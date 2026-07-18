@@ -1,0 +1,7 @@
+experiment:
+  id: "003"
+  theme: coupon_effect_aipw
+dataset:
+  name: completejourney
+pipeline_config: configs/causal/inference/defaults.yaml
+feature_config: configs/preprocessing/inference_features.yaml

@@ -1,0 +1,238 @@
+features:
+  - name: age_midpoint
+    role: covariate
+    source_table: demographics
+    source_column: age
+    unit_id: household_id
+    transform: ordered_category_midpoint
+    dtype: ordinal_midpoint
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: age_unknown
+    role: covariate
+    source_table: demographics
+    source_column: age
+    unit_id: household_id
+    transform: is_missing_or_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: homeowner
+    role: covariate
+    source_table: demographics
+    source_column: home_ownership
+    unit_id: household_id
+    transform: equals
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: homeowner_yes
+    role: covariate
+    source_table: demographics
+    source_column: home_ownership
+    unit_id: household_id
+    transform: binary_with_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: homeowner_unknown
+    role: covariate
+    source_table: demographics
+    source_column: home_ownership
+    unit_id: household_id
+    transform: binary_with_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: household_size
+    role: covariate
+    source_table: demographics
+    source_column: household_size
+    unit_id: household_id
+    transform: numeric_category
+    dtype: numeric_category
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: income_midpoint_k
+    role: covariate
+    source_table: demographics
+    source_column: income
+    unit_id: household_id
+    transform: ordered_category_midpoint
+    dtype: ordinal_midpoint
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: income_unknown
+    role: covariate
+    source_table: demographics
+    source_column: income
+    unit_id: household_id
+    transform: is_missing_or_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: kids_count
+    role: covariate
+    source_table: demographics
+    source_column: kids_count
+    unit_id: household_id
+    transform: numeric_category
+    dtype: numeric_category
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: married
+    role: covariate
+    source_table: demographics
+    source_column: marital_status
+    unit_id: household_id
+    transform: equals
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: married_yes
+    role: covariate
+    source_table: demographics
+    source_column: marital_status
+    unit_id: household_id
+    transform: binary_with_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: married_unknown
+    role: covariate
+    source_table: demographics
+    source_column: marital_status
+    unit_id: household_id
+    transform: binary_with_unknown
+    dtype: binary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: outcome_baskets
+    role: outcome
+    source_table: transactions
+    source_column: basket_id
+    unit_id: household_id
+    aggregation: nunique
+    transform: log1p
+    dtype: count
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: outcome_coupon_disc
+    role: outcome
+    source_table: transactions
+    source_column: coupon_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: outcome_coupon_match_disc
+    role: outcome
+    source_table: transactions
+    source_column: coupon_match_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: outcome_quantity
+    role: outcome
+    source_table: transactions
+    source_column: quantity
+    unit_id: household_id
+    aggregation: sum
+    transform: log1p
+    dtype: count
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: outcome_retail_disc
+    role: outcome
+    source_table: transactions
+    source_column: retail_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: outcome_sales_value
+    role: outcome
+    source_table: transactions
+    source_column: sales_value
+    unit_id: household_id
+    aggregation: sum
+    transform: log1p
+    dtype: monetary
+    allowed_for_adjustment: false
+    post_treatment: false
+  - name: pre_baskets
+    role: covariate
+    source_table: transactions
+    source_column: basket_id
+    unit_id: household_id
+    aggregation: nunique
+    transform: log1p
+    dtype: count
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: pre_coupon_disc
+    role: covariate
+    source_table: transactions
+    source_column: coupon_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: pre_coupon_match_disc
+    role: covariate
+    source_table: transactions
+    source_column: coupon_match_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: pre_quantity
+    role: covariate
+    source_table: transactions
+    source_column: quantity
+    unit_id: household_id
+    aggregation: sum
+    transform: log1p
+    dtype: count
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: pre_retail_disc
+    role: covariate
+    source_table: transactions
+    source_column: retail_disc
+    unit_id: household_id
+    aggregation: sum
+    transform: signed_log1p
+    dtype: monetary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: pre_sales_value
+    role: covariate
+    source_table: transactions
+    source_column: sales_value
+    unit_id: household_id
+    aggregation: sum
+    transform: log1p
+    dtype: monetary
+    allowed_for_adjustment: true
+    post_treatment: false
+  - name: treated
+    role: treatment
+    source_table: campaigns
+    source_column: campaign_id
+    unit_id: household_id
+    transform: campaign_membership
+    dtype: binary
+    allowed_for_adjustment: false
+    post_treatment: false

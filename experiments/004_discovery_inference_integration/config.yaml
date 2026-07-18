@@ -1,0 +1,6 @@
+experiment:
+  id: "004"
+  theme: discovery_inference_integration
+dataset:
+  name: completejourney
+pipeline_config: configs/causal/inference/pipeline.yaml

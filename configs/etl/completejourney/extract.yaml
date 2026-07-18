@@ -1,0 +1,49 @@
+default: 
+    file: 
+        path: "{path_sys_base}/data/00_raw/completejourney/rdata"
+        name: ""
+        type: "rda"
+    read_option: 
+        csv: 
+            delimiter: ","
+            header: 0
+            dtype: "object"
+            quotechar: "\""
+            quoting: 1 ## quoting = QUOTE_MINIMAL (0), QUOTE_ALL (1), QUOTE_NONNUMERIC (2) or QUOTE_NONE (3).
+            encoding: "utf-8"
+        yaml: 
+            encoding: "utf-8"
+
+campaign_descriptions: 
+    file: 
+        name: "campaign_descriptions.rda"
+
+campaigns: 
+    file: 
+        name: "campaigns.rda"
+
+coupon_redemptions: 
+    file: 
+        name: "coupon_redemptions.rda"
+
+coupons: 
+    file: 
+        name: "coupons.rda"
+
+demographics: 
+    file: 
+        name: "demographics.rda"
+
+products: 
+    file: 
+        name: "products.rda"
+
+promotions: 
+    file: 
+        name: "promotions.rds"
+        type: "rds"
+
+transactions: 
+    file: 
+        name: "transactions.rds"
+        type: "rds"

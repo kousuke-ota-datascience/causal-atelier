@@ -1,0 +1,19 @@
+causal_design:
+  estimand: ATE
+  treatment:
+    name: treated
+    time: campaign_start
+    levels: [0, 1]
+  outcome:
+    name: outcome_sales_value
+    window:
+      start: campaign_start
+      end: campaign_end
+  unit: household
+  time_zero: campaign_start
+  adjustment_set: pre_treatment_covariates
+  assumptions:
+    - consistency
+    - conditional_exchangeability
+    - positivity
+    - no_interference

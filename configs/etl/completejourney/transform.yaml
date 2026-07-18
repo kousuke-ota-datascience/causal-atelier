@@ -1,0 +1,14 @@
+dataset: completejourney
+input_stage: 00_raw
+output_stage: 10_interim
+output_format: parquet
+
+tables:
+  - campaign_descriptions
+  - campaigns
+  - coupon_redemptions
+  - coupons
+  - demographics
+  - products
+  - promotions
+  - transactions

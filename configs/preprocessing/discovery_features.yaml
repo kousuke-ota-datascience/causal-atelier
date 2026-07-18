@@ -1,0 +1,327 @@
+metadata:
+  entity_id: household_id
+  time_column: week
+  treatment_column: treated
+
+tables:
+  campaigns:
+    name: campaigns
+    household_key: household_id
+    campaign_id: campaign_id
+
+  campaign_descriptions:
+    name: campaign_descriptions
+    campaign_id: campaign_id
+    start_day: start_date
+    end_day: end_date
+
+  demographics:
+    name: demographics
+    household_key: household_id
+
+  transactions:
+    name: transactions
+    household_key: household_id
+    week: week
+    transaction_timestamp: transaction_timestamp
+
+campaign_window:
+  day_to_week:
+    method: floor_divide
+    divisor: 7
+
+categorical_mappings:
+  age:
+    type: ordered_midpoint
+    unknown_values:
+      - null
+      - Unknown
+    categories:
+      - label: "19-24"
+        midpoint: 21.5
+      - label: "25-34"
+        midpoint: 29.5
+      - label: "35-44"
+        midpoint: 39.5
+      - label: "45-54"
+        midpoint: 49.5
+      - label: "55-64"
+        midpoint: 59.5
+      - label: "65+"
+        midpoint: 70.0
+
+  income:
+    type: ordered_midpoint
+    unit: thousand_usd
+    unknown_values:
+      - null
+      - Unknown
+    categories:
+      - label: "Under 15K"
+        midpoint: 7.5
+      - label: "15-24K"
+        midpoint: 19.5
+      - label: "25-34K"
+        midpoint: 29.5
+      - label: "35-49K"
+        midpoint: 42.0
+      - label: "50-74K"
+        midpoint: 62.0
+      - label: "75-99K"
+        midpoint: 87.0
+      - label: "100-124K"
+        midpoint: 112.0
+      - label: "125-149K"
+        midpoint: 137.0
+      - label: "150-174K"
+        midpoint: 162.0
+      - label: "175-199K"
+        midpoint: 187.0
+      - label: "200-249K"
+        midpoint: 225.0
+      - label: "250K+"
+        midpoint: 275.0
+
+features:
+  baseline:
+    - name: age_midpoint
+      source_table: demographics
+      source_column: age
+      transform: ordered_category_midpoint
+      mapping: age
+      role: baseline
+      data_type: ordinal_midpoint
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: age_unknown
+      source_table: demographics
+      source_column: age
+      transform: is_missing_or_unknown
+      unknown_values:
+        - null
+        - Unknown
+      role: baseline
+      data_type: binary
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: income_midpoint_k
+      source_table: demographics
+      source_column: income
+      transform: ordered_category_midpoint
+      mapping: income
+      role: baseline
+      data_type: ordinal_midpoint
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: income_unknown
+      source_table: demographics
+      source_column: income
+      transform: is_missing_or_unknown
+      unknown_values:
+        - null
+        - Unknown
+      role: baseline
+      data_type: binary
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: homeowner
+      source_table: demographics
+      source_column: home_ownership
+      transform: equals
+      value: Homeowner
+      role: baseline
+      data_type: binary
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: married
+      source_table: demographics
+      source_column: marital_status
+      transform: equals
+      value: Married
+      role: baseline
+      data_type: binary
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: household_size
+      source_table: demographics
+      source_column: household_size
+      transform: numeric_category
+      role: baseline
+      data_type: numeric_category
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: kids_count
+      source_table: demographics
+      source_column: kids_count
+      transform: numeric_category
+      role: baseline
+      data_type: numeric_category
+      background_tier: baseline
+      used_in_discovery: true
+      fisherz_caution: true
+
+  pre_period:
+    - name: pre_baskets
+      source_table: transactions
+      source_column: basket_id
+      window: pre
+      aggregation: nunique
+      fill_value: 0
+      transform: log1p
+      role: pre_treatment_behavior
+      data_type: count
+      background_tier: pre
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: pre_quantity
+      source_table: transactions
+      source_column: quantity
+      window: pre
+      aggregation: sum
+      fill_value: 0
+      transform: log1p
+      role: pre_treatment_behavior
+      data_type: count
+      background_tier: pre
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: pre_sales_value
+      source_table: transactions
+      source_column: sales_value
+      window: pre
+      aggregation: sum
+      fill_value: 0
+      transform: log1p
+      role: pre_treatment_behavior
+      data_type: monetary
+      background_tier: pre
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: pre_retail_disc
+      source_table: transactions
+      source_column: retail_disc
+      window: pre
+      aggregation: sum
+      fill_value: 0
+      transform: signed_log1p
+      role: pre_treatment_behavior
+      data_type: monetary
+      background_tier: pre
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: pre_coupon_disc
+      source_table: transactions
+      source_column: coupon_disc
+      window: pre
+      aggregation: sum
+      fill_value: 0
+      transform: signed_log1p
+      role: pre_treatment_behavior
+      data_type: monetary
+      background_tier: pre
+      used_in_discovery: true
+      fisherz_caution: true
+
+  treatment:
+    - name: treated
+      source_table: campaigns
+      source_column: campaign_id
+      transform: campaign_membership
+      role: treatment
+      data_type: binary
+      background_tier: treatment
+      used_in_discovery: true
+      fisherz_caution: true
+
+  outcome_period:
+    - name: outcome_baskets
+      source_table: transactions
+      source_column: basket_id
+      window: outcome
+      aggregation: nunique
+      fill_value: 0
+      transform: log1p
+      role: outcome
+      data_type: count
+      background_tier: outcome
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: outcome_quantity
+      source_table: transactions
+      source_column: quantity
+      window: outcome
+      aggregation: sum
+      fill_value: 0
+      transform: log1p
+      role: outcome
+      data_type: count
+      background_tier: outcome
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: outcome_sales_value
+      source_table: transactions
+      source_column: sales_value
+      window: outcome
+      aggregation: sum
+      fill_value: 0
+      transform: log1p
+      role: outcome
+      data_type: monetary
+      background_tier: outcome
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: outcome_retail_disc
+      source_table: transactions
+      source_column: retail_disc
+      window: outcome
+      aggregation: sum
+      fill_value: 0
+      transform: signed_log1p
+      role: outcome
+      data_type: monetary
+      background_tier: outcome
+      used_in_discovery: true
+      fisherz_caution: true
+
+    - name: outcome_coupon_disc
+      source_table: transactions
+      source_column: coupon_disc
+      window: outcome
+      aggregation: sum
+      fill_value: 0
+      transform: signed_log1p
+      role: outcome
+      data_type: monetary
+      background_tier: outcome
+      used_in_discovery: true
+      fisherz_caution: true
+
+background_knowledge:
+  tier_order:
+    - baseline
+    - pre
+    - treatment
+    - outcome
+
+  forbid_backward_edges: true

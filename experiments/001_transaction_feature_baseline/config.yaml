@@ -1,0 +1,6 @@
+experiment:
+  id: "001"
+  theme: transaction_feature_baseline
+dataset:
+  name: completejourney
+preprocessing_config: configs/preprocessing/discovery_features.yaml
