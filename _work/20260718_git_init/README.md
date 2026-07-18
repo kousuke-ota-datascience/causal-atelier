@@ -131,21 +131,21 @@ ssh -T git@github.com
 ## 10. リモートリポジトリを登録する
 
 ```bash
-git remote add origin git@github.com:kousuke-ota-datascience/causal-atelier.git
+git remote add causal-atelier git@github.com:kousuke-ota-datascience/causal-atelier.git
 git remote -v
 ```
 
-すでに `origin` が存在する場合は、追加ではなくURLを更新する。
+すでに `causal-atelier` が存在する場合は、追加ではなくURLを更新する。
 
 ```bash
-git remote set-url origin git@github.com:kousuke-ota-datascience/causal-atelier.git
+git remote set-url causal-atelier git@github.com:kousuke-ota-datascience/causal-atelier.git
 git remote -v
 ```
 
 ## 11. リモートの状態を確認する
 
 ```bash
-git fetch origin
+git fetch causal-atelier
 git log --oneline --graph --all --decorate
 ```
 
@@ -157,7 +157,7 @@ GitHub側にREADMEなどの既存コミットがある場合は、強制pushせ�
 ## 12. `main` ブランチをpushする
 
 ```bash
-git push -u origin main
+git push -u causal-atelier main
 ```
 
 ## 13. 登録結果を確認する
@@ -171,7 +171,7 @@ git remote -v
 期待する状態は以下のとおり。
 
 - working treeがcleanである
-- ローカルの `main` が `origin/main` を追跡している
+- ローカルの `main` が `causal-atelier/main` を追跡している
 - GitHub上にソースコード、設定、テスト、ドキュメントが表示される
 - 実データ、ログ、仮想環境、キャッシュ、生成artifactが登録されていない
 
