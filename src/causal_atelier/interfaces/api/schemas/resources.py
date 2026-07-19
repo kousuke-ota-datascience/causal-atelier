@@ -131,12 +131,14 @@ class PipelineStageCreate(ApiModel):
     stage_key: str
     stage_type: Literal["ETL", "DISCOVERY", "INFERENCE"]
     analysis_mode: Literal["EDGE_WEIGHT", "TREATMENT_EFFECT"] | None = None
+    input_mode: Literal["CONFIGURED_FEATURE_BUILD", "ANALYSIS_READY"] | None = None
     runner_name: str | None = None
     enabled: bool = True
     depends_on: list[str] = Field(default_factory=list)
     dataset_inputs: dict[str, str] = Field(default_factory=dict)
     configuration_inputs: dict[str, str] = Field(default_factory=dict)
     artifact_inputs: dict[str, str] = Field(default_factory=dict)
+    graph_inputs: dict[str, str] = Field(default_factory=dict)
     parameters: dict[str, Any] = Field(default_factory=dict)
     outputs: dict[str, str] = Field(default_factory=dict)
 
@@ -147,6 +149,24 @@ class PipelineStageCreate(ApiModel):
         if self.stage_type != "INFERENCE" and self.analysis_mode is not None:
             raise ValueError("analysis_mode is only valid for INFERENCE")
         return self
+
+
+class AnalysisDatasetBindingUpdate(ApiModel):
+    analysis_unit_description: str = Field(min_length=1, max_length=2000)
+    unit_identifier_column_id: str | None = None
+
+
+class CausalGraphCreate(ApiModel):
+    project_id: str
+    slug: str = Field(pattern=r"^[a-z0-9][a-z0-9-_]{1,126}$")
+    name: str = Field(min_length=1, max_length=255)
+    description: str | None = None
+
+
+class CausalGraphVersionCreate(ApiModel):
+    source_discovery_algorithm_result_id: str
+    feature_semantics_version_id: str
+    selection_note: str | None = None
 
 
 class PipelineDefinitionCreate(ApiModel):

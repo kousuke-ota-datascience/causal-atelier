@@ -102,6 +102,7 @@ class _DataCatalogService:
         self.session.add(version)
         self.session.flush()
         table_hashes: list[dict[str, Any]] = []
+        schema_hashes: list[dict[str, Any]] = []
         for ordinal, raw in enumerate(tables, start=1):
             object_data = raw["object"]
             if object_data["backend"] != self.store.backend:
@@ -219,12 +220,36 @@ class _DataCatalogService:
             table_hashes.append(
                 {"logical_name": table.logical_name, "hash": actual_checksum}
             )
-        version.schema_hash = canonical_hash(
-            [{"name": raw["logical_name"]} for raw in tables]
-        )
+            schema_hashes.append(
+                {"logical_name": table.logical_name, "schema_hash": schema_hash}
+            )
+        version.schema_hash = canonical_hash(schema_hashes)
         version.content_hash = canonical_hash(table_hashes)
         version.status = "READY"
         version.ready_at = m.utcnow()
+        if len(tables) == 1 and tables[0]["object"]["format"].upper() in {
+            "CSV",
+            "PARQUET",
+        }:
+            primary_table = self.session.scalar(
+                select(m.DatasetTableVersion).where(
+                    m.DatasetTableVersion.dataset_version_id == version.id
+                )
+            )
+            self.session.add(
+                m.AnalysisDatasetBinding(
+                    dataset_version_id=version.id,
+                    primary_table_version_id=primary_table.id,
+                    analysis_unit_description=source_metadata.get(
+                        "analysis_unit_description", "One row is one analysis unit"
+                    ),
+                    readiness_status="READY",
+                    schema_hash_snapshot=version.schema_hash,
+                    validation_summary_json={"issues": []},
+                    created_by=actor_user_id,
+                    validated_at=m.utcnow(),
+                )
+            )
         add_audit(
             self.session,
             project_id=dataset.project_id,
@@ -310,6 +335,11 @@ class _ConfigurationService:
             or 0
         ) + 1
         issues = validate_configuration(configuration.configuration_type, document)
+        issues.extend(
+            self._validate_resource_bindings(
+                configuration.project_id, configuration.configuration_type, document
+            )
+        )
         version = m.ConfigurationVersion(
             configuration_id=configuration.id,
             version_number=number,
@@ -345,6 +375,13 @@ class _ConfigurationService:
     ) -> list[dict[str, Any]]:
         issues = validate_configuration(
             configuration.configuration_type, version.canonical_json
+        )
+        issues.extend(
+            self._validate_resource_bindings(
+                configuration.project_id,
+                configuration.configuration_type,
+                version.canonical_json,
+            )
         )
         version.validation_status = (
             "INVALID" if any(i["severity"] == "ERROR" for i in issues) else "VALID"
@@ -388,6 +425,10 @@ class _ConfigurationService:
 
     def _clear_projection(self, version_id: str) -> None:
         for model, column in (
+            (
+                m.FeatureSemanticsDatasetBinding,
+                m.FeatureSemanticsDatasetBinding.configuration_version_id,
+            ),
             (m.FeatureSemanticItem, m.FeatureSemanticItem.feature_semantics_version_id),
             (
                 m.FeatureSemanticsProjection,
@@ -418,7 +459,35 @@ class _ConfigurationService:
                     feature_count=len(features),
                 )
             )
+            dataset_version_id = document.get("dataset_version_id")
+            if dataset_version_id:
+                binding = self.session.get(
+                    m.AnalysisDatasetBinding, dataset_version_id
+                )
+                self.session.add(
+                    m.FeatureSemanticsDatasetBinding(
+                        configuration_version_id=version.id,
+                        dataset_version_id=dataset_version_id,
+                        dataset_table_version_id=binding.primary_table_version_id,
+                        dataset_schema_hash_snapshot=binding.schema_hash_snapshot,
+                        binding_status="VALID",
+                        validation_summary_json={"issues": []},
+                        validated_at=m.utcnow(),
+                    )
+                )
+                dataset_columns = {
+                    column.name: column.id
+                    for column in self.session.scalars(
+                        select(m.DatasetColumn).where(
+                            m.DatasetColumn.dataset_table_version_id
+                            == binding.primary_table_version_id
+                        )
+                    ).all()
+                }
+            else:
+                dataset_columns = {}
             for item in features:
+                role = item["role"]
                 self.session.add(
                     m.FeatureSemanticItem(
                         feature_semantics_version_id=version.id,
@@ -432,10 +501,22 @@ class _ConfigurationService:
                         aggregation=item.get("aggregation"),
                         transform=item.get("transform"),
                         dtype=item.get("dtype"),
+                        dataset_column_id=dataset_columns.get(
+                            item.get("source_column") or item["name"]
+                        ),
+                        categorical=bool(item.get("categorical", False)),
+                        allowed_for_discovery=bool(
+                            item.get(
+                                "allowed_for_discovery",
+                                role not in {"identifier", "excluded"},
+                            )
+                        ),
                         allowed_for_adjustment=bool(
                             item.get("allowed_for_adjustment", False)
                         ),
                         post_treatment=bool(item.get("post_treatment", False)),
+                        time_metadata_json=item.get("time_metadata", {}),
+                        description=item.get("description"),
                         metadata_json=item.get("metadata", {}),
                     )
                 )
@@ -449,6 +530,8 @@ class _ConfigurationService:
                     feature_semantics_version_id=design.get(
                         "feature_semantics_version_id"
                     ),
+                    dataset_version_id=design.get("dataset_version_id"),
+                    causal_graph_version_id=design.get("causal_graph_version_id"),
                     estimand=design["estimand"],
                     treatment_name=treatment["name"],
                     treatment_time=treatment.get("time"),
@@ -457,7 +540,17 @@ class _ConfigurationService:
                     outcome_window=outcome.get("window"),
                     unit=design["unit"],
                     time_zero=design.get("time_zero"),
-                    adjustment_set_name=design.get("adjustment_set"),
+                    adjustment_set_name=(
+                        design.get("adjustment_set")
+                        if isinstance(design.get("adjustment_set"), str)
+                        else None
+                    ),
+                    target_population=design.get("target_population"),
+                    adjustment_strategy=design.get("adjustment_strategy"),
+                    adjustment_set_json=design.get("adjustment_set", [])
+                    if isinstance(design.get("adjustment_set", []), list)
+                    else [],
+                    analyst_note=design.get("analyst_note"),
                 )
             )
             for ordinal, assumption in enumerate(
@@ -478,6 +571,148 @@ class _ConfigurationService:
                         ordinal=ordinal,
                     )
                 )
+
+    def _validate_resource_bindings(
+        self,
+        project_id: str,
+        configuration_type: str,
+        document: dict[str, Any],
+    ) -> list[dict[str, Any]]:
+        issues: list[dict[str, Any]] = []
+        if configuration_type == "FEATURE_SEMANTICS":
+            dataset_version_id = document.get("dataset_version_id")
+            if not dataset_version_id:
+                return issues  # Legacy semantics remain valid without a Dataset binding.
+            version = self.session.get(m.DatasetVersion, dataset_version_id)
+            dataset = self.session.get(m.Dataset, version.dataset_id) if version else None
+            binding = self.session.get(m.AnalysisDatasetBinding, dataset_version_id)
+            if (
+                not version
+                or not dataset
+                or dataset.project_id != project_id
+                or not binding
+                or binding.readiness_status != "READY"
+            ):
+                return [
+                    _issue(
+                        "analysis_dataset_binding_invalid",
+                        "Feature semantics requires a READY analysis Dataset binding",
+                    )
+                ]
+            allowed_columns = {
+                column.name
+                for column, policy in self.session.execute(
+                    select(m.DatasetColumn, m.DatasetColumnPolicy)
+                    .join(
+                        m.DatasetColumnPolicy,
+                        m.DatasetColumnPolicy.dataset_column_id == m.DatasetColumn.id,
+                    )
+                    .where(
+                        m.DatasetColumn.dataset_table_version_id
+                        == binding.primary_table_version_id,
+                        m.DatasetColumnPolicy.analysis_allowed.is_(True),
+                    )
+                ).all()
+            }
+            for ordinal, feature in enumerate(document.get("features", [])):
+                source = feature.get("source_column") or feature.get("name")
+                if source not in allowed_columns:
+                    issues.append(
+                        _issue(
+                            "semantic_source_column_invalid",
+                            f"Column is missing or not allowed for analysis: {source}",
+                            f"features[{ordinal}]",
+                        )
+                    )
+        elif configuration_type == "CAUSAL_DESIGN":
+            design = document.get("causal_design", document)
+            semantics_id = design.get("feature_semantics_version_id")
+            dataset_id = design.get("dataset_version_id")
+            graph_id = design.get("causal_graph_version_id")
+            if any((semantics_id, dataset_id, graph_id)) and not all(
+                (semantics_id, dataset_id, graph_id)
+            ):
+                issues.append(
+                    _issue(
+                        "causal_design_lineage_incomplete",
+                        "Dataset, Feature Semantics, and Saved Graph must be specified together",
+                    )
+                )
+            if all((semantics_id, dataset_id, graph_id)):
+                graph = self.session.get(m.CausalGraphVersion, graph_id)
+                binding = self.session.get(m.FeatureSemanticsDatasetBinding, semantics_id)
+                if (
+                    not graph
+                    or graph.status != "PUBLISHED"
+                    or graph.dataset_version_id != dataset_id
+                    or graph.feature_semantics_version_id != semantics_id
+                    or not binding
+                    or binding.dataset_version_id != dataset_id
+                ):
+                    issues.append(
+                        _issue(
+                            "causal_design_lineage_mismatch",
+                            "Causal Design inputs do not refer to the same published analysis lineage",
+                        )
+                    )
+                items = {
+                    item.name: item
+                    for item in self.session.scalars(
+                        select(m.FeatureSemanticItem).where(
+                            m.FeatureSemanticItem.feature_semantics_version_id
+                            == semantics_id
+                        )
+                    ).all()
+                }
+                treatment = design.get("treatment", {})
+                outcome = design.get("outcome", {})
+                treatment_name = (
+                    treatment.get("name") if isinstance(treatment, dict) else treatment
+                )
+                outcome_name = outcome.get("name") if isinstance(outcome, dict) else outcome
+                if items.get(treatment_name) is None or items[treatment_name].role != "treatment":
+                    issues.append(
+                        _issue(
+                            "causal_design_treatment_invalid",
+                            "Causal Design treatment must have the treatment role",
+                        )
+                    )
+                if items.get(outcome_name) is None or items[outcome_name].role != "outcome":
+                    issues.append(
+                        _issue(
+                            "causal_design_outcome_invalid",
+                            "Causal Design outcome must have the outcome role",
+                        )
+                    )
+                for name in design.get("adjustment_set", []):
+                    item = items.get(name)
+                    if (
+                        not item
+                        or item.role != "covariate"
+                        or not item.allowed_for_adjustment
+                        or item.post_treatment
+                    ):
+                        issues.append(
+                            _issue(
+                                "bad_control",
+                                f"Variable is not an allowed pre-treatment covariate: {name}",
+                            )
+                        )
+                node_names = set(
+                    self.session.scalars(
+                        select(m.CausalGraphNode.name).where(
+                            m.CausalGraphNode.causal_graph_version_id == graph_id
+                        )
+                    ).all()
+                )
+                if treatment_name not in node_names or outcome_name not in node_names:
+                    issues.append(
+                        _issue(
+                            "causal_design_graph_nodes_missing",
+                            "Saved Graph must contain the treatment and outcome nodes",
+                        )
+                    )
+        return issues
 
 
 class RunService:
@@ -507,6 +742,8 @@ class RunService:
                     )
                 return existing, True
         stages, pipeline_version = self._resolve_stages(request_document)
+        for stage in stages:
+            stage["input_mode"] = stage.get("input_mode") or "CONFIGURED_FEATURE_BUILD"
         issues = self._validate_stages(
             project_id, stages, request_document["execution_mode"]
         )
@@ -515,7 +752,7 @@ class RunService:
             "run_id": None,
             "execution_mode": request_document["execution_mode"],
             "random_seed": request_document.get("random_seed"),
-            "stages": stages,
+            "stages": [self._plan_stage(stage) for stage in stages],
             "validation_checks": [
                 "resource_project_boundary",
                 "published_configuration",
@@ -567,6 +804,7 @@ class RunService:
                 stage_key=stage["stage_key"],
                 stage_type=stage["stage_type"],
                 analysis_mode=stage.get("analysis_mode"),
+                input_mode=stage["input_mode"],
                 ordinal=ordinal,
                 runner_name=stage.get("runner_name") or stage["stage_type"].lower(),
                 status=status if terminal else "QUEUED",
@@ -623,6 +861,38 @@ class RunService:
             after={"execution_mode": mode, "status": status},
         )
         return run, False
+
+    def _plan_stage(self, stage: dict[str, Any]) -> dict[str, Any]:
+        resolved = dict(stage)
+        resolved["input_mode"] = stage.get("input_mode") or "CONFIGURED_FEATURE_BUILD"
+        resolved["resolved_inputs"] = {
+            "datasets": {
+                name: {
+                    "dataset_version_id": identifier,
+                    "content_hash": version.content_hash if version else None,
+                    "schema_hash": version.schema_hash if version else None,
+                }
+                for name, identifier in stage.get("dataset_inputs", {}).items()
+                for version in (self.session.get(m.DatasetVersion, identifier),)
+            },
+            "configurations": {
+                name: {
+                    "configuration_version_id": identifier,
+                    "content_hash": version.content_hash if version else None,
+                }
+                for name, identifier in stage.get("configuration_inputs", {}).items()
+                for version in (self.session.get(m.ConfigurationVersion, identifier),)
+            },
+            "saved_graphs": {
+                name: {
+                    "causal_graph_version_id": identifier,
+                    "content_hash": version.content_hash if version else None,
+                }
+                for name, identifier in stage.get("graph_inputs", {}).items()
+                for version in (self.session.get(m.CausalGraphVersion, identifier),)
+            },
+        }
+        return resolved
 
     def retry(self, run: m.Run, actor_user_id: str) -> m.Run:
         if run.status not in {"FAILED", "CANCELLED"}:
@@ -737,7 +1007,11 @@ class RunService:
                 stage["stage_type"] == "INFERENCE"
                 and stage.get("analysis_mode") == "EDGE_WEIGHT"
             ):
-                if not stage.get("artifact_inputs") and not stage.get("depends_on"):
+                if (
+                    not stage.get("artifact_inputs")
+                    and not stage.get("graph_inputs")
+                    and not stage.get("depends_on")
+                ):
                     issues.append(
                         _issue(
                             "edge_artifact_required",
@@ -772,6 +1046,17 @@ class RunService:
                     )
                 else:
                     config_versions[name] = version
+                    expected_type = _expected_configuration_type(stage, name)
+                    if (
+                        expected_type
+                        and configuration.configuration_type != expected_type
+                    ):
+                        issues.append(
+                            _issue(
+                                "configuration_type_mismatch",
+                                f"{name} requires {expected_type}, got {configuration.configuration_type}",
+                            )
+                        )
             for name, version_id in stage.get("dataset_inputs", {}).items():
                 version = self.session.get(m.DatasetVersion, version_id)
                 dataset = (
@@ -801,12 +1086,104 @@ class RunService:
                             f"Artifact input is not AVAILABLE: {name}",
                         )
                     )
+            input_mode = stage.get("input_mode") or "CONFIGURED_FEATURE_BUILD"
+            if input_mode == "ANALYSIS_READY":
+                issues.extend(
+                    self._validate_analysis_ready_inputs(
+                        project_id, stage, config_versions
+                    )
+                )
+            for name, graph_version_id in stage.get("graph_inputs", {}).items():
+                graph_version = self.session.get(
+                    m.CausalGraphVersion, graph_version_id
+                )
+                graph = (
+                    self.session.get(m.CausalGraph, graph_version.causal_graph_id)
+                    if graph_version
+                    else None
+                )
+                if (
+                    not graph_version
+                    or not graph
+                    or graph.project_id != project_id
+                    or graph_version.status != "PUBLISHED"
+                ):
+                    issues.append(
+                        _issue(
+                            "causal_graph_not_published",
+                            f"Saved graph input is not PUBLISHED: {name}",
+                        )
+                    )
             if stage.get("analysis_mode") == "TREATMENT_EFFECT":
                 issues.extend(self._validate_treatment_effect(stage, config_versions))
         if not _acyclic(stages):
             issues.append(
                 _issue("pipeline_cycle", "Pipeline dependencies must be acyclic")
             )
+        return issues
+
+    def _validate_analysis_ready_inputs(
+        self,
+        project_id: str,
+        stage: dict[str, Any],
+        versions: dict[str, m.ConfigurationVersion],
+    ) -> list[dict[str, Any]]:
+        issues: list[dict[str, Any]] = []
+        dataset_ids = list(stage.get("dataset_inputs", {}).values())
+        semantics = versions.get("feature_semantics")
+        if len(dataset_ids) != 1:
+            issues.append(
+                _issue(
+                    "analysis_dataset_count_invalid",
+                    "ANALYSIS_READY requires exactly one Dataset Version",
+                )
+            )
+            return issues
+        binding = self.session.get(m.AnalysisDatasetBinding, dataset_ids[0])
+        semantics_binding = (
+            self.session.get(m.FeatureSemanticsDatasetBinding, semantics.id)
+            if semantics
+            else None
+        )
+        if not binding or binding.readiness_status != "READY":
+            issues.append(
+                _issue(
+                    "analysis_dataset_not_ready",
+                    "ANALYSIS_READY requires a READY analysis Dataset binding",
+                )
+            )
+        if (
+            not semantics
+            or not semantics_binding
+            or semantics_binding.binding_status != "VALID"
+            or semantics_binding.dataset_version_id != dataset_ids[0]
+        ):
+            issues.append(
+                _issue(
+                    "feature_semantics_binding_invalid",
+                    "ANALYSIS_READY requires published Feature Semantics bound to the Dataset Version",
+                )
+            )
+        graph_ids = list(stage.get("graph_inputs", {}).values())
+        if stage.get("stage_type") == "INFERENCE" and len(graph_ids) != 1:
+            issues.append(
+                _issue(
+                    "causal_graph_input_required",
+                    "ANALYSIS_READY inference requires exactly one Saved Graph Version",
+                )
+            )
+        if graph_ids and semantics:
+            graph = self.session.get(m.CausalGraphVersion, graph_ids[0])
+            if graph and (
+                graph.dataset_version_id != dataset_ids[0]
+                or graph.feature_semantics_version_id != semantics.id
+            ):
+                issues.append(
+                    _issue(
+                        "causal_graph_lineage_mismatch",
+                        "Saved Graph does not match the Dataset and Feature Semantics inputs",
+                    )
+                )
         return issues
 
     def _validate_treatment_effect(
@@ -838,6 +1215,19 @@ class RunService:
                     "Causal design is not valid/projected",
                 )
             ]
+        graph_id = next(iter(stage.get("graph_inputs", {}).values()), None)
+        dataset_id = next(iter(stage.get("dataset_inputs", {}).values()), None)
+        if stage.get("input_mode") == "ANALYSIS_READY" and (
+            design.feature_semantics_version_id != semantics.id
+            or design.dataset_version_id != dataset_id
+            or design.causal_graph_version_id != graph_id
+        ):
+            issues.append(
+                _issue(
+                    "causal_design_run_mismatch",
+                    "Run inputs must match the Dataset, Semantics, and Saved Graph declared by Causal Design",
+                )
+            )
         treatment = by_name.get(design.treatment_name)
         outcome = by_name.get(design.outcome_name)
         if not treatment or treatment.role != "treatment":
@@ -903,6 +1293,19 @@ class RunService:
                     artifact_id=artifact_id,
                 )
             )
+        for name, graph_version_id in stage.get("graph_inputs", {}).items():
+            graph = self.session.get(m.CausalGraphVersion, graph_version_id)
+            if graph:
+                self.session.add(
+                    m.StageRunGraphInput(
+                        stage_run_id=stage_record.id,
+                        input_name=name,
+                        causal_graph_version_id=graph.id,
+                        content_hash_snapshot=graph.content_hash,
+                        source="API_OVERRIDE",
+                    )
+                )
+        self._add_input_preparation(stage_record, stage)
         for name, value in stage.get("parameters", {}).items():
             self.session.add(
                 m.StageRunParameter(
@@ -912,6 +1315,37 @@ class RunService:
                     source="API_OVERRIDE",
                 )
             )
+
+    def _add_input_preparation(
+        self, stage_record: m.StageRun, stage: dict[str, Any]
+    ) -> None:
+        dataset_id = next(iter(stage.get("dataset_inputs", {}).values()), None)
+        if not dataset_id:
+            return
+        version = self.session.get(m.DatasetVersion, dataset_id)
+        configs = stage.get("configuration_inputs", {})
+        semantics_id = configs.get("feature_semantics")
+        feature_id = configs.get("feature_config")
+        table_id = None
+        if stage_record.input_mode == "ANALYSIS_READY":
+            binding = self.session.get(m.AnalysisDatasetBinding, dataset_id)
+            table_id = binding.primary_table_version_id if binding else None
+        parameters = stage.get("parameters", {})
+        self.session.add(
+            m.StageRunInputPreparation(
+                stage_run_id=stage_record.id,
+                input_mode=stage_record.input_mode,
+                input_dataset_version_id=dataset_id,
+                input_table_version_id=table_id,
+                input_schema_hash=version.schema_hash or "",
+                feature_semantics_version_id=semantics_id,
+                requested_columns_json=parameters.get(
+                    "selected_columns", parameters.get("columns", [])
+                ),
+                conditioning_spec_json=parameters.get("conditioning", {}),
+                configured_feature_version_id=feature_id,
+            )
+        )
 
 
 def validate_configuration(
@@ -929,12 +1363,14 @@ def validate_configuration(
             ]
         names: set[str] = set()
         roles = {
+            "identifier",
             "treatment",
             "outcome",
             "covariate",
             "mediator",
             "collider",
             "post_treatment",
+            "excluded",
         }
         for ordinal, feature in enumerate(features):
             location = f"features[{ordinal}]"
@@ -990,6 +1426,23 @@ def validate_configuration(
                         location,
                     )
                 )
+        treatments = [
+            feature.get("name")
+            for feature in features
+            if feature.get("role") == "treatment"
+        ]
+        outcomes = [
+            feature.get("name")
+            for feature in features
+            if feature.get("role") == "outcome"
+        ]
+        if set(treatments) & set(outcomes):
+            issues.append(
+                _issue(
+                    "treatment_outcome_same",
+                    "Treatment and outcome must not use the same feature",
+                )
+            )
     elif configuration_type == "CAUSAL_DESIGN":
         design = document.get("causal_design", document)
         missing = {"estimand", "treatment", "outcome", "unit"} - set(design)
@@ -1043,6 +1496,30 @@ def _acyclic(stages: list[dict[str, Any]]) -> bool:
         return True
 
     return all(visit(node) for node in graph)
+
+
+def _expected_configuration_type(stage: dict[str, Any], name: str) -> str | None:
+    if name == "feature_semantics":
+        return "FEATURE_SEMANTICS"
+    if name == "causal_design":
+        return "CAUSAL_DESIGN"
+    if name in {"analysis_config", "config"}:
+        return (
+            "DISCOVERY_ANALYSIS"
+            if stage.get("stage_type") == "DISCOVERY"
+            else "INFERENCE_ANALYSIS"
+            if stage.get("stage_type") == "INFERENCE"
+            else None
+        )
+    if name == "feature_config":
+        return (
+            "DISCOVERY_FEATURE"
+            if stage.get("stage_type") == "DISCOVERY"
+            else "INFERENCE_FEATURE"
+            if stage.get("stage_type") == "INFERENCE"
+            else None
+        )
+    return None
 
 
 def _hash_file(path: Path) -> str:

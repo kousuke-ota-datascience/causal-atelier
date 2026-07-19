@@ -102,12 +102,14 @@ class WorkerProjectionService:
     ) -> None:
         configs = _config_id_map(session, stage.id)
         dataset_id = _first_dataset_id(session, stage.id)
-        required = (
-            configs.get("analysis_config") or configs.get("config"),
-            configs.get("feature_config"),
-            dataset_id,
-        )
-        if not all(required):
+        analysis = configs.get("analysis_config") or configs.get("config")
+        features = configs.get("feature_config")
+        semantics = configs.get("feature_semantics")
+        if not analysis or not dataset_id:
+            return
+        if stage.input_mode == "CONFIGURED_FEATURE_BUILD" and not features:
+            return
+        if stage.input_mode == "ANALYSIS_READY" and not semantics:
             return
         summary_path = output_dir / "algorithm_summary.csv"
         summaries = (
@@ -115,13 +117,22 @@ class WorkerProjectionService:
             if summary_path.exists()
             else []
         )
+        feature_frame_path = output_dir / "analysis_ready_feature_frame.parquet"
+        node_names = (
+            list(pd.read_parquet(feature_frame_path).columns)
+            if feature_frame_path.exists()
+            else []
+        )
         result = m.DiscoveryResult(
             stage_run_id=stage.id,
             dataset_version_id=dataset_id,
-            discovery_analysis_version_id=required[0],
-            discovery_feature_version_id=required[1],
+            discovery_analysis_version_id=analysis,
+            discovery_feature_version_id=features,
+            input_mode=stage.input_mode,
+            feature_semantics_version_id=semantics,
+            input_preparation_attempt_id=_current_preparation_id(session, stage.id),
             algorithm_count=len(summaries),
-            node_count=None,
+            node_count=len(node_names) or None,
             edge_count=0,
             status="SUCCEEDED",
             summary_json={
@@ -141,7 +152,17 @@ class WorkerProjectionService:
                 message=None
                 if pd.isna(summary.get("message"))
                 else str(summary.get("message")),
-                metadata_json={"edge_count": int(summary.get("edges", 0))},
+                edge_artifact_id=(
+                    edge_artifact.id
+                    if (edge_artifact := _artifact_for_output(
+                        session, stage.id, f"{algorithm}_edges"
+                    ))
+                    else None
+                ),
+                metadata_json={
+                    "edge_count": int(summary.get("edges", 0)),
+                    "node_names": node_names,
+                },
             )
             session.add(algorithm_result)
             session.flush()
@@ -177,17 +198,35 @@ class WorkerProjectionService:
         configs = _config_id_map(session, stage.id)
         analysis = configs.get("analysis_config") or configs.get("config")
         features = configs.get("feature_config")
+        semantics = configs.get("feature_semantics")
         dataset_id = _first_dataset_id(session, stage.id)
-        if not all((artifact, analysis, features, dataset_id)):
+        graph = _graph_input(session, stage.id)
+        if not all((artifact, analysis, dataset_id)):
+            return
+        if stage.input_mode == "CONFIGURED_FEATURE_BUILD" and not features:
+            return
+        if stage.input_mode == "ANALYSIS_READY" and not all((semantics, graph)):
             return
         result = m.EdgeWeightResult(
             stage_run_id=stage.id,
             dataset_version_id=dataset_id,
             inference_analysis_version_id=analysis,
             inference_feature_version_id=features,
+            input_mode=stage.input_mode,
+            feature_semantics_version_id=semantics,
+            causal_graph_version_id=graph.causal_graph_version_id if graph else None,
+            input_preparation_attempt_id=_current_preparation_id(session, stage.id),
             result_artifact_id=artifact.id,
             status="SUCCEEDED",
-            summary_json={"interpretation_level": "EXPLORATORY_EDGE_COEFFICIENT"},
+            summary_json={
+                "interpretation_level": "EXPLORATORY_EDGE_COEFFICIENT",
+                "skipped_edges": (
+                    pd.read_csv(artifacts["skipped_edges"]).to_dict("records")
+                    if artifacts.get("skipped_edges")
+                    and artifacts["skipped_edges"].exists()
+                    else []
+                ),
+            },
         )
         session.add(result)
         session.flush()
@@ -229,9 +268,12 @@ class WorkerProjectionService:
         design_id = configs.get("causal_design")
         dataset_id = _first_dataset_id(session, stage.id)
         design = session.get(m.CausalDesignProjection, design_id) if design_id else None
-        if not all(
-            (artifact, analysis, features, semantics, design_id, dataset_id, design)
-        ):
+        graph = _graph_input(session, stage.id)
+        if not all((artifact, analysis, semantics, design_id, dataset_id, design)):
+            return
+        if stage.input_mode == "CONFIGURED_FEATURE_BUILD" and not features:
+            return
+        if stage.input_mode == "ANALYSIS_READY" and not graph:
             return
         params = {
             row.parameter_name: row.value_json
@@ -248,6 +290,9 @@ class WorkerProjectionService:
             inference_feature_version_id=features,
             feature_semantics_version_id=semantics,
             causal_design_version_id=design_id,
+            input_mode=stage.input_mode,
+            causal_graph_version_id=graph.causal_graph_version_id if graph else None,
+            input_preparation_attempt_id=_current_preparation_id(session, stage.id),
             treatment_name=design.treatment_name,
             outcome_name=design.outcome_name,
             estimand=design.estimand,
@@ -301,6 +346,20 @@ class WorkerProjectionService:
                             ),
                         )
                     )
+        diagnostics_path = artifacts.get("design_diagnostics")
+        if diagnostics_path and diagnostics_path.exists():
+            for raw in pd.read_csv(diagnostics_path).to_dict("records"):
+                session.add(
+                    m.DiagnosticSummary(
+                        stage_run_id=stage.id,
+                        diagnostic_type="DESIGN",
+                        metric_name="sample_count",
+                        metric_value_number=_nullable_float(raw.get("sample_count")),
+                        severity="INFO",
+                        status="AVAILABLE",
+                        payload_json=_json_safe(raw),
+                    )
+                )
 
 
 def _first_dataset_id(session: Session, stage_id: str) -> str | None:
@@ -327,6 +386,23 @@ def _artifact_for_output(
 ) -> m.Artifact | None:
     output = session.get(m.StageRunArtifactOutput, (stage_id, name))
     return session.get(m.Artifact, output.artifact_id) if output else None
+
+
+def _graph_input(session: Session, stage_id: str) -> m.StageRunGraphInput | None:
+    return session.scalar(
+        select(m.StageRunGraphInput).where(
+            m.StageRunGraphInput.stage_run_id == stage_id
+        )
+    )
+
+
+def _current_preparation_id(session: Session, stage_id: str) -> str | None:
+    attempt = session.scalar(
+        select(m.StageAttempt)
+        .where(m.StageAttempt.stage_run_id == stage_id)
+        .order_by(m.StageAttempt.attempt_number.desc())
+    )
+    return attempt.id if attempt else None
 
 
 def _nullable_float(value: object) -> float | None:

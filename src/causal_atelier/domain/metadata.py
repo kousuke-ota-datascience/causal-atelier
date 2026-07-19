@@ -15,6 +15,7 @@ from sqlalchemy import (
     JSON,
     BigInteger,
     Boolean,
+    CheckConstraint,
     DateTime,
     Float,
     ForeignKey,
@@ -203,6 +204,30 @@ class DatasetColumn(Base):
     )
 
 
+class AnalysisDatasetBinding(Base):
+    """Declares the single primary table used by the analysis-ready path."""
+
+    __tablename__ = "analysis_dataset_binding"
+    dataset_version_id: Mapped[str] = mapped_column(
+        ForeignKey("dataset_version.id"), primary_key=True
+    )
+    primary_table_version_id: Mapped[str] = mapped_column(
+        ForeignKey("dataset_table_version.id"), unique=True
+    )
+    analysis_unit_description: Mapped[str] = mapped_column(Text)
+    unit_identifier_column_id: Mapped[str | None] = mapped_column(
+        ForeignKey("dataset_column.id")
+    )
+    readiness_status: Mapped[str] = mapped_column(String(32), default="UNKNOWN")
+    schema_hash_snapshot: Mapped[str] = mapped_column(String(255))
+    validation_summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_by: Mapped[str] = mapped_column(ForeignKey("app_user.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class DatasetColumnPolicy(Base):
     __tablename__ = "dataset_column_policy"
     dataset_column_id: Mapped[str] = mapped_column(
@@ -327,6 +352,26 @@ class FeatureSemanticsProjection(Base):
     )
 
 
+class FeatureSemanticsDatasetBinding(Base):
+    __tablename__ = "feature_semantics_dataset_binding"
+    configuration_version_id: Mapped[str] = mapped_column(
+        ForeignKey("configuration_version.id"), primary_key=True
+    )
+    dataset_version_id: Mapped[str] = mapped_column(
+        ForeignKey("dataset_version.id"), index=True
+    )
+    dataset_table_version_id: Mapped[str] = mapped_column(
+        ForeignKey("dataset_table_version.id")
+    )
+    dataset_schema_hash_snapshot: Mapped[str] = mapped_column(String(255))
+    binding_status: Mapped[str] = mapped_column(String(32), default="VALID")
+    validation_summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class FeatureSemanticItem(Base):
     __tablename__ = "feature_semantic_item"
     feature_semantics_version_id: Mapped[str] = mapped_column(
@@ -340,8 +385,15 @@ class FeatureSemanticItem(Base):
     aggregation: Mapped[str | None] = mapped_column(String(64))
     transform: Mapped[str | None] = mapped_column(String(128))
     dtype: Mapped[str | None] = mapped_column(String(128))
+    dataset_column_id: Mapped[str | None] = mapped_column(
+        ForeignKey("dataset_column.id")
+    )
+    categorical: Mapped[bool] = mapped_column(Boolean, default=False)
+    allowed_for_discovery: Mapped[bool] = mapped_column(Boolean, default=True)
     allowed_for_adjustment: Mapped[bool] = mapped_column(Boolean, default=False)
     post_treatment: Mapped[bool] = mapped_column(Boolean, default=False)
+    time_metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    description: Mapped[str | None] = mapped_column(Text)
     metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
 
@@ -353,6 +405,12 @@ class CausalDesignProjection(Base):
     feature_semantics_version_id: Mapped[str | None] = mapped_column(
         ForeignKey("configuration_version.id")
     )
+    dataset_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("dataset_version.id")
+    )
+    causal_graph_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("causal_graph_version.id")
+    )
     estimand: Mapped[str] = mapped_column(String(16))
     treatment_name: Mapped[str] = mapped_column(String(255))
     treatment_time: Mapped[str | None] = mapped_column(String(255))
@@ -362,6 +420,10 @@ class CausalDesignProjection(Base):
     unit: Mapped[str] = mapped_column(String(255))
     time_zero: Mapped[str | None] = mapped_column(String(255))
     adjustment_set_name: Mapped[str | None] = mapped_column(String(255))
+    target_population: Mapped[str | None] = mapped_column(Text)
+    adjustment_strategy: Mapped[str | None] = mapped_column(String(64))
+    adjustment_set_json: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    analyst_note: Mapped[str | None] = mapped_column(Text)
 
 
 class CausalAssumption(Base):
@@ -447,6 +509,7 @@ class PipelineStageDefinition(Base):
     stage_key: Mapped[str] = mapped_column(String(255))
     stage_type: Mapped[str] = mapped_column(String(32))
     analysis_mode: Mapped[str | None] = mapped_column(String(32))
+    input_mode: Mapped[str | None] = mapped_column(String(32))
     ordinal: Mapped[int] = mapped_column(Integer)
     enabled_by_default: Mapped[bool] = mapped_column(Boolean, default=True)
     runner_name: Mapped[str] = mapped_column(String(128))
@@ -561,6 +624,9 @@ class StageRun(Base):
     stage_key: Mapped[str] = mapped_column(String(255))
     stage_type: Mapped[str] = mapped_column(String(32))
     analysis_mode: Mapped[str | None] = mapped_column(String(32))
+    input_mode: Mapped[str] = mapped_column(
+        String(32), default="CONFIGURED_FEATURE_BUILD", server_default="CONFIGURED_FEATURE_BUILD"
+    )
     ordinal: Mapped[int] = mapped_column(Integer)
     runner_name: Mapped[str] = mapped_column(String(128))
     status: Mapped[str] = mapped_column(String(32), default="SUBMITTED")
@@ -643,6 +709,56 @@ class StageRunArtifactInput(Base):
     )
     input_name: Mapped[str] = mapped_column(String(255), primary_key=True)
     artifact_id: Mapped[str] = mapped_column(ForeignKey("artifact.id"))
+
+
+class StageRunInputPreparation(Base):
+    __tablename__ = "stage_run_input_preparation"
+    stage_run_id: Mapped[str] = mapped_column(
+        ForeignKey("stage_run.id"), primary_key=True
+    )
+    input_mode: Mapped[str] = mapped_column(String(32))
+    input_dataset_version_id: Mapped[str] = mapped_column(
+        ForeignKey("dataset_version.id")
+    )
+    input_table_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("dataset_table_version.id")
+    )
+    input_schema_hash: Mapped[str] = mapped_column(String(255))
+    feature_semantics_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("configuration_version.id")
+    )
+    requested_columns_json: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    conditioning_spec_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    configured_feature_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("configuration_version.id")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+
+
+class StageAttemptInputPreparation(Base):
+    __tablename__ = "stage_attempt_input_preparation"
+    stage_attempt_id: Mapped[str] = mapped_column(
+        ForeignKey("stage_attempt.id"), primary_key=True
+    )
+    stage_run_id: Mapped[str] = mapped_column(ForeignKey("stage_run.id"), index=True)
+    input_mode: Mapped[str] = mapped_column(String(32))
+    actual_selected_columns_json: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    excluded_columns_json: Mapped[list[Any]] = mapped_column(JSON, default=list)
+    resolved_conditioning_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    feature_frame_artifact_id: Mapped[str | None] = mapped_column(
+        ForeignKey("artifact.id")
+    )
+    resolved_preparation_artifact_id: Mapped[str | None] = mapped_column(
+        ForeignKey("artifact.id")
+    )
+    status: Mapped[str] = mapped_column(String(32), default="RUNNING")
+    error_summary: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class StageRunParameter(Base):
@@ -884,8 +1000,17 @@ class DiscoveryResult(Base):
     discovery_analysis_version_id: Mapped[str] = mapped_column(
         ForeignKey("configuration_version.id")
     )
-    discovery_feature_version_id: Mapped[str] = mapped_column(
+    discovery_feature_version_id: Mapped[str | None] = mapped_column(
         ForeignKey("configuration_version.id")
+    )
+    input_mode: Mapped[str] = mapped_column(
+        String(32), default="CONFIGURED_FEATURE_BUILD", server_default="CONFIGURED_FEATURE_BUILD"
+    )
+    feature_semantics_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("configuration_version.id")
+    )
+    input_preparation_attempt_id: Mapped[str | None] = mapped_column(
+        ForeignKey("stage_attempt_input_preparation.stage_attempt_id")
     )
     resolved_semantics_artifact_id: Mapped[str | None] = mapped_column(
         ForeignKey("artifact.id")
@@ -934,6 +1059,119 @@ class DiscoveryEdge(Base):
     payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
 
+class CausalGraph(Base):
+    __tablename__ = "causal_graph"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("project.id"), index=True)
+    slug: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(ForeignKey("app_user.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (UniqueConstraint("project_id", "slug"),)
+
+
+class CausalGraphVersion(Base):
+    __tablename__ = "causal_graph_version"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    causal_graph_id: Mapped[str] = mapped_column(ForeignKey("causal_graph.id"), index=True)
+    version_number: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(32), default="DRAFT")
+    source_discovery_algorithm_result_id: Mapped[str] = mapped_column(
+        ForeignKey("discovery_algorithm_result.id")
+    )
+    dataset_version_id: Mapped[str] = mapped_column(ForeignKey("dataset_version.id"))
+    feature_semantics_version_id: Mapped[str] = mapped_column(
+        ForeignKey("configuration_version.id")
+    )
+    algorithm: Mapped[str] = mapped_column(String(64))
+    algorithm_parameter_hash: Mapped[str | None] = mapped_column(String(255))
+    node_count: Mapped[int] = mapped_column(Integer)
+    edge_count: Mapped[int] = mapped_column(Integer)
+    canonical_json: Mapped[dict[str, Any]] = mapped_column(JSON)
+    content_hash: Mapped[str] = mapped_column(String(255))
+    graph_artifact_id: Mapped[str] = mapped_column(ForeignKey("artifact.id"))
+    selection_note: Mapped[str | None] = mapped_column(Text)
+    created_by: Mapped[str] = mapped_column(ForeignKey("app_user.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow
+    )
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    published_by: Mapped[str | None] = mapped_column(ForeignKey("app_user.id"))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    supersedes_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("causal_graph_version.id")
+    )
+    __table_args__ = (
+        UniqueConstraint("causal_graph_id", "version_number"),
+        UniqueConstraint("causal_graph_id", "content_hash"),
+        CheckConstraint("version_number >= 1", name="ck_graph_version_number"),
+        CheckConstraint("node_count >= 0", name="ck_graph_node_count"),
+        CheckConstraint("edge_count >= 0", name="ck_graph_edge_count"),
+    )
+
+
+class CausalGraphNode(Base):
+    __tablename__ = "causal_graph_node"
+    causal_graph_version_id: Mapped[str] = mapped_column(
+        ForeignKey("causal_graph_version.id"), primary_key=True
+    )
+    name: Mapped[str] = mapped_column(String(255), primary_key=True)
+    ordinal: Mapped[int] = mapped_column(Integer)
+    role_snapshot: Mapped[str | None] = mapped_column(String(32))
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    __table_args__ = (UniqueConstraint("causal_graph_version_id", "ordinal"),)
+
+
+class CausalGraphEdge(Base):
+    __tablename__ = "causal_graph_edge"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    causal_graph_version_id: Mapped[str] = mapped_column(
+        ForeignKey("causal_graph_version.id"), index=True
+    )
+    node_a: Mapped[str] = mapped_column(String(255))
+    node_b: Mapped[str] = mapped_column(String(255))
+    endpoint_at_a: Mapped[str] = mapped_column(String(16))
+    endpoint_at_b: Mapped[str] = mapped_column(String(16))
+    score: Mapped[float | None] = mapped_column(Float)
+    stability: Mapped[float | None] = mapped_column(Float)
+    source_discovery_edge_id: Mapped[str | None] = mapped_column(
+        ForeignKey("discovery_edge.id")
+    )
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    __table_args__ = (
+        UniqueConstraint("causal_graph_version_id", "node_a", "node_b"),
+        CheckConstraint("node_a < node_b", name="ck_graph_edge_node_order"),
+        CheckConstraint(
+            "endpoint_at_a IN ('TAIL', 'ARROW', 'CIRCLE')",
+            name="ck_graph_endpoint_a",
+        ),
+        CheckConstraint(
+            "endpoint_at_b IN ('TAIL', 'ARROW', 'CIRCLE')",
+            name="ck_graph_endpoint_b",
+        ),
+    )
+
+
+class StageRunGraphInput(Base):
+    __tablename__ = "stage_run_graph_input"
+    stage_run_id: Mapped[str] = mapped_column(
+        ForeignKey("stage_run.id"), primary_key=True
+    )
+    input_name: Mapped[str] = mapped_column(String(255), primary_key=True)
+    causal_graph_version_id: Mapped[str] = mapped_column(
+        ForeignKey("causal_graph_version.id")
+    )
+    content_hash_snapshot: Mapped[str] = mapped_column(String(255))
+    source: Mapped[str] = mapped_column(String(32), default="API_OVERRIDE")
+
+
 class EdgeWeightResult(Base):
     __tablename__ = "edge_weight_result"
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
@@ -945,8 +1183,20 @@ class EdgeWeightResult(Base):
     inference_analysis_version_id: Mapped[str] = mapped_column(
         ForeignKey("configuration_version.id")
     )
-    inference_feature_version_id: Mapped[str] = mapped_column(
+    inference_feature_version_id: Mapped[str | None] = mapped_column(
         ForeignKey("configuration_version.id")
+    )
+    input_mode: Mapped[str] = mapped_column(
+        String(32), default="CONFIGURED_FEATURE_BUILD", server_default="CONFIGURED_FEATURE_BUILD"
+    )
+    feature_semantics_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("configuration_version.id")
+    )
+    causal_graph_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("causal_graph_version.id"), index=True
+    )
+    input_preparation_attempt_id: Mapped[str | None] = mapped_column(
+        ForeignKey("stage_attempt_input_preparation.stage_attempt_id")
     )
     result_artifact_id: Mapped[str] = mapped_column(ForeignKey("artifact.id"))
     report_artifact_id: Mapped[str | None] = mapped_column(ForeignKey("artifact.id"))
@@ -991,7 +1241,7 @@ class TreatmentEffectResult(Base):
     inference_analysis_version_id: Mapped[str] = mapped_column(
         ForeignKey("configuration_version.id")
     )
-    inference_feature_version_id: Mapped[str] = mapped_column(
+    inference_feature_version_id: Mapped[str | None] = mapped_column(
         ForeignKey("configuration_version.id")
     )
     feature_semantics_version_id: Mapped[str] = mapped_column(
@@ -1002,6 +1252,15 @@ class TreatmentEffectResult(Base):
     )
     discovery_result_id: Mapped[str | None] = mapped_column(
         ForeignKey("discovery_result.id")
+    )
+    input_mode: Mapped[str] = mapped_column(
+        String(32), default="CONFIGURED_FEATURE_BUILD", server_default="CONFIGURED_FEATURE_BUILD"
+    )
+    causal_graph_version_id: Mapped[str | None] = mapped_column(
+        ForeignKey("causal_graph_version.id"), index=True
+    )
+    input_preparation_attempt_id: Mapped[str | None] = mapped_column(
+        ForeignKey("stage_attempt_input_preparation.stage_attempt_id")
     )
     treatment_name: Mapped[str] = mapped_column(String(255))
     outcome_name: Mapped[str] = mapped_column(String(255))
@@ -1175,6 +1434,29 @@ def _protect_available_artifact(_: Any, __: Any, target: Artifact) -> None:
         {"stored_object_id", "content_hash", "schema_name", "schema_version"},
     ):
         raise ValueError("Available artifact content is immutable")
+
+
+@event.listens_for(CausalGraphVersion, "before_update")
+def _protect_published_causal_graph(
+    _: Any, __: Any, target: CausalGraphVersion
+) -> None:
+    previous = inspect(target).attrs.status.history.deleted
+    prior_status = previous[0] if previous else target.status
+    if prior_status in {"PUBLISHED", "DEPRECATED"} and _changed(
+        target,
+        {
+            "causal_graph_id",
+            "version_number",
+            "source_discovery_algorithm_result_id",
+            "dataset_version_id",
+            "feature_semantics_version_id",
+            "canonical_json",
+            "content_hash",
+            "node_count",
+            "edge_count",
+        },
+    ):
+        raise ValueError("Published causal graph content is immutable")
 
 
 __all__ = [

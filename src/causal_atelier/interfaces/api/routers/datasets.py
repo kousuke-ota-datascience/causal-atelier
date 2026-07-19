@@ -33,6 +33,7 @@ from causal_atelier.interfaces.api.dependencies import (
     require_project_role,
 )
 from causal_atelier.interfaces.api.schemas import (
+    AnalysisDatasetBindingUpdate,
     DatasetCreate,
     DatasetRegistryImport,
     DatasetVersionCreate,
@@ -231,6 +232,37 @@ def create_dataset_version(
     return _version_response(session, version)
 
 
+@router.get("/datasets/{dataset_id}/versions")
+def list_dataset_versions(
+    dataset_id: str,
+    version_status: str | None = None,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=50, ge=1, le=200),
+    session: Session = Depends(get_session),
+    user: RequestUser = Depends(get_current_user),
+) -> dict:
+    dataset = get_or_404(session, m.Dataset, dataset_id)
+    require_project_role(session, user, dataset.project_id)
+    query = select(m.DatasetVersion).where(
+        m.DatasetVersion.dataset_id == dataset.id,
+        m.DatasetVersion.deleted_at.is_(None),
+    )
+    if version_status:
+        query = query.where(m.DatasetVersion.status == version_status)
+    total = session.scalar(select(func.count()).select_from(query.subquery())) or 0
+    versions = session.scalars(
+        query.order_by(m.DatasetVersion.version_number.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+    ).all()
+    return {
+        "items": [_version_response(session, item) for item in versions],
+        "total": total,
+        "page": page,
+        "limit": limit,
+    }
+
+
 @router.get("/dataset-versions/{version_id}")
 def get_dataset_version(
     version_id: str,
@@ -240,6 +272,34 @@ def get_dataset_version(
     version = get_or_404(session, m.DatasetVersion, version_id)
     require_project_role(session, user, project_for_dataset_version(session, version))
     return _version_response(session, version)
+
+
+@router.put("/dataset-versions/{version_id}/analysis-binding")
+def update_analysis_dataset_binding(
+    version_id: str,
+    body: AnalysisDatasetBindingUpdate,
+    session: Session = Depends(get_session),
+    user: RequestUser = Depends(get_current_user),
+) -> dict:
+    version = get_or_404(session, m.DatasetVersion, version_id)
+    project_id = project_for_dataset_version(session, version)
+    require_project_role(session, user, project_id, "ANALYST")
+    binding = get_or_404(session, m.AnalysisDatasetBinding, version.id)
+    if body.unit_identifier_column_id:
+        column = get_or_404(
+            session, m.DatasetColumn, body.unit_identifier_column_id
+        )
+        if column.dataset_table_version_id != binding.primary_table_version_id:
+            raise HTTPException(
+                status.HTTP_422_UNPROCESSABLE_ENTITY,
+                "Unit identifier must belong to the analysis primary table",
+            )
+    binding.analysis_unit_description = body.analysis_unit_description
+    binding.unit_identifier_column_id = body.unit_identifier_column_id
+    binding.readiness_status = "READY"
+    binding.validation_summary_json = {"issues": []}
+    binding.validated_at = m.utcnow()
+    return model_dict(binding)
 
 
 @router.get("/dataset-versions/{version_id}/registry")
@@ -420,9 +480,21 @@ def _version_response(session: Session, version: m.DatasetVersion) -> dict:
         .order_by(m.DatasetTableVersion.ordinal)
     ).all()
     response = model_dict(version)
-    response["tables"] = [
-        model_dict(table, exclude={"stored_object_id"}) for table in tables
-    ]
+    response["tables"] = []
+    for table in tables:
+        columns = session.scalars(
+            select(m.DatasetColumn)
+            .where(m.DatasetColumn.dataset_table_version_id == table.id)
+            .order_by(m.DatasetColumn.ordinal)
+        ).all()
+        response["tables"].append(
+            {
+                **model_dict(table, exclude={"stored_object_id"}),
+                "columns": [model_dict(column) for column in columns],
+            }
+        )
+    binding = session.get(m.AnalysisDatasetBinding, version.id)
+    response["analysis_binding"] = model_dict(binding) if binding else None
     return response
 
 

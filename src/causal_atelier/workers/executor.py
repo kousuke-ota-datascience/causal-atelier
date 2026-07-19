@@ -13,7 +13,10 @@ import yaml
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from causal_atelier import __version__
+
 from causal_atelier.application.pipeline.discovery import DiscoveryStageRunner
+from causal_atelier.application.analysis_ready import AnalysisReadyExecutor
 from causal_atelier.application.pipeline.etl import execute_completejourney_etl
 from causal_atelier.application.pipeline.inference import InferenceStageRunner
 from causal_atelier.application.pipeline.planning import StagePlan
@@ -144,6 +147,12 @@ class Worker:
                     stage.status = "SUCCEEDED"
                     stage.selected_attempt_id = attempt.id
                     stage.finished_at = m.utcnow()
+                    preparation = session.get(
+                        m.StageAttemptInputPreparation, attempt.id
+                    )
+                    if preparation:
+                        preparation.status = "SUCCEEDED"
+                        preparation.finished_at = m.utcnow()
                     service.add_event(
                         run.id,
                         "STAGE_SUCCEEDED",
@@ -167,6 +176,13 @@ class Worker:
                     attempt.error_detail_json = {
                         "traceback": traceback.format_exc(limit=20)
                     }
+                    preparation = session.get(
+                        m.StageAttemptInputPreparation, attempt.id
+                    )
+                    if preparation:
+                        preparation.status = "FAILED"
+                        preparation.error_summary = str(exc)[:4000]
+                        preparation.finished_at = m.utcnow()
                     stage.status = "FAILED"
                     stage.error_code = attempt.error_code
                     stage.error_summary = attempt.error_message
@@ -193,7 +209,21 @@ class Worker:
             self._finish_cancelled(session, run, RunService(session))
 
     def _create_attempt(self, session: Session, stage: m.StageRun) -> m.StageAttempt:
-        return self.run_state.create_attempt(session, stage)
+        attempt = self.run_state.create_attempt(session, stage)
+        requested = session.get(m.StageRunInputPreparation, stage.id)
+        if requested:
+            session.add(
+                m.StageAttemptInputPreparation(
+                    stage_attempt_id=attempt.id,
+                    stage_run_id=stage.id,
+                    input_mode=stage.input_mode,
+                    actual_selected_columns_json=requested.requested_columns_json,
+                    excluded_columns_json=[],
+                    resolved_conditioning_json=requested.conditioning_spec_json,
+                    status="RUNNING",
+                )
+            )
+        return attempt
 
     def _execute_stage(
         self,
@@ -216,6 +246,42 @@ class Worker:
                 output_dir,
                 etl_outputs,
             )
+            return output_dir
+        if stage.input_mode == "ANALYSIS_READY":
+            parameters = {
+                row.parameter_name: row.value_json
+                for row in session.scalars(
+                    select(m.StageRunParameter).where(
+                        m.StageRunParameter.stage_run_id == stage.id
+                    )
+                ).all()
+            }
+            artifacts, resolved = AnalysisReadyExecutor(self.store).execute(
+                session, stage, output_dir, parameters
+            )
+            attempt_preparation = session.get(
+                m.StageAttemptInputPreparation, attempt.id
+            )
+            if attempt_preparation:
+                for name, value in resolved.items():
+                    setattr(attempt_preparation, name, value)
+            self._register_stage_outputs(
+                session, run, stage, attempt, output_dir, artifacts
+            )
+            if attempt_preparation:
+                feature_output = session.get(
+                    m.StageRunArtifactOutput, (stage.id, "feature_frame")
+                )
+                preparation_output = session.get(
+                    m.StageRunArtifactOutput, (stage.id, "input_preparation")
+                )
+                attempt_preparation.feature_frame_artifact_id = (
+                    feature_output.artifact_id if feature_output else None
+                )
+                attempt_preparation.resolved_preparation_artifact_id = (
+                    preparation_output.artifact_id if preparation_output else None
+                )
+            self._project_results(session, run, stage, artifacts, output_dir)
             return output_dir
         config_paths = self._materialize_configs(session, stage, workspace)
         dataset_yaml = self._materialize_dataset(session, stage, workspace)
@@ -500,6 +566,16 @@ class Worker:
                 m.StageRunArtifactInput.stage_run_id == stage.id
             )
         ).all()
+        graph_inputs = session.scalars(
+            select(m.StageRunGraphInput).where(
+                m.StageRunGraphInput.stage_run_id == stage.id
+            )
+        ).all()
+        graph_artifact_ids = [
+            graph.graph_artifact_id
+            for item in graph_inputs
+            if (graph := session.get(m.CausalGraphVersion, item.causal_graph_version_id))
+        ]
         for artifact in registered.values():
             for upstream_id in upstream_ids:
                 session.add(
@@ -509,6 +585,14 @@ class Worker:
                         relationship_type="DERIVED_FROM",
                     )
                 )
+            for graph_artifact_id in graph_artifact_ids:
+                session.add(
+                    m.ArtifactLineage(
+                        downstream_artifact_id=artifact.id,
+                        upstream_artifact_id=graph_artifact_id,
+                        relationship_type="USED_GRAPH",
+                    )
+                )
         manifest_document = {
             "schema_version": "2",
             "run_id": run.id,
@@ -516,11 +600,19 @@ class Worker:
             "attempt_id": attempt.id,
             "stage_type": stage.stage_type,
             "analysis_mode": stage.analysis_mode,
+            "input_mode": stage.input_mode,
             "input_resource_ids": self._input_ids(session, stage.id),
             "configuration_versions": self._config_versions(session, stage.id),
             "artifacts": {
                 name: {"artifact_id": artifact.id, "checksum": artifact.content_hash}
                 for name, artifact in registered.items()
+            },
+            "saved_graph_versions": {
+                item.input_name: {
+                    "causal_graph_version_id": item.causal_graph_version_id,
+                    "content_hash": item.content_hash_snapshot,
+                }
+                for item in graph_inputs
             },
             "random_seed": run.random_seed,
             "code_commit": run.code_commit,
@@ -665,6 +757,14 @@ class Worker:
                     )
                 ).all()
             },
+            "saved_graphs": {
+                item.input_name: item.causal_graph_version_id
+                for item in session.scalars(
+                    select(m.StageRunGraphInput).where(
+                        m.StageRunGraphInput.stage_run_id == stage_id
+                    )
+                ).all()
+            },
         }
 
     @staticmethod
@@ -735,6 +835,10 @@ def _artifact_kind(
 ) -> tuple[str, dict[str, Any]]:
     lowered = f"{name} {path}".lower()
     metadata: dict[str, Any] = {}
+    if "input_preparation" in lowered:
+        return "INPUT_PREPARATION", metadata
+    if "feature_frame" in lowered:
+        return "FEATURE_FRAME", metadata
     if stage.stage_type == "ETL" and path.suffix.lower() in {".csv", ".parquet"}:
         metadata["logical_table"] = name.removeprefix("dataset_")
         return "DATASET_TABLE", metadata

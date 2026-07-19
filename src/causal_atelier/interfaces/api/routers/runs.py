@@ -193,6 +193,51 @@ def get_run_artifacts(
     return [_artifact_response(item) for item in artifacts]
 
 
+@router.get("/runs/{run_id}/results")
+def get_run_results(
+    run_id: str,
+    session: Session = Depends(get_session),
+    user: RequestUser = Depends(get_current_user),
+) -> dict:
+    run = get_or_404(session, m.Run, run_id)
+    require_project_role(session, user, run.project_id)
+    stages = session.scalars(
+        select(m.StageRun)
+        .where(m.StageRun.run_id == run.id)
+        .order_by(m.StageRun.ordinal)
+    ).all()
+    items: list[dict] = []
+    for stage in stages:
+        candidates = (
+            ("DISCOVERY", m.DiscoveryResult),
+            ("EDGE_WEIGHT", m.EdgeWeightResult),
+            ("TREATMENT_EFFECT", m.TreatmentEffectResult),
+        )
+        for result_type, model in candidates:
+            result = session.scalar(
+                select(model).where(model.stage_run_id == stage.id)
+            )
+            if result:
+                items.append(
+                    {
+                        "run_id": run.id,
+                        "stage_run_id": stage.id,
+                        "stage_key": stage.stage_key,
+                        "result_type": result_type,
+                        "result_id": result.id,
+                        "status": getattr(result, "status", None)
+                        or getattr(result, "diagnostic_status", None),
+                        "created_at": model_dict(result).get("created_at"),
+                        "url": {
+                            "DISCOVERY": f"/api/v1/discovery-results/{result.id}",
+                            "EDGE_WEIGHT": f"/api/v1/edge-weight-results/{result.id}",
+                            "TREATMENT_EFFECT": f"/api/v1/treatment-effect-results/{result.id}",
+                        }[result_type],
+                    }
+                )
+    return {"run_id": run.id, "items": items, "total": len(items)}
+
+
 @router.get("/artifacts/{artifact_id}")
 def get_artifact(
     artifact_id: str,

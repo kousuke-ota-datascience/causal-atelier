@@ -21,7 +21,7 @@ from causal_atelier.infrastructure.persistence import Database
 from causal_atelier.infrastructure.settings import WebSettings
 from causal_atelier.interfaces.api.dependencies import seed_roles
 
-from .routers import configurations, datasets, projects, runs, visualizations
+from .routers import causal_graphs, configurations, datasets, projects, runs, visualizations
 
 
 logger = logging.getLogger("causal_atelier.api")
@@ -65,7 +65,7 @@ def create_app(
         CORSMiddleware,
         allow_origins=["http://localhost:8080", "http://localhost:3000"],
         allow_credentials=False,
-        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allow_headers=[
             "Authorization",
             "Content-Type",
@@ -143,6 +143,7 @@ def create_app(
         projects.router,
         datasets.router,
         configurations.router,
+        causal_graphs.router,
         runs.router,
         visualizations.router,
     ):

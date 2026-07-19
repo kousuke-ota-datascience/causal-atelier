@@ -3,44 +3,240 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="causal atelier — 因果分析のデータ準備、探索、推論を一つの来歴として管理します。">
   <title>causal atelier</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header>
-    <div><span class="mark">ca</span><strong>causal atelier</strong></div>
-    <span class="environment">MVP workspace</span>
+  <header class="site-header">
+    <a class="brand" href="#/projects" aria-label="causal atelier ホーム">
+      <span class="mark">ca</span>
+      <span><strong>causal atelier</strong><small>Analysis workspace</small></span>
+    </a>
+    <div class="header-actions">
+      <span id="api-status" class="api-status"><i></i>APIを確認中</span>
+      <span class="environment">LOCAL</span>
+    </div>
   </header>
-  <main>
-    <section class="hero">
-      <p class="eyebrow">CAUSAL ANALYSIS CONTROL PLANE</p>
-      <h1>分析の前提から成果物まで、<br>ひとつの来歴として。</h1>
-      <p>Dataset、設定、実行計画、診断、結果を不変versionで結びます。探索graphや係数を、証明済みの因果効果としては表示しません。</p>
+
+  <main id="app">
+    <section id="project-list-view" class="view">
+      <div class="hero">
+        <p class="eyebrow">CAUSAL ANALYSIS WORKSPACE</p>
+        <h1>問いから推定までを、<br><em>ひとつの来歴</em>に。</h1>
+        <p class="hero-copy">分析可能な単一テーブル、列の意味、因果探索とグラフ比較、そして因果推論。判断の根拠になるすべてを Project に結びます。</p>
+        <div class="hero-actions">
+          <button id="new-project" class="button button-primary">新しいProject <span>＋</span></button>
+          <a href="/docs" class="button button-quiet">API documentation ↗</a>
+        </div>
+      </div>
+
+      <section class="project-section">
+        <div class="section-heading">
+          <div><p class="eyebrow">YOUR WORKSPACES</p><h2>Projects</h2></div>
+          <p id="project-summary" class="section-meta">読み込み中</p>
+        </div>
+        <div id="projects" class="project-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="principles" aria-label="causal atelier の原則">
+        <article><span>01</span><div><h3>Trace every decision</h3><p>Dataset Version、設定、Run、Artifactをひとつの分析来歴として固定します。</p></div></article>
+        <article><span>02</span><div><h3>Compare, don't assume</h3><p>探索グラフをアルゴリズム別に並べ、構造の違いを推定前に確かめます。</p></div></article>
+        <article><span>03</span><div><h3>Keep claims bounded</h3><p>探索edgeと因果効果を区別し、仮定・診断・信頼区間を結果と一緒に表示します。</p></div></article>
+      </section>
     </section>
 
-    <section class="toolbar">
-      <div><h2>Projects</h2><p id="project-summary">読み込み中</p></div>
-      <button id="new-project">新しいProject</button>
-    </section>
-    <section id="projects" class="cards" aria-live="polite"></section>
+    <section id="project-detail-view" class="view" hidden>
+      <div class="detail-shell">
+        <aside class="sidebar">
+          <a href="#/projects" class="back-link">← All projects</a>
+          <div class="project-identity">
+            <span id="detail-monogram" class="project-monogram">CA</span>
+            <div><h2 id="sidebar-project-name">Project</h2><p id="sidebar-project-slug">—</p></div>
+          </div>
+          <nav id="workflow-nav" class="workflow-nav" aria-label="分析ワークフロー">
+            <a href="#" data-section="overview"><span>01</span><div>Overview<small>プロジェクト詳細</small></div></a>
+            <a href="#" data-section="data"><span>02</span><div>Analysis dataset<small>単一テーブルと列の意味</small></div></a>
+            <a href="#" data-section="discovery"><span>03</span><div>Causal discovery<small>探索とグラフ比較</small></div></a>
+            <a href="#" data-section="inference"><span>04</span><div>Causal inference<small>効果推定と診断</small></div></a>
+          </nav>
+          <div class="sidebar-note"><span>SCIENTIFIC NOTE</span><p>探索グラフはアルゴリズム依存の仮説です。真のDAGが証明されたものではありません。</p></div>
+        </aside>
 
-    <section class="principles">
-      <article><span>01</span><h3>Reproducibility</h3><p>Dataset Version、Configuration hash、Execution Plan、Artifact checksumをRunへ固定。</p></article>
-      <article><span>02</span><h3>Scientific context</h3><p>estimand、adjustment set、assumption、diagnosticを推定値と同じ場所に表示。</p></article>
-      <article><span>03</span><h3>Bounded inspection</h3><p>ETLデータはserver-side集計と明示的samplingで確認し、機密列policyを常に適用。</p></article>
+        <div class="detail-content">
+          <div id="detail-loading" class="loading-panel"><span class="spinner"></span>Projectを読み込んでいます</div>
+
+          <section id="section-overview" class="workflow-section" hidden>
+            <div class="detail-hero">
+              <div><p class="eyebrow">PROJECT OVERVIEW</p><h1 id="detail-project-name">Project</h1><p id="detail-project-description"></p></div>
+              <span id="detail-project-status" class="status-pill">ACTIVE</span>
+            </div>
+            <div class="metric-grid">
+              <article><span>Datasets</span><strong id="metric-datasets">—</strong><small>登録済み</small></article>
+              <article><span>Runs</span><strong id="metric-runs">—</strong><small>すべての実行</small></article>
+              <article><span>Completed</span><strong id="metric-completed">—</strong><small>完了したRun</small></article>
+              <article><span>Saved graphs</span><strong id="metric-graphs">—</strong><small>推論に利用可能</small></article>
+            </div>
+            <div class="overview-grid">
+              <article class="panel journey-panel">
+                <div class="panel-heading"><div><p class="kicker">ANALYSIS JOURNEY</p><h2>次に行うこと</h2></div></div>
+                <div id="journey-status" class="journey-status"></div>
+              </article>
+              <article class="panel">
+                <div class="panel-heading"><div><p class="kicker">RECENT ACTIVITY</p><h2>最近のRun</h2></div><button class="text-button" data-go-section="discovery">すべて表示 →</button></div>
+                <div id="recent-runs" class="run-list compact-list"></div>
+              </article>
+            </div>
+            <article class="panel project-details-panel">
+              <div class="panel-heading"><div><p class="kicker">PROJECT DETAILS</p><h2>基本情報</h2></div><button id="edit-project" class="button button-secondary">編集</button></div>
+              <dl id="project-details" class="definition-grid"></dl>
+            </article>
+          </section>
+
+          <section id="section-data" class="workflow-section" hidden>
+            <div class="page-heading"><div><p class="eyebrow">02 — ANALYSIS DATASET</p><h1>分析可能な単一テーブルを登録する</h1><p>ETL済みのCSVまたはParquetを不変のDataset Versionとして登録し、各列の分析上の意味を定義します。</p></div><span class="step-badge">STEP 02</span></div>
+            <div class="flow-strip" aria-label="分析データ登録の流れ"><span class="done">01 <b>Upload table</b></span><i>→</i><span>02 <b>Inspect schema</b></span><i>→</i><span>03 <b>Define semantics</b></span><i>→</i><span>04 <b>Publish</b></span></div>
+
+            <div class="two-column">
+              <article class="panel">
+                <div class="panel-heading"><div><p class="kicker">ANALYSIS-READY TABLE</p><h2>ファイルを登録</h2></div><span class="number-tag">A</span></div>
+                <form id="upload-dataset-form" class="stack-form">
+                  <label class="file-drop" id="file-drop"><input id="dataset-file" name="file" type="file" accept=".csv,.parquet" required><span class="upload-icon">↥</span><strong id="file-label">CSV / Parquet</strong><small>1行が1分析単位になったテーブル</small></label>
+                  <div class="form-row"><label>Dataset名<input name="name" required placeholder="Campaign analysis table"></label><label>Slug<input name="slug" required pattern="[a-z0-9][a-z0-9-_]{1,126}" placeholder="campaign-analysis"></label></div>
+                  <div class="form-row"><label>Logical table名<input name="logical_name" required placeholder="analysis_table"></label><label>Dataset kind<select name="dataset_kind"><option value="PROCESSED">PROCESSED</option><option value="DISCOVERY_FEATURE">DISCOVERY_FEATURE</option><option value="INFERENCE_FEATURE">INFERENCE_FEATURE</option></select></label></div>
+                  <label>1行が表す分析単位<textarea name="analysis_unit_description" rows="2" required placeholder="例: 1行は1世帯・1キャンペーンを表す"></textarea></label>
+                  <p class="form-message" data-form-message></p>
+                  <button type="submit" class="button button-primary full-button">アップロードしてVersionを作成</button>
+                </form>
+              </article>
+
+              <article class="panel">
+                <div class="panel-heading"><div><p class="kicker">FEATURE SEMANTICS</p><h2>列の意味を定義</h2></div><span class="number-tag">B</span></div>
+                <form id="semantics-form" class="stack-form">
+                  <label>Dataset Version<select id="semantics-version-select" name="version_id" required><option value="">Versionを選択</option></select></label>
+                  <div id="semantics-columns" class="semantics-columns"><p class="field-hint">Versionを選ぶと列一覧が表示されます。</p></div>
+                  <div class="notice-box">post-treatment、mediator、colliderを調整変数へ含めると推定を歪める可能性があります。調整可否はroleとは別に明示してください。</div>
+                  <p class="form-message" data-form-message></p>
+                  <button type="submit" class="button button-primary full-button">検証してSemanticsをpublish</button>
+                </form>
+              </article>
+            </div>
+
+            <article class="panel table-panel">
+              <div class="panel-heading"><div><p class="kicker">DATA CATALOG</p><h2>Project datasets</h2></div><button class="button button-secondary" data-refresh="data">更新</button></div>
+              <div id="dataset-list" class="data-table-wrap"></div>
+            </article>
+          </section>
+
+          <section id="section-discovery" class="workflow-section" hidden>
+            <div class="page-heading"><div><p class="eyebrow">03 — CAUSAL DISCOVERY</p><h1>構造を探索し、比較する</h1><p>同じDataset Versionに複数アルゴリズムを適用し、edgeの一致と相違を確かめます。</p></div><span class="step-badge">STEP 03</span></div>
+            <div class="analysis-layout">
+              <article class="panel settings-panel">
+                <div class="panel-heading"><div><p class="kicker">RUN SETTINGS</p><h2>探索条件</h2></div></div>
+                <form id="discovery-run-form" class="stack-form">
+                  <label>分析Dataset Version<select id="discovery-version-id" name="version_id" required><option value="">Versionを選択</option></select></label>
+                  <label>Feature Semantics<select id="discovery-semantics-id" name="feature_semantics" required><option value="">PUBLISHED Semanticsを選択</option></select></label>
+                  <fieldset><legend>Algorithms</legend><div class="check-grid">
+                    <label class="check-card"><input type="checkbox" name="algorithms" value="pc" checked><span><b>PC</b><small>Constraint-based</small></span></label>
+                    <label class="check-card"><input type="checkbox" name="algorithms" value="ges" checked><span><b>GES</b><small>Score-based</small></span></label>
+                    <label class="check-card"><input type="checkbox" name="algorithms" value="lingam"><span><b>LiNGAM</b><small>Non-Gaussian</small></span></label>
+                  </div></fieldset>
+                  <div class="form-row"><label>有意水準 α<input name="alpha" type="number" min="0.0001" max="0.2" step="0.001" value="0.01"></label><label>Random seed<input name="random_seed" type="number" value="42"></label></div>
+                  <details class="advanced"><summary>Algorithm input conditioning <span>＋</span></summary><label>欠損値<select name="missing_values"><option value="complete_case">Complete case</option><option value="median">Median imputation</option></select></label><label>Categorical encoding<select name="categorical_encoding"><option value="ordinal">Ordinal codes</option><option value="reject">Reject categorical columns</option></select></label><label>Collinearity threshold<input name="collinearity_threshold" type="number" min="0.8" max="1" step="0.001" value="0.995"></label></details>
+                  <div class="form-row"><label>実行モード<select name="execution_mode"><option value="RUN">RUN</option><option value="VALIDATE_ONLY">VALIDATE ONLY</option><option value="DRY_RUN">DRY RUN</option></select></label><label>Bootstrap samples<input name="bootstrap_samples" type="number" min="0" value="0"></label></div>
+                  <p class="form-message" data-form-message></p>
+                  <button type="submit" class="button button-primary full-button">因果探索を実行 <span>→</span></button>
+                </form>
+              </article>
+
+              <div class="analysis-main">
+                <article id="discovery-run-monitor" class="panel run-monitor" hidden></article>
+                <article class="panel graph-panel">
+                  <div class="panel-heading graph-heading"><div><p class="kicker">GRAPH EXPLORER</p><h2>アルゴリズム比較</h2></div><div class="graph-controls"><button id="load-discovery-run" class="button button-secondary">Runから読込</button><button id="compare-graphs" class="button button-secondary" disabled>並べて比較</button></div></div>
+                  <div class="result-loader"><label>Discovery Run<select id="discovery-run-select"><option value="">Runを選択</option></select></label></div>
+                  <div id="graph-tabs" class="graph-tabs" role="tablist"></div>
+                  <div id="graph-stage" class="graph-stage empty-graph">
+                    <div class="graph-placeholder"><span>⌁</span><h3>探索結果を選択してください</h3><p>Run完了後、edge Artifactを読み込むとグラフを描画します。</p></div>
+                  </div>
+                  <div id="graph-summary" class="graph-summary"></div>
+                </article>
+              </div>
+            </div>
+
+            <article class="panel table-panel">
+              <div class="panel-heading"><div><p class="kicker">RUN HISTORY</p><h2>Discovery runs</h2></div><button class="button button-secondary" data-refresh="runs">更新</button></div>
+              <div id="discovery-runs" class="data-table-wrap"></div>
+            </article>
+          </section>
+
+          <section id="section-inference" class="workflow-section" hidden>
+            <div class="page-heading"><div><p class="eyebrow">04 — CAUSAL INFERENCE</p><h1>仮定を置き、効果を推定する</h1><p>保存した探索グラフを入力に、edge係数またはtreatment effectを推定します。</p></div><span class="step-badge">STEP 04</span></div>
+            <div class="analysis-layout inference-layout">
+              <article class="panel settings-panel">
+                <div class="panel-heading"><div><p class="kicker">INFERENCE DESIGN</p><h2>推論条件</h2></div></div>
+                <form id="inference-run-form" class="stack-form">
+                  <div class="mode-switch" role="radiogroup"><label><input type="radio" name="analysis_mode" value="EDGE_WEIGHT" checked><span>Edge weight<small>探索edgeの係数</small></span></label><label><input type="radio" name="analysis_mode" value="TREATMENT_EFFECT"><span>Treatment effect<small>ATE / ATT</small></span></label></div>
+                  <label>保存した探索グラフVersion<select id="saved-graph-select" name="graph_version_id" required><option value="">PUBLISHED Graphを選択</option></select></label>
+                  <div id="selected-graph-note" class="selected-graph-note">Discovery画面でグラフを保存してください。</div>
+                  <label>分析Dataset Version<select id="inference-version-id" name="version_id" required><option value="">Versionを選択</option></select></label>
+                  <label>Feature Semantics<select id="inference-semantics-id" name="feature_semantics" required><option value="">PUBLISHED Semanticsを選択</option></select></label>
+                  <div id="treatment-fields" hidden>
+                    <div class="form-row"><label>Treatment<input name="treatment" placeholder="treated"></label><label>Outcome<input name="outcome" placeholder="outcome_sales_value"></label></div>
+                    <div class="form-row"><label>Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label>調整戦略<select name="adjustment_strategy"><option value="PRE_TREATMENT">Pre-treatment covariates</option><option value="MANUAL">Manual</option><option value="GRAPH_DERIVED">Graph-derived candidates</option></select></label></div>
+                    <label>Adjustment set（カンマ区切り）<input name="covariates" placeholder="age, income, baseline_sales"></label>
+                    <label>推定手法（カンマ区切り）<input name="effect_methods" value="diff_in_means,ols_coefficient,g_computation_ate,ipw_ate"></label>
+                    <label>Target population<textarea name="target_population" rows="2" placeholder="分析対象集団"></textarea></label>
+                    <label>因果仮定（1行1件）<textarea name="assumptions" rows="3" placeholder="exchangeability&#10;positivity&#10;consistency"></textarea></label>
+                  </div>
+                  <div class="form-row"><label>実行モード<select name="execution_mode"><option value="RUN">RUN</option><option value="VALIDATE_ONLY">VALIDATE ONLY</option><option value="DRY_RUN">DRY RUN</option></select></label><label>Random seed<input name="random_seed" type="number" value="42"></label></div>
+                  <p class="form-message" data-form-message></p>
+                  <button type="submit" class="button button-primary full-button">因果推論を実行 <span>→</span></button>
+                </form>
+              </article>
+
+              <div class="analysis-main">
+                <article id="inference-run-monitor" class="panel run-monitor" hidden></article>
+                <article class="panel result-panel">
+                  <div class="panel-heading"><div><p class="kicker">ESTIMATION RESULTS</p><h2>推論結果</h2></div><button id="load-inference-run" class="button button-secondary">Runから読込</button></div>
+                  <div class="result-loader"><label>Inference Run<select id="inference-run-select"><option value="">Runを選択</option></select></label></div>
+                  <div id="inference-results" class="results-empty"><span>∿</span><h3>まだ推論結果はありません</h3><p>Inference Runを選択すると、推定値・信頼区間・診断を表示します。</p></div>
+                </article>
+              </div>
+            </div>
+            <article class="panel table-panel">
+              <div class="panel-heading"><div><p class="kicker">RUN HISTORY</p><h2>Inference runs</h2></div><button class="button button-secondary" data-refresh="runs">更新</button></div>
+              <div id="inference-runs" class="data-table-wrap"></div>
+            </article>
+          </section>
+        </div>
+      </div>
     </section>
   </main>
 
+  <datalist id="known-version-ids"></datalist>
+
   <dialog id="project-dialog">
-    <form id="project-form">
-      <div class="dialog-title"><h2>Projectを作成</h2><button type="button" id="close-dialog">×</button></div>
+    <form id="project-form" class="dialog-form">
+      <div class="dialog-title"><div><p class="kicker">NEW WORKSPACE</p><h2>Projectを作成</h2></div><button type="button" class="icon-button" data-close-dialog>×</button></div>
       <label>Slug<input name="slug" required pattern="[a-z0-9][a-z0-9-]{1,62}" placeholder="coupon-analysis"></label>
       <label>Name<input name="name" required placeholder="Coupon effect study"></label>
       <label>Description<textarea name="description" rows="3" placeholder="目的と分析対象"></textarea></label>
-      <p id="form-error" class="error"></p>
-      <button type="submit">作成する</button>
+      <p class="form-message" data-form-message></p>
+      <div class="dialog-actions"><button type="button" class="button button-secondary" data-close-dialog>キャンセル</button><button type="submit" class="button button-primary">作成する</button></div>
     </form>
   </dialog>
+
+  <dialog id="edit-project-dialog">
+    <form id="edit-project-form" class="dialog-form">
+      <div class="dialog-title"><div><p class="kicker">PROJECT DETAILS</p><h2>Projectを編集</h2></div><button type="button" class="icon-button" data-close-edit>×</button></div>
+      <label>Name<input name="name" required></label>
+      <label>Description<textarea name="description" rows="4"></textarea></label>
+      <p class="form-message" data-form-message></p>
+      <div class="dialog-actions"><button type="button" class="button button-secondary" data-close-edit>キャンセル</button><button type="submit" class="button button-primary">変更を保存</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
   <script src="/app.js" type="module"></script>
 </body>
 </html>

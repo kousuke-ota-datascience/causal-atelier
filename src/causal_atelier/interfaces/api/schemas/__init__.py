@@ -1,7 +1,10 @@
 """Versioned HTTP request and response schemas."""
 
 from .resources import (
+    AnalysisDatasetBindingUpdate,
     ApiModel,
+    CausalGraphCreate,
+    CausalGraphVersionCreate,
     ConfigurationCreate,
     ConfigurationVersionCreate,
     DatasetCreate,
@@ -29,7 +32,10 @@ from .resources import (
 )
 
 __all__ = [
+    "AnalysisDatasetBindingUpdate",
     "ApiModel",
+    "CausalGraphCreate",
+    "CausalGraphVersionCreate",
     "ConfigurationCreate",
     "ConfigurationVersionCreate",
     "DatasetCreate",

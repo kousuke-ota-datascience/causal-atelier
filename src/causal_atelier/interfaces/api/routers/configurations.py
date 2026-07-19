@@ -118,6 +118,26 @@ def create_configuration_version(
     return model_dict(version, exclude={"original_text"})
 
 
+@router.get("/configurations/{configuration_id}/versions")
+def list_configuration_versions(
+    configuration_id: str,
+    version_status: str | None = None,
+    session: Session = Depends(get_session),
+    user: RequestUser = Depends(get_current_user),
+) -> list[dict]:
+    configuration = get_or_404(session, m.Configuration, configuration_id)
+    require_project_role(session, user, configuration.project_id)
+    query = select(m.ConfigurationVersion).where(
+        m.ConfigurationVersion.configuration_id == configuration.id
+    )
+    if version_status:
+        query = query.where(m.ConfigurationVersion.status == version_status)
+    versions = session.scalars(
+        query.order_by(m.ConfigurationVersion.version_number.desc())
+    ).all()
+    return [model_dict(item, exclude={"original_text"}) for item in versions]
+
+
 @router.get("/configuration-versions/{version_id}")
 def get_configuration_version(
     version_id: str,
@@ -268,6 +288,7 @@ def create_pipeline_definition(
             stage_key=stage.stage_key,
             stage_type=stage.stage_type,
             analysis_mode=stage.analysis_mode,
+            input_mode=stage.input_mode,
             ordinal=ordinal,
             enabled_by_default=stage.enabled,
             runner_name=stage.runner_name or stage.stage_type.lower(),
@@ -402,6 +423,7 @@ def create_pipeline_definition_version(
             stage_key=stage.stage_key,
             stage_type=stage.stage_type,
             analysis_mode=stage.analysis_mode,
+            input_mode=stage.input_mode,
             ordinal=ordinal,
             enabled_by_default=stage.enabled,
             runner_name=stage.runner_name or stage.stage_type.lower(),
