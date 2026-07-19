@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from causal_atelier.infrastructure.config import load_yaml_mapping
+from causal_atelier.application.pipeline.configuration import load_yaml_mapping
 from causal_atelier.shared.validation import ValidationIssue, ValidationSeverity
 
 

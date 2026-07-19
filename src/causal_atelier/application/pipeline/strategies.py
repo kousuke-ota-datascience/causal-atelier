@@ -1,4 +1,4 @@
-"""Pipeline command strategies."""
+"""Pipeline execution strategies."""
 
 from __future__ import annotations
 

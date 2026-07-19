@@ -5,6 +5,9 @@ description = "Causal discovery and inference platform"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.16.0",
+    "azure-storage-blob>=12.25.1",
+    "boto3>=1.39.0",
     "causal-learn>=0.1.4.5",
     "dask>=2026.3.0",
     "econml>=0.16.0",
@@ -13,9 +16,13 @@ dependencies = [
     "ipykernel>=7.2.0",
     "pandas>=3.0.2",
     "pyarrow>=24.0.0",
+    "psycopg[binary]>=3.2.0",
+    "pyjwt[crypto]>=2.10.0",
     "pytest>=9.0.3",
+    "python-multipart>=0.0.20",
     "pyyaml>=6.0.3",
     "rdata>=1.0.0",
+    "sqlalchemy>=2.0.41",
     "uvicorn>=0.30.0",
 ]
 
@@ -23,6 +30,8 @@ dependencies = [
 causal-atelier-discovery = "causal_atelier.interfaces.cli.discovery:main"
 causal-atelier-inference = "causal_atelier.interfaces.cli.inference:main"
 causal-atelier-pipeline = "causal_atelier.interfaces.cli.pipeline:main"
+causal-atelier-api = "causal_atelier.interfaces.api.app:main"
+causal-atelier-worker = "causal_atelier.workers.main:main"
 
 [tool.uv.workspace]
 members = []

@@ -5,11 +5,11 @@ import sys
 from pathlib import Path
 
 from causal_atelier.infrastructure.config import load_yaml_mapping
-from causal_atelier.infrastructure.artifacts.registry import ArtifactRegistry
+from causal_atelier.application.pipeline.artifacts import ArtifactRegistry
 from causal_atelier.interfaces.cli.pipeline import parse_args
-from causal_atelier.application.planning import ExecutionPlan, PipelinePlanner, StagePlan
-from causal_atelier.application.strategies import DryRunStrategy, ValidateOnlyStrategy
-from causal_atelier.application.validation import CrossStageValidator
+from causal_atelier.application.pipeline.planning import ExecutionPlan, PipelinePlanner, StagePlan
+from causal_atelier.application.pipeline.strategies import DryRunStrategy, ValidateOnlyStrategy
+from causal_atelier.application.pipeline.validation import CrossStageValidator
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]

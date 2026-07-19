@@ -1,11 +1,11 @@
-"""Cross-stage validation for the integrated pipeline."""
+"""Cross-stage validation for pipeline use cases."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 from causal_atelier.causal.design import CausalDesign
-from causal_atelier.infrastructure.config import load_yaml_mapping
+from causal_atelier.application.pipeline.configuration import load_yaml_mapping
 from causal_atelier.preprocessing.common import FeatureRole, FeatureSemanticsCatalog
 from causal_atelier.shared.validation import ValidationIssue, ValidationResult, ValidationSeverity
 

@@ -1,4 +1,4 @@
-"""Execution plan construction for the integrated CLI."""
+"""Execution plan construction shared by all interfaces."""
 
 from __future__ import annotations
 
@@ -7,9 +7,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-from causal_atelier.infrastructure.config import load_yaml_mapping
-from causal_atelier.infrastructure.config.paths import resolve_project_path
-from causal_atelier.infrastructure.artifacts.registry import ArtifactRegistry, ArtifactSpec
+from causal_atelier.application.pipeline.artifacts import ArtifactRegistry, ArtifactSpec
+from causal_atelier.application.pipeline.configuration import (
+    load_yaml_mapping,
+    resolve_project_path,
+)
 
 
 @dataclass(frozen=True)

@@ -9,8 +9,8 @@ from pathlib import Path
 
 from causal_atelier.shared.constants import SUPPORTED_DISCOVERY_ALGORITHMS
 
-from causal_atelier.application.end_to_end_pipeline import execute
-from causal_atelier.application.strategies import format_validation
+from causal_atelier.application.pipeline.end_to_end import execute
+from causal_atelier.application.pipeline.strategies import format_validation
 
 
 def build_parser() -> argparse.ArgumentParser:

@@ -8,7 +8,7 @@ from typing import Any, Protocol
 
 from causal_atelier.shared.validation import ValidationIssue, ValidationSeverity
 
-from causal_atelier.infrastructure.artifacts.registry import RunManifest
+from causal_atelier.application.pipeline.artifacts import RunManifest
 from .planning import ExecutionPlan, StagePlan
 
 
@@ -46,8 +46,8 @@ class PipelineExecutor:
     def default(cls) -> "PipelineExecutor":
         """Build the default executor with discovery and inference runners."""
 
-        from causal_atelier.application.discovery_pipeline import DiscoveryStageRunner
-        from causal_atelier.application.inference_pipeline import InferenceStageRunner
+        from causal_atelier.application.pipeline.discovery import DiscoveryStageRunner
+        from causal_atelier.application.pipeline.inference import InferenceStageRunner
 
         return cls(
             {

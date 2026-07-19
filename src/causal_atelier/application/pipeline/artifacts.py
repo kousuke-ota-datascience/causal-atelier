@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import hashlib
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
-from causal_atelier.infrastructure.config import dump_yaml, hash_file, load_yaml_mapping
+import yaml
 
 
 @dataclass(frozen=True)
@@ -99,7 +101,11 @@ class RunManifest:
     def read(cls, path: Path) -> dict[str, Any]:
         """Read a manifest as a mapping."""
 
-        return load_yaml_mapping(path)
+        with path.open(encoding="utf-8") as stream:
+            document = yaml.safe_load(stream) or {}
+        if not isinstance(document, Mapping):
+            raise ValueError(f"YAML root must be a mapping: {path}")
+        return dict(document)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize the manifest."""
@@ -122,7 +128,21 @@ class RunManifest:
     def write(self, path: Path) -> None:
         """Write the manifest to YAML."""
 
-        dump_yaml(path, self.to_dict())
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            yaml.safe_dump(self.to_dict(), allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+
+
+def hash_file(path: Path) -> str:
+    """Return the SHA-256 digest used in reproducibility manifests."""
+
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 __all__ = ["ArtifactRegistry", "ArtifactSpec", "RunManifest"]

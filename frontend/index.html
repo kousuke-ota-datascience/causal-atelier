@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>causal atelier</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header>
+    <div><span class="mark">ca</span><strong>causal atelier</strong></div>
+    <span class="environment">MVP workspace</span>
+  </header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">CAUSAL ANALYSIS CONTROL PLANE</p>
+      <h1>分析の前提から成果物まで、<br>ひとつの来歴として。</h1>
+      <p>Dataset、設定、実行計画、診断、結果を不変versionで結びます。探索graphや係数を、証明済みの因果効果としては表示しません。</p>
+    </section>
+
+    <section class="toolbar">
+      <div><h2>Projects</h2><p id="project-summary">読み込み中</p></div>
+      <button id="new-project">新しいProject</button>
+    </section>
+    <section id="projects" class="cards" aria-live="polite"></section>
+
+    <section class="principles">
+      <article><span>01</span><h3>Reproducibility</h3><p>Dataset Version、Configuration hash、Execution Plan、Artifact checksumをRunへ固定。</p></article>
+      <article><span>02</span><h3>Scientific context</h3><p>estimand、adjustment set、assumption、diagnosticを推定値と同じ場所に表示。</p></article>
+      <article><span>03</span><h3>Bounded inspection</h3><p>ETLデータはserver-side集計と明示的samplingで確認し、機密列policyを常に適用。</p></article>
+    </section>
+  </main>
+
+  <dialog id="project-dialog">
+    <form id="project-form">
+      <div class="dialog-title"><h2>Projectを作成</h2><button type="button" id="close-dialog">×</button></div>
+      <label>Slug<input name="slug" required pattern="[a-z0-9][a-z0-9-]{1,62}" placeholder="coupon-analysis"></label>
+      <label>Name<input name="name" required placeholder="Coupon effect study"></label>
+      <label>Description<textarea name="description" rows="3" placeholder="目的と分析対象"></textarea></label>
+      <p id="form-error" class="error"></p>
+      <button type="submit">作成する</button>
+    </form>
+  </dialog>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

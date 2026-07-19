@@ -37,17 +37,17 @@ Causal domain
 Application and infrastructure
 ------------------------------
 
-.. automodule:: causal_atelier.application.planning
+.. automodule:: causal_atelier.application.pipeline.planning
    :members:
 
-.. automodule:: causal_atelier.application.strategies
+.. automodule:: causal_atelier.application.pipeline.strategies
    :members:
 
-.. automodule:: causal_atelier.application.execution
+.. automodule:: causal_atelier.application.pipeline.execution
    :members:
 
-.. automodule:: causal_atelier.application.validation
+.. automodule:: causal_atelier.application.pipeline.validation
    :members:
 
-.. automodule:: causal_atelier.infrastructure.artifacts.registry
+.. automodule:: causal_atelier.application.pipeline.artifacts
    :members:
