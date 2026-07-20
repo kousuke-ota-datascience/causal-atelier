@@ -232,7 +232,25 @@
       <label>Name<input name="name" required></label>
       <label>Description<textarea name="description" rows="4"></textarea></label>
       <p class="form-message" data-form-message></p>
-      <div class="dialog-actions"><button type="button" class="button button-secondary" data-close-edit>キャンセル</button><button type="submit" class="button button-primary">変更を保存</button></div>
+      <div class="dialog-actions split-actions">
+        <button id="open-delete-project" type="button" class="button button-danger-outline">Projectを削除</button>
+        <div class="dialog-action-group"><button type="button" class="button button-secondary" data-close-edit>キャンセル</button><button type="submit" class="button button-primary">変更を保存</button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="delete-project-dialog">
+    <form id="delete-project-form" class="dialog-form">
+      <div class="dialog-title"><div><p class="kicker danger-kicker">DELETE PROJECT</p><h2>Projectを削除</h2></div><button type="button" class="icon-button" data-close-delete>×</button></div>
+      <div class="delete-warning">
+        <strong id="delete-project-name">Project</strong>
+        <p>Projectを論理削除し、一覧から非表示にします。Dataset、Run、Saved Graph、Artifactはretention policyに従って保持され、この画面からは復元できません。</p>
+      </div>
+      <label>確認のためProject slug <code id="delete-project-slug">project-slug</code> を入力してください
+        <input id="delete-project-confirmation" name="confirmation" required autocomplete="off" spellcheck="false">
+      </label>
+      <p class="form-message" data-form-message></p>
+      <div class="dialog-actions"><button type="button" class="button button-secondary" data-close-delete>キャンセル</button><button id="confirm-delete-project" type="submit" class="button button-danger" disabled>論理削除する</button></div>
     </form>
   </dialog>
 

@@ -292,7 +292,15 @@ docker compose up -d
 
 `docker compose down --volumes`はPostgreSQL metadataとArtifact Storeを含む全volumeを削除します。登録済みProject、Dataset、Saved Graph、Run結果が不要だと確認できた場合だけ使用してください。
 
-## 13. よくある問題
+## 13. Projectを論理削除する
+
+Projectを開き、`Overview`の「編集」から「Projectを削除」を押します。確認画面へ表示されたProject slugを正確に入力すると、「論理削除する」が有効になります。
+
+この操作を実行できるのは`PROJECT_ADMIN`だけです。削除後はProject一覧へ戻り、対象Projectは表示されなくなります。
+
+この操作は論理削除です。Dataset、Run、Saved Graph、Artifactはretention policyに従って保持されますが、現在のFrontendにはProjectを復元する機能がありません。Projectを間違えて削除した場合は、metadataを直接変更せず、運用管理者へ連絡してください。
+
+## 14. よくある問題
 
 ### Dataset Versionを選んでも列が表示されない
 
@@ -345,3 +353,11 @@ Saved Graphを選び直し、自動設定されたDataset VersionとFeature Sema
 ### `401`、`403`、`404`になる
 
 Frontendはdevelopment認証で`X-User-Subject: local-developer`を使用します。curlやSwaggerから同じProjectを操作する場合も同じsubjectを使用してください。異なるsubjectは別利用者として扱われます。
+
+Project一覧は表示されるのに詳細画面で一部Resourceが`Not Found`になる場合は、FrontendとAPI containerのversionが一致していない可能性があります。FrontendはHostのsourceをbind mountしていますが、APIとworkerはbuild済みimageを使用するため、Backend変更後は次を実行してください。
+
+```bash
+docker compose up --build -d migrate api worker frontend
+```
+
+再build後、Browser側もcacheを無視して再読み込みします。

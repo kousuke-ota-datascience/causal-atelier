@@ -44,6 +44,24 @@ def test_project_resources_are_hidden_across_users(web) -> None:
     assert response.json()["error"]["code"] == "NOT_FOUND"
 
 
+def test_project_can_be_logically_deleted(web) -> None:
+    client, app, _ = web
+    project = _project(client)
+
+    response = client.delete(f"/api/v1/projects/{project['id']}")
+
+    assert response.status_code == 204
+    assert client.get(f"/api/v1/projects/{project['id']}").status_code == 404
+    listed_ids = {item["id"] for item in client.get("/api/v1/projects").json()["items"]}
+    assert project["id"] not in listed_ids
+    with app.state.database.session() as session:
+        from causal_atelier.infrastructure.persistence import models as m
+
+        deleted = session.get(m.Project, project["id"])
+        assert deleted.status == "DELETED"
+        assert deleted.deleted_at is not None
+
+
 def test_configuration_yaml_is_validated_versioned_and_published(web) -> None:
     client, _, _ = web
     project = _project(client)

@@ -57,6 +57,8 @@ a { color: inherit; text-decoration: none; }
 .button-primary span { color: var(--lime); }
 .button-secondary { border-color: var(--line-strong); background: transparent; color: var(--ink-soft); }
 .button-quiet { background: var(--lime-soft); color: var(--green); border-color: #d9e7a3; }
+.button-danger { background: var(--red); color: white; }
+.button-danger-outline { border-color: #d9aaa5; background: transparent; color: var(--red); }
 .full-button { width: 100%; min-height: 46px; }
 .text-button { appearance: none; border: 0; background: none; color: var(--green); font-weight: 700; font-size: 11px; cursor: pointer; }
 
@@ -72,7 +74,8 @@ a { color: inherit; text-decoration: none; }
 .project-card h3 { position: relative; z-index: 1; margin: 28px 0 8px; font: 500 24px/1.25 var(--serif); }
 .project-card p { position: relative; z-index: 1; color: var(--muted); flex: 1; margin: 0; font-size: 13px; }
 .project-card footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 22px; color: var(--muted); font-size: 10px; }
-.card-open { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 750; }
+.card-open { appearance: none; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--green); padding: 0; cursor: pointer; font: 750 10px var(--sans); }
+.card-open:hover { text-decoration: underline; }
 .empty { grid-column: 1/-1; display: grid; place-items: center; min-height: 170px; border: 1px dashed var(--line-strong); color: var(--muted); text-align: center; padding: 36px; }
 .skeleton-card { height: 220px; background: linear-gradient(100deg, var(--card) 30%, #f1f0e9 50%, var(--card) 70%); background-size: 220% 100%; border: 1px solid var(--line); animation: shimmer 1.3s infinite; }
 @keyframes shimmer { to { background-position-x: -220%; } }
@@ -283,6 +286,13 @@ dialog::backdrop { background: rgba(23,35,29,.64); backdrop-filter: blur(3px); }
 .dialog-title h2 { margin: 0; font: 500 27px var(--serif); }
 .icon-button { appearance: none; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 23px; line-height: 1; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.dialog-actions.split-actions { justify-content: space-between; }
+.dialog-action-group { display: flex; gap: 8px; }
+.danger-kicker { color: var(--red); }
+.delete-warning { padding: 14px 16px; border-left: 3px solid var(--red); background: #f9eae7; color: #71443f; }
+.delete-warning strong { color: var(--red); font: 600 16px var(--serif); }
+.delete-warning p { margin: 5px 0 0; font-size: 10px; }
+.dialog-form label code { color: var(--red); font-size: 10px; }
 .toast-region { position: fixed; right: 20px; bottom: 20px; z-index: 100; display: grid; gap: 8px; width: min(350px, calc(100% - 40px)); }
 .toast { display: flex; align-items: flex-start; gap: 10px; padding: 13px 15px; background: var(--ink); color: white; box-shadow: var(--shadow); font-size: 10px; animation: toast-in .2s ease-out; }
 .toast.success::before { content: "✓"; color: var(--lime); font-weight: 800; }
@@ -342,4 +352,6 @@ dialog::backdrop { background: rgba(23,35,29,.64); backdrop-filter: blur(3px); }
   .definition-grid { grid-template-columns: 1fr; }
   .estimate-hero { grid-template-columns: 1fr; }
   .estimate-hero > div { border-right: 0; border-bottom: 1px solid var(--line); }
+  .dialog-actions.split-actions { align-items: stretch; flex-direction: column-reverse; }
+  .dialog-action-group { display: grid; grid-template-columns: 1fr 1fr; }
 }

@@ -438,6 +438,16 @@ Dataset Source Adapterは、少なくとも次の契約を持つ。
 
 利用者はProjectを作成、閲覧、更新、論理削除できること。
 
+Project論理削除の受入条件は次のとおりとする。
+
+- FrontendのProject詳細画面から削除操作へ遷移できること。
+- 削除を実行できるのはProject Admin以上とし、APIでも権限を検査すること。
+- 誤操作防止のため、確認画面で対象Projectのslugと完全一致する文字列の再入力を要求すること。
+- 削除時はProjectの`status`を`DELETED`、`deleted_at`を削除日時へ更新し、Project一覧およびProject詳細の通常取得対象から除外すること。
+- Dataset、Run、Saved Graph、Artifact等をProject削除と同時に物理削除せず、各Resourceのretention policyに従って保持すること。
+- MVP Frontendから復元できないことと、保持Resourceが即時物理削除されないことを確認画面へ明示すること。
+- 削除成功後は実行中のFrontend pollingを停止し、Project一覧へ遷移すること。
+
 ### FR-PRJ-002
 
 Dataset、Configuration、Experiment、Run、Graph、Artifact、ResultはProjectに所属すること。

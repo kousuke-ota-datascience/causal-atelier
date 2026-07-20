@@ -37,7 +37,11 @@ async function api(path, options = {}) {
   }
   if (!response.ok) {
     const details = body?.error?.details?.issues || body?.error?.details?.detail || body?.detail;
-    const suffix = Array.isArray(details) ? `: ${details.map(issue => issue.message || issue.msg || issue.code).join(", ")}` : "";
+    const suffix = Array.isArray(details) ? `: ${details.map(issue => {
+      const location = Array.isArray(issue.loc) ? issue.loc.filter(part => part !== "body").join(".") : "";
+      const message = issue.message || issue.msg || issue.code;
+      return location ? `${location}: ${message}` : message;
+    }).join(", ")}` : "";
     throw new Error(`${body?.error?.message || body?.detail || `HTTP ${response.status}`}${suffix}`);
   }
   return body;
@@ -96,13 +100,21 @@ function bindEvents() {
   $("#new-project").addEventListener("click", () => $("#project-dialog").showModal());
   $$('[data-close-dialog]').forEach(button => button.addEventListener("click", () => $("#project-dialog").close()));
   $$('[data-close-edit]').forEach(button => button.addEventListener("click", () => $("#edit-project-dialog").close()));
+  $$('[data-close-delete]').forEach(button => button.addEventListener("click", () => $("#delete-project-dialog").close()));
   $("#project-form").addEventListener("submit", createProject);
   $("#edit-project-form").addEventListener("submit", updateProject);
   $("#edit-project").addEventListener("click", openProjectEditor);
+  $("#open-delete-project").addEventListener("click", openDeleteProjectDialog);
+  $("#delete-project-confirmation").addEventListener("input", syncDeleteConfirmation);
+  $("#delete-project-form").addEventListener("submit", deleteProject);
   $("#workflow-nav").addEventListener("click", event => {
     const link = event.target.closest("[data-section]");
-    if (!link || !state.project) return;
+    if (!link) return;
     event.preventDefault();
+    if (!state.project) {
+      location.hash = "#/projects";
+      return;
+    }
     location.hash = `#/projects/${state.project.id}/${link.dataset.section}`;
   });
   document.addEventListener("click", delegatedClick);
@@ -175,29 +187,47 @@ async function loadProjects() {
 
 function projectCard(project) {
   const monogram = initials(project.name);
-  return `<a class="project-card" href="#/projects/${escapeAttr(project.id)}/overview" data-monogram="${escapeAttr(monogram)}">
+  return `<article class="project-card" data-monogram="${escapeAttr(monogram)}">
     <span class="slug">${escapeHtml(project.slug)}</span>
     <h3>${escapeHtml(project.name)}</h3>
     <p>${escapeHtml(project.description || "説明はまだありません。Project詳細から分析を始められます。")}</p>
-    <footer><span>${formatDate(project.created_at)}</span><span class="card-open">Open workspace →</span></footer>
-  </a>`;
+    <footer><span>${formatDate(project.created_at)}</span><button type="button" class="card-open" data-open-project="${escapeAttr(project.id)}">Overview →</button></footer>
+  </article>`;
 }
 
 async function loadProject(projectId) {
   $("#detail-loading").hidden = false;
+  $("#detail-loading").innerHTML = '<span class="spinner"></span>Projectを読み込んでいます';
   $$(".workflow-section").forEach(section => section.hidden = true);
   try {
-    const [project, datasets, runs, members, configurations, graphs] = await Promise.all([
-      api(`/api/v1/projects/${encodeURIComponent(projectId)}`),
-      api(`/api/v1/datasets?project_id=${encodeURIComponent(projectId)}&limit=200`),
-      api(`/api/v1/runs?project_id=${encodeURIComponent(projectId)}&limit=200`),
-      api(`/api/v1/projects/${encodeURIComponent(projectId)}/members`).catch(() => []),
-      api(`/api/v1/configurations?project_id=${encodeURIComponent(projectId)}`),
-      api(`/api/v1/causal-graphs?project_id=${encodeURIComponent(projectId)}&limit=200`),
+    const encodedProjectId = encodeURIComponent(projectId);
+    const project = await api(`/api/v1/projects/${encodedProjectId}`);
+    const resourceFailures = [];
+    const loadResource = async (label, path, fallback) => {
+      try { return await api(path); }
+      catch (error) {
+        resourceFailures.push(`${label}: ${error.message}`);
+        return fallback;
+      }
+    };
+    const [datasets, runs, members, configurations, graphs] = await Promise.all([
+      loadResource("Datasets", `/api/v1/datasets?project_id=${encodedProjectId}&limit=200`, {items: []}),
+      loadResource("Runs", `/api/v1/runs?project_id=${encodedProjectId}&limit=200`, {items: []}),
+      loadResource("Members", `/api/v1/projects/${encodedProjectId}/members`, []),
+      loadResource("Configurations", `/api/v1/configurations?project_id=${encodedProjectId}`, []),
+      loadResource("Saved Graphs", `/api/v1/causal-graphs?project_id=${encodedProjectId}&limit=200`, {items: []}),
     ]);
     const [versionPages, configurationVersionLists] = await Promise.all([
-      Promise.all(datasets.items.map(dataset => api(`/api/v1/datasets/${dataset.id}/versions?limit=200`))),
-      Promise.all(configurations.map(config => api(`/api/v1/configurations/${config.id}/versions`))),
+      Promise.all(datasets.items.map(dataset => loadResource(
+        `Dataset ${dataset.name} versions`,
+        `/api/v1/datasets/${encodeURIComponent(dataset.id)}/versions?limit=200`,
+        {items: []},
+      ))),
+      Promise.all(configurations.map(config => loadResource(
+        `Configuration ${config.name} versions`,
+        `/api/v1/configurations/${encodeURIComponent(config.id)}/versions`,
+        [],
+      ))),
     ]);
     state.project = project;
     state.datasets = datasets.items;
@@ -215,8 +245,12 @@ async function loadProject(projectId) {
     renderProjectShell();
     renderAllProjectData();
     showSection(state.section);
+    if (resourceFailures.length) {
+      toast(`Projectは開きましたが、一部の情報を取得できませんでした: ${resourceFailures.join(" / ")}`, "error");
+    }
   } catch (error) {
-    $("#detail-loading").innerHTML = `<div class="empty">${escapeHtml(error.message)}<br><a href="#/projects">Project一覧へ戻る</a></div>`;
+    state.project = null;
+    $("#detail-loading").innerHTML = `<div class="empty">Projectを開けません: ${escapeHtml(error.message)}<br><a href="#/projects">Project一覧へ戻る</a></div>`;
     toast(error.message, "error");
   }
 }
@@ -346,10 +380,15 @@ async function createProject(event) {
   event.preventDefault();
   const form = event.currentTarget;
   const message = $("[data-form-message]", form);
+  const data = new FormData(form);
+  const payload = {
+    slug: String(data.get("slug") || "").trim(),
+    name: String(data.get("name") || "").trim(),
+    description: String(data.get("description") || "").trim() || null,
+  };
   setFormBusy(form, true, message);
   try {
-    const data = new FormData(form);
-    const project = await api("/api/v1/projects", {method: "POST", body: JSON.stringify({slug: data.get("slug"), name: data.get("name"), description: data.get("description") || null})});
+    const project = await api("/api/v1/projects", {method: "POST", body: JSON.stringify(payload)});
     form.reset();
     $("#project-dialog").close();
     toast("Projectを作成しました。", "success");
@@ -362,6 +401,8 @@ function openProjectEditor() {
   const form = $("#edit-project-form");
   form.elements.name.value = state.project.name;
   form.elements.description.value = state.project.description || "";
+  const currentMember = state.members.find(member => member.external_subject === AUTH_HEADERS["X-User-Subject"]);
+  $("#open-delete-project").hidden = Boolean(currentMember) && currentMember.role !== "PROJECT_ADMIN";
   $("#edit-project-dialog").showModal();
 }
 
@@ -379,6 +420,51 @@ async function updateProject(event) {
     toast("Projectの情報を更新しました。", "success");
   } catch (error) { message.textContent = error.message; }
   finally { setFormBusy(form, false); }
+}
+
+function openDeleteProjectDialog() {
+  if (!state.project) return;
+  $("#edit-project-dialog").close();
+  $("#delete-project-name").textContent = state.project.name;
+  $("#delete-project-slug").textContent = state.project.slug;
+  const form = $("#delete-project-form");
+  form.reset();
+  $("[data-form-message]", form).textContent = "";
+  syncDeleteConfirmation();
+  $("#delete-project-dialog").showModal();
+  $("#delete-project-confirmation").focus();
+}
+
+function syncDeleteConfirmation() {
+  const expected = state.project?.slug || "";
+  $("#confirm-delete-project").disabled = $("#delete-project-confirmation").value !== expected;
+}
+
+async function deleteProject(event) {
+  event.preventDefault();
+  if (!state.project) return;
+  const form = event.currentTarget;
+  const message = $("[data-form-message]", form);
+  if (form.elements.confirmation.value !== state.project.slug) {
+    message.textContent = "Project slugが一致していません。";
+    return;
+  }
+  const projectId = state.project.id;
+  const projectName = state.project.name;
+  setFormBusy(form, true, message);
+  try {
+    await api(`/api/v1/projects/${encodeURIComponent(projectId)}`, {method: "DELETE"});
+    clearPollers();
+    $("#delete-project-dialog").close();
+    state.project = null;
+    toast(`${projectName} を論理削除しました。`, "success");
+    location.hash = "#/projects";
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    setFormBusy(form, false);
+    syncDeleteConfirmation();
+  }
 }
 
 async function uploadDataset(event) {
@@ -843,6 +929,11 @@ async function refreshResources() {
 }
 
 async function delegatedClick(event) {
+  const projectButton = event.target.closest("[data-open-project]");
+  if (projectButton) {
+    location.hash = `#/projects/${encodeURIComponent(projectButton.dataset.openProject)}/overview`;
+    return;
+  }
   const sectionButton = event.target.closest("[data-go-section]");
   if (sectionButton && state.project) location.hash = `#/projects/${state.project.id}/${sectionButton.dataset.goSection}`;
   const copyButton = event.target.closest("[data-copy]");
