@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import uuid
+from decimal import Decimal
 from dataclasses import dataclass, field
 from typing import Any
 
-from ariadne.product.domain.enums import ExecutionOperation
+from ariadne.product.domain.enums import ExecutionOperation, GraphVersionStatus
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidAnalysisSpec,
@@ -79,13 +81,20 @@ class ExecutionService:
                     raise EntityNotFound("GraphVersion", command.input_graph_version_id)
                 if gv.project_id != command.project_id:
                     raise ProjectBoundaryViolation("GraphVersion does not belong to project")
+                if gv.status != GraphVersionStatus.FIXED:
+                    raise InvalidAnalysisSpec("ESTIMATION requires a FIXED GraphVersion")
+
+            graph_content_hash = gv.content_hash if command.input_graph_version_id else None
 
             executions: list[Execution] = []
             for variant in command.variants:
                 snapshot_hash = _compute_snapshot_hash(
+                    objective=variant.objective_snapshot,
+                    rationale=variant.rationale_snapshot,
                     dataset_version_id=command.dataset_version_id,
                     dataset_content_hash=dataset_version.content_hash,
                     input_graph_version_id=command.input_graph_version_id,
+                    input_graph_content_hash=graph_content_hash,
                     operation=command.operation,
                     algorithm_or_estimator=variant.algorithm_or_estimator,
                     parameter_json=variant.parameter_json,
@@ -129,6 +138,20 @@ class ExecutionService:
                 raise EntityNotFound("Execution", execution_id)
             return execution
 
+    def get_prefill(self, execution_id: str) -> dict[str, Any]:
+        execution = self.get_execution(execution_id)
+        return {
+            "operation": execution.operation.value,
+            "dataset_version_id": execution.dataset_version_id,
+            "input_graph_version_id": execution.input_graph_version_id,
+            "objective": execution.objective_snapshot,
+            "rationale": execution.rationale_snapshot,
+            "analysis_spec": execution.analysis_spec_json,
+            "algorithm_or_estimator": execution.algorithm_or_estimator,
+            "parameters": execution.parameter_json,
+            "random_seed": execution.random_seed,
+        }
+
     def request_cancel(self, execution_id: str) -> None:
         with self._uow_factory() as uow:
             execution = uow.executions.get(execution_id)
@@ -149,9 +172,31 @@ class ExecutionService:
 
 
 def _compute_snapshot_hash(**kwargs: Any) -> str:
-    canonical = json.dumps(
-        {k: kwargs[k] for k in sorted(kwargs)},
-        sort_keys=True,
-        default=str,
-    ).encode()
+    canonical = canonical_snapshot_json(kwargs).encode("utf-8")
     return hashlib.sha256(canonical).hexdigest()
+
+
+def canonical_snapshot_json(value: Any) -> str:
+    """Serialize snapshot input with deterministic key, NULL, and number rules."""
+    return json.dumps(_canonicalize(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _canonicalize(value: Any) -> Any:
+    if value is None or isinstance(value, (str, bool)):
+        return value
+    if isinstance(value, int):
+        return {"$number": str(value)}
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise InvalidAnalysisSpec("Snapshot numbers must be finite")
+        number = Decimal(repr(value))
+        if number == 0:
+            number = Decimal(0)
+        return {"$number": format(number.normalize(), "f")}
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise InvalidAnalysisSpec("Snapshot object keys must be strings")
+        return {key: _canonicalize(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_canonicalize(item) for item in value]
+    raise InvalidAnalysisSpec(f"Snapshot contains unsupported value: {type(value).__name__}")

@@ -12,15 +12,15 @@ services:
       retries: 12
     volumes:
       - metadata-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
 
   migrate:
     build: .
-    command: ["alembic", "upgrade", "head"]
+    command: ["alembic", "-c", "alembic_product.ini", "upgrade", "head"]
     environment: &backend-environment
-      ARIADNE_DATABASE_URL: postgresql+psycopg://ariadne:ariadne@database:5432/ariadne
+      ARIADNE_PRODUCT_DATABASE_URL: postgresql+psycopg://ariadne:ariadne@database:5432/ariadne
       ARIADNE_ARTIFACT_ROOT: /state/objects
-      ARIADNE_WORKSPACE_ROOT: /state/workspaces
-      ARIADNE_AUTH_MODE: development
     depends_on:
       database:
         condition: service_healthy

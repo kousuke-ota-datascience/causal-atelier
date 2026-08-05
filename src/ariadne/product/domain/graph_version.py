@@ -9,6 +9,7 @@ from typing import Any
 
 from ariadne.product.domain.enums import GraphType, GraphVersionStatus
 from ariadne.product.domain.errors import GraphAlreadyFixed, InvalidStateTransition
+from ariadne.product.domain.graph_semantics import canonical_graph
 
 
 def _new_id() -> str:
@@ -35,7 +36,7 @@ class GraphVersion:
             raise GraphAlreadyFixed(
                 f"GraphVersion {self.graph_version_id!r} is already FIXED"
             )
-        self.graph_json = graph_json
+        self.graph_json = canonical_graph(self.graph_type, graph_json)
         if edit_rationale is not None:
             self.edit_rationale = edit_rationale
 

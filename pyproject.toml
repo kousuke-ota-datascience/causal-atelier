@@ -6,26 +6,17 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.16.0",
-    "azure-storage-blob>=12.25.1",
-    "boto3>=1.39.0",
     "causal-learn>=0.1.4.8",
     "lingam>=1.8.3",
+    "numpy>=1.26.0",
     "scipy>1.6.1",
     "statsmodels>=0.14.2",
-    "dask>=2026.3.0",
-    "econml>=0.16.0",
     "fastapi>=0.115.0",
-    "httpx2>=0.28.0",
-    "ipykernel>=7.2.0",
-    "mlflow-skinny>=2.15.0",
     "pandas>=3.0.2",
     "pyarrow>=24.0.0",
     "psycopg[binary]>=3.2.0",
-    "pyjwt[crypto]>=2.10.0",
-    "pytest>=9.0.3",
     "python-multipart>=0.0.20",
     "pyyaml>=6.0.3",
-    "rdata>=1.0.0",
     "sqlalchemy>=2.0.41",
     "uvicorn>=0.30.0",
 ]
@@ -37,13 +28,10 @@ ariadne-estimate = "ariadne.interfaces.cli.estimation:main"
 # New product API and Worker
 ariadne-api = "ariadne.interfaces.web_api.app:main"
 ariadne-worker = "ariadne.interfaces.worker.runner:main"
-# Legacy CLI aliases (deprecated – will be removed after compatibility window)
-ariadne-discovery = "ariadne.legacy.interfaces.cli.discovery:main"
-ariadne-inference = "ariadne.legacy.interfaces.cli.inference:main"
-ariadne-pipeline = "ariadne.legacy.interfaces.cli.pipeline:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+norecursedirs = ["legacy_archive"]
 markers = [
     "unit: pure domain/validator tests with no I/O",
     "component: application service and adapter tests",
@@ -66,14 +54,30 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ariadne"]
+exclude = [
+    "src/ariadne/legacy/**",
+    "src/ariadne/infrastructure/artifact_store/**",
+    "src/ariadne/infrastructure/auth/**",
+    "src/ariadne/infrastructure/data_query/**",
+    "src/ariadne/infrastructure/persistence/**",
+    "src/ariadne/infrastructure/storage/**",
+    "src/ariadne/infrastructure/tracking/**",
+    "src/ariadne/infrastructure/logging.py",
+    "src/ariadne/infrastructure/logging_helpers.py",
+    "src/ariadne/infrastructure/settings.py",
+    "src/ariadne/shared/identity.py",
+    "src/ariadne/shared/exceptions.py",
+]
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.0",
     "ipykernel>=7.2.0",
     "myst-parser>=4.0.1",
     "sphinx>=8.2.3",
     "sphinx-autodoc-typehints>=3.5.2",
     "sphinx-rtd-theme>=3.0.2",
+    "pytest>=9.0.3",
 ]
 docs = [
     "myst-parser>=4.0.1",

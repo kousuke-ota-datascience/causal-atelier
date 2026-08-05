@@ -19,15 +19,17 @@ from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.application.graph_version_service import GraphVersionService
 from ariadne.product.application.lineage_query_service import LineageQueryService
 from ariadne.product.application.project_data_service import ProjectDataService
+from ariadne.product.application.query_service import ProductQueryService
+from ariadne.product.application.artifact_service import ArtifactService
+from ariadne.interfaces.web_api.idempotency import IdempotencyService
 from ariadne.product.persistence.unit_of_work import SqlUnitOfWork
 
 
 @lru_cache(maxsize=1)
 def _get_session_factory() -> Any:
-    database_url = os.getenv(
-        "ARIADNE_PRODUCT_DATABASE_URL",
-        os.getenv("ARIADNE_DATABASE_URL", "sqlite:///.ariadne/product.db"),
-    )
+    database_url = os.getenv("ARIADNE_PRODUCT_DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("ARIADNE_PRODUCT_DATABASE_URL is required")
     engine = create_engine(database_url)
     return sessionmaker(bind=engine)
 
@@ -47,31 +49,43 @@ def _uow_context() -> Generator[SqlUnitOfWork, None, None]:
         session.close()
 
 
-def get_project_data_service() -> ProjectDataService:
+async def get_project_data_service() -> ProjectDataService:
     return ProjectDataService(
         uow_factory=_uow_context,
         artifact_store=_get_artifact_store(),
     )
 
 
-def get_execution_service() -> ExecutionService:
+async def get_execution_service() -> ExecutionService:
     return ExecutionService(uow_factory=_uow_context)
 
 
-def get_graph_version_service() -> GraphVersionService:
+async def get_graph_version_service() -> GraphVersionService:
     return GraphVersionService(uow_factory=_uow_context)
 
 
-def get_annotation_service() -> AnnotationService:
+async def get_annotation_service() -> AnnotationService:
     return AnnotationService(uow_factory=_uow_context)
 
 
-def get_comparison_service() -> ComparisonQueryService:
+async def get_comparison_service() -> ComparisonQueryService:
     return ComparisonQueryService(uow_factory=_uow_context)
 
 
-def get_lineage_service() -> LineageQueryService:
+async def get_lineage_service() -> LineageQueryService:
     return LineageQueryService(uow_factory=_uow_context)
+
+
+async def get_query_service() -> ProductQueryService:
+    return ProductQueryService(uow_factory=_uow_context)
+
+
+async def get_artifact_service() -> ArtifactService:
+    return ArtifactService(uow_factory=_uow_context, artifact_store=_get_artifact_store())
+
+
+async def get_idempotency_service() -> IdempotencyService:
+    return IdempotencyService(_get_session_factory())
 
 
 # FastAPI Depends aliases
@@ -81,3 +95,6 @@ GraphVersionServiceDep = Annotated[GraphVersionService, Depends(get_graph_versio
 AnnotationServiceDep = Annotated[AnnotationService, Depends(get_annotation_service)]
 ComparisonServiceDep = Annotated[ComparisonQueryService, Depends(get_comparison_service)]
 LineageServiceDep = Annotated[LineageQueryService, Depends(get_lineage_service)]
+ProductQueryServiceDep = Annotated[ProductQueryService, Depends(get_query_service)]
+ArtifactServiceDep = Annotated[ArtifactService, Depends(get_artifact_service)]
+IdempotencyServiceDep = Annotated[IdempotencyService, Depends(get_idempotency_service)]

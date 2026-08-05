@@ -10,6 +10,7 @@ from ariadne.product.domain.errors import EntityNotFound, InvalidAnalysisSpec
 
 @dataclass(frozen=True)
 class ComparisonView:
+    operation: str
     common_conditions: dict[str, Any]
     changed_conditions: list[dict[str, Any]]
     result_differences: list[dict[str, Any]]
@@ -21,7 +22,7 @@ class ComparisonQueryService:
     def __init__(self, uow_factory: Any) -> None:
         self._uow_factory = uow_factory
 
-    def compare(self, result_ids: list[str]) -> ComparisonView:
+    def compare(self, result_ids: list[str], project_id: str | None = None) -> ComparisonView:
         if len(result_ids) < 2:
             raise InvalidAnalysisSpec("At least 2 result_ids are required for comparison")
 
@@ -40,6 +41,8 @@ class ComparisonQueryService:
             project_ids = {e.project_id for e in executions if e}  # type: ignore[union-attr]
             if len(project_ids) > 1:
                 raise InvalidAnalysisSpec("All results must belong to the same project")
+            if project_id is not None and project_ids != {project_id}:
+                raise InvalidAnalysisSpec("All results must belong to the requested project")
 
             operations = {e.operation for e in executions if e}  # type: ignore[union-attr]
             if len(operations) > 1:
@@ -94,6 +97,7 @@ def _build_comparison(results: list[Any], executions: list[Any]) -> ComparisonVi
     }
 
     return ComparisonView(
+        operation=executions[0].operation.value,
         common_conditions=common,
         changed_conditions=changed,
         result_differences=result_diffs,

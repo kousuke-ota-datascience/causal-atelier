@@ -33,6 +33,22 @@ class ProductBase(DeclarativeBase):
     pass
 
 
+class IdempotencyRecordOrm(ProductBase):
+    """Technical table; not a business entity."""
+
+    __tablename__ = "product_idempotency"
+    idempotency_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    scope: Mapped[str] = mapped_column(String(100), nullable=False)
+    idempotency_key: Mapped[str] = mapped_column(String(200), nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    response_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    __table_args__ = (
+        UniqueConstraint("project_id", "scope", "idempotency_key", name="uq_product_idempotency_key"),
+    )
+
+
 class ProjectOrm(ProductBase):
     __tablename__ = "product_project"
 
@@ -67,6 +83,10 @@ class ArtifactOrm(ProductBase):
 
     __table_args__ = (
         CheckConstraint("size_bytes >= 0", name="ck_product_artifact_size_bytes"),
+        CheckConstraint(
+            "artifact_type IN ('DATASET_FILE','GRAPH_JSON','GRAPH_IMAGE','EFFECT_TABLE','DIAGNOSTICS_TABLE','MANIFEST','CONFIG_SNAPSHOT','LOG')",
+            name="ck_product_artifact_type",
+        ),
     )
 
 
@@ -130,6 +150,11 @@ class ExecutionOrm(ProductBase):
             name="ck_product_execution_status",
         ),
         CheckConstraint("retry_count >= 0", name="ck_product_execution_retry_count"),
+        CheckConstraint(
+            "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL) OR "
+            "(operation = 'ESTIMATION' AND input_graph_version_id IS NOT NULL)",
+            name="ck_product_execution_graph_by_operation",
+        ),
     )
 
 
@@ -145,6 +170,17 @@ class ResultOrm(ProductBase):
     diagnostics_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
     warning_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "result_type IN ('DISCOVERY_GRAPH_RESULT','IDENTIFICATION_RESULT','TREATMENT_EFFECT_RESULT')",
+            name="ck_product_result_type",
+        ),
+        CheckConstraint(
+            "scientific_status IN ('VALID','NOT_IDENTIFIED','INSUFFICIENT_OVERLAP','INSUFFICIENT_SAMPLE','ESTIMATION_UNRELIABLE')",
+            name="ck_product_result_scientific_status",
+        ),
+    )
 
 
 class GraphVersionOrm(ProductBase):
@@ -165,6 +201,7 @@ class GraphVersionOrm(ProductBase):
 
     __table_args__ = (
         CheckConstraint("status IN ('DRAFT', 'FIXED')", name="ck_product_graph_version_status"),
+        CheckConstraint("graph_type IN ('DAG','CPDAG','PAG')", name="ck_product_graph_version_type"),
     )
 
 

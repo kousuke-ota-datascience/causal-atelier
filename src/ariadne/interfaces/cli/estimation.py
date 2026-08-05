@@ -1,107 +1,85 @@
-"""ariadne-estimate CLI command."""
+"""Standalone estimation CLI; scientific negative outcomes exit zero."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import platform
 import sys
 from pathlib import Path
 
+import yaml
+from pydantic import ValidationError
 
-def _sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
-    return h.hexdigest()
+from ariadne.interfaces.cli.config_schema import EstimationCliConfig
+from ariadne.interfaces.cli.manifest import CliManifest
+
+
+def _hash(path: Path) -> str:
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return digest
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(prog="ariadne-estimate")
+    parser.add_argument("--config", required=True, type=Path)
+    return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        prog="ariadne-estimate",
-        description="Estimate causal effects using a graph and dataset.",
-    )
-    parser.add_argument("--dataset", required=True, type=Path)
-    parser.add_argument("--graph", required=True, type=Path, help="Path to graph JSON")
-    parser.add_argument("--estimator", required=True, help="Estimator name (e.g. aipw, drl)")
-    parser.add_argument("--treatment", required=True)
-    parser.add_argument("--outcome", required=True)
-    parser.add_argument("--output-dir", required=True, type=Path)
-    parser.add_argument("--random-seed", type=int, default=None)
-    parser.add_argument("--params", type=json.loads, default={}, metavar="JSON")
-    parser.add_argument("--spec", type=json.loads, default={}, metavar="JSON", help="Additional analysis spec as JSON")
-    args = parser.parse_args(argv)
-
-    dataset_path: Path = args.dataset.resolve()
-    graph_path: Path = args.graph.resolve()
-    output_dir: Path = args.output_dir.resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    if not dataset_path.exists():
-        print(f"ERROR: Dataset not found: {dataset_path}", file=sys.stderr)
-        return 3
-    if not graph_path.exists():
-        print(f"ERROR: Graph not found: {graph_path}", file=sys.stderr)
-        return 3
-
-    dataset_hash = _sha256_file(dataset_path)
-    graph_hash = _sha256_file(graph_path)
-
-    analysis_spec = {
-        "treatment": args.treatment,
-        "outcome": args.outcome,
-        **args.spec,
-    }
-
+    args = parse_args(argv)
     try:
+        config = EstimationCliConfig.model_validate(yaml.safe_load(args.config.read_text(encoding="utf-8")))
+    except (OSError, yaml.YAMLError, ValidationError, TypeError) as exc:
+        print(f"ERROR: invalid config: {exc}", file=sys.stderr)
+        return 2
+    dataset, graph = config.dataset.resolve(), config.graph.resolve()
+    if not dataset.is_file() or not graph.is_file():
+        print("ERROR: dataset or graph not found", file=sys.stderr)
+        return 3
+    dataset_hash, graph_hash = _hash(dataset), _hash(graph)
+    if (config.dataset_hash and config.dataset_hash != dataset_hash) or (config.graph_hash and config.graph_hash != graph_hash):
+        print("ERROR: input hash mismatch", file=sys.stderr)
+        return 3
+    try:
+        from ariadne.product.domain.errors import InvalidAnalysisSpec, UnsupportedEstimator
         from ariadne.product.ports.scientific_core import EstimationInput
         from ariadne.scientific.core_adapter import ScientificCoreAdapter
-
-        core = ScientificCoreAdapter()
-        input_ = EstimationInput(
-            dataset_path=dataset_path,
-            graph_path=graph_path,
-            estimator=args.estimator,
-            parameters=args.params,
-            random_seed=args.random_seed,
-            analysis_spec=analysis_spec,
-        )
-        output = core.run_estimation(input_, output_dir)
+        output = ScientificCoreAdapter().run_estimation(EstimationInput(
+            dataset_path=dataset, graph_path=graph, estimator=config.estimator,
+            parameters=config.parameters, random_seed=config.random_seed,
+            analysis_spec=config.analysis_spec,
+        ), config.output_dir)
+    except (InvalidAnalysisSpec, UnsupportedEstimator) as exc:
+        print(f"ERROR: invalid config: {exc}", file=sys.stderr)
+        return 2
     except Exception as exc:
-        print(f"ERROR: Scientific core execution failed: {exc}", file=sys.stderr)
+        print(f"ERROR: scientific core technical failure: {exc}", file=sys.stderr)
         return 4
-
-    import ariadne
-    version = getattr(ariadne, "__version__", "0.1.0")
-
-    from ariadne.interfaces.cli.manifest import EstimationManifest
-    manifest = EstimationManifest(
-        manifest_version="1",
-        ariadne_version=version,
-        estimator=args.estimator,
-        dataset_path=str(dataset_path),
-        dataset_hash=dataset_hash,
-        graph_path=str(graph_path),
-        graph_hash=graph_hash,
-        parameters=args.params,
-        analysis_spec=analysis_spec,
-        random_seed=args.random_seed,
-        scientific_status=output.scientific_status.value,
-        payload=output.payload,
-        summary=output.summary,
-        output_dir=str(output_dir),
-        artifacts=[str(p) for p in output.artifacts],
-        warnings=output.warnings,
-    )
-
-    manifest_path = output_dir / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest.__dict__, indent=2, default=str))
-
-    print(f"Scientific status: {output.scientific_status.value}")
-    print(f"Manifest written to: {manifest_path}")
+    try:
+        import ariadne
+        manifest = CliManifest(
+            manifest_version="1.0", operation="ESTIMATION",
+            dataset={"content_hash": dataset_hash, "location": str(dataset)},
+            graph={"content_hash": graph_hash, "location": str(graph)},
+            algorithm_or_estimator=config.estimator, parameters=config.parameters,
+            analysis_spec=config.analysis_spec, random_seed=config.random_seed,
+            code_version=getattr(ariadne, "__version__", "0.1.0"),
+            runtime_versions={"python": platform.python_version()},
+            scientific_status=output.scientific_status.value, result_summary=output.summary,
+            artifacts=[{"location": str(path), "content_hash": _hash(path)} for path in output.artifacts],
+            warnings=output.warnings,
+        )
+        config.output_dir.mkdir(parents=True, exist_ok=True)
+        (config.output_dir / "manifest.json").write_text(
+            json.dumps(manifest.to_dict(), sort_keys=True, indent=2), encoding="utf-8"
+        )
+    except OSError as exc:
+        print(f"ERROR: output write failure: {exc}", file=sys.stderr)
+        return 5
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

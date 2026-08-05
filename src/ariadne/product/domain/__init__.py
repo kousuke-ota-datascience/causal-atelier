@@ -15,6 +15,9 @@ from ariadne.product.domain.enums import (
 )
 from ariadne.product.domain.errors import (
     DomainError,
+    ArtifactHashMismatch,
+    InfrastructureError,
+    ScientificCoreExecutionError,
     EntityNotFound,
     GraphAlreadyFixed,
     InvalidAnalysisSpec,
@@ -35,6 +38,9 @@ __all__ = [
     "ArtifactType",
     "DatasetVersion",
     "DomainError",
+    "ArtifactHashMismatch",
+    "InfrastructureError",
+    "ScientificCoreExecutionError",
     "EntityNotFound",
     "Execution",
     "ExecutionOperation",

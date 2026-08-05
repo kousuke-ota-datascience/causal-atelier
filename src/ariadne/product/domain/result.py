@@ -19,7 +19,7 @@ class Result:
     result_id: str = field(default_factory=_new_id)
     execution_id: str = ""
     result_type: ResultType = ResultType.DISCOVERY_GRAPH_RESULT
-    scientific_status: ScientificStatus = ScientificStatus.GRAPH_PRODUCED
+    scientific_status: ScientificStatus = ScientificStatus.VALID
     summary_json: dict[str, Any] = field(default_factory=dict)
     payload_json: dict[str, Any] = field(default_factory=dict)
     diagnostics_json: dict[str, Any] = field(default_factory=dict)

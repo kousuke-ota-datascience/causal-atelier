@@ -8,6 +8,7 @@ from ariadne.interfaces.web_api.dependencies import ProjectDataServiceDep
 from ariadne.interfaces.web_api.schemas import (
     ProjectCreate,
     ProjectResponse,
+    ProjectListResponse,
     ProjectUpdate,
 )
 from ariadne.product.application.project_data_service import (
@@ -33,7 +34,7 @@ def _project_to_response(p: Project) -> ProjectResponse:
 
 
 @router.post("", status_code=201, response_model=ProjectResponse)
-def create_project(body: ProjectCreate, svc: ProjectDataServiceDep) -> ProjectResponse:
+async def create_project(body: ProjectCreate, svc: ProjectDataServiceDep) -> ProjectResponse:
     project = svc.create_project(CreateProjectCommand(
         name=body.name,
         topic=body.topic,
@@ -43,23 +44,18 @@ def create_project(body: ProjectCreate, svc: ProjectDataServiceDep) -> ProjectRe
     return _project_to_response(project)
 
 
+@router.get("", response_model=ProjectListResponse)
+async def list_projects(svc: ProjectDataServiceDep) -> ProjectListResponse:
+    return ProjectListResponse(items=[_project_to_response(item) for item in svc.list_projects()])
+
+
 @router.get("/{project_id}", response_model=ProjectResponse)
-def get_project(project_id: str, svc: ProjectDataServiceDep) -> ProjectResponse:
-    from ariadne.product.domain.errors import EntityNotFound
-    from ariadne.product.persistence.database import SessionFactory
-    import os
-    # Direct query via service (project is returned on update; get requires direct UoW)
-    # Use a minimal inline query for now
-    from ariadne.interfaces.web_api.dependencies import _uow_context
-    with _uow_context() as uow:
-        project = uow.projects.get(project_id)
-        if project is None:
-            raise EntityNotFound("Project", project_id)
-    return _project_to_response(project)
+async def get_project(project_id: str, svc: ProjectDataServiceDep) -> ProjectResponse:
+    return _project_to_response(svc.get_project(project_id))
 
 
 @router.patch("/{project_id}", response_model=ProjectResponse)
-def update_project(
+async def update_project(
     project_id: str, body: ProjectUpdate, svc: ProjectDataServiceDep
 ) -> ProjectResponse:
     project = svc.update_project(UpdateProjectCommand(

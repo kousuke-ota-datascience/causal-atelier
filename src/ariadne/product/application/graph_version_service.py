@@ -7,8 +7,9 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from ariadne.product.domain.enums import GraphType
-from ariadne.product.domain.errors import EntityNotFound, ProjectBoundaryViolation
+from ariadne.product.domain.enums import ExecutionOperation, GraphType, ResultType
+from ariadne.product.domain.errors import EntityNotFound, InvalidAnalysisSpec, ProjectBoundaryViolation
+from ariadne.product.domain.graph_semantics import canonical_graph
 from ariadne.product.domain.graph_version import GraphVersion
 from ariadne.product.ports.clock import ClockPort, SystemClock
 
@@ -39,7 +40,8 @@ class GraphVersionService:
 
     def create_from_discovery_result(self, command: CreateGraphVersionCommand) -> GraphVersion:
         now = self._clock.now()
-        content_hash = _hash_graph(command.graph_json)
+        graph_json = canonical_graph(command.graph_type, command.graph_json)
+        content_hash = _hash_graph(graph_json)
 
         with self._uow_factory() as uow:
             project = uow.projects.get(command.project_id)
@@ -49,6 +51,15 @@ class GraphVersionService:
             result = uow.results.get(command.source_result_id)
             if result is None:
                 raise EntityNotFound("Result", command.source_result_id)
+            source_execution = uow.executions.get(result.execution_id)
+            if source_execution is None:
+                raise EntityNotFound("Execution", result.execution_id)
+            if source_execution.project_id != command.project_id:
+                raise ProjectBoundaryViolation("Source Result is not in the same project")
+            if result.result_type != ResultType.DISCOVERY_GRAPH_RESULT:
+                raise InvalidAnalysisSpec("Source Result must be DISCOVERY_GRAPH_RESULT")
+            if source_execution.operation != ExecutionOperation.DISCOVERY:
+                raise InvalidAnalysisSpec("Source Execution must be DISCOVERY")
 
             if command.parent_graph_version_id is not None:
                 parent = uow.graph_versions.get(command.parent_graph_version_id)
@@ -63,7 +74,7 @@ class GraphVersionService:
                 parent_graph_version_id=command.parent_graph_version_id,
                 name=command.name,
                 graph_type=command.graph_type,
-                graph_json=command.graph_json,
+                graph_json=graph_json,
                 content_hash=content_hash,
                 edit_rationale=command.edit_rationale,
                 created_by=command.created_by,
@@ -81,7 +92,7 @@ class GraphVersionService:
             if gv is None:
                 raise EntityNotFound("GraphVersion", command.graph_version_id)
             gv.apply_edit(command.graph_json, command.edit_rationale)
-            gv.content_hash = _hash_graph(command.graph_json)
+            gv.content_hash = _hash_graph(gv.graph_json)
             uow.graph_versions.update(gv)
             uow.commit()
         return gv

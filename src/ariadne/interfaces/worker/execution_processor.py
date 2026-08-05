@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import tempfile
-import uuid
-from datetime import datetime, timezone
+import hashlib
+import json
 from pathlib import Path
 from typing import Any
 
@@ -15,7 +15,9 @@ from ariadne.product.domain.enums import (
     ExecutionStatus,
     ResultType,
     ScientificStatus,
+    GraphVersionStatus,
 )
+from ariadne.product.domain.errors import ArtifactHashMismatch
 from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.result import Result
 from ariadne.product.ports.artifact_store import ArtifactStorePort
@@ -46,18 +48,11 @@ class ExecutionProcessor:
         self._clock = clock or SystemClock()
 
     def process(self, execution: Execution) -> None:
-        """Process a single QUEUED execution through to SUCCEEDED or FAILED."""
-        now = self._clock.now()
-
-        # Transition to RUNNING
+        """Process an execution atomically claimed as RUNNING."""
         with self._uow_factory() as uow:
             execution = uow.executions.get(execution.execution_id)
-            if execution is None or execution.status != ExecutionStatus.QUEUED:
-                return  # Already claimed or gone
-
-            execution.mark_running(now)
-            uow.executions.update(execution)
-            uow.commit()
+            if execution is None or execution.status != ExecutionStatus.RUNNING:
+                return
 
         try:
             self._execute(execution)
@@ -85,6 +80,14 @@ class ExecutionProcessor:
             suffix = Path(artifact.object_key).suffix or ".parquet"
             dataset_path = dataset_path.with_suffix(suffix)
             self._store.retrieve(artifact.object_key, dataset_path)
+            actual_hash = _sha256_file(dataset_path)
+            if actual_hash != artifact.content_hash or actual_hash != dsv.content_hash:
+                raise ArtifactHashMismatch(
+                    f"Dataset Artifact hash mismatch for {artifact.artifact_id}"
+                )
+
+            if self._is_cancelled(execution.execution_id):
+                return
 
             # Run scientific core
             if execution.operation == ExecutionOperation.DISCOVERY:
@@ -123,6 +126,7 @@ class ExecutionProcessor:
 
             # Store artifacts in artifact store
             stored_artifacts: list[Artifact] = []
+            stored_keys: list[str] = []
             for art_path in artifact_paths:
                 artifact_type = _guess_artifact_type(art_path)
                 object_key = (
@@ -130,6 +134,7 @@ class ExecutionProcessor:
                     f"/{art_path.name}"
                 )
                 stored = self._store.store(art_path, object_key)
+                stored_keys.append(stored.object_key)
                 stored_artifacts.append(Artifact(
                     project_id=execution.project_id,
                     execution_id=execution.execution_id,
@@ -143,14 +148,25 @@ class ExecutionProcessor:
                 ))
 
             # Persist result, artifacts, and update execution status in one transaction
-            with self._uow_factory() as uow:
-                uow.results.add_many([result])
-                uow.artifacts.add_many(stored_artifacts)
-                exec_entity = uow.executions.get(execution.execution_id)
-                if exec_entity:
+            try:
+                with self._uow_factory() as uow:
+                    exec_entity = uow.executions.get(execution.execution_id)
+                    if exec_entity is None or exec_entity.status != ExecutionStatus.RUNNING:
+                        for key in stored_keys:
+                            self._store.delete(key)
+                        return
+                    uow.results.add_many([result])
+                    uow.artifacts.add_many(stored_artifacts)
                     exec_entity.mark_succeeded(now)
                     uow.executions.update(exec_entity)
-                uow.commit()
+                    uow.commit()
+            except Exception:
+                for key in stored_keys:
+                    try:
+                        self._store.delete(key)
+                    except Exception:
+                        logger.exception("Unable to clean orphan artifact %s", key)
+                raise
 
     def _run_discovery(self, execution: Execution, dataset_path: Path, output_dir: Path) -> Any:
         from ariadne.product.ports.scientific_core import DiscoveryInput
@@ -184,20 +200,24 @@ class ExecutionProcessor:
             gv = uow.graph_versions.get(execution.input_graph_version_id)
             if gv is None:
                 raise RuntimeError(f"GraphVersion not found: {execution.input_graph_version_id}")
-            # Find graph artifact
-            artifacts = uow.artifacts.list_by_result(gv.source_result_id)
-            graph_artifacts = [a for a in artifacts if a.artifact_type == ArtifactType.GRAPH_JSON]
-            if not graph_artifacts:
-                # Serialize the graph_json stored in the entity as a fallback
-                import json
-                graph_path = tmp / "input_graph.json"
-                graph_path.write_text(json.dumps(gv.graph_json))
-                return graph_path
-            graph_artifact = graph_artifacts[0]
+            if gv.status != GraphVersionStatus.FIXED:
+                raise RuntimeError("Estimation input GraphVersion is not FIXED")
+            graph_json = gv.graph_json
+            expected_hash = gv.content_hash
 
         graph_path = tmp / "input_graph.json"
-        self._store.retrieve(graph_artifact.object_key, graph_path)
+        graph_path.write_text(json.dumps(graph_json, sort_keys=True), encoding="utf-8")
+        canonical_hash = hashlib.sha256(
+            json.dumps(graph_json, sort_keys=True).encode("utf-8")
+        ).hexdigest()
+        if canonical_hash != expected_hash:
+            raise ArtifactHashMismatch("GraphVersion content hash mismatch")
         return graph_path
+
+    def _is_cancelled(self, execution_id: str) -> bool:
+        with self._uow_factory() as uow:
+            execution = uow.executions.get(execution_id)
+            return execution is None or execution.status == ExecutionStatus.CANCELLED
 
     def _mark_failed(self, execution_id: str, error_summary: str) -> None:
         now = self._clock.now()
@@ -223,3 +243,11 @@ def _guess_artifact_type(path: Path) -> ArtifactType:
     if suffix in (".log", ".txt"):
         return ArtifactType.LOG
     return ArtifactType.LOG
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()

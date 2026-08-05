@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import uvicorn
-from fastapi import FastAPI
+import uuid
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 
-from ariadne.interfaces.web_api.error_handlers import domain_error_handler
+from ariadne.interfaces.web_api.error_handlers import domain_error_handler, validation_error_handler
 from ariadne.interfaces.web_api.routers import (
     annotations,
     dataset_versions,
@@ -13,8 +15,9 @@ from ariadne.interfaces.web_api.routers import (
     graph_versions,
     projects,
     results,
+    artifacts,
 )
-from ariadne.product.domain.errors import DomainError
+from ariadne.product.domain.errors import DomainError, InfrastructureError
 
 
 def create_app() -> FastAPI:
@@ -25,16 +28,22 @@ def create_app() -> FastAPI:
     )
 
     app.add_exception_handler(DomainError, domain_error_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(InfrastructureError, domain_error_handler)  # type: ignore[arg-type]
+    app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore[arg-type]
 
-    app.include_router(projects.router)
-    app.include_router(dataset_versions.router)
-    app.include_router(executions.router)
-    app.include_router(results.router)
-    app.include_router(graph_versions.router)
-    app.include_router(annotations.router)
+    @app.middleware("http")
+    async def request_id(request: Request, call_next):  # type: ignore[no-untyped-def]
+        request.state.request_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
+        response = await call_next(request)
+        response.headers["X-Request-Id"] = request.state.request_id
+        return response
 
-    @app.get("/health")
-    def health() -> dict[str, str]:
+    for router in (projects.router, dataset_versions.router, executions.router, results.router,
+                   graph_versions.router, annotations.router, artifacts.router):
+        app.include_router(router, prefix="/api/v1")
+
+    @app.get("/health/ready")
+    async def health() -> dict[str, str]:
         return {"status": "ok"}
 
     return app

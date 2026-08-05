@@ -12,7 +12,12 @@ from typing import Any
 from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.dataset_version import DatasetVersion
 from ariadne.product.domain.enums import ArtifactType
-from ariadne.product.domain.errors import EntityNotFound, ProjectBoundaryViolation
+from ariadne.product.domain.errors import (
+    ArtifactHashMismatch,
+    EntityNotFound,
+    InvalidAnalysisSpec,
+    ProjectBoundaryViolation,
+)
 from ariadne.product.domain.project import Project
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.ports.clock import ClockPort, SystemClock
@@ -94,6 +99,57 @@ class ProjectDataService:
             uow.commit()
         return project
 
+    def get_project(self, project_id: str) -> Project:
+        with self._uow_factory() as uow:
+            project = uow.projects.get(project_id)
+            if project is None:
+                raise EntityNotFound("Project", project_id)
+            return project
+
+    def list_projects(self) -> list[Project]:
+        with self._uow_factory() as uow:
+            return uow.projects.list()
+
+    def get_dataset_version(self, dataset_version_id: str) -> DatasetVersion:
+        with self._uow_factory() as uow:
+            dataset = uow.dataset_versions.get(dataset_version_id)
+            if dataset is None:
+                raise EntityNotFound("DatasetVersion", dataset_version_id)
+            return dataset
+
+    def list_dataset_versions(self, project_id: str) -> list[DatasetVersion]:
+        with self._uow_factory() as uow:
+            if uow.projects.get(project_id) is None:
+                raise EntityNotFound("Project", project_id)
+            return uow.dataset_versions.list_by_project(project_id)
+
+    def get_dataset_preview(self, dataset_version_id: str, limit: int = 20) -> dict[str, Any]:
+        if limit < 1 or limit > 100:
+            raise InvalidAnalysisSpec("preview limit must be between 1 and 100")
+        with self._uow_factory() as uow:
+            dataset = uow.dataset_versions.get(dataset_version_id)
+            if dataset is None:
+                raise EntityNotFound("DatasetVersion", dataset_version_id)
+            artifact = uow.artifacts.get(dataset.source_artifact_id)
+            if artifact is None:
+                raise EntityNotFound("Artifact", dataset.source_artifact_id)
+        import tempfile
+        import pandas as pd
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / Path(artifact.object_key).name
+            self._artifact_store.retrieve(artifact.object_key, path)
+            actual_hash = _sha256_file(path)
+            if actual_hash != artifact.content_hash or actual_hash != dataset.content_hash:
+                raise ArtifactHashMismatch("Dataset Artifact hash mismatch")
+            frame = pd.read_parquet(path) if path.suffix.lower() == ".parquet" else pd.read_csv(path)
+        preview = frame.head(limit).astype(object).where(frame.head(limit).notna(), None)
+        return {
+            "dataset_version_id": dataset.dataset_version_id,
+            "columns": list(frame.columns),
+            "rows": preview.to_dict(orient="records"),
+            "limit": limit,
+        }
+
     def register_dataset_version(self, command: RegisterDatasetVersionCommand) -> DatasetVersion:
         now = self._clock.now()
 
@@ -116,12 +172,14 @@ class ProjectDataService:
             artifact_id = str(uuid.uuid4())
             object_key = f"projects/{command.project_id}/datasets/{command.dataset_key}/{artifact_id}/{command.source_path.name}"
 
-            # Store file
             stored = self._artifact_store.store(
                 source_path=command.source_path,
                 object_key=object_key,
-                media_type="application/octet-stream",
+                media_type="text/csv" if command.source_path.suffix.lower() == ".csv" else "application/vnd.apache.parquet",
             )
+            if stored.content_hash != content_hash:
+                self._artifact_store.delete(stored.object_key)
+                raise ArtifactHashMismatch("Stored Dataset Artifact hash mismatch")
 
             # Create artifact entity
             artifact = Artifact(
@@ -151,9 +209,13 @@ class ProjectDataService:
                 created_at=now,
             )
 
-            uow.artifacts.add_many([artifact])
-            uow.dataset_versions.add(dataset_version)
-            uow.commit()
+            try:
+                uow.artifacts.add_many([artifact])
+                uow.dataset_versions.add(dataset_version)
+                uow.commit()
+            except Exception:
+                self._artifact_store.delete(stored.object_key)
+                raise
 
         return dataset_version
 

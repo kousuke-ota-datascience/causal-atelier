@@ -1,6 +1,6 @@
 # 23 API・インターフェース設計 — 初期価値検証版
 
-- 文書状態: 初版
+- 文書状態: MVP実装反映
 - 更新日: 2026-08-05
 - 上位文書:
   - `10_要件定義.md`
@@ -34,6 +34,7 @@ DB Entityやclass内部構造は定義しない。
 - enumは大文字snake caseとする
 - JSON objectの未知fieldは、初期版では原則rejectする
 - Request内でEntity全体を複製せず、正本EntityのIDを参照する
+- 本章以降のPath表記には、共通prefix `/api/v1` を付与する
 
 ### 2.2 Response envelope
 
@@ -108,6 +109,7 @@ Navigation ContextはWeb App内の遷移用であり、正本データではな�
 | Method | Path | 用途 |
 |---|---|---|
 | POST | `/projects` | Project作成 |
+| GET | `/projects` | Web AppのProject選択用一覧 |
 | GET | `/projects/{project_id}` | Project取得 |
 | PATCH | `/projects/{project_id}` | Project更新 |
 
@@ -324,10 +326,10 @@ Response:
 {
   "operation": "ESTIMATION",
   "common_conditions": {},
-  "changed_conditions": {},
-  "result_differences": {},
+  "changed_conditions": [],
+  "result_differences": [],
   "warnings": [],
-  "lineage_summary": []
+  "lineage_summary": {}
 }
 ```
 
@@ -344,10 +346,10 @@ Validation:
   "root_result_id": "uuid",
   "nodes": [
     {
-      "node_type": "RESULT",
+      "node_type": "Result",
       "entity_id": "uuid",
       "label": "AIPW result",
-      "summary": {}
+      "attributes": {}
     }
   ],
   "edges": [
@@ -443,12 +445,11 @@ Scientific CoreのinterfaceはPython objectまたは同等の型付き構造を�
 ### 9.1 Commands
 
 ```text
-ariadne discovery run --config <path>
-ariadne inference run --config <path>
-ariadne config validate --config <path>
+ariadne-discover --config <path>
+ariadne-estimate --config <path>
 ```
 
-具体的なoption名は実装時に確定してよいが、configはWeb/APIのAnalysis Specと意味的に一致させる。
+configはstrict validationを行い、Web/APIのAnalysis Specと意味的に一致させる。Web/APIのExecution IDは生成しない。
 
 ### 9.2 Manifest Schema
 

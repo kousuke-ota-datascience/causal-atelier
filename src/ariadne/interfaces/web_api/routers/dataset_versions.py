@@ -5,13 +5,15 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, File, Form, Header, UploadFile
 
 from ariadne.interfaces.web_api.dependencies import ProjectDataServiceDep
 from ariadne.interfaces.web_api.schemas import (
     DatasetVersionListResponse,
     DatasetVersionResponse,
+    DatasetPreviewResponse,
 )
+from ariadne.interfaces.web_api.dependencies import IdempotencyServiceDep
 from ariadne.product.application.project_data_service import RegisterDatasetVersionCommand
 from ariadne.product.domain.dataset_version import DatasetVersion
 
@@ -27,7 +29,7 @@ def _dsv_to_response(dv: DatasetVersion) -> DatasetVersionResponse:
         name=dv.name,
         version_label=dv.version_label,
         content_hash=dv.content_hash,
-        column_schema=dv.schema_json,
+        schema=dv.schema_json,
         profile_summary=dv.profile_summary_json,
         row_count=dv.row_count,
         column_count=dv.column_count,
@@ -45,6 +47,8 @@ async def register_dataset_version(
     source_note: str | None = Form(None),
     file: UploadFile = File(...),
     svc: ProjectDataServiceDep = ...,
+    idempotency: IdempotencyServiceDep = ...,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> DatasetVersionResponse:
     with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename or "data.parquet").suffix) as tmp:
         tmp.write(await file.read())
@@ -62,39 +66,36 @@ async def register_dataset_version(
         row_count = len(df)
         column_count = len(df.columns)
 
-        dv = svc.register_dataset_version(RegisterDatasetVersionCommand(
-            project_id=project_id,
-            dataset_key=dataset_key,
-            name=name,
-            version_label=version_label,
-            source_path=tmp_path,
-            schema_json=schema_json,
-            row_count=row_count,
-            column_count=column_count,
-            source_note=source_note,
-        ))
+        payload = {"dataset_key": dataset_key, "name": name, "version_label": version_label,
+                   "source_note": source_note, "content": __import__("hashlib").sha256(tmp_path.read_bytes()).hexdigest()}
+        response = idempotency.execute(
+            project_id=project_id, scope="dataset-version", key=idempotency_key, payload=payload,
+            command=lambda: _dsv_to_response(svc.register_dataset_version(RegisterDatasetVersionCommand(
+                project_id=project_id, dataset_key=dataset_key, name=name,
+                version_label=version_label, source_path=tmp_path, schema_json=schema_json,
+                row_count=row_count, column_count=column_count, source_note=source_note,
+            ))).model_dump(mode="json"),
+        )
     finally:
         tmp_path.unlink(missing_ok=True)
 
-    return _dsv_to_response(dv)
+    return DatasetVersionResponse.model_validate(response)
 
 
 @router.get("/projects/{project_id}/dataset-versions", response_model=DatasetVersionListResponse)
-def list_dataset_versions(
+async def list_dataset_versions(
     project_id: str,
+    svc: ProjectDataServiceDep,
 ) -> DatasetVersionListResponse:
-    from ariadne.interfaces.web_api.dependencies import _uow_context
-    with _uow_context() as uow:
-        items = uow.dataset_versions.list_by_project(project_id)
+    items = svc.list_dataset_versions(project_id)
     return DatasetVersionListResponse(items=[_dsv_to_response(dv) for dv in items])
 
 
 @router.get("/dataset-versions/{dataset_version_id}", response_model=DatasetVersionResponse)
-def get_dataset_version(dataset_version_id: str) -> DatasetVersionResponse:
-    from ariadne.interfaces.web_api.dependencies import _uow_context
-    from ariadne.product.domain.errors import EntityNotFound
-    with _uow_context() as uow:
-        dv = uow.dataset_versions.get(dataset_version_id)
-        if dv is None:
-            raise EntityNotFound("DatasetVersion", dataset_version_id)
-    return _dsv_to_response(dv)
+async def get_dataset_version(dataset_version_id: str, svc: ProjectDataServiceDep) -> DatasetVersionResponse:
+    return _dsv_to_response(svc.get_dataset_version(dataset_version_id))
+
+
+@router.get("/dataset-versions/{dataset_version_id}/preview", response_model=DatasetPreviewResponse)
+async def preview_dataset(dataset_version_id: str, svc: ProjectDataServiceDep, limit: int = 20) -> DatasetPreviewResponse:
+    return DatasetPreviewResponse.model_validate(svc.get_dataset_preview(dataset_version_id, limit))

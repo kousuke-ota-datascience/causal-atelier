@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Header, Request
 
-from ariadne.interfaces.web_api.dependencies import ExecutionServiceDep
+from ariadne.interfaces.web_api.dependencies import (
+    ExecutionServiceDep, IdempotencyServiceDep, ProductQueryServiceDep,
+)
 from ariadne.interfaces.web_api.schemas import (
     ExecutionBatchCreate,
     ExecutionBatchResponse,
     ExecutionListResponse,
     ExecutionResponse,
+    ExecutionPrefillResponse,
+    ExecutionAccepted,
 )
 from ariadne.product.application.execution_service import (
     CreateExecutionBatchCommand,
@@ -41,57 +45,61 @@ def _execution_to_response(e: Execution) -> ExecutionResponse:
 
 
 @router.post("/projects/{project_id}/execution-batches", status_code=201, response_model=ExecutionBatchResponse)
-def create_execution_batch(
+async def create_execution_batch(
     project_id: str,
     body: ExecutionBatchCreate,
     request: Request,
     svc: ExecutionServiceDep,
+    idempotency: IdempotencyServiceDep,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> ExecutionBatchResponse:
     requested_by = request.headers.get("X-User-Id", "anonymous")
-    result = svc.create_execution_batch(CreateExecutionBatchCommand(
-        project_id=project_id,
-        dataset_version_id=body.dataset_version_id,
-        operation=ExecutionOperation(body.operation),
-        variants=[
-            ExecutionVariantSpec(
+    def command() -> dict:  # type: ignore[type-arg]
+        result = svc.create_execution_batch(CreateExecutionBatchCommand(
+            project_id=project_id, dataset_version_id=body.dataset_version_id,
+            operation=ExecutionOperation(body.operation),
+            variants=[ExecutionVariantSpec(
                 algorithm_or_estimator=v.algorithm_or_estimator,
-                parameter_json=v.parameter_json,
-                random_seed=v.random_seed,
-                analysis_spec_json=v.analysis_spec_json,
-                objective_snapshot=v.objective_snapshot,
-                rationale_snapshot=v.rationale_snapshot,
-            )
-            for v in body.variants
-        ],
-        input_graph_version_id=body.input_graph_version_id,
-        code_version=body.code_version,
-        runtime_version_json=body.runtime_version_json,
-        requested_by=requested_by,
-    ))
-    return ExecutionBatchResponse(
-        batch_key=result.batch_key,
-        execution_ids=result.execution_ids,
+                parameter_json=v.parameters, random_seed=v.random_seed,
+                analysis_spec_json=body.analysis_spec,
+                objective_snapshot=body.objective, rationale_snapshot=body.rationale,
+            ) for v in body.variants],
+            input_graph_version_id=body.input_graph_version_id,
+            code_version=body.code_version, runtime_version_json=body.runtime_versions,
+            requested_by=requested_by,
+        ))
+        return ExecutionBatchResponse(
+            batch_key=result.batch_key,
+            executions=[ExecutionAccepted(execution_id=value, status="QUEUED") for value in result.execution_ids],
+        ).model_dump(mode="json")
+    response = idempotency.execute(
+        project_id=project_id, scope="execution-batch", key=idempotency_key,
+        payload=body.model_dump(mode="json"), command=command,
     )
+    return ExecutionBatchResponse.model_validate(response)
 
 
 @router.get("/projects/{project_id}/executions", response_model=ExecutionListResponse)
-def list_executions(project_id: str) -> ExecutionListResponse:
-    from ariadne.interfaces.web_api.dependencies import _uow_context
-    with _uow_context() as uow:
-        items = uow.executions.list_by_project(project_id)
+async def list_executions(project_id: str, query: ProductQueryServiceDep) -> ExecutionListResponse:
+    items = query.list_executions(project_id)
     return ExecutionListResponse(items=[_execution_to_response(e) for e in items])
 
 
 @router.get("/executions/{execution_id}", response_model=ExecutionResponse)
-def get_execution(execution_id: str, svc: ExecutionServiceDep) -> ExecutionResponse:
+async def get_execution(execution_id: str, svc: ExecutionServiceDep) -> ExecutionResponse:
     return _execution_to_response(svc.get_execution(execution_id))
 
 
+@router.get("/executions/{execution_id}/prefill", response_model=ExecutionPrefillResponse)
+async def get_execution_prefill(execution_id: str, svc: ExecutionServiceDep) -> ExecutionPrefillResponse:
+    return ExecutionPrefillResponse.model_validate(svc.get_prefill(execution_id))
+
+
 @router.post("/executions/{execution_id}/cancel", status_code=204)
-def cancel_execution(execution_id: str, svc: ExecutionServiceDep) -> None:
+async def cancel_execution(execution_id: str, svc: ExecutionServiceDep) -> None:
     svc.request_cancel(execution_id)
 
 
 @router.post("/executions/{execution_id}/retry", status_code=204)
-def retry_execution(execution_id: str, svc: ExecutionServiceDep) -> None:
+async def retry_execution(execution_id: str, svc: ExecutionServiceDep) -> None:
     svc.retry_execution(execution_id)

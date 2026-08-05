@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ariadne.product.domain.annotation import Annotation
-from ariadne.product.domain.errors import EntityNotFound
+from ariadne.product.domain.errors import EntityNotFound, ProjectBoundaryViolation
 from ariadne.product.ports.clock import ClockPort, SystemClock
 
 
@@ -51,6 +51,23 @@ class AnnotationService:
             updated_at=now,
         )
         with self._uow_factory() as uow:
+            if uow.projects.get(command.project_id) is None:
+                raise EntityNotFound("Project", command.project_id)
+            if command.target_result_id is not None:
+                result = uow.results.get(command.target_result_id)
+                if result is None:
+                    raise EntityNotFound("Result", command.target_result_id)
+                execution = uow.executions.get(result.execution_id)
+                if execution is None:
+                    raise EntityNotFound("Execution", result.execution_id)
+                if execution.project_id != command.project_id:
+                    raise ProjectBoundaryViolation("Target Result is not in the same project")
+            if command.target_graph_version_id is not None:
+                graph = uow.graph_versions.get(command.target_graph_version_id)
+                if graph is None:
+                    raise EntityNotFound("GraphVersion", command.target_graph_version_id)
+                if graph.project_id != command.project_id:
+                    raise ProjectBoundaryViolation("Target GraphVersion is not in the same project")
             uow.annotations.add(annotation)
             uow.commit()
         return annotation

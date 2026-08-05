@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import select, text
@@ -306,6 +307,10 @@ class SqlProjectRepository:
         if orm:
             _project_to_orm(project, existing=orm)
 
+    def list(self) -> list[Project]:
+        rows = self._session.scalars(select(ProjectOrm).order_by(ProjectOrm.created_at)).all()
+        return [_orm_to_project(row) for row in rows]
+
 
 class SqlDatasetVersionRepository:
     def __init__(self, session: Session) -> None:
@@ -353,8 +358,8 @@ class SqlExecutionRepository:
         ).all()
         return [_orm_to_execution(r) for r in rows]
 
-    def claim_next(self) -> Execution | None:
-        """Atomically claim the next QUEUED execution using SELECT FOR UPDATE SKIP LOCKED."""
+    def claim_next(self, worker_token: str) -> Execution | None:
+        """Lock and mark one row RUNNING; the caller commits this transaction."""
         orm = self._session.scalars(
             select(ExecutionOrm)
             .where(ExecutionOrm.status == "QUEUED")
@@ -362,7 +367,13 @@ class SqlExecutionRepository:
             .with_for_update(skip_locked=True)
             .limit(1)
         ).first()
-        return _orm_to_execution(orm) if orm else None
+        if orm is None:
+            return None
+        orm.status = ExecutionStatus.RUNNING.value
+        orm.started_at = datetime.now(timezone.utc)
+        orm._worker_token = worker_token
+        self._session.flush()
+        return _orm_to_execution(orm)
 
     def update(self, execution: Execution) -> None:
         orm = self._session.get(ExecutionOrm, execution.execution_id)
@@ -377,6 +388,9 @@ class SqlResultRepository:
     def add_many(self, results: list[Result]) -> None:
         for r in results:
             self._session.add(_result_to_orm(r))
+        # Artifact rows may reference these newly-created Results in the same UoW.
+        # There are no ORM relationships to give SQLAlchemy an ordering hint.
+        self._session.flush()
 
     def get(self, result_id: str) -> Result | None:
         orm = self._session.get(ResultOrm, result_id)

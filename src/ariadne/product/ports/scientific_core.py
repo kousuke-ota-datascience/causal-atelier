@@ -31,6 +31,7 @@ class EstimationInput:
 @dataclass
 class DiscoveryOutput:
     scientific_status: ScientificStatus
+    graph_type: str = "CPDAG"
     graph_json: dict[str, Any] = field(default_factory=dict)
     summary: dict[str, Any] = field(default_factory=dict)
     diagnostics: dict[str, Any] = field(default_factory=dict)

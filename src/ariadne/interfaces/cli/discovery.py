@@ -1,95 +1,90 @@
-"""ariadne-discover CLI command."""
+"""Standalone discovery CLI; it never creates Web/API Execution IDs."""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import platform
 import sys
 from pathlib import Path
 
+import yaml
+from pydantic import ValidationError
 
-def _sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
-    return h.hexdigest()
+from ariadne.interfaces.cli.config_schema import DiscoveryCliConfig
+from ariadne.interfaces.cli.manifest import CliManifest
+
+
+def _hash(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(prog="ariadne-discover")
+    parser.add_argument("--config", required=True, type=Path)
+    return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        prog="ariadne-discover",
-        description="Run causal discovery on a pre-processed tabular dataset.",
-    )
-    parser.add_argument("--dataset", required=True, type=Path, help="Path to dataset (.parquet or .csv)")
-    parser.add_argument("--algorithm", required=True, help="Discovery algorithm (pc, ges, lingam, notears)")
-    parser.add_argument("--output-dir", required=True, type=Path, help="Directory to write outputs")
-    parser.add_argument("--alpha", type=float, default=0.05, help="Significance level for PC (default: 0.05)")
-    parser.add_argument("--random-seed", type=int, default=None)
-    parser.add_argument("--params", type=json.loads, default={}, metavar="JSON", help="Additional parameters as JSON")
-    parser.add_argument("--no-background-knowledge", action="store_true")
-    args = parser.parse_args(argv)
-
-    dataset_path: Path = args.dataset.resolve()
-    output_dir: Path = args.output_dir.resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    if not dataset_path.exists():
-        print(f"ERROR: Dataset not found: {dataset_path}", file=sys.stderr)
-        return 3
-
-    dataset_hash = _sha256_file(dataset_path)
-    params = {
-        "alpha": args.alpha,
-        "use_background_knowledge": not args.no_background_knowledge,
-        **args.params,
-    }
-
+    args = parse_args(argv)
     try:
+        raw = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+        config = DiscoveryCliConfig.model_validate(raw)
+    except (OSError, yaml.YAMLError, ValidationError, TypeError) as exc:
+        print(f"ERROR: invalid config: {exc}", file=sys.stderr)
+        return 2
+    dataset = config.dataset.resolve()
+    if not dataset.is_file():
+        print(f"ERROR: dataset not found: {dataset}", file=sys.stderr)
+        return 3
+    dataset_hash = _hash(dataset)
+    if config.dataset_hash and config.dataset_hash != dataset_hash:
+        print("ERROR: dataset hash mismatch", file=sys.stderr)
+        return 3
+    try:
+        from ariadne.product.domain.errors import InvalidAnalysisSpec, UnsupportedAlgorithm
         from ariadne.product.ports.scientific_core import DiscoveryInput
         from ariadne.scientific.core_adapter import ScientificCoreAdapter
-
-        core = ScientificCoreAdapter()
-        input_ = DiscoveryInput(
-            dataset_path=dataset_path,
-            algorithm=args.algorithm,
-            parameters=params,
-            random_seed=args.random_seed,
-        )
-        output = core.run_discovery(input_, output_dir)
+        output = ScientificCoreAdapter().run_discovery(DiscoveryInput(
+            dataset_path=dataset, algorithm=config.algorithm, parameters=config.parameters,
+            random_seed=config.random_seed, analysis_spec=config.analysis_spec,
+        ), config.output_dir)
+    except (InvalidAnalysisSpec, UnsupportedAlgorithm) as exc:
+        print(f"ERROR: invalid config: {exc}", file=sys.stderr)
+        return 2
     except Exception as exc:
-        print(f"ERROR: Scientific core execution failed: {exc}", file=sys.stderr)
+        print(f"ERROR: scientific core technical failure: {exc}", file=sys.stderr)
         return 4
-
-    # Build and write manifest
-    import ariadne
-    version = getattr(ariadne, "__version__", "0.1.0")
-
-    from ariadne.interfaces.cli.manifest import DiscoveryManifest
-    manifest = DiscoveryManifest(
-        manifest_version="1",
-        ariadne_version=version,
-        algorithm=args.algorithm,
-        dataset_path=str(dataset_path),
-        dataset_hash=dataset_hash,
-        parameters=params,
-        random_seed=args.random_seed,
-        scientific_status=output.scientific_status.value,
-        graph_json=output.graph_json,
-        summary=output.summary,
-        output_dir=str(output_dir),
-        artifacts=[str(p) for p in output.artifacts],
-        warnings=output.warnings,
-    )
-
-    manifest_path = output_dir / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest.__dict__, indent=2, default=str))
-
-    print(f"Scientific status: {output.scientific_status.value}")
-    print(f"Manifest written to: {manifest_path}")
+    try:
+        artifacts = [{"location": str(path), "content_hash": _hash(path)} for path in output.artifacts]
+        manifest = CliManifest(
+            manifest_version="1.0", operation="DISCOVERY",
+            dataset={"content_hash": dataset_hash, "location": str(dataset)}, graph=None,
+            algorithm_or_estimator=config.algorithm, parameters=config.parameters,
+            analysis_spec=config.analysis_spec, random_seed=config.random_seed,
+            code_version=_version(), runtime_versions={"python": platform.python_version()},
+            scientific_status=output.scientific_status.value, result_summary=output.summary,
+            artifacts=artifacts, warnings=output.warnings,
+        )
+        config.output_dir.mkdir(parents=True, exist_ok=True)
+        (config.output_dir / "manifest.json").write_text(
+            json.dumps(manifest.to_dict(), sort_keys=True, indent=2), encoding="utf-8"
+        )
+    except OSError as exc:
+        print(f"ERROR: output write failure: {exc}", file=sys.stderr)
+        return 5
     return 0
 
 
+def _version() -> str:
+    import ariadne
+    return getattr(ariadne, "__version__", "0.1.0")
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

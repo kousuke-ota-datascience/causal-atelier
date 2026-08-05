@@ -45,3 +45,27 @@ class UnsupportedAlgorithm(DomainError):
 class UnsupportedEstimator(DomainError):
     def __init__(self, name: str) -> None:
         super().__init__(f"Unsupported estimator: {name!r}")
+
+
+class InfrastructureError(Exception):
+    """Base class for technical failures that must not become Results."""
+
+
+class ArtifactStoreUnavailable(InfrastructureError):
+    pass
+
+
+class ArtifactHashMismatch(InfrastructureError):
+    pass
+
+
+class DatabaseUnavailable(InfrastructureError):
+    pass
+
+
+class ScientificCoreExecutionError(InfrastructureError):
+    pass
+
+
+class QueueClaimError(InfrastructureError):
+    pass

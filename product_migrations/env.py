@@ -13,10 +13,10 @@ from ariadne.product.persistence.orm_models import ProductBase
 config = context.config
 if config.config_file_name:
     fileConfig(config.config_file_name)
-config.set_main_option(
-    "sqlalchemy.url",
-    os.getenv("ARIADNE_PRODUCT_DATABASE_URL", os.getenv("ARIADNE_DATABASE_URL", config.get_main_option("sqlalchemy.url"))),
-)
+database_url = os.getenv("ARIADNE_PRODUCT_DATABASE_URL")
+if not database_url:
+    raise RuntimeError("ARIADNE_PRODUCT_DATABASE_URL is required for Product migrations")
+config.set_main_option("sqlalchemy.url", database_url)
 target_metadata = ProductBase.metadata
 
 
@@ -27,6 +27,7 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
+        version_table="alembic_version_product",
     )
     with context.begin_transaction():
         context.run_migrations()

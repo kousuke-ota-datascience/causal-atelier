@@ -6,6 +6,7 @@ import logging
 import os
 import signal
 import time
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
@@ -61,11 +62,12 @@ def run_worker(
     logger.info("Worker started. Polling every %.1fs", poll_seconds)
     global _stop
     _stop = False
+    worker_token = str(uuid.uuid4())
 
     while not _stop:
         try:
             with uow_context() as uow:
-                execution = uow.executions.claim_next()
+                execution = uow.executions.claim_next(worker_token)
                 uow.commit()
 
             if execution is not None:
@@ -84,10 +86,9 @@ def main() -> None:
     import logging as _logging
     _logging.basicConfig(level=_logging.INFO)
 
-    database_url = os.getenv(
-        "ARIADNE_PRODUCT_DATABASE_URL",
-        os.getenv("ARIADNE_DATABASE_URL", "sqlite:///.ariadne/product.db"),
-    )
+    database_url = os.getenv("ARIADNE_PRODUCT_DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("ARIADNE_PRODUCT_DATABASE_URL is required")
     artifact_root = Path(os.getenv("ARIADNE_ARTIFACT_ROOT", ".ariadne/objects"))
     poll_seconds = float(os.getenv("ARIADNE_WORKER_POLL_SECONDS", "2"))
 

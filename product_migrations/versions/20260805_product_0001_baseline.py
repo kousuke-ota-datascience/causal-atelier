@@ -20,6 +20,17 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
+        "product_idempotency",
+        sa.Column("idempotency_id", sa.String(36), primary_key=True),
+        sa.Column("project_id", sa.String(36), nullable=False),
+        sa.Column("scope", sa.String(100), nullable=False),
+        sa.Column("idempotency_key", sa.String(200), nullable=False),
+        sa.Column("request_hash", sa.String(64), nullable=False),
+        sa.Column("response_json", sa.JSON, nullable=False),
+        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.UniqueConstraint("project_id", "scope", "idempotency_key", name="uq_product_idempotency_key"),
+    )
+    op.create_table(
         "product_project",
         sa.Column("project_id", sa.String(36), primary_key=True),
         sa.Column("name", sa.String(200), nullable=False),
@@ -63,6 +74,10 @@ def upgrade() -> None:
             name="ck_product_execution_status",
         ),
         sa.CheckConstraint("retry_count >= 0", name="ck_product_execution_retry_count"),
+        sa.CheckConstraint(
+            "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL) OR (operation = 'ESTIMATION' AND input_graph_version_id IS NOT NULL)",
+            name="ck_product_execution_graph_by_operation",
+        ),
     )
     op.create_index("ix_product_execution_project_id", "product_execution", ["project_id"])
     op.create_index("ix_product_execution_dataset_version_id", "product_execution", ["dataset_version_id"])
@@ -81,6 +96,8 @@ def upgrade() -> None:
         sa.Column("diagnostics_json", sa.JSON, nullable=False, server_default="{}"),
         sa.Column("warning_json", sa.JSON, nullable=False, server_default="[]"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.CheckConstraint("result_type IN ('DISCOVERY_GRAPH_RESULT','IDENTIFICATION_RESULT','TREATMENT_EFFECT_RESULT')", name="ck_product_result_type"),
+        sa.CheckConstraint("scientific_status IN ('VALID','NOT_IDENTIFIED','INSUFFICIENT_OVERLAP','INSUFFICIENT_SAMPLE','ESTIMATION_UNRELIABLE')", name="ck_product_result_scientific_status"),
     )
     op.create_index("ix_product_result_execution_id", "product_result", ["execution_id"])
 
@@ -99,6 +116,7 @@ def upgrade() -> None:
         sa.Column("created_by", sa.String(200), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.CheckConstraint("status IN ('DRAFT', 'FIXED')", name="ck_product_graph_version_status"),
+        sa.CheckConstraint("graph_type IN ('DAG','CPDAG','PAG')", name="ck_product_graph_version_type"),
     )
     op.create_index("ix_product_graph_version_project_id", "product_graph_version", ["project_id"])
     op.create_index("ix_product_graph_version_source_result_id", "product_graph_version", ["source_result_id"])
@@ -118,6 +136,7 @@ def upgrade() -> None:
         sa.Column("metadata_json", sa.JSON, nullable=False, server_default="{}"),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.CheckConstraint("size_bytes >= 0", name="ck_product_artifact_size_bytes"),
+        sa.CheckConstraint("artifact_type IN ('DATASET_FILE','GRAPH_JSON','GRAPH_IMAGE','EFFECT_TABLE','DIAGNOSTICS_TABLE','MANIFEST','CONFIG_SNAPSHOT','LOG')", name="ck_product_artifact_type"),
     )
     op.create_index("ix_product_artifact_project_id", "product_artifact", ["project_id"])
     op.create_index("ix_product_artifact_execution_id", "product_artifact", ["execution_id"])
@@ -192,4 +211,5 @@ def downgrade() -> None:
     op.drop_table("product_graph_version")
     op.drop_table("product_result")
     op.drop_table("product_execution")
+    op.drop_table("product_idempotency")
     op.drop_table("product_project")
