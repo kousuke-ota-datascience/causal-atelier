@@ -1,0 +1,25 @@
+default: 
+    file: 
+        path: "../../data/{data_ver}/{process_id}"
+        name: ""
+        type: "parquet" ## csv(include tsv, ssv) or yaml or pickle
+    write_option: 
+        csv: 
+            delimiter: "\t"
+            quotechar: "\""
+            quoting: 1 ## quoting = QUOTE_MINIMAL (0), QUOTE_ALL (1), QUOTE_NONNUMERIC (2) or QUOTE_NONE (3).
+            encoding: "utf-8"
+            header: True
+            index: False
+        yaml: 
+            encoding: "utf-8"
+
+unexisting_track_db: 
+    file: 
+        name: "unexisting_track_db.csv"
+        type: "csv"
+
+unexisting_track_db_metadata: 
+    file: 
+        name: "unexisting_track_db_metadata.yaml"
+        type: "yaml"

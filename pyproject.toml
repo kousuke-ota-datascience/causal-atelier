@@ -1,0 +1,83 @@
+[project]
+name = "ariadne"
+version = "0.1.0"
+description = "Causal discovery and inference platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.16.0",
+    "azure-storage-blob>=12.25.1",
+    "boto3>=1.39.0",
+    "causal-learn>=0.1.4.8",
+    "lingam>=1.8.3",
+    "scipy>1.6.1",
+    "statsmodels>=0.14.2",
+    "dask>=2026.3.0",
+    "econml>=0.16.0",
+    "fastapi>=0.115.0",
+    "httpx2>=0.28.0",
+    "ipykernel>=7.2.0",
+    "mlflow-skinny>=2.15.0",
+    "pandas>=3.0.2",
+    "pyarrow>=24.0.0",
+    "psycopg[binary]>=3.2.0",
+    "pyjwt[crypto]>=2.10.0",
+    "pytest>=9.0.3",
+    "python-multipart>=0.0.20",
+    "pyyaml>=6.0.3",
+    "rdata>=1.0.0",
+    "sqlalchemy>=2.0.41",
+    "uvicorn>=0.30.0",
+]
+
+[project.scripts]
+# New product CLI
+ariadne-discover = "ariadne.interfaces.cli.discovery:main"
+ariadne-estimate = "ariadne.interfaces.cli.estimation:main"
+# New product API and Worker
+ariadne-api = "ariadne.interfaces.web_api.app:main"
+ariadne-worker = "ariadne.interfaces.worker.runner:main"
+# Legacy CLI aliases (deprecated – will be removed after compatibility window)
+ariadne-discovery = "ariadne.legacy.interfaces.cli.discovery:main"
+ariadne-inference = "ariadne.legacy.interfaces.cli.inference:main"
+ariadne-pipeline = "ariadne.legacy.interfaces.cli.pipeline:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "unit: pure domain/validator tests with no I/O",
+    "component: application service and adapter tests",
+    "api: FastAPI + DB integration tests",
+    "worker: Outbox / Worker / lease / retry / cancel tests",
+    "postgres: requires a real PostgreSQL connection",
+    "cli: CLI entry-point regression tests",
+    "mlflow: MLflow integration tests using local SQLite backend",
+    "e2e: full MVP journey end-to-end tests",
+    "scientific: synthetic-data statistical validation tests",
+    "requirement: links a test to a functional requirement ID",
+]
+
+[tool.uv.workspace]
+members = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ariadne"]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+    "myst-parser>=4.0.1",
+    "sphinx>=8.2.3",
+    "sphinx-autodoc-typehints>=3.5.2",
+    "sphinx-rtd-theme>=3.0.2",
+]
+docs = [
+    "myst-parser>=4.0.1",
+    "sphinx>=8.2.3",
+    "sphinx-autodoc-typehints>=3.5.2",
+    "sphinx-rtd-theme>=3.0.2",
+]

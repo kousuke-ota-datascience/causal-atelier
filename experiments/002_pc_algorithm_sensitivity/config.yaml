@@ -1,0 +1,7 @@
+experiment:
+  id: "002"
+  theme: pc_algorithm_sensitivity
+dataset:
+  name: completejourney
+analysis_config: configs/causal/discovery.yaml
+feature_config: configs/preprocessing/discovery_features.yaml

@@ -1,0 +1,248 @@
+dataset:
+  name: completejourney
+  analysis_unit: household
+  unit_key: household_id
+  time_key: week
+
+tables:
+  transactions:
+    name: transactions
+    household_key: household_id
+    week: week
+    transaction_timestamp: transaction_timestamp
+    required_columns:
+      - household_id
+      - basket_id
+      - week
+      - transaction_timestamp
+      - sales_value
+      - quantity
+      - retail_disc
+      - coupon_disc
+      - coupon_match_disc
+
+  demographics:
+    name: demographics
+    household_key: household_id
+    required_columns:
+      - household_id
+      - age
+      - income
+      - home_ownership
+      - marital_status
+      - household_size
+      - household_comp
+      - kids_count
+
+  campaigns:
+    name: campaigns
+    household_key: household_id
+    campaign_id: campaign_id
+    required_columns:
+      - household_id
+      - campaign_id
+
+  campaign_descriptions:
+    name: campaign_descriptions
+    campaign_id: campaign_id
+    start_day: start_date
+    end_day: end_date
+    required_columns:
+      - campaign_id
+      - start_date
+      - end_date
+
+windows:
+  campaign_dates:
+    day_to_week:
+      method: floor_divide
+      divisor: 7
+  pre:
+    type: relative_to_campaign_start
+  outcome:
+    type: campaign_period
+
+treatment:
+  name: treated
+  source_table: campaigns
+  campaign_id_column: campaign_id
+  household_key_column: household_id
+
+aggregations:
+  pre:
+    source_table: transactions
+    prefix: pre
+    group_by:
+      - household_id
+    filters:
+      window: pre
+    metrics:
+      baskets:
+        column: basket_id
+        agg: nunique
+      quantity:
+        column: quantity
+        agg: sum
+      sales_value:
+        column: sales_value
+        agg: sum
+      retail_disc:
+        column: retail_disc
+        agg: sum
+      coupon_disc:
+        column: coupon_disc
+        agg: sum
+      coupon_match_disc:
+        column: coupon_match_disc
+        agg: sum
+
+  outcome:
+    source_table: transactions
+    prefix: outcome
+    group_by:
+      - household_id
+    filters:
+      window: outcome
+    metrics:
+      baskets:
+        column: basket_id
+        agg: nunique
+      quantity:
+        column: quantity
+        agg: sum
+      sales_value:
+        column: sales_value
+        agg: sum
+      retail_disc:
+        column: retail_disc
+        agg: sum
+      coupon_disc:
+        column: coupon_disc
+        agg: sum
+      coupon_match_disc:
+        column: coupon_match_disc
+        agg: sum
+
+encodings:
+  age_midpoint:
+    input_column: age
+    output: age_midpoint
+    type: ordinal_map
+    unknown_value: null
+    map:
+      "19-24": 21.5
+      "25-34": 29.5
+      "35-44": 39.5
+      "45-54": 49.5
+      "55-64": 59.5
+      "65+": 70.0
+
+  age_unknown:
+    input_column: age
+    output: age_unknown
+    type: unknown_indicator
+    unknown_values:
+      - null
+      - Unknown
+
+  income_midpoint_k:
+    input_column: income
+    output: income_midpoint_k
+    type: ordinal_map
+    unknown_value: null
+    map:
+      "Under 15K": 7.5
+      "15-24K": 19.5
+      "25-34K": 29.5
+      "35-49K": 42.0
+      "50-74K": 62.0
+      "75-99K": 87.0
+      "100-124K": 112.0
+      "125-149K": 137.0
+      "150-174K": 162.0
+      "175-199K": 187.0
+      "200-249K": 225.0
+      "250K+": 275.0
+
+  income_unknown:
+    input_column: income
+    output: income_unknown
+    type: unknown_indicator
+    unknown_values:
+      - null
+      - Unknown
+
+  home_ownership:
+    input_column: home_ownership
+    type: binary_with_unknown
+    positive_values:
+      - Homeowner
+    output_positive: homeowner_yes
+    output_unknown: homeowner_unknown
+    aliases:
+      homeowner: homeowner_yes
+
+  marital_status:
+    input_column: marital_status
+    type: binary_with_unknown
+    positive_values:
+      - Married
+    output_positive: married_yes
+    output_unknown: married_unknown
+    aliases:
+      married: married_yes
+
+  household_size:
+    input_column: household_size
+    output: household_size
+    type: numeric_extract
+    unknown_value: 0
+
+  kids_count:
+    input_column: kids_count
+    output: kids_count
+    type: kids_count
+    unknown_value: 0
+
+adjustment_sets:
+  pre_treatment_covariates:
+    description: Pre-treatment household covariates only.
+    variables:
+      - age_midpoint
+      - age_unknown
+      - income_midpoint_k
+      - income_unknown
+      - household_size
+      - kids_count
+      - pre_baskets
+      - pre_quantity
+      - pre_sales_value
+      - pre_coupon_disc
+      - pre_coupon_match_disc
+      - pre_retail_disc
+      - homeowner_yes
+      - homeowner_unknown
+      - married_yes
+      - married_unknown
+    include_patterns: []
+    forbidden_roles:
+      - treatment
+      - outcome
+      - mediator
+      - collider
+      - post_treatment
+    reviewer_status: manually_reviewed
+
+  exclude_patterns:
+    - "^outcome_"
+    - "^post_"
+    - "^campaign_"
+
+feature_validation:
+  drop_constant_columns: true
+  drop_all_missing_columns: true
+  fail_on_missing_required_columns: true
+  fail_on_unknown_aggregation: true
+  dropped_column_notes:
+    - column: household_comp
+      reason: non_numeric_not_encoded

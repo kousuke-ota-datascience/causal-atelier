@@ -1,0 +1,21 @@
+pipeline:
+  run_id: null
+  random_seed: 42
+  fail_fast: true
+  validate_feature_semantics: true
+  artifact_manifest: true
+
+stages:
+  discovery:
+    enabled: true
+    analysis_config: configs/causal/discovery.yaml
+    feature_config: configs/preprocessing/discovery_features.yaml
+    output_dir: artifacts/pipelines/causal_discovery
+
+  inference:
+    enabled: true
+    config: configs/causal/inference/defaults.yaml
+    feature_config: configs/preprocessing/inference_features.yaml
+    feature_semantics: configs/preprocessing/feature_semantics.yaml
+    causal_design: configs/causal/inference/designs/completejourney_household.yaml
+    output_dir: artifacts/pipelines/causal_inference

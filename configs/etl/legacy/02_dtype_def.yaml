@@ -1,0 +1,7 @@
+info_logical_name: 
+    int64: 
+        - dummy_int64
+    float64: 
+        - dummy_float64
+    datetime64: 
+        dummy_datetime64: "%Y-%m-%d"

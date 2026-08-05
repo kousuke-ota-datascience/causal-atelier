@@ -1,0 +1,7 @@
+parameter_files:
+    in_data: "../../prm/{prm_ver}/01_in_data.yaml"
+    dtype_def: "../../prm/{prm_ver}/02_dtype_def.yaml"
+    column_structure: "../../prm/{prm_ver}/03_column_structure.yaml"
+    constants: "{path_sys_base}/common/prm/constants.yaml"
+    message: "{path_sys_base}/common/prm/message.yaml"
+    out_data: "../../prm/{prm_ver}/99_out_data.yaml"

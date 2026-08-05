@@ -1,0 +1,43 @@
+mode: edge_weight
+
+data:
+  dataset_yaml: configs/etl/completejourney/load.yaml
+  campaign_id: "18"
+  pre_weeks: 8
+  collinearity_threshold: 0.995
+  discovery_manifest: artifacts/pipelines/causal_discovery/manifest.yaml
+  output_dir: artifacts/pipelines/causal_inference
+
+feature_config_path: configs/preprocessing/inference_features.yaml
+
+edge_weight:
+  algorithms:
+    - pc
+    - ges
+    - lingam
+    - notears
+  robust_se: none
+  min_samples: 30
+
+treatment_effect:
+  treatment: treated
+  outcome: outcome_sales_value
+  estimand: ATE
+  adjustment_strategy: pre_treatment_covariates
+  covariates: null
+  effect_methods:
+    - diff_in_means
+    - ols_coefficient
+    - g_computation_ate
+    - ipw_ate
+  robust_se: HC3
+  propensity_clip:
+    lower: 0.01
+    upper: 0.99
+  cross_fitting_folds: 0
+
+report:
+  language: ja
+  write_markdown: true
+  write_csv: true
+  write_config_snapshot: true

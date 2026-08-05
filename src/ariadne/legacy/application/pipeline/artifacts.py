@@ -1,0 +1,148 @@
+"""Artifact registry and manifest helpers."""
+
+from __future__ import annotations
+
+import hashlib
+from collections.abc import Mapping
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+
+@dataclass(frozen=True)
+class ArtifactSpec:
+    """One planned or created artifact."""
+
+    name: str
+    path: Path
+    required: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize this artifact spec."""
+
+        return {
+            "name": self.name,
+            "path": str(self.path),
+            "required": self.required,
+        }
+
+
+@dataclass(frozen=True)
+class ArtifactRegistry:
+    """Pipeline artifact contract."""
+
+    artifacts: tuple[ArtifactSpec, ...] = ()
+
+    def for_stage(self, stage: str) -> dict[str, str]:
+        """Return artifact paths whose names are prefixed by a stage name."""
+
+        prefix = f"{stage}."
+        return {
+            artifact.name.removeprefix(prefix): str(artifact.path)
+            for artifact in self.artifacts
+            if artifact.name.startswith(prefix)
+        }
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize the registry."""
+
+        return {"artifacts": [artifact.to_dict() for artifact in self.artifacts]}
+
+
+@dataclass(frozen=True)
+class RunManifest:
+    """Manifest written for a completed stage."""
+
+    run_label: str | None  # human-assigned label; NOT an Ariadne execution_id
+    stage: str
+    resolved_output_dir: Path
+    created_at: str
+    config_paths: dict[str, Path]
+    config_hashes: dict[str, str]
+    artifacts: dict[str, Path]
+    random_seed: int | None = None
+    metadata: dict[str, Any] | None = None
+
+    @classmethod
+    def build(
+        cls,
+        *,
+        run_label: str | None,
+        stage: str,
+        output_dir: Path,
+        config_paths: Mapping[str, Path],
+        artifacts: Mapping[str, Path],
+        random_seed: int | None,
+        metadata: Mapping[str, Any] | None = None,
+    ) -> "RunManifest":
+        """Build a manifest and hash existing config files."""
+
+        hashes = {
+            name: hash_file(path)
+            for name, path in config_paths.items()
+            if path.exists()
+        }
+        return cls(
+            run_label=run_label,
+            stage=stage,
+            resolved_output_dir=output_dir,
+            created_at=datetime.now(timezone.utc).isoformat(),
+            config_paths=dict(config_paths),
+            config_hashes=hashes,
+            artifacts=dict(artifacts),
+            random_seed=random_seed,
+            metadata=dict(metadata or {}),
+        )
+
+    @classmethod
+    def read(cls, path: Path) -> dict[str, Any]:
+        """Read a manifest as a mapping."""
+
+        with path.open(encoding="utf-8") as stream:
+            document = yaml.safe_load(stream) or {}
+        if not isinstance(document, Mapping):
+            raise ValueError(f"YAML root must be a mapping: {path}")
+        return dict(document)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize the manifest."""
+
+        data = {
+            "run_label": self.run_label,
+            "stage": self.stage,
+            "resolved_output_dir": str(self.resolved_output_dir),
+            "created_at": self.created_at,
+            "random_seed": self.random_seed,
+            "artifacts": {name: str(path) for name, path in self.artifacts.items()},
+            "metadata": self.metadata or {},
+        }
+        for name, path in self.config_paths.items():
+            data[f"resolved_{name}_path"] = str(path)
+        for name, digest in self.config_hashes.items():
+            data[f"resolved_{name}_hash"] = digest
+        return data
+
+    def write(self, path: Path) -> None:
+        """Write the manifest to YAML."""
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            yaml.safe_dump(self.to_dict(), allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+
+
+def hash_file(path: Path) -> str:
+    """Return the SHA-256 digest used in reproducibility manifests."""
+
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+__all__ = ["ArtifactRegistry", "ArtifactSpec", "RunManifest"]

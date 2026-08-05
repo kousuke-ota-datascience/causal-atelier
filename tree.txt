@@ -1,0 +1,261 @@
+.
+├── .gitignore
+├── README.md
+├── _work
+│   └── 20260718_git_init
+│       └── README.md
+├── artifacts
+│   ├── experiments
+│   │   ├── 001_transaction_feature_baseline
+│   │   ├── 002_pc_algorithm_sensitivity
+│   │   ├── 003_coupon_effect_aipw
+│   │   └── 004_discovery_inference_integration
+│   └── pipelines
+│       ├── causal_discovery
+│       └── causal_inference
+├── configs
+│   ├── causal
+│   │   ├── discovery.yaml
+│   │   └── inference
+│   │       ├── defaults.yaml
+│   │       ├── designs
+│   │       │   └── completejourney_household.yaml
+│   │       └── pipeline.yaml
+│   ├── etl
+│   │   ├── completejourney
+│   │   │   ├── extract.yaml
+│   │   │   ├── load.yaml
+│   │   │   └── transform.yaml
+│   │   └── legacy
+│   │       ├── 00_calc_def.yaml
+│   │       ├── 01_in_data.yaml
+│   │       ├── 02_dtype_def.yaml
+│   │       ├── 03_column_structure.yaml
+│   │       └── 99_out_data.yaml
+│   └── preprocessing
+│       ├── discovery_features.yaml
+│       ├── feature_semantics.yaml
+│       └── inference_features.yaml
+├── data
+│   ├── 00_raw
+│   │   ├── README_data.md
+│   │   ├── airbnb
+│   │   ├── completejourney
+│   │   │   ├── csv
+│   │   │   └── rdata
+│   │   ├── mental_health_detection
+│   │   └── walmart
+│   ├── 10_interim
+│   │   └── completejourney
+│   └── 20_processed
+│       └── completejourney
+│           ├── discovery
+│           └── inference
+├── docs
+│   ├── api.rst
+│   ├── architecture
+│   │   └── program_architecture.ipynb
+│   ├── archive
+│   │   └── legacy_implementation_summary.md
+│   ├── conf.py
+│   ├── configuration.rst
+│   ├── feature_config.rst
+│   ├── index.rst
+│   ├── methodology
+│   │   ├── adjustment_sets.rst
+│   │   ├── diagnostics.rst
+│   │   ├── estimands.rst
+│   │   ├── feature_semantics.rst
+│   │   ├── identification.rst
+│   │   └── limitations.rst
+│   ├── methodology.rst
+│   ├── reproducibility.rst
+│   └── usage.rst
+├── experiments
+│   ├── 001_transaction_feature_baseline
+│   │   ├── README.md
+│   │   ├── config.yaml
+│   │   └── run.py
+│   ├── 002_pc_algorithm_sensitivity
+│   │   ├── README.md
+│   │   ├── config.yaml
+│   │   └── run.py
+│   ├── 003_coupon_effect_aipw
+│   │   ├── README.md
+│   │   ├── config.yaml
+│   │   └── run.py
+│   └── 004_discovery_inference_integration
+│       ├── README.md
+│       ├── config.yaml
+│       └── run.py
+├── notebooks
+│   ├── 001_transaction_feature_baseline
+│   │   └── 01_preprocessing.ipynb
+│   ├── 002_pc_algorithm_sensitivity
+│   │   └── 01_causal_discovery_and_validation.ipynb
+│   ├── 003_coupon_effect_aipw
+│   │   └── 01_causal_inference.ipynb
+│   └── 004_discovery_inference_integration
+│       └── 01_pipeline_plan.ipynb
+├── pyproject.toml
+├── src
+│   └── ariadne
+│       ├── __init__.py
+│       ├── application
+│       │   ├── __init__.py
+│       │   ├── discovery_pipeline.py
+│       │   ├── end_to_end_pipeline.py
+│       │   ├── etl_pipeline.py
+│       │   ├── execution.py
+│       │   ├── inference_pipeline.py
+│       │   ├── planning.py
+│       │   ├── strategies.py
+│       │   └── validation.py
+│       ├── causal
+│       │   ├── __init__.py
+│       │   ├── design
+│       │   │   ├── __init__.py
+│       │   │   └── schemas.py
+│       │   ├── discovery
+│       │   │   ├── __init__.py
+│       │   │   ├── algorithms.py
+│       │   │   ├── config.py
+│       │   │   ├── constants.py
+│       │   │   ├── diagnostics
+│       │   │   │   ├── __init__.py
+│       │   │   │   └── discovery.py
+│       │   │   ├── graph.py
+│       │   │   ├── reporting
+│       │   │   │   ├── __init__.py
+│       │   │   │   └── outputs.py
+│       │   │   └── results.py
+│       │   └── inference
+│       │       ├── __init__.py
+│       │       ├── config.py
+│       │       ├── constants.py
+│       │       ├── context.py
+│       │       ├── diagnostics
+│       │       │   ├── __init__.py
+│       │       │   ├── balance.py
+│       │       │   ├── design.py
+│       │       │   ├── outcome.py
+│       │       │   └── overlap.py
+│       │       ├── discovery_artifacts
+│       │       │   ├── __init__.py
+│       │       │   └── edges.py
+│       │       ├── estimators
+│       │       │   ├── __init__.py
+│       │       │   ├── aipw.py
+│       │       │   ├── edge_weight.py
+│       │       │   ├── inference.py
+│       │       │   ├── ipw.py
+│       │       │   ├── linear_model.py
+│       │       │   └── treatment_effect.py
+│       │       ├── exceptions.py
+│       │       ├── modes
+│       │       │   ├── __init__.py
+│       │       │   ├── base.py
+│       │       │   ├── edge_weight_mode.py
+│       │       │   ├── registry.py
+│       │       │   └── treatment_effect_mode.py
+│       │       ├── multiplicity.py
+│       │       ├── nuisance
+│       │       │   ├── __init__.py
+│       │       │   └── propensity.py
+│       │       └── reporting
+│       │           ├── __init__.py
+│       │           ├── markdown.py
+│       │           ├── outputs.py
+│       │           └── tables.py
+│       ├── etl
+│       │   ├── __init__.py
+│       │   ├── completejourney
+│       │   │   ├── __init__.py
+│       │   │   ├── extract.py
+│       │   │   ├── load.py
+│       │   │   └── transform.py
+│       │   ├── registry.py
+│       │   └── validation.py
+│       ├── infrastructure
+│       │   ├── __init__.py
+│       │   ├── artifacts
+│       │   │   ├── __init__.py
+│       │   │   └── registry.py
+│       │   ├── config
+│       │   │   ├── __init__.py
+│       │   │   ├── datasets.py
+│       │   │   ├── hashing.py
+│       │   │   ├── loader.py
+│       │   │   └── paths.py
+│       │   ├── logging.py
+│       │   ├── logging_helpers.py
+│       │   └── storage
+│       │       ├── __init__.py
+│       │       └── files.py
+│       ├── interfaces
+│       │   ├── __init__.py
+│       │   └── cli
+│       │       ├── __init__.py
+│       │       ├── discovery.py
+│       │       ├── inference.py
+│       │       └── pipeline.py
+│       ├── preprocessing
+│       │   ├── __init__.py
+│       │   ├── common
+│       │   │   ├── __init__.py
+│       │   │   ├── dataframe_utils.py
+│       │   │   ├── semantics.py
+│       │   │   └── windowing.py
+│       │   ├── discovery
+│       │   │   ├── __init__.py
+│       │   │   ├── aggregations.py
+│       │   │   ├── builder.py
+│       │   │   ├── config.py
+│       │   │   ├── encoders.py
+│       │   │   ├── metadata.py
+│       │   │   ├── source_features.py
+│       │   │   └── tables.py
+│       │   └── inference
+│       │       ├── __init__.py
+│       │       ├── aggregation.py
+│       │       ├── aggregations.py
+│       │       ├── builder.py
+│       │       ├── config.py
+│       │       ├── encoders.py
+│       │       ├── encoding.py
+│       │       ├── selectors.py
+│       │       └── transforms.py
+│       └── shared
+│           ├── __init__.py
+│           ├── constants.py
+│           ├── exceptions.py
+│           └── validation
+│               ├── __init__.py
+│               ├── issues.py
+│               └── result.py
+├── tests
+│   ├── conftest.py
+│   ├── fixtures
+│   │   └── completejourney
+│   ├── integration
+│   │   ├── test_core.py
+│   │   ├── test_inference.py
+│   │   └── test_runtime.py
+│   └── unit
+│       ├── causal
+│       │   ├── discovery
+│       │   └── inference
+│       ├── etl
+│       │   └── completejourney
+│       │       └── test_extract.py
+│       ├── infrastructure
+│       │   ├── config
+│       │   │   └── test_datasets.py
+│       │   ├── storage
+│       │   │   └── test_files.py
+│       │   └── test_logging.py
+│       └── preprocessing
+├── tree.txt
+└── uv.lock
+
+91 directories, 168 files

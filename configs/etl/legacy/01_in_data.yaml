@@ -1,0 +1,25 @@
+default: 
+    file: 
+        path: ""
+        name: ""
+        type: "parquet" ## csv(include tsv, ssv) or yaml or pickle
+    read_option: 
+        csv: 
+            delimiter: ","
+            header: 0
+            dtype: "object"
+            quotechar: "\""
+            quoting: 1 ## quoting = QUOTE_MINIMAL (0), QUOTE_ALL (1), QUOTE_NONNUMERIC (2) or QUOTE_NONE (3).
+            encoding: "utf-8"
+        yaml: 
+            encoding: "utf-8"
+
+spotify_charts: 
+    file: 
+        path: "{path_sys_base}/data_management/01_pickled/spotify_charts/data/001"
+        name: "spotify_charts_*.parquet"
+
+spotify_tracks_db: 
+    file: 
+        path: "{path_sys_base}/data_management/01_pickled/spotify_tracks_db/data/001"
+        name: "spotify_tracks_db.parquet"

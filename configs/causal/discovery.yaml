@@ -1,0 +1,71 @@
+dataset:
+  yaml_path: configs/etl/completejourney/load.yaml
+
+run:
+  campaign_id: "18"
+  pre_weeks: 8
+  output_dir: artifacts/pipelines/causal_discovery
+  random_seed: 20260630
+
+preprocessing:
+  collinearity_threshold: 0.995
+
+discovery:
+  # Select one or more discovery algorithms.
+  # Supported values:
+  #   - pc: constraint-based PC from causal-learn.
+  #   - ges: score-based GES from causal-learn.
+  #   - lingam: DirectLiNGAM; requires the optional `lingam` package.
+  #   - notears: linear NOTEARS; requires a compatible optional `notears` package.
+  # Example:
+  #   algorithms: [pc, ges]
+  algorithms:
+    - pc
+
+  use_background_knowledge: true
+
+  # GES settings: score-based greedy equivalence search.
+  # For faster execution, especially with many variables:
+  ges:
+    # Maximum number of parents per node (null = unlimited).
+    # Setting maxP=3 or maxP=4 greatly speeds up GES.
+    maxP: 4
+    # Score function: local_score_BIC is faster than local_score_marginal_general.
+    score_func: local_score_BIC
+
+  pc:
+    alpha: 0.01
+    indep_test: fisherz
+    allowed_indep_tests:
+      - fisherz
+      - kci
+      - chisq
+      - gsq
+    discrete_indep_tests:
+      - chisq
+      - gsq
+    discrete_bins: 4
+    alpha_grid:
+      - 0.001
+      - 0.005
+      - 0.01
+      - 0.05
+
+  notears:
+    threshold: 0.3
+
+diagnostics:
+  bootstrap:
+    samples: 0
+    sample_fraction: 1.0
+
+reporting:
+  write_raw_input: true
+  write_processed_input: true
+  write_standardized_input: true
+  write_variable_metadata: true
+  write_variable_diagnostics: true
+  write_algorithm_summary: true
+  write_graph_markdown: true
+  write_alpha_sensitivity: false
+  write_bootstrap_stability: true

@@ -1,0 +1,47 @@
+default: 
+    file: 
+        path: "{path_sys_base}/data/10_interim/completejourney"
+        name: ""
+        type: "parquet" ## csv(include tsv, ssv) or yaml or pickle
+    read_option: 
+        csv: 
+            delimiter: ","
+            header: 0
+            dtype: "object"
+            quotechar: "\""
+            quoting: 1 ## quoting = QUOTE_MINIMAL (0), QUOTE_ALL (1), QUOTE_NONNUMERIC (2) or QUOTE_NONE (3).
+            encoding: "utf-8"
+        yaml: 
+            encoding: "utf-8"
+
+campaign_descriptions: 
+    file: 
+        name: "campaign_descriptions.parquet"
+
+campaigns: 
+    file: 
+        name: "campaigns.parquet"
+
+coupon_redemptions: 
+    file: 
+        name: "coupon_redemptions.parquet"
+
+coupons: 
+    file: 
+        name: "coupons.parquet"
+
+demographics: 
+    file: 
+        name: "demographics.parquet"
+
+products: 
+    file: 
+        name: "products.parquet"
+
+promotions: 
+    file: 
+        name: "promotions.parquet"
+
+transactions: 
+    file: 
+        name: "transactions.parquet"
