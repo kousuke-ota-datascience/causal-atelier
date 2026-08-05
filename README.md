@@ -29,7 +29,7 @@ Bearer tokenを検証してください。詳細な構成、resource登録から
 ローカルでAPIとworkerを直接起動する場合は次のとおりです。
 
 ```bash
-uv sync --all-groups
+uv sync --all-groups --python 3.12
 export ARIADNE_AUTO_CREATE_SCHEMA=true
 uv run ariadne-api
 # 別terminal
@@ -45,4 +45,3 @@ uv run pytest -q
 本サービスは因果識別を自動証明しません。因果探索edgeはalgorithm依存の探索結果、
 edge weightは探索的係数として表示し、treatment effectにはestimand、調整集合、
 宣言された仮定、診断を併記します。
-

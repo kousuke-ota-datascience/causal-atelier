@@ -30,7 +30,7 @@ cd /datadrive/user_work/[USER_NAME]/ariadne
 python --version
 uv --version
 git --version
-uv sync --all-groups
+uv sync --all-groups --python 3.12
 ```
 
 CLIがインストールされたことを確認します。

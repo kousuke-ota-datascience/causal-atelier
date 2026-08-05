@@ -19,3 +19,13 @@ def test_four_workspace_frontend_uses_only_product_api_contract() -> None:
         "/graph-versions", "/annotations", "/lineage", "/artifacts/", "/export",
     ))
     assert "target_graph_version_id:graph.graph_version_id" in javascript
+
+
+def test_frontend_generates_idempotency_keys_without_requiring_random_uuid() -> None:
+    javascript = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
+
+    assert "function idempotencyKey()" in javascript
+    assert 'typeof globalThis.crypto?.randomUUID==="function"' in javascript
+    assert 'typeof globalThis.crypto?.getRandomValues==="function"' in javascript
+    assert javascript.count("randomUUID()") == 1
+    assert javascript.count("'Idempotency-Key':idempotencyKey()") == 4

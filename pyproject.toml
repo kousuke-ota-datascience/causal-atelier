@@ -3,7 +3,7 @@ name = "ariadne"
 version = "0.1.0"
 description = "Causal discovery and inference platform"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "alembic>=1.16.0",
     "causal-learn>=0.1.4.8",
