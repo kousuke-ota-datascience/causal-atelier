@@ -1,6 +1,6 @@
-# 23 API・インターフェース設計 — 初期価値検証版
+# 23 API・インターフェース設計 — 初期価値検証版 ENH-E2統合改定
 
-- 文書状態: ENH-E1統合改定版
+- 文書状態: ENH-E2統合改定版
 - 更新日: 2026-08-06
 - 上位文書:
   - `10_要件定義.md`
@@ -118,9 +118,10 @@ Estimation、Refutation、Sensitivity開始時は対応する`input_result_id`�
 | Method | Path | 用途 |
 |---|---|---|
 | POST | `/projects` | Project作成 |
-| GET | `/projects` | Web AppのProject選択用一覧 |
+| GET | `/projects` | Project一覧。既定`status=ACTIVE`、管理用途でstatus filter可 |
 | GET | `/projects/{project_id}` | Project取得 |
-| PATCH | `/projects/{project_id}` | Project更新 |
+| PATCH | `/projects/{project_id}` | ACTIVE Project更新 |
+| DELETE | `/projects/{project_id}` | Project論理削除。`ACTIVE → ARCHIVED` |
 
 ### 4.2 Dataset Version
 
@@ -156,6 +157,9 @@ SENSITIVITY
 |---|---|---|
 | GET | `/api/v1/projects/{project_id}/results/{result_id}` | Result詳細 |
 | POST | `/api/v1/projects/{project_id}/comparisons/query` | Result比較Projection |
+| GET | `/api/v1/projects/{project_id}/graph-candidates` | Discovery ResultとGraph Versionの統合一覧 |
+| GET | `/api/v1/projects/{project_id}/graph-candidates/{candidate_kind}/{candidate_id}` | Graph Candidate詳細 |
+| POST | `/api/v1/projects/{project_id}/graph-candidate-comparisons/query` | 2件以上のGraph Candidate比較 |
 | GET | `/api/v1/projects/{project_id}/results/{result_id}/lineage` | Result Lineage |
 | GET | `/api/v1/projects/{project_id}/scientific-capabilities` | 利用可能な科学機能 |
 
@@ -164,7 +168,8 @@ Comparisonは同一Result Type等の比較可能条件を検証する。
 
 | Method | Path | 用途 |
 |---|---|---|
-| POST | `/api/v1/projects/{project_id}/graph-versions` | Discovered / User-defined / Imported / Edited Graph作成 |
+| POST | `/api/v1/projects/{project_id}/graph-versions` | Graph Version作成 |
+| POST | `/api/v1/projects/{project_id}/graph-edit-drafts` | ResultまたはFIXED Graphから編集用DRAFT作成 |
 | GET | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | Graph取得 |
 | PATCH | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | DRAFT更新 |
 | POST | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}/fix` | FIXED化 |
@@ -256,6 +261,7 @@ ResponseはDataset Version metadataを返す。
   "parent_graph_version_id": null,
   "graph_origin": "USER_DEFINED",
   "name": "Domain graph v1",
+  "designated_outcome_node": "sales",
   "graph": {},
   "provenance": {
     "source_note": "Defined from domain knowledge"
@@ -591,11 +597,12 @@ Input Contract、Project境界、State Conflictは`422`または`409`へ変換�
 - Artifact / Manifest Schema
 - Scientific Backend Adapter
 
-### 11.2 ENH-E1 Version
+### 11.2 Contract Version
 
 ```text
 API: v1
 Analysis Spec: causal-analysis-spec/2
+ENH-E2では両versionを維持する
 ```
 
 ### 11.3 互換方針
@@ -605,3 +612,153 @@ Analysis Spec: causal-analysis-spec/2
 - 未対応FieldをSilent Ignoreしない
 - Breaking Changeが必要な場合、要件変更、設計更新、Contract Version更新の順で処理する
 - 実装から要件定義書を更新しない
+
+
+## 12. ENH-E2追加Contract
+
+### 12.1. Project論理削除
+
+```http
+DELETE /api/v1/projects/{project_id}
+```
+
+意味:
+
+- ACTIVEの場合、ARCHIVEDへ変更する
+- 既にARCHIVEDの場合、idempotentに成功する
+- Projectおよび下位Entityを物理削除しない
+- Responseは`204 No Content`とする
+
+ARCHIVED Projectへのwriteは`409 PROJECT_ARCHIVED`を返す。
+
+### 12.2. Discovery Analysis Spec
+
+```json
+{
+  "operation_spec": {
+    "feature_columns": ["coupon", "visits", "sales"],
+    "designated_outcome_node": "sales",
+    "constraints": {
+      "required_edges": [],
+      "forbidden_edges": [],
+      "temporal_tiers": []
+    }
+  }
+}
+```
+
+Validation:
+
+- FeatureはDataset schemaに存在する
+- 重複しない
+- OutcomeはDataset schemaとFeature columnsに存在する
+
+### 12.3. Graph Version Response
+
+追加field:
+
+```json
+{
+  "designated_outcome_node": "sales",
+  "allowed_actions": {
+    "can_edit": false,
+    "can_fix": false,
+    "can_create_child": true,
+    "can_use_for_inference": true,
+    "disabled_reasons": []
+  }
+}
+```
+
+`allowed_actions`はQuery Responseへ含めてもよく、正本Entity属性として保存しない。
+
+### 12.4. Create Graph Edit Draft
+
+```http
+POST /api/v1/projects/{project_id}/graph-edit-drafts
+```
+
+```json
+{
+  "base_candidate_kind": "GRAPH_VERSION",
+  "base_candidate_id": "uuid",
+  "change_kind": "USER_EDITED",
+  "name": "Edited graph",
+  "edit_rationale": "Remove implausible edge"
+}
+```
+
+規則:
+
+- baseがFIXED Graph Versionなら子DRAFTを作成する
+- baseがDiscovery Resultなら同一内容のDISCOVERED rootを確保し、その子DRAFTを作成する
+- Algorithm Outputを変更しない
+- Parentは同一ProjectかつFIXED
+
+### 12.5. Graph Candidate Response
+
+```json
+{
+  "candidate_kind": "GRAPH_VERSION",
+  "candidate_id": "uuid",
+  "source_result_id": "uuid",
+  "graph_version_id": "uuid",
+  "parent_graph_version_id": null,
+  "graph_type": "DAG",
+  "graph_origin": "DISCOVERED",
+  "version_status": "FIXED",
+  "scientific_status": null,
+  "fixed": true,
+  "designated_outcome_node": "sales",
+  "summary": {
+    "node_count": 8,
+    "edge_count": 11
+  },
+  "allowed_actions": {}
+}
+```
+
+### 12.6. Graph Candidate Comparison Request
+
+```json
+{
+  "candidate_refs": [
+    {"candidate_kind": "DISCOVERY_RESULT", "candidate_id": "uuid-1"},
+    {"candidate_kind": "GRAPH_VERSION", "candidate_id": "uuid-2"}
+  ]
+}
+```
+
+2件以上を必須とする。
+
+Response:
+
+- candidate tabs
+- Graph Document
+- compatibility
+- common nodes
+- added / removed / endpoint-changed edges
+- non-comparable reasons
+
+### 12.7. Inference Outcome Validation
+
+Web AppはGraph Versionの`designated_outcome_node`をCausal Questionへ設定する。APIは次を検証する。
+
+```text
+analysis_spec.causal_question.outcome
+= input_graph_version.designated_outcome_node
+```
+
+不一致は`409 GRAPH_OUTCOME_MISMATCH`、未指定は`422 GRAPH_OUTCOME_REQUIRED`とする。
+
+### 12.8. 追加Error Code
+
+| Code | HTTP | 意味 |
+|---|---:|---|
+| `PROJECT_ARCHIVED` | 409 | ARCHIVED Projectへのwrite |
+| `GRAPH_PARENT_NOT_FIXED` | 409 | DRAFTをParentに指定 |
+| `GRAPH_FIXED_IMMUTABLE` | 409 | FIXED Graph直接更新 |
+| `GRAPH_OUTCOME_REQUIRED` | 422 | FIXED GraphのOutcome未指定 |
+| `GRAPH_OUTCOME_MISMATCH` | 409 | Inference Outcome不一致 |
+| `GRAPH_CANDIDATE_NOT_COMPARABLE` | 422 | 構造差分不能。個別表示は可能 |
+| `INVALID_GRAPH_EDIT_BASE` | 409 | 編集元Candidateが不適格 |
