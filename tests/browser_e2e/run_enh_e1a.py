@@ -202,6 +202,25 @@ def main() -> int:
             discovery_form = page.locator("#discovery-form")
             discovery_form.locator('select[name="dataset_version_id"]').select_option(dataset_id)
             discovery_form.locator('input[name="features"]').fill("x,treatment,outcome")
+
+            # Regression: invalid UI state must not reach the API as an empty batch.
+            before_invalid = {item["execution_id"] for item in _executions(project_id)}
+            for algorithm in ("pc", "ges"):
+                discovery_form.locator(
+                    f'input[name="algorithms"][value="{algorithm}"]'
+                ).uncheck()
+            discovery_form.locator("button").click()
+            page.locator("#notice").filter(has_text="Algorithmを1件以上").wait_for()
+            assert {item["execution_id"] for item in _executions(project_id)} == before_invalid
+
+            discovery_form.locator('input[name="algorithms"][value="pc"]').check()
+            discovery_form.locator('input[name="alpha"]').fill("0.05,not-a-number")
+            discovery_form.locator("button").click()
+            page.locator("#notice").filter(has_text="PC alpha").wait_for()
+            assert {item["execution_id"] for item in _executions(project_id)} == before_invalid
+
+            discovery_form.locator('input[name="algorithms"][value="ges"]').check()
+            discovery_form.locator('input[name="alpha"]').fill("0.01,0.05")
             before = {item["execution_id"] for item in _executions(project_id)}
             discovery_form.locator("button").click()
             page.locator("#notice").filter(has_text="Discovery").wait_for()

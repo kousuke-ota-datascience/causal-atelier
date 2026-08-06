@@ -138,6 +138,71 @@ def test_product_constraints_and_transaction_rollback(postgres_engine):  # type:
 
 
 @pytest.mark.postgres
+def test_legacy_estimation_remains_readable_without_weakening_current_input_gate(postgres_engine):  # type: ignore[no-untyped-def]
+    ids = _seed_queued_execution(postgres_engine)
+    ids.update({name: str(uuid.uuid4()) for name in (
+        "discovery_result", "graph", "legacy_estimation", "current_estimation",
+    )})
+    now = datetime.now(timezone.utc)
+    try:
+        with postgres_engine.begin() as connection:
+            connection.execute(
+                text("INSERT INTO product_result "
+                     "(result_id,execution_id,result_type,scientific_status,summary_json,payload_json,"
+                     "diagnostics_json,warning_json,created_at) "
+                     "VALUES (:discovery_result,:execution,'DISCOVERY_GRAPH_RESULT','GENERATED',"
+                     "'{}','{}','{}','[]',:now)"),
+                {**ids, "now": now},
+            )
+            connection.execute(
+                text("INSERT INTO product_graph_version "
+                     "(graph_version_id,project_id,source_result_id,name,graph_type,graph_origin,"
+                     "provenance_json,graph_json,content_hash,status,created_by,created_at) "
+                     "VALUES (:graph,:project,:discovery_result,'legacy graph','DAG','DISCOVERED',"
+                     "'{}','{\"graph_type\":\"DAG\",\"nodes\":[],\"edges\":[]}',"
+                     "'legacy-hash','FIXED','postgres-contract',:now)"),
+                {**ids, "now": now},
+            )
+            connection.execute(
+                text("INSERT INTO product_execution "
+                     "(execution_id,project_id,dataset_version_id,input_graph_version_id,batch_key,"
+                     "operation,analysis_spec_json,algorithm_or_estimator,parameter_json,code_version,"
+                     "runtime_version_json,snapshot_hash,snapshot_schema_version,status,retry_count,"
+                     "requested_by,requested_at) "
+                     "VALUES (:legacy_estimation,:project,:dataset,:graph,:legacy_estimation,"
+                     "'ESTIMATION','{}','ols','{}','legacy','{}','legacy-hash',"
+                     "'legacy-product-snapshot/1','SUCCEEDED',0,'postgres-contract',:now)"),
+                {**ids, "now": now},
+            )
+
+        with pytest.raises(IntegrityError):
+            with postgres_engine.begin() as connection:
+                connection.execute(
+                    text("INSERT INTO product_execution "
+                         "(execution_id,project_id,dataset_version_id,input_graph_version_id,batch_key,"
+                         "operation,analysis_spec_json,algorithm_or_estimator,parameter_json,code_version,"
+                         "runtime_version_json,snapshot_hash,snapshot_schema_version,status,retry_count,"
+                         "requested_by,requested_at) "
+                         "VALUES (:current_estimation,:project,:dataset,:graph,:current_estimation,"
+                         "'ESTIMATION','{}','ols','{}','current','{}','current-hash',"
+                         "'causal-analysis-spec/2','QUEUED',0,'postgres-contract',:now)"),
+                    {**ids, "now": now},
+                )
+    finally:
+        with postgres_engine.begin() as connection:
+            connection.execute(
+                text("DELETE FROM product_execution WHERE execution_id=:legacy_estimation"), ids,
+            )
+            connection.execute(
+                text("DELETE FROM product_graph_version WHERE graph_version_id=:graph"), ids,
+            )
+            connection.execute(
+                text("DELETE FROM product_result WHERE result_id=:discovery_result"), ids,
+            )
+        _delete_seed(postgres_engine, ids)
+
+
+@pytest.mark.postgres
 def test_claim_next_is_atomic_across_concurrent_workers(postgres_engine):  # type: ignore[no-untyped-def]
     ids = _seed_queued_execution(postgres_engine)
     factory = sessionmaker(bind=postgres_engine, expire_on_commit=False)

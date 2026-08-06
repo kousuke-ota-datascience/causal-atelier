@@ -160,7 +160,9 @@ class ExecutionOrm(ProductBase):
         CheckConstraint(
             "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL AND input_result_id IS NULL) OR "
             "(operation = 'IDENTIFICATION' AND input_graph_version_id IS NOT NULL AND input_result_id IS NULL) OR "
-            "(operation IN ('ESTIMATION','REFUTATION','SENSITIVITY') AND input_graph_version_id IS NOT NULL AND input_result_id IS NOT NULL)",
+            "(operation = 'ESTIMATION' AND input_graph_version_id IS NOT NULL AND "
+            "(input_result_id IS NOT NULL OR snapshot_schema_version = 'legacy-product-snapshot/1')) OR "
+            "(operation IN ('REFUTATION','SENSITIVITY') AND input_graph_version_id IS NOT NULL AND input_result_id IS NOT NULL)",
             name="ck_product_execution_input_by_operation",
         ),
     )

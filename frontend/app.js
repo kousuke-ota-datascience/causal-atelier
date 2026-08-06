@@ -5,7 +5,16 @@ const $$=(selector)=>[...document.querySelectorAll(selector)];
 
 async function api(path,options={}){
   const response=await fetch(API+path,options);
-  if(!response.ok){let body={};try{body=await response.json()}catch{};const code=body.error?.code;throw new Error(code?`${code}: ${body.error.message}`:(body.error?.message||`${response.status} ${response.statusText}`))}
+  if(!response.ok){
+    let body={};try{body=await response.json()}catch{}
+    const error=body.error||{};
+    const details=Array.isArray(error.details?.errors)?error.details.errors.map(item=>{
+      const location=Array.isArray(item.loc)?item.loc.filter(value=>value!=='body').join('.'):'request';
+      return `${location||'request'}: ${item.msg||'invalid value'}`;
+    }).join('; '):'';
+    const summary=error.code?`${error.code}: ${error.message}`:(error.message||`${response.status} ${response.statusText}`);
+    throw new Error(details?`${summary} (${details})`:summary);
+  }
   if(response.status===204)return null;
   return response.json();
 }
@@ -50,7 +59,45 @@ async function loadDatasets(){
 }
 window.preview=async id=>{try{const p=await api(`/dataset-versions/${id}/preview?limit=10`);$('#preview').innerHTML=`<h3>Preview</h3><table><thead><tr>${p.columns.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>${p.rows.map(row=>`<tr>${p.columns.map(c=>`<td>${escapeHtml(row[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}catch(error){notice(error.message)}};
 
-$('#discovery-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('Projectを選択してください');const form=new FormData(event.target);const algorithms=form.getAll('algorithms');const alphas=list(form.get('alpha'));const variants=[];for(const algorithm of algorithms){if(algorithm==='pc'){for(const alpha of alphas)variants.push({algorithm_or_estimator:'pc',parameters:{alpha:Number(alpha)},random_seed:42})}else variants.push({algorithm_or_estimator:algorithm,parameters:{},random_seed:42})}const analysis_spec={schema_version:'causal-analysis-spec/2',analysis_mode:'EXPLORATORY',research_context:{problem_statement:null,research_question:null,significance:null,hypothesis:null},causal_question:{},causal_design:{adjustment_set:[],assumptions:[]},operation_spec:{feature_columns:list(form.get('features')),constraints:{required_edges:[],forbidden_edges:[],temporal_tiers:[]},expected_graph_type:null},validation_override:null};try{await api(`/projects/${state.project.project_id}/execution-batches`,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':idempotencyKey()},body:JSON.stringify({operation:'DISCOVERY',dataset_version_id:form.get('dataset_version_id'),input_graph_version_id:null,input_result_id:null,objective:form.get('objective')||null,rationale:form.get('rationale')||null,analysis_spec,variants,code_version:'web-enh-e1',runtime_versions:{client:'web'}})});notice(`${variants.length}件のDiscoveryを受け付けました`);await loadExecutions()}catch(error){notice(error.message)}};
+function discoveryRequest(form){
+  const datasetId=String(form.get('dataset_version_id')||'');
+  const dataset=state.datasets.find(item=>item.dataset_version_id===datasetId);
+  if(!dataset)throw new Error('Datasetを選択してください');
+
+  const features=list(String(form.get('features')||''));
+  if(!features.length)throw new Error('Feature columnsを1件以上指定してください');
+  if(new Set(features).size!==features.length)throw new Error('Feature columnsに重複があります');
+  const knownColumns=new Set(Object.keys(dataset.schema||{}));
+  const unknown=features.filter(name=>!knownColumns.has(name));
+  if(unknown.length)throw new Error(`Datasetに存在しないFeature columns: ${unknown.join(', ')}`);
+
+  const algorithms=form.getAll('algorithms').map(String);
+  if(!algorithms.length)throw new Error('Algorithmを1件以上選択してください');
+  const variants=[];
+  if(algorithms.includes('pc')){
+    const alphaTokens=list(String(form.get('alpha')||''));
+    if(!alphaTokens.length)throw new Error('PCを選択した場合はalphaを1件以上指定してください');
+    const invalid=alphaTokens.filter(token=>{
+      const value=Number(token);return !Number.isFinite(value)||value<=0||value>=1;
+    });
+    if(invalid.length)throw new Error(`PC alphaは0より大きく1より小さい数値にしてください: ${invalid.join(', ')}`);
+    for(const token of alphaTokens)variants.push({algorithm_or_estimator:'pc',parameters:{alpha:Number(token)},random_seed:42});
+  }
+  if(algorithms.includes('ges'))variants.push({algorithm_or_estimator:'ges',parameters:{},random_seed:42});
+  if(variants.length>20)throw new Error(`Executionは一度に20件までです（現在${variants.length}件）`);
+
+  return {operation:'DISCOVERY',dataset_version_id:datasetId,input_graph_version_id:null,input_result_id:null,objective:form.get('objective')||null,rationale:form.get('rationale')||null,analysis_spec:{schema_version:'causal-analysis-spec/2',analysis_mode:'EXPLORATORY',research_context:{problem_statement:null,research_question:null,significance:null,hypothesis:null},causal_question:{},causal_design:{adjustment_set:[],assumptions:[]},operation_spec:{feature_columns:features,constraints:{required_edges:[],forbidden_edges:[],temporal_tiers:[]},expected_graph_type:null},validation_override:null},variants,code_version:'web-enh-e1',runtime_versions:{client:'web'}};
+}
+$('#discovery-form').onsubmit=async event=>{
+  event.preventDefault();
+  if(!state.project)return notice('Projectを選択してください');
+  try{
+    const body=discoveryRequest(new FormData(event.target));
+    await api(`/projects/${state.project.project_id}/execution-batches`,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':idempotencyKey()},body:JSON.stringify(body)});
+    notice(`${body.variants.length}件のDiscoveryを受け付けました`);
+    await loadExecutions();
+  }catch(error){notice(error.message)}
+};
 async function loadExecutions(){if(!state.project){state.executions=[];state.results=[];return}state.executions=(await api(`/projects/${state.project.project_id}/executions`)).items;state.results=[];for(const execution of state.executions){if(execution.status==='SUCCEEDED'){const values=(await api(`/executions/${execution.execution_id}/results`)).items;values.forEach(value=>value.execution=execution);state.results.push(...values)}}const bases=$('#base-executions');if(bases)bases.innerHTML='<option value="">新規分析</option>'+state.executions.filter(e=>e.operation==='ESTIMATION').map(e=>`<option value="${e.execution_id}">${escapeHtml(e.algorithm_or_estimator)} / ${e.execution_id.slice(0,8)}</option>`).join('');renderDiscovery();renderInference();renderResultOptions()}
 function resultRows(operation,target){const values=state.results.filter(r=>r.execution.operation===operation);target.innerHTML=values.length?`<table><thead><tr><th></th><th>Method</th><th>Status</th><th>Summary</th></tr></thead><tbody>${values.map(r=>`<tr><td><input type="checkbox" value="${r.result_id}"></td><td>${escapeHtml(r.execution.algorithm_or_estimator)}</td><td class="${r.scientific_status}">${r.scientific_status}</td><td>${escapeHtml(JSON.stringify(r.summary))}</td></tr>`).join('')}</tbody></table>`:'完了Resultはありません';return values}
 function renderDiscovery(){const values=resultRows('DISCOVERY',$('#discovery-results'));$('#graph-source').innerHTML='<option value="">選択</option>'+values.map(r=>`<option value="${r.result_id}">${r.execution.algorithm_or_estimator} / ${r.result_id.slice(0,8)}</option>`).join('')}

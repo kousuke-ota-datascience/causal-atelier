@@ -35,8 +35,8 @@
           <label>Feature columns<input name="features" placeholder="coupon,visits,sales" required></label>
           <fieldset><legend>Algorithms</legend><label><input type="checkbox" name="algorithms" value="pc" checked> PC</label><label><input type="checkbox" name="algorithms" value="ges" checked> GES</label></fieldset>
           <label>PC alpha grid<input name="alpha" value="0.01,0.05" required></label>
-          <label>Objective<input name="objective" value="Compare candidate causal structures"></label>
-          <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison"></label>
+          <label>Objective<input name="objective" value="Compare candidate causal structures" maxlength="4000"></label>
+          <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
           <button>複数Executionを受付</button>
         </form>
         <div class="card"><div class="heading"><h2>Graph Results</h2><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div><button id="compare-discovery" type="button">選択した3件以上を比較</button><pre id="discovery-comparison"></pre></div>

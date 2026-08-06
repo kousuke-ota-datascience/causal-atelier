@@ -41,3 +41,19 @@ def test_frontend_generates_idempotency_keys_without_requiring_random_uuid() -> 
     assert 'typeof globalThis.crypto?.getRandomValues==="function"' in javascript
     assert javascript.count("randomUUID()") == 1
     assert javascript.count("'Idempotency-Key':idempotencyKey()") == 8
+
+
+def test_discovery_form_validates_api_constraints_and_renders_error_details() -> None:
+    html = (REPOSITORY / "frontend" / "index.html").read_text(encoding="utf-8")
+    javascript = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
+
+    assert "function discoveryRequest(form)" in javascript
+    assert "Algorithmを1件以上選択してください" in javascript
+    assert "PC alphaは0より大きく1より小さい数値" in javascript
+    assert "Feature columnsに重複があります" in javascript
+    assert "Datasetに存在しないFeature columns" in javascript
+    assert "Executionは一度に20件まで" in javascript
+    assert "error.details?.errors" in javascript
+    assert "item.loc.filter(value=>value!=='body').join('.')" in javascript
+    assert 'name="objective" value="Compare candidate causal structures" maxlength="4000"' in html
+    assert 'name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"' in html

@@ -167,6 +167,31 @@ async def submit(client, project_id, body, key):  # type: ignore[no-untyped-def]
     )
 
 
+@pytest.mark.anyio
+async def test_execution_batch_validation_error_exposes_actionable_field_details(client) -> None:  # type: ignore[no-untyped-def]
+    response = await submit(client, "not-used", {
+        "operation": "DISCOVERY", "dataset_version_id": "not-used",
+        "input_graph_version_id": None, "input_result_id": None,
+        "objective": "validation regression", "rationale": "no variants",
+        "analysis_spec": common_spec(
+            question=False,
+            operation_spec={
+                "feature_columns": ["x"], "constraints": {},
+                "expected_graph_type": None,
+            },
+        ),
+        "variants": [], "code_version": "test", "runtime_versions": {},
+    }, "invalid-empty-variants")
+
+    assert response.status_code == 400
+    error = response.json()["error"]
+    assert error["code"] == "INVALID_REQUEST"
+    assert any(
+        item["loc"] == ["body", "variants"] and item["type"] == "too_short"
+        for item in error["details"]["errors"]
+    )
+
+
 async def _create_identification_fixture(client, *, name: str, content: bytes):  # type: ignore[no-untyped-def]
     project_id = (await client.post("/api/v1/projects", json={"name": name})).json()["project_id"]
     dataset_id = (await client.post(

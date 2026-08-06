@@ -29,6 +29,15 @@ def upgrade() -> None:
             server_default="causal-analysis-spec/2",
         ),
     )
+    # Every row present while this migration runs was created under the v1
+    # contract, which had no input_result_id and no identification-first gate.
+    # Preserve that fact instead of fabricating an upstream Result reference.
+    # The server default remains v2, so all executions created after the
+    # migration are governed by the strict current constraint below.
+    op.execute(
+        "UPDATE product_execution "
+        "SET snapshot_schema_version='legacy-product-snapshot/1'"
+    )
     op.create_foreign_key(
         "fk_product_execution_input_result_id",
         "product_execution",
@@ -56,13 +65,15 @@ def upgrade() -> None:
         "product_execution",
         "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL AND input_result_id IS NULL) OR "
         "(operation = 'IDENTIFICATION' AND input_graph_version_id IS NOT NULL AND input_result_id IS NULL) OR "
-        "(operation IN ('ESTIMATION','REFUTATION','SENSITIVITY') AND input_graph_version_id IS NOT NULL AND input_result_id IS NOT NULL)",
+        "(operation = 'ESTIMATION' AND input_graph_version_id IS NOT NULL AND "
+        "(input_result_id IS NOT NULL OR snapshot_schema_version = 'legacy-product-snapshot/1')) OR "
+        "(operation IN ('REFUTATION','SENSITIVITY') AND input_graph_version_id IS NOT NULL AND input_result_id IS NOT NULL)",
     )
 
-    op.execute("UPDATE product_result SET scientific_status='GENERATED' WHERE result_type='DISCOVERY_GRAPH_RESULT' AND scientific_status='VALID'")
-    op.execute("UPDATE product_result SET scientific_status='ESTIMATED' WHERE result_type='TREATMENT_EFFECT_RESULT' AND scientific_status='VALID'")
     op.drop_constraint("ck_product_result_type", "product_result", type_="check")
     op.drop_constraint("ck_product_result_scientific_status", "product_result", type_="check")
+    op.execute("UPDATE product_result SET scientific_status='GENERATED' WHERE result_type='DISCOVERY_GRAPH_RESULT' AND scientific_status='VALID'")
+    op.execute("UPDATE product_result SET scientific_status='ESTIMATED' WHERE result_type='TREATMENT_EFFECT_RESULT' AND scientific_status='VALID'")
     op.create_check_constraint(
         "ck_product_result_type",
         "product_result",

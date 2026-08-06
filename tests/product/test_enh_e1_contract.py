@@ -7,7 +7,10 @@ from ariadne.product.domain.enums import (
     ExecutionOperation, GraphOrigin, ResultType, ScientificStatus,
 )
 from ariadne.product.domain.errors import InvalidAnalysisSpec
-from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.execution import (
+    Execution,
+    LEGACY_SNAPSHOT_SCHEMA_VERSION,
+)
 from ariadne.product.domain.graph_version import GraphVersion
 from ariadne.product.domain.result import Result
 from ariadne.product.application.scientific_validation_service import ESTIMATOR_CAPABILITIES
@@ -26,6 +29,34 @@ def test_operation_input_contract_matrix(operation, graph, upstream):  # type: i
     with pytest.raises(ValueError):
         Execution(operation=operation, input_graph_version_id=None if graph else "graph",
                   input_result_id=upstream)
+
+
+def test_legacy_execution_snapshot_is_readable_without_weakening_v2_contract() -> None:
+    Execution(
+        operation=ExecutionOperation.DISCOVERY,
+        snapshot_schema_version=LEGACY_SNAPSHOT_SCHEMA_VERSION,
+    )
+    Execution(
+        operation=ExecutionOperation.ESTIMATION,
+        input_graph_version_id="graph",
+        input_result_id=None,
+        snapshot_schema_version=LEGACY_SNAPSHOT_SCHEMA_VERSION,
+    )
+
+    with pytest.raises(ValueError, match="Invalid inputs"):
+        Execution(
+            operation=ExecutionOperation.ESTIMATION,
+            input_graph_version_id="graph",
+            input_result_id=None,
+        )
+    with pytest.raises(ValueError, match="did not exist"):
+        Execution(
+            operation=ExecutionOperation.IDENTIFICATION,
+            input_graph_version_id="graph",
+            snapshot_schema_version=LEGACY_SNAPSHOT_SCHEMA_VERSION,
+        )
+    with pytest.raises(ValueError, match="Unsupported snapshot_schema_version"):
+        Execution(snapshot_schema_version="unknown-snapshot/9")
 
 
 @pytest.mark.requirement("FR-064", "FR-065")
