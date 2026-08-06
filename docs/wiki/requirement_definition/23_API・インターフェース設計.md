@@ -1,15 +1,18 @@
 # 23 API・インターフェース設計 — 初期価値検証版
 
-- 文書状態: MVP実装反映
-- 更新日: 2026-08-05
+- 文書状態: ENH-E1統合改定版
+- 更新日: 2026-08-06
 - 上位文書:
   - `10_要件定義.md`
   - `21_論理データ設計.md`
   - `22_プロダクト基本設計.md`
 - 下位文書:
   - `30_詳細設計.md`
-- 関連文書: `40_実装移行計画.md`
 - 目的: Web App、Web API、Worker、Scientific CoreおよびCLIの間で交換する契約を定義する
+
+> **要件定義書は常にシステムの正本である。**
+>
+> **実装、既存コード、DBスキーマ、API、UIまたはテスト結果から、要件定義書を逆生成・事後更新してはならない。**
 
 ## 1. 適用範囲
 
@@ -76,13 +79,19 @@ Navigation ContextはWeb App内の遷移用であり、正本データではな�
 
 ### 3.2 Inference開始Context
 
-| Field | Type | Required | 説明 |
-|---|---|---:|---|
-| `project_id` | UUID | 1 | Project |
-| `dataset_version_id` | UUID | 1 | 推論入力Dataset Version |
-| `graph_version_id` | UUID | 1 | 推論入力Graph Version |
-| `source_discovery_result_id` | UUID |  | 表示用source Result。正本はGraph Versionから取得する |
+```json
+{
+  "project_id": "uuid",
+  "dataset_version_id": "uuid",
+  "graph_version_id": "uuid",
+  "source_result_id": "uuid-or-null",
+  "prefill_execution_id": "uuid-or-null"
+}
+```
 
+Identification開始時は`graph_version_id`を必須とし、`source_result_id`は不要とする。
+
+Estimation、Refutation、Sensitivity開始時は対応する`input_result_id`をExecution Commandへ渡す。
 ### 3.3 Result選択Context
 
 | Field | Type | Required | 制約 |
@@ -126,35 +135,41 @@ Navigation ContextはWeb App内の遷移用であり、正本データではな�
 
 | Method | Path | 用途 |
 |---|---|---|
-| POST | `/projects/{project_id}/execution-batches` | 複数Execution受付 |
-| GET | `/projects/{project_id}/executions` | Execution一覧 |
-| GET | `/executions/{execution_id}` | Execution取得 |
-| GET | `/executions/{execution_id}/prefill` | 再実行用初期値取得 |
-| POST | `/executions/{execution_id}/cancel` | cancel要求 |
-| POST | `/executions/{execution_id}/retry` | 技術的retry要求 |
+| POST | `/api/v1/projects/{project_id}/execution-batches` | Operation別Execution Batch作成 |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}` | Execution取得 |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/cancel` | Cancel要求 |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/retry` | 技術的Retry |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/prefill` | 再実行用Prefill |
 
-`execution-batches`はCommand endpointであり、Batchを正本Resourceとして作成しない。
+対応Operation:
 
+```text
+DISCOVERY
+IDENTIFICATION
+ESTIMATION
+REFUTATION
+SENSITIVITY
+```
 ### 4.4 Result・Comparison・Lineage
 
 | Method | Path | 用途 |
 |---|---|---|
-| GET | `/executions/{execution_id}/results` | ExecutionのResult一覧 |
-| GET | `/results/{result_id}` | Result取得 |
-| POST | `/comparisons/query` | Result比較を生成 |
-| GET | `/results/{result_id}/lineage` | Result起点Lineageを生成 |
-| POST | `/results/{result_id}/export` | portable package生成 |
+| GET | `/api/v1/projects/{project_id}/results/{result_id}` | Result詳細 |
+| POST | `/api/v1/projects/{project_id}/comparisons/query` | Result比較Projection |
+| GET | `/api/v1/projects/{project_id}/results/{result_id}/lineage` | Result Lineage |
+| GET | `/api/v1/projects/{project_id}/scientific-capabilities` | 利用可能な科学機能 |
 
+Comparisonは同一Result Type等の比較可能条件を検証する。
 ### 4.5 Graph Version
 
 | Method | Path | 用途 |
 |---|---|---|
-| POST | `/projects/{project_id}/graph-versions` | ResultからGraph Version作成 |
-| GET | `/projects/{project_id}/graph-versions` | 一覧 |
-| GET | `/graph-versions/{graph_version_id}` | 取得 |
-| PATCH | `/graph-versions/{graph_version_id}` | DRAFT更新 |
-| POST | `/graph-versions/{graph_version_id}/fix` | FIXEDへ遷移 |
+| POST | `/api/v1/projects/{project_id}/graph-versions` | Discovered / User-defined / Imported / Edited Graph作成 |
+| GET | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | Graph取得 |
+| PATCH | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | DRAFT更新 |
+| POST | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}/fix` | FIXED化 |
 
+Graph Origin別にSource Result / Parent Graph制約を検証する。
 ### 4.6 Annotation・Artifact
 
 | Method | Path | 用途 |
@@ -200,65 +215,65 @@ ResponseはDataset Version metadataを返す。
 
 ```json
 {
-  "operation": "DISCOVERY",
+  "operation": "IDENTIFICATION",
   "dataset_version_id": "uuid",
-  "input_graph_version_id": null,
-  "objective": "Find candidate causal structures",
-  "rationale": "Compare algorithms before selecting an estimation graph",
-  "analysis_spec": {},
+  "input_graph_version_id": "uuid",
+  "input_result_id": null,
+  "objective": "Identify the ATE",
+  "rationale": "Campaign planning",
+  "analysis_spec": {
+    "schema_version": "causal-analysis-spec/2",
+    "analysis_mode": "EXPLORATORY",
+    "research_context": {},
+    "causal_question": {},
+    "causal_design": {},
+    "operation_spec": {},
+    "validation_override": null
+  },
   "variants": [
     {
-      "algorithm_or_estimator": "PC",
-      "parameters": {"alpha": 0.01},
+      "algorithm_or_estimator": "GRAPHICAL_BACKDOOR",
+      "parameters": {},
       "random_seed": 42
     }
-  ]
+  ],
+  "code_version": "git-sha",
+  "runtime_versions": {}
 }
 ```
 
-| Field | Type | Required | 制約 |
-|---|---|---:|---|
-| `operation` | enum | 1 | `DISCOVERY` / `ESTIMATION` |
-| `dataset_version_id` | UUID | 1 | Project所属 |
-| `input_graph_version_id` | UUID | 条件付 | ESTIMATIONで必須、DISCOVERYで禁止 |
-| `objective` | string |  | 0〜4,000文字 |
-| `rationale` | string |  | 0〜8,000文字 |
-| `analysis_spec` | object | 1 | operation別schema |
-| `variants` | object[] | 1 | 1〜20件 |
+**Operation別制約**
 
-各variantが1 Executionとなる。
-
-Response:
-
-```json
-{
-  "batch_key": "uuid",
-  "executions": [
-    {"execution_id": "uuid", "status": "QUEUED"}
-  ]
-}
-```
-
+- DISCOVERY: Graph / Input Result禁止
+- IDENTIFICATION: Dataset / Graph必須
+- ESTIMATION: Identification Result必須
+- REFUTATION / SENSITIVITY: Treatment Effect Result必須
 ### 5.4 Create Graph Version Request
 
 ```json
 {
-  "source_result_id": "uuid",
+  "source_result_id": null,
   "parent_graph_version_id": null,
-  "name": "Selected graph v1",
+  "graph_origin": "USER_DEFINED",
+  "name": "Domain graph v1",
   "graph": {},
-  "edit_rationale": "Removed an edge inconsistent with temporal ordering",
+  "provenance": {
+    "source_note": "Defined from domain knowledge"
+  },
+  "edit_rationale": null,
   "fix_immediately": false
 }
 ```
 
-Validation:
+Graph Origin:
 
-- source Resultは`DISCOVERY_GRAPH`である
-- source ResultとProjectが一致する
-- parent指定時は同一Projectである
-- graph schemaがgraph typeと整合する
-
+```text
+DISCOVERED
+CONSTRAINT_ADJUSTED
+USER_DEFINED
+IMPORTED
+USER_EDITED
+```
 ### 5.5 Upsert Annotation Request
 
 ```json
@@ -298,25 +313,28 @@ Validation:
 
 ### 6.2 Result Response
 
-主要field:
+```json
+{
+  "result_id": "uuid",
+  "execution_id": "uuid",
+  "result_type": "IDENTIFICATION_RESULT",
+  "scientific_status": "IDENTIFIED",
+  "summary": {},
+  "payload": {},
+  "diagnostics": {},
+  "warnings": [],
+  "artifact_ids": []
+}
+```
 
-- `result_id`
-- `execution_id`
-- `result_type`
-- `scientific_status`
-- `summary`
-- `diagnostics`
-- `warnings`
-- `artifact_ids`
+一覧取得では`payload`を省略できる。
 
-大きなpayloadはArtifact参照へ分離できる。
-
+科学的負結果も通常のResult Responseとして返す。
 ### 6.3 Comparison Query
 
 ```json
 {
-  "project_id": "uuid",
-  "result_ids": ["uuid", "uuid"]
+  "result_ids": ["uuid-1", "uuid-2"]
 }
 ```
 
@@ -324,153 +342,187 @@ Response:
 
 ```json
 {
-  "operation": "ESTIMATION",
+  "result_type": "TREATMENT_EFFECT_RESULT",
   "common_conditions": {},
-  "changed_conditions": [],
+  "changed_conditions": {},
   "result_differences": [],
   "warnings": [],
-  "lineage_summary": {}
+  "lineage_summary": []
 }
 ```
 
-Validation:
-
-- 2〜20 Result
-- 全Resultが同一Project
-- DISCOVERYとESTIMATIONを混在させない
-
+比較可能条件を満たさない場合は`INCOMPARABLE` Warningを返す。
 ### 6.4 Lineage Response
 
 ```json
 {
   "root_result_id": "uuid",
-  "nodes": [
-    {
-      "node_type": "Result",
-      "entity_id": "uuid",
-      "label": "AIPW result",
-      "attributes": {}
-    }
-  ],
-  "edges": [
-    {
-      "relation_type": "GENERATED_BY",
-      "from_id": "uuid",
-      "to_id": "uuid"
-    }
-  ]
+  "nodes": [],
+  "edges": [],
+  "warnings": []
 }
 ```
 
-## 7. operation別Analysis Spec
+Node Type:
 
-### 7.1 Discovery Analysis Spec
+- PROJECT
+- DATASET_VERSION
+- EXECUTION
+- RESULT
+- GRAPH_VERSION
+- ARTIFACT
+- ANNOTATION
+
+`input_result_id`、Graph Source / Parentを再帰追跡し、Cycleを検出する。
+## 7. Operation別Analysis Spec
+
+### 7.1 共通構造
 
 ```json
 {
-  "feature_columns": ["coupon", "visits", "sales"],
-  "constraints": {
-    "required_edges": [],
-    "forbidden_edges": [],
-    "temporal_tiers": []
+  "schema_version": "causal-analysis-spec/2",
+  "analysis_mode": "EXPLORATORY",
+  "research_context": {},
+  "causal_question": {},
+  "causal_design": {},
+  "operation_spec": {},
+  "validation_override": null
+}
+```
+
+未知FieldをRejectする。
+
+### 7.2 Discovery Analysis Spec
+
+- Feature Set
+- Graph Constraint
+- Algorithm Configuration
+- Expected Graph Type
+- Stability / Bootstrap Option
+
+### 7.3 Identification Analysis Spec
+
+```json
+{
+  "causal_design": {
+    "identification_strategy": "BACKDOOR",
+    "adjustment_set": ["x1", "x2"],
+    "assumptions": []
   },
-  "expected_graph_type": null
+  "operation_spec": {
+    "allow_partial_identification": false
+  }
 }
 ```
 
-### 7.2 Estimation Analysis Spec
+### 7.4 Estimation Analysis Spec
 
 ```json
 {
-  "treatment": "coupon",
-  "outcome": "sales",
-  "estimand": "ATE",
-  "target_population": null,
-  "adjustment_set": ["past_sales", "member_rank"],
-  "assumptions": ["No unmeasured confounding"],
-  "inference_options": {}
+  "operation_spec": {
+    "estimator": "AIPW",
+    "inference_options": {
+      "confidence_level": 0.95
+    }
+  }
 }
 ```
 
+### 7.5 Refutation Analysis Spec
+
+```json
+{
+  "operation_spec": {
+    "method": "PLACEBO_TREATMENT",
+    "repetitions": 100
+  }
+}
+```
+
+### 7.6 Sensitivity Analysis Spec
+
+```json
+{
+  "operation_spec": {
+    "dimension": "PROPENSITY_CLIPPING",
+    "values": [0.01, 0.025, 0.05]
+  }
+}
+```
+
+### 7.7 Validation Override
+
+```json
+{
+  "reason": "Scientific justification",
+  "actor": "user-id",
+  "warning_codes": ["LIMITED_OVERLAP"]
+}
+```
 ## 8. Scientific Core Interface
 
-Scientific CoreのinterfaceはPython objectまたは同等の型付き構造を使用する。Web API schemaと完全に同一である必要はないが、意味を一致させる。
+### 8.1 Product Port
 
-### 8.1 Discovery Input
+```python
+class ScientificCorePort(Protocol):
+    def run_discovery(...) -> list[ScientificResultDescriptor]: ...
+    def run_identification(...) -> list[ScientificResultDescriptor]: ...
+    def run_estimation(...) -> list[ScientificResultDescriptor]: ...
+    def run_refutation(...) -> list[ScientificResultDescriptor]: ...
+    def run_sensitivity(...) -> list[ScientificResultDescriptor]: ...
+```
 
-- dataset reference
-- algorithm identifier
-- parameter map
-- feature columns
-- graph constraints
-- random seed
+### 8.2 Scientific Result Descriptor
 
-### 8.2 Discovery Output
+```python
+@dataclass(frozen=True)
+class ScientificResultDescriptor:
+    result_type: ResultType
+    scientific_status: ScientificStatus
+    summary: dict[str, Any]
+    payload: dict[str, Any]
+    diagnostics: dict[str, Any]
+    warnings: list[dict[str, Any]]
+    artifacts: list[ArtifactDescriptor]
+```
 
-- graph type
-- nodes
-- edges and endpoint semantics
-- diagnostics
-- scientific warnings
-- artifact payload descriptors
+### 8.3 Result Type / Status
 
-### 8.3 Estimation Input
+Result TypeとScientific Statusの対応は`21_論理データ設計.md`に従う。
 
-- dataset reference
-- graph reference
-- causal design
-- estimator identifier
-- parameter map
-- random seed
+### 8.4 Boundary
 
-### 8.4 Estimation Output
-
-- scientific status
-- estimate nullable
-- standard error / confidence interval nullable
-- diagnostics
-- warnings
-- artifact payload descriptors
-
-### 8.5 Scientific Status
-
-- `VALID`
-- `NOT_IDENTIFIED`
-- `INSUFFICIENT_OVERLAP`
-- `INSUFFICIENT_SAMPLE`
-- `ESTIMATION_UNRELIABLE`
-
+- External Library型をProduct Domainへ返さない
+- DB RepositoryをScientific Coreへ渡さない
+- Scientific Negative OutcomeをTechnical Exceptionへ変換しない
+- Backend名 / Version / WarningをResultまたはArtifact Metadataへ保存する
 ## 9. CLI Interface
 
 ### 9.1 Commands
 
 ```text
 ariadne-discover --config <path>
+ariadne-identify --config <path>
 ariadne-estimate --config <path>
+ariadne-refute --config <path>
+ariadne-sensitivity --config <path>
 ```
-
-configはstrict validationを行い、Web/APIのAnalysis Specと意味的に一致させる。Web/APIのExecution IDは生成しない。
 
 ### 9.2 Manifest Schema
 
-```json
-{
-  "manifest_version": "1.0",
-  "operation": "DISCOVERY",
-  "dataset": {"content_hash": "...", "location": "..."},
-  "graph": null,
-  "algorithm_or_estimator": "PC",
-  "parameters": {},
-  "analysis_spec": {},
-  "random_seed": 42,
-  "code_version": "...",
-  "runtime_versions": {},
-  "scientific_status": "VALID",
-  "result_summary": {},
-  "artifacts": []
-}
-```
+- Manifest Schema Version
+- Operation
+- Analysis Mode
+- Causal Question Hash
+- Dataset / Graph Hash
+- Graph Origin
+- Upstream Result Reference
+- Method / Parameter / Seed
+- Code / Runtime / Backend Version
+- Scientific Status
+- Artifact List / Hash
 
+CLIはWeb Execution IDを生成しない。
 ## 10. Error Model
 
 ### 10.1 Error Response
@@ -504,20 +556,52 @@ configはstrict validationを行い、Web/APIのAnalysis Specと意味的に一�
 
 ### 10.3 主要Error Code
 
-- `INVALID_ANALYSIS_SPEC`
-- `PROJECT_BOUNDARY_VIOLATION`
-- `GRAPH_ALREADY_FIXED`
-- `INVALID_GRAPH_SEMANTICS`
-- `EXECUTION_STATE_CONFLICT`
-- `IDEMPOTENCY_CONFLICT`
-- `ARTIFACT_HASH_MISMATCH`
-- `UNSUPPORTED_ALGORITHM`
-- `UNSUPPORTED_ESTIMATOR`
+```text
+ENTITY_NOT_FOUND
+PROJECT_BOUNDARY_VIOLATION
+INVALID_STATE_TRANSITION
+INVALID_ANALYSIS_SPEC
+GRAPH_ALREADY_FIXED
+INVALID_GRAPH_SEMANTICS
+UNSUPPORTED_ALGORITHM
+UNSUPPORTED_ESTIMATOR
+UPSTREAM_RESULT_REQUIRED
+UPSTREAM_RESULT_INCOMPATIBLE
+IDENTIFICATION_NOT_ACCEPTABLE
+DATA_ELIGIBILITY_FAILED
+OVERRIDE_REASON_REQUIRED
+UNSUPPORTED_IDENTIFICATION_STRATEGY
+UNSUPPORTED_REFUTATION_METHOD
+UNSUPPORTED_SENSITIVITY_METHOD
+SNAPSHOT_SCHEMA_UNSUPPORTED
+GRAPH_ORIGIN_INVALID
+INCOMPARABLE_RESULTS
+```
 
+科学的負結果をHTTP Errorにしない。
+
+Input Contract、Project境界、State Conflictは`422`または`409`へ変換する。
 ## 11. Contract Versioning
 
-- Web APIはURL major versionを使用する: `/api/v1/...`
-- backward compatibleなfield追加はminor変更として扱う
-- enum追加はclient影響を評価する
-- CLI Manifestは`manifest_version`を持つ
-- Scientific Core interfaceはapplication adapterでversion差を吸収する
+### 11.1 Version対象
+
+- Web API
+- Analysis Spec
+- Snapshot Canonicalization
+- Artifact / Manifest Schema
+- Scientific Backend Adapter
+
+### 11.2 ENH-E1 Version
+
+```text
+API: v1
+Analysis Spec: causal-analysis-spec/2
+```
+
+### 11.3 互換方針
+
+- 既存DISCOVERY / ESTIMATIONの意味を保持する
+- 旧DTOまたは旧DB Schemaを要件へ昇格しない
+- 未対応FieldをSilent Ignoreしない
+- Breaking Changeが必要な場合、要件変更、設計更新、Contract Version更新の順で処理する
+- 実装から要件定義書を更新しない
