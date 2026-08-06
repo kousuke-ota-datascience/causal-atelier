@@ -9,6 +9,7 @@ from ariadne.interfaces.web_api.dependencies import (
     IdempotencyServiceDep,
     LineageServiceDep,
     ProductQueryServiceDep,
+    GraphCandidateServiceDep,
 )
 from ariadne.interfaces.web_api.schemas import (
     ComparisonQueryRequest,
@@ -18,11 +19,82 @@ from ariadne.interfaces.web_api.schemas import (
     LineageResponse,
     ResultListResponse,
     ResultResponse,
+    GraphCandidateComparisonRequest,
+    GraphCandidateComparisonResponse,
+    GraphCandidateListResponse,
+    GraphCandidateResponse,
 )
+from ariadne.product.application.graph_candidate_query_service import CandidateRef, GraphCandidateView
 from ariadne.product.domain.errors import EntityNotFound
 from ariadne.product.domain.result import Result
 
 router = APIRouter(tags=["results"])
+
+
+def _candidate_to_response(value: GraphCandidateView) -> GraphCandidateResponse:
+    return GraphCandidateResponse(
+        candidate_kind=value.candidate_kind,
+        candidate_id=value.candidate_id,
+        source_result_id=value.source_result_id,
+        graph_version_id=value.graph_version_id,
+        parent_graph_version_id=value.parent_graph_version_id,
+        graph_type=value.graph_type,
+        graph_origin=value.graph_origin,
+        version_status=value.version_status,
+        scientific_status=value.scientific_status,
+        fixed=value.fixed,
+        designated_outcome_node=value.designated_outcome_node,
+        summary=value.summary,
+        warnings=value.warnings,
+        allowed_actions=value.allowed_actions,
+        graph=value.graph,
+    )
+
+
+@router.get(
+    "/projects/{project_id}/graph-candidates",
+    response_model=GraphCandidateListResponse,
+)
+async def list_graph_candidates(
+    project_id: str, svc: GraphCandidateServiceDep
+) -> GraphCandidateListResponse:
+    return GraphCandidateListResponse(
+        items=[_candidate_to_response(item) for item in svc.list_candidates(project_id)]
+    )
+
+
+@router.get(
+    "/projects/{project_id}/graph-candidates/{candidate_kind}/{candidate_id}",
+    response_model=GraphCandidateResponse,
+)
+async def get_graph_candidate(
+    project_id: str,
+    candidate_kind: str,
+    candidate_id: str,
+    svc: GraphCandidateServiceDep,
+) -> GraphCandidateResponse:
+    return _candidate_to_response(svc.get_candidate(project_id, candidate_kind, candidate_id))
+
+
+@router.post(
+    "/projects/{project_id}/graph-candidate-comparisons/query",
+    response_model=GraphCandidateComparisonResponse,
+)
+async def compare_graph_candidates(
+    project_id: str,
+    body: GraphCandidateComparisonRequest,
+    svc: GraphCandidateServiceDep,
+) -> GraphCandidateComparisonResponse:
+    view = svc.compare(project_id, [
+        CandidateRef(item.candidate_kind, item.candidate_id)
+        for item in body.candidate_refs
+    ])
+    return GraphCandidateComparisonResponse(
+        candidates=[_candidate_to_response(item) for item in view.candidates],
+        compatibility=view.compatibility,
+        differences=view.differences,
+        warnings=view.warnings,
+    )
 
 
 def _result_to_response(r: Result, artifact_ids: list[str] | None = None) -> ResultResponse:

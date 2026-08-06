@@ -16,9 +16,12 @@ from ariadne.product.domain.errors import (
     ArtifactHashMismatch,
     EntityNotFound,
     InvalidAnalysisSpec,
+    InvalidDatasetMetadata,
     ProjectBoundaryViolation,
 )
 from ariadne.product.domain.project import Project
+from ariadne.product.domain.enums import ProjectStatus
+from ariadne.product.application.project_policy import require_active_project
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.ports.unit_of_work import UnitOfWork
@@ -40,6 +43,12 @@ class UpdateProjectCommand:
     topic: str | None = None
     objective: str | None = None
     memo: str | None = None
+
+
+@dataclass
+class ArchiveProjectCommand:
+    project_id: str
+    requested_by: str = "system"
 
 
 @dataclass
@@ -88,6 +97,7 @@ class ProjectDataService:
             project = uow.projects.get(command.project_id)
             if project is None:
                 raise EntityNotFound("Project", command.project_id)
+            require_active_project(project)
             project.update_metadata(
                 name=command.name,
                 topic=command.topic,
@@ -106,9 +116,22 @@ class ProjectDataService:
                 raise EntityNotFound("Project", project_id)
             return project
 
-    def list_projects(self) -> list[Project]:
+    def list_projects(self, status: ProjectStatus | None = ProjectStatus.ACTIVE) -> list[Project]:
         with self._uow_factory() as uow:
-            return uow.projects.list()
+            projects = uow.projects.list()
+            return projects if status is None else [item for item in projects if item.status == status]
+
+    def archive_project(self, command: ArchiveProjectCommand) -> None:
+        with self._uow_factory() as uow:
+            project = uow.projects.get(command.project_id)
+            if project is None:
+                raise EntityNotFound("Project", command.project_id)
+            if project.status == ProjectStatus.ARCHIVED:
+                return
+            project.archive()
+            project.updated_at = self._clock.now()
+            uow.projects.update(project)
+            uow.commit()
 
     def get_dataset_version(self, dataset_version_id: str) -> DatasetVersion:
         with self._uow_factory() as uow:
@@ -152,6 +175,10 @@ class ProjectDataService:
 
     def register_dataset_version(self, command: RegisterDatasetVersionCommand) -> DatasetVersion:
         now = self._clock.now()
+        dataset_key = _required_dataset_text("dataset_key", command.dataset_key, 100)
+        name = _required_dataset_text("name", command.name, 200)
+        version_label = _required_dataset_text("version_label", command.version_label, 100)
+        source_note = _optional_dataset_text("source_note", command.source_note, 4000)
 
         # Compute content hash from file
         content_hash = _sha256_file(command.source_path)
@@ -161,16 +188,21 @@ class ProjectDataService:
             project = uow.projects.get(command.project_id)
             if project is None:
                 raise EntityNotFound("Project", command.project_id)
+            require_active_project(project)
 
             # Check for duplicate
-            if uow.dataset_versions.exists_hash(command.project_id, command.dataset_key, content_hash):
+            if uow.dataset_versions.exists_hash(command.project_id, dataset_key, content_hash):
                 raise ProjectBoundaryViolation(
                     f"Dataset version with same content already exists in project {command.project_id!r}"
                 )
 
             # Build object key for artifact store
             artifact_id = str(uuid.uuid4())
-            object_key = f"projects/{command.project_id}/datasets/{command.dataset_key}/{artifact_id}/{command.source_path.name}"
+            # Dataset metadata is user-controlled and must not become a path segment.
+            object_key = (
+                f"projects/{command.project_id}/datasets/{artifact_id}"
+                f"/source{command.source_path.suffix.lower()}"
+            )
 
             stored = self._artifact_store.store(
                 source_path=command.source_path,
@@ -197,15 +229,15 @@ class ProjectDataService:
             dataset_version = DatasetVersion(
                 project_id=command.project_id,
                 source_artifact_id=artifact_id,
-                dataset_key=command.dataset_key,
-                name=command.name,
-                version_label=command.version_label,
+                dataset_key=dataset_key,
+                name=name,
+                version_label=version_label,
                 content_hash=content_hash,
                 schema_json=command.schema_json,
                 profile_summary_json=command.profile_summary_json or {},
                 row_count=command.row_count,
                 column_count=command.column_count,
-                source_note=command.source_note,
+                source_note=source_note,
                 created_at=now,
             )
 
@@ -217,7 +249,29 @@ class ProjectDataService:
                 self._artifact_store.delete(stored.object_key)
                 raise
 
-        return dataset_version
+            return dataset_version
+
+
+def _required_dataset_text(field: str, value: str, max_length: int) -> str:
+    normalized = value.strip()
+    if not normalized:
+        raise InvalidDatasetMetadata(f"{field} must not be empty")
+    if len(normalized) > max_length:
+        raise InvalidDatasetMetadata(
+            f"{field} must be at most {max_length} characters (received {len(normalized)})"
+        )
+    return normalized
+
+
+def _optional_dataset_text(field: str, value: str | None, max_length: int) -> str | None:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if len(normalized) > max_length:
+        raise InvalidDatasetMetadata(
+            f"{field} must be at most {max_length} characters (received {len(normalized)})"
+        )
+    return normalized or None
 
 
 def _sha256_file(path: Path) -> str:

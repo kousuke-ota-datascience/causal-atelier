@@ -108,16 +108,27 @@ class ExecutionProcessor:
 
             now = self._clock.now()
             snapshot_warnings = execution.analysis_spec_json.get("scientific_warnings", [])
-            results = [Result(
-                execution_id=execution.execution_id,
-                result_type=descriptor.result_type,
-                scientific_status=descriptor.scientific_status,
-                summary_json=descriptor.summary,
-                payload_json=descriptor.payload,
-                diagnostics_json=descriptor.diagnostics,
-                warning_json=[*descriptor.warnings, *snapshot_warnings],
-                created_at=now,
-            ) for descriptor in descriptors]
+            results: list[Result] = []
+            for descriptor in descriptors:
+                summary = dict(descriptor.summary)
+                payload = dict(descriptor.payload)
+                if descriptor.result_type == ResultType.DISCOVERY_GRAPH_RESULT:
+                    outcome = execution.analysis_spec_json.get("operation_spec", {}).get(
+                        "designated_outcome_node"
+                    )
+                    if outcome is not None:
+                        summary["designated_outcome_node"] = outcome
+                        payload["designated_outcome_node"] = outcome
+                results.append(Result(
+                    execution_id=execution.execution_id,
+                    result_type=descriptor.result_type,
+                    scientific_status=descriptor.scientific_status,
+                    summary_json=summary,
+                    payload_json=payload,
+                    diagnostics_json=descriptor.diagnostics,
+                    warning_json=[*descriptor.warnings, *snapshot_warnings],
+                    created_at=now,
+                ))
 
             # Store artifacts in artifact store
             stored_artifacts: list[Artifact] = []

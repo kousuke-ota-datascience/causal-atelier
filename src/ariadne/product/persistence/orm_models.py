@@ -209,6 +209,7 @@ class GraphVersionOrm(ProductBase):
     project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
     source_result_id: Mapped[str | None] = mapped_column(ForeignKey("product_result.result_id", ondelete="RESTRICT"), index=True)
     parent_graph_version_id: Mapped[str | None] = mapped_column(ForeignKey("product_graph_version.graph_version_id", ondelete="RESTRICT"), index=True)
+    designated_outcome_node: Mapped[str | None] = mapped_column(String(200), index=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     graph_type: Mapped[str] = mapped_column(String(40), nullable=False)
     graph_origin: Mapped[str] = mapped_column(String(40), nullable=False)

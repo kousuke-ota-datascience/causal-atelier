@@ -8,6 +8,7 @@ from typing import Any
 from ariadne.product.domain.annotation import Annotation
 from ariadne.product.domain.errors import EntityNotFound, ProjectBoundaryViolation
 from ariadne.product.ports.clock import ClockPort, SystemClock
+from ariadne.product.application.project_policy import require_active_project
 
 
 @dataclass
@@ -51,8 +52,10 @@ class AnnotationService:
             updated_at=now,
         )
         with self._uow_factory() as uow:
-            if uow.projects.get(command.project_id) is None:
+            project = uow.projects.get(command.project_id)
+            if project is None:
                 raise EntityNotFound("Project", command.project_id)
+            require_active_project(project)
             if command.target_result_id is not None:
                 result = uow.results.get(command.target_result_id)
                 if result is None:
@@ -78,6 +81,10 @@ class AnnotationService:
             annotation = uow.annotations.get(command.annotation_id)
             if annotation is None:
                 raise EntityNotFound("Annotation", command.annotation_id)
+            project = uow.projects.get(annotation.project_id)
+            if project is None:
+                raise EntityNotFound("Project", annotation.project_id)
+            require_active_project(project)
             annotation.update_content(
                 statement=command.statement,
                 rationale=command.rationale,

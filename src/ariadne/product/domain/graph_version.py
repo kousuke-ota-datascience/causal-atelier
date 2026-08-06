@@ -8,7 +8,11 @@ from datetime import datetime
 from typing import Any
 
 from ariadne.product.domain.enums import GraphOrigin, GraphType, GraphVersionStatus
-from ariadne.product.domain.errors import GraphAlreadyFixed, InvalidStateTransition
+from ariadne.product.domain.errors import (
+    GraphAlreadyFixed,
+    InvalidAnalysisSpec,
+    InvalidStateTransition,
+)
 from ariadne.product.domain.graph_semantics import canonical_graph
 
 
@@ -22,6 +26,7 @@ class GraphVersion:
     project_id: str = ""
     source_result_id: str | None = None
     parent_graph_version_id: str | None = None
+    designated_outcome_node: str | None = None
     name: str = ""
     graph_type: GraphType = GraphType.DAG
     graph_origin: GraphOrigin = GraphOrigin.USER_DEFINED
@@ -49,12 +54,29 @@ class GraphVersion:
         if not valid[self.graph_origin]:
             raise ValueError(f"Invalid references for graph origin {self.graph_origin.value}")
 
-    def apply_edit(self, graph_json: dict[str, Any], edit_rationale: str | None = None) -> None:
+    def apply_edit(
+        self,
+        graph_json: dict[str, Any],
+        edit_rationale: str | None = None,
+        designated_outcome_node: str | None = None,
+        *,
+        update_outcome: bool = False,
+    ) -> None:
         if self.status == GraphVersionStatus.FIXED:
             raise GraphAlreadyFixed(
                 f"GraphVersion {self.graph_version_id!r} is already FIXED"
             )
-        self.graph_json = canonical_graph(self.graph_type, graph_json)
+        graph = canonical_graph(self.graph_type, graph_json)
+        outcome = designated_outcome_node if update_outcome else self.designated_outcome_node
+        if outcome is not None and outcome not in graph["nodes"]:
+            raise InvalidAnalysisSpec("designated_outcome_node must be a Graph node")
+        if update_outcome and outcome != self.designated_outcome_node and not (
+            edit_rationale and edit_rationale.strip()
+        ):
+            raise InvalidAnalysisSpec("Changing designated outcome requires edit_rationale")
+        self.graph_json = graph
+        if update_outcome:
+            self.designated_outcome_node = outcome
         if edit_rationale is not None:
             self.edit_rationale = edit_rationale
 
@@ -64,3 +86,10 @@ class GraphVersion:
                 "GraphVersion", self.status, GraphVersionStatus.FIXED
             )
         self.status = GraphVersionStatus.FIXED
+
+    def validate_outcome(self) -> None:
+        if (
+            self.designated_outcome_node is not None
+            and self.designated_outcome_node not in self.graph_json.get("nodes", [])
+        ):
+            raise InvalidAnalysisSpec("designated_outcome_node must be a Graph node")

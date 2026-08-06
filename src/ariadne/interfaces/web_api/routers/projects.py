@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Response
 
 from ariadne.interfaces.web_api.dependencies import ProjectDataServiceDep
 from ariadne.interfaces.web_api.schemas import (
@@ -13,8 +13,10 @@ from ariadne.interfaces.web_api.schemas import (
 )
 from ariadne.product.application.project_data_service import (
     CreateProjectCommand,
+    ArchiveProjectCommand,
     UpdateProjectCommand,
 )
+from ariadne.product.domain.enums import ProjectStatus
 from ariadne.product.domain.project import Project
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -45,8 +47,10 @@ async def create_project(body: ProjectCreate, svc: ProjectDataServiceDep) -> Pro
 
 
 @router.get("", response_model=ProjectListResponse)
-async def list_projects(svc: ProjectDataServiceDep) -> ProjectListResponse:
-    return ProjectListResponse(items=[_project_to_response(item) for item in svc.list_projects()])
+async def list_projects(
+    svc: ProjectDataServiceDep, status: ProjectStatus | None = ProjectStatus.ACTIVE
+) -> ProjectListResponse:
+    return ProjectListResponse(items=[_project_to_response(item) for item in svc.list_projects(status)])
 
 
 @router.get("/{project_id}", response_model=ProjectResponse)
@@ -66,3 +70,14 @@ async def update_project(
         memo=body.memo,
     ))
     return _project_to_response(project)
+
+
+@router.delete("/{project_id}", status_code=204)
+async def archive_project(
+    project_id: str, request: Request, svc: ProjectDataServiceDep
+) -> Response:
+    svc.archive_project(ArchiveProjectCommand(
+        project_id=project_id,
+        requested_by=request.headers.get("X-User-Id", "anonymous"),
+    ))
+    return Response(status_code=204)

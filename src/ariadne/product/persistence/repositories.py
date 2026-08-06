@@ -231,6 +231,7 @@ def _orm_to_graph_version(orm: GraphVersionOrm) -> GraphVersion:
         project_id=orm.project_id,
         source_result_id=orm.source_result_id,
         parent_graph_version_id=orm.parent_graph_version_id,
+        designated_outcome_node=orm.designated_outcome_node,
         name=orm.name,
         graph_type=GraphType(orm.graph_type),
         graph_origin=GraphOrigin(orm.graph_origin),
@@ -250,6 +251,7 @@ def _graph_version_to_orm(gv: GraphVersion, existing: GraphVersionOrm | None = N
     orm.project_id = gv.project_id
     orm.source_result_id = gv.source_result_id
     orm.parent_graph_version_id = gv.parent_graph_version_id
+    orm.designated_outcome_node = gv.designated_outcome_node
     orm.name = gv.name
     orm.graph_type = gv.graph_type.value
     orm.graph_origin = gv.graph_origin.value

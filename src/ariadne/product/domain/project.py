@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from ariadne.product.domain.enums import ProjectStatus
-from ariadne.product.domain.errors import InvalidStateTransition
+from ariadne.product.domain.errors import InvalidStateTransition, ProjectArchived
 
 
 def _new_id() -> str:
@@ -32,6 +32,8 @@ class Project:
         objective: str | None = None,
         memo: str | None = None,
     ) -> None:
+        if self.status == ProjectStatus.ARCHIVED:
+            raise ProjectArchived(self.project_id)
         if name is not None:
             self.name = name
         if topic is not None:
@@ -42,6 +44,8 @@ class Project:
             self.memo = memo
 
     def archive(self) -> None:
+        if self.status == ProjectStatus.ARCHIVED:
+            return
         if self.status != ProjectStatus.ACTIVE:
             raise InvalidStateTransition("Project", self.status, ProjectStatus.ARCHIVED)
         self.status = ProjectStatus.ARCHIVED

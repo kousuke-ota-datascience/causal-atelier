@@ -17,6 +17,7 @@ from ariadne.product.application.annotation_service import AnnotationService
 from ariadne.product.application.comparison_query_service import ComparisonQueryService
 from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.application.graph_version_service import GraphVersionService
+from ariadne.product.application.graph_candidate_query_service import GraphCandidateQueryService
 from ariadne.product.application.lineage_query_service import LineageQueryService
 from ariadne.product.application.project_data_service import ProjectDataService
 from ariadne.product.application.query_service import ProductQueryService
@@ -64,6 +65,10 @@ async def get_graph_version_service() -> GraphVersionService:
     return GraphVersionService(uow_factory=_uow_context)
 
 
+async def get_graph_candidate_service() -> GraphCandidateQueryService:
+    return GraphCandidateQueryService(uow_factory=_uow_context)
+
+
 async def get_annotation_service() -> AnnotationService:
     return AnnotationService(uow_factory=_uow_context)
 
@@ -92,6 +97,7 @@ async def get_idempotency_service() -> IdempotencyService:
 ProjectDataServiceDep = Annotated[ProjectDataService, Depends(get_project_data_service)]
 ExecutionServiceDep = Annotated[ExecutionService, Depends(get_execution_service)]
 GraphVersionServiceDep = Annotated[GraphVersionService, Depends(get_graph_version_service)]
+GraphCandidateServiceDep = Annotated[GraphCandidateQueryService, Depends(get_graph_candidate_service)]
 AnnotationServiceDep = Annotated[AnnotationService, Depends(get_annotation_service)]
 ComparisonServiceDep = Annotated[ComparisonQueryService, Depends(get_comparison_service)]
 LineageServiceDep = Annotated[LineageQueryService, Depends(get_lineage_service)]

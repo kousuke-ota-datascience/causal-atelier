@@ -9,8 +9,9 @@
   <div class="shell">
     <aside>
       <label>Project<select id="project-select"></select></label>
-      <button id="new-project">＋ Project</button>
+      <button id="new-project">Project Register &amp; Management</button>
       <nav>
+        <button data-workspace="management">Project Management</button>
         <button data-workspace="data" class="active">1 Project / Data</button>
         <button data-workspace="discovery">2 Discovery</button>
         <button data-workspace="inference">3 Inference</button>
@@ -20,44 +21,54 @@
     </aside>
     <main>
       <div id="notice"></div>
-      <section id="data" class="workspace active">
-        <h1>Project / Data</h1><p>目的と不変のDataset Versionを管理します。</p>
+      <section id="management" class="workspace">
+        <h1>Project Register &amp; Management</h1>
+        <p>Projectの登録、ACTIVE Project一覧の確認、分析来歴を保持した利用停止を行います。</p>
         <div class="grid">
-          <form id="project-form" class="card"><h2>Project</h2><label>Name<input name="name" required maxlength="200"></label><label>Topic<input name="topic"></label><label>Objective<textarea name="objective"></textarea></label><label>Memo<textarea name="memo"></textarea></label><button>保存</button></form>
-          <form id="dataset-form" class="card"><h2>Dataset Version</h2><label>CSV / Parquet<input name="file" type="file" accept=".csv,.parquet" required></label><label>Dataset key<input name="dataset_key" required></label><label>Version label<input name="version_label" required></label><label>Name<input name="name" required></label><label>Source note<textarea name="source_note"></textarea></label><button>登録</button></form>
+          <form id="project-register-form" class="card"><h2>Project Register</h2><p class="section-help">新しい分析テーマをACTIVE Projectとして登録します。</p><label data-tooltip="Project selectorと一覧に表示する、分析テーマを識別できる名称です。">Project Name<input name="name" required maxlength="200" placeholder="Sales improvement analysis"></label><label data-tooltip="検証したい研究課題または解決したい業務課題を短く記載します。">Research topic / Business issue<input name="topic" placeholder="Coupon and sales"></label><label data-tooltip="このProjectで最終的に明らかにする内容や意思決定目的を記載します。">Objective<textarea name="objective" placeholder="Estimate the causal effect of coupon delivery"></textarea></label><label data-tooltip="対象範囲、stakeholder、留意事項など、目的以外の補足情報です。">Memo<textarea name="memo" placeholder="Scope, stakeholders, and notes"></textarea></label><button>Projectを登録</button></form>
+          <div class="card"><h2>Project List</h2><p class="section-help">ACTIVE Projectを選択、または確認後にARCHIVEDへ変更します。</p><div id="project-list"></div></div>
         </div>
-        <div class="card"><h2>Datasets</h2><div id="datasets"></div><div id="preview"></div></div>
+      </section>
+      <section id="data" class="workspace active">
+        <h1>Project / Data</h1><p>プロジェクトにおいて取り組むリサーチトピックと、使用するDatasetの管理・登録を行います。</p>
+        <div class="grid">
+          <form id="project-form" class="card"><h2>Project</h2><p class="section-help">選択中ACTIVE Projectのmetadataだけを編集します。</p><label data-tooltip="Project selectorと一覧に表示する名称です。">Name<input name="name" required maxlength="200"></label><label data-tooltip="検証対象の研究課題または業務課題です。">Topic<input name="topic"></label><label data-tooltip="分析によって明らかにする内容や意思決定目的です。">Objective<textarea name="objective"></textarea></label><label data-tooltip="対象範囲や留意事項などの補足情報です。">Memo<textarea name="memo"></textarea></label><button>変更を保存</button></form>
+          <form id="dataset-form" class="card"><h2>Dataset Register</h2><p class="section-help">前処理済みファイルを上書き不能なDataset Versionとして登録します。</p><label data-tooltip="UTF-8 CSVまたは有効なParquetを指定します。空ファイルや拡張子の異なるファイルは登録できません。">CSV / Parquet<input name="file" type="file" accept=".csv,.parquet" required></label><label data-tooltip="同一DatasetのVersion系列をまとめる100文字以内の安定したkeyです。列名一覧ではありません。例: sales_transactions">Dataset key<input name="dataset_key" required maxlength="100" placeholder="sales"></label><label data-tooltip="取得時点や加工版を識別する100文字以内のlabelです。例: 2026-08、v2-cleaned">Version label<input name="version_label" required maxlength="100" placeholder="2026-08"></label><label data-tooltip="画面上でDataset Versionを識別する200文字以内の表示名です。">Name<input name="name" required maxlength="200" placeholder="Sales dataset"></label><label data-tooltip="データの出所、抽出条件、前処理内容を4,000文字以内で記録します。">Source note<textarea name="source_note" maxlength="4000" placeholder="Source system, extraction date, preprocessing"></textarea></label><button>登録</button></form>
+        </div>
+        <div class="card"><h2>Registered Datasets</h2><p class="section-help">schema、行列数、hashとpreviewを確認します。</p><div id="datasets"></div><div id="preview"></div></div>
       </section>
       <section id="discovery" class="workspace">
         <h1>Discovery</h1><p>PC・GESとPC parameter sensitivityを別Executionとして比較します。</p>
         <form id="discovery-form" class="card form-grid">
-          <label>Dataset<select name="dataset_version_id" class="datasets-select" required></select></label>
-          <label>Feature columns<input name="features" placeholder="coupon,visits,sales" required></label>
+          <label data-tooltip="Discoveryへ入力する不変Dataset Versionを選択します。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label>
+          <label data-tooltip="因果探索に含める列をDataset schemaから複数選択します。指定順はschema順へ正規化されます。">Feature columns<span class="input-action"><input name="features" placeholder="coupon, visits, sales" required readonly><button id="open-feature-selector" type="button">列を選択</button></span><small>Dataset schemaから1件以上選択します。</small></label>
+          <label data-tooltip="因果効果の結果変数として扱う列をFeature columnsから1件選択します。GraphとInferenceへ継承されます。">Outcome<select name="designated_outcome_node" id="discovery-outcome" required><option value="">Featureを先に選択</option></select><small>Feature columnsに含まれる列を1件指定し、Inferenceまで継承します。</small></label>
           <fieldset><legend>Algorithms</legend><label><input type="checkbox" name="algorithms" value="pc" checked> PC</label><label><input type="checkbox" name="algorithms" value="ges" checked> GES</label></fieldset>
-          <label>PC alpha grid<input name="alpha" value="0.01,0.05" required></label>
+          <label data-tooltip="PCの条件付き独立性検定で使用する有意水準をカンマ区切りで指定します。各値ごとに別Executionを生成します。">PC alpha grid<input name="alpha" value="0.01,0.05" required></label>
           <label>Objective<input name="objective" value="Compare candidate causal structures" maxlength="4000"></label>
           <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
           <button>複数Executionを受付</button>
         </form>
-        <div class="card"><div class="heading"><h2>Graph Results</h2><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div><button id="compare-discovery" type="button">選択した3件以上を比較</button><pre id="discovery-comparison"></pre></div>
-        <div class="card"><h2>Graph Version editor</h2><label>Discovery Source Result<select id="graph-source"></select></label><label>または Parent Graph<select id="graph-parent"></select></label><label>Parentからの変更種別<select id="graph-transform"><option>USER_EDITED</option><option>CONSTRAINT_ADJUSTED</option></select></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label>選定・編集理由<textarea id="graph-rationale"></textarea></label><button id="save-graph" type="button">Graphを作成してFIXED</button></div>
-        <div class="card"><h2>Direct Graph registration</h2><label>Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label>Name<input id="direct-graph-name" value="Domain DAG"></label><label>Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label>Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">直接登録してFIXED</button></div>
+        <div class="card"><div class="heading"><div><h2>Discovery Executions</h2><p class="section-help">技術状態とDiscovery Resultを確認します。</p></div><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div></div>
+        <div class="card"><div class="heading"><div><h2>Graph Candidates</h2><p class="section-help">Algorithm Outputと派生Graph Versionを同じ一覧で確認・編集・比較します。</p></div><button id="compare-discovery" type="button" disabled>選択した2件以上を比較</button></div><div id="graph-candidates"></div><div id="discovery-comparison"></div></div>
+        <div class="card"><h2>Direct Graph Registration</h2><p class="section-help">Discoveryを経由しないGraph Versionを登録します。</p><label data-tooltip="USER_DEFINEDは専門知識から作成、IMPORTEDは外部Graphの取込みを表します。">Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label data-tooltip="Graph Versionを一覧で識別する名称です。">Name<input id="direct-graph-name" value="Domain DAG"></label><label data-tooltip="Graph nodeのうちInferenceのOutcomeとして継承するnode名です。">Designated Outcome<input id="direct-graph-outcome" placeholder="sales"></label><label data-tooltip="graph_type、nodes、endpoint semanticsを含むedgesを指定します。登録直後はDRAFTです。">Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label data-tooltip="Graphの根拠、作成者、import元など、来歴を再確認できる情報を記載します。">Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">DRAFTとして登録</button></div>
       </section>
       <section id="inference" class="workspace">
-        <h1>Inference</h1><p>Causal Questionを固定し、IdentificationとData Eligibilityを確認してから推定します。</p>
+        <h1>Inference</h1><p>FIXED Graph VersionからOutcomeを継承し、IdentificationとData Eligibilityを確認してから推定します。</p>
+        <div class="explain-grid"><article><h2>Identification</h2><p>Graphと仮定から、指定した因果効果が理論上識別できるかを確認する段階です。</p></article><article><h2>Data Eligibility</h2><p>実データの型、欠測、sample size、overlap等が推定条件を満たすか確認する段階です。</p></article></div>
         <form id="inference-form" class="card form-grid">
-          <label>Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label>FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
-          <label>Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
+          <label data-tooltip="推定に使用する不変Dataset Versionです。Graphのnode名と列名が対応している必要があります。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label data-tooltip="InferenceにはOutcomeが指定されたFIXED Graph Versionだけを使用できます。">FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
+          <label data-tooltip="EXPLORATORYは探索的分析、CONFIRMATORYは事前に定めた仮説の検証を表します。">Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
           <label>Population<input name="population" required></label><label>Comparator<input name="comparator" required></label>
-          <label>Treatment<input name="treatment" required></label><label>Outcome<input name="outcome" required></label>
+          <label data-tooltip="介入あり／なしとして比較するTreatment列です。現在のEstimatorでは通常二値列を指定します。">Treatment<input name="treatment" required placeholder="coupon"></label><label data-tooltip="選択したFIXED Graph Versionからread-onlyで継承され、ここでは変更できません。">Outcome (Graphから継承)<output id="inference-outcome" class="readonly-field">Graphを選択してください</output></label>
           <label>Analysis unit<input name="analysis_unit" required></label><label>Treatment time<input name="treatment_time" required></label><label>Outcome window<input name="outcome_window" required></label>
-          <label>Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label>Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label>Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
-          <label>Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
+          <label data-tooltip="ATEは母集団全体、ATTはTreatmentを受けた対象における平均処置効果です。">Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label data-tooltip="BACKDOORは交絡調整、RANDOMIZEDは無作為割付を仮定した識別戦略です。">Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label data-tooltip="交絡調整へ使用するpre-treatment列をカンマ区切りで指定します。colliderやpost-treatment列を含めないでください。">Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
+          <label data-tooltip="識別と推定が成立するために置く科学的仮定を、カンマまたは改行区切りで記録します。">Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
           <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
-          <label>Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
-          <label>WARN override reason<input name="override_reason"></label>
-          <label>Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
-          <label>Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
+          <label data-tooltip="先に実行したIdentificationのうち、推定gateを通過できるResultを選択します。">Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
+          <label data-tooltip="Data EligibilityがWARNでも推定を続ける場合に、判断理由を明示します。FAILはoverrideできません。">WARN override reason<input name="override_reason"></label>
+          <label data-tooltip="既存Executionの再実行または条件変更としてLineageを残す場合に基準Executionを選択します。">Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
+          <label data-tooltip="基準Executionから条件を変更する場合に、その理由を必ず記載します。">Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
           <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
         </form>
@@ -73,5 +84,9 @@
       </section>
     </main>
   </div>
+  <dialog id="archive-modal"><form method="dialog" class="modal-card"><h2>ProjectをARCHIVEDにしますか？</h2><p>既存のResultとLineageは保持されますが、このProjectでは新しい分析やmetadata更新ができなくなります。</p><div class="modal-actions"><button value="cancel" class="secondary">取消</button><button id="confirm-archive" value="confirm" type="button" class="danger">利用停止を確定</button></div></form></dialog>
+  <dialog id="feature-modal"><form method="dialog" class="modal-card"><h2>Feature columns selector</h2><p>選択Datasetのschema列からDiscovery対象を選択します。不明なtext tokenは確定時に除去されます。</p><div id="feature-options"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button id="confirm-features" value="confirm" type="button">選択を反映</button></div></form></dialog>
+  <dialog id="graph-modal"><div class="modal-card wide"><div class="heading"><h2>Graphを確認/編集する</h2><button id="close-graph-modal" type="button" class="secondary">閉じる</button></div><div id="graph-meta"></div><div id="graph-visual"></div><label data-tooltip="Algorithm Outputの元となるread-only Discovery Resultです。">Discovery Source Result<select id="graph-source"></select></label><label data-tooltip="FIXED Graphを編集する場合に、変更前のVersionとして保持される親Graphです。">Parent Graph<select id="graph-parent"></select></label><label data-tooltip="専門家による編集か、post-hoc constraint適用かを来歴として区別します。">変更種別<select id="graph-transform"><option>USER_EDITED</option><option>CONSTRAINT_ADJUSTED</option></select></label><label data-tooltip="Inferenceへ継承するOutcome nodeです。変更には編集理由が必要です。">Designated Outcome<input id="graph-outcome"></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label data-tooltip="Graphの採用・変更を正当化する科学的または業務上の理由です。">選定・編集理由<textarea id="graph-rationale" placeholder="変更の科学的・業務的理由"></textarea></label><div id="graph-modal-actions" class="modal-actions"><button id="adopt-graph" type="button">Algorithm Outputを採用</button><button id="save-graph" type="button">Graphを保存</button><button id="fix-graph" type="button">DRAFTをFIXEDにする</button></div></div></dialog>
+  <dialog id="graph-comparison-modal"><div class="modal-card wide"><div class="heading"><h2>Graph Comparison</h2><button id="close-comparison-modal" type="button" class="secondary">閉じる</button></div><div id="comparison-tabs"></div><div id="comparison-graph"></div><div id="comparison-summary"></div></div></dialog>
   <script src="/app.js"></script>
 </body></html>

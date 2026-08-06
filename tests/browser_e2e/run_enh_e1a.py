@@ -1,4 +1,4 @@
-"""Real Chromium acceptance runner for E2E-04, E2E-05, E2E-06, and E1a."""
+"""Real Chromium acceptance runner for E2E-04 through E2E-10 and E1a."""
 
 from __future__ import annotations
 
@@ -97,7 +97,7 @@ def _upload(page: Page, project_id: str, name: str, content: str) -> str:
         form.locator('input[name="version_label"]').fill("v1")
         form.locator('input[name="name"]').fill(name)
         form.locator('textarea[name="source_note"]').fill("ENH-E1a browser acceptance synthetic fixture")
-        form.locator("button").click()
+        form.locator("button:not([type])").click()
         page.locator("#notice").filter(has_text="Dataset Version").wait_for()
     finally:
         source.unlink(missing_ok=True)
@@ -124,7 +124,7 @@ def _fill_inference(
     form.locator('select[name="analysis_mode"]').select_option(mode)
     for name, value in {
         "population": "eligible rows", "comparator": "untreated",
-        "treatment": "treatment", "outcome": "outcome", "analysis_unit": "id",
+        "treatment": "treatment", "analysis_unit": "id",
         "treatment_time": "t0", "outcome_window": "t1",
     }.items():
         form.locator(f'[name="{name}"]').fill(value)
@@ -182,26 +182,73 @@ def main() -> int:
             page.goto(WEB, wait_until="networkidle")
             page.locator("#health").filter(has_text="API READY").wait_for(timeout=30_000)
             project_name = f"ENH-E1a Browser {int(time.time())}"
-            page.locator('#project-form input[name="name"]').fill(project_name)
-            page.locator('#project-form input[name="topic"]').fill("E2E-04 to E2E-06")
-            page.locator('#project-form textarea[name="objective"]').fill("Browser acceptance")
-            page.locator("#project-form button").click()
-            page.locator("#notice").filter(has_text="Project").wait_for()
+            page.locator('nav button[data-workspace="management"]').click()
+            register = page.locator("#project-register-form")
+            tooltip = register.locator(".tooltip-trigger").first
+            tooltip.focus()
+            tooltip.locator("xpath=following-sibling::*[@role='tooltip'][1]").wait_for(
+                state="visible"
+            )
+            register.locator('input[name="name"]').fill(project_name)
+            register.locator('input[name="topic"]').fill("E2E-04 to E2E-10")
+            register.locator('textarea[name="objective"]').fill("Browser acceptance")
+            register.locator('textarea[name="memo"]').fill("Registered from the dedicated management workspace")
+            register.locator("button:not([type])").click()
+            page.locator("#notice").filter(has_text="Projectを登録").wait_for()
             project_id = _wait(lambda: next((
                 item["project_id"] for item in _get("/projects")["items"]
                 if item["name"] == project_name
             ), None))
             evidence["project_id"] = project_id
+            project_row = page.locator("#project-list tr").filter(has_text=project_name)
+            assert project_row.count() == 1 and "ACTIVE" in project_row.inner_text()
+
+            # E2E-07: select the registered Project and update metadata in Project / Data.
+            project_row.locator("button.link-button").click()
+            page.locator("#data.workspace.active").wait_for()
+            project_form = page.locator("#project-form")
+            project_form.locator('textarea[name="memo"]').fill("Metadata updated from Project / Data")
+            project_form.locator("button:not([type])").click()
+            page.locator("#notice").filter(has_text="metadataを更新").wait_for()
+            assert _get(f"/projects/{project_id}")["memo"] == "Metadata updated from Project / Data"
 
             rows = ["id,x,treatment,outcome"]
             rows.extend(f"{index},{(index % 9) - 4},{index % 2},{2 * (index % 2) + 0.7 * ((index % 9) - 4) + (index % 5) / 10}" for index in range(1, 181))
+
+            # Invalid upload is a client error with an actionable code, never an HTTP 500.
+            before_invalid_datasets = {
+                item["dataset_version_id"]
+                for item in _get(f"/projects/{project_id}/dataset-versions")["items"]
+            }
+            with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as handle:
+                empty_source = Path(handle.name)
+            try:
+                invalid_form = page.locator("#dataset-form")
+                invalid_form.locator('input[name="file"]').set_input_files(empty_source)
+                invalid_form.locator('input[name="dataset_key"]').fill("invalid-empty")
+                invalid_form.locator('input[name="version_label"]').fill("v1")
+                invalid_form.locator('input[name="name"]').fill("invalid empty file")
+                invalid_form.locator("button:not([type])").click()
+                page.locator("#notice").filter(has_text="INVALID_DATASET_FILE").wait_for()
+            finally:
+                empty_source.unlink(missing_ok=True)
+            assert {
+                item["dataset_version_id"]
+                for item in _get(f"/projects/{project_id}/dataset-versions")["items"]
+            } == before_invalid_datasets
             dataset_id = _upload(page, project_id, "continuous", "\n".join(rows) + "\n")
 
             # E2E-06: discovery output -> constraint-adjusted -> user-edited.
             _nav(page, "discovery")
             discovery_form = page.locator("#discovery-form")
             discovery_form.locator('select[name="dataset_version_id"]').select_option(dataset_id)
-            discovery_form.locator('input[name="features"]').fill("x,treatment,outcome")
+            page.locator("#open-feature-selector").click()
+            page.locator("#feature-modal").wait_for(state="visible")
+            for column in ("x", "treatment", "outcome"):
+                page.locator(f'#feature-options input[value="{column}"]').check()
+            page.locator("#confirm-features").click()
+            assert discovery_form.locator('input[name="features"]').input_value() == "x, treatment, outcome"
+            discovery_form.locator('select[name="designated_outcome_node"]').select_option("outcome")
 
             # Regression: invalid UI state must not reach the API as an empty batch.
             before_invalid = {item["execution_id"] for item in _executions(project_id)}
@@ -209,39 +256,46 @@ def main() -> int:
                 discovery_form.locator(
                     f'input[name="algorithms"][value="{algorithm}"]'
                 ).uncheck()
-            discovery_form.locator("button").click()
+            discovery_form.locator("button:not([type])").click()
             page.locator("#notice").filter(has_text="Algorithmを1件以上").wait_for()
             assert {item["execution_id"] for item in _executions(project_id)} == before_invalid
 
             discovery_form.locator('input[name="algorithms"][value="pc"]').check()
             discovery_form.locator('input[name="alpha"]').fill("0.05,not-a-number")
-            discovery_form.locator("button").click()
+            discovery_form.locator("button:not([type])").click()
             page.locator("#notice").filter(has_text="PC alpha").wait_for()
             assert {item["execution_id"] for item in _executions(project_id)} == before_invalid
 
             discovery_form.locator('input[name="algorithms"][value="ges"]').check()
             discovery_form.locator('input[name="alpha"]').fill("0.01,0.05")
             before = {item["execution_id"] for item in _executions(project_id)}
-            discovery_form.locator("button").click()
+            discovery_form.locator("button:not([type])").click()
             page.locator("#notice").filter(has_text="Discovery").wait_for()
             discoveries = _wait_new_executions(project_id, before, "DISCOVERY", 3)
             _refresh(page, "#refresh-discovery")
-            _wait(lambda: page.locator("#graph-source option").count() > 1)
-            source_values = page.locator("#graph-source option").evaluate_all(
-                "options => options.slice(1).map(option => option.value)"
-            )
-            page.locator("#graph-source").select_option(source_values[-1])
+            discovery_results = [
+                next(item for item in _results(execution["execution_id"])
+                     if item["result_type"] == "DISCOVERY_GRAPH_RESULT")
+                for execution in discoveries
+            ]
+            assert all(result["payload"]["designated_outcome_node"] == "outcome" for result in discovery_results)
+            source_result = discovery_results[-1]
+            source_row = page.locator("#graph-candidates tr").filter(has_text=source_result["result_id"])
+            _wait(lambda: source_row.count() == 1)
+            source_row.locator("button").click()
+            page.locator("#graph-modal").wait_for(state="visible")
             endpoint_display = page.locator("#graph-editor").inner_text()
             assert "Type: CPDAG" in endpoint_display and ("TAIL" in endpoint_display or "ARROW" in endpoint_display)
             page.locator("#graph-rationale").fill("Preserve algorithm output and endpoint semantics")
-            page.locator("#save-graph").click()
-            page.locator("#notice").filter(has_text="provenance").wait_for()
+            page.locator("#adopt-graph").click()
+            page.locator("#notice").filter(has_text="DISCOVERED FIXED").wait_for()
             discovered_graph = _wait(lambda: next((
                 item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
-                if item["graph_origin"] == "DISCOVERED"
+                if item["graph_origin"] == "DISCOVERED" and item["source_result_id"] == source_result["result_id"]
             ), None))
+            assert discovered_graph["status"] == "FIXED"
+            assert discovered_graph["designated_outcome_node"] == "outcome"
 
-            page.locator("#graph-parent").select_option(discovered_graph["graph_version_id"])
             page.locator("#graph-transform").select_option("CONSTRAINT_ADJUSTED")
             if page.locator("#graph-editor .edge button").count():
                 page.locator("#graph-editor .edge button").first.click()
@@ -251,11 +305,18 @@ def main() -> int:
                 page.locator("#add-edge").click()
             page.locator("#graph-rationale").fill("Apply a documented post-hoc constraint")
             page.locator("#save-graph").click()
+            page.locator("#notice").filter(has_text="DRAFTへ保存").wait_for()
             constrained = _wait(lambda: next((
                 item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
                 if item["graph_origin"] == "CONSTRAINT_ADJUSTED"
             ), None))
-            page.locator("#graph-parent").select_option(constrained["graph_version_id"])
+            assert constrained["status"] == "DRAFT"
+            page.locator("#fix-graph").click()
+            page.locator("#notice").filter(has_text="FIXED").wait_for()
+            constrained = _wait(lambda: next((
+                item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
+                if item["graph_version_id"] == constrained["graph_version_id"] and item["status"] == "FIXED"
+            ), None))
             page.locator("#graph-transform").select_option("USER_EDITED")
             if page.locator("#graph-editor .edge button").count():
                 page.locator("#graph-editor .edge button").first.click()
@@ -265,6 +326,7 @@ def main() -> int:
                 page.locator("#add-edge").click()
             page.locator("#graph-rationale").fill("Domain expert edit with explicit rationale")
             page.locator("#save-graph").click()
+            page.locator("#notice").filter(has_text="DRAFTへ保存").wait_for()
             edited = _wait(lambda: next((
                 item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
                 if item["graph_origin"] == "USER_EDITED"
@@ -278,9 +340,80 @@ def main() -> int:
                 "graph_version_ids": [discovered_graph["graph_version_id"], constrained["graph_version_id"], edited["graph_version_id"]],
             }
 
+            # E2E-08 through E2E-10: Outcome propagation, unified candidates, and comparison modal.
+            assert page.locator("#graph-visual .graph-node.outcome").count() == 1
+            assert page.locator("#graph-visual").evaluate(
+                "element => element.scrollWidth <= element.clientWidth"
+            )
+            assert page.locator("#graph-visual").evaluate(
+                "element => [...element.querySelectorAll('.graph-node')].every(node => {"
+                "const outer=element.getBoundingClientRect(), inner=node.getBoundingClientRect();"
+                "return inner.left>=outer.left-1 && inner.right<=outer.right+1})"
+            )
+            page.locator("#close-graph-modal").click()
+            for candidate_id in (discovered_graph["graph_version_id"], constrained["graph_version_id"]):
+                page.locator(f'#graph-candidates input.candidate-check[value="{candidate_id}"]').check()
+            page.locator("#compare-discovery").click()
+            page.locator("#graph-comparison-modal").wait_for(state="visible")
+            assert page.locator("#comparison-tabs button").count() == 2
+            assert "Structure diff" in page.locator("#comparison-summary").inner_text()
+            assert page.locator("#comparison-graph svg").count() == 1
+            assert page.locator("#comparison-graph").evaluate(
+                "element => element.scrollWidth <= element.clientWidth"
+            )
+            assert page.locator("#comparison-graph").evaluate(
+                "element => [...element.querySelectorAll('.graph-node')].every(node => {"
+                "const outer=element.getBoundingClientRect(), inner=node.getBoundingClientRect();"
+                "return inner.left>=outer.left-1 && inner.right<=outer.right+1})"
+            )
+            page.screenshot(path=OUTPUT / "E2E-10-graph-comparison.png", full_page=True)
+            page.locator("#close-comparison-modal").click()
+            page.evaluate("""() => {
+                const nodes=Array.from({length:13},(_,index)=>`node_${index}`);
+                renderGraphVisual(
+                    {graph_type:'DAG',nodes,edges:[]},
+                    document.querySelector('#graph-visual'),
+                    'node_12'
+                );
+                document.querySelector('#graph-modal').showModal();
+            }""")
+            large_graph = page.locator("#graph-visual")
+            assert large_graph.locator(".graph-node").count() == 13
+            assert large_graph.evaluate("element => element.scrollWidth <= element.clientWidth")
+            assert large_graph.evaluate(
+                "element => [...element.querySelectorAll('.graph-node')].every(node => {"
+                "const outer=element.getBoundingClientRect(), inner=node.getBoundingClientRect();"
+                "return inner.left>=outer.left-1 && inner.right<=outer.right+1})"
+            )
+            assert large_graph.evaluate(
+                "element => new Set([...element.querySelectorAll('.graph-node')].map("
+                "node => Math.round(node.getBoundingClientRect().top))).size > 2"
+            )
+            assert large_graph.evaluate(
+                "element => {const nodes=[...element.querySelectorAll('.graph-node')],"
+                "outcome=element.querySelector('.graph-node.outcome');"
+                "return outcome.getBoundingClientRect().right >= "
+                "Math.max(...nodes.map(node=>node.getBoundingClientRect().right))-1}"
+            )
+            page.locator("#close-graph-modal").click()
+            evidence["scenarios"]["E2E-08"] = {
+                "status": "PASS", "outcome": "outcome",
+                "result_ids": [item["result_id"] for item in discovery_results],
+            }
+            evidence["scenarios"]["E2E-09"] = {
+                "status": "PASS",
+                "graph_version_ids": [discovered_graph["graph_version_id"], constrained["graph_version_id"], edited["graph_version_id"]],
+            }
+            evidence["scenarios"]["E2E-10"] = {
+                "status": "PASS",
+                "candidate_ids": [discovered_graph["graph_version_id"], constrained["graph_version_id"]],
+                "large_graph_node_count": 13,
+            }
+
             # Register an explicit DAG without converting CPDAG/PAG.
             page.locator("#direct-graph-json").fill(json.dumps(DAG))
             page.locator("#direct-graph-name").fill("Domain DAG for identification")
+            page.locator("#direct-graph-outcome").fill("outcome")
             page.locator("#direct-graph-note").fill("Declared domain knowledge; independent of discovery orientation")
             page.locator("#save-direct-graph").click()
             page.locator("#notice").filter(has_text="Direct Graph").wait_for()
@@ -288,10 +421,25 @@ def main() -> int:
                 item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
                 if item["graph_origin"] == "USER_DEFINED" and item["graph_type"] == "DAG"
             ), None))
+            assert dag["status"] == "DRAFT"
+            dag_row = page.locator(
+                f'#graph-candidates input.candidate-check[value="{dag["graph_version_id"]}"]'
+            ).locator("xpath=ancestor::tr")
+            dag_row.locator("button").click()
+            page.locator("#graph-modal").wait_for(state="visible")
+            page.locator("#fix-graph").click()
+            page.locator("#notice").filter(has_text="FIXED").wait_for()
+            dag = _wait(lambda: next((
+                item for item in _get(f"/projects/{project_id}/graph-versions")["items"]
+                if item["graph_version_id"] == dag["graph_version_id"] and item["status"] == "FIXED"
+            ), None))
+            page.locator("#close-graph-modal").click()
             graph_id = dag["graph_version_id"]
 
             # E2E-04 identification-first, two estimators, follow-ups, annotation, lineage.
             _fill_inference(page, dataset_id=dataset_id, graph_id=graph_id)
+            assert page.locator("#inference-outcome").inner_text() == "outcome"
+            assert page.locator('#inference-form input[name="outcome"]').count() == 0
             identification_execution, identification, eligibility = _run_identification(page, project_id)
             assert identification["scientific_status"] == "IDENTIFIED"
             assert eligibility["scientific_status"] in {"PASS", "WARN"}
@@ -406,6 +554,23 @@ def main() -> int:
                 "status": "PASS",
                 "execution_ids": [confirmatory["execution_id"], revised["execution_id"], randomized_execution["execution_id"], binary_execution["execution_id"]],
                 "warnings": confirmatory["scientific_warnings"],
+            }
+
+            # Complete E2E-07 after lineage exists: archive is logical and removes normal write selection.
+            page.locator('nav button[data-workspace="management"]').click()
+            _wait(lambda: page.locator("#management.workspace.active").count() == 1)
+            archive_row = page.locator("#project-list tr").filter(has_text=project_name)
+            archive_row.locator("button.danger").click()
+            page.locator("#archive-modal").wait_for(state="visible")
+            page.locator("#confirm-archive").click()
+            page.locator("#notice").filter(has_text="ARCHIVED").wait_for()
+            assert all(item["project_id"] != project_id for item in _get("/projects")["items"])
+            assert any(item["project_id"] == project_id for item in _get("/projects?status=ARCHIVED")["items"])
+            assert _get(f"/results/{effect_id}")["result_id"] == effect_id
+            assert page.locator(f'#project-select option[value="{project_id}"]').count() == 0
+            evidence["scenarios"]["E2E-07"] = {
+                "status": "PASS", "project_id": project_id,
+                "retained_result_id": effect_id,
             }
             outcome = "PASS"
         except Exception:

@@ -16,6 +16,7 @@ from ariadne.interfaces.web_api.schemas import (
 from ariadne.interfaces.web_api.dependencies import IdempotencyServiceDep
 from ariadne.product.application.project_data_service import RegisterDatasetVersionCommand
 from ariadne.product.domain.dataset_version import DatasetVersion
+from ariadne.product.domain.errors import InvalidDatasetFile
 
 router = APIRouter(tags=["dataset-versions"])
 
@@ -50,17 +51,35 @@ async def register_dataset_version(
     idempotency: IdempotencyServiceDep = ...,
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> DatasetVersionResponse:
-    with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename or "data.parquet").suffix) as tmp:
-        tmp.write(await file.read())
+    filename = file.filename or ""
+    suffix = Path(filename).suffix.lower()
+    if suffix not in {".csv", ".parquet"}:
+        raise InvalidDatasetFile("Dataset file must have a .csv or .parquet extension")
+    content = await file.read()
+    if not content:
+        raise InvalidDatasetFile("Dataset file is empty")
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        tmp.write(content)
         tmp_path = Path(tmp.name)
 
     try:
         import pandas as pd
-        suffix = tmp_path.suffix.lower()
-        if suffix == ".parquet":
-            df = pd.read_parquet(tmp_path)
-        else:
-            df = pd.read_csv(tmp_path)
+        try:
+            if suffix == ".parquet":
+                df = pd.read_parquet(tmp_path)
+            else:
+                df = pd.read_csv(tmp_path)
+        except (ImportError, OSError, UnicodeError, ValueError) as exc:
+            raise InvalidDatasetFile(
+                "Dataset file could not be parsed as CSV or Parquet"
+            ) from exc
+
+        if not len(df.columns):
+            raise InvalidDatasetFile("Dataset must contain at least one column")
+        if any(not isinstance(column, str) or not column.strip() for column in df.columns):
+            raise InvalidDatasetFile("Dataset column names must be non-empty strings")
+        if len(set(df.columns)) != len(df.columns):
+            raise InvalidDatasetFile("Dataset column names must be unique")
 
         schema_json = {col: _product_column_type(df[col]) for col in df.columns}
         row_count = len(df)

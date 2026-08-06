@@ -11,8 +11,8 @@ from typing import Any, Callable
 
 from sqlalchemy import select, text
 
-from ariadne.product.domain.errors import DomainError
-from ariadne.product.persistence.orm_models import IdempotencyRecordOrm
+from ariadne.product.domain.errors import DomainError, ProjectArchived
+from ariadne.product.persistence.orm_models import IdempotencyRecordOrm, ProjectOrm
 
 
 class IdempotencyConflict(DomainError):
@@ -42,6 +42,10 @@ class IdempotencyService:
         # The in-process lock covers SQLite/component tests. PostgreSQL's
         # transaction-scoped advisory lock provides cross-process exclusion.
         with self._process_lock, self._session_factory() as session:
+            if scope in {"dataset-version", "execution-batch", "graph-version", "graph-edit-draft"}:
+                project = session.get(ProjectOrm, project_id)
+                if project is not None and project.status == "ARCHIVED":
+                    raise ProjectArchived(project_id)
             if session.bind.dialect.name == "postgresql":
                 lock_id = int.from_bytes(
                     hashlib.sha256(f"{project_id}:{scope}:{key}".encode()).digest()[:8],

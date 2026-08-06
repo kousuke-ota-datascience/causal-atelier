@@ -110,6 +110,7 @@ class ProductQueryService:
                     "graph_version_id": graph.graph_version_id,
                     "content_hash": graph.content_hash,
                     "graph_origin": graph.graph_origin.value,
+                    "designated_outcome_node": graph.designated_outcome_node,
                     "provenance": graph.provenance_json,
                 },
                 "artifacts": [

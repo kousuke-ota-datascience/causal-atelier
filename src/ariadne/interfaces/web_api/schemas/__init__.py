@@ -146,23 +146,65 @@ class GraphVersionCreate(StrictModel):
     graph_origin: Literal["DISCOVERED", "CONSTRAINT_ADJUSTED", "USER_DEFINED", "IMPORTED", "USER_EDITED"]
     name: str = Field(min_length=1, max_length=200); graph_type: Literal["DAG", "CPDAG", "PAG"]
     graph: dict[str, Any]; provenance: dict[str, Any]
+    designated_outcome_node: str | None = Field(default=None, min_length=1, max_length=200)
     edit_rationale: str | None = None; fix_immediately: bool = False
 
 
 class GraphVersionUpdate(StrictModel):
     graph: dict[str, Any]; edit_rationale: str | None = None
+    designated_outcome_node: str | None = Field(default=None, min_length=1, max_length=200)
+    expected_content_hash: str | None = None
 
 
 class GraphVersionResponse(StrictModel):
     graph_version_id: str; project_id: str; source_result_id: str | None
     parent_graph_version_id: str | None; name: str; graph_type: str; graph: dict[str, Any]
     graph_origin: str; provenance: dict[str, Any]
+    designated_outcome_node: str | None
     content_hash: str; edit_rationale: str | None; status: str; created_by: str
     created_at: datetime | None
+    allowed_actions: dict[str, Any] = Field(default_factory=dict)
 
 
 class GraphVersionListResponse(StrictModel):
     items: list[GraphVersionResponse]; next_cursor: str | None = None
+
+
+class GraphEditDraftCreate(StrictModel):
+    base_candidate_kind: Literal["DISCOVERY_RESULT", "GRAPH_VERSION"]
+    base_candidate_id: str
+    change_kind: Literal["USER_EDITED", "CONSTRAINT_ADJUSTED"]
+    name: str = Field(min_length=1, max_length=200)
+    edit_rationale: str = Field(min_length=1, max_length=8000)
+
+
+class CandidateRef(StrictModel):
+    candidate_kind: Literal["DISCOVERY_RESULT", "GRAPH_VERSION"]
+    candidate_id: str
+
+
+class GraphCandidateResponse(StrictModel):
+    candidate_kind: str; candidate_id: str; source_result_id: str | None
+    graph_version_id: str | None; parent_graph_version_id: str | None
+    graph_type: str; graph_origin: str; version_status: str | None
+    scientific_status: str | None; fixed: bool; designated_outcome_node: str | None
+    summary: dict[str, Any]; warnings: list[Any]; allowed_actions: dict[str, Any]
+    graph: dict[str, Any] | None = None
+
+
+class GraphCandidateListResponse(StrictModel):
+    items: list[GraphCandidateResponse]; next_cursor: str | None = None
+
+
+class GraphCandidateComparisonRequest(StrictModel):
+    candidate_refs: list[CandidateRef] = Field(min_length=2, max_length=20)
+
+
+class GraphCandidateComparisonResponse(StrictModel):
+    candidates: list[GraphCandidateResponse]
+    compatibility: dict[str, Any]
+    differences: list[dict[str, Any]]
+    warnings: list[str]
 
 
 class AnnotationCreate(StrictModel):

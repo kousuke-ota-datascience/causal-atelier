@@ -29,7 +29,8 @@ _CAUSAL_DESIGN = {
 }
 _OPERATION_FIELDS = {
     ExecutionOperation.DISCOVERY: {
-        "feature_columns", "constraints", "expected_graph_type", "bootstrap_samples",
+        "feature_columns", "designated_outcome_node", "constraints",
+        "expected_graph_type", "bootstrap_samples",
     },
     ExecutionOperation.IDENTIFICATION: {"allow_partial_identification"},
     ExecutionOperation.ESTIMATION: {"estimator", "inference_options"},
@@ -140,6 +141,13 @@ def validate_analysis_spec(operation: ExecutionOperation, value: dict[str, Any])
         columns = spec.get("feature_columns")
         if not _string_list(columns, unique=True) or not columns:
             raise InvalidAnalysisSpec("operation_spec.feature_columns is required")
+        outcome = spec.get("designated_outcome_node")
+        if outcome is not None and (not isinstance(outcome, str) or not outcome):
+            raise InvalidAnalysisSpec("operation_spec.designated_outcome_node must be a non-empty string")
+        if outcome is not None and outcome not in columns:
+            raise InvalidAnalysisSpec(
+                "operation_spec.designated_outcome_node must be included in feature_columns"
+            )
         if spec.get("expected_graph_type") not in {None, "DAG", "CPDAG", "PAG"}:
             raise InvalidAnalysisSpec("expected_graph_type must be DAG, CPDAG, PAG, or null")
         if not isinstance(spec.get("constraints", {}), dict):

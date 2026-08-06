@@ -120,6 +120,7 @@ def main() -> None:
                 "rationale": "PC alpha grid plus GES",
                 "analysis_spec": _spec({
                     "feature_columns": ["coupon", "past_sales", "sales"],
+                    "designated_outcome_node": "sales",
                     "constraints": {}, "expected_graph_type": None,
                 }),
                 "variants": [
@@ -151,7 +152,8 @@ def main() -> None:
                 "source_result_id": source["result_id"], "parent_graph_version_id": None,
                 "graph_origin": "DISCOVERED",
                 "name": "fixed discovery graph", "graph_type": "CPDAG",
-                "graph": source["payload"], "provenance": {"backend": "compose-smoke"},
+                "graph": source["payload"], "designated_outcome_node": "sales",
+                "provenance": {"backend": "compose-smoke"},
                 "edit_rationale": "algorithm output",
                 "fix_immediately": True,
             },
@@ -170,7 +172,8 @@ def main() -> None:
             headers={"Idempotency-Key": f"domain-graph-{run_key}"},
             json={"source_result_id": None, "parent_graph_version_id": None,
                   "graph_origin": "USER_DEFINED", "name": "domain DAG", "graph_type": "DAG",
-                  "graph": domain_graph_document, "provenance": {"source_note": "known DGP"},
+                  "graph": domain_graph_document, "designated_outcome_node": "sales",
+                  "provenance": {"source_note": "known DGP"},
                   "edit_rationale": None, "fix_immediately": True},
         ))
 

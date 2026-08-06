@@ -18,6 +18,13 @@ from ariadne.product.domain.errors import (
     InvalidGraphSemantics,
     ArtifactHashMismatch,
     ScientificContractViolation,
+    GraphOutcomeMismatch,
+    GraphOutcomeRequired,
+    GraphParentNotFixed,
+    InvalidDatasetFile,
+    InvalidDatasetMetadata,
+    InvalidGraphEditBase,
+    ProjectArchived,
 )
 from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
 
@@ -34,10 +41,24 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 404, "ENTITY_NOT_FOUND", str(exc))
     if isinstance(exc, ProjectBoundaryViolation):
         return _error(request, 422, "PROJECT_BOUNDARY_VIOLATION", str(exc))
+    if isinstance(exc, ProjectArchived):
+        return _error(request, 409, "PROJECT_ARCHIVED", str(exc))
     if isinstance(exc, IdempotencyConflict):
         return _error(request, 409, "IDEMPOTENCY_CONFLICT", str(exc))
     if isinstance(exc, GraphAlreadyFixed):
-        return _error(request, 409, "GRAPH_ALREADY_FIXED", str(exc))
+        return _error(request, 409, "GRAPH_FIXED_IMMUTABLE", str(exc))
+    if isinstance(exc, GraphParentNotFixed):
+        return _error(request, 409, "GRAPH_PARENT_NOT_FIXED", str(exc))
+    if isinstance(exc, GraphOutcomeRequired):
+        return _error(request, 422, "GRAPH_OUTCOME_REQUIRED", str(exc))
+    if isinstance(exc, GraphOutcomeMismatch):
+        return _error(request, 409, "GRAPH_OUTCOME_MISMATCH", str(exc))
+    if isinstance(exc, InvalidGraphEditBase):
+        return _error(request, 409, "INVALID_GRAPH_EDIT_BASE", str(exc))
+    if isinstance(exc, InvalidDatasetFile):
+        return _error(request, 422, "INVALID_DATASET_FILE", str(exc))
+    if isinstance(exc, InvalidDatasetMetadata):
+        return _error(request, 422, "INVALID_DATASET_METADATA", str(exc))
     if isinstance(exc, InvalidStateTransition):
         return _error(request, 409, "EXECUTION_STATE_CONFLICT", str(exc))
     if isinstance(exc, InvalidGraphSemantics):

@@ -57,3 +57,22 @@ def test_discovery_form_validates_api_constraints_and_renders_error_details() ->
     assert "item.loc.filter(value=>value!=='body').join('.')" in javascript
     assert 'name="objective" value="Compare candidate causal structures" maxlength="4000"' in html
     assert 'name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"' in html
+
+
+def test_frontend_has_accessible_tooltips_and_non_scrolling_graph_canvases() -> None:
+    html = (REPOSITORY / "frontend" / "index.html").read_text(encoding="utf-8")
+    javascript = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
+    css = (REPOSITORY / "frontend" / "styles.css").read_text(encoding="utf-8")
+
+    assert html.count("data-tooltip=") >= 20
+    assert "function enhanceTooltips()" in javascript
+    assert "trigger.type='button'" in javascript
+    assert "content.setAttribute('role','tooltip')" in javascript
+    assert ".tooltip-trigger:focus-visible+.tooltip-content" in css
+    assert 'name="dataset_key" required maxlength="100"' in html
+    assert "列名一覧ではありません" in html
+    assert "pointer-events:none" in css
+    assert 'class="graph-svg" width="100%"' in javascript
+    assert "columns=Math.min(6,Math.max(1,nodes.length))" in javascript
+    assert "#graph-visual,#comparison-graph{overflow:hidden" in css
+    assert "if(noticeTimer)clearTimeout(noticeTimer)" in javascript

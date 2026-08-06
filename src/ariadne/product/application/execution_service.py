@@ -14,6 +14,8 @@ from ariadne.product.domain.enums import ExecutionOperation, GraphVersionStatus
 from ariadne.product.domain.analysis_spec import SCHEMA_VERSION
 from ariadne.product.domain.errors import (
     EntityNotFound,
+    GraphOutcomeMismatch,
+    GraphOutcomeRequired,
     InvalidAnalysisSpec,
     ProjectBoundaryViolation,
     ScientificContractViolation,
@@ -21,6 +23,7 @@ from ariadne.product.domain.errors import (
 from ariadne.product.domain.execution import Execution
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.application.scientific_validation_service import ScientificValidationService
+from ariadne.product.application.project_policy import require_active_project
 
 
 @dataclass
@@ -87,6 +90,7 @@ class ExecutionService:
             project = uow.projects.get(command.project_id)
             if project is None:
                 raise EntityNotFound("Project", command.project_id)
+            require_active_project(project)
 
             base_execution = None
             if command.base_execution_id is not None:
@@ -116,6 +120,30 @@ class ExecutionService:
             executions: list[Execution] = []
             for variant in command.variants:
                 analysis_spec = _strip_generated_snapshot_fields(variant.analysis_spec_json)
+                dataset_columns = _dataset_columns(dataset_version.schema_json)
+                if command.operation == ExecutionOperation.DISCOVERY:
+                    operation_spec = analysis_spec.get("operation_spec", {})
+                    unknown = [
+                        item for item in operation_spec.get("feature_columns", [])
+                        if item not in dataset_columns
+                    ]
+                    if unknown:
+                        raise InvalidAnalysisSpec(f"Unknown feature columns: {unknown}")
+                    outcome = operation_spec.get("designated_outcome_node")
+                    if outcome is not None and outcome not in dataset_columns:
+                        raise InvalidAnalysisSpec("designated outcome is not in Dataset schema")
+                elif command.operation in {
+                    ExecutionOperation.IDENTIFICATION, ExecutionOperation.ESTIMATION,
+                }:
+                    if not gv.designated_outcome_node:
+                        raise GraphOutcomeRequired("FIXED Graph Version has no designated outcome")
+                    if gv.designated_outcome_node not in dataset_columns:
+                        raise GraphOutcomeRequired("Graph designated outcome is not in Dataset schema")
+                    submitted_outcome = analysis_spec.get("causal_question", {}).get("outcome")
+                    if submitted_outcome != gv.designated_outcome_node:
+                        raise GraphOutcomeMismatch(
+                            "Causal Question outcome does not match Graph designated outcome"
+                        )
                 warnings = _post_selection_inference_warnings(
                     uow=uow,
                     project_id=command.project_id,
@@ -220,6 +248,10 @@ class ExecutionService:
             execution = uow.executions.get(execution_id)
             if execution is None:
                 raise EntityNotFound("Execution", execution_id)
+            project = uow.projects.get(execution.project_id)
+            if project is None:
+                raise EntityNotFound("Project", execution.project_id)
+            require_active_project(project)
             execution.request_cancel()
             uow.executions.update(execution)
             uow.commit()
@@ -229,6 +261,10 @@ class ExecutionService:
             execution = uow.executions.get(execution_id)
             if execution is None:
                 raise EntityNotFound("Execution", execution_id)
+            project = uow.projects.get(execution.project_id)
+            if project is None:
+                raise EntityNotFound("Project", execution.project_id)
+            require_active_project(project)
             execution.increment_retry()
             uow.executions.update(execution)
             uow.commit()
@@ -345,6 +381,19 @@ def _changed_dimensions(left: Any, right: Any, prefix: str = "") -> list[str]:
 def canonical_snapshot_json(value: Any) -> str:
     """Serialize snapshot input with deterministic key, NULL, and number rules."""
     return json.dumps(_canonicalize(value), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _dataset_columns(schema_json: Any) -> set[str]:
+    if isinstance(schema_json, dict):
+        fields = schema_json.get("fields")
+        if isinstance(fields, list):
+            return {
+                str(item["name"])
+                for item in fields
+                if isinstance(item, dict) and isinstance(item.get("name"), str)
+            }
+        return {str(name) for name in schema_json}
+    return set()
 
 
 def _canonicalize(value: Any) -> Any:

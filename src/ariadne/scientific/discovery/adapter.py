@@ -100,11 +100,19 @@ class DiscoveryAdapter:
         if not graph["edges"]:
             warnings.append("No edges were discovered under the specified conditions.")
         status = ScientificStatus.GENERATED_WITH_WARNINGS if warnings else ScientificStatus.GENERATED
+        designated_outcome = spec.get("designated_outcome_node")
+        if designated_outcome is not None:
+            graph = {**graph, "designated_outcome_node": designated_outcome}
         return ScientificResultBatch([ScientificResultDescriptor(
             result_type=ResultType.DISCOVERY_GRAPH_RESULT,
             scientific_status=status,
             payload=graph,
-            summary={"algorithm": algorithm.upper(), "node_count": len(columns), "edge_count": len(graph["edges"])},
+            summary={
+                "algorithm": algorithm.upper(),
+                "node_count": len(columns),
+                "edge_count": len(graph["edges"]),
+                "designated_outcome_node": designated_outcome,
+            },
             diagnostics={
                 "feature_columns": columns,
                 "constraints_requested": bool(constraints),
