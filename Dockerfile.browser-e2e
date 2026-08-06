@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/playwright/python:v1.62.0-noble
+
+RUN pip install --no-cache-dir playwright==1.62.0
+
+WORKDIR /workspace
+COPY --chmod=0755 tests/browser_e2e/run_enh_e1a.py /workspace/tests/browser_e2e/run_enh_e1a.py
+
+ENTRYPOINT ["python", "tests/browser_e2e/run_enh_e1a.py"]

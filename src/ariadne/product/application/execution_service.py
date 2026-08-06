@@ -44,12 +44,15 @@ class CreateExecutionBatchCommand:
     code_version: str = ""
     runtime_version_json: dict[str, Any] = field(default_factory=dict)
     requested_by: str = "system"
+    base_execution_id: str | None = None
+    change_reason: str | None = None
 
 
 @dataclass
 class ExecutionBatchResult:
     batch_key: str
     execution_ids: list[str]
+    scientific_warnings_by_execution: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
 
 
 class ExecutionService:
@@ -74,6 +77,8 @@ class ExecutionService:
                 "UPSTREAM_RESULT_REQUIRED" if upstream_required else "UPSTREAM_RESULT_INCOMPATIBLE",
                 "input_result_id does not match operation",
             )
+        if command.base_execution_id is None and command.change_reason is not None:
+            raise InvalidAnalysisSpec("change_reason requires base_execution_id")
 
         now = self._clock.now()
         batch_key = str(uuid.uuid4())
@@ -82,6 +87,14 @@ class ExecutionService:
             project = uow.projects.get(command.project_id)
             if project is None:
                 raise EntityNotFound("Project", command.project_id)
+
+            base_execution = None
+            if command.base_execution_id is not None:
+                base_execution = uow.executions.get(command.base_execution_id)
+                if base_execution is None:
+                    raise EntityNotFound("Execution", command.base_execution_id)
+                if base_execution.project_id != command.project_id:
+                    raise ProjectBoundaryViolation("Base Execution does not belong to project")
 
             dataset_version = uow.dataset_versions.get(command.dataset_version_id)
             if dataset_version is None:
@@ -102,6 +115,23 @@ class ExecutionService:
 
             executions: list[Execution] = []
             for variant in command.variants:
+                analysis_spec = _strip_generated_snapshot_fields(variant.analysis_spec_json)
+                warnings = _post_selection_inference_warnings(
+                    uow=uow,
+                    project_id=command.project_id,
+                    dataset_version_id=command.dataset_version_id,
+                    operation=command.operation,
+                    analysis_mode=analysis_spec.get("analysis_mode"),
+                )
+                if warnings:
+                    analysis_spec["scientific_warnings"] = warnings
+                if base_execution is not None:
+                    analysis_spec["revision_context"] = _build_revision_context(
+                        base=base_execution,
+                        command=command,
+                        variant=variant,
+                        analysis_spec=analysis_spec,
+                    )
                 self._validation.validate_submission(
                     uow=uow,
                     project_id=command.project_id,
@@ -109,7 +139,7 @@ class ExecutionService:
                     graph_version_id=command.input_graph_version_id,
                     input_result_id=command.input_result_id,
                     operation=command.operation,
-                    analysis_spec=variant.analysis_spec_json,
+                    analysis_spec=analysis_spec,
                     method=variant.algorithm_or_estimator,
                     parameters=variant.parameter_json,
                 )
@@ -125,7 +155,7 @@ class ExecutionService:
                     algorithm_or_estimator=variant.algorithm_or_estimator,
                     parameter_json=variant.parameter_json,
                     random_seed=variant.random_seed,
-                    analysis_spec_json=variant.analysis_spec_json,
+                    analysis_spec_json=analysis_spec,
                     code_version=command.code_version,
                     runtime_version_json=command.runtime_version_json,
                 )
@@ -138,7 +168,7 @@ class ExecutionService:
                     operation=command.operation,
                     objective_snapshot=variant.objective_snapshot,
                     rationale_snapshot=variant.rationale_snapshot,
-                    analysis_spec_json=variant.analysis_spec_json,
+                    analysis_spec_json=analysis_spec,
                     algorithm_or_estimator=variant.algorithm_or_estimator,
                     parameter_json=variant.parameter_json,
                     random_seed=variant.random_seed,
@@ -157,6 +187,10 @@ class ExecutionService:
         return ExecutionBatchResult(
             batch_key=batch_key,
             execution_ids=[e.execution_id for e in executions],
+            scientific_warnings_by_execution={
+                e.execution_id: list(e.analysis_spec_json.get("scientific_warnings", []))
+                for e in executions
+            },
         )
 
     def get_execution(self, execution_id: str) -> Execution:
@@ -203,6 +237,109 @@ class ExecutionService:
 def _compute_snapshot_hash(**kwargs: Any) -> str:
     canonical = canonical_snapshot_json(kwargs).encode("utf-8")
     return hashlib.sha256(canonical).hexdigest()
+
+
+def _strip_generated_snapshot_fields(value: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: item for key, item in value.items()
+        if key not in {"revision_context", "scientific_warnings"}
+    }
+
+
+def _post_selection_inference_warnings(
+    *,
+    uow: Any,
+    project_id: str,
+    dataset_version_id: str,
+    operation: ExecutionOperation,
+    analysis_mode: Any,
+) -> list[dict[str, Any]]:
+    if operation != ExecutionOperation.ESTIMATION or analysis_mode != "CONFIRMATORY":
+        return []
+    source_ids = sorted({
+        execution.execution_id
+        for execution in uow.executions.list_by_project(project_id)
+        if execution.operation == ExecutionOperation.DISCOVERY
+        and execution.dataset_version_id == dataset_version_id
+    })
+    if not source_ids:
+        return []
+    return [{
+        "warning_code": "POST_SELECTION_INFERENCE_RISK",
+        "message": (
+            "Confirmatory estimation follows graph discovery on the same Dataset Version; "
+            "post-selection inference may invalidate nominal uncertainty."
+        ),
+        "source_discovery_execution_ids": source_ids,
+        "dataset_version_id": dataset_version_id,
+        "rationale": (
+            "A prior DISCOVERY Execution used the same immutable Dataset Version in this Project."
+        ),
+    }]
+
+
+def _build_revision_context(
+    *,
+    base: Execution,
+    command: CreateExecutionBatchCommand,
+    variant: ExecutionVariantSpec,
+    analysis_spec: dict[str, Any],
+) -> dict[str, Any]:
+    base_conditions = {
+        "dataset_version_id": base.dataset_version_id,
+        "input_graph_version_id": base.input_graph_version_id,
+        "input_result_id": base.input_result_id,
+        "operation": base.operation.value,
+        "objective": base.objective_snapshot,
+        "rationale": base.rationale_snapshot,
+        "analysis_spec": _strip_generated_snapshot_fields(base.analysis_spec_json),
+        "algorithm_or_estimator": base.algorithm_or_estimator,
+        "parameters": base.parameter_json,
+        "random_seed": base.random_seed,
+        "code_version": base.code_version,
+        "runtime_versions": base.runtime_version_json,
+    }
+    proposed_conditions = {
+        "dataset_version_id": command.dataset_version_id,
+        "input_graph_version_id": command.input_graph_version_id,
+        "input_result_id": command.input_result_id,
+        "operation": command.operation.value,
+        "objective": variant.objective_snapshot,
+        "rationale": variant.rationale_snapshot,
+        "analysis_spec": _strip_generated_snapshot_fields(analysis_spec),
+        "algorithm_or_estimator": variant.algorithm_or_estimator,
+        "parameters": variant.parameter_json,
+        "random_seed": variant.random_seed,
+        "code_version": command.code_version,
+        "runtime_versions": command.runtime_version_json,
+    }
+    changed = _changed_dimensions(base_conditions, proposed_conditions)
+    reason = command.change_reason.strip() if isinstance(command.change_reason, str) else None
+    if changed and not reason:
+        raise ScientificContractViolation(
+            "EXECUTION_CHANGE_REASON_REQUIRED",
+            "A changed Execution requires a non-empty change_reason",
+        )
+    return {
+        "base_execution_id": base.execution_id,
+        "base_snapshot_hash": base.snapshot_hash,
+        "revision_kind": "REVISED" if changed else "RERUN",
+        "change_reason": reason if changed else None,
+        "changed_dimensions": changed,
+    }
+
+
+def _changed_dimensions(left: Any, right: Any, prefix: str = "") -> list[str]:
+    if isinstance(left, dict) and isinstance(right, dict):
+        changed: list[str] = []
+        for key in sorted(set(left) | set(right)):
+            path = f"{prefix}.{key}" if prefix else key
+            if key not in left or key not in right:
+                changed.append(path)
+            else:
+                changed.extend(_changed_dimensions(left[key], right[key], path))
+        return changed
+    return [] if left == right else [prefix]
 
 
 def canonical_snapshot_json(value: Any) -> str:

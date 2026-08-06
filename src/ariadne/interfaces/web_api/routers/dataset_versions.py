@@ -62,7 +62,7 @@ async def register_dataset_version(
         else:
             df = pd.read_csv(tmp_path)
 
-        schema_json = {col: str(dtype) for col, dtype in df.dtypes.items()}
+        schema_json = {col: _product_column_type(df[col]) for col in df.columns}
         row_count = len(df)
         column_count = len(df.columns)
 
@@ -80,6 +80,24 @@ async def register_dataset_version(
         tmp_path.unlink(missing_ok=True)
 
     return DatasetVersionResponse.model_validate(response)
+
+
+def _product_column_type(series: object) -> str:
+    """Normalize dataframe storage types before crossing into Product Domain."""
+    import pandas as pd
+
+    dtype = getattr(series, "dtype", None)
+    if pd.api.types.is_bool_dtype(dtype):
+        return "BOOLEAN"
+    if pd.api.types.is_integer_dtype(dtype):
+        return "INTEGER"
+    if pd.api.types.is_float_dtype(dtype):
+        return "REAL"
+    if pd.api.types.is_datetime64_any_dtype(dtype):
+        return "DATETIME"
+    if pd.api.types.is_string_dtype(dtype) or pd.api.types.is_object_dtype(dtype):
+        return "TEXT"
+    return "OTHER"
 
 
 @router.get("/projects/{project_id}/dataset-versions", response_model=DatasetVersionListResponse)

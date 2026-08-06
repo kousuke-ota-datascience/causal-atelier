@@ -15,14 +15,14 @@ from ariadne.product.domain.errors import (
 
 ESTIMATOR_CAPABILITIES: dict[str, dict[str, Any]] = {
     "difference_in_means": {
-        "estimands": {"ATE", "ATT"}, "strategies": {"RANDOMIZED"}, "parameters": set(),
+        "estimands": {"ATE"}, "strategies": {"RANDOMIZED"}, "parameters": set(),
         "treatment_types": {"BINARY"}, "outcome_types": {"CONTINUOUS"},
         "required_adjustment": "NONE", "uncertainty_support": True,
         "overlap_requirement": "TREATMENT_ARMS",
         "produced_diagnostics": {"SAMPLE_SIZE", "TREATMENT_ARM_COUNTS"},
     },
     "diff_in_means": {
-        "estimands": {"ATE", "ATT"}, "strategies": {"RANDOMIZED"}, "parameters": set(),
+        "estimands": {"ATE"}, "strategies": {"RANDOMIZED"}, "parameters": set(),
         "treatment_types": {"BINARY"}, "outcome_types": {"CONTINUOUS"},
         "required_adjustment": "NONE", "uncertainty_support": True,
         "overlap_requirement": "TREATMENT_ARMS",
@@ -158,16 +158,124 @@ class ScientificValidationService:
                 "OVERRIDE_REASON_REQUIRED", "validation_override is required for REQUIRES_REVIEW"
             )
 
-        name = method.lower()
-        capability = ESTIMATOR_CAPABILITIES.get(name)
-        if capability is None:
-            raise InvalidAnalysisSpec(f"Unsupported estimator: {method}")
         question = analysis_spec["causal_question"]
         design = upstream_execution.analysis_spec_json["causal_design"]
-        if question["estimand"] not in capability["estimands"]:
-            raise InvalidAnalysisSpec("Estimator is incompatible with estimand")
-        if design["identification_strategy"] not in capability["strategies"]:
-            raise InvalidAnalysisSpec("Estimator is incompatible with identification strategy")
-        unknown = set(parameters) - capability["parameters"]
-        if unknown:
-            raise InvalidAnalysisSpec(f"Unsupported estimator parameters: {sorted(unknown)}")
+        validate_estimator_compatibility(
+            method=method,
+            parameters=parameters,
+            estimand=question["estimand"],
+            strategy=design["identification_strategy"],
+            submitted_adjustment=analysis_spec["causal_design"].get("adjustment_set", []),
+            identified_adjustment=upstream.payload_json.get("selected_adjustment_set", []),
+            eligibility_payload=eligibility.payload_json,
+        )
+
+
+def validate_estimator_compatibility(
+    *,
+    method: str,
+    parameters: dict[str, Any],
+    estimand: str,
+    strategy: str,
+    submitted_adjustment: list[str],
+    identified_adjustment: list[str],
+    eligibility_payload: dict[str, Any],
+) -> None:
+    """Validate the complete FR-054 contract using persisted scientific evidence."""
+    capability = ESTIMATOR_CAPABILITIES.get(method.lower())
+    if capability is None:
+        raise ScientificContractViolation(
+            "ESTIMATOR_UNSUPPORTED", f"Unsupported estimator: {method}"
+        )
+    if estimand not in capability["estimands"]:
+        raise ScientificContractViolation(
+            "ESTIMATOR_ESTIMAND_INCOMPATIBLE",
+            f"{method} does not support estimand {estimand}",
+        )
+
+    inferred = eligibility_payload.get("inferred_types")
+    if not isinstance(inferred, dict):
+        raise ScientificContractViolation(
+            "DATA_ELIGIBILITY_TYPE_EVIDENCE_MISSING",
+            "Data Eligibility Result has no normalized inferred types",
+        )
+    treatment = inferred.get("treatment")
+    outcome = inferred.get("outcome")
+    treatment_type = treatment.get("type") if isinstance(treatment, dict) else None
+    outcome_type = outcome.get("type") if isinstance(outcome, dict) else None
+    if treatment_type not in capability["treatment_types"]:
+        raise ScientificContractViolation(
+            "ESTIMATOR_TREATMENT_TYPE_INCOMPATIBLE",
+            f"{method} does not support treatment type {treatment_type or 'UNKNOWN'}",
+        )
+    if outcome_type not in capability["outcome_types"]:
+        raise ScientificContractViolation(
+            "ESTIMATOR_OUTCOME_TYPE_INCOMPATIBLE",
+            f"{method} does not support outcome type {outcome_type or 'UNKNOWN'}",
+        )
+    if strategy not in capability["strategies"]:
+        raise ScientificContractViolation(
+            "ESTIMATOR_IDENTIFICATION_STRATEGY_INCOMPATIBLE",
+            f"{method} does not support identification strategy {strategy}",
+        )
+
+    unknown = set(parameters) - capability["parameters"]
+    if unknown:
+        raise ScientificContractViolation(
+            "ESTIMATOR_PARAMETER_UNSUPPORTED",
+            f"Unsupported estimator parameters: {sorted(unknown)}",
+        )
+    _validate_parameter_values(method, parameters)
+
+    if submitted_adjustment != identified_adjustment:
+        raise ScientificContractViolation(
+            "ESTIMATOR_ADJUSTMENT_INCOMPATIBLE",
+            "Submitted adjustment set does not match the Identification Result",
+        )
+    if capability["required_adjustment"] == "NONE" and identified_adjustment:
+        raise ScientificContractViolation(
+            "ESTIMATOR_ADJUSTMENT_INCOMPATIBLE",
+            f"{method} does not consume an adjustment set",
+        )
+
+    if capability["overlap_requirement"] == "PROPENSITY_SCORE":
+        checks = eligibility_payload.get("checks")
+        overlap = next(
+            (
+                item for item in checks
+                if isinstance(item, dict) and item.get("check_code") == "LIMITED_OVERLAP"
+            ),
+            None,
+        ) if isinstance(checks, list) else None
+        if overlap is None or overlap.get("status") not in {"PASS", "WARN"}:
+            raise ScientificContractViolation(
+                "ESTIMATOR_DIAGNOSTIC_PREREQUISITE_MISSING",
+                f"{method} requires an estimable propensity overlap diagnostic",
+            )
+
+
+def _validate_parameter_values(method: str, parameters: dict[str, Any]) -> None:
+    robust_se = parameters.get("robust_se")
+    if robust_se is not None and robust_se not in {"HC0", "HC1", "HC2", "HC3"}:
+        raise ScientificContractViolation(
+            "ESTIMATOR_PARAMETER_UNSUPPORTED", "robust_se must be HC0, HC1, HC2, or HC3"
+        )
+    clip = parameters.get("propensity_clip")
+    if clip is not None and (
+        not isinstance(clip, (list, tuple))
+        or len(clip) != 2
+        or not all(isinstance(value, (int, float)) for value in clip)
+        or not 0 < float(clip[0]) < float(clip[1]) < 1
+    ):
+        raise ScientificContractViolation(
+            "ESTIMATOR_PARAMETER_UNSUPPORTED",
+            "propensity_clip must be [lower, upper] with 0 < lower < upper < 1",
+        )
+    folds = parameters.get("cross_fitting_folds")
+    if folds is not None and (
+        not isinstance(folds, int) or isinstance(folds, bool) or folds == 1 or folds < 0
+    ):
+        raise ScientificContractViolation(
+            "ESTIMATOR_PARAMETER_UNSUPPORTED",
+            "cross_fitting_folds must be zero or at least two",
+        )

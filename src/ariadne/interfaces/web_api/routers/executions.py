@@ -43,6 +43,9 @@ def _execution_to_response(e: Execution) -> ExecutionResponse:
         started_at=e.started_at,
         finished_at=e.finished_at,
         last_error_summary=e.last_error_summary,
+        analysis_mode=e.analysis_spec_json.get("analysis_mode"),
+        scientific_warnings=e.analysis_spec_json.get("scientific_warnings", []),
+        revision_context=e.analysis_spec_json.get("revision_context"),
     )
 
 
@@ -75,10 +78,16 @@ async def create_execution_batch(
             input_result_id=body.input_result_id,
             code_version=body.code_version, runtime_version_json=body.runtime_versions,
             requested_by=requested_by,
+            base_execution_id=body.base_execution_id,
+            change_reason=body.change_reason,
         ))
         return ExecutionBatchResponse(
             batch_key=result.batch_key,
-            executions=[ExecutionAccepted(execution_id=value, status="QUEUED") for value in result.execution_ids],
+            executions=[ExecutionAccepted(
+                execution_id=value,
+                status="QUEUED",
+                scientific_warnings=result.scientific_warnings_by_execution.get(value, []),
+            ) for value in result.execution_ids],
         ).model_dump(mode="json")
     response = idempotency.execute(
         project_id=project_id, scope="execution-batch", key=idempotency_key,

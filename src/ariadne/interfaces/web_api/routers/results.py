@@ -100,6 +100,7 @@ def _lineage_relation(source_type: str | None, target_type: str | None) -> str:
         ("Result", "Artifact"): "HAS_ARTIFACT",
         ("Result", "Annotation"): "HAS_ANNOTATION",
         ("GraphVersion", "Annotation"): "HAS_ANNOTATION",
+        ("Execution", "Execution"): "REVISED_FROM",
     }.get((source_type, target_type), "RELATED_TO")
 
 

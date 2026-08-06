@@ -128,8 +128,30 @@ class LineageQueryService:
                     "snapshot_hash": generating.snapshot_hash,
                     "snapshot_schema_version": generating.snapshot_schema_version,
                     "status": generating.status.value,
+                    "analysis_mode": generating.analysis_spec_json.get("analysis_mode"),
+                    "scientific_warnings": generating.analysis_spec_json.get("scientific_warnings", []),
+                    "revision_context": generating.analysis_spec_json.get("revision_context"),
                 }))
                 add_edge(generating.execution_id, current.result_id)
+                revision = generating.analysis_spec_json.get("revision_context")
+                if isinstance(revision, dict):
+                    base = uow.executions.get(revision.get("base_execution_id", ""))
+                    if base is None:
+                        raise ValueError("Revision base Execution does not exist")
+                    if base.project_id != execution_project_id:
+                        raise ValueError("Revision lineage crosses a Project boundary")
+                    add_node(LineageNode("Execution", base.execution_id,
+                                         f"Execution ({base.operation.value})", {
+                        "algorithm_or_estimator": base.algorithm_or_estimator,
+                        "parameters": base.parameter_json,
+                        "snapshot_hash": base.snapshot_hash,
+                        "snapshot_schema_version": base.snapshot_schema_version,
+                        "status": base.status.value,
+                        "analysis_mode": base.analysis_spec_json.get("analysis_mode"),
+                        "scientific_warnings": base.analysis_spec_json.get("scientific_warnings", []),
+                        "revision_context": base.analysis_spec_json.get("revision_context"),
+                    }))
+                    add_edge(base.execution_id, generating.execution_id)
                 add_dataset(generating.dataset_version_id, generating.execution_id)
                 add_artifacts(generating.execution_id, current.result_id)
                 add_annotations(target_result_id=current.result_id)

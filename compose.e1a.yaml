@@ -1,0 +1,30 @@
+services:
+  database:
+    ports: !override
+      - "127.0.0.1:15432:5432"
+  api:
+    ports: !override
+      - "127.0.0.1:18000:8000"
+  frontend:
+    ports: !override
+      - "127.0.0.1:18080:80"
+  browser-e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.browser-e2e
+    image: ariadne-e1a-browser-e2e:playwright-1.62.0
+    # The workspace is group-restricted and hosted on a root-squashed filesystem.
+    user: "${ARIADNE_E2E_USER:-1000:1000}"
+    profiles: ["e2e"]
+    working_dir: /workspace
+    environment:
+      ARIADNE_E2E_WEB_URL: http://frontend
+      ARIADNE_E2E_API_URL: http://api:8000/api/v1
+      ARIADNE_E2E_OUTPUT_DIR: /evidence
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ./test-results/browser_e2e:/evidence
+    depends_on:
+      frontend:
+        condition: service_started

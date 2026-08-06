@@ -10,10 +10,11 @@ from ariadne.product.domain.enums import ExecutionOperation
 from ariadne.product.domain.errors import InvalidAnalysisSpec
 
 SCHEMA_VERSION = "causal-analysis-spec/2"
-_COMMON = {
+_REQUIRED_COMMON = {
     "schema_version", "analysis_mode", "research_context", "causal_question",
     "causal_design", "operation_spec", "validation_override",
 }
+_OPTIONAL_COMMON = {"revision_context", "scientific_warnings"}
 _RESEARCH_CONTEXT = {
     "problem_statement", "research_question", "significance", "hypothesis",
 }
@@ -40,8 +41,8 @@ _OPERATION_FIELDS = {
 def validate_analysis_spec(operation: ExecutionOperation, value: dict[str, Any]) -> None:
     if not isinstance(value, dict):
         raise InvalidAnalysisSpec("analysis_spec must be an object")
-    _reject_unknown("analysis_spec", value, _COMMON)
-    missing = _COMMON - set(value)
+    _reject_unknown("analysis_spec", value, _REQUIRED_COMMON | _OPTIONAL_COMMON)
+    missing = _REQUIRED_COMMON - set(value)
     if missing:
         raise InvalidAnalysisSpec(f"analysis_spec fields are required: {sorted(missing)}")
     if value["schema_version"] != SCHEMA_VERSION:
@@ -101,6 +102,38 @@ def validate_analysis_spec(operation: ExecutionOperation, value: dict[str, Any])
             raise InvalidAnalysisSpec("validation_override.actor is required")
         if not _string_list(override["warning_codes"], unique=True) or not override["warning_codes"]:
             raise InvalidAnalysisSpec("validation_override.warning_codes is required")
+
+    revision = value.get("revision_context")
+    if revision is not None:
+        revision_fields = {
+            "base_execution_id", "base_snapshot_hash", "revision_kind",
+            "change_reason", "changed_dimensions",
+        }
+        if not isinstance(revision, dict) or set(revision) != revision_fields:
+            raise InvalidAnalysisSpec(
+                "revision_context requires base_execution_id, base_snapshot_hash, "
+                "revision_kind, change_reason, and changed_dimensions"
+            )
+        if not all(
+            isinstance(revision[name], str) and revision[name]
+            for name in ("base_execution_id", "base_snapshot_hash")
+        ):
+            raise InvalidAnalysisSpec("revision_context base reference is required")
+        if revision["revision_kind"] not in {"RERUN", "REVISED"}:
+            raise InvalidAnalysisSpec("revision_context.revision_kind is invalid")
+        if not _string_list(revision["changed_dimensions"], unique=True):
+            raise InvalidAnalysisSpec("revision_context.changed_dimensions must be a unique string list")
+        reason = revision["change_reason"]
+        if reason is not None and (not isinstance(reason, str) or not reason.strip()):
+            raise InvalidAnalysisSpec("revision_context.change_reason must be null or non-empty")
+        if revision["revision_kind"] == "REVISED" and reason is None:
+            raise InvalidAnalysisSpec("revision_context.change_reason is required for REVISED")
+        if revision["revision_kind"] == "RERUN" and revision["changed_dimensions"]:
+            raise InvalidAnalysisSpec("RERUN cannot contain changed dimensions")
+
+    warnings = value.get("scientific_warnings", [])
+    if not isinstance(warnings, list) or any(not _scientific_warning(item) for item in warnings):
+        raise InvalidAnalysisSpec("scientific_warnings contains an invalid warning")
 
     spec = value["operation_spec"]
     if operation == ExecutionOperation.DISCOVERY:
@@ -168,4 +201,20 @@ def _string_list(value: Any, *, unique: bool = False) -> bool:
         isinstance(value, list)
         and all(isinstance(item, str) and item for item in value)
         and (not unique or len(value) == len(set(value)))
+    )
+
+
+def _scientific_warning(value: Any) -> bool:
+    fields = {
+        "warning_code", "message", "source_discovery_execution_ids",
+        "dataset_version_id", "rationale",
+    }
+    return (
+        isinstance(value, dict)
+        and set(value) == fields
+        and all(isinstance(value[name], str) and value[name] for name in (
+            "warning_code", "message", "dataset_version_id", "rationale",
+        ))
+        and _string_list(value["source_discovery_execution_ids"], unique=True)
+        and value["source_discovery_execution_ids"] == sorted(value["source_discovery_execution_ids"])
     )

@@ -68,6 +68,8 @@ class ExecutionBatchCreate(StrictModel):
     variants: list[ExecutionVariantRequest] = Field(min_length=1, max_length=20)
     code_version: str = Field(min_length=1, max_length=200)
     runtime_versions: dict[str, Any]
+    base_execution_id: str | None = None
+    change_reason: str | None = Field(default=None, max_length=8000)
 
     @model_validator(mode="after")
     def graph_matches_operation(self) -> "ExecutionBatchCreate":
@@ -100,6 +102,7 @@ class ExecutionBatchCreate(StrictModel):
 
 class ExecutionAccepted(StrictModel):
     execution_id: str; status: str
+    scientific_warnings: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ExecutionBatchResponse(StrictModel):
@@ -113,6 +116,9 @@ class ExecutionResponse(StrictModel):
     algorithm_or_estimator: str; status: str; retry_count: int; requested_by: str
     requested_at: datetime | None; started_at: datetime | None; finished_at: datetime | None
     last_error_summary: str | None
+    analysis_mode: str | None = None
+    scientific_warnings: list[dict[str, Any]] = Field(default_factory=list)
+    revision_context: dict[str, Any] | None = None
 
 
 class ExecutionListResponse(StrictModel):

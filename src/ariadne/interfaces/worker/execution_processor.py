@@ -107,6 +107,7 @@ class ExecutionProcessor:
                 raise RuntimeError("Scientific Core returned no Results")
 
             now = self._clock.now()
+            snapshot_warnings = execution.analysis_spec_json.get("scientific_warnings", [])
             results = [Result(
                 execution_id=execution.execution_id,
                 result_type=descriptor.result_type,
@@ -114,7 +115,7 @@ class ExecutionProcessor:
                 summary_json=descriptor.summary,
                 payload_json=descriptor.payload,
                 diagnostics_json=descriptor.diagnostics,
-                warning_json=descriptor.warnings,
+                warning_json=[*descriptor.warnings, *snapshot_warnings],
                 created_at=now,
             ) for descriptor in descriptors]
 

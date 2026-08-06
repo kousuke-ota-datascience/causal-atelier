@@ -40,7 +40,8 @@
           <button>複数Executionを受付</button>
         </form>
         <div class="card"><div class="heading"><h2>Graph Results</h2><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div><button id="compare-discovery" type="button">選択した3件以上を比較</button><pre id="discovery-comparison"></pre></div>
-        <div class="card"><h2>Graph Version editor</h2><label>Discovery Source Result<select id="graph-source"></select></label><label>または Parent Graph（USER_EDITED）<select id="graph-parent"></select></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label>選定・編集理由<textarea id="graph-rationale"></textarea></label><button id="save-graph" type="button">Graphを作成してFIXED</button></div>
+        <div class="card"><h2>Graph Version editor</h2><label>Discovery Source Result<select id="graph-source"></select></label><label>または Parent Graph<select id="graph-parent"></select></label><label>Parentからの変更種別<select id="graph-transform"><option>USER_EDITED</option><option>CONSTRAINT_ADJUSTED</option></select></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label>選定・編集理由<textarea id="graph-rationale"></textarea></label><button id="save-graph" type="button">Graphを作成してFIXED</button></div>
+        <div class="card"><h2>Direct Graph registration</h2><label>Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label>Name<input id="direct-graph-name" value="Domain DAG"></label><label>Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label>Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">直接登録してFIXED</button></div>
       </section>
       <section id="inference" class="workspace">
         <h1>Inference</h1><p>Causal Questionを固定し、IdentificationとData Eligibilityを確認してから推定します。</p>
@@ -55,8 +56,10 @@
           <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
           <label>Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
           <label>WARN override reason<input name="override_reason"></label>
+          <label>Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
+          <label>Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
-          <div id="preflight"></div><button>2. 許可済みResultからEstimationを実行</button>
+          <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
         </form>
         <div class="card"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
         <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>

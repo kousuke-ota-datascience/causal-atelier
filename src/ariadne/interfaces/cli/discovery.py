@@ -73,6 +73,7 @@ def main(argv: list[str] | None = None) -> int:
             code_version=_version(), runtime_versions={"python": platform.python_version()},
             scientific_status=output.scientific_status.value, result_summary=output.summary,
             artifacts=artifacts, warnings=output.warnings,
+            scientific_warnings=config.analysis_spec.get("scientific_warnings", []),
             analysis_mode=config.analysis_spec["analysis_mode"],
             backend_version="ariadne/0.1.0",
         )

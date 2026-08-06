@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import io
 import math
+import os
 import random
 import time
 import uuid
@@ -16,7 +17,7 @@ import uuid
 import httpx
 
 
-BASE_URL = "http://127.0.0.1:8000/api/v1"
+BASE_URL = os.getenv("ARIADNE_GOLDEN_PATH_BASE_URL", "http://127.0.0.1:8000/api/v1")
 TIMEOUT_SECONDS = 120
 
 
@@ -211,7 +212,12 @@ def main() -> None:
         estimation_ids = [item["execution_id"] for item in estimation["executions"]]
         _wait_for_executions(client, estimation_ids)
         estimation_results = [
-            _require(client.get(f"/executions/{execution_id}/results"))["items"][0]
+            next(
+                result for result in _require(
+                    client.get(f"/executions/{execution_id}/results")
+                )["items"]
+                if result["result_type"] == "TREATMENT_EFFECT_RESULT"
+            )
             for execution_id in estimation_ids
         ]
         assert all(result["scientific_status"] == "ESTIMATED" for result in estimation_results)

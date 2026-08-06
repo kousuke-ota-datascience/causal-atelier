@@ -94,6 +94,7 @@ def run_stage(operation: ExecutionOperation, argv: list[str] | None = None) -> i
                 for result in results
             ]}, artifacts=artifacts,
             warnings=[str(warning) for result in results for warning in result.warnings],
+            scientific_warnings=config.analysis_spec.get("scientific_warnings", []),
             analysis_mode=config.analysis_spec["analysis_mode"],
             causal_question_hash=causal_question_hash(config.analysis_spec),
             graph_origin=getattr(config, "graph_origin", None),

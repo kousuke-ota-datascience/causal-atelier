@@ -20,9 +20,17 @@ def test_four_workspace_frontend_uses_only_product_api_contract() -> None:
     ))
     assert "target_graph_version_id:graph.graph_version_id" in javascript
     assert "parent_graph_version_id:parent||null" in javascript
-    assert "origin=parent?'USER_EDITED'" in javascript
+    assert "origin=parent?$('#graph-transform').value:'DISCOVERED'" in javascript
+    assert "save-direct-graph" in html and "direct-graph-json" in javascript
     assert all(value in html for value in ("result-type-filter", "result-status-filter"))
     assert "compatible estimators=" in javascript
+    assert all(value in html for value in (
+        "base-executions", "change_reason", "scientific-warnings",
+    ))
+    assert all(value in javascript for value in (
+        "base_execution_id:base", "change_reason:changeReason",
+        "scientific_warnings", "inferred_types",
+    ))
 
 
 def test_frontend_generates_idempotency_keys_without_requiring_random_uuid() -> None:
@@ -32,4 +40,4 @@ def test_frontend_generates_idempotency_keys_without_requiring_random_uuid() -> 
     assert 'typeof globalThis.crypto?.randomUUID==="function"' in javascript
     assert 'typeof globalThis.crypto?.getRandomValues==="function"' in javascript
     assert javascript.count("randomUUID()") == 1
-    assert javascript.count("'Idempotency-Key':idempotencyKey()") == 7
+    assert javascript.count("'Idempotency-Key':idempotencyKey()") == 8

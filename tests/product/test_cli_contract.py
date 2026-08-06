@@ -58,7 +58,26 @@ def test_estimation_cli_scientific_negative_result_exits_zero(
     graph.write_text('{"graph_type":"DAG","nodes":["t","y"],"edges":[]}', encoding="utf-8")
     output_dir = tmp_path / "output"
     identification = tmp_path / "identification.json"
-    identification.write_text(json.dumps({"identification_status":"IDENTIFIED","eligibility_status":"PASS"}), encoding="utf-8")
+    identification.write_text(json.dumps({
+        "identification_status": "IDENTIFIED", "eligibility_status": "PASS",
+        "analysis_spec": {
+            "causal_design": {"identification_strategy": "RANDOMIZED", "adjustment_set": []},
+        },
+        "result_summary": {"results": [
+            {"result_type": "IDENTIFICATION_RESULT", "payload": {
+                "strategy": "RANDOMIZED", "selected_adjustment_set": [],
+            }},
+            {"result_type": "DATA_ELIGIBILITY_RESULT", "payload": {
+                "status": "PASS", "checks": [
+                    {"check_code": "TREATMENT_PREVALENCE", "status": "PASS"},
+                ],
+                "inferred_types": {
+                    "treatment": {"type": "BINARY", "evidence": {}},
+                    "outcome": {"type": "CONTINUOUS", "evidence": {}},
+                },
+            }},
+        ]},
+    }), encoding="utf-8")
 
     def run(_self, _input, _destination):  # type: ignore[no-untyped-def]
         return EstimationOutput(
@@ -82,6 +101,44 @@ def test_estimation_cli_scientific_negative_result_exits_zero(
     assert manifest["scientific_status"] == "REQUIRES_REVIEW"
     assert manifest["graph"]["content_hash"]
     assert manifest["result_summary"] == {"estimate": None}
+    assert manifest["scientific_warnings"] == []
+
+
+def test_estimation_cli_uses_api_compatible_type_error_code(
+    tmp_path: Path, capsys,
+) -> None:  # type: ignore[no-untyped-def]
+    dataset = tmp_path / "data.csv"
+    dataset.write_text("t,y\n0,0\n1,1\n", encoding="utf-8")
+    graph = tmp_path / "graph.json"
+    graph.write_text('{"graph_type":"DAG","nodes":["t","y"],"edges":[]}', encoding="utf-8")
+    identification = tmp_path / "identification.json"
+    identification.write_text(json.dumps({
+        "identification_status": "IDENTIFIED", "eligibility_status": "PASS",
+        "analysis_spec": {"causal_design": {"identification_strategy": "RANDOMIZED"}},
+        "result_summary": {"results": [
+            {"result_type": "IDENTIFICATION_RESULT", "payload": {
+                "strategy": "RANDOMIZED", "selected_adjustment_set": [],
+            }},
+            {"result_type": "DATA_ELIGIBILITY_RESULT", "payload": {
+                "checks": [],
+                "inferred_types": {
+                    "treatment": {"type": "BINARY", "evidence": {}},
+                    "outcome": {"type": "BINARY", "evidence": {}},
+                },
+            }},
+        ]},
+    }), encoding="utf-8")
+    config = tmp_path / "estimation.yaml"
+    config.write_text(yaml.safe_dump({
+        "config_version": "2.0", "dataset": str(dataset), "graph": str(graph),
+        "graph_origin": "USER_DEFINED", "identification_manifest": str(identification),
+        "estimator": "ols", "parameters": {},
+        "analysis_spec": {"schema_version":"causal-analysis-spec/2","analysis_mode":"EXPLORATORY","research_context":{},"causal_question":{"population":"rows","treatment":"t","comparator":"0","outcome":"y","analysis_unit":"row","treatment_time":"t0","outcome_window":"t1","estimand":"ATE"},"causal_design":{"identification_strategy":"RANDOMIZED","adjustment_set":[],"assumptions":[]},"operation_spec":{"estimator":"ols","inference_options":{}},"validation_override":None},
+        "random_seed": 42, "output_dir": str(tmp_path / "output"),
+    }), encoding="utf-8")
+
+    assert estimation_main(["--config", str(config)]) == 2
+    assert "ESTIMATOR_OUTCOME_TYPE_INCOMPATIBLE" in capsys.readouterr().err
 
 
 def test_cli_rejects_unknown_config_field(tmp_path: Path) -> None:
