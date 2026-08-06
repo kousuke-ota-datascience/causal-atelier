@@ -35,28 +35,40 @@
           <label>Feature columns<input name="features" placeholder="coupon,visits,sales" required></label>
           <fieldset><legend>Algorithms</legend><label><input type="checkbox" name="algorithms" value="pc" checked> PC</label><label><input type="checkbox" name="algorithms" value="ges" checked> GES</label></fieldset>
           <label>PC alpha grid<input name="alpha" value="0.01,0.05" required></label>
-          <label>Objective<input name="objective" value="Compare candidate causal structures"></label>
-          <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison"></label>
+          <label>Objective<input name="objective" value="Compare candidate causal structures" maxlength="4000"></label>
+          <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
           <button>複数Executionを受付</button>
         </form>
         <div class="card"><div class="heading"><h2>Graph Results</h2><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div><button id="compare-discovery" type="button">選択した3件以上を比較</button><pre id="discovery-comparison"></pre></div>
-        <div class="card"><h2>Graph Version editor</h2><label>Source Result<select id="graph-source"></select></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label>選定・編集理由<textarea id="graph-rationale"></textarea></label><button id="save-graph" type="button">Graphを作成してFIXED</button></div>
+        <div class="card"><h2>Graph Version editor</h2><label>Discovery Source Result<select id="graph-source"></select></label><label>または Parent Graph<select id="graph-parent"></select></label><label>Parentからの変更種別<select id="graph-transform"><option>USER_EDITED</option><option>CONSTRAINT_ADJUSTED</option></select></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label>選定・編集理由<textarea id="graph-rationale"></textarea></label><button id="save-graph" type="button">Graphを作成してFIXED</button></div>
+        <div class="card"><h2>Direct Graph registration</h2><label>Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label>Name<input id="direct-graph-name" value="Domain DAG"></label><label>Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label>Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">直接登録してFIXED</button></div>
       </section>
       <section id="inference" class="workspace">
-        <h1>Inference</h1><p>FIXED Graphと明示したadjustment setだけを使用します。</p>
+        <h1>Inference</h1><p>Causal Questionを固定し、IdentificationとData Eligibilityを確認してから推定します。</p>
         <form id="inference-form" class="card form-grid">
           <label>Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label>FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
+          <label>Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
+          <label>Population<input name="population" required></label><label>Comparator<input name="comparator" required></label>
           <label>Treatment<input name="treatment" required></label><label>Outcome<input name="outcome" required></label>
-          <label>Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label>Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
+          <label>Analysis unit<input name="analysis_unit" required></label><label>Treatment time<input name="treatment_time" required></label><label>Outcome window<input name="outcome_window" required></label>
+          <label>Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label>Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label>Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
           <label>Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
+          <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
+          <label>Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
+          <label>WARN override reason<input name="override_reason"></label>
+          <label>Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
+          <label>Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
-          <div id="preflight"></div><button>複数Estimatorを受付</button>
+          <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
         </form>
-        <div class="card"><div class="heading"><h2>Estimation comparison</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
+        <div class="card"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
+        <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
+        <form id="refutation-form" class="card form-grid"><h2>Refutation</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Method<select name="method"><option>PLACEBO_TREATMENT</option><option>DATA_SUBSET</option></select></label><label>Repetitions<input name="repetitions" type="number" value="20" min="2"></label><label>Subset fraction<input name="subset_fraction" type="number" value="0.8" step="0.05"></label><button>実行</button></form>
+        <form id="sensitivity-form" class="card form-grid"><h2>Sensitivity</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Dimension<select name="dimension"><option>PROPENSITY_CLIPPING</option><option>ADJUSTMENT_SET</option></select></label><label>Clipping values<input name="values" value="0.01,0.025,0.05"></label><label>Adjustment sets (;区切り)<input name="adjustment_sets" placeholder="x1;x1,x2"></label><button>実行</button></form>
       </section>
       <section id="results" class="workspace">
         <h1>Results / Lineage</h1><p>Result、判断理由、入力条件、Artifactを一つの来歴として確認します。</p>
-        <div class="card"><label>Result<select id="result-select"></select></label><button id="load-result" type="button">詳細と来歴を表示</button><div id="result-detail"></div><div id="artifacts"></div><pre id="lineage"></pre></div>
+        <div class="card"><div class="grid"><label>Result Type filter<select id="result-type-filter"><option value="">すべて</option></select></label><label>Scientific Status filter<select id="result-status-filter"><option value="">すべて</option></select></label></div><label>Result<select id="result-select"></select></label><button id="load-result" type="button">詳細と来歴を表示</button><div id="result-detail"></div><div id="artifacts"></div><pre id="lineage"></pre></div>
         <form id="annotation-form" class="card"><h2>Annotation</h2><label>Statement<textarea name="statement" required></textarea></label><label>採用・不採用理由<textarea name="rationale"></textarea></label><label>Assumptions (1行1件)<textarea name="assumptions"></textarea></label><label>Limitations (1行1件)<textarea name="limitations"></textarea></label><button>記録</button></form>
       </section>
     </main>

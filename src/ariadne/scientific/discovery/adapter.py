@@ -8,14 +8,16 @@ from typing import Any
 
 import pandas as pd
 
-from ariadne.product.domain.enums import GraphType, ScientificStatus
+from ariadne.product.domain.enums import GraphType, ResultType, ScientificStatus
 from ariadne.product.domain.errors import (
     InvalidAnalysisSpec,
     ScientificCoreExecutionError,
     UnsupportedAlgorithm,
 )
 from ariadne.product.domain.graph_semantics import canonical_graph
-from ariadne.product.ports.scientific_core import DiscoveryInput, DiscoveryOutput
+from ariadne.product.ports.scientific_core import (
+    ArtifactDescriptor, DiscoveryInput, ScientificResultBatch, ScientificResultDescriptor,
+)
 
 _GRAPH_TYPES = {"pc": GraphType.CPDAG, "ges": GraphType.CPDAG, "lingam": GraphType.DAG, "notears": GraphType.DAG}
 _PARAMETERS = {
@@ -24,23 +26,18 @@ _PARAMETERS = {
     "lingam": set(),
     "notears": {"notears_threshold"},
 }
-_SPEC_FIELDS = {"feature_columns", "constraints", "expected_graph_type"}
-
-
 class DiscoveryAdapter:
-    def run(self, input_: DiscoveryInput, output_dir: Path) -> DiscoveryOutput:
+    def run(self, input_: DiscoveryInput, output_dir: Path) -> list[ScientificResultDescriptor]:
         algorithm = input_.algorithm.lower()
         if algorithm not in _GRAPH_TYPES:
             raise UnsupportedAlgorithm(input_.algorithm)
         unknown = set(input_.parameters) - _PARAMETERS[algorithm]
         if unknown:
             raise InvalidAnalysisSpec(f"Unknown {algorithm} parameters: {sorted(unknown)}")
-        unknown_spec = set(input_.analysis_spec) - _SPEC_FIELDS
-        if unknown_spec:
-            raise InvalidAnalysisSpec(f"Unknown discovery analysis fields: {sorted(unknown_spec)}")
+        spec = input_.analysis_spec["operation_spec"]
 
         frame = _load_dataset(input_.dataset_path)
-        columns = input_.analysis_spec.get("feature_columns")
+        columns = spec.get("feature_columns")
         if not isinstance(columns, list) or not columns:
             raise InvalidAnalysisSpec("analysis_spec.feature_columns must be a non-empty list")
         if len(columns) != len(set(columns)):
@@ -80,15 +77,12 @@ class DiscoveryAdapter:
             )
 
         graph_type = _GRAPH_TYPES[algorithm]
-        expected_graph_type = input_.analysis_spec.get("expected_graph_type")
+        expected_graph_type = spec.get("expected_graph_type")
         if expected_graph_type is not None and expected_graph_type != graph_type.value:
             raise InvalidAnalysisSpec(
                 f"expected_graph_type={expected_graph_type!r} does not match {graph_type.value!r}"
             )
         graph = _edges_to_graph_json(result.edges, graph_type, columns)
-        graph, constraint_warnings = _apply_constraints(
-            graph, input_.analysis_spec.get("constraints", {})
-        )
         graph = canonical_graph(graph_type, graph)
 
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -96,18 +90,31 @@ class DiscoveryAdapter:
         graph_path.write_text(json.dumps(graph, sort_keys=True, indent=2), encoding="utf-8")
         edges_path = output_dir / f"{algorithm}_edges.csv"
         pd.DataFrame(graph["edges"]).to_csv(edges_path, index=False)
-        warnings = list(constraint_warnings)
+        constraints = spec.get("constraints", {})
+        warnings: list[str] = []
+        if constraints:
+            warnings.append(
+                "Requested constraints were not applied by the backend; create a separate "
+                "CONSTRAINT_ADJUSTED Graph Version with constraint_mode=POST_HOC."
+            )
         if not graph["edges"]:
             warnings.append("No edges were discovered under the specified conditions.")
-        return DiscoveryOutput(
-            scientific_status=ScientificStatus.VALID,
-            graph_type=graph_type.value,
-            graph_json=graph,
+        status = ScientificStatus.GENERATED_WITH_WARNINGS if warnings else ScientificStatus.GENERATED
+        return ScientificResultBatch([ScientificResultDescriptor(
+            result_type=ResultType.DISCOVERY_GRAPH_RESULT,
+            scientific_status=status,
+            payload=graph,
             summary={"algorithm": algorithm.upper(), "node_count": len(columns), "edge_count": len(graph["edges"])},
-            diagnostics={"feature_columns": columns, "constraints_applied": bool(input_.analysis_spec.get("constraints"))},
+            diagnostics={
+                "feature_columns": columns,
+                "constraints_requested": bool(constraints),
+                "constraints_applied": False,
+                "constraint_mode": "NOT_APPLIED" if constraints else None,
+                "backend": "ariadne.causal.discovery",
+            },
             warnings=warnings,
-            artifacts=[graph_path, edges_path],
-        )
+            artifacts=[ArtifactDescriptor(graph_path), ArtifactDescriptor(edges_path)],
+        )])
 
 
 def _load_dataset(path: Path) -> pd.DataFrame:

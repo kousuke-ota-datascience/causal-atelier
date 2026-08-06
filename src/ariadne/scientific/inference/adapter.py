@@ -10,14 +10,16 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from ariadne.product.domain.enums import GraphType, ScientificStatus
+from ariadne.product.domain.enums import GraphType, ResultType, ScientificStatus
 from ariadne.product.domain.errors import (
     InvalidAnalysisSpec,
     ScientificCoreExecutionError,
     UnsupportedEstimator,
 )
 from ariadne.product.domain.graph_semantics import validate_graph_document
-from ariadne.product.ports.scientific_core import EstimationInput, EstimationOutput
+from ariadne.product.ports.scientific_core import (
+    ArtifactDescriptor, EstimationInput, ScientificResultBatch, ScientificResultDescriptor,
+)
 
 _METHODS = {
     "difference_in_means": "diff_in_means",
@@ -40,17 +42,20 @@ _PARAM_FIELDS = {
 
 
 class EstimationAdapter:
-    def run(self, input_: EstimationInput, output_dir: Path) -> EstimationOutput:
+    def run(self, input_: EstimationInput, output_dir: Path) -> list[ScientificResultDescriptor]:
         estimator = input_.estimator.lower()
         if estimator not in _METHODS:
             raise UnsupportedEstimator(input_.estimator)
-        unknown_spec = set(input_.analysis_spec) - _SPEC_FIELDS
         unknown_params = set(input_.parameters) - _PARAM_FIELDS[_METHODS[estimator]]
-        if unknown_spec or unknown_params:
+        if unknown_params:
             raise InvalidAnalysisSpec(
-                f"Unknown estimation fields: {sorted(unknown_spec | unknown_params)}"
+                f"Unknown estimation fields: {sorted(unknown_params)}"
             )
-        spec = input_.analysis_spec
+        spec = {
+            **input_.analysis_spec["causal_question"],
+            **input_.analysis_spec["causal_design"],
+            "inference_options": input_.analysis_spec["operation_spec"].get("inference_options", {}),
+        }
         treatment = _required_string(spec, "treatment")
         outcome = _required_string(spec, "outcome")
         estimand = str(spec.get("estimand", "")).upper()
@@ -77,15 +82,21 @@ class EstimationAdapter:
         except (KeyError, ValueError, TypeError) as exc:
             raise InvalidAnalysisSpec("graph.graph_type must be DAG, CPDAG, or PAG") from exc
         validate_graph_document(graph_type, graph)
+        if graph_type != GraphType.DAG:
+            return _negative_output(
+                ScientificStatus.REQUIRES_REVIEW,
+                estimator,
+                "Estimation requires a DAG; CPDAG/PAG was not implicitly oriented.",
+            )
         if treatment not in graph["nodes"] or outcome not in graph["nodes"]:
             return _negative_output(
-                ScientificStatus.NOT_IDENTIFIED,
+                ScientificStatus.REQUIRES_REVIEW,
                 estimator,
                 "Treatment and outcome must both be present in the fixed graph.",
             )
         if not _has_semantic_path(graph, treatment, outcome):
             return _negative_output(
-                ScientificStatus.NOT_IDENTIFIED,
+                ScientificStatus.REQUIRES_REVIEW,
                 estimator,
                 "The fixed graph contains no possibly directed treatment-to-outcome path.",
             )
@@ -163,7 +174,7 @@ class EstimationAdapter:
             ) from exc
 
         effect = float(record.effect)
-        status = ScientificStatus.VALID
+        status = ScientificStatus.ESTIMATED
         warnings: list[str] = []
         if estimator in {"difference_in_means", "diff_in_means"}:
             warnings.append("Unadjusted difference in means does not control confounding.")
@@ -190,7 +201,9 @@ class EstimationAdapter:
         result_path.write_text(json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8")
         diagnostics_path = output_dir / f"{estimator}_diagnostics.json"
         diagnostics_path.write_text(json.dumps(diagnostics, sort_keys=True, indent=2), encoding="utf-8")
-        return EstimationOutput(
+        diagnostic_status = ScientificStatus.WARN if warnings else ScientificStatus.PASS
+        return ScientificResultBatch([ScientificResultDescriptor(
+            result_type=ResultType.TREATMENT_EFFECT_RESULT,
             scientific_status=status,
             payload=payload,
             summary={
@@ -199,8 +212,16 @@ class EstimationAdapter:
             },
             diagnostics=diagnostics,
             warnings=warnings,
-            artifacts=[result_path, diagnostics_path],
-        )
+            artifacts=[ArtifactDescriptor(result_path)],
+        ), ScientificResultDescriptor(
+            result_type=ResultType.DIAGNOSTICS_RESULT,
+            scientific_status=diagnostic_status,
+            summary={"estimator": estimator, "status": diagnostic_status.value},
+            payload=diagnostics,
+            diagnostics=diagnostics,
+            warnings=warnings,
+            artifacts=[ArtifactDescriptor(diagnostics_path)],
+        )])
 
 
 def _required_string(spec: dict[str, Any], name: str) -> str:
@@ -267,14 +288,27 @@ def _negative_output(
     estimator: str,
     warning: str,
     diagnostics: dict[str, Any] | None = None,
-) -> EstimationOutput:
-    return EstimationOutput(
+) -> list[ScientificResultDescriptor]:
+    diagnostic_status = (
+        ScientificStatus.FAIL
+        if status in {ScientificStatus.INSUFFICIENT_OVERLAP, ScientificStatus.INSUFFICIENT_SAMPLE}
+        else ScientificStatus.WARN
+    )
+    return ScientificResultBatch([ScientificResultDescriptor(
+        result_type=ResultType.TREATMENT_EFFECT_RESULT,
         scientific_status=status,
         payload={"estimator": estimator, "estimate": None, "standard_error": None, "confidence_interval": None},
         summary={"estimator": estimator, "estimate": None},
         diagnostics=diagnostics or {},
         warnings=[warning],
-    )
+    ), ScientificResultDescriptor(
+        result_type=ResultType.DIAGNOSTICS_RESULT,
+        scientific_status=diagnostic_status,
+        summary={"status": diagnostic_status.value},
+        payload=diagnostics or {},
+        diagnostics=diagnostics or {},
+        warnings=[warning],
+    )])
 
 
 __all__ = ["EstimationAdapter"]

@@ -96,63 +96,104 @@ class LineageQueryService:
                     }))
                     add_edge(source_artifact.artifact_id, dataset.dataset_version_id)
 
-            add_node(LineageNode("Result", result.result_id, f"Result ({result.result_type.value})", {
-                "scientific_status": result.scientific_status.value,
-            }))
-            execution = uow.executions.get(result.execution_id)
-            if execution:
-                project = uow.projects.get(execution.project_id)
+            processing: set[str] = set()
+
+            def add_result_chain(current: Any, depth: int = 0) -> None:
+                if depth > 32:
+                    raise ValueError("Lineage maximum depth exceeded")
+                if current.result_id in processing:
+                    raise ValueError("Lineage cycle detected")
+                if current.result_id in visited:
+                    return
+                processing.add(current.result_id)
+                add_node(LineageNode("Result", current.result_id,
+                                     f"Result ({current.result_type.value})", {
+                    "scientific_status": current.scientific_status.value,
+                }))
+                generating = uow.executions.get(current.execution_id)
+                if generating is None:
+                    processing.remove(current.result_id); return
+                if generating.project_id != execution_project_id:
+                    raise ValueError("Lineage crosses a Project boundary")
+                project = uow.projects.get(generating.project_id)
                 if project:
                     add_node(LineageNode("Project", project.project_id, project.name, {
-                        "topic": project.topic,
-                        "objective": project.objective,
+                        "topic": project.topic, "objective": project.objective,
                     }))
-                    add_edge(project.project_id, execution.execution_id)
-                add_node(LineageNode("Execution", execution.execution_id, f"Execution ({execution.operation.value})", {
-                    "algorithm_or_estimator": execution.algorithm_or_estimator,
-                    "parameters": execution.parameter_json,
-                    "objective_snapshot": execution.objective_snapshot,
-                    "rationale_snapshot": execution.rationale_snapshot,
-                    "code_version": execution.code_version,
-                    "status": execution.status.value,
+                    add_edge(project.project_id, generating.execution_id)
+                add_node(LineageNode("Execution", generating.execution_id,
+                                     f"Execution ({generating.operation.value})", {
+                    "algorithm_or_estimator": generating.algorithm_or_estimator,
+                    "parameters": generating.parameter_json,
+                    "snapshot_hash": generating.snapshot_hash,
+                    "snapshot_schema_version": generating.snapshot_schema_version,
+                    "status": generating.status.value,
+                    "analysis_mode": generating.analysis_spec_json.get("analysis_mode"),
+                    "scientific_warnings": generating.analysis_spec_json.get("scientific_warnings", []),
+                    "revision_context": generating.analysis_spec_json.get("revision_context"),
                 }))
-                add_edge(execution.execution_id, result.result_id)
-                add_dataset(execution.dataset_version_id, execution.execution_id)
-                add_artifacts(execution.execution_id, result.result_id)
-
-                if execution.input_graph_version_id:
-                    graph = uow.graph_versions.get(execution.input_graph_version_id)
+                add_edge(generating.execution_id, current.result_id)
+                revision = generating.analysis_spec_json.get("revision_context")
+                if isinstance(revision, dict):
+                    base = uow.executions.get(revision.get("base_execution_id", ""))
+                    if base is None:
+                        raise ValueError("Revision base Execution does not exist")
+                    if base.project_id != execution_project_id:
+                        raise ValueError("Revision lineage crosses a Project boundary")
+                    add_node(LineageNode("Execution", base.execution_id,
+                                         f"Execution ({base.operation.value})", {
+                        "algorithm_or_estimator": base.algorithm_or_estimator,
+                        "parameters": base.parameter_json,
+                        "snapshot_hash": base.snapshot_hash,
+                        "snapshot_schema_version": base.snapshot_schema_version,
+                        "status": base.status.value,
+                        "analysis_mode": base.analysis_spec_json.get("analysis_mode"),
+                        "scientific_warnings": base.analysis_spec_json.get("scientific_warnings", []),
+                        "revision_context": base.analysis_spec_json.get("revision_context"),
+                    }))
+                    add_edge(base.execution_id, generating.execution_id)
+                add_dataset(generating.dataset_version_id, generating.execution_id)
+                add_artifacts(generating.execution_id, current.result_id)
+                add_annotations(target_result_id=current.result_id)
+                if generating.input_result_id:
+                    upstream = uow.results.get(generating.input_result_id)
+                    if upstream:
+                        add_result_chain(upstream, depth + 1)
+                        add_edge(upstream.result_id, generating.execution_id)
+                if generating.input_graph_version_id:
+                    graph = uow.graph_versions.get(generating.input_graph_version_id)
                     if graph:
-                        add_node(LineageNode("GraphVersion", graph.graph_version_id, graph.name, {
-                            "graph_type": graph.graph_type.value,
-                            "content_hash": graph.content_hash,
-                            "status": graph.status.value,
-                        }))
-                        add_edge(graph.graph_version_id, execution.execution_id)
-                        add_annotations(graph_version_id=graph.graph_version_id)
-                        discovery_result = uow.results.get(graph.source_result_id)
-                        if discovery_result:
-                            add_node(LineageNode("Result", discovery_result.result_id, "Discovery Result", {
-                                "scientific_status": discovery_result.scientific_status.value,
-                            }))
-                            add_edge(discovery_result.result_id, graph.graph_version_id)
-                            discovery_execution = uow.executions.get(discovery_result.execution_id)
-                            if discovery_execution:
-                                add_node(LineageNode("Execution", discovery_execution.execution_id,
-                                                    "Discovery Execution", {
-                                    "algorithm_or_estimator": discovery_execution.algorithm_or_estimator,
-                                    "parameters": discovery_execution.parameter_json,
-                                    "objective_snapshot": discovery_execution.objective_snapshot,
-                                    "rationale_snapshot": discovery_execution.rationale_snapshot,
-                                    "code_version": discovery_execution.code_version,
-                                    "status": discovery_execution.status.value,
-                                }))
-                                add_edge(discovery_execution.execution_id, discovery_result.result_id)
-                                add_dataset(discovery_execution.dataset_version_id,
-                                            discovery_execution.execution_id)
-                                add_artifacts(discovery_execution.execution_id,
-                                              discovery_result.result_id)
-                            add_annotations(target_result_id=discovery_result.result_id)
-            add_annotations(target_result_id=result.result_id)
+                        add_graph_chain(graph, generating.execution_id, depth + 1)
+                processing.remove(current.result_id)
+
+            graph_processing: set[str] = set()
+
+            def add_graph_chain(graph: Any, consumer_id: str, depth: int) -> None:
+                if depth > 32 or graph.graph_version_id in graph_processing:
+                    raise ValueError("Graph lineage cycle or maximum depth detected")
+                graph_processing.add(graph.graph_version_id)
+                add_node(LineageNode("GraphVersion", graph.graph_version_id, graph.name, {
+                    "graph_type": graph.graph_type.value,
+                    "graph_origin": graph.graph_origin.value,
+                    "provenance": graph.provenance_json,
+                    "content_hash": graph.content_hash,
+                    "status": graph.status.value,
+                }))
+                add_edge(graph.graph_version_id, consumer_id)
+                add_annotations(graph_version_id=graph.graph_version_id)
+                if graph.source_result_id:
+                    source = uow.results.get(graph.source_result_id)
+                    if source:
+                        add_result_chain(source, depth + 1)
+                        add_edge(source.result_id, graph.graph_version_id)
+                if graph.parent_graph_version_id:
+                    parent = uow.graph_versions.get(graph.parent_graph_version_id)
+                    if parent:
+                        add_graph_chain(parent, graph.graph_version_id, depth + 1)
+                graph_processing.remove(graph.graph_version_id)
+
+            root_execution = uow.executions.get(result.execution_id)
+            execution_project_id = root_execution.project_id if root_execution else ""
+            add_result_chain(result)
 
         return LineageView(nodes=nodes, edges=edges)

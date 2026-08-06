@@ -35,24 +35,72 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: invalid config: {exc}", file=sys.stderr)
         return 2
     dataset, graph = config.dataset.resolve(), config.graph.resolve()
-    if not dataset.is_file() or not graph.is_file():
-        print("ERROR: dataset or graph not found", file=sys.stderr)
+    identification_manifest = config.identification_manifest.resolve()
+    if not dataset.is_file() or not graph.is_file() or not identification_manifest.is_file():
+        print("ERROR: dataset, graph, or identification manifest not found", file=sys.stderr)
         return 3
     dataset_hash, graph_hash = _hash(dataset), _hash(graph)
     if (config.dataset_hash and config.dataset_hash != dataset_hash) or (config.graph_hash and config.graph_hash != graph_hash):
         print("ERROR: input hash mismatch", file=sys.stderr)
         return 3
     try:
-        from ariadne.product.domain.errors import InvalidAnalysisSpec, UnsupportedEstimator
+        from ariadne.product.domain.errors import (
+            InvalidAnalysisSpec, ScientificContractViolation, UnsupportedEstimator,
+        )
+        from ariadne.product.domain.analysis_spec import causal_question_hash, validate_analysis_spec
+        from ariadne.product.domain.enums import ExecutionOperation
+        from ariadne.product.application.scientific_validation_service import (
+            validate_estimator_compatibility,
+        )
         from ariadne.product.ports.scientific_core import EstimationInput
         from ariadne.scientific.core_adapter import ScientificCoreAdapter
+        validate_analysis_spec(ExecutionOperation.ESTIMATION, config.analysis_spec)
+        upstream = json.loads(identification_manifest.read_text(encoding="utf-8"))
+        identification_status = upstream.get("identification_status")
+        eligibility_status = upstream.get("eligibility_status")
+        if identification_status not in {"IDENTIFIED", "REQUIRES_REVIEW"}:
+            raise InvalidAnalysisSpec("identification status is not acceptable")
+        if eligibility_status == "FAIL":
+            raise InvalidAnalysisSpec("data eligibility failed")
+        if eligibility_status == "WARN" and config.analysis_spec.get("validation_override") is None:
+            raise InvalidAnalysisSpec("validation_override is required for eligibility WARN")
+        result_documents = upstream.get("result_summary", {}).get("results", [])
+        identification_payload = next(
+            (
+                item.get("payload", {}) for item in result_documents
+                if item.get("result_type") == "IDENTIFICATION_RESULT"
+            ),
+            {},
+        )
+        eligibility_payload = next(
+            (
+                item.get("payload", {}) for item in result_documents
+                if item.get("result_type") == "DATA_ELIGIBILITY_RESULT"
+            ),
+            {},
+        )
+        upstream_spec = upstream.get("analysis_spec", {})
+        strategy = identification_payload.get("strategy") or upstream_spec.get(
+            "causal_design", {}
+        ).get("identification_strategy")
+        validate_estimator_compatibility(
+            method=config.estimator,
+            parameters=config.parameters,
+            estimand=config.analysis_spec["causal_question"]["estimand"],
+            strategy=strategy,
+            submitted_adjustment=config.analysis_spec["causal_design"].get("adjustment_set", []),
+            identified_adjustment=identification_payload.get("selected_adjustment_set", []),
+            eligibility_payload=eligibility_payload,
+        )
         output = ScientificCoreAdapter().run_estimation(EstimationInput(
             dataset_path=dataset, graph_path=graph, estimator=config.estimator,
+            upstream_result=upstream,
             parameters=config.parameters, random_seed=config.random_seed,
             analysis_spec=config.analysis_spec,
         ), config.output_dir)
     except (InvalidAnalysisSpec, UnsupportedEstimator) as exc:
-        print(f"ERROR: invalid config: {exc}", file=sys.stderr)
+        code = exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC"
+        print(f"ERROR [{code}]: invalid config: {exc}", file=sys.stderr)
         return 2
     except Exception as exc:
         print(f"ERROR: scientific core technical failure: {exc}", file=sys.stderr)
@@ -60,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         import ariadne
         manifest = CliManifest(
-            manifest_version="1.0", operation="ESTIMATION",
+            manifest_version="2.0", operation="ESTIMATION",
             dataset={"content_hash": dataset_hash, "location": str(dataset)},
             graph={"content_hash": graph_hash, "location": str(graph)},
             algorithm_or_estimator=config.estimator, parameters=config.parameters,
@@ -70,6 +118,14 @@ def main(argv: list[str] | None = None) -> int:
             scientific_status=output.scientific_status.value, result_summary=output.summary,
             artifacts=[{"location": str(path), "content_hash": _hash(path)} for path in output.artifacts],
             warnings=output.warnings,
+            scientific_warnings=config.analysis_spec.get("scientific_warnings", []),
+            analysis_mode=config.analysis_spec["analysis_mode"],
+            causal_question_hash=causal_question_hash(config.analysis_spec),
+            graph_origin=config.graph_origin,
+            upstream_result_reference=f"sha256:{_hash(identification_manifest)}",
+            identification_status=identification_status,
+            eligibility_status=eligibility_status,
+            backend_version="ariadne/0.1.0",
         )
         config.output_dir.mkdir(parents=True, exist_ok=True)
         (config.output_dir / "manifest.json").write_text(

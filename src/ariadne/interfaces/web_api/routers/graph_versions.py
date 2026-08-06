@@ -17,7 +17,7 @@ from ariadne.product.application.graph_version_service import (
     CreateGraphVersionCommand,
     UpdateDraftCommand,
 )
-from ariadne.product.domain.enums import GraphType
+from ariadne.product.domain.enums import GraphOrigin, GraphType
 from ariadne.product.domain.errors import EntityNotFound
 from ariadne.product.domain.graph_version import GraphVersion
 
@@ -32,6 +32,8 @@ def _gv_to_response(gv: GraphVersion) -> GraphVersionResponse:
         parent_graph_version_id=gv.parent_graph_version_id,
         name=gv.name,
         graph_type=gv.graph_type.value,
+        graph_origin=gv.graph_origin.value,
+        provenance=gv.provenance_json,
         graph=gv.graph_json,
         content_hash=gv.content_hash,
         edit_rationale=gv.edit_rationale,
@@ -52,11 +54,19 @@ async def create_graph_version(
 ) -> GraphVersionResponse:
     created_by = request.headers.get("X-User-Id", "anonymous")
     def command() -> dict:  # type: ignore[type-arg]
-        graph = svc.create_from_discovery_result(CreateGraphVersionCommand(
+        command_value = CreateGraphVersionCommand(
             project_id=project_id, source_result_id=body.source_result_id, name=body.name,
             graph_type=GraphType(body.graph_type), graph_json=body.graph, created_by=created_by,
+            graph_origin=GraphOrigin(body.graph_origin), provenance_json=body.provenance,
             parent_graph_version_id=body.parent_graph_version_id, edit_rationale=body.edit_rationale,
-        ))
+        )
+        graph = {
+            GraphOrigin.DISCOVERED: svc.create_from_discovery_result,
+            GraphOrigin.CONSTRAINT_ADJUSTED: svc.create_constraint_adjusted,
+            GraphOrigin.USER_DEFINED: svc.create_user_defined,
+            GraphOrigin.IMPORTED: svc.create_imported,
+            GraphOrigin.USER_EDITED: svc.create_from_parent_edit,
+        }[command_value.graph_origin](command_value)
         if body.fix_immediately:
             graph = svc.fix_graph(graph.graph_version_id)
         return _gv_to_response(graph).model_dump(mode="json")

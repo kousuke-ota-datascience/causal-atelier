@@ -48,8 +48,11 @@ def main(argv: list[str] | None = None) -> int:
         return 3
     try:
         from ariadne.product.domain.errors import InvalidAnalysisSpec, UnsupportedAlgorithm
+        from ariadne.product.domain.analysis_spec import validate_analysis_spec
+        from ariadne.product.domain.enums import ExecutionOperation
         from ariadne.product.ports.scientific_core import DiscoveryInput
         from ariadne.scientific.core_adapter import ScientificCoreAdapter
+        validate_analysis_spec(ExecutionOperation.DISCOVERY, config.analysis_spec)
         output = ScientificCoreAdapter().run_discovery(DiscoveryInput(
             dataset_path=dataset, algorithm=config.algorithm, parameters=config.parameters,
             random_seed=config.random_seed, analysis_spec=config.analysis_spec,
@@ -63,13 +66,16 @@ def main(argv: list[str] | None = None) -> int:
     try:
         artifacts = [{"location": str(path), "content_hash": _hash(path)} for path in output.artifacts]
         manifest = CliManifest(
-            manifest_version="1.0", operation="DISCOVERY",
+            manifest_version="2.0", operation="DISCOVERY",
             dataset={"content_hash": dataset_hash, "location": str(dataset)}, graph=None,
             algorithm_or_estimator=config.algorithm, parameters=config.parameters,
             analysis_spec=config.analysis_spec, random_seed=config.random_seed,
             code_version=_version(), runtime_versions={"python": platform.python_version()},
             scientific_status=output.scientific_status.value, result_summary=output.summary,
             artifacts=artifacts, warnings=output.warnings,
+            scientific_warnings=config.analysis_spec.get("scientific_warnings", []),
+            analysis_mode=config.analysis_spec["analysis_mode"],
+            backend_version="ariadne/0.1.0",
         )
         config.output_dir.mkdir(parents=True, exist_ok=True)
         (config.output_dir / "manifest.json").write_text(

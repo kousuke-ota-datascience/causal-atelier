@@ -20,11 +20,16 @@ from ariadne.product.domain.enums import (
 from ariadne.product.domain.errors import ArtifactHashMismatch
 from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.result import Result
+from ariadne.product.application.execution_service import _compute_snapshot_hash
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.ports.scientific_core import (
     DiscoveryInput,
+    IdentificationInput,
     EstimationInput,
+    RefutationInput,
+    SensitivityInput,
+    ScientificResultDescriptor,
     ScientificCorePort,
 )
 from ariadne.product.ports.unit_of_work import UnitOfWork
@@ -89,63 +94,56 @@ class ExecutionProcessor:
             if self._is_cancelled(execution.execution_id):
                 return
 
-            # Run scientific core
-            if execution.operation == ExecutionOperation.DISCOVERY:
-                sci_output = self._run_discovery(execution, dataset_path, output_dir)
-                result_type = ResultType.DISCOVERY_GRAPH_RESULT
-                payload_json = sci_output.graph_json
-                summary_json = sci_output.summary
-                diagnostics_json = sci_output.diagnostics
-                warnings = sci_output.warnings
-                scientific_status = sci_output.scientific_status
-                artifact_paths = sci_output.artifacts
-            else:
-                # ESTIMATION – also needs graph artifact
-                graph_path = self._retrieve_graph(execution, tmp)
-                est_output = self._run_estimation(execution, dataset_path, graph_path, output_dir)
-                result_type = ResultType.TREATMENT_EFFECT_RESULT
-                payload_json = est_output.payload
-                summary_json = est_output.summary
-                diagnostics_json = est_output.diagnostics
-                warnings = est_output.warnings
-                scientific_status = est_output.scientific_status
-                artifact_paths = est_output.artifacts
-
-            # Build result and artifacts
-            now = self._clock.now()
-            result = Result(
-                execution_id=execution.execution_id,
-                result_type=result_type,
-                scientific_status=scientific_status,
-                summary_json=summary_json,
-                payload_json=payload_json,
-                diagnostics_json=diagnostics_json,
-                warning_json=warnings,
-                created_at=now,
+            graph_path = (
+                self._retrieve_graph(execution, tmp)
+                if execution.operation != ExecutionOperation.DISCOVERY else None
             )
+            self._verify_snapshot(execution, dsv.content_hash)
+            upstream, upstream_execution = self._retrieve_upstream(execution)
+            descriptors = self._dispatch(
+                execution, dataset_path, graph_path, upstream, upstream_execution, output_dir
+            )
+            if not descriptors:
+                raise RuntimeError("Scientific Core returned no Results")
+
+            now = self._clock.now()
+            snapshot_warnings = execution.analysis_spec_json.get("scientific_warnings", [])
+            results = [Result(
+                execution_id=execution.execution_id,
+                result_type=descriptor.result_type,
+                scientific_status=descriptor.scientific_status,
+                summary_json=descriptor.summary,
+                payload_json=descriptor.payload,
+                diagnostics_json=descriptor.diagnostics,
+                warning_json=[*descriptor.warnings, *snapshot_warnings],
+                created_at=now,
+            ) for descriptor in descriptors]
 
             # Store artifacts in artifact store
             stored_artifacts: list[Artifact] = []
             stored_keys: list[str] = []
-            for art_path in artifact_paths:
-                artifact_type = _guess_artifact_type(art_path)
-                object_key = (
-                    f"projects/{execution.project_id}/executions/{execution.execution_id}"
-                    f"/{art_path.name}"
-                )
-                stored = self._store.store(art_path, object_key)
-                stored_keys.append(stored.object_key)
-                stored_artifacts.append(Artifact(
-                    project_id=execution.project_id,
-                    execution_id=execution.execution_id,
-                    result_id=result.result_id,
-                    artifact_type=artifact_type,
-                    object_key=stored.object_key,
-                    content_hash=stored.content_hash,
-                    media_type=stored.media_type,
-                    size_bytes=stored.size_bytes,
-                    created_at=now,
-                ))
+            for result, descriptor in zip(results, descriptors, strict=True):
+                for art in descriptor.artifacts:
+                    art_path = art.path
+                    artifact_type = _guess_artifact_type(art_path)
+                    object_key = (
+                        f"projects/{execution.project_id}/executions/{execution.execution_id}"
+                        f"/{result.result_id}/{art_path.name}"
+                    )
+                    stored = self._store.store(art_path, object_key)
+                    stored_keys.append(stored.object_key)
+                    stored_artifacts.append(Artifact(
+                        project_id=execution.project_id,
+                        execution_id=execution.execution_id,
+                        result_id=result.result_id,
+                        artifact_type=artifact_type,
+                        object_key=stored.object_key,
+                        content_hash=stored.content_hash,
+                        media_type=stored.media_type,
+                        size_bytes=stored.size_bytes,
+                        metadata_json={"content_role": art.content_role},
+                        created_at=now,
+                    ))
 
             # Persist result, artifacts, and update execution status in one transaction
             try:
@@ -155,7 +153,7 @@ class ExecutionProcessor:
                         for key in stored_keys:
                             self._store.delete(key)
                         return
-                    uow.results.add_many([result])
+                    uow.results.add_many(results)
                     uow.artifacts.add_many(stored_artifacts)
                     exec_entity.mark_succeeded(now)
                     uow.executions.update(exec_entity)
@@ -168,34 +166,105 @@ class ExecutionProcessor:
                         logger.exception("Unable to clean orphan artifact %s", key)
                 raise
 
-    def _run_discovery(self, execution: Execution, dataset_path: Path, output_dir: Path) -> Any:
-        from ariadne.product.ports.scientific_core import DiscoveryInput
-        input_ = DiscoveryInput(
-            dataset_path=dataset_path,
-            algorithm=execution.algorithm_or_estimator,
+    def _dispatch(
+        self,
+        execution: Execution,
+        dataset_path: Path,
+        graph_path: Path | None,
+        upstream: Result | None,
+        upstream_execution: Execution | None,
+        output_dir: Path,
+    ) -> list[ScientificResultDescriptor]:
+        common = dict(
             parameters=execution.parameter_json,
             random_seed=execution.random_seed,
             analysis_spec=execution.analysis_spec_json,
         )
-        return self._core.run_discovery(input_, output_dir)
+        match execution.operation:
+            case ExecutionOperation.DISCOVERY:
+                return self._core.run_discovery(DiscoveryInput(
+                    dataset_path=dataset_path, algorithm=execution.algorithm_or_estimator, **common
+                ), output_dir)
+            case ExecutionOperation.IDENTIFICATION:
+                assert graph_path is not None
+                return self._core.run_identification(IdentificationInput(
+                    dataset_path=dataset_path, graph_path=graph_path,
+                    method=execution.algorithm_or_estimator, **common,
+                ), output_dir)
+            case ExecutionOperation.ESTIMATION:
+                assert graph_path is not None and upstream is not None
+                return self._core.run_estimation(EstimationInput(
+                    dataset_path=dataset_path, graph_path=graph_path,
+                    estimator=execution.algorithm_or_estimator,
+                    upstream_result=_result_document(upstream), **common,
+                ), output_dir)
+            case ExecutionOperation.REFUTATION:
+                assert graph_path is not None and upstream is not None and upstream_execution is not None
+                analysis_spec = _inherit_scientific_context(
+                    execution.analysis_spec_json, upstream_execution.analysis_spec_json
+                )
+                return self._core.run_refutation(RefutationInput(
+                    dataset_path=dataset_path, graph_path=graph_path,
+                    base_result={**_result_document(upstream), **_context(upstream_execution)},
+                    method=analysis_spec["operation_spec"]["method"],
+                    parameters=execution.parameter_json, random_seed=execution.random_seed,
+                    analysis_spec=analysis_spec,
+                ), output_dir)
+            case ExecutionOperation.SENSITIVITY:
+                assert graph_path is not None and upstream is not None and upstream_execution is not None
+                analysis_spec = _inherit_scientific_context(
+                    execution.analysis_spec_json, upstream_execution.analysis_spec_json
+                )
+                return self._core.run_sensitivity(SensitivityInput(
+                    dataset_path=dataset_path, graph_path=graph_path,
+                    base_result={**_result_document(upstream), **_context(upstream_execution)},
+                    dimension=analysis_spec["operation_spec"]["dimension"],
+                    parameters=execution.parameter_json, random_seed=execution.random_seed,
+                    analysis_spec=analysis_spec,
+                ), output_dir)
+            case _:
+                raise RuntimeError(f"Unsupported operation: {execution.operation}")
 
-    def _run_estimation(
-        self, execution: Execution, dataset_path: Path, graph_path: Path, output_dir: Path
-    ) -> Any:
-        from ariadne.product.ports.scientific_core import EstimationInput
-        input_ = EstimationInput(
-            dataset_path=dataset_path,
-            graph_path=graph_path,
-            estimator=execution.algorithm_or_estimator,
-            parameters=execution.parameter_json,
+    def _retrieve_upstream(self, execution: Execution) -> tuple[Result | None, Execution | None]:
+        if execution.input_result_id is None:
+            return None, None
+        with self._uow_factory() as uow:
+            result = uow.results.get(execution.input_result_id)
+            if result is None:
+                raise RuntimeError(f"Upstream Result not found: {execution.input_result_id}")
+            generating = uow.executions.get(result.execution_id)
+            if generating is None:
+                raise RuntimeError(f"Upstream Execution not found: {result.execution_id}")
+            return result, generating
+
+    def _verify_snapshot(self, execution: Execution, dataset_content_hash: str) -> None:
+        with self._uow_factory() as uow:
+            graph = (
+                uow.graph_versions.get(execution.input_graph_version_id)
+                if execution.input_graph_version_id else None
+            )
+        actual = _compute_snapshot_hash(
+            objective=execution.objective_snapshot,
+            rationale=execution.rationale_snapshot,
+            dataset_version_id=execution.dataset_version_id,
+            dataset_content_hash=dataset_content_hash,
+            input_graph_version_id=execution.input_graph_version_id,
+            input_graph_content_hash=graph.content_hash if graph else None,
+            input_result_id=execution.input_result_id,
+            operation=execution.operation,
+            algorithm_or_estimator=execution.algorithm_or_estimator,
+            parameter_json=execution.parameter_json,
             random_seed=execution.random_seed,
-            analysis_spec=execution.analysis_spec_json,
+            analysis_spec_json=execution.analysis_spec_json,
+            code_version=execution.code_version,
+            runtime_version_json=execution.runtime_version_json,
         )
-        return self._core.run_estimation(input_, output_dir)
+        if actual != execution.snapshot_hash:
+            raise ArtifactHashMismatch("Execution snapshot hash mismatch")
 
     def _retrieve_graph(self, execution: Execution, tmp: Path) -> Path:
         if execution.input_graph_version_id is None:
-            raise RuntimeError("input_graph_version_id required for ESTIMATION")
+            raise RuntimeError("input_graph_version_id required for operation")
         with self._uow_factory() as uow:
             gv = uow.graph_versions.get(execution.input_graph_version_id)
             if gv is None:
@@ -251,3 +320,33 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: stream.read(65536), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _result_document(result: Result) -> dict[str, Any]:
+    return {
+        "result_id": result.result_id,
+        "result_type": result.result_type.value,
+        "scientific_status": result.scientific_status.value,
+        "summary": result.summary_json,
+        "payload": result.payload_json,
+        "diagnostics": result.diagnostics_json,
+        "warnings": result.warning_json,
+    }
+
+
+def _context(execution: Execution) -> dict[str, Any]:
+    return {
+        "causal_question": execution.analysis_spec_json.get("causal_question", {}),
+        "causal_design": execution.analysis_spec_json.get("causal_design", {}),
+    }
+
+
+def _inherit_scientific_context(
+    current: dict[str, Any], upstream: dict[str, Any]
+) -> dict[str, Any]:
+    return {
+        **current,
+        "research_context": current.get("research_context") or upstream.get("research_context", {}),
+        "causal_question": current.get("causal_question") or upstream.get("causal_question", {}),
+        "causal_design": current.get("causal_design") or upstream.get("causal_design", {}),
+    }

@@ -7,7 +7,7 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from ariadne.product.domain.enums import ExecutionOperation, GraphType, ResultType
+from ariadne.product.domain.enums import ExecutionOperation, GraphOrigin, GraphType, ResultType
 from ariadne.product.domain.errors import EntityNotFound, InvalidAnalysisSpec, ProjectBoundaryViolation
 from ariadne.product.domain.graph_semantics import canonical_graph
 from ariadne.product.domain.graph_version import GraphVersion
@@ -17,11 +17,13 @@ from ariadne.product.ports.clock import ClockPort, SystemClock
 @dataclass
 class CreateGraphVersionCommand:
     project_id: str
-    source_result_id: str
+    source_result_id: str | None
     name: str
     graph_type: GraphType
     graph_json: dict[str, Any]
     created_by: str
+    graph_origin: GraphOrigin = GraphOrigin.DISCOVERED
+    provenance_json: dict[str, Any] | None = None
     parent_graph_version_id: str | None = None
     edit_rationale: str | None = None
 
@@ -39,6 +41,11 @@ class GraphVersionService:
         self._clock = clock or SystemClock()
 
     def create_from_discovery_result(self, command: CreateGraphVersionCommand) -> GraphVersion:
+        if command.graph_origin != GraphOrigin.DISCOVERED:
+            raise InvalidAnalysisSpec("create_from_discovery_result requires DISCOVERED origin")
+        return self.create(command)
+
+    def create(self, command: CreateGraphVersionCommand) -> GraphVersion:
         now = self._clock.now()
         graph_json = canonical_graph(command.graph_type, command.graph_json)
         content_hash = _hash_graph(graph_json)
@@ -48,18 +55,19 @@ class GraphVersionService:
             if project is None:
                 raise EntityNotFound("Project", command.project_id)
 
-            result = uow.results.get(command.source_result_id)
-            if result is None:
-                raise EntityNotFound("Result", command.source_result_id)
-            source_execution = uow.executions.get(result.execution_id)
-            if source_execution is None:
-                raise EntityNotFound("Execution", result.execution_id)
-            if source_execution.project_id != command.project_id:
-                raise ProjectBoundaryViolation("Source Result is not in the same project")
-            if result.result_type != ResultType.DISCOVERY_GRAPH_RESULT:
-                raise InvalidAnalysisSpec("Source Result must be DISCOVERY_GRAPH_RESULT")
-            if source_execution.operation != ExecutionOperation.DISCOVERY:
-                raise InvalidAnalysisSpec("Source Execution must be DISCOVERY")
+            if command.source_result_id is not None:
+                result = uow.results.get(command.source_result_id)
+                if result is None:
+                    raise EntityNotFound("Result", command.source_result_id)
+                source_execution = uow.executions.get(result.execution_id)
+                if source_execution is None:
+                    raise EntityNotFound("Execution", result.execution_id)
+                if source_execution.project_id != command.project_id:
+                    raise ProjectBoundaryViolation("Source Result is not in the same project")
+                if result.result_type != ResultType.DISCOVERY_GRAPH_RESULT:
+                    raise InvalidAnalysisSpec("Source Result must be DISCOVERY_GRAPH_RESULT")
+                if source_execution.operation != ExecutionOperation.DISCOVERY:
+                    raise InvalidAnalysisSpec("Source Execution must be DISCOVERY")
 
             if command.parent_graph_version_id is not None:
                 parent = uow.graph_versions.get(command.parent_graph_version_id)
@@ -74,6 +82,8 @@ class GraphVersionService:
                 parent_graph_version_id=command.parent_graph_version_id,
                 name=command.name,
                 graph_type=command.graph_type,
+                graph_origin=command.graph_origin,
+                provenance_json=command.provenance_json or {},
                 graph_json=graph_json,
                 content_hash=content_hash,
                 edit_rationale=command.edit_rationale,
@@ -85,6 +95,31 @@ class GraphVersionService:
             uow.commit()
 
         return graph_version
+
+    def create_user_defined(self, command: CreateGraphVersionCommand) -> GraphVersion:
+        if command.graph_origin != GraphOrigin.USER_DEFINED:
+            raise InvalidAnalysisSpec("create_user_defined requires USER_DEFINED origin")
+        return self.create(command)
+
+    def create_imported(self, command: CreateGraphVersionCommand) -> GraphVersion:
+        if command.graph_origin != GraphOrigin.IMPORTED:
+            raise InvalidAnalysisSpec("create_imported requires IMPORTED origin")
+        return self.create(command)
+
+    def create_constraint_adjusted(self, command: CreateGraphVersionCommand) -> GraphVersion:
+        if command.graph_origin != GraphOrigin.CONSTRAINT_ADJUSTED:
+            raise InvalidAnalysisSpec("create_constraint_adjusted requires CONSTRAINT_ADJUSTED origin")
+        provenance = command.provenance_json or {}
+        if provenance.get("constraint_mode") != "POST_HOC":
+            raise InvalidAnalysisSpec("constraint_mode=POST_HOC is required")
+        return self.create(command)
+
+    def create_from_parent_edit(self, command: CreateGraphVersionCommand) -> GraphVersion:
+        if command.graph_origin != GraphOrigin.USER_EDITED:
+            raise InvalidAnalysisSpec("create_from_parent_edit requires USER_EDITED origin")
+        if not command.edit_rationale:
+            raise InvalidAnalysisSpec("edit_rationale is required for USER_EDITED")
+        return self.create(command)
 
     def update_draft(self, command: UpdateDraftCommand) -> GraphVersion:
         with self._uow_factory() as uow:

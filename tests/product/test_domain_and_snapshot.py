@@ -11,8 +11,11 @@ from ariadne.product.domain.graph_semantics import canonical_graph
 
 def test_scientific_status_is_exact_design_contract():
     assert {item.value for item in ScientificStatus} == {
-        "VALID", "NOT_IDENTIFIED", "INSUFFICIENT_OVERLAP",
-        "INSUFFICIENT_SAMPLE", "ESTIMATION_UNRELIABLE",
+        "VALID", "GENERATED", "GENERATED_WITH_WARNINGS", "UNRELIABLE",
+        "IDENTIFIED", "NOT_IDENTIFIED", "PARTIALLY_IDENTIFIED", "REQUIRES_REVIEW",
+        "PASS", "WARN", "FAIL", "ESTIMATED", "INSUFFICIENT_OVERLAP",
+        "INSUFFICIENT_SAMPLE", "ESTIMATION_UNRELIABLE", "NO_FAILURE_DETECTED",
+        "FAILURE_DETECTED", "INCONCLUSIVE", "ROBUST", "FRAGILE",
     }
 
 

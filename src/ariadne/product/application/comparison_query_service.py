@@ -48,6 +48,10 @@ class ComparisonQueryService:
             if len(operations) > 1:
                 raise InvalidAnalysisSpec("All results must have the same operation type")
 
+            result_types = {result.result_type for result in results}
+            if len(result_types) > 1:
+                raise InvalidAnalysisSpec("All results must have the same Result Type")
+
         return _build_comparison(results, executions)  # type: ignore[arg-type]
 
 
@@ -96,11 +100,26 @@ def _build_comparison(results: list[Any], executions: list[Any]) -> ComparisonVi
         "result_ids": [r.result_id for r in results],
     }
 
+    questions = [execution.analysis_spec_json.get("causal_question", {}) for execution in executions]
+    compatibility_fields = ("estimand", "outcome", "population")
+    mismatches = [
+        field for field in compatibility_fields
+        if len({json_value(question.get(field)) for question in questions}) > 1
+    ]
+    warnings = (
+        [f"INCOMPARABLE: causal question differs in {', '.join(mismatches)}"]
+        if mismatches else []
+    )
     return ComparisonView(
         operation=executions[0].operation.value,
         common_conditions=common,
         changed_conditions=changed,
         result_differences=result_diffs,
-        warnings=[],
+        warnings=warnings,
         lineage_summary=lineage,
     )
+
+
+def json_value(value: Any) -> str:
+    import json
+    return json.dumps(value, sort_keys=True, ensure_ascii=False)

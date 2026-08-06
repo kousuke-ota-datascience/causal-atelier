@@ -11,6 +11,10 @@ from ariadne.product.domain.enums import ExecutionOperation, ExecutionStatus
 from ariadne.product.domain.errors import InvalidStateTransition
 
 
+CURRENT_SNAPSHOT_SCHEMA_VERSION = "causal-analysis-spec/2"
+LEGACY_SNAPSHOT_SCHEMA_VERSION = "legacy-product-snapshot/1"
+
+
 def _new_id() -> str:
     return str(uuid.uuid4())
 
@@ -21,6 +25,7 @@ class Execution:
     project_id: str = ""
     dataset_version_id: str = ""
     input_graph_version_id: str | None = None
+    input_result_id: str | None = None
     batch_key: str = field(default_factory=_new_id)
     operation: ExecutionOperation = ExecutionOperation.DISCOVERY
     objective_snapshot: str | None = None
@@ -32,6 +37,7 @@ class Execution:
     code_version: str = ""
     runtime_version_json: dict[str, Any] = field(default_factory=dict)
     snapshot_hash: str = ""
+    snapshot_schema_version: str = CURRENT_SNAPSHOT_SCHEMA_VERSION
     status: ExecutionStatus = ExecutionStatus.QUEUED
     retry_count: int = 0
     last_error_summary: str | None = None
@@ -39,6 +45,40 @@ class Execution:
     requested_at: datetime | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
+
+    def __post_init__(self) -> None:
+        self.validate_input_contract()
+
+    def validate_input_contract(self) -> None:
+        """Enforce the operation/input matrix before persistence."""
+        graph = self.input_graph_version_id is not None
+        upstream = self.input_result_id is not None
+        current = {
+            ExecutionOperation.DISCOVERY: (False, False),
+            ExecutionOperation.IDENTIFICATION: (True, False),
+            ExecutionOperation.ESTIMATION: (True, True),
+            ExecutionOperation.REFUTATION: (True, True),
+            ExecutionOperation.SENSITIVITY: (True, True),
+        }
+        legacy = {
+            ExecutionOperation.DISCOVERY: (False, False),
+            ExecutionOperation.ESTIMATION: (True, False),
+        }
+        if self.snapshot_schema_version == CURRENT_SNAPSHOT_SCHEMA_VERSION:
+            expected = current[self.operation]
+        elif self.snapshot_schema_version == LEGACY_SNAPSHOT_SCHEMA_VERSION:
+            expected = legacy.get(self.operation)
+            if expected is None:
+                raise ValueError(
+                    f"Operation {self.operation.value} did not exist in the legacy snapshot contract"
+                )
+        else:
+            raise ValueError("Unsupported snapshot_schema_version")
+        if (graph, upstream) != expected:
+            raise ValueError(
+                f"Invalid inputs for {self.operation.value}: "
+                f"graph={graph}, input_result={upstream}"
+            )
 
     def mark_running(self, started_at: datetime) -> None:
         if self.status != ExecutionStatus.QUEUED:

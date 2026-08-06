@@ -21,7 +21,16 @@ class CliManifest:
     scientific_status: str
     result_summary: dict[str, Any]
     artifacts: list[dict[str, Any]] = field(default_factory=list)
-    warnings: list[str] = field(default_factory=list)
+    warnings: list[Any] = field(default_factory=list)
+    scientific_warnings: list[dict[str, Any]] = field(default_factory=list)
+    snapshot_schema_version: str = "causal-analysis-spec/2"
+    analysis_mode: str | None = None
+    causal_question_hash: str | None = None
+    graph_origin: str | None = None
+    upstream_result_reference: str | None = None
+    identification_status: str | None = None
+    eligibility_status: str | None = None
+    backend_version: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

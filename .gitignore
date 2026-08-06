@@ -13,6 +13,7 @@ artifacts/pipelines/**
 artifacts/experiments/**
 !artifacts/pipelines/.gitkeep
 !artifacts/experiments/.gitkeep
+test-results/
 
 mlruns/
 mlflow.db

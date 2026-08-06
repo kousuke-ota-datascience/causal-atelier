@@ -58,63 +58,51 @@ class ExecutionVariantRequest(StrictModel):
 
 
 class ExecutionBatchCreate(StrictModel):
-    operation: Literal["DISCOVERY", "ESTIMATION"]
+    operation: Literal["DISCOVERY", "IDENTIFICATION", "ESTIMATION", "REFUTATION", "SENSITIVITY"]
     dataset_version_id: str
     input_graph_version_id: str | None = None
+    input_result_id: str | None = None
     objective: str | None = Field(default=None, max_length=4000)
     rationale: str | None = Field(default=None, max_length=8000)
     analysis_spec: dict[str, Any]
     variants: list[ExecutionVariantRequest] = Field(min_length=1, max_length=20)
     code_version: str = Field(min_length=1, max_length=200)
     runtime_versions: dict[str, Any]
+    base_execution_id: str | None = None
+    change_reason: str | None = Field(default=None, max_length=8000)
 
     @model_validator(mode="after")
     def graph_matches_operation(self) -> "ExecutionBatchCreate":
-        if self.operation == "ESTIMATION" and self.input_graph_version_id is None:
-            raise ValueError("input_graph_version_id is required for ESTIMATION")
-        if self.operation == "DISCOVERY" and self.input_graph_version_id is not None:
-            raise ValueError("input_graph_version_id is forbidden for DISCOVERY")
-        if self.operation == "DISCOVERY":
-            allowed = {"feature_columns", "constraints", "expected_graph_type"}
-            unknown = set(self.analysis_spec) - allowed
-            columns = self.analysis_spec.get("feature_columns")
-            constraints = self.analysis_spec.get("constraints", {})
-            expected = self.analysis_spec.get("expected_graph_type")
-            if unknown:
-                raise ValueError(f"unknown discovery analysis_spec fields: {sorted(unknown)}")
-            if not isinstance(columns, list) or not columns or not all(
-                isinstance(column, str) and column for column in columns
-            ):
-                raise ValueError("feature_columns must be a non-empty string list")
-            if len(columns) != len(set(columns)):
-                raise ValueError("feature_columns must be unique")
-            if not isinstance(constraints, dict):
-                raise ValueError("constraints must be an object")
-            if expected not in {None, "DAG", "CPDAG", "PAG"}:
-                raise ValueError("expected_graph_type must be DAG, CPDAG, PAG, or null")
-        else:
-            allowed = {
-                "treatment", "outcome", "estimand", "target_population",
-                "adjustment_set", "assumptions", "inference_options",
-            }
-            unknown = set(self.analysis_spec) - allowed
-            if unknown:
-                raise ValueError(f"unknown estimation analysis_spec fields: {sorted(unknown)}")
-            for field_name in ("treatment", "outcome"):
-                if not isinstance(self.analysis_spec.get(field_name), str) or not self.analysis_spec[field_name]:
-                    raise ValueError(f"{field_name} is required")
-            if self.analysis_spec.get("estimand") not in {"ATE", "ATT"}:
-                raise ValueError("estimand must be ATE or ATT")
-            adjustment = self.analysis_spec.get("adjustment_set")
-            if not isinstance(adjustment, list) or not all(
-                isinstance(column, str) and column for column in adjustment
-            ):
-                raise ValueError("adjustment_set must be an explicit string list")
+        graph_required = self.operation != "DISCOVERY"
+        upstream_required = self.operation in {"ESTIMATION", "REFUTATION", "SENSITIVITY"}
+        if (self.input_graph_version_id is not None) != graph_required:
+            raise ValueError("input_graph_version_id does not match operation")
+        if (self.input_result_id is not None) != upstream_required:
+            raise ValueError("input_result_id does not match operation")
+        from ariadne.product.domain.analysis_spec import validate_analysis_spec
+        from ariadne.product.domain.enums import ExecutionOperation
+        from ariadne.product.domain.errors import InvalidAnalysisSpec
+        try:
+            if self.operation == "ESTIMATION":
+                for variant in self.variants:
+                    value = {
+                        **self.analysis_spec,
+                        "operation_spec": {
+                            **self.analysis_spec.get("operation_spec", {}),
+                            "estimator": variant.algorithm_or_estimator,
+                        },
+                    }
+                    validate_analysis_spec(ExecutionOperation.ESTIMATION, value)
+            else:
+                validate_analysis_spec(ExecutionOperation(self.operation), self.analysis_spec)
+        except InvalidAnalysisSpec as exc:
+            raise ValueError(str(exc)) from exc
         return self
 
 
 class ExecutionAccepted(StrictModel):
     execution_id: str; status: str
+    scientific_warnings: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ExecutionBatchResponse(StrictModel):
@@ -123,10 +111,14 @@ class ExecutionBatchResponse(StrictModel):
 
 class ExecutionResponse(StrictModel):
     execution_id: str; project_id: str; dataset_version_id: str
-    input_graph_version_id: str | None; batch_key: str; operation: str
+    input_graph_version_id: str | None; input_result_id: str | None
+    snapshot_schema_version: str; batch_key: str; operation: str
     algorithm_or_estimator: str; status: str; retry_count: int; requested_by: str
     requested_at: datetime | None; started_at: datetime | None; finished_at: datetime | None
     last_error_summary: str | None
+    analysis_mode: str | None = None
+    scientific_warnings: list[dict[str, Any]] = Field(default_factory=list)
+    revision_context: dict[str, Any] | None = None
 
 
 class ExecutionListResponse(StrictModel):
@@ -134,7 +126,7 @@ class ExecutionListResponse(StrictModel):
 
 
 class ExecutionPrefillResponse(StrictModel):
-    operation: str; dataset_version_id: str; input_graph_version_id: str | None
+    operation: str; dataset_version_id: str; input_graph_version_id: str | None; input_result_id: str | None
     objective: str | None; rationale: str | None; analysis_spec: dict[str, Any]
     algorithm_or_estimator: str; parameters: dict[str, Any]; random_seed: int | None
 
@@ -150,9 +142,11 @@ class ResultListResponse(StrictModel): items: list[ResultResponse]
 
 
 class GraphVersionCreate(StrictModel):
-    source_result_id: str; parent_graph_version_id: str | None = None
+    source_result_id: str | None = None; parent_graph_version_id: str | None = None
+    graph_origin: Literal["DISCOVERED", "CONSTRAINT_ADJUSTED", "USER_DEFINED", "IMPORTED", "USER_EDITED"]
     name: str = Field(min_length=1, max_length=200); graph_type: Literal["DAG", "CPDAG", "PAG"]
-    graph: dict[str, Any]; edit_rationale: str | None = None; fix_immediately: bool = False
+    graph: dict[str, Any]; provenance: dict[str, Any]
+    edit_rationale: str | None = None; fix_immediately: bool = False
 
 
 class GraphVersionUpdate(StrictModel):
@@ -160,8 +154,9 @@ class GraphVersionUpdate(StrictModel):
 
 
 class GraphVersionResponse(StrictModel):
-    graph_version_id: str; project_id: str; source_result_id: str
+    graph_version_id: str; project_id: str; source_result_id: str | None
     parent_graph_version_id: str | None; name: str; graph_type: str; graph: dict[str, Any]
+    graph_origin: str; provenance: dict[str, Any]
     content_hash: str; edit_rationale: str | None; status: str; created_by: str
     created_at: datetime | None
 
