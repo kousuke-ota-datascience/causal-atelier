@@ -21,6 +21,7 @@ class Execution:
     project_id: str = ""
     dataset_version_id: str = ""
     input_graph_version_id: str | None = None
+    input_result_id: str | None = None
     batch_key: str = field(default_factory=_new_id)
     operation: ExecutionOperation = ExecutionOperation.DISCOVERY
     objective_snapshot: str | None = None
@@ -32,6 +33,7 @@ class Execution:
     code_version: str = ""
     runtime_version_json: dict[str, Any] = field(default_factory=dict)
     snapshot_hash: str = ""
+    snapshot_schema_version: str = "causal-analysis-spec/2"
     status: ExecutionStatus = ExecutionStatus.QUEUED
     retry_count: int = 0
     last_error_summary: str | None = None
@@ -39,6 +41,28 @@ class Execution:
     requested_at: datetime | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
+
+    def __post_init__(self) -> None:
+        self.validate_input_contract()
+
+    def validate_input_contract(self) -> None:
+        """Enforce the operation/input matrix before persistence."""
+        graph = self.input_graph_version_id is not None
+        upstream = self.input_result_id is not None
+        valid = {
+            ExecutionOperation.DISCOVERY: (False, False),
+            ExecutionOperation.IDENTIFICATION: (True, False),
+            ExecutionOperation.ESTIMATION: (True, True),
+            ExecutionOperation.REFUTATION: (True, True),
+            ExecutionOperation.SENSITIVITY: (True, True),
+        }
+        if (graph, upstream) != valid[self.operation]:
+            raise ValueError(
+                f"Invalid inputs for {self.operation.value}: "
+                f"graph={graph}, input_result={upstream}"
+            )
+        if self.snapshot_schema_version != "causal-analysis-spec/2":
+            raise ValueError("Unsupported snapshot_schema_version")
 
     def mark_running(self, started_at: datetime) -> None:
         if self.status != ExecutionStatus.QUEUED:

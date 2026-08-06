@@ -95,6 +95,8 @@ class ProductQueryService:
                 "execution": {
                     "execution_id": execution.execution_id,
                     "snapshot_hash": execution.snapshot_hash,
+                    "snapshot_schema_version": execution.snapshot_schema_version,
+                    "input_result_id": execution.input_result_id,
                     "operation": execution.operation.value,
                     "analysis_spec": execution.analysis_spec_json,
                     "algorithm_or_estimator": execution.algorithm_or_estimator,
@@ -104,7 +106,12 @@ class ProductQueryService:
                     "runtime_versions": execution.runtime_version_json,
                 },
                 "dataset": {"dataset_version_id": dataset.dataset_version_id, "content_hash": dataset.content_hash},
-                "graph": None if graph is None else {"graph_version_id": graph.graph_version_id, "content_hash": graph.content_hash},
+                "graph": None if graph is None else {
+                    "graph_version_id": graph.graph_version_id,
+                    "content_hash": graph.content_hash,
+                    "graph_origin": graph.graph_origin.value,
+                    "provenance": graph.provenance_json,
+                },
                 "artifacts": [
                     {"artifact_id": item.artifact_id, "content_hash": item.content_hash, "artifact_type": item.artifact_type.value}
                     for item in artifacts

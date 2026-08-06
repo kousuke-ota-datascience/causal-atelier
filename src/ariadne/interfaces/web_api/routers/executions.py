@@ -31,6 +31,8 @@ def _execution_to_response(e: Execution) -> ExecutionResponse:
         project_id=e.project_id,
         dataset_version_id=e.dataset_version_id,
         input_graph_version_id=e.input_graph_version_id,
+        input_result_id=e.input_result_id,
+        snapshot_schema_version=e.snapshot_schema_version,
         batch_key=e.batch_key,
         operation=e.operation.value,
         algorithm_or_estimator=e.algorithm_or_estimator,
@@ -61,10 +63,16 @@ async def create_execution_batch(
             variants=[ExecutionVariantSpec(
                 algorithm_or_estimator=v.algorithm_or_estimator,
                 parameter_json=v.parameters, random_seed=v.random_seed,
-                analysis_spec_json=body.analysis_spec,
+                analysis_spec_json=(
+                    {**body.analysis_spec, "operation_spec": {
+                        **body.analysis_spec["operation_spec"],
+                        "estimator": v.algorithm_or_estimator,
+                    }} if body.operation == "ESTIMATION" else body.analysis_spec
+                ),
                 objective_snapshot=body.objective, rationale_snapshot=body.rationale,
             ) for v in body.variants],
             input_graph_version_id=body.input_graph_version_id,
+            input_result_id=body.input_result_id,
             code_version=body.code_version, runtime_version_json=body.runtime_versions,
             requested_by=requested_by,
         ))

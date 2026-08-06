@@ -17,6 +17,7 @@ from ariadne.product.domain.errors import (
     ProjectBoundaryViolation,
     InvalidGraphSemantics,
     ArtifactHashMismatch,
+    ScientificContractViolation,
 )
 from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
 
@@ -42,7 +43,11 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
     if isinstance(exc, InvalidGraphSemantics):
         return _error(request, 422, "INVALID_GRAPH_SEMANTICS", str(exc))
     if isinstance(exc, InvalidAnalysisSpec):
-        return _error(request, 422, "INVALID_ANALYSIS_SPEC", str(exc))
+        return _error(
+            request, 422,
+            exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC",
+            str(exc),
+        )
     if isinstance(exc, ArtifactHashMismatch):
         return _error(request, 500, "ARTIFACT_HASH_MISMATCH", str(exc))
     return _error(request, 400, "DOMAIN_ERROR", str(exc))

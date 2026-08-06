@@ -13,6 +13,27 @@ from ariadne.scientific.discovery.adapter import DiscoveryAdapter
 from ariadne.scientific.inference.adapter import EstimationAdapter
 
 
+def discovery_spec():  # type: ignore[no-untyped-def]
+    return {
+        "schema_version": "causal-analysis-spec/2", "analysis_mode": "EXPLORATORY",
+        "research_context": {}, "causal_question": {},
+        "causal_design": {"adjustment_set": [], "assumptions": []},
+        "operation_spec": {"feature_columns": ["x", "treatment", "sales"], "constraints": {}, "expected_graph_type": None},
+        "validation_override": None,
+    }
+
+
+def estimation_spec(estimator="ols", estimand="ATE", adjustment=None):  # type: ignore[no-untyped-def]
+    return {
+        "schema_version": "causal-analysis-spec/2", "analysis_mode": "EXPLORATORY",
+        "research_context": {},
+        "causal_question": {"population": "rows", "treatment": "treatment", "comparator": "untreated", "outcome": "sales", "analysis_unit": "row", "treatment_time": "t0", "outcome_window": "t1", "estimand": estimand},
+        "causal_design": {"identification_strategy": "BACKDOOR", "adjustment_set": ["x"] if adjustment is None else adjustment, "assumptions": []},
+        "operation_spec": {"estimator": estimator, "inference_options": {}},
+        "validation_override": None,
+    }
+
+
 @pytest.fixture
 def synthetic(tmp_path: Path):
     rng=np.random.default_rng(20260805);n=300
@@ -31,9 +52,9 @@ def test_pc_and_ges_run_without_database_and_preserve_graph_semantics(synthetic,
     dataset,_=synthetic
     output=DiscoveryAdapter().run(DiscoveryInput(
         dataset_path=dataset,algorithm=algorithm,parameters={"alpha":.05} if algorithm=="pc" else {},
-        random_seed=42,analysis_spec={"feature_columns":["x","treatment","sales"],"constraints":{}},
+        random_seed=42,analysis_spec=discovery_spec(),
     ),tmp_path/algorithm)
-    assert output.scientific_status is ScientificStatus.VALID
+    assert output.scientific_status is ScientificStatus.GENERATED
     assert output.graph_type=="CPDAG"
     assert output.graph_json["nodes"]==["sales","treatment","x"]
     assert all(set(edge)>= {"endpoint_source","endpoint_target"} for edge in output.graph_json["edges"])
@@ -46,10 +67,9 @@ def test_estimators_use_explicit_adjustment_and_recover_ate(synthetic,tmp_path,e
     dataset,graph=synthetic
     output=EstimationAdapter().run(EstimationInput(
         dataset_path=dataset,graph_path=graph,estimator=estimator,parameters={},random_seed=42,
-        analysis_spec={"treatment":"treatment","outcome":"sales","estimand":"ATE",
-                       "target_population":None,"adjustment_set":["x"],"assumptions":[],"inference_options":{}},
+        analysis_spec=estimation_spec(estimator),
     ),tmp_path/estimator)
-    assert output.scientific_status is ScientificStatus.VALID
+    assert output.scientific_status is ScientificStatus.ESTIMATED
     assert output.payload["adjustment_set"]==["x"]
     assert abs(output.payload["estimate"]-2)<tolerance
     assert output.payload["confidence_interval"] is not None
@@ -59,9 +79,7 @@ def test_estimators_use_explicit_adjustment_and_recover_ate(synthetic,tmp_path,e
 def test_small_sample_is_scientific_result_not_exception(synthetic,tmp_path):  # type: ignore[no-untyped-def]
     dataset,graph=synthetic;small=tmp_path/"small.csv";pd.read_csv(dataset).head(8).to_csv(small,index=False)
     output=EstimationAdapter().run(EstimationInput(
-        dataset_path=small,graph_path=graph,estimator="ols",analysis_spec={
-            "treatment":"treatment","outcome":"sales","estimand":"ATT","target_population":None,
-            "adjustment_set":["x"],"assumptions":[],"inference_options":{}},
+        dataset_path=small,graph_path=graph,estimator="ols",analysis_spec=estimation_spec("ols", "ATT"),
     ),tmp_path/"small")
     assert output.scientific_status is ScientificStatus.INSUFFICIENT_SAMPLE
 
@@ -74,10 +92,9 @@ def test_missing_treatment_to_outcome_path_is_not_identified(synthetic, tmp_path
     no_path.write_text(json.dumps(graph_document), encoding="utf-8")
     output = EstimationAdapter().run(EstimationInput(
         dataset_path=dataset, graph_path=no_path, estimator="ols", parameters={},
-        analysis_spec={"treatment":"treatment","outcome":"sales","estimand":"ATE",
-                       "target_population":None,"adjustment_set":["x"],"assumptions":[],"inference_options":{}},
+        analysis_spec=estimation_spec("ols"),
     ), tmp_path / "not-identified")
-    assert output.scientific_status is ScientificStatus.NOT_IDENTIFIED
+    assert output.scientific_status is ScientificStatus.REQUIRES_REVIEW
 
 
 def test_extreme_propensity_is_insufficient_overlap(synthetic, tmp_path):  # type: ignore[no-untyped-def]
@@ -89,8 +106,7 @@ def test_extreme_propensity_is_insufficient_overlap(synthetic, tmp_path):  # typ
     frame.to_csv(separated, index=False)
     output = EstimationAdapter().run(EstimationInput(
         dataset_path=separated, graph_path=graph, estimator="ipw", parameters={},
-        analysis_spec={"treatment":"treatment","outcome":"sales","estimand":"ATE",
-                       "target_population":None,"adjustment_set":["x"],"assumptions":[],"inference_options":{}},
+        analysis_spec=estimation_spec("ipw"),
     ), tmp_path / "overlap")
     assert output.scientific_status is ScientificStatus.INSUFFICIENT_OVERLAP
 
@@ -112,7 +128,6 @@ def test_non_estimable_aipw_uncertainty_is_unreliable(tmp_path: Path) -> None:
     graph.write_text(json.dumps(graph_document), encoding="utf-8")
     output = EstimationAdapter().run(EstimationInput(
         dataset_path=dataset, graph_path=graph, estimator="aipw", parameters={},
-        analysis_spec={"treatment":"treatment","outcome":"sales","estimand":"ATE",
-                       "target_population":None,"adjustment_set":columns,"assumptions":[],"inference_options":{}},
+        analysis_spec=estimation_spec("aipw", adjustment=columns),
     ), tmp_path / "unreliable")
     assert output.scientific_status is ScientificStatus.ESTIMATION_UNRELIABLE

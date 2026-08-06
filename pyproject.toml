@@ -25,6 +25,9 @@ dependencies = [
 # New product CLI
 ariadne-discover = "ariadne.interfaces.cli.discovery:main"
 ariadne-estimate = "ariadne.interfaces.cli.estimation:main"
+ariadne-identify = "ariadne.interfaces.cli.identification:main"
+ariadne-refute = "ariadne.interfaces.cli.refutation:main"
+ariadne-sensitivity = "ariadne.interfaces.cli.sensitivity:main"
 # New product API and Worker
 ariadne-api = "ariadne.interfaces.web_api.app:main"
 ariadne-worker = "ariadne.interfaces.worker.runner:main"
@@ -42,6 +45,7 @@ markers = [
     "mlflow: MLflow integration tests using local SQLite backend",
     "e2e: full MVP journey end-to-end tests",
     "scientific: synthetic-data statistical validation tests",
+    "scientific_benchmark: deterministic and repeated scientific acceptance benchmarks",
     "requirement: links a test to a functional requirement ID",
 ]
 

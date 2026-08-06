@@ -15,6 +15,7 @@ from ariadne.product.domain.enums import (
     ArtifactType,
     ExecutionOperation,
     ExecutionStatus,
+    GraphOrigin,
     GraphType,
     GraphVersionStatus,
     ProjectStatus,
@@ -142,6 +143,7 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
         project_id=orm.project_id,
         dataset_version_id=orm.dataset_version_id,
         input_graph_version_id=orm.input_graph_version_id,
+        input_result_id=orm.input_result_id,
         batch_key=orm.batch_key,
         operation=ExecutionOperation(orm.operation),
         objective_snapshot=orm.objective_snapshot,
@@ -153,6 +155,7 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
         code_version=orm.code_version,
         runtime_version_json=orm.runtime_version_json or {},
         snapshot_hash=orm.snapshot_hash,
+        snapshot_schema_version=orm.snapshot_schema_version,
         status=ExecutionStatus(orm.status),
         retry_count=orm.retry_count,
         last_error_summary=orm.last_error_summary,
@@ -169,6 +172,7 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
     orm.project_id = e.project_id
     orm.dataset_version_id = e.dataset_version_id
     orm.input_graph_version_id = e.input_graph_version_id
+    orm.input_result_id = e.input_result_id
     orm.batch_key = e.batch_key
     orm.operation = e.operation.value
     orm.objective_snapshot = e.objective_snapshot
@@ -180,6 +184,7 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
     orm.code_version = e.code_version
     orm.runtime_version_json = e.runtime_version_json
     orm.snapshot_hash = e.snapshot_hash
+    orm.snapshot_schema_version = e.snapshot_schema_version
     orm.status = e.status.value
     orm.retry_count = e.retry_count
     orm.last_error_summary = e.last_error_summary
@@ -228,6 +233,8 @@ def _orm_to_graph_version(orm: GraphVersionOrm) -> GraphVersion:
         parent_graph_version_id=orm.parent_graph_version_id,
         name=orm.name,
         graph_type=GraphType(orm.graph_type),
+        graph_origin=GraphOrigin(orm.graph_origin),
+        provenance_json=orm.provenance_json or {},
         graph_json=orm.graph_json or {},
         content_hash=orm.content_hash,
         edit_rationale=orm.edit_rationale,
@@ -245,6 +252,8 @@ def _graph_version_to_orm(gv: GraphVersion, existing: GraphVersionOrm | None = N
     orm.parent_graph_version_id = gv.parent_graph_version_id
     orm.name = gv.name
     orm.graph_type = gv.graph_type.value
+    orm.graph_origin = gv.graph_origin.value
+    orm.provenance_json = gv.provenance_json
     orm.graph_json = gv.graph_json
     orm.content_hash = gv.content_hash
     orm.edit_rationale = gv.edit_rationale

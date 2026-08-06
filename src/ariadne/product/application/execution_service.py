@@ -11,13 +11,16 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ariadne.product.domain.enums import ExecutionOperation, GraphVersionStatus
+from ariadne.product.domain.analysis_spec import SCHEMA_VERSION
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidAnalysisSpec,
     ProjectBoundaryViolation,
+    ScientificContractViolation,
 )
 from ariadne.product.domain.execution import Execution
 from ariadne.product.ports.clock import ClockPort, SystemClock
+from ariadne.product.application.scientific_validation_service import ScientificValidationService
 
 
 @dataclass
@@ -37,6 +40,7 @@ class CreateExecutionBatchCommand:
     operation: ExecutionOperation
     variants: list[ExecutionVariantSpec]
     input_graph_version_id: str | None = None
+    input_result_id: str | None = None
     code_version: str = ""
     runtime_version_json: dict[str, Any] = field(default_factory=dict)
     requested_by: str = "system"
@@ -52,14 +56,24 @@ class ExecutionService:
     def __init__(self, uow_factory: Any, clock: ClockPort | None = None) -> None:
         self._uow_factory = uow_factory
         self._clock = clock or SystemClock()
+        self._validation = ScientificValidationService()
 
     def create_execution_batch(self, command: CreateExecutionBatchCommand) -> ExecutionBatchResult:
         if not command.variants:
             raise InvalidAnalysisSpec("At least one variant is required")
-        if command.operation == ExecutionOperation.ESTIMATION and command.input_graph_version_id is None:
-            raise InvalidAnalysisSpec("input_graph_version_id is required for ESTIMATION")
-        if command.operation == ExecutionOperation.DISCOVERY and command.input_graph_version_id is not None:
-            raise InvalidAnalysisSpec("input_graph_version_id must be None for DISCOVERY")
+        graph_required = command.operation != ExecutionOperation.DISCOVERY
+        upstream_required = command.operation in {
+            ExecutionOperation.ESTIMATION,
+            ExecutionOperation.REFUTATION,
+            ExecutionOperation.SENSITIVITY,
+        }
+        if (command.input_graph_version_id is not None) != graph_required:
+            raise InvalidAnalysisSpec("input_graph_version_id does not match operation")
+        if (command.input_result_id is not None) != upstream_required:
+            raise ScientificContractViolation(
+                "UPSTREAM_RESULT_REQUIRED" if upstream_required else "UPSTREAM_RESULT_INCOMPATIBLE",
+                "input_result_id does not match operation",
+            )
 
         now = self._clock.now()
         batch_key = str(uuid.uuid4())
@@ -82,12 +96,23 @@ class ExecutionService:
                 if gv.project_id != command.project_id:
                     raise ProjectBoundaryViolation("GraphVersion does not belong to project")
                 if gv.status != GraphVersionStatus.FIXED:
-                    raise InvalidAnalysisSpec("ESTIMATION requires a FIXED GraphVersion")
+                    raise InvalidAnalysisSpec("Operation requires a FIXED GraphVersion")
 
             graph_content_hash = gv.content_hash if command.input_graph_version_id else None
 
             executions: list[Execution] = []
             for variant in command.variants:
+                self._validation.validate_submission(
+                    uow=uow,
+                    project_id=command.project_id,
+                    dataset_version_id=command.dataset_version_id,
+                    graph_version_id=command.input_graph_version_id,
+                    input_result_id=command.input_result_id,
+                    operation=command.operation,
+                    analysis_spec=variant.analysis_spec_json,
+                    method=variant.algorithm_or_estimator,
+                    parameters=variant.parameter_json,
+                )
                 snapshot_hash = _compute_snapshot_hash(
                     objective=variant.objective_snapshot,
                     rationale=variant.rationale_snapshot,
@@ -95,6 +120,7 @@ class ExecutionService:
                     dataset_content_hash=dataset_version.content_hash,
                     input_graph_version_id=command.input_graph_version_id,
                     input_graph_content_hash=graph_content_hash,
+                    input_result_id=command.input_result_id,
                     operation=command.operation,
                     algorithm_or_estimator=variant.algorithm_or_estimator,
                     parameter_json=variant.parameter_json,
@@ -107,6 +133,7 @@ class ExecutionService:
                     project_id=command.project_id,
                     dataset_version_id=command.dataset_version_id,
                     input_graph_version_id=command.input_graph_version_id,
+                    input_result_id=command.input_result_id,
                     batch_key=batch_key,
                     operation=command.operation,
                     objective_snapshot=variant.objective_snapshot,
@@ -118,6 +145,7 @@ class ExecutionService:
                     code_version=command.code_version,
                     runtime_version_json=command.runtime_version_json,
                     snapshot_hash=snapshot_hash,
+                    snapshot_schema_version=SCHEMA_VERSION,
                     requested_by=command.requested_by,
                     requested_at=now,
                 )
@@ -144,6 +172,7 @@ class ExecutionService:
             "operation": execution.operation.value,
             "dataset_version_id": execution.dataset_version_id,
             "input_graph_version_id": execution.input_graph_version_id,
+            "input_result_id": execution.input_result_id,
             "objective": execution.objective_snapshot,
             "rationale": execution.rationale_snapshot,
             "analysis_spec": execution.analysis_spec_json,

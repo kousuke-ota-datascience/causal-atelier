@@ -14,8 +14,12 @@ from ariadne.product.ports.repositories import (
 from ariadne.product.ports.scientific_core import (
     DiscoveryInput,
     DiscoveryOutput,
+    IdentificationInput,
     EstimationInput,
     EstimationOutput,
+    RefutationInput,
+    SensitivityInput,
+    ScientificResultDescriptor,
     ScientificCorePort,
 )
 from ariadne.product.ports.unit_of_work import UnitOfWork
@@ -28,8 +32,12 @@ __all__ = [
     "DatasetVersionRepository",
     "DiscoveryInput",
     "DiscoveryOutput",
+    "IdentificationInput",
     "EstimationInput",
     "EstimationOutput",
+    "RefutationInput",
+    "SensitivityInput",
+    "ScientificResultDescriptor",
     "ExecutionRepository",
     "GraphVersionRepository",
     "ProjectRepository",
