@@ -106,7 +106,12 @@ class GenericExecutor:
                     break
                 except Exception as exc:
                     self.compensate(stage, exc)
-                    stage.fail({"type": type(exc).__name__, "message": str(exc)}, self.clock())
+                    error = {"type": type(exc).__name__, "message": str(exc)}
+                    for attribute in ("code", "path"):
+                        value = getattr(exc, attribute, None)
+                        if value is not None:
+                            error[attribute] = value
+                    stage.fail(error, self.clock())
                     if len(stage.attempts) < max_attempts and self.retryable(exc):
                         if cancelled is not None and cancelled():
                             return ExecutionOutcome(

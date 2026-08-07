@@ -82,3 +82,34 @@ def test_fit_and_selection_contract_isolates_test() -> None:
     with pytest.raises(PredictiveValidationError) as selection_error:
         assert_test_isolation(["VALIDATION", "TEST"])
     assert selection_error.value.code == "TEST_ISOLATION_VIOLATION"
+
+
+@pytest.mark.requirement("FR-058", "FR-059", "NFR-003")
+def test_split_rejects_unknown_strategy_invalid_seed_and_non_finite_time() -> None:
+    common = {
+        "row_ids": list(range(6)),
+        "train_ratio": 0.5,
+        "validation_ratio": 0.25,
+    }
+    with pytest.raises(PredictiveValidationError) as strategy_error:
+        build_partitions(**common, strategy="UNKNOWN", seed=1)
+    assert strategy_error.value.code == "UNSUPPORTED_SPLIT_STRATEGY"
+    assert strategy_error.value.path == "split_spec.strategy"
+
+    with pytest.raises(PredictiveValidationError) as seed_error:
+        build_partitions(**common, strategy="RANDOM", seed=True)
+    assert seed_error.value.code == "INVALID_SPLIT_SEED"
+
+    with pytest.raises(PredictiveValidationError) as time_error:
+        build_partitions(
+            list(range(6)),
+            strategy="TIME_BASED",
+            train_ratio=0,
+            validation_ratio=0,
+            seed=1,
+            times=[1, 2, float("nan"), 4, 5, 6],
+            train_cutoff=2,
+            validation_cutoff=4,
+        )
+    assert time_error.value.code == "INVALID_TIME_VALUE"
+    assert time_error.value.path == "split_spec.time_column"

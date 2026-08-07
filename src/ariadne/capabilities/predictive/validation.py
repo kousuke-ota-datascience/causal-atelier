@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+import math
 from typing import Any
 
 from ariadne.product.domain.errors import InvalidSchema, PredictiveValidationError
-from ariadne.product.domain.schemas import reject_unknown
+from ariadne.product.domain.schemas import canonical_bytes, reject_unknown
 
 PREDICTIVE_SCHEMA_VERSION = "predictive-analysis-spec/1"
 TASK_TYPES = frozenset({"BINARY_CLASSIFICATION", "REGRESSION"})
@@ -25,8 +26,9 @@ _SPLIT = {
     "strategy", "train_ratio", "validation_ratio", "test_ratio", "group_column",
     "time_column", "train_cutoff", "validation_cutoff", "stratify", "seed",
 }
-_AVAILABILITY = {"column", "available_at", "allowed"}
-_CLASSIFICATION_METRICS = {"ROC_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1"}
+_AVAILABILITY = {"column", "available_at", "allowed", "derived_from"}
+_AVAILABILITY_REQUIRED = {"column", "available_at", "allowed"}
+_CLASSIFICATION_METRICS = {"ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1"}
 _REGRESSION_METRICS = {"MAE", "RMSE", "R2"}
 
 
@@ -86,12 +88,21 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
         if not isinstance(descriptor, Mapping):
             raise InvalidSchema(f"Feature availability for {column!r} must be an object")
         reject_unknown(descriptor, _AVAILABILITY, name=f"availability_cutoff.{column}")
-        if set(descriptor) != _AVAILABILITY or descriptor["column"] != column:
+        if not _AVAILABILITY_REQUIRED.issubset(descriptor) or descriptor["column"] != column:
             raise InvalidSchema(f"Feature availability for {column!r} has an invalid shape")
         if not isinstance(descriptor["available_at"], str) or not descriptor["available_at"]:
             raise InvalidSchema(f"Feature availability for {column!r} requires available_at")
         if not isinstance(descriptor["allowed"], bool):
             raise InvalidSchema(f"Feature availability for {column!r} requires boolean allowed")
+        derived_from = descriptor.get("derived_from", [])
+        if (
+            not isinstance(derived_from, list)
+            or any(not isinstance(source, str) or not source for source in derived_from)
+            or len(derived_from) != len(set(derived_from))
+        ):
+            raise InvalidSchema(
+                f"Feature availability for {column!r} requires a unique string derived_from array"
+            )
 
     split = _object(payload, "split_spec")
     reject_unknown(split, _SPLIT, name="split_spec")
@@ -105,7 +116,13 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
         )
     ratios = [split.get(name) for name in ("train_ratio", "validation_ratio", "test_ratio")]
     if strategy != "TIME_BASED":
-        if any(isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0 for value in ratios):
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            or value <= 0
+            for value in ratios
+        ):
             raise InvalidSchema("train, validation, and test ratios must be positive numbers")
         if abs(sum(float(value) for value in ratios) - 1.0) > 1e-9:
             raise InvalidSchema("split ratios must sum to 1")
@@ -123,30 +140,57 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
             "TEMPORAL_LEAKAGE_RISK", "train_cutoff must precede validation_cutoff",
             path="split_spec.validation_cutoff",
         )
-    if not isinstance(split.get("seed"), int):
+    if isinstance(split.get("seed"), bool) or not isinstance(split.get("seed"), int):
         raise InvalidSchema("split seed must be an integer")
+    if not isinstance(split.get("stratify"), bool):
+        raise InvalidSchema("split stratify must be a boolean")
+    if (strategy == "STRATIFIED") != split["stratify"]:
+        raise PredictiveValidationError(
+            "STRATIFY_CONTRACT_MISMATCH",
+            "stratify must be true exactly when strategy is STRATIFIED",
+            path="split_spec.stratify",
+        )
 
     for name in ("preprocessing_spec", "model_spec", "tuning_spec", "evaluation_spec", "explanation_spec"):
         if not isinstance(payload[name], Mapping):
             raise InvalidSchema(f"{name} must be an object")
     evaluation = dict(payload["evaluation_spec"])
-    reject_unknown(evaluation, {"primary_metric", "secondary_metrics", "subgroups"}, name="evaluation_spec")
+    reject_unknown(
+        evaluation,
+        {"primary_metric", "secondary_metrics", "subgroups"},
+        name="evaluation_spec",
+    )
+    if "primary_metric" not in evaluation or "secondary_metrics" not in evaluation:
+        raise InvalidSchema("evaluation_spec requires primary_metric and secondary_metrics")
     primary_metric = evaluation.get("primary_metric")
     allowed_metrics = (
         _CLASSIFICATION_METRICS if task_type == "BINARY_CLASSIFICATION" else _REGRESSION_METRICS
     )
     if primary_metric not in allowed_metrics:
         raise PredictiveValidationError(
-            "METRIC_TASK_MISMATCH", f"Metric {primary_metric!r} is incompatible with {task_type}",
+            "METRIC_TASK_MISMATCH",
+            f"Metric {primary_metric!r} is incompatible with {task_type}",
             path="evaluation_spec.primary_metric",
         )
     secondary = evaluation.get("secondary_metrics", [])
-    if not isinstance(secondary, list) or set(secondary) - allowed_metrics:
+    if (
+        not isinstance(secondary, list)
+        or any(not isinstance(metric, str) for metric in secondary)
+        or len(secondary) != len(set(secondary))
+        or set(secondary) - allowed_metrics
+    ):
         raise PredictiveValidationError(
-            "METRIC_TASK_MISMATCH", "secondary_metrics contain an incompatible metric",
+            "METRIC_TASK_MISMATCH",
+            "secondary_metrics must be unique and compatible with the task",
             path="evaluation_spec.secondary_metrics",
         )
+    subgroups = evaluation.get("subgroups", [])
+    if not isinstance(subgroups, list) or any(
+        not isinstance(column, str) or not column for column in subgroups
+    ):
+        raise InvalidSchema("evaluation_spec.subgroups must be a string array")
     LeakageValidator().validate(question, feature, split)
+    canonical_bytes(payload)
     return dict(payload)
 
 
@@ -175,6 +219,12 @@ class LeakageValidator:
         for index, column in enumerate(features):
             value = availability.get(column)
             if isinstance(value, Mapping):
+                if target in value.get("derived_from", []):
+                    raise PredictiveValidationError(
+                        "TARGET_DERIVATIVE_LEAKAGE_DETECTED",
+                        f"Feature {column!r} is derived from the prediction target",
+                        path=f"feature_spec.availability_cutoff.{column}.derived_from",
+                    )
                 allowed = value.get("allowed")
                 point = value.get("available_at")
                 forbidden = allowed is False or point in self._FORBIDDEN_AVAILABILITY
@@ -227,32 +277,56 @@ def validate_partition_isolation(
     population: Sequence[Any] | None = None,
 ) -> None:
     train_ids, validation_ids, test_ids = set(train), set(validation), set(test)
+    if (
+        len(train_ids) != len(train)
+        or len(validation_ids) != len(validation)
+        or len(test_ids) != len(test)
+    ):
+        raise PredictiveValidationError(
+            "SPLIT_DUPLICATE_ROW",
+            "A row identifier occurs more than once within a partition",
+            path="partitions",
+        )
     if train_ids & validation_ids or train_ids & test_ids or validation_ids & test_ids:
-        raise PredictiveValidationError("SPLIT_OVERLAP", "Partition row identifiers overlap")
+        raise PredictiveValidationError(
+            "SPLIT_OVERLAP", "Partition row identifiers overlap", path="partitions"
+        )
     if population is not None and train_ids | validation_ids | test_ids != set(population):
         raise PredictiveValidationError(
-            "SPLIT_POPULATION_MISMATCH", "Partition union does not equal the input population"
+            "SPLIT_POPULATION_MISMATCH",
+            "Partition union does not equal the input population",
+            path="partitions",
         )
     supplied = (train_groups, validation_groups, test_groups)
     if any(item is not None for item in supplied):
         if any(item is None for item in supplied):
-            raise PredictiveValidationError("GROUP_PARTITION_INCOMPLETE", "All group partitions are required")
+            raise PredictiveValidationError(
+                "GROUP_PARTITION_INCOMPLETE",
+                "All group partitions are required",
+                path="partitions",
+            )
         groups = [set(item or ()) for item in supplied]
         if groups[0] & groups[1] or groups[0] & groups[2] or groups[1] & groups[2]:
-            raise PredictiveValidationError("GROUP_LEAKAGE_DETECTED", "An entity crosses partitions")
+            raise PredictiveValidationError(
+                "GROUP_LEAKAGE_DETECTED", "An entity crosses partitions", path="partitions"
+            )
 
 
 def assert_train_only_fit(fit_partition: str) -> None:
     if fit_partition != "TRAIN":
         raise PredictiveValidationError(
-            "PREPROCESSING_LEAKAGE_DETECTED", "Preprocessing may only be fitted on TRAIN"
+            "PREPROCESSING_LEAKAGE_DETECTED",
+            "Preprocessing may only be fitted on TRAIN",
+            path="preprocessing_spec.fit_partition",
         )
 
 
 def assert_test_isolation(used_for_selection: Sequence[str]) -> None:
     if "TEST" in used_for_selection:
         raise PredictiveValidationError(
-            "TEST_ISOLATION_VIOLATION", "TEST cannot be used for feature, model, or threshold selection"
+            "TEST_ISOLATION_VIOLATION",
+            "TEST cannot be used for feature, model, or threshold selection",
+            path="tuning_spec.selection_partitions",
         )
 
 

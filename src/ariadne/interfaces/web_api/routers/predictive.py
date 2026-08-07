@@ -49,7 +49,9 @@ async def predictive_capabilities(project_id: str) -> dict[str, Any]:
         "task_types": ["BINARY_CLASSIFICATION", "REGRESSION"],
         "split_strategies": ["RANDOM", "STRATIFIED", "GROUP", "TIME_BASED"],
         "metrics": {
-            "BINARY_CLASSIFICATION": ["ROC_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1"],
+            "BINARY_CLASSIFICATION": [
+                "ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1",
+            ],
             "REGRESSION": ["MAE", "RMSE", "R2"],
         },
         "training_available": False,

@@ -16,7 +16,12 @@ from ariadne.capabilities.predictive import (
     validate_predictive_specification,
 )
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
-from ariadne.product.domain.errors import EntityNotFound, ProjectArchived
+from ariadne.product.domain.errors import (
+    EntityNotFound,
+    InvalidSchema,
+    PredictiveValidationError,
+    ProjectArchived,
+)
 from ariadne.product.domain.schemas import SchemaRegistry, canonical_hash
 from ariadne.product.persistence.orm_models import (
     ExecutionPlanOrm,
@@ -93,6 +98,14 @@ class PredictiveSplitService:
         )
         if outcome.status != "SUCCEEDED" or len(outcome.artifacts) != 1:
             error = outcome.stages[-1].last_error or {"message": "Predictive split failed"}
+            if error.get("type") == "PredictiveValidationError":
+                raise PredictiveValidationError(
+                    str(error.get("code", "PREDICTIVE_SPLIT_INVALID")),
+                    str(error.get("message", "Predictive split validation failed")),
+                    path=error.get("path"),
+                )
+            if error.get("type") == "InvalidSchema":
+                raise InvalidSchema(str(error.get("message", "Predictive split schema is invalid")))
             raise ValueError(str(error.get("message", error)))
         artifact_draft = outcome.artifacts[0]
         artifact_id = str(uuid.uuid4())

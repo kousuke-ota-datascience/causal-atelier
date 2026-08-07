@@ -10,6 +10,7 @@ import pandas as pd
 
 from ariadne.capabilities.predictive.splitting import build_partitions, comparable_time
 from ariadne.capabilities.predictive.validation import validate_predictive_specification
+from ariadne.product.domain.errors import PredictiveValidationError
 from ariadne.product.domain.execution_plan import StageType
 from ariadne.product.domain.schemas import canonical_hash
 from ariadne.product.workflow.contracts import ArtifactDraft, StageContext, StageRunResult
@@ -25,7 +26,11 @@ class PredictiveSplitRunner:
     def validate(self, context: StageContext) -> None:
         frame = context.inputs.get("frame")
         if not isinstance(frame, pd.DataFrame) or frame.empty:
-            raise ValueError("Predictive split requires a non-empty pandas analysis frame")
+            raise PredictiveValidationError(
+                "EMPTY_POPULATION",
+                "Predictive split requires a non-empty pandas analysis frame",
+                path="source_population",
+            )
         validate_predictive_specification(context.stage.parameters)
         spec = context.stage.parameters
         question = spec["prediction_question"]
@@ -38,10 +43,40 @@ class PredictiveSplitRunner:
         }
         unknown = sorted(referenced - set(frame.columns))
         if unknown:
-            raise ValueError(f"Predictive specification references unknown columns: {unknown}")
+            raise PredictiveValidationError(
+                "UNKNOWN_PREDICTIVE_COLUMN",
+                f"Predictive specification references unknown columns: {unknown}",
+                path="family_spec",
+            )
+        target_values = frame[question["target"]]
+        if target_values.isna().any():
+            raise PredictiveValidationError(
+                "MISSING_TARGET_VALUE",
+                "The prediction target contains missing values",
+                path="prediction_question.target",
+            )
+        if spec["task_type"] == "BINARY_CLASSIFICATION" and target_values.nunique() != 2:
+            raise PredictiveValidationError(
+                "BINARY_TARGET_REQUIRED",
+                "Binary classification requires exactly two target classes",
+                path="prediction_question.target",
+            )
         source = context.inputs.get("source_snapshot")
-        if not isinstance(source, dict) or not source.get("dataset_version_id"):
-            raise ValueError("Predictive split requires an immutable source snapshot")
+        if not isinstance(source, dict) or any(
+            not isinstance(source.get(field), str) or not source[field]
+            for field in ("dataset_version_id", "dataset_content_hash", "materialized_hash")
+        ):
+            raise PredictiveValidationError(
+                "INVALID_SOURCE_SNAPSHOT",
+                "Predictive split requires an immutable source snapshot",
+                path="source_snapshot",
+            )
+        if source.get("analysis_view_id") and not source.get("analysis_view_hash"):
+            raise PredictiveValidationError(
+                "INVALID_SOURCE_SNAPSHOT",
+                "Analysis View sources require an immutable view hash",
+                path="source_snapshot.analysis_view_hash",
+            )
 
     def run(self, context: StageContext) -> StageRunResult:
         frame: pd.DataFrame = context.inputs["frame"]
@@ -87,7 +122,7 @@ class PredictiveSplitRunner:
                 },
             },
         }
-        if strategy == "STRATIFIED":
+        if spec["task_type"] == "BINARY_CLASSIFICATION":
             manifest["class_distribution"] = {
                 partition: _counts(frame.iloc[indices][question["target"]])
                 for partition, indices in partitions.items()
@@ -149,4 +184,8 @@ def _assert_time_boundaries(boundaries: dict[str, dict[str, Any]]) -> None:
         <= comparable_time(boundaries["VALIDATION"]["max"])
         < comparable_time(boundaries["TEST"]["min"])
     ):
-        raise ValueError("TEMPORAL_LEAKAGE_RISK: temporal partitions overlap or are unordered")
+        raise PredictiveValidationError(
+            "TEMPORAL_LEAKAGE_RISK",
+            "Temporal partitions overlap or are unordered",
+            path="split_spec",
+        )

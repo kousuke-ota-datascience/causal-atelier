@@ -31,3 +31,41 @@ def test_predictive_spec_requires_complete_availability_and_task_metric(
     with pytest.raises(PredictiveValidationError, match="incompatible") as captured:
         validate_predictive_specification(mismatch)
     assert captured.value.code == "METRIC_TASK_MISMATCH"
+
+    pr_auc = predictive_spec_factory()
+    pr_auc["evaluation_spec"]["primary_metric"] = "PR_AUC"
+    assert (
+        validate_predictive_specification(pr_auc)["evaluation_spec"]
+        == pr_auc["evaluation_spec"]
+    )
+
+    stratified = predictive_spec_factory()
+    stratified["split_spec"].update({"strategy": "STRATIFIED", "stratify": True})
+    assert validate_predictive_specification(stratified)["split_spec"]["stratify"] is True
+
+
+@pytest.mark.requirement("FR-055", "FR-056", "FR-057")
+def test_predictive_spec_rejects_unknown_missing_duplicate_and_ambiguous_stratify_fields(
+    predictive_spec_factory,
+) -> None:  # type: ignore[no-untyped-def]
+    unknown = predictive_spec_factory()
+    unknown["prediction_question"]["unknown"] = "not canonical"
+    with pytest.raises(InvalidSchema, match="Unknown prediction_question fields"):
+        validate_predictive_specification(unknown)
+
+    missing = predictive_spec_factory()
+    del missing["prediction_question"]["intended_use"]
+    with pytest.raises(InvalidSchema, match="fields are required"):
+        validate_predictive_specification(missing)
+
+    duplicate = predictive_spec_factory()
+    duplicate["feature_spec"]["feature_columns"] = ["score", "score"]
+    with pytest.raises(InvalidSchema, match="unique string array"):
+        validate_predictive_specification(duplicate)
+
+    ambiguous = predictive_spec_factory()
+    ambiguous["split_spec"]["stratify"] = True
+    with pytest.raises(PredictiveValidationError) as captured:
+        validate_predictive_specification(ambiguous)
+    assert captured.value.code == "STRATIFY_CONTRACT_MISMATCH"
+    assert captured.value.path == "split_spec.stratify"

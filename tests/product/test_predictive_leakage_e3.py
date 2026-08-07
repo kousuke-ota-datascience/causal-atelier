@@ -41,6 +41,15 @@ def test_target_and_future_feature_leakage_are_rejected(
         validate_predictive_specification(timestamp_future)
     assert timestamp_error.value.code == "FUTURE_LEAKAGE_DETECTED"
 
+    derivative = predictive_spec_factory()
+    derivative["feature_spec"]["availability_cutoff"]["score"]["derived_from"] = [
+        "converted"
+    ]
+    with pytest.raises(PredictiveValidationError) as derivative_error:
+        validate_predictive_specification(derivative)
+    assert derivative_error.value.code == "TARGET_DERIVATIVE_LEAKAGE_DETECTED"
+    assert derivative_error.value.path.endswith("score.derived_from")
+
 
 @pytest.mark.requirement("FR-059", "AR-014")
 def test_group_key_feature_and_partition_overlap_are_rejected() -> None:
@@ -64,3 +73,26 @@ def test_group_key_feature_and_partition_overlap_are_rejected() -> None:
     with pytest.raises(PredictiveValidationError) as population_error:
         validate_partition_isolation([1], [2], [3], population=[1, 2, 3, 4])
     assert population_error.value.code == "SPLIT_POPULATION_MISMATCH"
+
+    with pytest.raises(PredictiveValidationError) as group_partition_error:
+        validate_partition_isolation(
+            [1],
+            [2],
+            [3],
+            train_groups=["entity-1"],
+            validation_groups=["entity-1"],
+            test_groups=["entity-2"],
+            population=[1, 2, 3],
+        )
+    assert group_partition_error.value.code == "GROUP_LEAKAGE_DETECTED"
+    assert group_partition_error.value.path == "partitions"
+
+
+@pytest.mark.requirement("FR-059", "AR-014")
+def test_group_column_requires_group_strategy(predictive_spec_factory) -> None:  # type: ignore[no-untyped-def]
+    spec = predictive_spec_factory()
+    spec["split_spec"]["group_column"] = "entity_id"
+    with pytest.raises(PredictiveValidationError) as captured:
+        validate_predictive_specification(spec)
+    assert captured.value.code == "GROUP_LEAKAGE_RISK"
+    assert captured.value.path == "split_spec.group_column"
