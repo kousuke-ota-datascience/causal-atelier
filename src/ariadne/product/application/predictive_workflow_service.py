@@ -11,7 +11,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import select
+from sqlalchemy import or_, select
 
 from ariadne.capabilities.predictive import (
     PredictivePlanner,
@@ -550,11 +550,15 @@ class PredictiveWorkflowService:
             return [self._execution_response(row) for row in rows]
 
     def list_family_executions(self, project_id: str) -> list[dict[str, Any]]:
-        """Return Generic Workflow executions, including prior family implementations."""
+        """Return user-visible Generic Workflow executions across analysis families."""
         with self._session_factory() as session:
             self._project(session, project_id)
             rows = session.scalars(select(FamilyExecutionOrm).where(
-                FamilyExecutionOrm.project_id == project_id
+                FamilyExecutionOrm.project_id == project_id,
+                or_(
+                    FamilyExecutionOrm.analysis_family != "PREDICTIVE",
+                    FamilyExecutionOrm.analysis_specification_id.is_not(None),
+                ),
             ).order_by(FamilyExecutionOrm.requested_at.desc()))
             return [self._execution_response(row) for row in rows]
 

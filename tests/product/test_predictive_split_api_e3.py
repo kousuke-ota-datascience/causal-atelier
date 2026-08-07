@@ -46,6 +46,11 @@ async def test_split_api_persists_reproducible_partition_artifact_and_lineage(
     assert first_body["partition_artifact"]["selection_contract"]["TEST"] == {
         "fit_allowed": False, "selection_allowed": False, "final_evaluation_only": True,
     }
+    listed_executions = await client.get(f"/api/v1/projects/{project_id}/executions")
+    assert listed_executions.status_code == 200
+    assert first_body["execution_id"] not in {
+        item["execution_id"] for item in listed_executions.json()["items"]
+    }
 
     artifact_id = first_body["partition_artifact"]["artifact_id"]
     metadata = await client.get(
