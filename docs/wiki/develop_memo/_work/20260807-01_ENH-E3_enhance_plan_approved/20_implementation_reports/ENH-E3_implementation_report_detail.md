@@ -3,8 +3,8 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `7462cd2a1d6cc532366cc8276a383151f7411f45`
-- 現在の実装migration head: `20260807_product_0005`（G4 Test Agentがsingle head / PostgreSQL clean upgradeを検証済み。G5では変更なし）
+- 現在のimplementation commit: `265b69a3317a0b9747cacee457e72b36a62daa7e`
+- 現在の実装migration head: `20260807_product_0006`（G6 Test Agent監査待ち）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
 
@@ -36,7 +36,10 @@
 18. G5 trial `002` implementation commit `4a83bb6860c895f00e4dfd7c9e7880105387373e`で、Model Card value/lineage、Browser error rendering、Predictive JSON Artifact terminologyのcoverageだけを追加した。production codeは変更していない。
 19. G5 trial `002`は非Browser項目がすべてPASSしたが、G5-004は`.dockerignore`と`Dockerfile.browser-e2e`のbuild-context不整合によりBrowser scenario実行前に`BLOCKED`となった。正式なGate Decisionは`FAIL`ではなく`BLOCKED`である。
 20. 作業指示者からの明示的な再実装指示に基づき、G5 trial `003` implementation commit `7462cd2a1d6cc532366cc8276a383151f7411f45`でG5 Predictive Browser runnerだけをDocker build contextへ再包含した。product codeは変更していない。
-21. G5 trial `003`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G6は未着手である。
+21. G5 trial `003`はTest AgentによりG5-004 BrowserがPASSし、Trial 002でPASS済みの7項目と合わせてG5-001〜008が全項目PASSと判定された。
+22. G5 trial `003`のtested implementationは`7462cd2a1d6cc532366cc8276a383151f7411f45`、handoff report commitは`19d7eed86230ce6d165596c9fb29ae6d771672a9`、最終PASS evidence commitは`f97b9ec5d8d2903cba3ee4dc676347fabed5488d`である。
+23. G6 trial `001` implementation commit `265b69a3317a0b9747cacee457e72b36a62daa7e`でContext UI、shared workspace state、unified Results / Comparison / Lineage / Annotation / Artifact / Export、Project access control、6 route frontend closure、canonical G6 testsを実装した。
+24. G6 trial `001`は`READY_FOR_TEST`である。Coding Agentはpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
 
 ### 1.2. 現在の判定
 
@@ -50,14 +53,17 @@
 | E3-3 Predictive Specification + Split | Completed | trial `002` implementation commit `fd4e332` |
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
 | E3-4 / Gate G4 | **PASS** | trial `003` Gate Decision / final evidence `5b41aff` |
-| E3-5 / Gate G5 | **READY_FOR_TEST** | trial `002` BLOCKED後、trial `003` implementation commit `7462cd2` |
-| E3-6 / Gate G6 | Not Started | G5 PASS前のため開始禁止 |
+| E3-5 / Gate G5 | **PASS** | trial `003` Gate Decision / final evidence `f97b9ec` |
+| E3-6 / Gate G6 | **READY_FOR_TEST** | trial `001` implementation commit `265b69a` |
 
 ## 2. Git / Working Tree状態
 
 ### 2.1. 確定commit列
 
 ```text
+265b69a feat: implement ENH-E3 G6 product closure
+f97b9ec test: record ENH-E3 G5 trial 003 browser evidence
+19d7eed docs: hand off ENH-E3 G5 trial 003 for audit
 7462cd2 test: package ENH-E3 predictive browser runner
 0ebc5ae test: record ENH-E3 G5 trial 002 audit evidence
 4a83bb6 test: complete ENH-E3 G5 required contract coverage
@@ -143,7 +149,8 @@ trial `001` implementation commitでは対象fileだけを明示stageし、`metr
 ### 引継ぎ注意
 
 - 実装順序は`06b_Ariadne_ENH-E3_実装再開指示書.md`を正本とする。
-- 現在はG5 Test Agent判定前であるため、G6実装へ進んではならない。
+- G5は正式PASS済みである。
+- G6 implementationは完了したがTest Agent監査前であるため、G6 PASSまたはENH-E3 Completedと判定してはならない。
 
 ## 3.2. WP-1 Domain / Migration
 
@@ -156,14 +163,16 @@ trial `001` implementation commitでは対象fileだけを明示stageし、`metr
 - Execution Plan / Stage / Attempt
 - additive migration `20260807_product_0004`
 - additive migration `20260807_product_0005`（G4 Test Agentがsingle head / PostgreSQL clean upgradeを検証済み）
+- additive migration `20260807_product_0006`（Project membership / workspace selection / generic Annotation / export bundle。G6監査待ち）
 - generic family Execution / Stage / Result / Artifact / Lineage table
 - Research Context永続化/API
 - Analysis Specification共通CRUD/FIX/REVISE API
+- Project role、Backend-authoritative workspace state、generic Annotation、export bundle永続化/API
 
-### 未完了部分
+### G6監査待ち部分
 
-- Research Context UI
-- 全Familyを統合したLineage query/export
+- migration `0005 -> 0006`のupgrade / downgrade / single-head / PostgreSQL検証
+- Research Context UIと全Family統合Lineage / Exportの動的E2E検証
 
 ## 3.3. WP-2 Generic Workflow Core — Completed / G1
 
@@ -246,7 +255,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 - Explore Resultへの観察メモ/限界Annotationは汎用Annotation統合側に残る。
 - route-backed navigation / browser backはWP-7後段に残る。
 
-## 3.7. WP-5 Predictive — G4 PASS / G5 trial 003 READY_FOR_TEST
+## 3.7. WP-5 Predictive — G4 PASS / G5 PASS
 
 以下のG3記述はtrial `002`までに確定したSplit基盤の履歴である。G3はその後Test AgentによりPASSと判定された。
 
@@ -393,7 +402,16 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 - trial `003`では`.dockerignore`へ当該runnerの明示的な再包含ruleだけを追加
 - production / frontend / migration / test scenario変更: なし
 
-## 3.8. WP-7 Frontend — G5 route-backed shell実装済み
+### G5 trial `003` Test Agent decision
+
+- canonical Browser image build: PASS
+- real Chromium deep link / full workflow / polling / results / error rendering / reload / browser back: PASS
+- G5-001〜008: 全項目PASS
+- blocking finding: none
+- Gate Decision: `PASS`
+- final PASS evidence: `f97b9ec5d8d2903cba3ee4dc676347fabed5488d`
+
+## 3.8. WP-7 Frontend — G6 closure実装済み / 監査待ち
 
 ### 完了済み
 
@@ -407,32 +425,31 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 - Research Context / Dataset / Analysis View / Task / Feature / Split form
 - Execution / Evaluation / Error Analysis / Explanation / Model Card / Artifact reference表示
 - `Predictive Explanation ≠ Causal Explanation ≠ Treatment Effect`のTerminology Guard
-
-### 未完了
-
-- Context / Results routeの最終機能
-- Context / Dataset / Analysis View common selectorの全route統合
+- 6 route共通のProject / status / Context / Dataset / Analysis View / role / unsaved indicator
+- Backend-authoritative workspace selection
+- Research Context create / edit / fix / version / usage
+- unified Results filter / summary / compatible comparison / lineage / Annotation / Artifact / manifest export
+- 状態のtext表示
 
 ## 3.9. WP-8 Results / Lineage / Export
 
-### 部分完了
+### G6 implementation完了 / 監査待ち
 
 - G2 Explore、G3 split、G4 Predictive full executionで明示的LineageEdgeを保存
 - Research Context / Dataset / optional Analysis View / Specification / Plan / Execution / Result / Artifact間のPredictive必要辺を追加
 - Model CardからSpecification / Dataset / optional Analysis View / Split / Preprocessor / Model / EvaluationへのG5必要辺を追加
 - frozen model / preprocessor / Prediction ArtifactからPredictive Explanation ResultへのG5必要辺を追加
-
-### 未完了
-
-- Explore / Causal / Predictive横断summary
-- generic Result detail / comparison
-- Project全体Lineage UI
-- bundle export
-- G6 full Project lineage / cross-family relation
+- Explore / Causal / PredictiveのProject-scoped unified result / family summary / detail
+- 同一family / result typeだけのcompatible comparison。cross-family rankingなし
+- explicit edgeとFK/state由来synthetic edgeを統合したProject-wide lineage
+- same-project限定の明示cross-analysis relation
+- polymorphic Annotationとrevision history
+- controlled Artifact / Export download
+- secret-like keyとrow-level sensitive payloadを除外したphysical manifest export
 
 ## 3.10. WP-9 Verification
 
-G1-G4のTest Agent監査は実施済み。G4 trial `001`と`002`はcoverage欠落でFAIL、trial `003`は全項目PASSである。G5 trial `001`はcoverage欠落でFAIL、trial `002`はBrowser test infrastructure不整合によりBLOCKED、trial `003`はその最小修正後の監査待ちである。
+G1-G5のTest Agent監査は実施済みで、各Gateの最終判定はPASSである。G4 trial `001`と`002`はcoverage欠落でFAIL後、trial `003`でPASSした。G5 trial `001`はcoverage欠落でFAIL、trial `002`はBrowser test infrastructure不整合によりBLOCKED後、trial `003`でPASSした。G6 trial `001`はstatic checkまで完了し、動的監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -635,6 +652,25 @@ decision: 結果不成立。PASSとして扱わない
 - runnerがgit ignore対象外であることとDocker COPY sourceの存在を静的に確認
 - `git diff --check`: clean
 - Coding AgentによるDocker build / Browser E2E / pytest / PostgreSQL / migration実行: NOT PERFORMED
+- Test Agent canonical Browser image build / real Chromium scenarios: PASS
+- G5-001〜008: 全項目PASS
+- Gate Decision: `PASS`
+- final PASS evidence commit: `f97b9ec5d8d2903cba3ee4dc676347fabed5488d`
+
+## 4.12. Gate G6 trial 001
+
+- implementation base: `f97b9ec5d8d2903cba3ee4dc676347fabed5488d`
+- implementation commit: `265b69a3317a0b9747cacee457e72b36a62daa7e`
+- changed production scope: membership / workspace state / unified results / comparison / lineage / Annotation / Artifact / Export / frontend closure
+- changed tests: `test_cross_analysis_lineage_e3.py`、`test_results_lineage_export_e3.py`、`test_enh_e3_api_worker_e2e.py`、`run_enh_e3.py`
+- migration head: `20260807_product_0006`（監査待ち）
+- Coding Agentによるpytest / Browser E2E / scientific benchmark / PostgreSQL / migration実行: NOT PERFORMED
+- changed Python source / tests / migrationの`compileall`: success
+- `frontend/app.js` Node syntax check: success
+- HTML parse / 125 ID unique: success
+- OpenAPI generation: success、82 paths、required G6 routes present
+- Generic Executor / legacy import architecture guard: no new violation observed
+- implementation staged diffの`git diff --check`: clean
 - state: READY_FOR_TEST
 
 ## 5. 既知の設計判断・制約
@@ -650,6 +686,9 @@ decision: 結果不成立。PASSとして扱わない
 - G4ではheavy trainingを同期APIで実行せず、202 submit後にProduct Workerがclaimする。
 - model objectはphysical Artifactへ保存し、Result JSONにはlibrary-neutral descriptorだけを保存する。
 - G5ではExplanation / Model Cardがavailableであることと対応methodをcapabilitiesで明示する。
+- G6ではProject-scoped unified resultsを提供するが、cross-family rankingは行わない。
+- G6のdefault result / exportはprediction rows、local explanations、secret-like keyを抑制する。
+- G6の明示lineage link、Annotation、Artifact / Export downloadはProject accessとsame-project制約をBackendで強制する。
 
 ### 5.2. 検討余地
 
@@ -783,22 +822,34 @@ decision: 結果不成立。PASSとして扱わない
 - changed test infrastructure: `.dockerignore`
 - migration head: `20260807_product_0005`（変更なし）
 - Coding Agent test execution: NOT PERFORMED
+- Gate Decision: PASS
+- final PASS evidence commit: `f97b9ec5d8d2903cba3ee4dc676347fabed5488d`
+- next allowed implementation action: G6 implementation
+
+### 6.12. G5 Trial 003 Test Agent result
+
+- canonical Browser image build: PASS
+- G5 Predictive Browser runner copy / startup: PASS
+- Predictive deep link / full workflow / routing / saved-result revisit / error rendering: PASS
+- G5 Gate Decision: PASS
+
+### 6.13. G6 trial 001 handoff
+
+- implementation base commit: `f97b9ec5d8d2903cba3ee4dc676347fabed5488d`
+- implementation completed commit: `265b69a3317a0b9747cacee457e72b36a62daa7e`
+- completion report: `G6_001_implementation_completion_report.md`
+- migration head: `20260807_product_0006`（検証待ち）
+- Coding Agent test execution: NOT PERFORMED
 - state: READY_FOR_TEST
-- next allowed implementation action: G5 Trial 003 Test Agent監査結果を待つ
+- Test Agent focus: same-project access / lineage、unified results / comparison、Annotation history、redacted export / controlled download、role enforcement、full API/worker E2E、real Chromium、migration、G1〜G5 regression
+- next allowed implementation action: G6 Trial 001 Test Agent監査結果を待つ
 
-### 6.12. G5 Trial 003 Test Agent focus
+## 7. G6監査時の禁止事項
 
-- canonical Browser imageがbuild可能であること
-- G5 Predictive Browser runnerがimage内へCOPYされ起動すること
-- Predictive deep link / full workflow / routing / saved-result revisit / error rendering
-- G5-004結果を反映したGate Decision
-
-## 7. 再開時の禁止事項
-
-- G5 Test Agent PASS前にG6へ進まない。
+- G6 Test Agent判定前にG6 PASSまたはENH-E3 Completedと記録しない。
 - `git add .`で承認文書、backup、後続draftを混入させない。
-- Coding AgentがG5のPASS / FAIL / BLOCKEDを判定しない。
-- Research Context / Lineage domain draftの存在をもってWP-3 / WP-8全体completedと判定しない。
+- Coding AgentがG6のPASS / FAIL / BLOCKEDを判定しない。
+- static checkだけをもってmigration / Browser / full product lifecycleをPASSと判定しない。
 - G1/G2確定commitをrewriteしない。
 
 ## 8. 最終引継ぎ判定
@@ -810,8 +861,9 @@ G3 Gate: PASS, trial 002 tested implementation fd4e332
 G4 Gate: PASS, trial 003 tested implementation a8b656b, final evidence 5b41aff
 G5 trial 001 Gate: FAIL, required coverage missing
 G5 trial 002 Gate: BLOCKED, Browser build context mismatch
-G5 implementation: READY_FOR_TEST, trial 003 commit 7462cd2
-G5 Gate: trial 003 Test Agent decision pending
-G6: NOT STARTED
-next allowed implementation action: wait for G5 trial 003 Gate Decision
+G5 Gate: PASS, trial 003 tested implementation 7462cd2, final evidence f97b9ec
+G6 implementation: READY_FOR_TEST, trial 001 commit 265b69a
+G6 Gate: Test Agent decision pending
+ENH-E3: IMPLEMENTATION_COMPLETE_AWAITING_G6_AUDIT
+next allowed implementation action: wait for G6 trial 001 Gate Decision
 ```
