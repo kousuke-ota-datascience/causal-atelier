@@ -1,4 +1,4 @@
-"""G4 PREPARE, TRAIN, and EVALUATE runners for the Generic Executor."""
+"""PREPARE, TRAIN, and EVALUATE runners for the Generic Executor."""
 
 from __future__ import annotations
 
@@ -104,12 +104,41 @@ class PredictivePrepareRunner:
             "selection_allowed": False,
             "final_evaluation_only": True,
         }
+        explanation_dataset = {
+            "schema_version": "predictive-explanation-dataset/1",
+            "partition": "TEST",
+            "row_ordinals": partitions["TEST"],
+            "features": test_features,
+            "feature_order": fitted["output_features"],
+            "selection_allowed": False,
+            "explanation_only": True,
+            "provenance": {
+                "source_snapshot": manifest["source_snapshot"],
+                "row_identifier": manifest["row_identifier"],
+                "partition": "TEST",
+                "specification_hash": manifest["specification_hash"],
+            },
+            "background_reference": {
+                "partition": "TRAIN",
+                "role": "PREPROCESSOR_FIT_REFERENCE",
+                "sample_count": len(train_frame),
+                "row_ordinals_hash": canonical_hash({
+                    "row_ordinals": partitions["TRAIN"]
+                }),
+            },
+        }
+        explanation_specification = dict(spec["explanation_spec"])
         content = _json_bytes(fitted)
         return StageRunResult(
             output_bindings={
                 "training_bundle": training_bundle,
                 "evaluation_bundle": evaluation_bundle,
                 "fitted_preprocessor": fitted,
+                "explanation_dataset": explanation_dataset,
+                "explanation_specification": explanation_specification,
+                "sampling_definition": dict(
+                    explanation_specification.get("sampling", {})
+                ),
             },
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_PREPROCESSOR",
@@ -217,8 +246,27 @@ class PredictiveTrainRunner:
             },
             warnings=warnings,
         )
+        training_summary = {
+            "schema_version": "predictive-training-summary/1",
+            "analytical_status": status,
+            "model_descriptor": descriptor,
+            "selected_hyperparameters": parameters,
+            "training_history": {
+                "algorithm": model_id,
+                "iterations": parameters.get("iterations"),
+            },
+            "validation_metrics": validation_metrics,
+            "validation_primary_metric": {
+                "name": primary_name,
+                "value": primary_value,
+            },
+            "warnings": list(warnings),
+        }
         return StageRunResult(
-            output_bindings={"frozen_model": model},
+            output_bindings={
+                "frozen_model": model,
+                "training_summary": training_summary,
+            },
             results=(result,),
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_MODEL",
@@ -359,9 +407,13 @@ class PredictiveEvaluateRunner:
         return StageRunResult(
             output_bindings={
                 "evaluation_summary": {
+                    "schema_version": "predictive-evaluation-summary/1",
                     "analytical_status": status,
                     "metrics": metrics,
                     "sample_count": len(actual),
+                    "evaluation_population": "TEST",
+                    "primary_metric": spec["evaluation_spec"]["primary_metric"],
+                    "warnings": list(warnings),
                 }
             },
             results=(evaluation, error_analysis),

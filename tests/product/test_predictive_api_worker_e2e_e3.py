@@ -108,7 +108,8 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
     assert capabilities.status_code == 200
     assert capabilities.json()["training_available"] is True
     assert capabilities.json()["evaluation_available"] is True
-    assert capabilities.json()["explanation_available"] is False
+    assert capabilities.json()["explanation_available"] is True
+    assert capabilities.json()["model_card_available"] is True
 
     plan = await client.post(
         f"/api/v1/projects/{project_id}/execution-plans",

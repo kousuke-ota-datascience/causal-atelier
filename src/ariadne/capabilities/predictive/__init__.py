@@ -1,3 +1,8 @@
+from ariadne.capabilities.predictive.explanation_runner import (
+    PredictiveExplainRunner,
+    SUPPORTED_EXPLANATION_METHOD,
+    register_predictive_explain_runner,
+)
 from ariadne.capabilities.predictive.planner import PredictivePlanner
 from ariadne.capabilities.predictive.split_runner import (
     PredictiveSplitRunner,
@@ -21,8 +26,10 @@ from ariadne.capabilities.predictive.validation import (
 __all__ = [
     "LeakageValidator", "PredictivePlanner", "PredictiveSplitRunner",
     "PredictivePrepareRunner", "PredictiveTrainRunner", "PredictiveEvaluateRunner",
+    "PredictiveExplainRunner", "SUPPORTED_EXPLANATION_METHOD",
     "assert_test_isolation", "assert_train_only_fit", "build_partitions",
-    "register_predictive_split_runner", "register_predictive_training_runners",
+    "register_predictive_explain_runner", "register_predictive_split_runner",
+    "register_predictive_training_runners",
     "validate_partition_isolation",
     "validate_predictive_specification",
 ]

@@ -52,6 +52,7 @@ class ArtifactDraft:
     media_type: str
     content: bytes
     metadata: dict[str, Any] = field(default_factory=dict)
+    result_type: str | None = None
 
 
 @dataclass(frozen=True)

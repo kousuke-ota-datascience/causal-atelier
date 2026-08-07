@@ -30,6 +30,8 @@ _AVAILABILITY = {"column", "available_at", "allowed", "derived_from"}
 _AVAILABILITY_REQUIRED = {"column", "available_at", "allowed"}
 _CLASSIFICATION_METRICS = {"ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1"}
 _REGRESSION_METRICS = {"MAE", "RMSE", "R2"}
+_EXPLANATION = {"method", "dataset", "sampling", "local_explanations"}
+_EXPLANATION_SAMPLING = {"strategy", "size", "seed"}
 
 
 def _object(payload: Mapping[str, Any], name: str) -> dict[str, Any]:
@@ -196,13 +198,7 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
             "Automated tuning candidates are not supported in the G4 minimal registry"
         )
 
-    explanation = dict(payload["explanation_spec"])
-    if explanation:
-        raise PredictiveValidationError(
-            "EXPLANATION_UNAVAILABLE",
-            "Predictive explanation is unavailable in G4",
-            path="explanation_spec",
-        )
+    _validate_explanation_spec(dict(payload["explanation_spec"]))
     evaluation = dict(payload["evaluation_spec"])
     reject_unknown(
         evaluation,
@@ -241,6 +237,43 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
     LeakageValidator().validate(question, feature, split)
     canonical_bytes(payload)
     return dict(payload)
+
+
+def _validate_explanation_spec(explanation: dict[str, Any]) -> None:
+    if not explanation:
+        return
+    reject_unknown(explanation, _EXPLANATION, name="explanation_spec")
+    missing = _EXPLANATION - set(explanation)
+    if missing:
+        raise InvalidSchema(
+            f"explanation_spec fields are required: {sorted(missing)}"
+        )
+    if not isinstance(explanation["method"], str) or not explanation["method"].strip():
+        raise InvalidSchema("explanation_spec.method must be a non-empty string")
+    if explanation["dataset"] != "TEST":
+        raise PredictiveValidationError(
+            "EXPLANATION_DATASET_UNSUPPORTED",
+            "G5 explanations require the explicit untouched TEST dataset",
+            path="explanation_spec.dataset",
+        )
+    if not isinstance(explanation["local_explanations"], bool):
+        raise InvalidSchema("explanation_spec.local_explanations must be boolean")
+    sampling = explanation["sampling"]
+    if not isinstance(sampling, Mapping):
+        raise InvalidSchema("explanation_spec.sampling must be an object")
+    reject_unknown(sampling, _EXPLANATION_SAMPLING, name="explanation_spec.sampling")
+    if set(sampling) != _EXPLANATION_SAMPLING:
+        raise InvalidSchema(
+            "explanation_spec.sampling requires strategy, size, and seed"
+        )
+    if sampling["strategy"] != "FIRST_N":
+        raise InvalidSchema("G5 explanation sampling strategy must be FIRST_N")
+    size = sampling["size"]
+    if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 1000:
+        raise InvalidSchema("explanation sampling size must be an integer in [1, 1000]")
+    seed = sampling["seed"]
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise InvalidSchema("explanation sampling seed must be an integer")
 
 
 class LeakageValidator:

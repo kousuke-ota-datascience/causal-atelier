@@ -1,4 +1,4 @@
-"""Predictive planners for G3 split validation and the G4 full workflow."""
+"""Predictive planners for split validation and the full staged workflow."""
 
 from __future__ import annotations
 
@@ -86,6 +86,9 @@ class PredictivePlanner:
                 "training_bundle": "predictive-training-bundle/1",
                 "evaluation_bundle": "predictive-evaluation-bundle/1",
                 "fitted_preprocessor": "fitted-preprocessor/1",
+                "explanation_dataset": "predictive-explanation-dataset/1",
+                "explanation_specification": "predictive-explanation-specification/1",
+                "sampling_definition": "predictive-explanation-sampling/1",
             },
             parameters=family_spec,
         )
@@ -96,7 +99,10 @@ class PredictivePlanner:
                 "training_bundle": "predictive-training-bundle/1",
                 "fitted_preprocessor": "fitted-preprocessor/1",
             },
-            output_contract={"frozen_model": "fitted-model/1"},
+            output_contract={
+                "frozen_model": "fitted-model/1",
+                "training_summary": "predictive-training-summary/1",
+            },
             parameters=family_spec,
         )
         evaluate = StageDefinition(
@@ -107,10 +113,11 @@ class PredictivePlanner:
                 "evaluation_bundle": "predictive-evaluation-bundle/1",
                 "fitted_preprocessor": "fitted-preprocessor/1",
             },
-            output_contract={"evaluation_summary": "predictive-evaluation-result/1"},
+            output_contract={"evaluation_summary": "predictive-evaluation-summary/1"},
             parameters=family_spec,
         )
-        dependencies = (
+        stages = [split, prepare, train, evaluate]
+        dependencies = [
             StageBinding("split", "partition_manifest", "prepare", "partition_manifest"),
             StageBinding("prepare", "training_bundle", "train", "training_bundle"),
             StageBinding(
@@ -123,13 +130,81 @@ class PredictivePlanner:
             StageBinding(
                 "prepare", "fitted_preprocessor", "evaluate", "fitted_preprocessor"
             ),
-        )
+        ]
+        if family_spec.get("explanation_spec"):
+            explain = StageDefinition(
+                stage_key="explain",
+                stage_type=StageType("predictive", "explain", "1"),
+                input_contract={
+                    "frozen_model": "fitted-model/1",
+                    "fitted_preprocessor": "fitted-preprocessor/1",
+                    "explanation_dataset": "predictive-explanation-dataset/1",
+                    "explanation_specification": (
+                        "predictive-explanation-specification/1"
+                    ),
+                    "sampling_definition": "predictive-explanation-sampling/1",
+                    "training_summary": "predictive-training-summary/1",
+                    "evaluation_summary": "predictive-evaluation-summary/1",
+                    "partition_manifest": "partition-artifact/1",
+                },
+                output_contract={
+                    "explanation_summary": "predictive-explanation-summary/1",
+                    "model_card": "predictive-model-card-result/1",
+                },
+                parameters=family_spec,
+            )
+            stages.append(explain)
+            dependencies.extend([
+                StageBinding("train", "frozen_model", "explain", "frozen_model"),
+                StageBinding(
+                    "prepare",
+                    "fitted_preprocessor",
+                    "explain",
+                    "fitted_preprocessor",
+                ),
+                StageBinding(
+                    "prepare",
+                    "explanation_dataset",
+                    "explain",
+                    "explanation_dataset",
+                ),
+                StageBinding(
+                    "prepare",
+                    "explanation_specification",
+                    "explain",
+                    "explanation_specification",
+                ),
+                StageBinding(
+                    "prepare",
+                    "sampling_definition",
+                    "explain",
+                    "sampling_definition",
+                ),
+                StageBinding(
+                    "train",
+                    "training_summary",
+                    "explain",
+                    "training_summary",
+                ),
+                StageBinding(
+                    "evaluate",
+                    "evaluation_summary",
+                    "explain",
+                    "evaluation_summary",
+                ),
+                StageBinding(
+                    "split",
+                    "partition_manifest",
+                    "explain",
+                    "partition_manifest",
+                ),
+            ])
         return ExecutionPlan.build(
             project_id=project_id,
             analysis_specification_id=specification_id,
             analysis_family=self.family,
             planner_id="predictive.full",
             planner_version="1",
-            stages=(split, prepare, train, evaluate),
-            dependencies=dependencies,
+            stages=tuple(stages),
+            dependencies=tuple(dependencies),
         )

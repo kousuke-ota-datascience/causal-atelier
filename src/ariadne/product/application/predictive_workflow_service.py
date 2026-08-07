@@ -1,4 +1,4 @@
-"""Asynchronous G4 predictive execution-plan and worker application service."""
+"""Asynchronous predictive execution-plan and worker application service."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from sqlalchemy import select
 
 from ariadne.capabilities.predictive import (
     PredictivePlanner,
+    register_predictive_explain_runner,
     register_predictive_split_runner,
     register_predictive_training_runners,
 )
@@ -365,7 +366,9 @@ class PredictiveWorkflowService:
                         FamilyStageExecutionOrm.execution_id == execution_id
                     ))
                 }
-                artifact_by_stage: dict[str, str] = {}
+                artifacts_by_stage: dict[str, list[str]] = {}
+                result_ids_by_type: dict[str, str] = {}
+                artifact_ids_by_type: dict[str, str] = {}
                 for stage_key, run_result in committed:
                     stage_row = stage_rows[stage_key]
                     result_ids: list[str] = []
@@ -373,6 +376,7 @@ class PredictiveWorkflowService:
                         self._validate_result(draft.result_type, draft.analytical_status)
                         result_id = str(uuid.uuid4())
                         result_ids.append(result_id)
+                        result_ids_by_type[draft.result_type] = result_id
                         session.add(FamilyResultOrm(
                             result_id=result_id,
                             project_id=project_id,
@@ -401,19 +405,30 @@ class PredictiveWorkflowService:
                     session.flush()
                     for draft in run_result.artifacts:
                         artifact_id = str(uuid.uuid4())
+                        artifact_ids_by_type[draft.artifact_type] = artifact_id
                         object_key = (
                             f"projects/{project_id}/executions/{execution_id}/"
                             f"{stage_key}/{artifact_id}.json"
                         )
                         stored = self._store_draft(draft.content, object_key, draft.media_type)
                         stored_keys.append(stored.object_key)
-                        artifact_by_stage[stage_key] = artifact_id
+                        artifacts_by_stage.setdefault(stage_key, []).append(artifact_id)
+                        target_result_id = (
+                            result_ids_by_type.get(draft.result_type)
+                            if draft.result_type
+                            else (result_ids[0] if result_ids else None)
+                        )
+                        if draft.result_type and target_result_id is None:
+                            raise InvalidSchema(
+                                "Artifact references an uncommitted Result type: "
+                                f"{draft.result_type}"
+                            )
                         session.add(FamilyArtifactOrm(
                             artifact_id=artifact_id,
                             project_id=project_id,
                             execution_id=execution_id,
                             stage_execution_id=stage_row.stage_execution_id,
-                            result_id=result_ids[0] if result_ids else None,
+                            result_id=target_result_id,
                             family="PREDICTIVE",
                             artifact_type=draft.artifact_type,
                             schema_version=draft.schema_version,
@@ -427,14 +442,17 @@ class PredictiveWorkflowService:
                         self._lineage(
                             session,
                             project_id,
-                            "Result" if result_ids else "Execution",
-                            result_ids[0] if result_ids else execution_id,
+                            "Result" if target_result_id else "Execution",
+                            target_result_id or execution_id,
                             "GENERATED",
                             "Artifact",
                             artifact_id,
                             {"stage_key": stage_key, "content_hash": stored.content_hash},
                         )
-                        if stage_key == "evaluate" and result_ids:
+                        if (
+                            stage_key in {"evaluate", "explain"}
+                            and target_result_id is not None
+                        ):
                             self._lineage(
                                 session,
                                 project_id,
@@ -442,22 +460,33 @@ class PredictiveWorkflowService:
                                 artifact_id,
                                 "EVIDENCE_FOR",
                                 "Result",
-                                result_ids[0],
+                                target_result_id,
                                 {"stage_key": stage_key},
                             )
                 session.flush()
-                chain = [key for key in ("split", "prepare", "train", "evaluate") if key in artifact_by_stage]
+                chain = [
+                    key
+                    for key in ("split", "prepare", "train", "evaluate", "explain")
+                    if key in artifacts_by_stage
+                ]
                 for source_key, target_key in zip(chain, chain[1:]):
-                    self._lineage(
-                        session,
-                        project_id,
-                        "Artifact",
-                        artifact_by_stage[target_key],
-                        "DERIVED_FROM",
-                        "Artifact",
-                        artifact_by_stage[source_key],
-                        {"source_stage": source_key, "target_stage": target_key},
-                    )
+                    for target_artifact_id in artifacts_by_stage[target_key]:
+                        self._lineage(
+                            session,
+                            project_id,
+                            "Artifact",
+                            target_artifact_id,
+                            "DERIVED_FROM",
+                            "Artifact",
+                            artifacts_by_stage[source_key][0],
+                            {"source_stage": source_key, "target_stage": target_key},
+                        )
+                self._add_g5_lineage(
+                    session,
+                    execution,
+                    result_ids_by_type,
+                    artifact_ids_by_type,
+                )
                 for stage in outcome.stages:
                     row = stage_rows[stage.stage_key]
                     _write_stage_state(row, stage)
@@ -700,7 +729,7 @@ class PredictiveWorkflowService:
             self._project(session, project_id)
         return {
             "schema_version": "predictive-capabilities/1",
-            "gate": "G4_TRAINING_EVALUATION",
+            "gate": "G5_EXPLAIN_UI",
             "task_types": ["BINARY_CLASSIFICATION", "REGRESSION"],
             "split_strategies": ["RANDOM", "STRATIFIED", "GROUP", "TIME_BASED"],
             "preprocessing_steps": ["MEAN_IMPUTATION", "STANDARDIZATION", "ONE_HOT"],
@@ -714,9 +743,20 @@ class PredictiveWorkflowService:
             "compatibility": {
                 entry["model_id"]: entry["supported_tasks"] for entry in MODEL_REGISTRY
             },
+            "explanation_methods": [{
+                "method": "LINEAR_COEFFICIENT_CONTRIBUTION",
+                "supported_models": [
+                    "logistic_regression.v1",
+                    "linear_regression.v1",
+                ],
+                "supports_global": True,
+                "supports_local": True,
+                "model_output_scales": ["LOG_ODDS", "PREDICTION"],
+            }],
             "training_available": True,
             "evaluation_available": True,
-            "explanation_available": False,
+            "explanation_available": True,
+            "model_card_available": True,
         }
 
     @staticmethod
@@ -724,7 +764,84 @@ class PredictiveWorkflowService:
         registry = StageRunnerRegistry()
         register_predictive_split_runner(registry)
         register_predictive_training_runners(registry)
+        register_predictive_explain_runner(registry)
         return registry
+
+    @staticmethod
+    def _add_g5_lineage(
+        session: Any,
+        execution: FamilyExecutionOrm,
+        result_ids: dict[str, str],
+        artifact_ids: dict[str, str],
+    ) -> None:
+        explanation_id = result_ids.get("PREDICTIVE_EXPLANATION_RESULT")
+        model_card_id = result_ids.get("MODEL_CARD_RESULT")
+        if explanation_id:
+            for artifact_type in (
+                "FITTED_PREPROCESSOR",
+                "FITTED_MODEL",
+                "PREDICTION",
+            ):
+                artifact_id = artifact_ids.get(artifact_type)
+                if artifact_id:
+                    PredictiveWorkflowService._lineage(
+                        session,
+                        execution.project_id,
+                        "Artifact",
+                        artifact_id,
+                        "USED_INPUT",
+                        "Result",
+                        explanation_id,
+                        {"purpose": "predictive_explanation"},
+                    )
+        if not model_card_id:
+            return
+        for target_type, target_id in (
+            ("AnalysisSpecification", execution.analysis_specification_id),
+            ("DatasetVersion", execution.dataset_version_id),
+            ("AnalysisView", execution.analysis_view_id),
+        ):
+            if target_id:
+                PredictiveWorkflowService._lineage(
+                    session,
+                    execution.project_id,
+                    "Result",
+                    model_card_id,
+                    "DOCUMENTS",
+                    target_type,
+                    target_id,
+                    {"document": "model_card"},
+                )
+        for artifact_type in (
+            "PARTITION_INDEX",
+            "FITTED_PREPROCESSOR",
+            "FITTED_MODEL",
+            "PREDICTION",
+        ):
+            artifact_id = artifact_ids.get(artifact_type)
+            if artifact_id:
+                PredictiveWorkflowService._lineage(
+                    session,
+                    execution.project_id,
+                    "Result",
+                    model_card_id,
+                    "SUMMARIZES",
+                    "Artifact",
+                    artifact_id,
+                    {"artifact_type": artifact_type},
+                )
+        evaluation_id = result_ids.get("EVALUATION_RESULT")
+        if evaluation_id:
+            PredictiveWorkflowService._lineage(
+                session,
+                execution.project_id,
+                "Result",
+                model_card_id,
+                "SUMMARIZES",
+                "Result",
+                evaluation_id,
+                {"result_type": "EVALUATION_RESULT"},
+            )
 
     @staticmethod
     def _planning_context(row: AnalysisSpecificationOrm) -> Any:
@@ -934,6 +1051,10 @@ class PredictiveWorkflowService:
                 "EVALUATED", "EVALUATED_WITH_WARNINGS", "INSUFFICIENT_TEST_SAMPLE",
             },
             "ERROR_ANALYSIS_RESULT": {"GENERATED", "GENERATED_WITH_WARNINGS"},
+            "PREDICTIVE_EXPLANATION_RESULT": {
+                "GENERATED", "GENERATED_WITH_WARNINGS", "NOT_APPLICABLE",
+            },
+            "MODEL_CARD_RESULT": {"GENERATED", "GENERATED_WITH_WARNINGS"},
         }
         if result_type not in allowed or status not in allowed[result_type]:
             raise InvalidSchema(f"Invalid Predictive Result status: {result_type}/{status}")

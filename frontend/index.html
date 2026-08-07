@@ -12,11 +12,13 @@
       <button id="new-project">Project Register &amp; Management</button>
       <nav>
         <button data-workspace="management">Project Management</button>
-        <button data-workspace="data" class="active">1 Project / Data</button>
-        <button data-workspace="explore">2 Explore &amp; Visualize</button>
-        <button data-workspace="discovery">3 Discovery</button>
-        <button data-workspace="inference">4 Inference</button>
-        <button data-workspace="results">5 Results / Lineage</button>
+        <button data-workspace="context" data-route="context">1 Research Context</button>
+        <button data-workspace="data" data-route="data" class="active">2 Project / Data</button>
+        <button data-workspace="explore" data-route="explore">3 Explore &amp; Visualize</button>
+        <button data-workspace="discovery" data-route="causal">4 Causal Discovery</button>
+        <button data-workspace="inference" data-route="causal">5 Causal Inference</button>
+        <button data-workspace="predictive" data-route="predictive">6 Predictive</button>
+        <button data-workspace="results" data-route="results">7 Results / Lineage</button>
       </nav>
       <p>科学的負結果は技術障害ではありません。Resultのstatusとdiagnosticsを確認してください。</p>
     </aside>
@@ -29,6 +31,11 @@
           <form id="project-register-form" class="card"><h2>Project Register</h2><p class="section-help">新しい分析テーマをACTIVE Projectとして登録します。</p><label data-tooltip="Project selectorと一覧に表示する、分析テーマを識別できる名称です。">Project Name<input name="name" required maxlength="200" placeholder="Sales improvement analysis"></label><label data-tooltip="検証したい研究課題または解決したい業務課題を短く記載します。">Research topic / Business issue<input name="topic" placeholder="Coupon and sales"></label><label data-tooltip="このProjectで最終的に明らかにする内容や意思決定目的を記載します。">Objective<textarea name="objective" placeholder="Estimate the causal effect of coupon delivery"></textarea></label><label data-tooltip="対象範囲、stakeholder、留意事項など、目的以外の補足情報です。">Memo<textarea name="memo" placeholder="Scope, stakeholders, and notes"></textarea></label><button>Projectを登録</button></form>
           <div class="card"><h2>Project List</h2><p class="section-help">ACTIVE Projectを選択、または確認後にARCHIVEDへ変更します。</p><div id="project-list"></div></div>
         </div>
+      </section>
+      <section id="context" class="workspace">
+        <h1>Research Context</h1>
+        <p>選択中ProjectのResearch Contextを確認します。作成・編集・version管理の最終機能はG6で完成します。</p>
+        <div class="card"><h2>Active Research Context</h2><div id="research-context-summary">固定済みResearch Contextはありません。</div></div>
       </section>
       <section id="data" class="workspace active">
         <h1>Project / Data</h1><p>プロジェクトにおいて取り組むリサーチトピックと、使用するDatasetの管理・登録を行います。</p>
@@ -112,6 +119,42 @@
         <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
         <form id="refutation-form" class="card form-grid"><h2>Refutation</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Method<select name="method"><option>PLACEBO_TREATMENT</option><option>DATA_SUBSET</option></select></label><label>Repetitions<input name="repetitions" type="number" value="20" min="2"></label><label>Subset fraction<input name="subset_fraction" type="number" value="0.8" step="0.05"></label><button>実行</button></form>
         <form id="sensitivity-form" class="card form-grid"><h2>Sensitivity</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Dimension<select name="dimension"><option>PROPENSITY_CLIPPING</option><option>ADJUSTMENT_SET</option></select></label><label>Clipping values<input name="values" value="0.01,0.025,0.05"></label><label>Adjustment sets (;区切り)<input name="adjustment_sets" placeholder="x1;x1,x2"></label><button>実行</button></form>
+      </section>
+      <section id="predictive" class="workspace">
+        <h1>Predictive Workspace</h1>
+        <p>固定したResearch ContextとDataset/Viewから、Prediction Task、Split、Training、Evaluation、Explanation、Model Cardを一つの再現可能なExecutionとして生成します。</p>
+        <div class="semantic-warning predictive-terminology" role="note"><b>Predictive Explanation ≠ Causal Explanation ≠ Treatment Effect</b> — 特徴量の寄与や重要度は予測modelの挙動を説明するもので、因果関係または介入効果を示しません。</div>
+        <div class="card"><h2>Backend Capabilities</h2><div id="predictive-capabilities">Backend availabilityを確認中です。</div></div>
+        <form id="predictive-form" class="card form-grid">
+          <h2>Prediction Task / Specification</h2>
+          <label>Active Research Context<select name="research_context_version_id" id="predictive-context" required><option value="">FIXED Contextを選択</option></select></label>
+          <label>Dataset Version<select name="dataset_version_id" class="datasets-select" required></select></label>
+          <label>Analysis View<select name="analysis_view_id" id="predictive-view"><option value="">Dataset Version全体</option></select></label>
+          <label>Task Type<select name="task_type"><option>BINARY_CLASSIFICATION</option><option>REGRESSION</option></select></label>
+          <label>Prediction unit<input name="prediction_unit" value="customer" required></label>
+          <label>Target column<input name="target" value="converted" required></label>
+          <label>Prediction time<input name="prediction_time" value="2026-01-01T00:00:00Z" required></label>
+          <label>Horizon<input name="horizon" value="30 days" required></label>
+          <label>Intended use<input name="intended_use" value="prioritize outreach" required></label>
+          <label>Deployment population<input name="deployment_population" value="eligible customers" required></label>
+          <label>Feature columns<input name="feature_columns" value="score" required><small>Prediction timeまでに利用可能な列だけをカンマ区切りで指定します。</small></label>
+          <label>Excluded columns<input name="excluded_columns" value="converted" required></label>
+          <label>Split strategy<select name="split_strategy"><option>STRATIFIED</option><option>RANDOM</option><option>GROUP</option><option>TIME_BASED</option></select></label>
+          <label>Seed<input name="seed" type="number" value="17" required></label>
+          <label>Train ratio<input name="train_ratio" type="number" value="0.6" step="0.05" required></label>
+          <label>Validation ratio<input name="validation_ratio" type="number" value="0.2" step="0.05" required></label>
+          <label>Test ratio<input name="test_ratio" type="number" value="0.2" step="0.05" required></label>
+          <label>Explanation method<select name="explanation_method" id="predictive-explanation-method"><option value="LINEAR_COEFFICIENT_CONTRIBUTION">Linear coefficient contribution</option></select></label>
+          <label>Explanation sample size<input name="explanation_sample_size" type="number" min="1" max="1000" value="20" required></label>
+          <label><input name="local_explanations" type="checkbox" checked> Local explanationを生成</label>
+          <button id="run-predictive" disabled>Splitを検証しTraining / Evaluation / Explanationを実行</button>
+        </form>
+        <div class="card"><h2>Split Validation</h2><div id="predictive-split-validation">未実行</div></div>
+        <div class="card"><div class="heading"><h2>Execution Status</h2><button id="refresh-predictive" type="button">更新</button></div><div id="predictive-executions">Executionはありません。</div></div>
+        <div class="grid">
+          <div class="card"><h2>Evaluation / Error Analysis / Explanation / Model Card</h2><div id="predictive-results">Resultはありません。</div></div>
+          <div class="card"><h2>Result / Artifact References</h2><div id="predictive-artifacts">Artifactはありません。</div></div>
+        </div>
       </section>
       <section id="results" class="workspace">
         <h1>Results / Lineage</h1><p>Result、判断理由、入力条件、Artifactを一つの来歴として確認します。</p>
