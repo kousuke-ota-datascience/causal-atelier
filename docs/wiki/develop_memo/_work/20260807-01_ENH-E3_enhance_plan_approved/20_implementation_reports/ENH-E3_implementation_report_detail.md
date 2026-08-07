@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`
+- 現在のimplementation commit: `a54c82f3648afad7cd9ec2bfacff2ceae7a59ac1`
 - 現在の実装migration head: `20260807_product_0006`（G6 Test Agent監査待ち）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -43,7 +43,9 @@
 25. G6 trial `001`ではG6-012 legacy dependency auditだけがPASSし、残りの高コストitemはfail-fastによりNOT_RUN_DUE_TO_PRIOR_FAILUREである。environment / infrastructure blockerはない。
 26. G6 trial `001`のaudit evidence commitは`17aca9459febcf0fb15b66da7f0457973baac840`である。
 27. G6 trial `002` implementation commit `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`でsensitive output defectを修正し、lineage / comparison / Annotation / export / Browser / authorizationの欠落coverageを追加した。
-28. G6 trial `002`は`READY_FOR_TEST`である。Coding Agentはpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
+28. G6 trial `002` Gate Decisionは`BLOCKED`である。G6-002 / 003 / 004 / 013はPASS、G6-007は`TEST_ASSERTION_AMBIGUITY`であり、product implementationのerror code / path違反は確認されていない。
+29. G6 trial `003` implementation commit `a54c82f3648afad7cd9ec2bfacff2ceae7a59ac1`で、strict request testの曖昧な複合入力を有効result + unknown fieldへ修正した。production codeは変更していない。
+30. G6 trial `003`は`READY_FOR_TEST`である。Coding Agentはpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
 
 ### 1.2. 現在の判定
 
@@ -58,13 +60,15 @@
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
 | E3-4 / Gate G4 | **PASS** | trial `003` Gate Decision / final evidence `5b41aff` |
 | E3-5 / Gate G5 | **PASS** | trial `003` Gate Decision / final evidence `f97b9ec` |
-| E3-6 / Gate G6 | **READY_FOR_TEST** | trial `001` FAIL後、trial `002` implementation commit `79d16f1` |
+| E3-6 / Gate G6 | **READY_FOR_TEST** | trial `001` FAIL、trial `002` BLOCKED後、trial `003` implementation commit `a54c82f` |
 
 ## 2. Git / Working Tree状態
 
 ### 2.1. 確定commit列
 
 ```text
+a54c82f fix: remove ambiguous G6 strict contract assertion
+f19cfc2 test: record ENH-E3 G6 trial 002 audit evidence
 79d16f1 fix: complete ENH-E3 G6 audit contracts
 17aca94 test: record ENH-E3 G6 trial 001 audit evidence
 265b69a feat: implement ENH-E3 G6 product closure
@@ -701,6 +705,19 @@ decision: 結果不成立。PASSとして扱わない
 - `git diff --check`: clean
 - state: READY_FOR_TEST
 
+## 4.14. Gate G6 trial 003
+
+- implementation base: `f19cfc2328db2c4947f2e06a38d5a33ec7cff4b1`
+- implementation commit: `a54c82f3648afad7cd9ec2bfacff2ceae7a59ac1`
+- production code変更: なし
+- changed test: `tests/product/test_results_lineage_export_e3.py`
+- correction: `result_ids=[]`とunknown fieldの複合validationを廃止し、valid result id + unknown fieldへ変更。error配列順序を要求しない。
+- migration head: `20260807_product_0006`（変更なし）
+- Coding Agentによるpytest / Browser E2E / scientific benchmark / PostgreSQL / migration実行: NOT PERFORMED
+- changed testのAST parse / compileall: success
+- `git diff --check`: clean
+- state: READY_FOR_TEST
+
 ## 5. 既知の設計判断・制約
 
 ### 5.1. 事実
@@ -887,6 +904,19 @@ decision: 結果不成立。PASSとして扱わない
 - Test Agent focus: G6-001〜013をTrial 002内で全完走。特にTrial 001 defect / coverage corrections、full regression、migration、scientific benchmark、canonical Browser
 - next allowed implementation action: G6 Trial 002 Test Agent監査結果を待つ
 
+### 6.15. G6 trial 003 handoff
+
+- implementation base commit: `f19cfc2328db2c4947f2e06a38d5a33ec7cff4b1`
+- implementation completed commit: `a54c82f3648afad7cd9ec2bfacff2ceae7a59ac1`
+- completion report: `G6_003_implementation_completion_report.md`
+- production code変更: none
+- changed test: `tests/product/test_results_lineage_export_e3.py`
+- migration head: `20260807_product_0006`（変更なし）
+- Coding Agent test execution: NOT PERFORMED
+- state: READY_FOR_TEST
+- Test Agent focus: G6-001〜013全完走。特にG6-007 strict request contract ambiguity解消の確認、G6-002 / 003 / 004 / 013回帰、full regression、migration、scientific、Browser
+- next allowed implementation action: G6 Trial 003 Test Agent監査結果を待つ
+
 ## 7. G6監査時の禁止事項
 
 - G6 Test Agent判定前にG6 PASSまたはENH-E3 Completedと記録しない。
@@ -906,8 +936,9 @@ G5 trial 001 Gate: FAIL, required coverage missing
 G5 trial 002 Gate: BLOCKED, Browser build context mismatch
 G5 Gate: PASS, trial 003 tested implementation 7462cd2, final evidence f97b9ec
 G6 trial 001 Gate: FAIL, sensitive local explanation + required coverage missing
-G6 implementation: READY_FOR_TEST, trial 002 commit 79d16f1
-G6 Gate: trial 002 Test Agent decision pending
+G6 trial 002 Gate: BLOCKED, TEST_ASSERTION_AMBIGUITY in G6-007
+G6 implementation: READY_FOR_TEST, trial 003 commit a54c82f
+G6 Gate: trial 003 Test Agent decision pending
 ENH-E3: IMPLEMENTATION_COMPLETE_AWAITING_G6_AUDIT
-next allowed implementation action: wait for G6 trial 002 Gate Decision
+next allowed implementation action: wait for G6 trial 003 Gate Decision
 ```

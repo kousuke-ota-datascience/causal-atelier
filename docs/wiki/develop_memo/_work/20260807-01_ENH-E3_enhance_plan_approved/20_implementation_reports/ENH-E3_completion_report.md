@@ -5,9 +5,9 @@ Status: IMPLEMENTATION_COMPLETE_AWAITING_G6_AUDIT
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- final implementation commit: `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`
+- final implementation commit: `a54c82f3648afad7cd9ec2bfacff2ceae7a59ac1`
 - migration head: `20260807_product_0006`（G6 Test Agent検証待ち）
-- current G6 implementation report: `G6_002_implementation_completion_report.md`
+- current G6 implementation report: `G6_003_implementation_completion_report.md`
 
 ## 1. 結論
 
@@ -19,6 +19,8 @@ Status: IMPLEMENTATION_COMPLETE_AWAITING_G6_AUDIT
 - G6 canonical product testsとreal Chromium runnerを追加した。
 - G6 Trial 001は、`local_explanation` suppressionの製品不具合とG6-002 / 003 / 004 / 006 / 013の必須coverage不足によりFAILした。
 - G6 Trial 002では当該製品不具合を修正し、欠落したlineage / comparison / Annotation / export / Browser / authorization coverageを追加した。
+- G6 Trial 002は、strict request testが複数validation errorの先頭順を固定したため`TEST_ASSERTION_AMBIGUITY`としてBLOCKEDになった。製品不具合ではない。
+- G6 Trial 003では当該test入力を単一unknown-field violationへ修正した。production codeは変更していない。
 - Coding AgentはG6のpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
 
 ### 1.2. 判定
@@ -43,8 +45,9 @@ ENH-E3の実装作業は完了したが、G6監査は未実施である。した
 - canonical Browser runnerのDocker build-context packaging。
 - Trial 002: sensitive Result / comparison redaction、Context → Dataset synthetic lineage、revision evidence、warning comparison semantics。
 - Trial 002: G6-002 / 003 / 004 / 006 / 013のmandatory automated coverage。
+- Trial 003: strict request testのvalidation ambiguity解消（test-only）。
 
-初回実装のfile listは`G6_001_implementation_completion_report.md`、現在の修正差分は`G6_002_implementation_completion_report.md`を正本とする。
+初回実装のfile listは`G6_001_implementation_completion_report.md`、前回修正は`G6_002_implementation_completion_report.md`、現在の修正差分は`G6_003_implementation_completion_report.md`を正本とする。
 
 ## 4. Architecture and analytical safeguards
 
@@ -107,10 +110,11 @@ ENH-E3の実装作業は完了したが、G6監査は未実施である。した
 
 - Known deviation: なし。
 - Trial 001 deviation: なし。Gate Decisionはdeterministic product defectとrequired coverage不足に基づく正式FAILである。
-- Trial 002 known deviation: なし。
-- Unresolved: G6 Trial 002 Test Agent auditと正式Gate Decision。
+- Trial 002 deviation: `TEST_ASSERTION_AMBIGUITY`によるBLOCKED。製品FAILではない。
+- Trial 003 known deviation: なし。test-only correctionである。
+- Unresolved: G6 Trial 003 Test Agent auditと正式Gate Decision。
 - 反対仮説: 静的検証成功のみでG6 PASSとみなせる、という解釈は採用しない。migration、DB persistence、worker integration、real Browser、regressionは動的監査なしには確立しないためである。
 
 ## 8. Next action
 
-Test Agentは`G6_002_implementation_completion_report.md`のRequired Test Agent focusに従ってG6 Trial 002のG6-001〜013をすべて監査し、Gate Decisionを作成する。Coding Agentの次状態は`READY_FOR_TEST`である。
+Test Agentは`G6_003_implementation_completion_report.md`のRequired Test Agent focusに従ってG6 Trial 003のG6-001〜013をすべて監査し、Gate Decisionを作成する。Coding Agentの次状態は`READY_FOR_TEST`である。
