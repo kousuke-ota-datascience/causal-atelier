@@ -81,7 +81,36 @@ Reason for PASS / FAIL / BLOCKED: all section 6.6 exit criteria passed. Expected
 
 ## 3. Gate G2
 
-Status: NOT STARTED. E3-2 changes are prohibited until G1 PASS.
+```text
+Gate: G2 — Analysis View + Explore
+Status: PASS
+Start commit: 4f597f0 (G1 evidence commit; G1 implementation commit 526eec805a9299e680ecff7e8292f11a651f89ca)
+Completed commit: 065859d8e6ff40e7393f79928653ebefc8e139e1
+Migration head: 20260807_product_0004
+Implemented scope: typed Analysis View DRAFT/FIXED lifecycle, deterministic compiler and manifest, source Dataset lineage, six exploratory operations, saved Result/Artifact, asynchronous family Execution claimed by the Product Worker, explicit Causal/Predictive draft handoff, Explore vertical-slice UI
+New tests:
+  - tests/product/test_analysis_view_e3.py
+  - tests/product/test_exploratory_contract_e3.py
+  - tests/product/test_exploratory_api_worker_e2e_e3.py
+  - tests/product/test_exploratory_frontend_contract_e3.py
+Commands executed:
+  - `UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/product/test_analysis_view_e3.py tests/product/test_exploratory_contract_e3.py tests/product/test_exploratory_api_worker_e2e_e3.py tests/product/test_exploratory_frontend_contract_e3.py tests/product/test_enh_e3_workflow_core.py tests/product/test_enh_e3_causal_workflow_regression.py tests/product/test_frontend_contract.py`
+  - `UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q`
+  - migration upgrade/downgrade/re-upgrade against PostgreSQL database `ariadne_enh_e3_test`
+  - `ARIADNE_PRODUCT_TEST_DATABASE_URL=postgresql+psycopg://.../ariadne_enh_e3_test ... pytest -q tests/product/test_postgres_contract.py`
+  - `docker compose -f compose.yaml -f compose.e1a.yaml -p ariadne-e1a --profile e2e run --build --rm browser-e2e`
+  - forbidden-import `rg` audit and `git diff --check`
+PASS count: targeted G2/G1/frontend regression 28; all-active 139; PostgreSQL contract 4
+FAIL count: 0
+SKIP count: all-active 4 (environment-dependent PostgreSQL tests; executed separately against PostgreSQL and passed)
+Migration result: PASS, clean upgrade to `20260807_product_0004`, downgrade to `20260806_product_0003`, and re-upgrade to `20260807_product_0004`
+Browser E2E result: PASS, Chromium 151.0.7922.34; E2E-02 plus existing E2E-04 through E2E-10 and E1a-additional all PASS; evidence `test-results/browser_e2e/evidence.json`, 2026-08-07T06:08:14Z–06:09:08Z
+Causal regression result: PASS in targeted and full suites, and in the same Browser run
+Legacy dependency import check: 0 new/imported references in Product, new Web API, or Exploratory Capability
+Known limitations: Research Context API/UI and generic cross-family Results/Lineage are later integration scope; preserved Predictive drafts are not G2 evidence
+Detected deviations: none accepted
+Reason for PASS / FAIL / BLOCKED: all section 8 minimum criteria passed. The four Browser console 422 responses are deliberate invalid-input scenarios. During E2E setup, nginx's static Docker DNS resolution was found to retain a replaced API container IP; `deploy/nginx.conf` now uses Docker DNS runtime resolution and the canonical rebuild command passes without manual restart.
+```
 
 ## 4. Gate G3
 
