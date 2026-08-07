@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `f16c0a7bb25fbe3378585ba78921398638d1ecea`
+- 現在のimplementation commit: `38f8b16f1a46d6c90fc780c446eb996417843841`
 - 現在の実装migration head: `20260807_product_0005`（Test Agentによるmigration検証待ち）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -24,7 +24,9 @@
 6. Trial `002`ではproduction codeを変更していない。
 7. G3 trial `002`はTest Agentにより全9報告項目PASS、full suite `157 passed, 4 skipped`、PostgreSQL contract `4 passed`と報告され、Gate Decisionは`PASS`である。
 8. G4 trial `001` implementation commit `f16c0a7bb25fbe3378585ba78921398638d1ecea`でTraining + Evaluation backend vertical sliceを実装した。
-9. G4は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G5 / G6は未着手である。
+9. G4 trial `001` Gate Decisionは`FAIL`であり、原因はscientific benchmarkにTRAIN-only fit、TEST isolation、deliberate leakage rejectionのcoverageが欠落していたことである。
+10. G4 trial `002` implementation commit `38f8b16f1a46d6c90fc780c446eb996417843841`で、当該3 benchmark coverageだけを追加した。production codeは変更していない。
+11. G4 trial `002`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G5 / G6は未着手である。
 
 ### 1.2. 現在の判定
 
@@ -37,7 +39,7 @@
 | Gate G2 | **PASS** | `065859d` / `87099e1` |
 | E3-3 Predictive Specification + Split | Completed | trial `002` implementation commit `fd4e332` |
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
-| E3-4 / Gate G4 | **READY_FOR_TEST** | trial `001` implementation commit `f16c0a7` |
+| E3-4 / Gate G4 | **READY_FOR_TEST** | trial `002` implementation commit `38f8b16` |
 | E3-5 / Gate G5 | Not Started | G4 PASS前のため開始禁止 |
 | E3-6 / Gate G6 | Not Started | 前段Gate未完了 |
 
@@ -46,6 +48,9 @@
 ### 2.1. 確定commit列
 
 ```text
+38f8b16 test: complete ENH-E3 G4 scientific benchmark coverage
+2bf2886 test: record ENH-E3 G4 trial 001 audit evidence
+6c0f10a docs: hand off ENH-E3 G4 implementation for audit
 f16c0a7 feat: implement ENH-E3 G4 predictive training and evaluation
 3c0447c test: record ENH-E3 G3 trial 002 audit evidence
 908ce95 docs: hand off ENH-E3 G3 trial 002 for audit
@@ -217,7 +222,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 - Explore Resultへの観察メモ/限界Annotationは汎用Annotation統合側に残る。
 - route-backed navigation / browser backはWP-7後段に残る。
 
-## 3.7. WP-5 Predictive — G4 trial 001 READY_FOR_TEST
+## 3.7. WP-5 Predictive — G4 trial 002 READY_FOR_TEST
 
 以下のG3記述はtrial `002`までに確定したSplit基盤の履歴である。G3はその後Test AgentによりPASSと判定された。
 
@@ -344,7 +349,7 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 
 ## 3.10. WP-9 Verification
 
-G1-G3のTest Agent監査は実施済み。G4 trial `001`はCoding Agent実装完了、Test Agent監査待ちである。
+G1-G3のTest Agent監査は実施済み。G4 trial `001`はcoverage欠落でFAIL、trial `002`はTest Agent監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -455,7 +460,22 @@ decision: 結果不成立。PASSとして扱わない
 - 対象27 Python fileのAST parse: success
 - `git diff --check`: clean
 - migration chain静的観察: `0001 -> 0002 -> 0003 -> 0004 -> 0005`
-- Test Agentによるpytest / PostgreSQL / migration / benchmark監査: 未実施
+- G4-009 Predictive Scientific Benchmark: FAIL
+- failure category: `REQUIRED_TEST_COVERAGE_MISSING`
+- missing coverage: TRAIN-only fit、TEST isolation、deliberate leakage rejection
+- G4-013 Static Architecture: PASS
+- G4-001〜008、010〜012: fail-fastによりNOT_RUN
+- Gate Decision: FAIL
+- Test evidence commit: `2bf28861436ae8b35b4b565062d30e48e142a6ea`
+
+## 4.7. Gate G4 trial 002
+
+- production code変更: なし
+- changed test: `tests/scientific_benchmarks/test_predictive_e3_benchmarks.py`
+- 追加coverage: TRAIN-only fit、TEST isolation、deliberate target leakage rejection
+- Coding Agentによるtest実行: NOT PERFORMED
+- 対象benchmark fileのAST parse: success
+- Test Agent監査: 未実施
 
 ## 5. 既知の設計判断・制約
 
@@ -478,7 +498,7 @@ decision: 結果不成立。PASSとして扱わない
 - Predictive split validationはAPI process内で実行する。将来、非常に大きいDatasetを扱う場合はasync Executionへ移す判断が必要だが、G3のsplit preview/validation契約では同期処理を採用している。
 - G4のModel Registryは意図的にBinary / Regression各1 modelに限定し、candidate tuning / AutoMLは実装していない。
 
-## 6. G3 trial handoff
+## 6. Gate trial handoff history
 
 ### 6.1. Trial 001 decision
 
@@ -509,10 +529,24 @@ decision: 結果不成立。PASSとして扱わない
 - completion report: `G4_001_implementation_completion_report.md`
 - migration head: `20260807_product_0005`（検証待ち）
 - Coding Agent test execution: NOT PERFORMED
-- state: READY_FOR_TEST
-- next allowed implementation action: G4 Test Agent監査結果を待つ
+- Gate Decision: FAIL
+- failure category: `REQUIRED_TEST_COVERAGE_MISSING`
+- Test evidence commit: `2bf28861436ae8b35b4b565062d30e48e142a6ea`
+- next allowed implementation action: G4内でbenchmark coverageだけを修正
 
-### 6.4. G4 Test Agent focus
+### 6.4. G4 trial 002 handoff
+
+- implementation base commit: `2bf28861436ae8b35b4b565062d30e48e142a6ea`
+- implementation completed commit: `38f8b16f1a46d6c90fc780c446eb996417843841`
+- completion report: `G4_002_implementation_completion_report.md`
+- changed production files: none
+- changed test files: `tests/scientific_benchmarks/test_predictive_e3_benchmarks.py`
+- migration head: `20260807_product_0005`（変更なし、検証待ち）
+- Coding Agent test execution: NOT PERFORMED
+- state: READY_FOR_TEST
+- next allowed implementation action: G4 Trial 002 Test Agent監査結果を待つ
+
+### 6.5. G4 Trial 002 Test Agent focus
 
 - Research Context / Analysis Specification lifecycleとProject境界
 - migration `0004 -> 0005 -> 0004 -> 0005`とsingle head
@@ -520,6 +554,7 @@ decision: 結果不成立。PASSとして扱わない
 - Binary / Regression training/evaluation、metric、analytical status
 - API 202 / Worker / cancel / retry / rerun / revise / prefill
 - Snapshot / Artifact / Result / Lineage整合とfull active suite
+- scientific benchmarkのTRAIN-only fit / TEST isolation / deliberate leakage rejection
 
 ## 7. 再開時の禁止事項
 
@@ -535,8 +570,8 @@ decision: 結果不成立。PASSとして扱わない
 G1: PASS
 G2: PASS
 G3 Gate: PASS, trial 002 tested implementation fd4e332
-G4 implementation: READY_FOR_TEST, trial 001 commit f16c0a7
-G4 Gate: Test Agent decision pending
+G4 implementation: READY_FOR_TEST, trial 002 commit 38f8b16
+G4 Gate: trial 001 FAIL, trial 002 Test Agent decision pending
 G5-G6: NOT STARTED
-next allowed implementation action: wait for G4 trial 001 Gate Decision
+next allowed implementation action: wait for G4 trial 002 Gate Decision
 ```
