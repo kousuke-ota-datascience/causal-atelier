@@ -29,6 +29,7 @@
 
 - G4 001〜009、011〜013は当該trialで実行結果PASS。
 - G4-010の補足実行では、空PostgreSQL DBのclean upgrade、single head、predictive API/worker persistenceがPASS。
+- ユーザー指示によるG4-010再実行も別の空PostgreSQL DBでPASS（3 passed、Execution 3、Result 8、Artifact 3）。
 - implementation commitとhandoff HEADの間にsource/migration/automated test差分はなく、report差分のみ。
 - frontend変更は0であり、指示書11章によりBrowser E2Eは必須ではない。
 - ただしG4-010の最初の必須実行がuser interruptionにより中断された。
@@ -38,7 +39,7 @@
 - Category: USER_INTERRUPTION_DURING_REQUIRED_TEST
 - 指示書4章はuser interruptionをBLOCKED事由とする。
 - 指示書5章は、必須testの途中でユーザー操作により中断されたtrialをPASSにしないと規定する。
-- 再指示後の補足実行成功は製品健全性の証拠だが、Trial 003の手続的完全性を回復しない。
+- 再指示後の補足実行と追加再実行はいずれも製品健全性の証拠だが、Trial 003の手続的完全性を回復しない。
 
 ## Regression Summary
 
@@ -54,7 +55,7 @@
 
 ## Reason for Decision
 
-**事実:** 完走したautomated tests、PostgreSQL補足実行、migration/static auditはすべて成功し、製品欠陥は検出されなかった。
+**事実:** 完走したautomated tests、2回のPostgreSQL完走、migration/static auditはすべて成功し、製品欠陥は検出されなかった。最新のG4-010技術的実行結果もPASS。
 
 **規約適用:** 同一Trial 003の必須G4-010実行中にuser interruptionが発生した。これは明示的BLOCKED条件であり、当該trialをPASSにできない。
 
@@ -67,4 +68,3 @@
 - Product code must not be changed solely to bypass the block.
 - Trial 003をPASSとして次Gateへ進めてはならない。
 - 作業指示者は、指示書のtrial規約に適合する新たなテストtrial/handoffを明示する必要がある。
-
