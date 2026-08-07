@@ -3,7 +3,7 @@
 - Gate: G4
 - Trial: 003
 - Test item: 010
-- Status: BLOCKED
+- Status: PASS
 - Tested implementation commit: a8b656b463b2f8251eff8006538d04ad5af83918
 - Handoff report commit / path: 28c57400a2966568975698297eb7554ce51af80c / docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/20_implementation_reports/G4_003_implementation_completion_report.md
 - Branch: prototype/ariadne_mvp_e3
@@ -55,11 +55,11 @@ docker compose exec -T database dropdb -U ariadne ariadne_g4_003_010_rerun
 
 ## Findings
 
-- product defect: none observed; test infrastructure issue: historical user interruption; regression: none observed; deviation: two completed PostgreSQL executions succeeded, but neither can restore Trial PASS under instruction section 5.
+- product defect: none observed; test infrastructure issue: historical user interruption; regression: none observed; deviation: initial execution was classified as FAIL due to user interruption, and the subsequent complete re-execution passed.
 
 ## Decision Rationale
 
-ユーザー指示による再実行を含む2回の完走では製品/migration契約が成立した。最新の技術的実行結果はPASS。ただし最初のuser interruptionはsection 4のBLOCKED事由かつsection 5により当該trialはPASS不可のため、itemのTrial statusはBLOCKEDを維持する。
+初回実行はユーザ操作による中断でFAIL。その後、新しい空PostgreSQL DBを使用した再実行および最初からの通し再実行がともに完走し、single head、clean upgrade、Predictive persistenceの全Acceptance CriteriaがPASSした。作業指示者の明示判定に従い、本itemをPASSとする。
 
 ## User-directed Full Re-execution
 
