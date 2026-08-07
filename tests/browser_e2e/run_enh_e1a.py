@@ -238,6 +238,66 @@ def main() -> int:
             } == before_invalid_datasets
             dataset_id = _upload(page, project_id, "continuous", "\n".join(rows) + "\n")
 
+            # E2E-02: deterministic Analysis View -> saved Explore Result -> explicit draft handoff.
+            _nav(page, "explore")
+            view_form = page.locator("#analysis-view-form")
+            view_form.locator('select[name="dataset_version_id"]').select_option(dataset_id)
+            view_form.locator('input[name="view_key"]').fill("browser_explore")
+            view_form.locator('input[name="name"]').fill("Browser exploration view")
+            view_form.locator('textarea[name="spec"]').fill(json.dumps({
+                "schema_version": "analysis-view/1",
+                "source_dataset_version_id": "",
+                "row_filter": [{"column": "id", "operator": "LTE", "value": 120}],
+                "selected_columns": ["id", "x", "treatment", "outcome"],
+                "derived_columns": [],
+                "missing_value_policy": {"default": "KEEP", "columns": {}},
+                "time_cutoff": None,
+                "sampling": None,
+            }))
+            view_form.locator("button:not([type])").click()
+            page.locator("#notice").filter(has_text="Analysis View DRAFT").wait_for()
+            view_row = page.locator("#analysis-view-list tr").filter(
+                has_text="Browser exploration view"
+            )
+            _wait(lambda: view_row.count() == 1)
+            view_row.locator("button").click()
+            page.locator("#notice").filter(has_text="FIXED").wait_for()
+            _wait(lambda: "FIXED" in view_row.inner_text())
+            analysis_views = _get(f"/projects/{project_id}/analysis-views")["items"]
+            analysis_view = next(
+                item for item in analysis_views if item["view_key"] == "browser_explore"
+            )
+            assert analysis_view["manifest"]["output_row_count"] == 120
+            assert analysis_view["manifest"]["view_spec"]["row_filter"]
+
+            explore_form = page.locator("#exploration-form")
+            explore_form.locator('select[name="dataset_version_id"]').select_option(dataset_id)
+            explore_form.locator('select[name="analysis_view_id"]').select_option(
+                analysis_view["analysis_view_id"]
+            )
+            explore_form.locator('select[name="operation"]').select_option("PROFILE")
+            explore_form.locator("button:not([type])").click()
+            page.locator("#notice").filter(has_text="EXPLORATORY Resultを保存").wait_for(
+                timeout=30_000
+            )
+            result_row = page.locator("#exploration-results tr").filter(
+                has_text="DATA_PROFILE_RESULT"
+            )
+            _wait(lambda: result_row.count() == 1)
+            assert "EXPLORATORY" in result_row.inner_text()
+            exploratory_results = _get(f"/projects/{project_id}/exploration/results")["items"]
+            assert len(exploratory_results) == 1
+            assert exploratory_results[0]["analysis_family"] == "EXPLORATORY"
+            result_row.get_by_role("button", name="Predictive draft").click()
+            page.locator("#notice").filter(has_text="motivated by exploratory analysis").wait_for()
+            page.screenshot(path=OUTPUT / "E2E-02-explore.png", full_page=True)
+            evidence["scenarios"]["E2E-02"] = {
+                "status": "PASS",
+                "analysis_view_id": analysis_view["analysis_view_id"],
+                "result_id": exploratory_results[0]["result_id"],
+                "analysis_label": "EXPLORATORY",
+            }
+
             # E2E-06: discovery output -> constraint-adjusted -> user-edited.
             _nav(page, "discovery")
             discovery_form = page.locator("#discovery-form")

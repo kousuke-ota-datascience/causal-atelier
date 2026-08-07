@@ -25,6 +25,8 @@ from ariadne.product.domain.errors import (
     InvalidDatasetMetadata,
     InvalidGraphEditBase,
     ProjectArchived,
+    InvalidSchema,
+    ResourceImmutable,
 )
 from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
 
@@ -69,6 +71,10 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
             exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC",
             str(exc),
         )
+    if isinstance(exc, InvalidSchema):
+        return _error(request, 422, "INVALID_SCHEMA", str(exc))
+    if isinstance(exc, ResourceImmutable):
+        return _error(request, 409, "RESOURCE_IMMUTABLE", str(exc))
     if isinstance(exc, ArtifactHashMismatch):
         return _error(request, 500, "ARTIFACT_HASH_MISMATCH", str(exc))
     return _error(request, 400, "DOMAIN_ERROR", str(exc))

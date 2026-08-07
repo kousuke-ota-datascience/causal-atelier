@@ -13,9 +13,10 @@
       <nav>
         <button data-workspace="management">Project Management</button>
         <button data-workspace="data" class="active">1 Project / Data</button>
-        <button data-workspace="discovery">2 Discovery</button>
-        <button data-workspace="inference">3 Inference</button>
-        <button data-workspace="results">4 Results / Lineage</button>
+        <button data-workspace="explore">2 Explore &amp; Visualize</button>
+        <button data-workspace="discovery">3 Discovery</button>
+        <button data-workspace="inference">4 Inference</button>
+        <button data-workspace="results">5 Results / Lineage</button>
       </nav>
       <p>科学的負結果は技術障害ではありません。Resultのstatusとdiagnosticsを確認してください。</p>
     </aside>
@@ -36,6 +37,41 @@
           <form id="dataset-form" class="card"><h2>Dataset Register</h2><p class="section-help">前処理済みファイルを上書き不能なDataset Versionとして登録します。</p><label data-tooltip="UTF-8 CSVまたは有効なParquetを指定します。空ファイルや拡張子の異なるファイルは登録できません。">CSV / Parquet<input name="file" type="file" accept=".csv,.parquet" required></label><label data-tooltip="同一DatasetのVersion系列をまとめる100文字以内の安定したkeyです。列名一覧ではありません。例: sales_transactions">Dataset key<input name="dataset_key" required maxlength="100" placeholder="sales"></label><label data-tooltip="取得時点や加工版を識別する100文字以内のlabelです。例: 2026-08、v2-cleaned">Version label<input name="version_label" required maxlength="100" placeholder="2026-08"></label><label data-tooltip="画面上でDataset Versionを識別する200文字以内の表示名です。">Name<input name="name" required maxlength="200" placeholder="Sales dataset"></label><label data-tooltip="データの出所、抽出条件、前処理内容を4,000文字以内で記録します。">Source note<textarea name="source_note" maxlength="4000" placeholder="Source system, extraction date, preprocessing"></textarea></label><button>登録</button></form>
         </div>
         <div class="card"><h2>Registered Datasets</h2><p class="section-help">schema、行列数、hashとpreviewを確認します。</p><div id="datasets"></div><div id="preview"></div></div>
+      </section>
+      <section id="explore" class="workspace">
+        <h1>Explore &amp; Visualize</h1>
+        <p>Dataset Versionまたは固定済みAnalysis Viewから、品質・分布・関連・群別集計・時系列・Chartを再現可能な探索Resultとして保存します。</p>
+        <div class="semantic-warning" role="note"><b>EXPLORATORY</b> — ここで得る分布、相関、群差、Chartは仮説生成の材料です。因果効果または確認的結論ではありません。</div>
+        <div class="grid">
+          <form id="analysis-view-form" class="card">
+            <h2>Analysis View</h2>
+            <p class="section-help">行・列・派生列・欠測・時間cutoffを型付きJSONで固定します。任意Pythonや非決定的関数は実行できません。</p>
+            <label>Dataset Version<select name="dataset_version_id" class="datasets-select" required></select></label>
+            <label>View key<input name="view_key" value="explore_view" required maxlength="100"></label>
+            <label>Name<input name="name" value="Exploration view" required maxlength="200"></label>
+            <label>View specification<textarea name="spec" class="code-input" required>{"schema_version":"analysis-view/1","source_dataset_version_id":"","row_filter":[],"selected_columns":[],"derived_columns":[],"missing_value_policy":{"default":"KEEP","columns":{}},"time_cutoff":null,"sampling":null}</textarea></label>
+            <button>Analysis View DRAFTを作成</button>
+          </form>
+          <div class="card">
+            <div class="heading"><div><h2>Saved Analysis Views</h2><p class="section-help">FIXED後は上書きせず、変更時は新Versionを作成します。</p></div><button id="refresh-analysis-views" type="button">更新</button></div>
+            <div id="analysis-view-list"></div>
+          </div>
+        </div>
+        <form id="exploration-form" class="card form-grid">
+          <h2>Exploration Specification</h2>
+          <label>Dataset Version<select name="dataset_version_id" class="datasets-select" required></select></label>
+          <label>Analysis View<select name="analysis_view_id" id="exploration-view"><option value="">Dataset Version全体</option></select></label>
+          <label>Operation<select name="operation"><option>PROFILE</option><option>DISTRIBUTION</option><option>ASSOCIATION</option><option>GROUP_SUMMARY</option><option>TIME_TREND</option><option>CHART</option></select></label>
+          <label>Columns (comma separated)<input name="columns" placeholder="sales, units"></label>
+          <label>Grouping columns<input name="grouping" placeholder="segment or date"></label>
+          <label>Aggregation<select name="aggregation_method"><option>COUNT</option><option>MEAN</option><option>SUM</option><option>MIN</option><option>MAX</option><option>MEDIAN</option></select></label>
+          <label>Aggregation target<input name="aggregation_column" placeholder="sales"></label>
+          <label>Chart mark<select name="mark"><option>point</option><option>bar</option><option>line</option><option>box</option><option>histogram</option><option>heatmap</option></select></label>
+          <label>Chart X<input name="chart_x" placeholder="units"></label>
+          <label>Chart Y<input name="chart_y" placeholder="sales"></label>
+          <div class="inline"><button id="preview-exploration" type="button" class="secondary">Preview（未保存）</button><button>探索Resultを保存</button></div>
+        </form>
+        <div class="card"><div class="heading"><h2>Saved Exploratory Results</h2><button id="refresh-exploration" type="button">更新</button></div><div id="exploration-output"></div><div id="exploration-results"></div></div>
       </section>
       <section id="discovery" class="workspace">
         <h1>Discovery</h1><p>PC・GESとPC parameter sensitivityを別Executionとして比較します。</p>

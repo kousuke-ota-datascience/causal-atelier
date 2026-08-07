@@ -259,3 +259,171 @@ class AnnotationOrm(ProductBase):
             name="ck_product_annotation_target_xor",
         ),
     )
+
+
+# ENH-E3 versioned workspace resources.  These tables are additive so the
+# existing causal product rows and their strict status constraints remain
+# readable without a destructive rewrite.
+
+
+class AnalysisViewOrm(ProductBase):
+    __tablename__ = "product_analysis_view"
+
+    analysis_view_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    source_dataset_version_id: Mapped[str] = mapped_column(ForeignKey("product_dataset_version.dataset_version_id", ondelete="RESTRICT"), nullable=False, index=True)
+    view_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    version_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="DRAFT")
+    schema_version: Mapped[str] = mapped_column(String(100), nullable=False, default="analysis-view/1")
+    spec_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    content_hash: Mapped[str | None] = mapped_column(String(64))
+    manifest_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_by: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    fixed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        UniqueConstraint("project_id", "view_key", "version_number", name="uq_product_analysis_view_version"),
+        CheckConstraint("status IN ('DRAFT','FIXED')", name="ck_product_analysis_view_status"),
+        CheckConstraint("version_number > 0", name="ck_product_analysis_view_version"),
+    )
+
+
+class ExecutionPlanOrm(ProductBase):
+    __tablename__ = "product_execution_plan"
+
+    execution_plan_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_specification_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    analysis_family: Mapped[str] = mapped_column(String(20), nullable=False)
+    plan_schema_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    planner_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    planner_version: Mapped[str] = mapped_column(String(40), nullable=False)
+    stages_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False)
+    dependencies_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False)
+    plan_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint("analysis_family IN ('EXPLORATORY','CAUSAL','PREDICTIVE')", name="ck_product_execution_plan_family"),
+    )
+
+
+class FamilyExecutionOrm(ProductBase):
+    __tablename__ = "product_family_execution"
+
+    execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    dataset_version_id: Mapped[str] = mapped_column(ForeignKey("product_dataset_version.dataset_version_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_view_id: Mapped[str | None] = mapped_column(ForeignKey("product_analysis_view.analysis_view_id", ondelete="RESTRICT"), index=True)
+    execution_plan_id: Mapped[str] = mapped_column(ForeignKey("product_execution_plan.execution_plan_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_family: Mapped[str] = mapped_column(String(20), nullable=False)
+    specification_schema_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    specification_snapshot_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    snapshot_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    snapshot_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="QUEUED")
+    retry_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    requested_by: Mapped[str] = mapped_column(String(200), nullable=False)
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    worker_token: Mapped[str | None] = mapped_column(String(36))
+    worker_id: Mapped[str | None] = mapped_column(String(200))
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint("analysis_family IN ('EXPLORATORY','CAUSAL','PREDICTIVE')", name="ck_product_family_execution_family"),
+        CheckConstraint("status IN ('QUEUED','RUNNING','SUCCEEDED','FAILED','CANCELLED')", name="ck_product_family_execution_status"),
+        CheckConstraint("retry_count >= 0", name="ck_product_family_execution_retry"),
+    )
+
+
+class FamilyStageExecutionOrm(ProductBase):
+    __tablename__ = "product_family_stage_execution"
+
+    stage_execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    execution_id: Mapped[str] = mapped_column(ForeignKey("product_family_execution.execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    stage_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    stage_type_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    ordinal: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, default="PENDING")
+    attempt_history_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    input_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    output_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    last_error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        UniqueConstraint("execution_id", "stage_key", name="uq_product_family_stage_key"),
+        CheckConstraint("status IN ('PENDING','READY','RUNNING','SUCCEEDED','FAILED','SKIPPED_DUE_TO_PREREQUISITE')", name="ck_product_family_stage_status"),
+    )
+
+
+class FamilyResultOrm(ProductBase):
+    __tablename__ = "product_family_result"
+
+    result_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    execution_id: Mapped[str] = mapped_column(ForeignKey("product_family_execution.execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    stage_execution_id: Mapped[str] = mapped_column(ForeignKey("product_family_stage_execution.stage_execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_family: Mapped[str] = mapped_column(String(20), nullable=False)
+    result_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    schema_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    analytical_status: Mapped[str] = mapped_column(String(60), nullable=False)
+    summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    diagnostics_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    warning_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint("analysis_family IN ('EXPLORATORY','CAUSAL','PREDICTIVE')", name="ck_product_family_result_family"),
+    )
+
+
+class FamilyArtifactOrm(ProductBase):
+    __tablename__ = "product_family_artifact"
+
+    artifact_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    execution_id: Mapped[str] = mapped_column(ForeignKey("product_family_execution.execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    stage_execution_id: Mapped[str] = mapped_column(ForeignKey("product_family_stage_execution.stage_execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    result_id: Mapped[str | None] = mapped_column(ForeignKey("product_family_result.result_id", ondelete="RESTRICT"), index=True)
+    family: Mapped[str] = mapped_column(String(20), nullable=False)
+    artifact_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    schema_version: Mapped[str] = mapped_column(String(100), nullable=False)
+    media_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    object_key: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint("family IN ('EXPLORATORY','CAUSAL','PREDICTIVE')", name="ck_product_family_artifact_family"),
+        CheckConstraint("size_bytes >= 0", name="ck_product_family_artifact_size"),
+    )
+
+
+class LineageEdgeOrm(ProductBase):
+    __tablename__ = "product_lineage_edge"
+
+    lineage_edge_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    source_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    source_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    relation_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    target_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    target_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    evidence_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    created_by: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("source_type", "source_id", "relation_type", "target_type", "target_id", name="uq_product_lineage_edge"),
+    )
