@@ -88,6 +88,19 @@ def test_full_predictive_dag_is_deterministic_and_keeps_test_out_of_training(
     predictive_spec_factory,
 ) -> None:  # type: ignore[no-untyped-def]
     spec = _full_spec(predictive_spec_factory)
+    first_plan = PredictivePlanner().build_full_plan(
+        project_id="project",
+        specification_id="fixed-specification",
+        family_spec=spec,
+    )
+    second_plan = PredictivePlanner().build_full_plan(
+        project_id="project",
+        specification_id="fixed-specification",
+        family_spec=spec,
+    )
+    assert first_plan.plan_hash == second_plan.plan_hash
+    assert first_plan.canonical_payload() == second_plan.canonical_payload()
+
     first = _execute(spec)
     second = _execute(spec)
     assert first.status == "SUCCEEDED"
@@ -97,9 +110,24 @@ def test_full_predictive_dag_is_deterministic_and_keeps_test_out_of_training(
     assert {stage.status.value for stage in first.stages} == {"SUCCEEDED"}
 
     prepare = next(stage for stage in first.stages if stage.stage_key == "prepare")
+    second_prepare = next(
+        stage for stage in second.stages if stage.stage_key == "prepare"
+    )
     train = next(stage for stage in first.stages if stage.stage_key == "train")
     evaluate = next(stage for stage in first.stages if stage.stage_key == "evaluate")
-    assert prepare.output_binding["fitted_preprocessor"]["fit_partition"] == "TRAIN"
+    fitted_preprocessor = prepare.output_binding["fitted_preprocessor"]
+    second_fitted_preprocessor = second_prepare.output_binding["fitted_preprocessor"]
+    feature_schema = [
+        (column["name"], column["kind"])
+        for column in fitted_preprocessor["columns"]
+    ]
+    feature_order = fitted_preprocessor["output_features"]
+    assert fitted_preprocessor["fit_partition"] == "TRAIN"
+    assert feature_schema == [("score", "NUMERIC"), ("segment", "CATEGORICAL")]
+    assert feature_order == ["score", "segment=A", "segment=B"]
+    assert second_fitted_preprocessor["columns"] == fitted_preprocessor["columns"]
+    assert second_fitted_preprocessor["output_features"] == feature_order
+    assert train.input_binding["training_bundle"]["feature_order"] == feature_order
     assert prepare.output_binding["evaluation_bundle"]["selection_allowed"] is False
     assert "evaluation_bundle" not in train.input_binding
     assert "test" not in train.input_binding["training_bundle"]
@@ -120,6 +148,16 @@ def test_full_predictive_dag_is_deterministic_and_keeps_test_out_of_training(
     training = next(result for result in first.results if result.result_type == "TRAINING_RESULT")
     assert training.analytical_status in {"TRAINED", "TRAINED_WITH_WARNINGS"}
     assert training.payload["model_descriptor"]["model_id"] == "logistic_regression.v1"
+    selected_hyperparameters = training.payload["selected_hyperparameters"]
+    assert selected_hyperparameters == {
+        "iterations": 800,
+        "learning_rate": 0.1,
+        "l2": 0.001,
+    }
+    validation_metric = training.summary["validation_primary_metric"]
+    assert validation_metric["name"] == "ROC_AUC"
+    assert validation_metric["value"] is not None
+    assert training.payload["validation_metrics"]["roc_auc"] == validation_metric["value"]
 
 
 @pytest.mark.requirement("G4-MINIMAL-MODEL-REGISTRY")

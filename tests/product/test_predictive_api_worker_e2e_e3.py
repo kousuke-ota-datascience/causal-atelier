@@ -3,9 +3,14 @@ from __future__ import annotations
 import uuid
 
 import pytest
+from sqlalchemy import select
 
 from ariadne.interfaces.web_api import dependencies
 from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
+from ariadne.product.persistence.orm_models import (
+    FamilyExecutionOrm,
+    FamilyStageExecutionOrm,
+)
 
 
 async def _workspace(client, predictive_spec_factory):  # type: ignore[no-untyped-def]
@@ -154,7 +159,8 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
         f"/api/v1/projects/{project_id}/executions/{execution_id}"
     )
     assert completed.status_code == 200
-    assert completed.json()["status"] == "SUCCEEDED"
+    completed_body = completed.json()
+    assert completed_body["status"] == "SUCCEEDED"
     stages = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/stages"
     )).json()["items"]
@@ -181,19 +187,159 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
     artifacts = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/artifacts"
     )).json()["items"]
-    assert {item["artifact_type"] for item in artifacts} == {
-        "PARTITION_INDEX", "FITTED_PREPROCESSOR", "FITTED_MODEL", "PREDICTION",
+    artifacts_by_type = {item["artifact_type"]: item for item in artifacts}
+    assert set(artifacts_by_type) == {
+        "PARTITION_INDEX",
+        "FITTED_PREPROCESSOR",
+        "FITTED_MODEL",
+        "PREDICTION",
     }
-    assert all(len(item["content_hash"]) == 64 for item in artifacts)
+    artifact_schema_versions = {
+        "PARTITION_INDEX": "partition-artifact/1",
+        "FITTED_PREPROCESSOR": "fitted-preprocessor/1",
+        "FITTED_MODEL": "fitted-model/1",
+        "PREDICTION": "prediction-artifact/1",
+    }
+    for artifact_type, artifact in artifacts_by_type.items():
+        assert artifact["analysis_family"] == "PREDICTIVE"
+        assert artifact["family"] == "PREDICTIVE"
+        assert artifact["artifact_type"] == artifact_type
+        assert artifact["schema_version"] == artifact_schema_versions[artifact_type]
+        assert artifact["media_type"] == "application/json"
+        assert len(artifact["content_hash"]) == 64
+        assert artifact["size_bytes"] > 0
+
     lineage = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/lineage"
     )).json()["items"]
-    assert sum(item["relation_type"] == "DERIVED_FROM" for item in lineage) == 3
-    assert any(
-        item["source_type"] == "AnalysisSpecification"
-        and item["target_id"] == execution_id
+    lineage_edges = {
+        (
+            item["source_type"],
+            item["source_id"],
+            item["relation_type"],
+            item["target_type"],
+            item["target_id"],
+        )
         for item in lineage
-    )
+    }
+    lineage_node_types = {
+        node_type
+        for edge in lineage_edges
+        for node_type in (edge[0], edge[3])
+    }
+    assert "ResearchContextVersion" in lineage_node_types
+    assert "DatasetVersion" in lineage_node_types
+    assert "AnalysisView" not in lineage_node_types
+    assert "ExecutionPlan" in lineage_node_types
+    assert "Result" in lineage_node_types
+    snapshot = completed_body["snapshot"]
+    assert (
+        "ResearchContextVersion",
+        snapshot["research_context"]["id"],
+        "USED_INPUT",
+        "Execution",
+        execution_id,
+    ) in lineage_edges
+    assert (
+        "DatasetVersion",
+        snapshot["dataset_version"]["id"],
+        "USED_INPUT",
+        "Execution",
+        execution_id,
+    ) in lineage_edges
+    assert snapshot["analysis_view"]["id"] is None
+    assert (
+        "AnalysisSpecification",
+        specification_id,
+        "USED_INPUT",
+        "Execution",
+        execution_id,
+    ) in lineage_edges
+    assert (
+        "ExecutionPlan",
+        plan_id,
+        "USED_INPUT",
+        "Execution",
+        execution_id,
+    ) in lineage_edges
+
+    split_result_id = by_type["SPLIT_RESULT"]["result_id"]
+    training_result_id = by_type["TRAINING_RESULT"]["result_id"]
+    evaluation_result_id = by_type["EVALUATION_RESULT"]["result_id"]
+    error_result_id = by_type["ERROR_ANALYSIS_RESULT"]["result_id"]
+    partition_artifact_id = artifacts_by_type["PARTITION_INDEX"]["artifact_id"]
+    preprocessor_artifact_id = artifacts_by_type["FITTED_PREPROCESSOR"]["artifact_id"]
+    model_artifact_id = artifacts_by_type["FITTED_MODEL"]["artifact_id"]
+    prediction_artifact_id = artifacts_by_type["PREDICTION"]["artifact_id"]
+    for result_id in (
+        split_result_id,
+        training_result_id,
+        evaluation_result_id,
+        error_result_id,
+    ):
+        assert (
+            "Execution",
+            execution_id,
+            "GENERATED",
+            "Result",
+            result_id,
+        ) in lineage_edges
+    assert (
+        "Result",
+        split_result_id,
+        "GENERATED",
+        "Artifact",
+        partition_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Execution",
+        execution_id,
+        "GENERATED",
+        "Artifact",
+        preprocessor_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Result",
+        training_result_id,
+        "GENERATED",
+        "Artifact",
+        model_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Result",
+        evaluation_result_id,
+        "GENERATED",
+        "Artifact",
+        prediction_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Artifact",
+        preprocessor_artifact_id,
+        "DERIVED_FROM",
+        "Artifact",
+        partition_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Artifact",
+        model_artifact_id,
+        "DERIVED_FROM",
+        "Artifact",
+        preprocessor_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Artifact",
+        prediction_artifact_id,
+        "DERIVED_FROM",
+        "Artifact",
+        model_artifact_id,
+    ) in lineage_edges
+    assert (
+        "Artifact",
+        prediction_artifact_id,
+        "EVIDENCE_FOR",
+        "Result",
+        evaluation_result_id,
+    ) in lineage_edges
 
     prefill = await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/prefill"
@@ -210,6 +356,83 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
     )
     assert cancelled.status_code == 200
     assert cancelled.json()["status"] == "CANCELLED"
+
+
+@pytest.mark.anyio
+@pytest.mark.requirement("G4-PREDICTIVE-RETRY-CONTRACT")
+async def test_failed_predictive_execution_retry_resets_and_can_succeed(
+    client, predictive_spec_factory,
+) -> None:  # type: ignore[no-untyped-def]
+    project_id, specification_id, family_spec = await _workspace(
+        client, predictive_spec_factory
+    )
+    plan = await client.post(
+        f"/api/v1/projects/{project_id}/execution-plans",
+        json={"analysis_specification_id": specification_id},
+    )
+    assert plan.status_code == 201
+    submitted = await client.post(
+        f"/api/v1/projects/{project_id}/executions",
+        json={
+            "analysis_specification_id": specification_id,
+            "execution_plan_id": plan.json()["execution_plan_id"],
+            "seed": family_spec["split_spec"]["seed"],
+        },
+    )
+    assert submitted.status_code == 202
+    execution_id = submitted.json()["execution_id"]
+
+    factory = dependencies._get_session_factory()
+    with factory() as session:
+        execution = session.get(FamilyExecutionOrm, execution_id)
+        assert execution is not None
+        execution.status = "FAILED"
+        execution.last_error_json = {
+            "type": "SyntheticFailure",
+            "message": "retry contract fixture",
+        }
+        first_stage = session.scalar(
+            select(FamilyStageExecutionOrm)
+            .where(FamilyStageExecutionOrm.execution_id == execution_id)
+            .order_by(FamilyStageExecutionOrm.ordinal)
+        )
+        assert first_stage is not None
+        first_stage.status = "FAILED"
+        first_stage.last_error_json = execution.last_error_json
+        first_stage.attempt_history_json = [{"attempt_number": 1}]
+        first_stage.input_binding_json = {"fixture": True}
+        first_stage.output_binding_json = {"fixture": True}
+        session.commit()
+
+    retry = await client.post(
+        f"/api/v1/projects/{project_id}/executions/{execution_id}/retry"
+    )
+    assert retry.status_code == 200
+    assert retry.json()["execution_id"] == execution_id
+    assert retry.json()["status"] == "QUEUED"
+    assert retry.json()["retry_count"] == 1
+    assert retry.json()["last_error"] is None
+    reset_stages = (await client.get(
+        f"/api/v1/projects/{project_id}/executions/{execution_id}/stages"
+    )).json()["items"]
+    assert {stage["status"] for stage in reset_stages} == {"PENDING"}
+    assert all(stage["attempt_history"] == [] for stage in reset_stages)
+    assert all(stage["input_binding"] == {} for stage in reset_stages)
+    assert all(stage["output_binding"] == {} for stage in reset_stages)
+    assert all(stage["last_error"] is None for stage in reset_stages)
+
+    worker = PredictiveWorkflowService(
+        dependencies._get_session_factory(), dependencies._get_artifact_store()
+    )
+    token = str(uuid.uuid4())
+    assert worker.claim_next(token, worker_id="g4-retry-worker") == execution_id
+    worker.process_execution(execution_id, worker_token=token)
+    completed = await client.get(
+        f"/api/v1/projects/{project_id}/executions/{execution_id}"
+    )
+    assert completed.status_code == 200
+    assert completed.json()["status"] == "SUCCEEDED"
+    assert completed.json()["retry_count"] == 1
 
 
 @pytest.mark.anyio

@@ -76,6 +76,7 @@ def test_classification_metrics_include_probability_threshold_balance_and_calibr
     assert metrics["threshold"] == 0.5
     assert metrics["class_balance"] == 0.5
     assert metrics["calibration"]
+    assert metrics["sample_count"] == 4
 
     runner = PredictiveEvaluateRunner()
     context = _context(
@@ -94,6 +95,9 @@ def test_classification_metrics_include_probability_threshold_balance_and_calibr
     )
     assert evaluation.analytical_status == "EVALUATED"
     assert evaluation.payload["evaluation_population"] == "TEST"
+    assert evaluation.summary["sample_count"] == 4
+    assert evaluation.payload["sample_count"] == 4
+    assert evaluation.payload["metrics"]["sample_count"] == 4
     assert errors.analytical_status == "GENERATED"
 
 
