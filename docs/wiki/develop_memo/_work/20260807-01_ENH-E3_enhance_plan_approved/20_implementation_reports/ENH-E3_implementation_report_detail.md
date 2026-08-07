@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `cb0f45164fe5190af37df466af70057b89b8c8cb`
+- 現在のimplementation commit: `4a83bb6860c895f00e4dfd7c9e7880105387373e`
 - 現在の実装migration head: `20260807_product_0005`（G4 Test Agentがsingle head / PostgreSQL clean upgradeを検証済み。G5では変更なし）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -31,7 +31,10 @@
 13. G4 trial `003`はTest Agentにより全13項目PASS、full suite `174 passed, 4 skipped`、PostgreSQL clean upgrade / single head / Predictive persistence `3 passed`と報告され、Gate Decisionは`PASS`である。
 14. G4 trial `003`のtested implementationは`a8b656b463b2f8251eff8006538d04ad5af83918`、handoff report commitは`28c57400a2966568975698297eb7554ce51af80c`、最終PASS evidence commitは`5b41affe599614f47a51ddf1ec32b528aa132b6a`である。
 15. G5 trial `001` implementation commit `cb0f45164fe5190af37df466af70057b89b8c8cb`でExplain Runner、Model Card、Predictive Workspace、6 route基盤、canonical automated test codeを実装した。
-16. G5 trial `001`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G6は未着手である。
+16. G5 trial `001` Gate Decisionは`FAIL`であり、原因はG5-002 / 004 / 005の必須automated coverage不足である。product defectは確立されていない。
+17. G5 trial `001`ではStatic ArchitectureだけがPASSし、G5-001 / 003 / 006 / 007およびBrowser / PostgreSQL実行はfail-fastによりNOT_RUNである。
+18. G5 trial `002` implementation commit `4a83bb6860c895f00e4dfd7c9e7880105387373e`で、Model Card value/lineage、Browser error rendering、Predictive JSON Artifact terminologyのcoverageだけを追加した。production codeは変更していない。
+19. G5 trial `002`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G6は未着手である。
 
 ### 1.2. 現在の判定
 
@@ -45,7 +48,7 @@
 | E3-3 Predictive Specification + Split | Completed | trial `002` implementation commit `fd4e332` |
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
 | E3-4 / Gate G4 | **PASS** | trial `003` Gate Decision / final evidence `5b41aff` |
-| E3-5 / Gate G5 | **READY_FOR_TEST** | trial `001` implementation commit `cb0f451` |
+| E3-5 / Gate G5 | **READY_FOR_TEST** | trial `001` FAIL後、trial `002` implementation commit `4a83bb6` |
 | E3-6 / Gate G6 | Not Started | G5 PASS前のため開始禁止 |
 
 ## 2. Git / Working Tree状態
@@ -53,6 +56,9 @@
 ### 2.1. 確定commit列
 
 ```text
+4a83bb6 test: complete ENH-E3 G5 required contract coverage
+4ce8734 test: record ENH-E3 G5 trial 001 audit evidence
+d7b1c1a docs: hand off ENH-E3 G5 implementation for audit
 cb0f451 feat: implement ENH-E3 G5 predictive explanation and UI
 5b41aff test: mark ENH-E3 G4 trial 003 pass
 8cc58c6 test: record G4 trial 003 full re-execution
@@ -364,6 +370,15 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 - Explain Stageの複数Result / Artifactを型で正しく対応付けるbackward-compatible shared `ArtifactDraft.result_type`
 - G5 capabilities（Explanation / Model Card available、supported method metadata）
 
+### G5 trial `001` Test Agent decision / trial `002` correction
+
+- Gate Decision: `FAIL`
+- failure category: G5-002 / 004 / 005の`REQUIRED_TEST_COVERAGE_MISSING`
+- product defect: 確立されていない
+- trial `002`ではModel Card意味値 / lineage、Browser error rendering、Predictive JSON Artifact terminologyの直接assertionだけを追加
+- changed tests: `tests/product/test_predictive_explanation_e3.py`、`tests/browser_e2e/run_enh_e3_predictive.py`
+- production / frontend / migration変更: なし
+
 ## 3.8. WP-7 Frontend — G5 route-backed shell実装済み
 
 ### 完了済み
@@ -403,7 +418,7 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 
 ## 3.10. WP-9 Verification
 
-G1-G4のTest Agent監査は実施済み。G4 trial `001`と`002`はcoverage欠落でFAIL、trial `003`は全項目PASSである。G5 trial `001`はTest Agent監査待ちである。
+G1-G4のTest Agent監査は実施済み。G4 trial `001`と`002`はcoverage欠落でFAIL、trial `003`は全項目PASSである。G5 trial `001`はcoverage欠落でFAIL、trial `002`はTest Agent監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -567,6 +582,27 @@ decision: 結果不成立。PASSとして扱わない
 - G4 4-stage / G5 5-stage PlanValidator: success
 - Generic Executor family token / Product-Web legacy import audit: 0 violations
 - `git diff --check`: clean
+- Test Agent Gate Decision: FAIL
+- failure category: 3件すべて`REQUIRED_TEST_COVERAGE_MISSING`
+- G5-002 missing coverage: Model Card意味値、Split / Preprocessor / Model / optional Analysis View lineage
+- G5-004 missing coverage: Browser error rendering scenario
+- G5-005 missing coverage: Predictive JSON Artifact Export terminology
+- product defect: 確立されていない
+- G5-008 Static Architecture: PASS
+- G5-001 / 003 / 006 / 007、Browser / PostgreSQL実行: NOT_RUN_DUE_TO_PRIOR_FAILURE
+- Test evidence commit: `4ce873473140f5748388eb9196493bc6cb90a995`
+
+## 4.10. Gate G5 trial 002
+
+- implementation commit: `4a83bb6860c895f00e4dfd7c9e7880105387373e`
+- production / frontend / migration変更: なし
+- changed tests: `tests/product/test_predictive_explanation_e3.py`、`tests/browser_e2e/run_enh_e3_predictive.py`
+- added coverage: Model Card complete values / lineage、Browser rendered error、Predictive Artifact terminology
+- Coding Agentによるpytest / Browser E2E / PostgreSQL / migration実行: NOT PERFORMED
+- changed 2 Python test filesのAST parse: success
+- Trial 001 missing coverage patterns: detected
+- changed tracked scope: 2 test files only
+- `git diff --check`: clean
 - Test Agent監査: 未実施
 
 ## 5. 既知の設計判断・制約
@@ -669,10 +705,12 @@ decision: 結果不成立。PASSとして扱わない
 - completion report: `G5_001_implementation_completion_report.md`
 - migration head: `20260807_product_0005`（変更なし）
 - Coding Agent test execution: NOT PERFORMED
-- state: READY_FOR_TEST
-- next allowed implementation action: G5 Trial 001 Test Agent監査結果を待つ
+- Gate Decision: FAIL
+- failure category: G5-002 / 004 / 005の`REQUIRED_TEST_COVERAGE_MISSING`
+- Test evidence commit: `4ce873473140f5748388eb9196493bc6cb90a995`
+- next allowed implementation action: G5内で報告された3 coverage不足だけを修正
 
-### 6.8. G5 Trial 001 Test Agent focus
+### 6.8. G5 Trial 001 Test Agent focus（FAIL履歴）
 
 - strict explanation specification / TEST-only sampling contract
 - deterministic global/local explanationとoutput scale
@@ -682,6 +720,25 @@ decision: 結果不成立。PASSとして扱わない
 - Backend-authoritative Predictive Workspace
 - Predictive deep link / reload / browser back
 - G1〜G4 regression、PostgreSQL persistence、single migration head、full active suite
+
+### 6.9. G5 trial 002 handoff
+
+- implementation base commit: `4ce873473140f5748388eb9196493bc6cb90a995`
+- implementation completed commit: `4a83bb6860c895f00e4dfd7c9e7880105387373e`
+- completion report: `G5_002_implementation_completion_report.md`
+- changed production files: none
+- changed test files: `tests/product/test_predictive_explanation_e3.py`、`tests/browser_e2e/run_enh_e3_predictive.py`
+- migration head: `20260807_product_0005`（変更なし）
+- Coding Agent test execution: NOT PERFORMED
+- state: READY_FOR_TEST
+- next allowed implementation action: G5 Trial 002 Test Agent監査結果を待つ
+
+### 6.10. G5 Trial 002 Test Agent focus
+
+- Model Card必須意味値 / runtime metadata / Analysis Viewを含むrequired lineage
+- Predictive Explanation / Model Card JSON Artifact terminology
+- Browser `predictive-error-rendering` scenario
+- Trial 001でNOT_RUNだったG5項目とfull regression
 
 ## 7. 再開時の禁止事項
 
@@ -698,8 +755,9 @@ G1: PASS
 G2: PASS
 G3 Gate: PASS, trial 002 tested implementation fd4e332
 G4 Gate: PASS, trial 003 tested implementation a8b656b, final evidence 5b41aff
-G5 implementation: READY_FOR_TEST, trial 001 commit cb0f451
-G5 Gate: Test Agent decision pending
+G5 trial 001 Gate: FAIL, required coverage missing
+G5 implementation: READY_FOR_TEST, trial 002 commit 4a83bb6
+G5 Gate: trial 002 Test Agent decision pending
 G6: NOT STARTED
-next allowed implementation action: wait for G5 trial 001 Gate Decision
+next allowed implementation action: wait for G5 trial 002 Gate Decision
 ```
