@@ -3,11 +3,9 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在HEAD: `87099e10e84d92b466791436d6db203d8c658efe`
+- 現在のimplementation commit: `73a92c1b5899bc0d072df0faf8621b5171b00e5a`
 - 現在の確定migration head: `20260807_product_0004`
-- 実装順序の正本:
-  - `00_enhance_plan_documents/06_Ariadne_ENH-E3_実装指示書.md`
-  - `00_enhance_plan_documents/06a_Ariadne_ENH-E3_実装順序補正・段階Gate適用指示.md`
+- 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
 
 ## 1. 引継ぎ時点の結論
@@ -19,11 +17,12 @@
    - 証跡commit: `4f597f0`
 2. Gate G2はPASS済みである。
    - 実装commit: `065859d8e6ff40e7393f79928653ebefc8e139e1`
-   - 証跡commit / 現在HEAD: `87099e10e84d92b466791436d6db203d8c658efe`
-3. E3-3 Predictive Specification + Splitは実装途中であり、差分は未コミットである。
+   - 証跡commit: `87099e10e84d92b466791436d6db203d8c658efe`
+3. E3-3 Predictive Specification + Splitのtrial `001` implementation commitは`73a92c1b5899bc0d072df0faf8621b5171b00e5a`である。
 4. G3新規テスト単体は`11 passed`、G1/G2/architectureを含む選択回帰は`38 passed`まで確認済みである。
 5. G3差分を含む最終`uv run pytest -q`は46%進行時点でユーザー操作により中断された。完走結果は存在しないため、G3はPASSと判定してはならない。
-6. G4 Training + Evaluation、G5 Explain + Predictive UI、G6 Cross-analysis Lineage + Full E2Eは未着手である。
+6. G3は`READY_FOR_TEST`であり、Test Agentの独立監査前なのでPASSではない。
+7. G4 Training + Evaluation、G5 Explain + Predictive UI、G6 Cross-analysis Lineage + Full E2Eは未着手である。
 
 ### 1.2. 現在の判定
 
@@ -34,8 +33,8 @@
 | Gate G1 | **PASS** | `526eec8` / `4f597f0` |
 | E3-2 Analysis View + Explore + Explore UI | Completed | G2実装commitに収録 |
 | Gate G2 | **PASS** | `065859d` / `87099e1` |
-| E3-3 Predictive Specification + Split | **In Progress** | 未コミット差分、選択テストPASS、全test未完走 |
-| Gate G3 | **NOT PASSED** | 最終full pytestとGate commitが未完了 |
+| E3-3 Predictive Specification + Split | **READY_FOR_TEST** | trial `001` implementation commit `73a92c1` |
+| Gate G3 | **NOT PASSED** | Test Agentのtrial `001` Gate Decision未作成 |
 | E3-4 / Gate G4 | Not Started | G3 PASS前のため開始禁止 |
 | E3-5 / Gate G5 | Not Started | G4 PASS前のため開始禁止 |
 | E3-6 / Gate G6 | Not Started | 前段Gate未完了 |
@@ -45,6 +44,8 @@
 ### 2.1. 確定commit列
 
 ```text
+73a92c1 feat: complete ENH-E3 G3 predictive specification and split
+f4faffc ENH-E3 途中経過。GATE G2 Pass 済， G3 実施途中
 87099e1 docs: record ENH-E3 G2 gate evidence
 065859d feat: pass ENH-E3 G2 exploration gate
 4f597f0 docs: record ENH-E3 G1 gate evidence
@@ -52,9 +53,9 @@
 3f87379 ENH-E2
 ```
 
-### 2.2. 現在のtracked変更
+### 2.2. 途中経過commitに収録されたtracked変更
 
-以下はすべてG3作業中の未コミット差分である。
+以下はG3作業中の差分として記録され、途中経過commit `f4faffc`へ収録された。
 
 | File | 変更目的 |
 | --- | --- |
@@ -64,9 +65,9 @@
 | `src/ariadne/product/application/exploratory_service.py` | Dataset / Analysis View読込を共有`AnalysisFrameProvider`へ委譲 |
 | `tests/product/conftest.py` | G3テスト用の厳密なPredictive Specification factory fixtureを追加 |
 
-tracked差分の概算は5 files、52 insertions、22 deletionsである。ただし、後述のuntracked新規ファイルはこの数に含まれない。
+当時のtracked差分の概算は5 files、52 insertions、22 deletionsであった。
 
-### 2.3. G3で新規作成したuntrackedファイル
+### 2.3. 途中経過commitに収録されたG3新規ファイル
 
 | File | 状態 / 責務 |
 | --- | --- |
@@ -83,7 +84,7 @@ tracked差分の概算は5 files、52 insertions、22 deletionsである。た�
 | `tests/product/test_predictive_leakage_e3.py` | target/future/group/overlap/population leakage |
 | `tests/product/test_predictive_split_api_e3.py` | API→Artifact Store→DB→Lineageの統合契約 |
 
-### 2.4. 保存済みだがG3の完成物として扱ってはならないuntrackedファイル
+### 2.4. 保存済みだがG3の完成物として扱ってはならないファイル
 
 | File / Directory | 扱い |
 | --- | --- |
@@ -92,7 +93,7 @@ tracked差分の概算は5 files、52 insertions、22 deletionsである。た�
 | `src/ariadne/product/domain/lineage.py` | Domain draft。G2/G3は`LineageEdgeOrm`で必要な辺を永続化しているが、横断Lineage完成はG6 |
 | 承認文書ディレクトリ、`_bkup/`、`document_inventory.json` | ユーザー入力。削除・一括stage禁止 |
 
-`git add .`は使用しないこと。G3 commit時は対象fileを明示し、少なくとも`metrics.py`、Research Context / Lineage draft、承認文書backupを除外すること。
+trial `001` implementation commitでは対象fileだけを明示stageし、`metrics.py`、Research Context / Lineage draft、control documentを変更対象から除外した。
 
 ## 3. Work Package別の実装詳細
 
@@ -104,7 +105,7 @@ tracked差分の概算は5 files、52 insertions、22 deletionsである。た�
 
 ### 引継ぎ注意
 
-- 実装順序は元のWP番号順ではなく、`06a`のG1〜G6順を優先する。
+- 実装順序は`06b_Ariadne_ENH-E3_実装再開指示書.md`を正本とする。
 - 現在はG3判定前であるため、Training実装へ進んではならない。
 
 ## 3.2. WP-1 Domain / Migration
@@ -206,7 +207,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 - Explore Resultへの観察メモ/限界Annotationは汎用Annotation統合側に残る。
 - route-backed navigation / browser backはWP-7後段に残る。
 
-## 3.7. WP-5 Predictive — G3範囲のみIn Progress
+## 3.7. WP-5 Predictive — G3範囲のみREADY_FOR_TEST
 
 ### Predictive Specification
 
@@ -225,7 +226,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 
 ### Leakage Validator
 
-実装・テスト済み拒否:
+実装済み拒否（trial `001`ではCoding Agentによるテスト実行なし）:
 
 - target列をfeatureへ含める
 - prediction time後または`OUTCOME_WINDOW_END`等で利用可能になるfeature
@@ -240,7 +241,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 
 ### Split Runner / Artifact
 
-実装中の`PredictiveSplitRunner`はmodel trainingを行わず、以下だけを生成する。
+`PredictiveSplitRunner`はmodel trainingを行わず、以下だけを生成する。
 
 - RANDOM / STRATIFIED / GROUP / TIME_BASED partition
 - stable row ordinal
@@ -263,7 +264,7 @@ G3では`product_0004`のgeneric tableを利用できるため、新migrationは
 
 ### API
 
-未コミットrouterで以下を追加している。
+以下のrouterを実装済みである。
 
 ```text
 GET  /api/v1/projects/{project_id}/predictive/capabilities
@@ -428,59 +429,24 @@ decision: 結果不成立。PASSとして扱わない
 - Predictive split validationはAPI process内で実行する。将来、非常に大きいDatasetを扱う場合はasync Executionへ移す判断が必要だが、G3のsplit preview/validation契約では同期処理を採用している。
 - `metrics.py`はG4 draftであり、現在のG3 test evidenceには含まれない。
 
-## 6. 後続エージェントの再開手順
+## 6. Trial 001 handoff
 
-### 6.1. 最優先
+### 6.1. 現在状態
 
-1. この報告書と`ENH-E3_gate_execution_report.md`を読む。
-2. `git status --short`で、上記分類と一致することを確認する。
-3. G4コードへ触れず、G3差分をreviewする。
-4. 次を再実行する。
+- implementation base commit: `f4faffc0afdec2abc6b0952bd4762952774de92a`
+- implementation completed commit: `73a92c1b5899bc0d072df0faf8621b5171b00e5a`
+- completion report: `G3_001_implementation_completion_report.md`
+- Coding Agent test execution: NOT PERFORMED
+- 最新Gate Decision: 未作成
+- next allowed implementation action: 同一GateのTest Agent監査結果を待つ
 
-```bash
-UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run python -m compileall -q src tests
-UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q \
-  tests/product/test_predictive_spec_e3.py \
-  tests/product/test_predictive_split_e3.py \
-  tests/product/test_predictive_leakage_e3.py \
-  tests/product/test_predictive_split_api_e3.py
-UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q
-git diff --check
-```
+### 6.2. Test Agent focus
 
-5. 必要に応じてPostgreSQL上でも`test_predictive_split_api_e3.py`を実行し、SQLite固有挙動でないことを確認する。
-6. 全test PASS後のみG3 PASS判定を行う。
-
-### 6.2. G3 commit時の明示stage候補
-
-```text
-src/ariadne/capabilities/predictive/__init__.py
-src/ariadne/capabilities/predictive/planner.py
-src/ariadne/capabilities/predictive/split_runner.py
-src/ariadne/capabilities/predictive/splitting.py
-src/ariadne/capabilities/predictive/validation.py
-src/ariadne/interfaces/web_api/app.py
-src/ariadne/interfaces/web_api/dependencies.py
-src/ariadne/interfaces/web_api/error_handlers.py
-src/ariadne/interfaces/web_api/routers/predictive.py
-src/ariadne/product/application/analysis_frame_service.py
-src/ariadne/product/application/exploratory_service.py
-src/ariadne/product/application/predictive_split_service.py
-tests/product/conftest.py
-tests/product/test_predictive_spec_e3.py
-tests/product/test_predictive_split_e3.py
-tests/product/test_predictive_leakage_e3.py
-tests/product/test_predictive_split_api_e3.py
-```
-
-`src/ariadne/capabilities/predictive/metrics.py`はG4用draftなので、G3 commitには含めない。
-
-### 6.3. G3 Gate確定
-
-1. G3実装commitを作成する。
-2. commit hash、full pytestの正確な件数・時間、既知制約を`ENH-E3_gate_execution_report.md`のG3節へ記録する。
-3. Gate証跡commitを作成する。
-4. G3 PASSを確定してからのみE3-4 Training + Evaluationへ進む。
+- G3 canonical test 4ファイル
+- Generic Executor変更に対するG1 Generic Workflow / CausalおよびG2 Exploratory回帰
+- SQLite / PostgreSQL persistence、Artifact、Lineage、source hash
+- split determinism、leakage/isolation、machine-readable error code/path
+- full active suite
 
 ## 7. 再開時の禁止事項
 
@@ -496,8 +462,8 @@ tests/product/test_predictive_split_api_e3.py
 ```text
 G1: PASS
 G2: PASS
-G3 implementation: IN PROGRESS, targeted tests PASS
-G3 Gate: NOT PASSED, full suite interrupted
+G3 implementation: READY_FOR_TEST, trial 001 commit 73a92c1
+G3 Gate: NOT PASSED, Test Agent decision pending
 G4-G6: NOT STARTED
-safe next action: finish G3 verification and Gate commit only
+next allowed implementation action: wait for G3 trial 001 Gate Decision
 ```
