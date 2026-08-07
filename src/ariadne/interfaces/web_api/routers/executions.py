@@ -5,12 +5,14 @@ from __future__ import annotations
 from fastapi import APIRouter, Header, Request
 
 from ariadne.interfaces.web_api.dependencies import (
-    ExecutionServiceDep, IdempotencyServiceDep, ProductQueryServiceDep,
+    ExecutionServiceDep,
+    IdempotencyServiceDep,
+    PredictiveWorkflowServiceDep,
+    ProductQueryServiceDep,
 )
 from ariadne.interfaces.web_api.schemas import (
     ExecutionBatchCreate,
     ExecutionBatchResponse,
-    ExecutionListResponse,
     ExecutionResponse,
     ExecutionPrefillResponse,
     ExecutionAccepted,
@@ -96,10 +98,17 @@ async def create_execution_batch(
     return ExecutionBatchResponse.model_validate(response)
 
 
-@router.get("/projects/{project_id}/executions", response_model=ExecutionListResponse)
-async def list_executions(project_id: str, query: ProductQueryServiceDep) -> ExecutionListResponse:
-    items = query.list_executions(project_id)
-    return ExecutionListResponse(items=[_execution_to_response(e) for e in items])
+@router.get("/projects/{project_id}/executions")
+async def list_executions(
+    project_id: str,
+    query: ProductQueryServiceDep,
+    predictive: PredictiveWorkflowServiceDep,
+) -> dict[str, object]:
+    causal = [
+        _execution_to_response(execution).model_dump(mode="json")
+        for execution in query.list_executions(project_id)
+    ]
+    return {"items": [*causal, *predictive.list_family_executions(project_id)]}
 
 
 @router.get("/executions/{execution_id}", response_model=ExecutionResponse)

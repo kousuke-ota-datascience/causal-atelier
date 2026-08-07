@@ -154,6 +154,55 @@ def validate_predictive_specification(payload: Mapping[str, Any]) -> dict[str, A
     for name in ("preprocessing_spec", "model_spec", "tuning_spec", "evaluation_spec", "explanation_spec"):
         if not isinstance(payload[name], Mapping):
             raise InvalidSchema(f"{name} must be an object")
+    preprocessing = dict(payload["preprocessing_spec"])
+    reject_unknown(
+        preprocessing,
+        {"fit_partition", "numeric_imputation", "scale_numeric", "categorical_encoding"},
+        name="preprocessing_spec",
+    )
+    if preprocessing.get("fit_partition", "TRAIN") != "TRAIN":
+        raise PredictiveValidationError(
+            "PREPROCESSING_LEAKAGE_DETECTED",
+            "Preprocessing may only be fitted on TRAIN",
+            path="preprocessing_spec.fit_partition",
+        )
+    if preprocessing.get("numeric_imputation", "MEAN") != "MEAN":
+        raise InvalidSchema("Only deterministic MEAN numeric imputation is supported")
+    if preprocessing.get("categorical_encoding", "ONE_HOT") != "ONE_HOT":
+        raise InvalidSchema("Only deterministic ONE_HOT categorical encoding is supported")
+    if not isinstance(preprocessing.get("scale_numeric", True), bool):
+        raise InvalidSchema("preprocessing_spec.scale_numeric must be boolean")
+
+    from ariadne.capabilities.predictive.modeling import resolve_model_spec
+
+    resolve_model_spec(str(task_type), dict(payload["model_spec"]))
+
+    tuning = dict(payload["tuning_spec"])
+    reject_unknown(
+        tuning,
+        {"selection_partitions", "candidates", "objective_metric"},
+        name="tuning_spec",
+    )
+    selection_partitions = tuning.get("selection_partitions", ["TRAIN", "VALIDATION"])
+    if not isinstance(selection_partitions, list) or any(
+        partition not in {"TRAIN", "VALIDATION", "TEST"}
+        for partition in selection_partitions
+    ):
+        raise InvalidSchema("tuning_spec.selection_partitions is invalid")
+    assert_test_isolation(selection_partitions)
+    candidates = tuning.get("candidates", [])
+    if not isinstance(candidates, list) or candidates:
+        raise InvalidSchema(
+            "Automated tuning candidates are not supported in the G4 minimal registry"
+        )
+
+    explanation = dict(payload["explanation_spec"])
+    if explanation:
+        raise PredictiveValidationError(
+            "EXPLANATION_UNAVAILABLE",
+            "Predictive explanation is unavailable in G4",
+            path="explanation_spec",
+        )
     evaluation = dict(payload["evaluation_spec"])
     reject_unknown(
         evaluation,

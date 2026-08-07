@@ -7,7 +7,10 @@ from typing import Any, Literal
 from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict
 
-from ariadne.interfaces.web_api.dependencies import PredictiveSplitServiceDep
+from ariadne.interfaces.web_api.dependencies import (
+    PredictiveSplitServiceDep,
+    PredictiveWorkflowServiceDep,
+)
 
 router = APIRouter(tags=["predictive"])
 
@@ -42,20 +45,10 @@ class PredictiveSplitResponse(StrictModel):
 
 
 @router.get("/projects/{project_id}/predictive/capabilities")
-async def predictive_capabilities(project_id: str) -> dict[str, Any]:
-    return {
-        "schema_version": "predictive-capabilities/1",
-        "gate": "G3_SPLIT_ONLY",
-        "task_types": ["BINARY_CLASSIFICATION", "REGRESSION"],
-        "split_strategies": ["RANDOM", "STRATIFIED", "GROUP", "TIME_BASED"],
-        "metrics": {
-            "BINARY_CLASSIFICATION": [
-                "ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1",
-            ],
-            "REGRESSION": ["MAE", "RMSE", "R2"],
-        },
-        "training_available": False,
-    }
+async def predictive_capabilities(
+    project_id: str, svc: PredictiveWorkflowServiceDep
+) -> dict[str, Any]:
+    return svc.capabilities(project_id)
 
 
 @router.post(

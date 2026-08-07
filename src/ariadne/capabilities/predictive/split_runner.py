@@ -1,4 +1,4 @@
-"""Predictive split Stage Runner; no model fitting occurs in Gate G3."""
+"""Predictive split Stage Runner shared by split validation and the full DAG."""
 
 from __future__ import annotations
 
@@ -13,7 +13,12 @@ from ariadne.capabilities.predictive.validation import validate_predictive_speci
 from ariadne.product.domain.errors import PredictiveValidationError
 from ariadne.product.domain.execution_plan import StageType
 from ariadne.product.domain.schemas import canonical_hash
-from ariadne.product.workflow.contracts import ArtifactDraft, StageContext, StageRunResult
+from ariadne.product.workflow.contracts import (
+    ArtifactDraft,
+    ResultDraft,
+    StageContext,
+    StageRunResult,
+)
 from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 
 
@@ -144,9 +149,19 @@ class PredictiveSplitRunner:
         content = json.dumps(
             manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False,
         ).encode("utf-8")
-        summary = {key: value for key, value in manifest.items() if key != "partitions"}
         return StageRunResult(
-            output_bindings={"partition_manifest": summary},
+            output_bindings={"partition_manifest": manifest},
+            results=(ResultDraft(
+                result_type="SPLIT_RESULT",
+                schema_version="predictive-split-result/1",
+                analytical_status="PASS",
+                summary={
+                    "strategy": strategy,
+                    "partition_counts": manifest["partition_counts"],
+                    "specification_hash": manifest["specification_hash"],
+                },
+                diagnostics={"selection_contract": manifest["selection_contract"]},
+            ),),
             artifacts=(ArtifactDraft(
                 artifact_type="PARTITION_INDEX",
                 schema_version="partition-artifact/1",

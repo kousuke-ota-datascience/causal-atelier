@@ -15,6 +15,7 @@ from typing import Any
 from ariadne.adapters.local_artifact_store import LocalArtifactStore
 from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
 from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
+from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
 from ariadne.scientific.core_adapter import ScientificCoreAdapter
 
 logger = logging.getLogger(__name__)
@@ -58,6 +59,7 @@ def run_worker(
         artifact_store=artifact_store,
     )
     exploratory_processor = ExploratoryWorkspaceService(session_factory, artifact_store)
+    predictive_processor = PredictiveWorkflowService(session_factory, artifact_store)
 
     signal.signal(signal.SIGTERM, _handle_signal)
     signal.signal(signal.SIGINT, _handle_signal)
@@ -87,7 +89,18 @@ def run_worker(
                         exploratory_execution_id, worker_token=worker_token,
                     )
                 else:
-                    time.sleep(poll_seconds)
+                    predictive_execution_id = predictive_processor.claim_next(
+                        worker_token, worker_id=worker_id,
+                    )
+                    if predictive_execution_id is not None:
+                        logger.info(
+                            "Claimed predictive execution %s", predictive_execution_id
+                        )
+                        predictive_processor.process_execution(
+                            predictive_execution_id, worker_token=worker_token,
+                        )
+                    else:
+                        time.sleep(poll_seconds)
         except Exception as exc:
             logger.exception("Worker loop error: %s", exc)
             time.sleep(poll_seconds)

@@ -197,13 +197,18 @@ async def test_split_runner_validation_error_preserves_machine_code_and_field_pa
 
 
 @pytest.mark.anyio
-@pytest.mark.requirement("FR-055", "FR-058")
-async def test_g3_capabilities_do_not_advertise_training(client) -> None:  # type: ignore[no-untyped-def]
+@pytest.mark.requirement("FR-055", "FR-058", "G4-CAPABILITIES")
+async def test_g4_capabilities_advertise_training_and_g5_explanation_gap(
+    client,
+) -> None:  # type: ignore[no-untyped-def]
     project_id = (await client.post(
         "/api/v1/projects", json={"name": "Predictive capabilities"}
     )).json()["project_id"]
     response = await client.get(f"/api/v1/projects/{project_id}/predictive/capabilities")
     assert response.status_code == 200
-    assert response.json()["gate"] == "G3_SPLIT_ONLY"
-    assert response.json()["training_available"] is False
+    assert response.json()["gate"] == "G4_TRAINING_EVALUATION"
+    assert response.json()["training_available"] is True
+    assert response.json()["evaluation_available"] is True
+    assert response.json()["explanation_available"] is False
+    assert response.json()["model_registry"]
     assert "PR_AUC" in response.json()["metrics"]["BINARY_CLASSIFICATION"]

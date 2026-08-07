@@ -24,6 +24,8 @@ from ariadne.product.application.query_service import ProductQueryService
 from ariadne.product.application.artifact_service import ArtifactService
 from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
 from ariadne.product.application.predictive_split_service import PredictiveSplitService
+from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
+from ariadne.product.application.workspace_lifecycle_service import WorkspaceLifecycleService
 from ariadne.interfaces.web_api.idempotency import IdempotencyService
 from ariadne.product.persistence.unit_of_work import SqlUnitOfWork
 
@@ -103,6 +105,14 @@ async def get_predictive_split_service() -> PredictiveSplitService:
     return PredictiveSplitService(_get_session_factory(), _get_artifact_store())
 
 
+async def get_workspace_lifecycle_service() -> WorkspaceLifecycleService:
+    return WorkspaceLifecycleService(_get_session_factory())
+
+
+async def get_predictive_workflow_service() -> PredictiveWorkflowService:
+    return PredictiveWorkflowService(_get_session_factory(), _get_artifact_store())
+
+
 # FastAPI Depends aliases
 ProjectDataServiceDep = Annotated[ProjectDataService, Depends(get_project_data_service)]
 ExecutionServiceDep = Annotated[ExecutionService, Depends(get_execution_service)]
@@ -119,4 +129,10 @@ ExploratoryWorkspaceServiceDep = Annotated[
 ]
 PredictiveSplitServiceDep = Annotated[
     PredictiveSplitService, Depends(get_predictive_split_service)
+]
+WorkspaceLifecycleServiceDep = Annotated[
+    WorkspaceLifecycleService, Depends(get_workspace_lifecycle_service)
+]
+PredictiveWorkflowServiceDep = Annotated[
+    PredictiveWorkflowService, Depends(get_predictive_workflow_service)
 ]

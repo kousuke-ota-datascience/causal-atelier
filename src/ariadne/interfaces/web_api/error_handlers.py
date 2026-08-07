@@ -24,6 +24,7 @@ from ariadne.product.domain.errors import (
     InvalidDatasetFile,
     InvalidDatasetMetadata,
     InvalidGraphEditBase,
+    InvalidExecutionPlan,
     ProjectArchived,
     InvalidSchema,
     ResourceImmutable,
@@ -64,6 +65,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 422, "INVALID_DATASET_METADATA", str(exc))
     if isinstance(exc, InvalidStateTransition):
         return _error(request, 409, "EXECUTION_STATE_CONFLICT", str(exc))
+    if isinstance(exc, InvalidExecutionPlan):
+        return _error(request, 422, exc.code, str(exc))
     if isinstance(exc, InvalidGraphSemantics):
         return _error(request, 422, "INVALID_GRAPH_SEMANTICS", str(exc))
     if isinstance(exc, InvalidAnalysisSpec):
