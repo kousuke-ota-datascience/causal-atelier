@@ -23,6 +23,7 @@ from ariadne.product.application.project_data_service import ProjectDataService
 from ariadne.product.application.query_service import ProductQueryService
 from ariadne.product.application.artifact_service import ArtifactService
 from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
+from ariadne.product.application.predictive_split_service import PredictiveSplitService
 from ariadne.interfaces.web_api.idempotency import IdempotencyService
 from ariadne.product.persistence.unit_of_work import SqlUnitOfWork
 
@@ -98,6 +99,10 @@ async def get_exploratory_workspace_service() -> ExploratoryWorkspaceService:
     return ExploratoryWorkspaceService(_get_session_factory(), _get_artifact_store())
 
 
+async def get_predictive_split_service() -> PredictiveSplitService:
+    return PredictiveSplitService(_get_session_factory(), _get_artifact_store())
+
+
 # FastAPI Depends aliases
 ProjectDataServiceDep = Annotated[ProjectDataService, Depends(get_project_data_service)]
 ExecutionServiceDep = Annotated[ExecutionService, Depends(get_execution_service)]
@@ -111,4 +116,7 @@ ArtifactServiceDep = Annotated[ArtifactService, Depends(get_artifact_service)]
 IdempotencyServiceDep = Annotated[IdempotencyService, Depends(get_idempotency_service)]
 ExploratoryWorkspaceServiceDep = Annotated[
     ExploratoryWorkspaceService, Depends(get_exploratory_workspace_service)
+]
+PredictiveSplitServiceDep = Annotated[
+    PredictiveSplitService, Depends(get_predictive_split_service)
 ]

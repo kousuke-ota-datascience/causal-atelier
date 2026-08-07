@@ -30,6 +30,7 @@ from ariadne.product.domain.errors import (
     ResourceImmutable,
 )
 from ariadne.product.domain.schemas import SchemaRegistry, canonical_hash
+from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
 from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
     ArtifactOrm,
@@ -57,6 +58,7 @@ class ExploratoryWorkspaceService:
         self._session_factory = session_factory
         self._store = artifact_store
         self._compiler = AnalysisViewCompiler()
+        self._frames = AnalysisFrameProvider(session_factory, artifact_store)
 
     def create_view(
         self,
@@ -470,27 +472,7 @@ class ExploratoryWorkspaceService:
     def _analysis_frame(
         self, project_id: str, dataset_version_id: str, analysis_view_id: str | None
     ) -> tuple[pd.DataFrame, dict[str, Any]]:
-        with self._session_factory() as session:
-            dataset, frame = self._load_frame(session, dataset_version_id)
-            if dataset.project_id != project_id: raise EntityNotFound("DatasetVersion", dataset_version_id)
-            if analysis_view_id:
-                view = self._view(session, project_id, analysis_view_id)
-                if view.status != "FIXED": raise InvalidSchema("Analysis View must be FIXED")
-                compiled = self._compiler.compile(
-                    frame, dataset.schema_json, view.spec_json,
-                    source_dataset_content_hash=dataset.content_hash,
-                )
-                if compiled.manifest != view.manifest_json:
-                    raise ArtifactHashMismatch("Fixed Analysis View no longer reproduces its manifest")
-                return compiled.frame, compiled.manifest
-            manifest = {
-                "schema_version": "analysis-view-manifest/1",
-                "source_dataset_content_hash": dataset.content_hash,
-                "materialized_hash": dataset.content_hash,
-                "source_row_count": len(frame), "output_row_count": len(frame),
-                "output_columns": list(frame.columns), "view_spec": None,
-            }
-            return frame, manifest
+        return self._frames.load(project_id, dataset_version_id, analysis_view_id)
 
     def _run_in_memory(
         self, execution_id: str, project_id: str, spec: dict[str, Any], frame: pd.DataFrame

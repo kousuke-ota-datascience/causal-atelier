@@ -1,0 +1,82 @@
+{
+  "package": "20260807_ENH-E3_enhance_plan",
+  "variant": "canonical-full-rewrite-approved",
+  "status": "ENH-E3承認済み",
+  "approval": {
+    "decision": "APPROVED",
+    "approved_by": "本チャット依頼者",
+    "approved_at": "2026-08-07 13:06 JST",
+    "evidence": "本チャットにおける「承認する」の明示的承認"
+  },
+  "baseline_branch": "prototype/ariadne_mvp_e3",
+  "baseline_commit": "3f87379bb3cbf18ba6f436877306959ddfd24163",
+  "baseline_migration_head": "20260806_product_0003",
+  "canonical_policy": "10_Revised_requirements_definition_documents is self-contained and describes only the ENH-E3 target state.",
+  "files": [
+    {
+      "path": "00_enhance_plan_documents/01_Enhance構想・要件改定計画.md",
+      "bytes": 5831,
+      "sha256": "a71c097513a22493ff776ab130118b4a57e7392c409358c693e977db2b079ce9"
+    },
+    {
+      "path": "00_enhance_plan_documents/02_Enhance構想承認記録.md",
+      "bytes": 1838,
+      "sha256": "5fcc05db315d2b2f682d123618870aeed6611b2666f10aa23e21cd49d881b73d"
+    },
+    {
+      "path": "00_enhance_plan_documents/03_要件定義書改定.md",
+      "bytes": 1534,
+      "sha256": "cc75b2157e1e7181b4e3d52aba1e975309dcb167952108d84471247dc202ddc7"
+    },
+    {
+      "path": "00_enhance_plan_documents/04_設計書改定.md",
+      "bytes": 1530,
+      "sha256": "5db320e129a2e1b9644703c0dc7df18ca9c3027fa04d27351fb2e1d20c10d70a"
+    },
+    {
+      "path": "00_enhance_plan_documents/05_要件・設計整合性およびトレーサビリティ確認.md",
+      "bytes": 3274,
+      "sha256": "efda8c8160a2ae30a2c111e537012af7abd4b6df05c6f335e00baf67c2ef593b"
+    },
+    {
+      "path": "00_enhance_plan_documents/06_Ariadne_ENH-E3_実装指示書.md",
+      "bytes": 4537,
+      "sha256": "994ba31e5af8a038b66ed2beaddf30d441200fd95aa6c922395459ea6e8b8ed9"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/00_プロダクトコンセプトメモ.md",
+      "bytes": 14166,
+      "sha256": "fba36b5843fa8d92fbba4337c917c05af48016b48846ea863f8768c5d6ec9896"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/10_要件定義.md",
+      "bytes": 25210,
+      "sha256": "6cab258eac965dc89ae0e25b581bc23026989b9397694aeff2c44a74976461bb"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/21_論理データ設計.md",
+      "bytes": 16011,
+      "sha256": "76098076d093106436a26683f82bfd04fdf20038edba6cc3575ef71f4441f84a"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/22_プロダクト基本設計.md",
+      "bytes": 10437,
+      "sha256": "a2481a133204078635340d4ea7201b0e53353bc55266d3f3c57a74f2487e8eea"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/23_API・インターフェース設計.md",
+      "bytes": 12318,
+      "sha256": "dfc3a54dc42bbbe2db3352d1dcbd16472bd8af4845175555359793b7b42e94b6"
+    },
+    {
+      "path": "10_Revised_requirements_definition_documents/30_詳細設計.md",
+      "bytes": 17528,
+      "sha256": "f9e7196e12088e5b67f8cdc0ff25f1eae27bfe909db91cb4f4935e1de67ab68d"
+    },
+    {
+      "path": "20_implementation_reports/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -27,6 +27,7 @@ from ariadne.product.domain.errors import (
     ProjectArchived,
     InvalidSchema,
     ResourceImmutable,
+    PredictiveValidationError,
 )
 from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
 
@@ -73,6 +74,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         )
     if isinstance(exc, InvalidSchema):
         return _error(request, 422, "INVALID_SCHEMA", str(exc))
+    if isinstance(exc, PredictiveValidationError):
+        return _error(request, 422, exc.code, str(exc), {"path": exc.path})
     if isinstance(exc, ResourceImmutable):
         return _error(request, 409, "RESOURCE_IMMUTABLE", str(exc))
     if isinstance(exc, ArtifactHashMismatch):
