@@ -228,6 +228,29 @@ def main() -> int:
                 "result_ids": [item["result_id"] for item in results],
             }
 
+            target_input = page.locator(
+                '#predictive-form input[name="target"]'
+            )
+            target_input.fill("missing_target")
+            run.click()
+            rendered_error = page.locator("#notice.show").filter(
+                has_text="UNKNOWN_PREDICTIVE_COLUMN"
+            )
+            rendered_error.wait_for(timeout=30_000)
+            assert "missing_target" in rendered_error.text_content()
+            assert _latest_predictive_execution(project_id)["execution_id"] == (
+                execution["execution_id"]
+            )
+            page.screenshot(
+                path=OUTPUT / "G5-predictive-error-rendering.png", full_page=True
+            )
+            evidence["scenarios"]["predictive-error-rendering"] = {
+                "status": "PASS",
+                "induced_error": "UNKNOWN_PREDICTIVE_COLUMN",
+                "rendered_message": rendered_error.text_content(),
+            }
+            target_input.fill("converted")
+
             page.locator('nav button[data-route="data"]').click()
             page.wait_for_url(f"**/projects/{project_id}/data")
             page.locator('nav button[data-workspace="predictive"]').click()

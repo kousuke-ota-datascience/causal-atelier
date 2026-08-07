@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+import platform
 import uuid
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -18,9 +22,25 @@ from ariadne.product.application.predictive_workflow_service import (
     PredictiveWorkflowService,
 )
 from ariadne.product.domain.errors import InvalidSchema, PredictiveValidationError
+from ariadne.product.persistence.orm_models import FamilyArtifactOrm
 from ariadne.product.workflow.executor import GenericExecutor
 from ariadne.product.workflow.plan_validator import PlanValidator
 from ariadne.product.workflow.runner_registry import StageRunnerRegistry
+
+
+TERMINOLOGY_LIMITATION = (
+    "Predictive Explanation is not a Causal Explanation or Treatment Effect."
+)
+
+
+def _assert_predictive_export_terminology(document: dict) -> None:  # type: ignore[type-arg]
+    assert TERMINOLOGY_LIMITATION in document["limitations"]
+    exported_without_limitations = {**document, "limitations": []}
+    serialized = json.dumps(
+        exported_without_limitations, ensure_ascii=False, sort_keys=True
+    ).lower()
+    assert "causal" not in serialized
+    assert "effect" not in serialized
 
 
 def _registry() -> StageRunnerRegistry:
@@ -245,22 +265,42 @@ def test_model_card_is_complete_and_unsupported_method_returns_not_applicable(
         "warnings",
         "code_runtime_metadata",
     }
+    assert model_card.payload["intended_use"] == "prioritize outreach"
+    assert model_card.payload["deployment_population"] == "eligible customers"
     assert model_card.payload["training_data"]["training_partition"] == "TRAIN"
+    assert model_card.payload["feature_set"] == {
+        "input_features": ["score"],
+        "output_features": ["score"],
+        "excluded_columns": ["converted", "customer_id"],
+    }
     assert model_card.payload["split_strategy"]["strategy"] == "STRATIFIED"
+    descriptor = model_card.payload["model_descriptor"]
+    assert set(descriptor) == {
+        "model_id", "task_type", "parameters", "seed", "feature_order",
+        "preprocessor_hash",
+    }
+    assert descriptor["model_id"] == "logistic_regression.v1"
+    assert descriptor["task_type"] == "BINARY_CLASSIFICATION"
+    assert descriptor["parameters"] == {
+        "iterations": 800, "learning_rate": 0.1, "l2": 0.001,
+    }
+    assert descriptor["seed"] == 17
+    assert descriptor["feature_order"] == ["score"]
+    assert len(descriptor["preprocessor_hash"]) == 64
     assert model_card.payload["selected_hyperparameters"]["iterations"] == 800
     assert model_card.payload["validation_metrics"]["sample_count"] == 24
     assert model_card.payload["test_metrics"]["sample_count"] == 24
     assert model_card.payload["code_runtime_metadata"]["code"] == "ariadne/0.1.0"
-    assert (
-        "Predictive Explanation is not a Causal Explanation or Treatment Effect."
-        in model_card.payload["limitations"]
-    )
+    assert TERMINOLOGY_LIMITATION in model_card.payload["limitations"]
 
 
 @pytest.mark.anyio
-@pytest.mark.requirement("G5-PREDICTIVE-EXPLANATION-PERSISTENCE-LINEAGE")
+@pytest.mark.requirement(
+    "G5-PREDICTIVE-EXPLANATION-PERSISTENCE-LINEAGE",
+    "G5-PREDICTIVE-EXPORT-TERMINOLOGY",
+)
 async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
-    client, predictive_spec_factory,
+    client, predictive_spec_factory, tmp_path: Path,
 ) -> None:  # type: ignore[no-untyped-def]
     project = await client.post(
         "/api/v1/projects", json={"name": "G5 Predictive Explain"}
@@ -276,6 +316,29 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
         headers={"Idempotency-Key": "g5-explain"},
     )
     dataset_id = dataset.json()["dataset_version_id"]
+    view = await client.post(
+        f"/api/v1/projects/{project_id}/analysis-views",
+        json={
+            "view_key": "g5-explanation-population",
+            "name": "G5 explanation population",
+            "spec": {
+                "schema_version": "analysis-view/1",
+                "source_dataset_version_id": dataset_id,
+                "row_filter": [],
+                "selected_columns": ["score", "converted"],
+                "derived_columns": [],
+                "missing_value_policy": {"default": "KEEP", "columns": {}},
+                "time_cutoff": None,
+                "sampling": None,
+            },
+        },
+    )
+    view_id = view.json()["analysis_view_id"]
+    fixed_view = await client.post(
+        f"/api/v1/projects/{project_id}/analysis-views/{view_id}/fix"
+    )
+    assert fixed_view.status_code == 200
+    assert fixed_view.json()["status"] == "FIXED"
     context = await client.post(
         f"/api/v1/projects/{project_id}/research-contexts",
         json={
@@ -298,7 +361,7 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
             "analysis_family": "PREDICTIVE",
             "research_context_version_id": context_id,
             "dataset_version_id": dataset_id,
-            "analysis_view_id": None,
+            "analysis_view_id": view_id,
             "analysis_mode": "CONFIRMATORY",
             "family_spec_schema_version": "predictive-analysis-spec/1",
             "family_spec": family_spec,
@@ -331,9 +394,10 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
     token = str(uuid.uuid4())
     assert worker.claim_next(token, worker_id="g5-test-worker") == execution_id
     worker.process_execution(execution_id, worker_token=token)
-    assert (await client.get(
+    completed = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}"
-    )).json()["status"] == "SUCCEEDED"
+    )).json()
+    assert completed["status"] == "SUCCEEDED"
 
     results = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/results"
@@ -341,6 +405,51 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
     results_by_type = {result["result_type"]: result for result in results}
     assert results_by_type["PREDICTIVE_EXPLANATION_RESULT"]["analytical_status"] == "GENERATED"
     assert results_by_type["MODEL_CARD_RESULT"]["analytical_status"] == "GENERATED"
+    model_card_payload = results_by_type["MODEL_CARD_RESULT"]["payload"]
+    assert model_card_payload["intended_use"] == "prioritize outreach"
+    assert model_card_payload["deployment_population"] == "eligible customers"
+    source_snapshot = model_card_payload["training_data"]["source_snapshot"]
+    assert set(source_snapshot) == {
+        "schema_version", "dataset_version_id", "dataset_content_hash",
+        "analysis_view_id", "analysis_view_hash", "materialized_hash",
+    }
+    assert source_snapshot["schema_version"] == "predictive-source-snapshot/1"
+    assert source_snapshot["dataset_version_id"] == dataset_id
+    assert source_snapshot["dataset_content_hash"] == (
+        completed["snapshot"]["dataset_version"]["hash"]
+    )
+    assert source_snapshot["analysis_view_id"] == view_id
+    assert source_snapshot["analysis_view_hash"] == (
+        completed["snapshot"]["analysis_view"]["hash"]
+    )
+    assert len(source_snapshot["materialized_hash"]) == 64
+    assert model_card_payload["training_data"]["analysis_view_id"] == view_id
+    assert model_card_payload["feature_set"] == {
+        "input_features": ["score"],
+        "output_features": ["score"],
+        "excluded_columns": ["converted", "customer_id"],
+    }
+    assert model_card_payload["split_strategy"]["strategy"] == "STRATIFIED"
+    assert model_card_payload["model_descriptor"]["model_id"] == (
+        "logistic_regression.v1"
+    )
+    assert model_card_payload["model_descriptor"]["feature_order"] == ["score"]
+    assert model_card_payload["model_descriptor"]["parameters"] == {
+        "iterations": 800,
+        "learning_rate": 0.1,
+        "l2": 0.001,
+    }
+    assert model_card_payload["code_runtime_metadata"] == {
+        "code": "ariadne/0.1.0",
+        "python": platform.python_version(),
+        "numpy": np.__version__,
+        "pandas": pd.__version__,
+        "schemas": [
+            "analysis-specification/1",
+            "predictive-analysis-spec/1",
+            "execution-plan/1",
+        ],
+    }
     artifacts = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/artifacts"
     )).json()["items"]
@@ -353,6 +462,29 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
     assert artifacts_by_type["MODEL_CARD"]["result_id"] == (
         results_by_type["MODEL_CARD_RESULT"]["result_id"]
     )
+    exported_documents: dict[str, dict] = {}  # type: ignore[type-arg]
+    factory = dependencies._get_session_factory()
+    with factory() as session:
+        for artifact_type in ("PREDICTIVE_EXPLANATION", "MODEL_CARD"):
+            artifact_row = session.get(
+                FamilyArtifactOrm,
+                artifacts_by_type[artifact_type]["artifact_id"],
+            )
+            assert artifact_row is not None
+            exported_path = tmp_path / f"{artifact_type.lower()}-export.json"
+            dependencies._get_artifact_store().retrieve(
+                artifact_row.object_key, exported_path
+            )
+            exported_documents[artifact_type] = json.loads(
+                exported_path.read_text(encoding="utf-8")
+            )
+    assert exported_documents["PREDICTIVE_EXPLANATION"] == (
+        results_by_type["PREDICTIVE_EXPLANATION_RESULT"]["payload"]
+    )
+    assert exported_documents["MODEL_CARD"] == model_card_payload
+    for exported_document in exported_documents.values():
+        _assert_predictive_export_terminology(exported_document)
+
     lineage = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/lineage"
     )).json()["items"]
@@ -373,6 +505,37 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
     ) in edges
     assert (
         "Result", model_card_id, "DOCUMENTS", "DatasetVersion", dataset_id,
+    ) in edges
+    assert (
+        "Result", model_card_id, "DOCUMENTS", "AnalysisView", view_id,
+    ) in edges
+    assert (
+        "Result",
+        model_card_id,
+        "SUMMARIZES",
+        "Artifact",
+        artifacts_by_type["PARTITION_INDEX"]["artifact_id"],
+    ) in edges
+    assert (
+        "Result",
+        model_card_id,
+        "SUMMARIZES",
+        "Artifact",
+        artifacts_by_type["FITTED_PREPROCESSOR"]["artifact_id"],
+    ) in edges
+    assert (
+        "Result",
+        model_card_id,
+        "SUMMARIZES",
+        "Artifact",
+        artifacts_by_type["FITTED_MODEL"]["artifact_id"],
+    ) in edges
+    assert (
+        "Result",
+        model_card_id,
+        "SUMMARIZES",
+        "Artifact",
+        artifacts_by_type["PREDICTION"]["artifact_id"],
     ) in edges
     assert (
         "Result",
