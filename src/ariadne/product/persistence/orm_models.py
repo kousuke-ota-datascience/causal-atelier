@@ -556,3 +556,85 @@ class LineageEdgeOrm(ProductBase):
     __table_args__ = (
         UniqueConstraint("source_type", "source_id", "relation_type", "target_type", "target_id", name="uq_product_lineage_edge"),
     )
+
+
+class ProjectMembershipOrm(ProductBase):
+    __tablename__ = "product_project_membership"
+
+    membership_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    user_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    role: Mapped[str] = mapped_column(String(20), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("project_id", "user_id", name="uq_product_project_membership"),
+        CheckConstraint("role IN ('OWNER','EDITOR','VIEWER')", name="ck_product_project_membership_role"),
+    )
+
+
+class WorkspaceSelectionOrm(ProductBase):
+    __tablename__ = "product_workspace_selection"
+
+    workspace_selection_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    user_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    research_context_version_id: Mapped[str | None] = mapped_column(ForeignKey("product_research_context_version.research_context_version_id", ondelete="RESTRICT"))
+    dataset_version_id: Mapped[str | None] = mapped_column(ForeignKey("product_dataset_version.dataset_version_id", ondelete="RESTRICT"))
+    analysis_view_id: Mapped[str | None] = mapped_column(ForeignKey("product_analysis_view.analysis_view_id", ondelete="RESTRICT"))
+    unsaved_draft: Mapped[bool] = mapped_column(nullable=False, default=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("project_id", "user_id", name="uq_product_workspace_selection"),
+    )
+
+
+class WorkspaceAnnotationOrm(ProductBase):
+    __tablename__ = "product_workspace_annotation"
+
+    annotation_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    target_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    target_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    statement: Mapped[str] = mapped_column(Text, nullable=False)
+    rationale: Mapped[str | None] = mapped_column(Text)
+    assumptions_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    limitations_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    decision: Mapped[str | None] = mapped_column(String(20))
+    next_actions_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    revision_history_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    created_by: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "target_type IN ('Project','ResearchContextVersion','AnalysisView','AnalysisSpecification','Execution','Result','GraphVersion')",
+            name="ck_product_workspace_annotation_target_type",
+        ),
+        CheckConstraint(
+            "decision IS NULL OR decision IN ('SELECTED','REJECTED','DEFERRED')",
+            name="ck_product_workspace_annotation_decision",
+        ),
+    )
+
+
+class ExportBundleOrm(ProductBase):
+    __tablename__ = "product_export_bundle"
+
+    export_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    schema_version: Mapped[str] = mapped_column(String(100), nullable=False, default="ariadne-export-manifest/1")
+    result_ids_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False)
+    object_key: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    media_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    manifest_summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    created_by: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        CheckConstraint("size_bytes >= 0", name="ck_product_export_bundle_size"),
+    )

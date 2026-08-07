@@ -24,6 +24,14 @@
     </aside>
     <main>
       <div id="notice"></div>
+      <section id="common-workspace-header" class="card common-workspace-header" aria-label="共通Workspace selection">
+        <div><b id="common-project-name">Project未選択</b><span id="common-project-status" class="status">—</span></div>
+        <label>Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
+        <label>Dataset Version<select id="common-dataset"><option value="">未選択</option></select></label>
+        <label>Analysis View<select id="common-view"><option value="">未選択</option></select></label>
+        <div>Role <span id="common-role" class="status">—</span></div>
+        <div id="unsaved-draft-indicator" role="status">保存済み</div>
+      </section>
       <section id="management" class="workspace">
         <h1>Project Register &amp; Management</h1>
         <p>Projectの登録、ACTIVE Project一覧の確認、分析来歴を保持した利用停止を行います。</p>
@@ -34,8 +42,23 @@
       </section>
       <section id="context" class="workspace">
         <h1>Research Context</h1>
-        <p>選択中ProjectのResearch Contextを確認します。作成・編集・version管理の最終機能はG6で完成します。</p>
-        <div class="card"><h2>Active Research Context</h2><div id="research-context-summary">固定済みResearch Contextはありません。</div></div>
+        <p>Projectの研究目的、Research Question、Hypothesis、意思決定文脈をversionとして管理します。FIXED versionは上書きできません。</p>
+        <div class="grid">
+          <form id="research-context-form" class="card">
+            <h2>Research Context DRAFT</h2>
+            <input name="research_context_version_id" type="hidden">
+            <label>Context key<input name="context_key" required maxlength="100" value="primary_context"></label>
+            <label>Problem statement<textarea name="problem_statement" required></textarea></label>
+            <label>Research Questions (1行1件)<textarea name="research_questions" required></textarea></label>
+            <label>Significance<textarea name="significance"></textarea></label>
+            <label>Hypotheses (1行1件)<textarea name="hypotheses"></textarea></label>
+            <label>Decision context JSON<textarea name="decision_context" class="code-input">{}</textarea></label>
+            <label>Relations JSON<textarea name="relations" class="code-input">[]</textarea></label>
+            <div class="inline"><button id="create-context" type="submit">新しいDRAFTを作成</button><button id="update-context" type="button" class="secondary">DRAFTを保存</button><button id="fix-context" type="button">FIXED化</button></div>
+          </form>
+          <div class="card"><h2>Project purpose</h2><div id="context-project-metadata"></div><h2>Version history</h2><div id="research-context-history"></div></div>
+        </div>
+        <div class="card"><h2>Active Research Context / Related Analysis</h2><div id="research-context-summary">固定済みResearch Contextはありません。</div><div id="research-context-usage"></div></div>
       </section>
       <section id="data" class="workspace active">
         <h1>Project / Data</h1><p>プロジェクトにおいて取り組むリサーチトピックと、使用するDatasetの管理・登録を行います。</p>
@@ -158,8 +181,9 @@
       </section>
       <section id="results" class="workspace">
         <h1>Results / Lineage</h1><p>Result、判断理由、入力条件、Artifactを一つの来歴として確認します。</p>
-        <div class="card"><div class="grid"><label>Result Type filter<select id="result-type-filter"><option value="">すべて</option></select></label><label>Scientific Status filter<select id="result-status-filter"><option value="">すべて</option></select></label></div><label>Result<select id="result-select"></select></label><button id="load-result" type="button">詳細と来歴を表示</button><div id="result-detail"></div><div id="artifacts"></div><pre id="lineage"></pre></div>
-        <form id="annotation-form" class="card"><h2>Annotation</h2><label>Statement<textarea name="statement" required></textarea></label><label>採用・不採用理由<textarea name="rationale"></textarea></label><label>Assumptions (1行1件)<textarea name="assumptions"></textarea></label><label>Limitations (1行1件)<textarea name="limitations"></textarea></label><button>記録</button></form>
+        <div class="card"><h2>Cross-analysis summary</h2><div id="result-summary">Resultを読込中です。</div></div>
+        <div class="card"><div class="grid"><label>Family filter<select id="result-family-filter"><option value="">すべて</option></select></label><label>Result Type filter<select id="result-type-filter"><option value="">すべて</option></select></label><label>Analytical Status filter<select id="result-status-filter"><option value="">すべて</option></select></label></div><div id="unified-result-list"></div><div class="inline"><button id="compare-results" type="button">選択Resultを比較</button><button id="show-project-lineage" type="button" class="secondary">Project全体Lineage</button></div><div id="result-comparison"></div><label>Result<select id="result-select"></select></label><button id="load-result" type="button">詳細と来歴を表示</button><div id="result-detail"></div><div id="artifacts"></div><pre id="lineage"></pre></div>
+        <form id="annotation-form" class="card"><h2>Annotation</h2><label>Statement<textarea name="statement" required></textarea></label><label>Rationale<textarea name="rationale"></textarea></label><label>Assumptions (1行1件)<textarea name="assumptions"></textarea></label><label>Limitations (1行1件)<textarea name="limitations"></textarea></label><label>Decision<select name="decision"><option value="">未指定</option><option>SELECTED</option><option>REJECTED</option><option>DEFERRED</option></select></label><label>Next actions (1行1件)<textarea name="next_actions"></textarea></label><button>Annotationを記録</button><div id="annotations"></div></form>
       </section>
     </main>
   </div>

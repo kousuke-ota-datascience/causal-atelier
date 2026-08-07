@@ -18,6 +18,10 @@ class ProjectBoundaryViolation(DomainError):
     pass
 
 
+class ProjectAccessDenied(DomainError):
+    pass
+
+
 class ProjectArchived(DomainError):
     def __init__(self, project_id: str) -> None:
         super().__init__(f"Project is ARCHIVED and read-only: {project_id}")

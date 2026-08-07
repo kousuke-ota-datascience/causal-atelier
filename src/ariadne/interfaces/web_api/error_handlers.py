@@ -15,6 +15,7 @@ from ariadne.product.domain.errors import (
     InvalidAnalysisSpec,
     InvalidStateTransition,
     ProjectBoundaryViolation,
+    ProjectAccessDenied,
     InvalidGraphSemantics,
     ArtifactHashMismatch,
     ScientificContractViolation,
@@ -45,6 +46,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 404, "ENTITY_NOT_FOUND", str(exc))
     if isinstance(exc, ProjectBoundaryViolation):
         return _error(request, 422, "PROJECT_BOUNDARY_VIOLATION", str(exc))
+    if isinstance(exc, ProjectAccessDenied):
+        return _error(request, 403, "PROJECT_ACCESS_DENIED", str(exc))
     if isinstance(exc, ProjectArchived):
         return _error(request, 409, "PROJECT_ARCHIVED", str(exc))
     if isinstance(exc, IdempotencyConflict):

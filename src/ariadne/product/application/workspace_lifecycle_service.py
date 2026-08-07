@@ -26,6 +26,7 @@ from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
     DatasetVersionOrm,
     FamilyExecutionOrm,
+    FamilyResultOrm,
     ProjectOrm,
     ResearchContextVersionOrm,
 )
@@ -130,12 +131,19 @@ class WorkspaceLifecycleService:
                 FamilyExecutionOrm.project_id == project_id,
                 FamilyExecutionOrm.research_context_version_id == context_id,
             )))
+            execution_ids = [row.execution_id for row in executions]
+            results = list(session.scalars(select(FamilyResultOrm).where(
+                FamilyResultOrm.project_id == project_id,
+                FamilyResultOrm.execution_id.in_(execution_ids),
+            ))) if execution_ids else []
             return {
                 "research_context_version_id": context_id,
                 "analysis_specification_ids": [
                     row.analysis_specification_id for row in specifications
                 ],
-                "execution_ids": [row.execution_id for row in executions],
+                "analysis_families": sorted({row.analysis_family for row in executions}),
+                "execution_ids": execution_ids,
+                "result_ids": [row.result_id for row in results],
             }
 
     def create_analysis_specification(
