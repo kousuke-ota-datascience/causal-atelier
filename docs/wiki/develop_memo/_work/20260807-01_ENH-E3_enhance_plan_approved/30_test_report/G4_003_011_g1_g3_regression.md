@@ -46,7 +46,21 @@ UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q te
 
 G3 targetedとG1/G2重要回帰45件が全成功したためPASS。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:27:52Z
+- Finished at: 2026-08-07T10:28:08Z
+
+~~~bash
+UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/product/test_predictive_spec_e3.py tests/product/test_predictive_leakage_e3.py tests/product/test_predictive_split_e3.py tests/product/test_predictive_split_api_e3.py tests/product/test_analysis_view_e3.py tests/product/test_exploratory_contract_e3.py tests/product/test_exploratory_api_worker_e2e_e3.py tests/product/test_exploratory_frontend_contract_e3.py tests/product/test_enh_e3_workflow_core.py tests/product/test_enh_e3_causal_workflow_regression.py tests/product/test_architecture.py
+~~~
+
+- Exact result: exit code 0; 45 passed; 0 failed; 0 skipped; 16s wall clock (pytest 9.30s).
+- Log / evidence: `/tmp/g4_003_full_rerun_011.log`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
-

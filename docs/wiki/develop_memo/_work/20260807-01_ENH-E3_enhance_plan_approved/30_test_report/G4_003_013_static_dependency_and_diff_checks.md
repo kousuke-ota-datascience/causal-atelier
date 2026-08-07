@@ -50,7 +50,24 @@ git diff --name-only a8b656b463b2f8251eff8006538d04ad5af83918 HEAD
 
 commit境界と全静的条件が成立したためPASS。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:25:00Z
+- Finished at: 2026-08-07T10:26:07Z
+
+~~~bash
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m compileall -q src tests
+git diff --check
+git diff --check 74a35fad6be00a883df8c4d92ac0ef05a53a5791 a8b656b463b2f8251eff8006538d04ad5af83918
+.venv/bin/alembic -c alembic_product.ini heads
+~~~
+
+- Exact result: final corrected audit exit code 0; production diff 0; migration diff 0; post-handoff source/test/migration diff 0; single head 0005; Generic Executor predictive token 0; Product/Web legacy import 0. Initial wrapper used an over-broad implementation..HEAD diff and failed to aggregate its warning status; second wrapper exited 1 because zero-match rg was combined with set -e. Both were auditor command errors, not product failures; final command handled zero-match explicitly.
+- Log / evidence: `/tmp/g4_003_full_rerun_013_static.log; /tmp/g4_003_full_rerun_013_static_corrected.log; /tmp/g4_003_full_rerun_013_static_final.log; coverage: /tmp/g4_003_full_rerun_coverage.log (13 tests collected, all required patterns found)`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
-

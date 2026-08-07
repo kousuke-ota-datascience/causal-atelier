@@ -46,7 +46,21 @@ UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q te
 
 全5 benchmarkは成功したためitemはPASS。ただしTrial全体は中断規約によりPASS不可。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:29:19Z
+- Finished at: 2026-08-07T10:29:26Z
+
+~~~bash
+UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/scientific_benchmarks/test_predictive_e3_benchmarks.py
+~~~
+
+- Exact result: exit code 0; 5 passed; 0 failed; 0 skipped; 7s wall clock (pytest 6.44s).
+- Log / evidence: `/tmp/g4_003_full_rerun_009.log`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
-

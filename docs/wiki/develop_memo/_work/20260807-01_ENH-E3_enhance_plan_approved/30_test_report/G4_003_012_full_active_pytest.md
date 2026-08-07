@@ -46,7 +46,21 @@ UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q
 
 Full active suiteは成功したためitemはPASS。ただしTrial全体は中断規約によりPASS不可。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:29:32Z
+- Finished at: 2026-08-07T10:30:31Z
+
+~~~bash
+UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q
+~~~
+
+- Exact result: exit code 0; 174 passed; 0 failed; 4 skipped; 59s wall clock (pytest 56.20s).
+- Log / evidence: `/tmp/g4_003_full_rerun_012.log`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
-

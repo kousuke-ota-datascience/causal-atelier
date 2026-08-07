@@ -46,7 +46,21 @@ UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q te
 
 Canonical evaluation 3件が成功したためPASS。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:27:16Z
+- Finished at: 2026-08-07T10:27:23Z
+
+~~~bash
+UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/product/test_predictive_evaluation_e3.py
+~~~
+
+- Exact result: exit code 0; 3 passed; 0 failed; 0 skipped; 7s wall clock (pytest 1.03s).
+- Log / evidence: `/tmp/g4_003_full_rerun_005_006.log`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
-

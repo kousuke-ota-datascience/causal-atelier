@@ -34,6 +34,25 @@
 - frontend変更は0であり、指示書11章によりBrowser E2Eは必須ではない。
 - ただしG4-010の最初の必須実行がuser interruptionにより中断された。
 
+## User-directed Full Re-execution Summary
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Execution interval: 2026-08-07T10:25:00Z through 2026-08-07T10:30:31Z
+- G4-001: 4 passed
+- G4-002〜004: 2 passed
+- G4-005〜006: 3 passed
+- G4-007〜008: 3 passed
+- G4-009: 5 passed
+- G4-010: technical PASS; single head/database revision `20260807_product_0005`; PostgreSQL E2E 3 passed; Execution 3, Result 8, Artifact 3; dedicated DB removed
+- G4-011: 45 passed
+- G4-012: 174 passed, 4 skipped
+- G4-013: final corrected static audit PASS; production/migration/post-handoff source-test-migration diff 0
+- Coverage audit: 13 tests collected; all Trial 002 missing-contract patterns found
+- Product defect / regression: none observed
+- Test Agent source/test/migration modification: NONE
+
+The full re-execution is technically PASS for every required item. It is retained as new evidence and does not reuse prior test outcomes.
+
 ## Blocking Findings
 
 - Category: USER_INTERRUPTION_DURING_REQUIRED_TEST
@@ -55,7 +74,7 @@
 
 ## Reason for Decision
 
-**事実:** 完走したautomated tests、2回のPostgreSQL完走、migration/static auditはすべて成功し、製品欠陥は検出されなかった。最新のG4-010技術的実行結果もPASS。
+**事実:** 完走したautomated tests、3回のPostgreSQL完走、migration/static auditはすべて成功し、製品欠陥は検出されなかった。今回の最初からの通し再実行も全必須項目が技術的PASS。
 
 **規約適用:** 同一Trial 003の必須G4-010実行中にuser interruptionが発生した。これは明示的BLOCKED条件であり、当該trialをPASSにできない。
 

@@ -61,6 +61,23 @@ docker compose exec -T database dropdb -U ariadne ariadne_g4_003_010_rerun
 
 ユーザー指示による再実行を含む2回の完走では製品/migration契約が成立した。最新の技術的実行結果はPASS。ただし最初のuser interruptionはsection 4のBLOCKED事由かつsection 5により当該trialはPASS不可のため、itemのTrial statusはBLOCKEDを維持する。
 
+## User-directed Full Re-execution
+
+- Execution HEAD before evidence update: `430f6411665bd72d3436b3a42cc7fd593e75a953`
+- Technical status: PASS
+- Started at: 2026-08-07T10:28:44Z
+- Finished at: 2026-08-07T10:29:02Z
+
+~~~bash
+.venv/bin/alembic -c alembic_product.ini heads
+env ARIADNE_PRODUCT_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@127.0.0.1:5432/ariadne_g4_003_full_rerun .venv/bin/alembic -c alembic_product.ini upgrade head
+env G4_010_RERUN_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@127.0.0.1:5432/ariadne_g4_003_full_rerun PYTHONPATH=/tmp/g4_003_g4_010_rerun UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q --noconftest -p g4_010_rerun_plugin tests/product/test_predictive_api_worker_e2e_e3.py
+~~~
+
+- Exact result: technical execution exit code 0; single head/database revision 20260807_product_0005; 3 passed, 0 failed, 0 skipped; 18s wall clock (pytest 2.06s); Execution 3, Result 8, Artifact 3; database removal verified with remaining count 0.
+- Log / evidence: `/tmp/g4_003_full_rerun_010.log`
+- Source/test/migration modification by Test Agent: NONE
+
 ## Source Modification by Test Agent
 
 NONE
