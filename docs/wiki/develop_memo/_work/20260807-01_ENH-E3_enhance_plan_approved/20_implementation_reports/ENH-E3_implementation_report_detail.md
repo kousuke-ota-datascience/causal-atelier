@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `265b69a3317a0b9747cacee457e72b36a62daa7e`
+- 現在のimplementation commit: `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`
 - 現在の実装migration head: `20260807_product_0006`（G6 Test Agent監査待ち）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -39,7 +39,11 @@
 21. G5 trial `003`はTest AgentによりG5-004 BrowserがPASSし、Trial 002でPASS済みの7項目と合わせてG5-001〜008が全項目PASSと判定された。
 22. G5 trial `003`のtested implementationは`7462cd2a1d6cc532366cc8276a383151f7411f45`、handoff report commitは`19d7eed86230ce6d165596c9fb29ae6d771672a9`、最終PASS evidence commitは`f97b9ec5d8d2903cba3ee4dc676347fabed5488d`である。
 23. G6 trial `001` implementation commit `265b69a3317a0b9747cacee457e72b36a62daa7e`でContext UI、shared workspace state、unified Results / Comparison / Lineage / Annotation / Artifact / Export、Project access control、6 route frontend closure、canonical G6 testsを実装した。
-24. G6 trial `001`は`READY_FOR_TEST`である。Coding Agentはpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
+24. G6 trial `001` Gate Decisionは`FAIL`である。deterministic product defectは単数形`local_explanation`のdefault suppression漏れであり、G6-002 / 003 / 004 / 006 / 013にはrequired automated coverage不足もあった。
+25. G6 trial `001`ではG6-012 legacy dependency auditだけがPASSし、残りの高コストitemはfail-fastによりNOT_RUN_DUE_TO_PRIOR_FAILUREである。environment / infrastructure blockerはない。
+26. G6 trial `001`のaudit evidence commitは`17aca9459febcf0fb15b66da7f0457973baac840`である。
+27. G6 trial `002` implementation commit `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`でsensitive output defectを修正し、lineage / comparison / Annotation / export / Browser / authorizationの欠落coverageを追加した。
+28. G6 trial `002`は`READY_FOR_TEST`である。Coding Agentはpytest、Browser E2E、scientific benchmark、PostgreSQL、migrationを実行していない。
 
 ### 1.2. 現在の判定
 
@@ -54,13 +58,15 @@
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
 | E3-4 / Gate G4 | **PASS** | trial `003` Gate Decision / final evidence `5b41aff` |
 | E3-5 / Gate G5 | **PASS** | trial `003` Gate Decision / final evidence `f97b9ec` |
-| E3-6 / Gate G6 | **READY_FOR_TEST** | trial `001` implementation commit `265b69a` |
+| E3-6 / Gate G6 | **READY_FOR_TEST** | trial `001` FAIL後、trial `002` implementation commit `79d16f1` |
 
 ## 2. Git / Working Tree状態
 
 ### 2.1. 確定commit列
 
 ```text
+79d16f1 fix: complete ENH-E3 G6 audit contracts
+17aca94 test: record ENH-E3 G6 trial 001 audit evidence
 265b69a feat: implement ENH-E3 G6 product closure
 f97b9ec test: record ENH-E3 G5 trial 003 browser evidence
 19d7eed docs: hand off ENH-E3 G5 trial 003 for audit
@@ -449,7 +455,7 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 
 ## 3.10. WP-9 Verification
 
-G1-G5のTest Agent監査は実施済みで、各Gateの最終判定はPASSである。G4 trial `001`と`002`はcoverage欠落でFAIL後、trial `003`でPASSした。G5 trial `001`はcoverage欠落でFAIL、trial `002`はBrowser test infrastructure不整合によりBLOCKED後、trial `003`でPASSした。G6 trial `001`はstatic checkまで完了し、動的監査待ちである。
+G1-G5のTest Agent監査は実施済みで、各Gateの最終判定はPASSである。G4 trial `001`と`002`はcoverage欠落でFAIL後、trial `003`でPASSした。G5 trial `001`はcoverage欠落でFAIL、trial `002`はBrowser test infrastructure不整合によりBLOCKED後、trial `003`でPASSした。G6 trial `001`はsensitive output defectとrequired coverage不足によりFAILした。trial `002`で当該defectとcoverageを修正し、再監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -671,6 +677,28 @@ decision: 結果不成立。PASSとして扱わない
 - OpenAPI generation: success、82 paths、required G6 routes present
 - Generic Executor / legacy import architecture guard: no new violation observed
 - implementation staged diffの`git diff --check`: clean
+- Test Agent Gate Decision: FAIL
+- failure category: deterministic product defect + `REQUIRED_TEST_COVERAGE_MISSING`
+- product defect: `local_explanation`単数形がdefault suppressionを通過
+- coverage不足: G6-002 / 003 / 004 / 006 / 013
+- G6-012 legacy dependency audit: PASS
+- remaining dynamic items: NOT_RUN_DUE_TO_PRIOR_FAILURE
+- audit evidence commit: `17aca9459febcf0fb15b66da7f0457973baac840`
+
+## 4.13. Gate G6 trial 002
+
+- implementation base: `17aca9459febcf0fb15b66da7f0457973baac840`
+- implementation commit: `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`
+- changed production file: `product_closure_service.py`
+- changed tests: `test_cross_analysis_lineage_e3.py`、`test_results_lineage_export_e3.py`、`run_enh_e3.py`
+- product correction: local explanation suppression、secret redaction、Context → Dataset synthetic lineage、revision evidence、warning comparison
+- added coverage: G6-002 / 003 / 004 / 006 / 013のTrial 001 missing contracts
+- migration head: `20260807_product_0006`（変更なし）
+- Coding Agentによるpytest / Browser E2E / scientific benchmark / PostgreSQL / migration実行: NOT PERFORMED
+- changed Python 4 filesのAST parse / compileall: success
+- Docker build context / Browser runner dependency source: present
+- legacy import: new violation 0
+- `git diff --check`: clean
 - state: READY_FOR_TEST
 
 ## 5. 既知の設計判断・制約
@@ -840,9 +868,24 @@ decision: 結果不成立。PASSとして扱わない
 - completion report: `G6_001_implementation_completion_report.md`
 - migration head: `20260807_product_0006`（検証待ち）
 - Coding Agent test execution: NOT PERFORMED
+- Gate Decision: FAIL
+- product defect: `SENSITIVE_LOCAL_EXPLANATION_NOT_SUPPRESSED`
+- required coverage missing: G6-002 / 003 / 004 / 006 / 013
+- Test evidence commit: `17aca9459febcf0fb15b66da7f0457973baac840`
+- next allowed implementation action: G6内でproduct defectとreported coverage不足だけを修正
+
+### 6.14. G6 trial 002 handoff
+
+- implementation base commit: `17aca9459febcf0fb15b66da7f0457973baac840`
+- implementation completed commit: `79d16f1b000a0e8e4771bfdcfd72cdf12b0e838c`
+- completion report: `G6_002_implementation_completion_report.md`
+- changed production file: `src/ariadne/product/application/product_closure_service.py`
+- changed test files: `tests/product/test_cross_analysis_lineage_e3.py`、`tests/product/test_results_lineage_export_e3.py`、`tests/browser_e2e/run_enh_e3.py`
+- migration head: `20260807_product_0006`（変更なし）
+- Coding Agent test execution: NOT PERFORMED
 - state: READY_FOR_TEST
-- Test Agent focus: same-project access / lineage、unified results / comparison、Annotation history、redacted export / controlled download、role enforcement、full API/worker E2E、real Chromium、migration、G1〜G5 regression
-- next allowed implementation action: G6 Trial 001 Test Agent監査結果を待つ
+- Test Agent focus: G6-001〜013をTrial 002内で全完走。特にTrial 001 defect / coverage corrections、full regression、migration、scientific benchmark、canonical Browser
+- next allowed implementation action: G6 Trial 002 Test Agent監査結果を待つ
 
 ## 7. G6監査時の禁止事項
 
@@ -862,8 +905,9 @@ G4 Gate: PASS, trial 003 tested implementation a8b656b, final evidence 5b41aff
 G5 trial 001 Gate: FAIL, required coverage missing
 G5 trial 002 Gate: BLOCKED, Browser build context mismatch
 G5 Gate: PASS, trial 003 tested implementation 7462cd2, final evidence f97b9ec
-G6 implementation: READY_FOR_TEST, trial 001 commit 265b69a
-G6 Gate: Test Agent decision pending
+G6 trial 001 Gate: FAIL, sensitive local explanation + required coverage missing
+G6 implementation: READY_FOR_TEST, trial 002 commit 79d16f1
+G6 Gate: trial 002 Test Agent decision pending
 ENH-E3: IMPLEMENTATION_COMPLETE_AWAITING_G6_AUDIT
-next allowed implementation action: wait for G6 trial 001 Gate Decision
+next allowed implementation action: wait for G6 trial 002 Gate Decision
 ```
