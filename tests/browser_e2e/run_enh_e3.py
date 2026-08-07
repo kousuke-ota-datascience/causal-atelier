@@ -4,37 +4,84 @@ from __future__ import annotations
 
 import json
 import platform
+import tempfile
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
 from run_enh_e3_predictive import (
     OUTPUT,
     WEB,
+    _get,
     _post,
     _select,
-    _upload_dataset,
     _wait,
 )
+from run_enh_e1a import main as run_causal_acceptance
 
 
-def _prepare() -> tuple[str, str]:
+def _prepare() -> str:
     project = _post("/projects", {
         "name": f"ENH-E3 Final Browser {int(time.time())}",
         "topic": "conversion prediction and causal follow-up",
         "objective": "Explore, predict, and preserve cross-analysis lineage",
         "memo": "G6 real Chromium acceptance",
     })
+    return project["project_id"]
+
+
+def _upload_dataset_in_browser(page, project_id: str) -> str:  # type: ignore[no-untyped-def]
+    before = {
+        item["dataset_version_id"]
+        for item in _get(f"/projects/{project_id}/dataset-versions")["items"]
+    }
     rows = ["score,converted"]
     rows.extend(f"{score},{int(score >= 0)}" for score in range(-60, 60))
-    dataset = _upload_dataset(project["project_id"], ("\n".join(rows) + "\n").encode())
-    return project["project_id"], dataset["dataset_version_id"]
+    with tempfile.NamedTemporaryFile(
+        "w", suffix=".csv", delete=False, encoding="utf-8"
+    ) as handle:
+        handle.write("\n".join(rows) + "\n")
+        source = Path(handle.name)
+    try:
+        form = page.locator("#dataset-form")
+        form.locator('input[name="file"]').set_input_files(source)
+        form.locator('input[name="dataset_key"]').fill("g6_final_browser")
+        form.locator('input[name="version_label"]').fill("v1")
+        form.locator('input[name="name"]').fill("G6 Final Browser Dataset")
+        form.locator('textarea[name="source_note"]').fill(
+            "Created through the real Chromium Dataset Version form"
+        )
+        form.locator("button:not([type])").click()
+        page.locator("#notice").filter(has_text="Dataset Versionを登録しました").wait_for()
+    finally:
+        source.unlink(missing_ok=True)
+    dataset_id = _wait(lambda: next((
+        item["dataset_version_id"]
+        for item in _get(f"/projects/{project_id}/dataset-versions")["items"]
+        if item["dataset_version_id"] not in before
+    ), None))
+    dataset_row = page.locator("#datasets tbody tr").filter(
+        has_text="G6 Final Browser Dataset"
+    )
+    assert dataset_row.count() == 1
+    assert "120 × 2" in dataset_row.inner_text()
+    return dataset_id
+
+
+def _causal_executions(project_id: str) -> list[dict]:
+    return [
+        item for item in _get(f"/projects/{project_id}/executions")["items"]
+        if item.get("operation")
+    ]
 
 
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    project_id, dataset_id = _prepare()
+    assert run_causal_acceptance() == 0
+    project_id = _prepare()
+    dataset_id = ""
     evidence = {
         "schema_version": "enh-e3-browser-evidence/1",
         "command": (
@@ -45,8 +92,15 @@ def main() -> int:
         "start_time": datetime.now(timezone.utc).isoformat(),
         "platform": platform.platform(),
         "project_id": project_id,
-        "dataset_version_id": dataset_id,
-        "scenarios": {},
+        "dataset_version_id": None,
+        "scenarios": {
+            "E2E-04-causal-effect": {
+                "status": "PASS", "evidence": "test-results/browser_e2e/evidence.json",
+            },
+            "E2E-07-rerun-revised": {
+                "status": "PASS", "evidence": "test-results/browser_e2e/evidence.json",
+            },
+        },
     }
     outcome = "FAIL"
     console: list[str] = []
@@ -84,6 +138,16 @@ def main() -> int:
             assert page.locator("#research-context-summary").get_by_text("final_context").count() == 1
             evidence["scenarios"]["research-context-versioning"] = {"status": "PASS"}
 
+            page.locator('nav button[data-route="data"]').click()
+            page.wait_for_url(f"**/projects/{project_id}/data")
+            page.locator("#data.workspace.active").wait_for()
+            dataset_id = _upload_dataset_in_browser(page, project_id)
+            evidence["dataset_version_id"] = dataset_id
+            evidence["scenarios"]["E2E-01-research-workspace"] = {
+                "status": "PASS", "dataset_version_id": dataset_id,
+                "assertions": ["Context FIXED", "Dataset Version created in Browser"],
+            }
+
             page.locator('nav button[data-route="explore"]').click()
             page.wait_for_url(f"**/projects/{project_id}/explore")
             _select(page, '#analysis-view-form select[name="dataset_version_id"]', dataset_id)
@@ -110,8 +174,23 @@ def main() -> int:
             page.locator('#exploration-form input[name="columns"]').fill("score, converted")
             page.locator("#exploration-form button:not(.secondary)").click()
             page.locator("#notice").filter(has_text="EXPLORATORY Resultを保存しました").wait_for(timeout=120_000)
-            page.locator("#exploration-results").get_by_text("EXPLORATORY").wait_for()
+            saved_exploration = page.locator("#exploration-results tbody tr").filter(
+                has_text="ASSOCIATION_RESULT"
+            )
+            saved_exploration.wait_for()
+            assert "EXPLORATORY" in saved_exploration.inner_text()
+            saved_exploration.get_by_role("button", name="Causal draft").click()
+            page.locator("#notice").filter(has_text="CAUSAL draftを作成しました").wait_for()
+            saved_exploration.get_by_role("button", name="Predictive draft").click()
+            page.locator("#notice").filter(has_text="PREDICTIVE draftを作成しました").wait_for()
             evidence["scenarios"]["analysis-view-explore"] = {"status": "PASS"}
+            evidence["scenarios"]["E2E-02-saved-exploration"] = {
+                "status": "PASS", "result_type": "ASSOCIATION_RESULT",
+                "assertions": ["Analysis View FIXED", "Saved Exploration visible"],
+            }
+            evidence["scenarios"]["E2E-03-exploration-drafts"] = {
+                "status": "PASS", "draft_families": ["CAUSAL", "PREDICTIVE"],
+            }
 
             page.locator('nav button[data-route="predictive"]').click()
             page.wait_for_url(f"**/projects/{project_id}/predictive")
@@ -128,13 +207,100 @@ def main() -> int:
                 has_text="Evaluation、Predictive Explanation、Model Cardを保存しました"
             ).wait_for(timeout=180_000)
             page.locator('#predictive-results [data-result-type="MODEL_CARD_RESULT"]').wait_for()
+            predictive_stage_text = page.locator("#predictive-results").inner_text()
+            for stage in ("split=SUCCEEDED", "prepare=SUCCEEDED", "train=SUCCEEDED",
+                          "evaluate=SUCCEEDED", "explain=SUCCEEDED"):
+                assert stage in predictive_stage_text
             evidence["scenarios"]["predictive-full-workflow"] = {"status": "PASS"}
+            evidence["scenarios"]["E2E-05-binary-classification"] = {
+                "status": "PASS",
+                "stages": ["SPLIT", "PREPARE", "TRAIN", "EVALUATE", "EXPLAIN"],
+            }
+
+            predictive_form = page.locator("#predictive-form")
+            predictive_form.locator('select[name="task_type"]').select_option("REGRESSION")
+            predictive_form.locator('input[name="target"]').fill("score")
+            predictive_form.locator('input[name="feature_columns"]').fill("converted")
+            predictive_form.locator('input[name="excluded_columns"]').fill("score")
+            predictive_form.locator('select[name="split_strategy"]').select_option("RANDOM")
+            prior_predictive_ids = {
+                item["execution_id"]
+                for item in _get(f"/projects/{project_id}/executions")["items"]
+                if item.get("analysis_family") == "PREDICTIVE"
+            }
+            run = page.locator("#run-predictive")
+            _wait(lambda: run.is_enabled())
+            run.click()
+            page.locator("#notice").filter(
+                has_text="Evaluation、Predictive Explanation、Model Cardを保存しました"
+            ).wait_for(timeout=180_000)
+            regression = _wait(lambda: next((
+                item for item in _get(f"/projects/{project_id}/executions")["items"]
+                if item.get("analysis_family") == "PREDICTIVE"
+                and item["execution_id"] not in prior_predictive_ids
+                and item["status"] == "SUCCEEDED"
+            ), None))
+            regression_results = _get(
+                f"/projects/{project_id}/executions/{regression['execution_id']}/results"
+            )["items"]
+            regression_evaluation = next(
+                item for item in regression_results
+                if item["result_type"] == "EVALUATION_RESULT"
+            )
+            assert regression_evaluation["summary"]["primary_metric"] == "RMSE"
+            evidence["scenarios"]["E2E-06-regression"] = {
+                "status": "PASS", "execution_id": regression["execution_id"],
+                "primary_metric": "RMSE",
+            }
+
+            page.locator('nav button[data-route="causal"]').first.click()
+            page.wait_for_url(f"**/projects/{project_id}/causal")
+            page.locator("#discovery.workspace.active").wait_for()
+            discovery = page.locator("#discovery-form")
+            _select(page, '#discovery-form select[name="dataset_version_id"]', dataset_id)
+            page.locator("#open-feature-selector").click()
+            page.locator("#feature-modal").wait_for(state="visible")
+            for column in ("score", "converted"):
+                page.locator(f'#feature-options input[value="{column}"]').check()
+            page.locator("#confirm-features").click()
+            assert discovery.locator('input[name="features"]').input_value() == "score, converted"
+            discovery.locator('select[name="designated_outcome_node"]').select_option("converted")
+            discovery.locator('input[name="algorithms"][value="ges"]').uncheck()
+            discovery.locator('input[name="alpha"]').fill("0.05")
+            before_causal = {item["execution_id"] for item in _causal_executions(project_id)}
+            discovery.locator("button:not([type])").click()
+            page.locator("#notice").filter(has_text="Discoveryを受け付けました").wait_for()
+            causal_execution = _wait(lambda: next((
+                item for item in _causal_executions(project_id)
+                if item["execution_id"] not in before_causal
+                and item["operation"] == "DISCOVERY" and item["status"] == "SUCCEEDED"
+            ), None))
+            causal_results = _get(
+                f"/executions/{causal_execution['execution_id']}/results"
+            )["items"]
+            discovery_result = next(
+                item for item in causal_results
+                if item["result_type"] == "DISCOVERY_GRAPH_RESULT"
+            )
+            page.locator("#refresh-discovery").click()
+            _wait(lambda: page.locator("#refresh-discovery").get_attribute(
+                "data-refresh-status"
+            ) == "done")
+            assert page.locator("#discovery-results tbody tr").filter(has_text="pc").count() >= 1
+            assert page.locator("#graph-candidates tbody tr").filter(
+                has_text=discovery_result["result_id"]
+            ).count() == 1
+            evidence["scenarios"]["integrated-causal-analysis"] = {
+                "status": "PASS", "execution_id": causal_execution["execution_id"],
+                "result_id": discovery_result["result_id"],
+            }
 
             page.locator('nav button[data-route="results"]').click()
             page.wait_for_url(f"**/projects/{project_id}/results")
             page.locator("#result-summary").get_by_text("Cross-family metrics", exact=False).wait_for()
             assert page.locator("#unified-result-list .family-label").filter(has_text="EXPLORATORY").count() >= 1
             assert page.locator("#unified-result-list .family-label").filter(has_text="PREDICTIVE").count() >= 1
+            assert page.locator("#unified-result-list .family-label").filter(has_text="CAUSAL").count() >= 1
             result_option = page.locator("#result-select option").filter(
                 has_text="EVALUATION_RESULT"
             ).first
@@ -161,6 +327,11 @@ def main() -> int:
             page.screenshot(path=OUTPUT / "G6-results-lineage-export.png", full_page=True)
             evidence["scenarios"]["results-lineage-annotation-export"] = {
                 "status": "PASS", "download": suggested,
+            }
+            evidence["scenarios"]["E2E-08-cross-analysis-lineage"] = {
+                "status": "PASS",
+                "families": ["EXPLORATORY", "PREDICTIVE", "CAUSAL"],
+                "reviewed": ["Result", "Lineage", "Annotation", "Export"],
             }
 
             for route in ("context", "data", "explore", "causal", "predictive", "results"):

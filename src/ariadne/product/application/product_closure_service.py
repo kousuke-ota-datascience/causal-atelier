@@ -228,7 +228,7 @@ class ProductClosureService:
             raise InvalidSchema(
                 "Quantitative comparison requires the same analysis family and compatible Result Type"
             )
-        summaries = [item["summary"] for item in values]
+        summaries = [_redact(item["summary"]) for item in values]
         keys = sorted(set().union(*(summary.keys() for summary in summaries)))
         common: dict[str, Any] = {}
         differences: list[dict[str, Any]] = []
@@ -238,7 +238,19 @@ class ProductClosureService:
                 common[key] = field_values[0]
             else:
                 differences.append({"field": key, "values": field_values})
-        return {
+        result_warnings = [list(item["warnings"]) for item in values]
+        common_warnings = [
+            warning for warning in result_warnings[0]
+            if all(warning in warnings for warnings in result_warnings[1:])
+        ]
+        warning_differences = [
+            {
+                "result_id": item["result_id"],
+                "warnings": [warning for warning in warnings if warning not in common_warnings],
+            }
+            for item, warnings in zip(values, result_warnings, strict=True)
+        ]
+        return _redact({
             "schema_version": "result-comparison/1",
             "project_id": project_id,
             "analysis_family": values[0]["analysis_family"],
@@ -246,6 +258,8 @@ class ProductClosureService:
             "compatible": True,
             "common_summary": common,
             "differences": differences,
+            "common_warnings": common_warnings,
+            "warning_differences": warning_differences,
             "results": [{
                 "result_id": item["result_id"],
                 "analytical_status": item["analytical_status"],
@@ -254,7 +268,7 @@ class ProductClosureService:
             } for item in values],
             "ranking": None,
             "warnings": ["Compatible results are shown without cross-metric ranking."],
-        }
+        })
 
     def project_lineage(self, project_id: str, *, user_id: str) -> dict[str, Any]:
         with self._session_factory() as session:
@@ -292,6 +306,16 @@ class ProductClosureService:
             for row in views:
                 node("AnalysisView", row.analysis_view_id, f"{row.name} v{row.version_number}", status=row.status, content_hash=row.content_hash)
                 edge("DatasetVersion", row.source_dataset_version_id, "DERIVED_FROM", "AnalysisView", row.analysis_view_id)
+            selections = list(session.scalars(select(WorkspaceSelectionOrm).where(
+                WorkspaceSelectionOrm.project_id == project_id
+            )))
+            for row in selections:
+                if row.research_context_version_id and row.dataset_version_id:
+                    edge(
+                        "ResearchContextVersion", row.research_context_version_id,
+                        "USED_INPUT", "DatasetVersion", row.dataset_version_id,
+                        evidence={"source": "workspace-selection"},
+                    )
             for row in specs:
                 node("AnalysisSpecification", row.analysis_specification_id, f"{row.analysis_family} {row.specification_key} v{row.version_number}", status=row.status)
                 edge("ResearchContextVersion", row.research_context_version_id, "SUPPORTED_BY", "AnalysisSpecification", row.analysis_specification_id)
@@ -320,7 +344,10 @@ class ProductClosureService:
                 revision = row.analysis_spec_json.get("revision_context") or {}
                 base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
                 if base_id:
-                    edge("Execution", base_id, "REVISED_FROM", "Execution", row.execution_id)
+                    edge(
+                        "Execution", base_id, "REVISED_FROM", "Execution", row.execution_id,
+                        evidence={"revision_context": revision},
+                    )
 
             for item in self._all_results(session, project_id):
                 node("Result", item["result_id"], item["result_type"], family=item["analysis_family"], analytical_status=item["analytical_status"])
@@ -389,6 +416,9 @@ class ProductClosureService:
         item: dict[str, Any], *, include_sensitive: bool, detail: bool,
     ) -> dict[str, Any]:
         value = dict(item)
+        value["summary"] = _redact(value.get("summary", {}))
+        value["diagnostics"] = _redact(value.get("diagnostics", {}))
+        value["warnings"] = _redact(value.get("warnings", []))
         if not detail:
             value.pop("payload", None)
             value.pop("diagnostics", None)
@@ -860,7 +890,7 @@ def _redact(value: Any) -> Any:
 
 def _suppress_sensitive_output(value: Any) -> Any:
     sensitive = {
-        "local_explanations", "local_contributions", "prediction_rows",
+        "local_explanation", "local_explanations", "local_contributions", "prediction_rows",
         "row_predictions", "row_contributions", "rows",
     }
     if isinstance(value, dict):
