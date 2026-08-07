@@ -51,7 +51,7 @@ def _execution_to_response(e: Execution) -> ExecutionResponse:
     )
 
 
-@router.post("/projects/{project_id}/execution-batches", status_code=201, response_model=ExecutionBatchResponse)
+@router.post("/projects/{project_id}/execution-batches", status_code=202, response_model=ExecutionBatchResponse)
 async def create_execution_batch(
     project_id: str,
     body: ExecutionBatchCreate,
