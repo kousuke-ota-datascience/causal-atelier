@@ -1,0 +1,3 @@
+# {{PROJECT_NAME}} API・インターフェース設計
+
+{{SNAPSHOT_CONTENT}}
