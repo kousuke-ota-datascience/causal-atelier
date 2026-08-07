@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `73a92c1b5899bc0d072df0faf8621b5171b00e5a`
+- 現在のimplementation commit: `fd4e332939f93cc35adbf4a03929818e47c04b7e`
 - 現在の確定migration head: `20260807_product_0004`
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -19,10 +19,12 @@
    - 実装commit: `065859d8e6ff40e7393f79928653ebefc8e139e1`
    - 証跡commit: `87099e10e84d92b466791436d6db203d8c658efe`
 3. E3-3 Predictive Specification + Splitのtrial `001` implementation commitは`73a92c1b5899bc0d072df0faf8621b5171b00e5a`である。
-4. G3新規テスト単体は`11 passed`、G1/G2/architectureを含む選択回帰は`38 passed`まで確認済みである。
-5. G3差分を含む最終`uv run pytest -q`は46%進行時点でユーザー操作により中断された。完走結果は存在しないため、G3はPASSと判定してはならない。
-6. G3は`READY_FOR_TEST`であり、Test Agentの独立監査前なのでPASSではない。
-7. G4 Training + Evaluation、G5 Explain + Predictive UI、G6 Cross-analysis Lineage + Full E2Eは未着手である。
+4. Trial `001` Gate Decisionは`FAIL`であり、原因はPredictive Specification canonical/deterministic behaviorのautomated coverage欠落である。
+5. Trial `002` implementation commit `fd4e332939f93cc35adbf4a03929818e47c04b7e`で、当該coverageを`tests/product/test_predictive_spec_e3.py`へ追加した。
+6. Trial `002`ではproduction codeを変更していない。
+7. Trial `001`より前の履歴では、G3新規テスト単体`11 passed`、G1/G2/architectureを含む選択回帰`38 passed`が記録されている。
+8. G3はtrial `002`の`READY_FOR_TEST`であり、最新確定Gate Decisionはtrial `001`の`FAIL`である。
+9. G4 Training + Evaluation、G5 Explain + Predictive UI、G6 Cross-analysis Lineage + Full E2Eは未着手である。
 
 ### 1.2. 現在の判定
 
@@ -33,8 +35,8 @@
 | Gate G1 | **PASS** | `526eec8` / `4f597f0` |
 | E3-2 Analysis View + Explore + Explore UI | Completed | G2実装commitに収録 |
 | Gate G2 | **PASS** | `065859d` / `87099e1` |
-| E3-3 Predictive Specification + Split | **READY_FOR_TEST** | trial `001` implementation commit `73a92c1` |
-| Gate G3 | **NOT PASSED** | Test Agentのtrial `001` Gate Decision未作成 |
+| E3-3 Predictive Specification + Split | **READY_FOR_TEST** | trial `002` implementation commit `fd4e332` |
+| Gate G3 | **NOT PASSED** | 最新Gate Decisionはtrial `001`のFAIL、trial `002`監査待ち |
 | E3-4 / Gate G4 | Not Started | G3 PASS前のため開始禁止 |
 | E3-5 / Gate G5 | Not Started | G4 PASS前のため開始禁止 |
 | E3-6 / Gate G6 | Not Started | 前段Gate未完了 |
@@ -44,6 +46,9 @@
 ### 2.1. 確定commit列
 
 ```text
+fd4e332 test: cover ENH-E3 G3 predictive specification identity
+5eb61a7 test: record ENH-E3 G3 trial 001 audit evidence
+6540499 docs: hand off ENH-E3 G3 implementation for audit
 73a92c1 feat: complete ENH-E3 G3 predictive specification and split
 f4faffc ENH-E3 途中経過。GATE G2 Pass 済， G3 実施途中
 87099e1 docs: record ENH-E3 G2 gate evidence
@@ -429,19 +434,31 @@ decision: 結果不成立。PASSとして扱わない
 - Predictive split validationはAPI process内で実行する。将来、非常に大きいDatasetを扱う場合はasync Executionへ移す判断が必要だが、G3のsplit preview/validation契約では同期処理を採用している。
 - `metrics.py`はG4 draftであり、現在のG3 test evidenceには含まれない。
 
-## 6. Trial 001 handoff
+## 6. G3 trial handoff
 
-### 6.1. 現在状態
+### 6.1. Trial 001 decision
 
 - implementation base commit: `f4faffc0afdec2abc6b0952bd4762952774de92a`
 - implementation completed commit: `73a92c1b5899bc0d072df0faf8621b5171b00e5a`
 - completion report: `G3_001_implementation_completion_report.md`
+- Gate Decision: FAIL
+- failure category: `REQUIRED_TEST_COVERAGE_MISSING`
+- evidence commit: `5eb61a76a1c7f35407d6bc6316c633336e06b59f`
+
+### 6.2. Trial 002 current state
+
+- implementation base commit: `5eb61a76a1c7f35407d6bc6316c633336e06b59f`
+- implementation completed commit: `fd4e332939f93cc35adbf4a03929818e47c04b7e`
+- completion report: `G3_002_implementation_completion_report.md`
+- changed production files: none
+- changed test files: `tests/product/test_predictive_spec_e3.py`
 - Coding Agent test execution: NOT PERFORMED
-- 最新Gate Decision: 未作成
-- next allowed implementation action: 同一GateのTest Agent監査結果を待つ
+- latest Gate Decision: trial `001` FAIL
+- next allowed implementation action: trial `002`のTest Agent監査結果を待つ
 
-### 6.2. Test Agent focus
+### 6.3. Test Agent focus
 
+- Predictive Specification canonical/deterministic identity assertion
 - G3 canonical test 4ファイル
 - Generic Executor変更に対するG1 Generic Workflow / CausalおよびG2 Exploratory回帰
 - SQLite / PostgreSQL persistence、Artifact、Lineage、source hash
@@ -462,8 +479,8 @@ decision: 結果不成立。PASSとして扱わない
 ```text
 G1: PASS
 G2: PASS
-G3 implementation: READY_FOR_TEST, trial 001 commit 73a92c1
-G3 Gate: NOT PASSED, Test Agent decision pending
+G3 implementation: READY_FOR_TEST, trial 002 commit fd4e332
+G3 Gate: NOT PASSED, latest decision is trial 001 FAIL
 G4-G6: NOT STARTED
-next allowed implementation action: wait for G3 trial 001 Gate Decision
+next allowed implementation action: wait for G3 trial 002 Gate Decision
 ```
