@@ -4,6 +4,7 @@ import pytest
 
 from ariadne.capabilities.predictive.validation import validate_predictive_specification
 from ariadne.product.domain.errors import InvalidSchema, PredictiveValidationError
+from ariadne.product.domain.schemas import canonical_bytes, canonical_hash
 
 
 @pytest.mark.requirement("FR-055", "FR-056", "FR-057")
@@ -69,3 +70,29 @@ def test_predictive_spec_rejects_unknown_missing_duplicate_and_ambiguous_stratif
         validate_predictive_specification(ambiguous)
     assert captured.value.code == "STRATIFY_CONTRACT_MISMATCH"
     assert captured.value.path == "split_spec.stratify"
+
+
+@pytest.mark.requirement("NFR-003")
+def test_predictive_spec_canonical_identity_is_independent_of_object_key_order(
+    predictive_spec_factory,
+) -> None:  # type: ignore[no-untyped-def]
+    specification = predictive_spec_factory()
+    reordered = _reverse_object_key_order(specification)
+
+    validated = validate_predictive_specification(specification)
+    reordered_validated = validate_predictive_specification(reordered)
+
+    assert reordered_validated == validated
+    assert canonical_bytes(reordered_validated) == canonical_bytes(validated)
+    assert canonical_hash(reordered_validated) == canonical_hash(validated)
+
+
+def _reverse_object_key_order(value):  # type: ignore[no-untyped-def]
+    if isinstance(value, dict):
+        return {
+            key: _reverse_object_key_order(value[key])
+            for key in reversed(tuple(value))
+        }
+    if isinstance(value, list):
+        return [_reverse_object_key_order(item) for item in value]
+    return value
