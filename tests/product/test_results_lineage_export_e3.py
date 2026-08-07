@@ -517,13 +517,17 @@ async def test_project_access_controlled_download_hash_and_sensitive_output_poli
 @pytest.mark.anyio
 @pytest.mark.requirement("G6-STRICT-CONTRACT")
 async def test_g6_request_contracts_reject_unknown_fields(client) -> None:  # type: ignore[no-untyped-def]
-    project_id, _ = await _workspace(client)
+    project_id, dataset_id = await _workspace(client)
+    result_id = str(_result(project_id, dataset_id)["result_id"])
     response = await client.post(
         f"/api/v1/projects/{project_id}/exports",
-        json={"result_ids": [], "unexpected": True},
+        json={"result_ids": [result_id], "unexpected": True},
     )
     assert response.status_code == 400
     assert response.json()["error"]["code"] == "INVALID_REQUEST"
     errors = response.json()["error"]["details"]["errors"]
-    assert errors[0]["loc"] == ["body", "unexpected"]
-    assert errors[0]["type"] == "extra_forbidden"
+    assert any(
+        error["loc"] == ["body", "unexpected"]
+        and error["type"] == "extra_forbidden"
+        for error in errors
+    )
