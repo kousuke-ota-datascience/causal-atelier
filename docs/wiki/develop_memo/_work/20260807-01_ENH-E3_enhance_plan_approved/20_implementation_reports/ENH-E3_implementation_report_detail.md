@@ -3,7 +3,7 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `4a83bb6860c895f00e4dfd7c9e7880105387373e`
+- 現在のimplementation commit: `7462cd2a1d6cc532366cc8276a383151f7411f45`
 - 現在の実装migration head: `20260807_product_0005`（G4 Test Agentがsingle head / PostgreSQL clean upgradeを検証済み。G5では変更なし）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
@@ -34,7 +34,9 @@
 16. G5 trial `001` Gate Decisionは`FAIL`であり、原因はG5-002 / 004 / 005の必須automated coverage不足である。product defectは確立されていない。
 17. G5 trial `001`ではStatic ArchitectureだけがPASSし、G5-001 / 003 / 006 / 007およびBrowser / PostgreSQL実行はfail-fastによりNOT_RUNである。
 18. G5 trial `002` implementation commit `4a83bb6860c895f00e4dfd7c9e7880105387373e`で、Model Card value/lineage、Browser error rendering、Predictive JSON Artifact terminologyのcoverageだけを追加した。production codeは変更していない。
-19. G5 trial `002`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G6は未着手である。
+19. G5 trial `002`は非Browser項目がすべてPASSしたが、G5-004は`.dockerignore`と`Dockerfile.browser-e2e`のbuild-context不整合によりBrowser scenario実行前に`BLOCKED`となった。正式なGate Decisionは`FAIL`ではなく`BLOCKED`である。
+20. 作業指示者からの明示的な再実装指示に基づき、G5 trial `003` implementation commit `7462cd2a1d6cc532366cc8276a383151f7411f45`でG5 Predictive Browser runnerだけをDocker build contextへ再包含した。product codeは変更していない。
+21. G5 trial `003`は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G6は未着手である。
 
 ### 1.2. 現在の判定
 
@@ -48,7 +50,7 @@
 | E3-3 Predictive Specification + Split | Completed | trial `002` implementation commit `fd4e332` |
 | Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
 | E3-4 / Gate G4 | **PASS** | trial `003` Gate Decision / final evidence `5b41aff` |
-| E3-5 / Gate G5 | **READY_FOR_TEST** | trial `001` FAIL後、trial `002` implementation commit `4a83bb6` |
+| E3-5 / Gate G5 | **READY_FOR_TEST** | trial `002` BLOCKED後、trial `003` implementation commit `7462cd2` |
 | E3-6 / Gate G6 | Not Started | G5 PASS前のため開始禁止 |
 
 ## 2. Git / Working Tree状態
@@ -56,6 +58,8 @@
 ### 2.1. 確定commit列
 
 ```text
+7462cd2 test: package ENH-E3 predictive browser runner
+0ebc5ae test: record ENH-E3 G5 trial 002 audit evidence
 4a83bb6 test: complete ENH-E3 G5 required contract coverage
 4ce8734 test: record ENH-E3 G5 trial 001 audit evidence
 d7b1c1a docs: hand off ENH-E3 G5 implementation for audit
@@ -242,7 +246,7 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 - Explore Resultへの観察メモ/限界Annotationは汎用Annotation統合側に残る。
 - route-backed navigation / browser backはWP-7後段に残る。
 
-## 3.7. WP-5 Predictive — G4 PASS / G5 trial 001 READY_FOR_TEST
+## 3.7. WP-5 Predictive — G4 PASS / G5 trial 003 READY_FOR_TEST
 
 以下のG3記述はtrial `002`までに確定したSplit基盤の履歴である。G3はその後Test AgentによりPASSと判定された。
 
@@ -379,6 +383,16 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 - changed tests: `tests/product/test_predictive_explanation_e3.py`、`tests/browser_e2e/run_enh_e3_predictive.py`
 - production / frontend / migration変更: なし
 
+### G5 trial `002` Test Agent decision / trial `003` infrastructure correction
+
+- G5-001 / 002 / 003 / 005 / 006 / 007 / 008: PASS
+- G5-004 Browser: `BLOCKED`
+- blocking category: `TEST_INFRASTRUCTURE_BUILD_CONTEXT_MISMATCH`
+- Browser scenarios executed: 0
+- root cause: `.dockerignore`が`Dockerfile.browser-e2e`の要求する`run_enh_e3_predictive.py`をbuild contextから除外
+- trial `003`では`.dockerignore`へ当該runnerの明示的な再包含ruleだけを追加
+- production / frontend / migration / test scenario変更: なし
+
 ## 3.8. WP-7 Frontend — G5 route-backed shell実装済み
 
 ### 完了済み
@@ -418,7 +432,7 @@ G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_availab
 
 ## 3.10. WP-9 Verification
 
-G1-G4のTest Agent監査は実施済み。G4 trial `001`と`002`はcoverage欠落でFAIL、trial `003`は全項目PASSである。G5 trial `001`はcoverage欠落でFAIL、trial `002`はTest Agent監査待ちである。
+G1-G4のTest Agent監査は実施済み。G4 trial `001`と`002`はcoverage欠落でFAIL、trial `003`は全項目PASSである。G5 trial `001`はcoverage欠落でFAIL、trial `002`はBrowser test infrastructure不整合によりBLOCKED、trial `003`はその最小修正後の監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -603,7 +617,25 @@ decision: 結果不成立。PASSとして扱わない
 - Trial 001 missing coverage patterns: detected
 - changed tracked scope: 2 test files only
 - `git diff --check`: clean
-- Test Agent監査: 未実施
+- Test Agent reports G5-001 / 002 / 003 / 005 / 006 / 007 / 008: PASS
+- full active suite: `182 passed, 4 skipped`
+- G1〜G4 targeted regression: `57 passed`
+- G5-004 Browser: BLOCKED before Chromium launch; scenarios executed 0
+- blocking category: `TEST_INFRASTRUCTURE_BUILD_CONTEXT_MISMATCH`
+- root cause: `.dockerignore`がDockerfileのCOPY sourceをbuild contextから除外
+- Gate Decision: BLOCKED
+- Test evidence commit: `0ebc5ae99d82a5bc0d843be695687633478db47d`
+
+## 4.11. Gate G5 trial 003
+
+- implementation commit: `7462cd2a1d6cc532366cc8276a383151f7411f45`
+- production / frontend / migration / Browser scenario変更: なし
+- changed test infrastructure: `.dockerignore`
+- correction: `tests/browser_e2e/run_enh_e3_predictive.py`の明示的な再包含ruleを追加
+- runnerがgit ignore対象外であることとDocker COPY sourceの存在を静的に確認
+- `git diff --check`: clean
+- Coding AgentによるDocker build / Browser E2E / pytest / PostgreSQL / migration実行: NOT PERFORMED
+- state: READY_FOR_TEST
 
 ## 5. 既知の設計判断・制約
 
@@ -730,15 +762,36 @@ decision: 結果不成立。PASSとして扱わない
 - changed test files: `tests/product/test_predictive_explanation_e3.py`、`tests/browser_e2e/run_enh_e3_predictive.py`
 - migration head: `20260807_product_0005`（変更なし）
 - Coding Agent test execution: NOT PERFORMED
+- Gate Decision: BLOCKED
+- blocking category: `TEST_INFRASTRUCTURE_BUILD_CONTEXT_MISMATCH`
+- Test evidence commit: `0ebc5ae99d82a5bc0d843be695687633478db47d`
+- next allowed implementation action: 通常はWAITING_FOR_INSTRUCTION。作業指示者の明示指示に基づきG5内でtest infrastructureだけを修正
+
+### 6.10. G5 Trial 002 Test Agent result
+
+- Model Card必須意味値 / runtime metadata / Analysis Viewを含むrequired lineage: PASS
+- Predictive Explanation / Model Card JSON Artifact terminology: PASS
+- Trial 001でNOT_RUNだった非Browser G5項目とfull regression: PASS
+- Browser `predictive-error-rendering` scenario: test infrastructure不整合によりNOT_RUN / BLOCKED
+
+### 6.11. G5 trial 003 handoff
+
+- implementation base commit: `0ebc5ae99d82a5bc0d843be695687633478db47d`
+- implementation completed commit: `7462cd2a1d6cc532366cc8276a383151f7411f45`
+- completion report: `G5_003_implementation_completion_report.md`
+- changed production files: none
+- changed test infrastructure: `.dockerignore`
+- migration head: `20260807_product_0005`（変更なし）
+- Coding Agent test execution: NOT PERFORMED
 - state: READY_FOR_TEST
-- next allowed implementation action: G5 Trial 002 Test Agent監査結果を待つ
+- next allowed implementation action: G5 Trial 003 Test Agent監査結果を待つ
 
-### 6.10. G5 Trial 002 Test Agent focus
+### 6.12. G5 Trial 003 Test Agent focus
 
-- Model Card必須意味値 / runtime metadata / Analysis Viewを含むrequired lineage
-- Predictive Explanation / Model Card JSON Artifact terminology
-- Browser `predictive-error-rendering` scenario
-- Trial 001でNOT_RUNだったG5項目とfull regression
+- canonical Browser imageがbuild可能であること
+- G5 Predictive Browser runnerがimage内へCOPYされ起動すること
+- Predictive deep link / full workflow / routing / saved-result revisit / error rendering
+- G5-004結果を反映したGate Decision
 
 ## 7. 再開時の禁止事項
 
@@ -756,8 +809,9 @@ G2: PASS
 G3 Gate: PASS, trial 002 tested implementation fd4e332
 G4 Gate: PASS, trial 003 tested implementation a8b656b, final evidence 5b41aff
 G5 trial 001 Gate: FAIL, required coverage missing
-G5 implementation: READY_FOR_TEST, trial 002 commit 4a83bb6
-G5 Gate: trial 002 Test Agent decision pending
+G5 trial 002 Gate: BLOCKED, Browser build context mismatch
+G5 implementation: READY_FOR_TEST, trial 003 commit 7462cd2
+G5 Gate: trial 003 Test Agent decision pending
 G6: NOT STARTED
-next allowed implementation action: wait for G5 trial 002 Gate Decision
+next allowed implementation action: wait for G5 trial 003 Gate Decision
 ```
