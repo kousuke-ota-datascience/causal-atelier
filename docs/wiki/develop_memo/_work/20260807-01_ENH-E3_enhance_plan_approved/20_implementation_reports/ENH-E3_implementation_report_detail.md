@@ -3,8 +3,8 @@
 - 作成日: 2026-08-07 UTC
 - 対象branch: `prototype/ariadne_mvp_e3`
 - ENH-E3 baseline: `3f87379bb3cbf18ba6f436877306959ddfd24163`
-- 現在のimplementation commit: `fd4e332939f93cc35adbf4a03929818e47c04b7e`
-- 現在の確定migration head: `20260807_product_0004`
+- 現在のimplementation commit: `f16c0a7bb25fbe3378585ba78921398638d1ecea`
+- 現在の実装migration head: `20260807_product_0005`（Test Agentによるmigration検証待ち）
 - 現在の実装指示正本: `00_enhance_plan_documents/06b_Ariadne_ENH-E3_実装再開指示書.md`
 - 関連Gate証跡: `20_implementation_reports/ENH-E3_gate_execution_report.md`
 
@@ -22,9 +22,9 @@
 4. Trial `001` Gate Decisionは`FAIL`であり、原因はPredictive Specification canonical/deterministic behaviorのautomated coverage欠落である。
 5. Trial `002` implementation commit `fd4e332939f93cc35adbf4a03929818e47c04b7e`で、当該coverageを`tests/product/test_predictive_spec_e3.py`へ追加した。
 6. Trial `002`ではproduction codeを変更していない。
-7. Trial `001`より前の履歴では、G3新規テスト単体`11 passed`、G1/G2/architectureを含む選択回帰`38 passed`が記録されている。
-8. G3はtrial `002`の`READY_FOR_TEST`であり、最新確定Gate Decisionはtrial `001`の`FAIL`である。
-9. G4 Training + Evaluation、G5 Explain + Predictive UI、G6 Cross-analysis Lineage + Full E2Eは未着手である。
+7. G3 trial `002`はTest Agentにより全9報告項目PASS、full suite `157 passed, 4 skipped`、PostgreSQL contract `4 passed`と報告され、Gate Decisionは`PASS`である。
+8. G4 trial `001` implementation commit `f16c0a7bb25fbe3378585ba78921398638d1ecea`でTraining + Evaluation backend vertical sliceを実装した。
+9. G4は`READY_FOR_TEST`であり、Coding Agentはtestを実行していない。G5 / G6は未着手である。
 
 ### 1.2. 現在の判定
 
@@ -35,9 +35,9 @@
 | Gate G1 | **PASS** | `526eec8` / `4f597f0` |
 | E3-2 Analysis View + Explore + Explore UI | Completed | G2実装commitに収録 |
 | Gate G2 | **PASS** | `065859d` / `87099e1` |
-| E3-3 Predictive Specification + Split | **READY_FOR_TEST** | trial `002` implementation commit `fd4e332` |
-| Gate G3 | **NOT PASSED** | 最新Gate Decisionはtrial `001`のFAIL、trial `002`監査待ち |
-| E3-4 / Gate G4 | Not Started | G3 PASS前のため開始禁止 |
+| E3-3 Predictive Specification + Split | Completed | trial `002` implementation commit `fd4e332` |
+| Gate G3 | **PASS** | trial `002` Test Agent Gate Decision |
+| E3-4 / Gate G4 | **READY_FOR_TEST** | trial `001` implementation commit `f16c0a7` |
 | E3-5 / Gate G5 | Not Started | G4 PASS前のため開始禁止 |
 | E3-6 / Gate G6 | Not Started | 前段Gate未完了 |
 
@@ -46,6 +46,9 @@
 ### 2.1. 確定commit列
 
 ```text
+f16c0a7 feat: implement ENH-E3 G4 predictive training and evaluation
+3c0447c test: record ENH-E3 G3 trial 002 audit evidence
+908ce95 docs: hand off ENH-E3 G3 trial 002 for audit
 fd4e332 test: cover ENH-E3 G3 predictive specification identity
 5eb61a7 test: record ENH-E3 G3 trial 001 audit evidence
 6540499 docs: hand off ENH-E3 G3 implementation for audit
@@ -89,12 +92,12 @@ f4faffc ENH-E3 途中経過。GATE G2 Pass 済， G3 実施途中
 | `tests/product/test_predictive_leakage_e3.py` | target/future/group/overlap/population leakage |
 | `tests/product/test_predictive_split_api_e3.py` | API→Artifact Store→DB→Lineageの統合契約 |
 
-### 2.4. 保存済みだがG3の完成物として扱ってはならないファイル
+### 2.4. G3 implementation当時に完成物として扱わなかったファイル（履歴）
 
 | File / Directory | 扱い |
 | --- | --- |
-| `src/ariadne/capabilities/predictive/metrics.py` | 中断前から存在するG4 Evaluation draft。G3 commitへ混入させないこと |
-| `src/ariadne/product/domain/research_context.py` | 後段統合待ちのdraft。現時点でContext API/UIは未実装 |
+| `src/ariadne/capabilities/predictive/metrics.py` | G3時点ではG4 Evaluation draft。G4 implementation commit `f16c0a7`へ収録 |
+| `src/ariadne/product/domain/research_context.py` | G3時点では後段統合待ちのdraft。G4でPersistence/APIへ統合、UIは後送 |
 | `src/ariadne/product/domain/lineage.py` | Domain draft。G2/G3は`LineageEdgeOrm`で必要な辺を永続化しているが、横断Lineage完成はG6 |
 | 承認文書ディレクトリ、`_bkup/`、`document_inventory.json` | ユーザー入力。削除・一括stage禁止 |
 
@@ -111,7 +114,7 @@ trial `001` implementation commitでは対象fileだけを明示stageし、`metr
 ### 引継ぎ注意
 
 - 実装順序は`06b_Ariadne_ENH-E3_実装再開指示書.md`を正本とする。
-- 現在はG3判定前であるため、Training実装へ進んではならない。
+- 現在はG4 Test Agent判定前であるため、G5実装へ進んではならない。
 
 ## 3.2. WP-1 Domain / Migration
 
@@ -123,12 +126,14 @@ trial `001` implementation commitでは対象fileだけを明示stageし、`metr
 - Analysis View domainと不変化
 - Execution Plan / Stage / Attempt
 - additive migration `20260807_product_0004`
+- additive migration `20260807_product_0005`（G4 Test Agent検証待ち）
 - generic family Execution / Stage / Result / Artifact / Lineage table
+- Research Context永続化/API
+- Analysis Specification共通CRUD/FIX/REVISE API
 
 ### 未完了部分
 
-- Research Contextの永続化/API/UI
-- Analysis Specificationの共通CRUD/FIX/REVISE API
+- Research Context UI
 - 全Familyを統合したLineage query/export
 
 ## 3.3. WP-2 Generic Workflow Core — Completed / G1
@@ -212,7 +217,9 @@ Explore Resultは`analysis_family=EXPLORATORY`、画面にも非因果・非確�
 - Explore Resultへの観察メモ/限界Annotationは汎用Annotation統合側に残る。
 - route-backed navigation / browser backはWP-7後段に残る。
 
-## 3.7. WP-5 Predictive — G3範囲のみREADY_FOR_TEST
+## 3.7. WP-5 Predictive — G4 trial 001 READY_FOR_TEST
+
+以下のG3記述はtrial `002`までに確定したSplit基盤の履歴である。G3はその後Test AgentによりPASSと判定された。
 
 ### Predictive Specification
 
@@ -277,9 +284,9 @@ POST /api/v1/projects/{project_id}/predictive/split-validations
 GET  /api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}
 ```
 
-`capabilities`は`gate=G3_SPLIT_ONLY`、`training_available=false`を返し、未完成のTrainingを利用可能と誤表示しない。
+G3 trial `002`時点の`capabilities`は`gate=G3_SPLIT_ONLY`、`training_available=false`を返していた。G4 implementationでは`gate=G4_TRAINING_EVALUATION`へ更新した。
 
-### G3で意図的に未実装
+### G3 trial `002`時点で意図的に未実装だった範囲
 
 - prepare runner
 - train runner
@@ -290,6 +297,19 @@ GET  /api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}
 - Model Card
 - Explain runner
 - Predictive UI
+
+### G4 trial `001` implementation
+
+- Research Context DRAFT / FIXED / immutable / relation / usage API
+- Analysis Specification共通envelopeのvalidate / fix / revise lifecycle
+- FIXED SpecificationからのExecution Plan API
+- `SPLIT -> PREPARE -> TRAIN -> EVALUATE`のGeneric Workflow DAG
+- TRAIN-only fitted preprocessor、Binary / Regression最小Model Registry
+- frozen model / preprocessorによるTEST evaluation
+- Training / Evaluation / Error Analysis Resultと4種Artifact
+- Worker claim、202 submit、Execution lifecycle API、snapshot、lineage
+- G4 capabilities。ExplanationはG5未完了として明示
+- additive migration `20260807_product_0005`
 
 ## 3.8. WP-7 Frontend
 
@@ -324,7 +344,7 @@ GET  /api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}
 
 ## 3.10. WP-9 Verification
 
-G1/G2の範囲は実施済み。G3以降と最終G6は未完了。
+G1-G3のTest Agent監査は実施済み。G4 trial `001`はCoding Agent実装完了、Test Agent監査待ちである。
 
 ## 4. テスト実行履歴
 
@@ -416,6 +436,27 @@ decision: 結果不成立。PASSとして扱わない
 
 中断後に残存するpytest processは確認されていない。
 
+## 4.5. Gate G3 trial 002 Test Agent evidence
+
+| 項目 | 報告結果 |
+| --- | --- |
+| G3 reports `001`〜`008` | 全項目PASS |
+| full active suite | `157 passed, 4 skipped` |
+| PostgreSQL contract | `4 passed`（初回infrastructure retry後） |
+| migration head | `20260807_product_0004` single head |
+| Gate Decision | `PASS` |
+| tested implementation | `fd4e332939f93cc35adbf4a03929818e47c04b7e` |
+| handoff report commit | `908ce95` |
+| audit evidence commit | `3c0447c` |
+
+## 4.6. Gate G4 trial 001
+
+- Coding Agentによるtest実行: NOT PERFORMED
+- 対象27 Python fileのAST parse: success
+- `git diff --check`: clean
+- migration chain静的観察: `0001 -> 0002 -> 0003 -> 0004 -> 0005`
+- Test Agentによるpytest / PostgreSQL / migration / benchmark監査: 未実施
+
 ## 5. 既知の設計判断・制約
 
 ### 5.1. 事実
@@ -426,13 +467,16 @@ decision: 結果不成立。PASSとして扱わない
 - TESTはArtifact内contractでselection input禁止としている。
 - 同一spec/source/seedのsplit Artifact content hashは一致することをAPI testで確認している。
 - G3は既存`product_0004` generic persistenceを利用し、新migrationを追加していない。
+- G4ではheavy trainingを同期APIで実行せず、202 submit後にProduct Workerがclaimする。
+- model objectはphysical Artifactへ保存し、Result JSONにはlibrary-neutral descriptorだけを保存する。
+- ExplanationはG5範囲のため利用不可をcapabilitiesで明示する。
 
 ### 5.2. 検討余地
 
-- `partition-artifacts/{id}`はmetadataを返すが、専用binary/content download APIはまだない。G4 runnerはArtifact Store Port経由で読む設計にするか、共通Artifact APIへ統合する必要がある。
+- `partition-artifacts/{id}`はmetadataを返すが、Stage間連携はHTTPではなくGeneric Workflow bindingを使用する。
 - shared `AnalysisFrameProvider`はProduct applicationからExploratory compilerを再利用している。Family非依存componentへ移す余地はあるが、現在はView compilerの単一正本を優先した。
 - Predictive split validationはAPI process内で実行する。将来、非常に大きいDatasetを扱う場合はasync Executionへ移す判断が必要だが、G3のsplit preview/validation契約では同期処理を採用している。
-- `metrics.py`はG4 draftであり、現在のG3 test evidenceには含まれない。
+- G4のModel Registryは意図的にBinary / Regression各1 modelに限定し、candidate tuning / AutoMLは実装していない。
 
 ## 6. G3 trial handoff
 
@@ -445,7 +489,7 @@ decision: 結果不成立。PASSとして扱わない
 - failure category: `REQUIRED_TEST_COVERAGE_MISSING`
 - evidence commit: `5eb61a76a1c7f35407d6bc6316c633336e06b59f`
 
-### 6.2. Trial 002 current state
+### 6.2. Trial 002 decision
 
 - implementation base commit: `5eb61a76a1c7f35407d6bc6316c633336e06b59f`
 - implementation completed commit: `fd4e332939f93cc35adbf4a03929818e47c04b7e`
@@ -453,24 +497,35 @@ decision: 結果不成立。PASSとして扱わない
 - changed production files: none
 - changed test files: `tests/product/test_predictive_spec_e3.py`
 - Coding Agent test execution: NOT PERFORMED
-- latest Gate Decision: trial `001` FAIL
-- next allowed implementation action: trial `002`のTest Agent監査結果を待つ
+- Gate Decision: PASS
+- Test Agent full suite: `157 passed, 4 skipped`
+- Test evidence commit: `3c0447cc535b305701f3528de8f7ed89bff1add7`
+- next allowed implementation action: G4 implementation
 
-### 6.3. Test Agent focus
+### 6.3. G4 trial 001 handoff
 
-- Predictive Specification canonical/deterministic identity assertion
-- G3 canonical test 4ファイル
-- Generic Executor変更に対するG1 Generic Workflow / CausalおよびG2 Exploratory回帰
-- SQLite / PostgreSQL persistence、Artifact、Lineage、source hash
-- split determinism、leakage/isolation、machine-readable error code/path
-- full active suite
+- implementation base commit: `3c0447cc535b305701f3528de8f7ed89bff1add7`
+- implementation completed commit: `f16c0a7bb25fbe3378585ba78921398638d1ecea`
+- completion report: `G4_001_implementation_completion_report.md`
+- migration head: `20260807_product_0005`（検証待ち）
+- Coding Agent test execution: NOT PERFORMED
+- state: READY_FOR_TEST
+- next allowed implementation action: G4 Test Agent監査結果を待つ
+
+### 6.4. G4 Test Agent focus
+
+- Research Context / Analysis Specification lifecycleとProject境界
+- migration `0004 -> 0005 -> 0004 -> 0005`とsingle head
+- 4-stage DAG、TRAIN-only preprocessing、TEST isolation
+- Binary / Regression training/evaluation、metric、analytical status
+- API 202 / Worker / cancel / retry / rerun / revise / prefill
+- Snapshot / Artifact / Result / Lineage整合とfull active suite
 
 ## 7. 再開時の禁止事項
 
-- G3全test完走前にG3をPASSと記載しない。
-- G3 PASS前にTrain / Evaluate runnerを追加しない。
+- G4 Test Agent PASS前にG5へ進まない。
 - `git add .`で承認文書、backup、後続draftを混入させない。
-- `metrics.py`の存在をもってG4 Evaluation completedと判定しない。
+- Coding AgentがG4のPASS / FAIL / BLOCKEDを判定しない。
 - Research Context / Lineage domain draftの存在をもってWP-3 / WP-8全体completedと判定しない。
 - G1/G2確定commitをrewriteしない。
 
@@ -479,8 +534,9 @@ decision: 結果不成立。PASSとして扱わない
 ```text
 G1: PASS
 G2: PASS
-G3 implementation: READY_FOR_TEST, trial 002 commit fd4e332
-G3 Gate: NOT PASSED, latest decision is trial 001 FAIL
-G4-G6: NOT STARTED
-next allowed implementation action: wait for G3 trial 002 Gate Decision
+G3 Gate: PASS, trial 002 tested implementation fd4e332
+G4 implementation: READY_FOR_TEST, trial 001 commit f16c0a7
+G4 Gate: Test Agent decision pending
+G5-G6: NOT STARTED
+next allowed implementation action: wait for G4 trial 001 Gate Decision
 ```
