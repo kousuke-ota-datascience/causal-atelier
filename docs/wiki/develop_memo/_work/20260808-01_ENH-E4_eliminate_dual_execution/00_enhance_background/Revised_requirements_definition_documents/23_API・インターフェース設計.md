@@ -1,6 +1,9 @@
-# 23 API・インターフェース設計 — ENH-E3正本
+# 23 API・インターフェース設計 — ENH-E4 approved target snapshot
 
-- 文書状態: ENH-E3承認済み正本
+- 文書状態: ENH-E4 approved target requirement/design snapshot
+- Baseline: corresponding approved pre-ENH-E4 requirement/design document
+- Precedence: baseline normative text that conflicts with an approved ENH-E4 ADR / requirement / invariant / constraint is superseded by the ENH-E4 target contract.
+- Implementation status: this document describes the approved target contract; it does not assert production implementation completion.
 - 承認日時: 2026-08-07 13:06 JST
 - 更新日: 2026-08-07
 - 上位文書:
