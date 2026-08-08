@@ -217,7 +217,7 @@ async def _create_identification_fixture(client, *, name: str, content: bytes): 
         "variants": [{"algorithm_or_estimator": "GRAPHICAL_IDENTIFICATION", "parameters": {}, "random_seed": 42}],
         "code_version": "test", "runtime_versions": {},
     }, f"{name}-identification")
-    assert response.status_code == 201
+    assert response.status_code == 202
     return project_id, dataset_id, response.json()["executions"][0]["execution_id"]
 
 
@@ -300,7 +300,7 @@ async def test_enh_e1_identification_first_nonidentification_and_lineage(client,
         "variants": [{"algorithm_or_estimator": "PC", "parameters": {}, "random_seed": 42}],
         "code_version": "test", "runtime_versions": {},
     }, "discover")
-    assert discovery.status_code == 201
+    assert discovery.status_code == 202
     discovery_execution = discovery.json()["executions"][0]["execution_id"]
     process_next(tmp_path)
     discovery_results = (await client.get(
@@ -364,7 +364,7 @@ async def test_enh_e1_identification_first_nonidentification_and_lineage(client,
         "variants": [{"algorithm_or_estimator": "GRAPHICAL_IDENTIFICATION", "parameters": {}, "random_seed": 42}],
         "code_version": "test", "runtime_versions": {},
     }, "identify")
-    assert identification.status_code == 201
+    assert identification.status_code == 202
     identification_execution = identification.json()["executions"][0]["execution_id"]
     process_next(tmp_path)
     results = (await client.get(f"/api/v1/executions/{identification_execution}/results")).json()["items"]
@@ -383,7 +383,7 @@ async def test_enh_e1_identification_first_nonidentification_and_lineage(client,
                      {"algorithm_or_estimator": "ipw", "parameters": {}, "random_seed": 42}],
         "code_version": "test", "runtime_versions": {},
     }, "estimate")
-    assert estimation.status_code == 201
+    assert estimation.status_code == 202
     for _ in range(2):
         process_next(tmp_path)
     effect_results = []
@@ -421,7 +421,7 @@ async def test_enh_e1_identification_first_nonidentification_and_lineage(client,
             "variants": [{"algorithm_or_estimator": method, "parameters": {}, "random_seed": 42}],
             "code_version": "test", "runtime_versions": {},
         }, operation.lower())
-        assert followup.status_code == 201
+        assert followup.status_code == 202
         followup_execution = followup.json()["executions"][0]["execution_id"]
         process_next(tmp_path)
         followup_results = (await client.get(
@@ -520,7 +520,7 @@ async def test_confirmatory_warning_and_revised_execution_are_persisted(
         "code_version": "test", "runtime_versions": {},
     }
     base = await submit(client, project_id, base_body, "e1a-base")
-    assert base.status_code == 201
+    assert base.status_code == 202
     base_execution_id = base.json()["executions"][0]["execution_id"]
     warning = base.json()["executions"][0]["scientific_warnings"][0]
     assert warning["warning_code"] == "POST_SELECTION_INFERENCE_RISK"
@@ -538,7 +538,7 @@ async def test_confirmatory_warning_and_revised_execution_are_persisted(
         **base_body,
         "base_execution_id": base_execution_id,
     }, "e1a-rerun")
-    assert rerun.status_code == 201
+    assert rerun.status_code == 202
     rerun_id = rerun.json()["executions"][0]["execution_id"]
     rerun_execution = (await client.get(f"/api/v1/executions/{rerun_id}")).json()
     assert rerun_execution["revision_context"]["revision_kind"] == "RERUN"
@@ -550,7 +550,7 @@ async def test_confirmatory_warning_and_revised_execution_are_persisted(
         "change_reason": "triangulate with a propensity estimator",
         "variants": [{"algorithm_or_estimator": "ipw", "parameters": {}, "random_seed": 42}],
     }, "e1a-revised")
-    assert revised.status_code == 201
+    assert revised.status_code == 202
     revised_id = revised.json()["executions"][0]["execution_id"]
     revised_execution = (await client.get(f"/api/v1/executions/{revised_id}")).json()
     revision = revised_execution["revision_context"]

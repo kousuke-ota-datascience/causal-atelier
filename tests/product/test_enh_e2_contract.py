@@ -192,7 +192,7 @@ async def test_project_delete_is_idempotent_archive_and_all_new_writes_are_guard
             "runtime_versions": {},
         },
     )
-    assert execution_response.status_code == 201
+    assert execution_response.status_code == 202
     execution_id = execution_response.json()["executions"][0]["execution_id"]
 
     assert (await client.delete(f"/api/v1/projects/{project_id}")).status_code == 204
@@ -342,4 +342,4 @@ async def test_inference_rejects_missing_or_tampered_graph_outcome(client) -> No
             dataset["dataset_version_id"], fixed["graph_version_id"], "outcome"
         ),
     )
-    assert accepted.status_code == 201
+    assert accepted.status_code == 202

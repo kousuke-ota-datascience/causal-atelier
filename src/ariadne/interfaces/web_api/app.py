@@ -16,6 +16,11 @@ from ariadne.interfaces.web_api.routers import (
     projects,
     results,
     artifacts,
+    exploration,
+    predictive,
+    predictive_workflow,
+    product_closure,
+    workspace_lifecycle,
 )
 from ariadne.product.domain.errors import DomainError, InfrastructureError
 
@@ -39,7 +44,9 @@ def create_app() -> FastAPI:
         return response
 
     for router in (projects.router, dataset_versions.router, executions.router, results.router,
-                   graph_versions.router, annotations.router, artifacts.router):
+                   graph_versions.router, annotations.router, artifacts.router,
+                   exploration.router, predictive.router, workspace_lifecycle.router,
+                   predictive_workflow.router, product_closure.router):
         app.include_router(router, prefix="/api/v1")
 
     @app.get("/health/ready")

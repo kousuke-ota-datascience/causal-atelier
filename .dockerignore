@@ -12,6 +12,8 @@ tests/*
 !tests/browser_e2e/
 tests/browser_e2e/*
 !tests/browser_e2e/run_enh_e1a.py
+!tests/browser_e2e/run_enh_e3_predictive.py
+!tests/browser_e2e/run_enh_e3.py
 src/ariadne/legacy
 src/ariadne/infrastructure/artifact_store
 src/ariadne/infrastructure/auth

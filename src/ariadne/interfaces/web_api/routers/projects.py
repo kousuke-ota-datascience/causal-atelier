@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Request, Response
 
-from ariadne.interfaces.web_api.dependencies import ProjectDataServiceDep
+from ariadne.interfaces.web_api.dependencies import ProjectDataServiceDep, ProductClosureServiceDep
 from ariadne.interfaces.web_api.schemas import (
     ProjectCreate,
     ProjectResponse,
@@ -36,13 +36,21 @@ def _project_to_response(p: Project) -> ProjectResponse:
 
 
 @router.post("", status_code=201, response_model=ProjectResponse)
-async def create_project(body: ProjectCreate, svc: ProjectDataServiceDep) -> ProjectResponse:
+async def create_project(
+    body: ProjectCreate,
+    request: Request,
+    svc: ProjectDataServiceDep,
+    closure: ProductClosureServiceDep,
+) -> ProjectResponse:
     project = svc.create_project(CreateProjectCommand(
         name=body.name,
         topic=body.topic,
         objective=body.objective,
         memo=body.memo,
     ))
+    closure.register_project_owner(
+        project.project_id, request.headers.get("X-User-Id", "anonymous")
+    )
     return _project_to_response(project)
 
 

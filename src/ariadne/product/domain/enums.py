@@ -10,6 +10,36 @@ class ProjectStatus(str, Enum):
     ARCHIVED = "ARCHIVED"
 
 
+class AnalysisFamily(str, Enum):
+    EXPLORATORY = "EXPLORATORY"
+    CAUSAL = "CAUSAL"
+    PREDICTIVE = "PREDICTIVE"
+
+
+class VersionedResourceStatus(str, Enum):
+    DRAFT = "DRAFT"
+    FIXED = "FIXED"
+
+
+class AnalysisMode(str, Enum):
+    EXPLORATORY = "EXPLORATORY"
+    CONFIRMATORY = "CONFIRMATORY"
+
+
+class StageExecutionStatus(str, Enum):
+    PENDING = "PENDING"
+    READY = "READY"
+    RUNNING = "RUNNING"
+    SUCCEEDED = "SUCCEEDED"
+    FAILED = "FAILED"
+    SKIPPED_DUE_TO_PREREQUISITE = "SKIPPED_DUE_TO_PREREQUISITE"
+
+
+class RevisionKind(str, Enum):
+    RERUN = "RERUN"
+    REVISED = "REVISED"
+
+
 class ArtifactType(str, Enum):
     DATASET_FILE = "DATASET_FILE"
     GRAPH_JSON = "GRAPH_JSON"

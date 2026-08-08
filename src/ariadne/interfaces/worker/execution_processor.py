@@ -21,14 +21,12 @@ from ariadne.product.domain.errors import ArtifactHashMismatch
 from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.result import Result
 from ariadne.product.application.execution_service import _compute_snapshot_hash
+from ariadne.capabilities.causal.workflow import CausalPlanner, register_causal_runners
+from ariadne.product.workflow.executor import GenericExecutor
+from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.ports.scientific_core import (
-    DiscoveryInput,
-    IdentificationInput,
-    EstimationInput,
-    RefutationInput,
-    SensitivityInput,
     ScientificResultDescriptor,
     ScientificCorePort,
 )
@@ -100,10 +98,12 @@ class ExecutionProcessor:
             )
             self._verify_snapshot(execution, dsv.content_hash)
             upstream, upstream_execution = self._retrieve_upstream(execution)
-            descriptors = self._dispatch(
+            descriptors = self._dispatch_generic(
                 execution, dataset_path, graph_path, upstream, upstream_execution, output_dir
             )
             if not descriptors:
+                if self._is_cancelled(execution.execution_id):
+                    return
                 raise RuntimeError("Scientific Core returned no Results")
 
             now = self._clock.now()
@@ -177,7 +177,7 @@ class ExecutionProcessor:
                         logger.exception("Unable to clean orphan artifact %s", key)
                 raise
 
-    def _dispatch(
+    def _dispatch_generic(
         self,
         execution: Execution,
         dataset_path: Path,
@@ -186,55 +186,33 @@ class ExecutionProcessor:
         upstream_execution: Execution | None,
         output_dir: Path,
     ) -> list[ScientificResultDescriptor]:
-        common = dict(
-            parameters=execution.parameter_json,
-            random_seed=execution.random_seed,
-            analysis_spec=execution.analysis_spec_json,
+        registry = StageRunnerRegistry()
+        register_causal_runners(registry, self._core)
+        plan = CausalPlanner().build_for_execution(execution)
+        stage_key = plan.stages[0].stage_key
+        inputs: dict[str, Any] = {
+            "dataset_path": dataset_path,
+            "output_dir": output_dir,
+        }
+        if graph_path is not None:
+            inputs["graph_path"] = graph_path
+        if upstream is not None:
+            inputs["upstream_result"] = upstream
+        if upstream_execution is not None:
+            inputs["upstream_execution"] = upstream_execution
+        outcome = GenericExecutor(registry, clock=self._clock.now).execute(
+            execution.execution_id,
+            plan,
+            external_inputs={stage_key: inputs},
+            snapshots={"snapshot_hash": execution.snapshot_hash},
+            cancelled=lambda: self._is_cancelled(execution.execution_id),
         )
-        match execution.operation:
-            case ExecutionOperation.DISCOVERY:
-                return self._core.run_discovery(DiscoveryInput(
-                    dataset_path=dataset_path, algorithm=execution.algorithm_or_estimator, **common
-                ), output_dir)
-            case ExecutionOperation.IDENTIFICATION:
-                assert graph_path is not None
-                return self._core.run_identification(IdentificationInput(
-                    dataset_path=dataset_path, graph_path=graph_path,
-                    method=execution.algorithm_or_estimator, **common,
-                ), output_dir)
-            case ExecutionOperation.ESTIMATION:
-                assert graph_path is not None and upstream is not None
-                return self._core.run_estimation(EstimationInput(
-                    dataset_path=dataset_path, graph_path=graph_path,
-                    estimator=execution.algorithm_or_estimator,
-                    upstream_result=_result_document(upstream), **common,
-                ), output_dir)
-            case ExecutionOperation.REFUTATION:
-                assert graph_path is not None and upstream is not None and upstream_execution is not None
-                analysis_spec = _inherit_scientific_context(
-                    execution.analysis_spec_json, upstream_execution.analysis_spec_json
-                )
-                return self._core.run_refutation(RefutationInput(
-                    dataset_path=dataset_path, graph_path=graph_path,
-                    base_result={**_result_document(upstream), **_context(upstream_execution)},
-                    method=analysis_spec["operation_spec"]["method"],
-                    parameters=execution.parameter_json, random_seed=execution.random_seed,
-                    analysis_spec=analysis_spec,
-                ), output_dir)
-            case ExecutionOperation.SENSITIVITY:
-                assert graph_path is not None and upstream is not None and upstream_execution is not None
-                analysis_spec = _inherit_scientific_context(
-                    execution.analysis_spec_json, upstream_execution.analysis_spec_json
-                )
-                return self._core.run_sensitivity(SensitivityInput(
-                    dataset_path=dataset_path, graph_path=graph_path,
-                    base_result={**_result_document(upstream), **_context(upstream_execution)},
-                    dimension=analysis_spec["operation_spec"]["dimension"],
-                    parameters=execution.parameter_json, random_seed=execution.random_seed,
-                    analysis_spec=analysis_spec,
-                ), output_dir)
-            case _:
-                raise RuntimeError(f"Unsupported operation: {execution.operation}")
+        if outcome.status == "CANCELLED":
+            return []
+        if outcome.status != "SUCCEEDED":
+            error = outcome.stages[-1].last_error or {"message": "Causal Stage failed"}
+            raise RuntimeError(str(error.get("message", error)))
+        return list(outcome.stages[-1].output_binding["scientific_descriptors"])
 
     def _retrieve_upstream(self, execution: Execution) -> tuple[Result | None, Execution | None]:
         if execution.input_result_id is None:

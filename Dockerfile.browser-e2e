@@ -4,5 +4,7 @@ RUN pip install --no-cache-dir playwright==1.62.0
 
 WORKDIR /workspace
 COPY --chmod=0755 tests/browser_e2e/run_enh_e1a.py /workspace/tests/browser_e2e/run_enh_e1a.py
+COPY --chmod=0755 tests/browser_e2e/run_enh_e3_predictive.py /workspace/tests/browser_e2e/run_enh_e3_predictive.py
+COPY --chmod=0755 tests/browser_e2e/run_enh_e3.py /workspace/tests/browser_e2e/run_enh_e3.py
 
 ENTRYPOINT ["python", "tests/browser_e2e/run_enh_e1a.py"]

@@ -15,6 +15,7 @@ from ariadne.product.domain.errors import (
     InvalidAnalysisSpec,
     InvalidStateTransition,
     ProjectBoundaryViolation,
+    ProjectAccessDenied,
     InvalidGraphSemantics,
     ArtifactHashMismatch,
     ScientificContractViolation,
@@ -24,7 +25,11 @@ from ariadne.product.domain.errors import (
     InvalidDatasetFile,
     InvalidDatasetMetadata,
     InvalidGraphEditBase,
+    InvalidExecutionPlan,
     ProjectArchived,
+    InvalidSchema,
+    ResourceImmutable,
+    PredictiveValidationError,
 )
 from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
 
@@ -41,6 +46,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 404, "ENTITY_NOT_FOUND", str(exc))
     if isinstance(exc, ProjectBoundaryViolation):
         return _error(request, 422, "PROJECT_BOUNDARY_VIOLATION", str(exc))
+    if isinstance(exc, ProjectAccessDenied):
+        return _error(request, 403, "PROJECT_ACCESS_DENIED", str(exc))
     if isinstance(exc, ProjectArchived):
         return _error(request, 409, "PROJECT_ARCHIVED", str(exc))
     if isinstance(exc, IdempotencyConflict):
@@ -61,6 +68,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 422, "INVALID_DATASET_METADATA", str(exc))
     if isinstance(exc, InvalidStateTransition):
         return _error(request, 409, "EXECUTION_STATE_CONFLICT", str(exc))
+    if isinstance(exc, InvalidExecutionPlan):
+        return _error(request, 422, exc.code, str(exc))
     if isinstance(exc, InvalidGraphSemantics):
         return _error(request, 422, "INVALID_GRAPH_SEMANTICS", str(exc))
     if isinstance(exc, InvalidAnalysisSpec):
@@ -69,6 +78,12 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
             exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC",
             str(exc),
         )
+    if isinstance(exc, InvalidSchema):
+        return _error(request, 422, "INVALID_SCHEMA", str(exc))
+    if isinstance(exc, PredictiveValidationError):
+        return _error(request, 422, exc.code, str(exc), {"path": exc.path})
+    if isinstance(exc, ResourceImmutable):
+        return _error(request, 409, "RESOURCE_IMMUTABLE", str(exc))
     if isinstance(exc, ArtifactHashMismatch):
         return _error(request, 500, "ARTIFACT_HASH_MISMATCH", str(exc))
     return _error(request, 400, "DOMAIN_ERROR", str(exc))
