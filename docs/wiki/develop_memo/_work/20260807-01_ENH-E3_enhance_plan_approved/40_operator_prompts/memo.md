@@ -135,7 +135,45 @@ G6 002 の実装が完了した。テストを実施せよ
 - docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/20_implementation_reports/
     - G6_002_implementation_completion_report.md
 -----
-G6 002 の実装が完了した。テストを実施せよ
+G6 002 のテストが完了した。確認し、再実装せよ
 
+- docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/30_test_report/
+    - G6_002_999_gate_decision.md
+-----
+G3 003 の実装が完了した。テストを実施せよ
 - docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/20_implementation_reports/
-    - G6_002_implementation_completion_report.md
+    - G6_003_implementation_completion_report.md
+
+-----
+G6 003 のテストが完了した。確認し、再実装せよ
+
+- docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/30_test_report/
+    - G6_003_999_gate_decision.md
+
+-----
+G3 003 の実装が完了した。テストを実施せよ
+- docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/20_implementation_reports/
+    - G6_004_implementation_completion_report.md
+
+-----
+G6 004 のテストが完了した。確認し、再実装せよ
+
+結論: FAIL
+
+  主因は必須ブラウザE2E（G6-006）です。
+
+  - E2E-06-regression 実行中、予測実行結果取得APIが HTTP 404
+  - ブラウザランナーは非ゼロ終了
+  - 一時障害ではなく、再現性のある機能/API不整合と判断
+  - その他の必須項目はPASS
+      - targeted G6: 32 passed
+      - API worker E2E: 10 passed
+      - G1–G5回帰: 65 passed
+      - PostgreSQL契約: 4 passed
+      - Scientific: 48 passed
+      - 全pytest: 190 passed, 4 skipped
+
+  レポート一式を作成・コミットしました。
+
+  - docs/wiki/develop_memo/_work/20260807-01_ENH-E3_enhance_plan_approved/30_test_report/G6_004_999_gate_decision.md
+  - Commit: 518c559
