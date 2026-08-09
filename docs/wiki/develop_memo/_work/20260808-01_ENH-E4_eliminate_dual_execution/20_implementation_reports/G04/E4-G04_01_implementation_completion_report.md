@@ -127,7 +127,7 @@ modified.
 - G05 is still required to converge all Product submission and old family output routes.
 - Existing family Result/Artifact writers remain transitional and are tracked by `E4-TD-003`.
 - Full UI/API/worker route cutover is intentionally not implemented.
-- The evidence runner logs were produced before the implementation commit fixed the SHA; the tested working-tree source corresponds to the implementation commit content.
+- Final evidence was run on report-descendant SHA `89afc28e4cf326a9fb7f571c7c1479a35271901e`; the implementation source/test/migration target remains `3d88781c1b69ba03bb06c0b8f143612b81feb4bf`.
 
 ## 9. Out-of-Scope Work
 
@@ -148,7 +148,7 @@ GenericExecutor persistence; and PostgreSQL infrastructure redesign.
 - Test target implementation commit: `3d88781c1b69ba03bb06c0b8f143612b81feb4bf`
 - Active Gate: `E4-G04 Trial 01`
 - Implementation report path: `docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/20_implementation_reports/G04/E4-G04_01_implementation_completion_report.md`
-- Coding Agent test execution: pure `17 passed, 1 skipped`; standardized PostgreSQL `17 passed`, exit `0`.
+- Coding Agent test execution: pure `17 passed, 1 skipped`; standardized PostgreSQL `17 passed`, exit `0` on report-descendant SHA `89afc28e4cf326a9fb7f571c7c1479a35271901e`.
 - Ready for independent test: `YES`
 
 ## 12. Design Block
@@ -162,7 +162,7 @@ GenericExecutor persistence; and PostgreSQL infrastructure redesign.
 ## 13. Supplemental Implementation Evidence
 
 - G04 PostgreSQL evidence: `test-results/postgres/run-20260809T052308Z.metadata.txt` (`1 passed`, migration head `20260809_product_0009`).
-- Regression PostgreSQL evidence: `test-results/postgres/run-20260809T052335Z.metadata.txt` (`17 passed`, migration head `20260809_product_0009`).
+- Final regression PostgreSQL evidence: `test-results/postgres/run-20260809T053141Z.metadata.txt` (`17 passed`, migration head `20260809_product_0009`, runner-recorded SHA `89afc28e4cf326a9fb7f571c7c1479a35271901e`).
 - Pure evidence command: `UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/product/test_enh_e4_g04_result_artifact_contract.py tests/product/test_enh_e4_g03_generic_executor_boundary.py tests/product/test_enh_e4_g03_persistent_stage_execution.py tests/product/test_enh_e4_g02_canonical_execution.py` → exit `0`, `17 passed, 1 skipped`.
 - No new dependency was added.
 - GenericExecutor remains free of Result/Artifact persistence, UoW commit, claim/lease, retry, and lineage authority.

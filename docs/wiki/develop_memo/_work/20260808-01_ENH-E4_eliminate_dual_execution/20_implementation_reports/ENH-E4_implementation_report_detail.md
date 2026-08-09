@@ -32,7 +32,7 @@
 ## 4. Current Working State
 
 - Current active Gate: E4-G04 Trial 01 handoff.
-- Current HEAD: `0c138086d3bedca49fb83c7c28cef059e0dde914` before report metadata correction commit.
+- Current HEAD: `89afc28e4cf326a9fb7f571c7c1479a35271901e` before final evidence metadata update.
 - Working tree: implementation commit fixed; report/detail files pending report commit; unrelated `.nfs` deletion remains.
 - Migration head: `20260809_product_0009`.
 - Uncommitted implementation files: NONE.
@@ -76,11 +76,12 @@ database issue outside the standardized runner is not changed.
 - Migration: `product_migrations/versions/20260809_product_0009_enh_e4_g04_result_artifact_ownership.py`
 - Pure tests: `tests/product/test_enh_e4_g04_result_artifact_contract.py`
 - PostgreSQL tests: `tests/product/test_enh_e4_g04_result_artifact_postgres.py`
-- Regression evidence: `test-results/postgres/run-20260809T052335Z.metadata.txt`
+- Regression evidence: `test-results/postgres/run-20260809T053141Z.metadata.txt`
 
 ## 10. Supplemental State
 
 Coding Agent self-check passed: pure `17 passed, 1 skipped`; standardized
 PostgreSQL G04/regression subset `17 passed`; migration current/head
-`20260809_product_0009`. This detail ledger records implementation state only;
+`20260809_product_0009`. Final report-descendant SHA
+`89afc28e4cf326a9fb7f571c7c1479a35271901e` was tested by the runner. This detail ledger records implementation state only;
 an independent Test Agent owns the G04 Gate decision.
