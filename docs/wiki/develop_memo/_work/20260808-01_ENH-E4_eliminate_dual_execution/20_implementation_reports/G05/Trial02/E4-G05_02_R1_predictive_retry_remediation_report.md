@@ -145,25 +145,48 @@ retry test は Family 4 table の before/after count equality を assert する�
 
 ### V-04 C3a rerun regression
 
-- Purpose: rerun canonical lifecycle
-- Tested SHA: `ad3e3e124ee47f9cbaa2470b25263b7289795262`
-- Exact command: V-03 command内の `tests/product/test_enh_e4_g05_phase_c_rerun_postgres.py`
-- Evidence directory: NOT_SET; Raw evidence: UNKNOWN
-- Exit code: 0 (node); Passed: 1; Failed: 0; Skipped: 0
-- Expected/Actual: PASS
-- Facts: rerun node PASS。
+- Verification ID: V-04
+- Purpose: C3a rerun canonical lifecycle
+- Tested SHA: `804dbde12574080b35cf6601ac97f9011ccd7a03`
+- Repository state: documentation-only changes after R1 checkpoint
+- Exact command: `ARIADNE_TEST_EVIDENCE_DIR=/tmp/ariadne-g05-t02-r1b-c3a scripts/test/run_product_postgres_tests.sh tests/product/test_enh_e4_g05_phase_c_rerun_postgres.py`
+- Evidence directory: `/tmp/ariadne-g05-t02-r1b-c3a`
+- Raw evidence: `/tmp/ariadne-g05-t02-r1b-c3a/run-20260809T113143Z.txt`
+- Exit code: 0; Passed: 1; Failed: 0; Skipped: 0
+- Expected: new Execution/base_execution_id/RERUN/new stages/no Family writes
+- Actual: PASS
+- Facts: independent standardized runner exited 0.
 - Interpretation: R1 does not regress C3a。
 
 ### V-05 C3b revise regression
 
-- Purpose: revise canonical lifecycle
-- Tested SHA: `ad3e3e124ee47f9cbaa2470b25263b7289795262`
-- Exact command: V-03 command内の `tests/product/test_enh_e4_g05_phase_c_revise_postgres.py`
-- Evidence directory: NOT_SET; Raw evidence: UNKNOWN
-- Exit code: 0 (node); Passed: 1; Failed: 0; Skipped: 0
-- Expected/Actual: PASS
-- Facts: revise node PASS。
+- Verification ID: V-05
+- Purpose: C3b revise canonical lifecycle
+- Tested SHA: `804dbde12574080b35cf6601ac97f9011ccd7a03`
+- Repository state: documentation-only changes after R1 checkpoint
+- Exact command: `ARIADNE_TEST_EVIDENCE_DIR=/tmp/ariadne-g05-t02-r1b-c3b scripts/test/run_product_postgres_tests.sh tests/product/test_enh_e4_g05_phase_c_revise_postgres.py`
+- Evidence directory: `/tmp/ariadne-g05-t02-r1b-c3b`
+- Raw evidence: `/tmp/ariadne-g05-t02-r1b-c3b/run-20260809T113158Z.txt`
+- Exit code: 0; Passed: 1; Failed: 0; Skipped: 0
+- Expected: REVISED/RERUN classification, new canonical execution/stages, no Family writes
+- Actual: PASS
+- Facts: independent standardized runner exited 0.
 - Interpretation: R1 does not regress C3b。
+
+### V-06 Isolated G03 Retry / StageExecution Regression
+
+- Verification ID: V-06
+- Purpose: combined invocationで失敗した G03 acceptance set の clean isolated verification
+- Tested SHA: `804dbde12574080b35cf6601ac97f9011ccd7a03`
+- Repository state: documentation-only changes after R1 checkpoint
+- Exact command: `ARIADNE_TEST_EVIDENCE_DIR=/tmp/ariadne-g05-t02-r1b-g03 scripts/test/run_product_postgres_tests.sh tests/product/test_enh_e4_g03_acceptance_postgres.py`
+- Evidence directory: `/tmp/ariadne-g05-t02-r1b-g03`
+- Raw evidence: UNKNOWN
+- Exit code: 0; Passed: 6; Failed: 0; Skipped: 0
+- Expected: combined failure 3件を含む G03 acceptance が isolated で PASS
+- Actual: PASS
+- Facts: clean isolated runner で 6 passed。
+- Interpretation: G03 production contract defectの証拠はなく、combined failure は `TEST_FIXTURE_ISOLATION_DEFECT` と分類する。
 
 ## 11. Migration
 
