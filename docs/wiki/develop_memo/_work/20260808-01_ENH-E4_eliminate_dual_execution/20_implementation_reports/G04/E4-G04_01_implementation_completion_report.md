@@ -9,7 +9,7 @@
 - Baseline commit: `14bc705938d0fda6ea0ab1b80c53ca677a19d794`
 - Starting commit: `c23ba9e144d6994a32816efa8e5257fa7c47fddc`
 - Implementation commit: `3d88781c1b69ba03bb06c0b8f143612b81feb4bf`
-- Report commit: `UNKNOWN` (report commit created after this implementation commit)
+- Report commit: `0c138086d3bedca49fb83c7c28cef059e0dde914` (initial report commit; metadata correction follows)
 - Migration head: `20260809_product_0009`
 - Started at: `2026-08-09T05:15:47+00:00`
 - Finished at: `2026-08-09T05:24:26+00:00`
