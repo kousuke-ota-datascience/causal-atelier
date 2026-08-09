@@ -1,74 +1,69 @@
-# {{GATE}} Trial {{TRIAL}} Implementation Completion Report
+# {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_ID}} Implementation Completion Report
 
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
-- Gate: {{GATE}}
-- Trial: {{TRIAL}}
-- Status: {{STATUS}}
-- Branch: {{BRANCH}}
-- Baseline commit: {{BASELINE_COMMIT}}
-- Starting commit: {{STARTING_COMMIT}}
-- Implementation commit: {{IMPLEMENTATION_COMMIT}}
-- Report commit: {{REPORT_COMMIT}}
-- Migration head: {{MIGRATION_HEAD}}
-- Started at: {{STARTED_AT}}
-- Finished at: {{FINISHED_AT}}
+- Gate: {{GATE_ID}}
+- Trial: {{TRIAL_ID}}
+- Status: READY_FOR_TEST / BLOCKED
+- Starting commit: {{STARTING_COMMIT_FULL_SHA}}
+- Implementation commit: {{IMPLEMENTATION_COMMIT_FULL_SHA_OR_NONE}}
+- Report commit: {{REPORT_COMMIT_FULL_SHA_OR_PENDING}}
+- 06 Contract: {{PATH_06}}
+- Applicable 08 Remediation: {{PATH_OR_NONE}}
+- Timestamp: {{TIMESTAMP_ISO8601_TZ}}
 
-## 1. Input
-- Implementation instruction: {{IMPLEMENTATION_INSTRUCTION_PATH}}
-- Previous Gate Decision report: {{PREVIOUS_GATE_DECISION_REPORT}}
+## 1. Implementation summary
 
-## 2. Scope Implemented
-{{SCOPE_IMPLEMENTED}}
+{{SUMMARY}}
 
-## 3. Files Changed
-### Added
-{{FILES_ADDED}}
-### Modified
-{{FILES_MODIFIED}}
-### Deleted
-{{FILES_DELETED}}
+## 2. Changed files
 
-## 4. Implementation Details
-{{IMPLEMENTATION_DETAILS}}
+| Path | Change | Reason |
+|---|---|---|
+| {{PATH}} | add / modify / delete | {{REASON}} |
 
-## 5. Automated Test Code Added / Changed
-{{AUTOMATED_TEST_CODE_CHANGES}}
+## 3. Observable implementation facts
 
-## 6. Migration
-- Added migration: {{ADDED_MIGRATION}}
-- Previous head: {{PREVIOUS_MIGRATION_HEAD}}
-- New head: {{NEW_MIGRATION_HEAD}}
-- Destructive change: {{DESTRUCTIVE_CHANGE}}
-- Data migration: {{DATA_MIGRATION}}
+{{FACTS}}
 
-## 7. Changes to Already-Passed Gates
-{{CHANGES_TO_PASSED_GATES}}
+## 4. Schema / migration / API / runtime impact
 
-## 8. Known Limitations / Unresolved Items
-{{KNOWN_LIMITATIONS}}
+{{IMPACT_OR_NA}}
 
-## 9. Out-of-Scope Work
-{{OUT_OF_SCOPE_WORK}}
+## 5. Protected passed-Gate impact
 
-## 10. Git Evidence
-- `git rev-parse HEAD`: {{GIT_HEAD}}
-- `git status --short`: {{GIT_STATUS_SHORT}}
-- Diff stat: {{GIT_DIFF_STAT}}
+| Passed Gate | Touched? | Preserved semantic | Self-check / evidence |
+|---|---|---|---|
+| {{GATE_OR_NONE}} | YES / NO | {{SEMANTIC}} | {{EVIDENCE}} |
 
-## 11. Handoff to Test Agent
-- Test target implementation commit: {{TEST_TARGET_IMPLEMENTATION_COMMIT}}
-- Active Gate: {{ACTIVE_GATE}}
-- Implementation report path: {{IMPLEMENTATION_REPORT_PATH}}
-- Coding Agent test execution: {{CODING_AGENT_TEST_EXECUTION}}
-- Ready for independent test: {{READY_FOR_INDEPENDENT_TEST}}
+## 6. Transition Debt impact
 
-## 12. Design Block
-- Contradiction: {{DESIGN_BLOCK_CONTRADICTION}}
-- Observed facts: {{DESIGN_BLOCK_FACTS}}
-- Impact: {{DESIGN_BLOCK_IMPACT}}
-- Minimal choices: {{DESIGN_BLOCK_CHOICES}}
-- Decision required: {{DESIGN_BLOCK_DECISION_REQUIRED}}
+| TD ID | Action | Implementation fact |
+|---|---|---|
+| {{TD_ID_OR_NONE}} | introduced / preserved / closed / NONE | {{FACT}} |
 
-## 13. Supplemental Implementation Evidence
-{{SUPPLEMENTAL_IMPLEMENTATION_EVIDENCE}}
+## 7. Coding Agent self-checks
+
+| Command | Exit code | Result summary |
+|---|---:|---|
+| `{{COMMAND}}` | {{EXIT_CODE}} | {{SUMMARY}} |
+
+These are not Gate acceptance evidence.
+
+## 8. Known limitations / unresolved observations
+
+{{LIMITATIONS_OR_NONE}}
+
+## 9. Handoff to Test Agent
+
+- Tested candidate commit: {{IMPLEMENTATION_COMMIT_FULL_SHA}}
+- Required completion report path: this file
+- Expected next action: independent verification under 07
+
+## 10. Fact / interpretation separation
+
+### Facts
+{{FACTS_RECAP}}
+
+### Interpretation
+{{INTERPRETATION_OR_NONE}}

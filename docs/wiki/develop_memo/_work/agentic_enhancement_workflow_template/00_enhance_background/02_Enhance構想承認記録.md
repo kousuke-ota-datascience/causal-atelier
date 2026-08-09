@@ -1,22 +1,18 @@
-# {{PROJECT_NAME}} {{ENHANCE_ID}} Enhance構想承認記録
+# {{ENHANCE_ID}} Enhance構想承認記録
 
-## 1. 対象計画
-- Enhancement ID: {{ENHANCE_ID}}
-- Target Plan: {{TARGET_PLAN_PATH}}
+- Decision: APPROVED / REJECTED / CONDITIONAL
+- Decision timestamp: {{TIMESTAMP}}
+- Decision authority: {{AUTHORITY}}
+- Reviewed proposal: {{PATH}}
 
-## 2. 承認情報
-- Decision: {{APPROVED_OR_REJECTED}}
-- Approved by: {{APPROVER}}
-- Approved at: {{APPROVED_AT}}
-
-## 3. 承認対象
+## Approved scope
 {{APPROVED_SCOPE}}
 
-## 4. 条件・留保
+## Conditions / constraints
 {{CONDITIONS}}
 
-## 5. 却下事項
-{{REJECTED_ITEMS}}
+## Explicit non-approval
+{{NOT_APPROVED}}
 
-## 6. 備考
-{{NOTES}}
+## Required follow-up
+{{FOLLOW_UP}}

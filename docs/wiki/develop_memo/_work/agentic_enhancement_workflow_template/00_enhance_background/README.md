@@ -1,17 +1,17 @@
-# Enhancement Background
+# Enhancement Background — Specification
 
 ## 0. Purpose
 
-このディレクトリは、エンハンスの背景、課題認識、要件改定、設計改定、承認、
-トレーサビリティ、およびエンハンス時点の要件・設計snapshotを保存する履歴層である。
+このディレクトリは、enhancementの背景、課題認識、要件改定、設計改定、承認、traceability、およびenhancement開始時点のsnapshotを保存する履歴層である。
 
 ## 1. Primary readers
 
-- 人間
+- Human owner / reviewer
 - 将来の設計レビュー担当
 - 将来のLLMによる背景復元・監査
 
-Coding Agent / Test Agentの通常作業では参照させない。
+Coding Agent / Test Agentの通常executionでは、ここを自由探索させない。
+必要な差分契約はGate-local 06 / 07へ統合する。
 
 ## 2. Standard documents
 
@@ -22,9 +22,20 @@ Coding Agent / Test Agentの通常作業では参照させない。
 5. `05_要件・設計整合性およびトレーサビリティ確認.md`
 6. `Revised_requirements_definition_documents/`
 
-## 3. Agent boundary
+## 3. Architecture-review trigger
 
-Coding Agent / Test Agentに必要な差分仕様は、
-`10_enhance_instruction/06_...` および `07_...` へ統合する。
+以下に該当する場合、`40_operator_workflows/architecture_review/`を`CONDITIONAL MUST`とする。
 
-背景・要件・設計文書をAgent自身に再探索させない。
+- runtime entrypoint / lifecycle変更
+- authority / ownership変更
+- persistence / schema / lineage変更
+- legacy path除去・統合
+- migration strategy変更
+- 複数subsystemを跨ぐcanonical source-of-truth変更
+
+Architecture reviewの成果はこの背景層または正式設計へ反映し、そのうえでGate-local 06 / 07に必要事項を抽出する。
+
+## 4. Boundary
+
+背景・要件・設計文書は上位contractであるが、Agentの実行入口ではない。
+Agentに参照例外を認める場合、06 / 07でpath・目的・authority・precedenceを限定する。

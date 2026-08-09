@@ -1,44 +1,52 @@
-# {{PROJECT_NAME}} {{ENHANCE_ID}} Implementation Report Detail
+# {{ENHANCE_ID}} {{GATE_ID}} Implementation Report Detail
 
-## 1. Baseline
-- Branch: {{BRANCH}}
-- Baseline commit: {{BASELINE_COMMIT}}
-- Initial migration head: {{INITIAL_MIGRATION_HEAD}}
-- Enhancement root: {{ENHANCE_ROOT}}
+- Project: {{PROJECT_NAME}}
+- Enhancement: {{ENHANCE_ID}}
+- Gate: {{GATE_ID}}
+- 06 Contract: {{PATH_06}}
+- 07 Contract: {{PATH_07}}
+- Current Trial: {{CURRENT_TRIAL}}
+- Ledger status: ACTIVE / FINALIZED_AFTER_PASS / ABANDONED
 
-## 2. Gate Status
-| Gate | Status | Latest Trial | Implementation Commit | Gate Decision Report |
-|---|---|---:|---|---|
-{{GATE_STATUS_ROWS}}
+## 1. Purpose
 
-## 3. Trial History
-| Gate | Trial | Coding Status | Implementation Commit | Test Decision | Evidence |
-|---|---:|---|---|---|---|
-{{TRIAL_HISTORY_ROWS}}
+この文書は**当該Gate内部だけ**の累積implementation ledgerである。
+未検証implementation stateを記録してよいが、verified current stateやGate PASSを宣言してはならない。
 
-## 4. Current Working State
-- Current active Gate: {{CURRENT_ACTIVE_GATE}}
-- Current HEAD: {{CURRENT_HEAD}}
-- Working tree: {{WORKING_TREE}}
-- Migration head: {{MIGRATION_HEAD}}
-- Uncommitted implementation files: {{UNCOMMITTED_IMPLEMENTATION_FILES}}
-- Saved future-Gate drafts: {{FUTURE_GATE_DRAFTS}}
-- Known environmental blocks: {{KNOWN_ENVIRONMENTAL_BLOCKS}}
+## 2. Trial history
 
-## 5. Completed Implementation
-{{COMPLETED_IMPLEMENTATION}}
+| Trial | Starting commit | Implementation commit | Remediation | Completion report | Coding status |
+|---|---|---|---|---|---|
+| {{TRIAL_ID}} | {{START}} | {{IMPLEMENTATION}} | {{08_OR_NONE}} | {{REPORT_PATH}} | READY_FOR_TEST / BLOCKED |
 
-## 6. Outstanding Work
-{{OUTSTANDING_WORK}}
+## 3. Current implementation state — unverified until Gate PASS
 
-## 7. Cross-Gate Changes
-{{CROSS_GATE_CHANGES}}
+{{CURRENT_IMPLEMENTATION_STATE}}
 
-## 8. Known Deviations
-{{KNOWN_DEVIATIONS}}
+## 4. Files / components touched across this Gate
 
-## 9. Evidence Index
-{{EVIDENCE_INDEX}}
+{{TOUCHED_COMPONENTS}}
 
-## 10. Supplemental State
-{{SUPPLEMENTAL_STATE}}
+## 5. Protected passed-Gate interactions
+
+{{PROTECTED_INTERACTIONS_OR_NONE}}
+
+## 6. Transition Debt implementation ledger
+
+| TD ID | Trial | Action | Fact |
+|---|---|---|---|
+| {{TD_ID_OR_NONE}} | {{TRIAL}} | introduce / preserve / close | {{FACT}} |
+
+## 7. Open Coding observations
+
+{{OPEN_OBSERVATIONS_OR_NONE}}
+
+## 8. Finalization rule
+
+- final PASS後: `FINALIZED_AFTER_PASS`とし、Gate Decisionへのlinkを追加する。
+- verified stateそのものはCurrent State Control Sheetで管理する。
+- FAIL中: current implementation stateをverifiedとして表現しない。
+
+## 9. Final Gate Decision
+
+{{FINAL_GATE_DECISION_PATH_OR_PENDING}}

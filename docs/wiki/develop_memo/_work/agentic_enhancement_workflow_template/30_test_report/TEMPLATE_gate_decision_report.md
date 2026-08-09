@@ -1,47 +1,75 @@
-# {{GATE}} Trial {{TRIAL}} Gate Decision
+# {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_ID}} Gate Decision
 
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
-- Gate: {{GATE}}
-- Trial: {{TRIAL}}
-- Status: {{STATUS}}
-- Tested implementation commit: {{TESTED_IMPLEMENTATION_COMMIT}}
-- Handoff report path: {{HANDOFF_REPORT_PATH}}
-- Branch: {{BRANCH}}
-- Migration head: {{MIGRATION_HEAD}}
-- Test Agent source modification: {{TEST_AGENT_SOURCE_MODIFICATION}}
+- Gate: {{GATE_ID}}
+- Trial: {{TRIAL_ID}}
+- Reserved Test Item ID: 999
+- Status: PASS / FAIL / BLOCKED
+- Tested commit: {{TESTED_COMMIT_FULL_SHA}}
+- 07 Contract: {{PATH_07}}
+- Completion report: {{COMPLETION_REPORT_PATH}}
+- Applicable 08: {{PATH_OR_NONE}}
+- Decision timestamp: {{TIMESTAMP_ISO8601_TZ}}
 
-## 1. Item Summary
-| Test Item ID (3-digit) | Name | Status | Report |
-|---:|---|---|---|
-{{ITEM_SUMMARY_ROWS}}
+## 1. Decision summary
 
-## 2. Gate Acceptance Summary
-| Acceptance Criterion | Evidence | Status |
+{{DECISION_SUMMARY}}
+
+## 2. Test Item evidence index
+
+| Item | Name | Status | AC | Evidence path |
+|---|---|---|---|---|
+| {{ITEM_ID}} | {{NAME}} | PASS / FAIL / BLOCKED | {{AC}} | {{PATH}} |
+
+## 3. Acceptance Criteria evaluation
+
+| AC | Result | Evidence |
 |---|---|---|
-{{GATE_ACCEPTANCE_ROWS}}
+| {{AC_ID}} | PASS / FAIL / BLOCKED | {{ITEM_PATHS}} |
 
-## 3. Blocking Findings
-{{BLOCKING_FINDINGS}}
+## 4. Protected passed-Gate regression
 
-## 4. Regression Summary
-- Required regression scope: {{REQUIRED_REGRESSION_SCOPE}}
-- Executed: {{REGRESSION_EXECUTED}}
-- Result: {{REGRESSION_RESULT}}
+| Previous Gate | Protected semantic | Regression result | Evidence |
+|---|---|---|---|
+| {{GATE_OR_NONE}} | {{SEMANTIC}} | PASS / FAIL / N/A | {{PATH}} |
 
-## 5. Scientific / Analytical Contract Summary
-{{SCIENTIFIC_ANALYTICAL_SUMMARY}}
+## 5. Transition Debt decision
 
-## 6. Reproducibility Summary
-| Test Item | Report | Primary Command |
-|---|---|---|
-{{REPRODUCIBILITY_ROWS}}
+| TD ID | Before | After | Decision / evidence |
+|---|---|---|---|
+| {{TD_ID_OR_NONE}} | OPEN / NONE | OPEN / CLOSED / CANCELLED / NONE | {{EVIDENCE}} |
 
-## 7. Reason for Decision
-{{DECISION_REASON}}
+## 6. Established contract after PASS
 
-## 8. Next Allowed Action
-{{NEXT_ALLOWED_ACTION}}
+Complete only when Status = PASS.
 
-## 9. Supplemental Context
-{{SUPPLEMENTAL_CONTEXT}}
+{{NEWLY_ESTABLISHED_SEMANTICS_OR_NA}}
+
+## 7. Control Sheet update eligibility
+
+- Eligible: YES only if final Status = PASS; otherwise NO
+- Sections to update: {{SECTIONS_OR_NONE}}
+- Promotion basis: this Gate Decision + referenced Test Item evidence
+
+## 8. Failure remediation input
+
+Complete only when Status = FAIL.
+
+- Failure facts requiring correction: {{FAILURE_FACTS_OR_NA}}
+- Suggested scope for 08 authoring: {{REMEDIATION_SCOPE_OR_NA}}
+- Acceptance Criteria remain unchanged: YES
+
+Test Agent does not author the implementation fix.
+
+## 9. Blocker record
+
+Complete only when Status = BLOCKED.
+
+- Blocker class: prerequisite / environment / contract ambiguity / unsafe operation / other
+- Facts: {{BLOCKER_FACTS_OR_NA}}
+- Required owner/action: {{OWNER_ACTION_OR_NA}}
+
+## 10. Final rationale
+
+{{FINAL_RATIONALE}}

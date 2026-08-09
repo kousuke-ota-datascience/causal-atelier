@@ -1,69 +1,70 @@
-# {{GATE}} Trial {{TRIAL}} Test {{ITEM}} — {{TEST_NAME}}
+# {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_ID}} Test Item {{TEST_ITEM_ID}} — {{TEST_NAME}}
 
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
-- Gate: {{GATE}}
-- Trial: {{TRIAL}}
-- Test Item ID (3-digit): {{ITEM}}
-- Status: {{STATUS}}
-- Tested implementation commit: {{TESTED_IMPLEMENTATION_COMMIT}}
-- Handoff report path: {{HANDOFF_REPORT_PATH}}
-- Branch: {{BRANCH}}
-- Migration head: {{MIGRATION_HEAD}}
-- Working directory: {{WORKING_DIRECTORY}}
-- Started at: {{STARTED_AT}}
-- Finished at: {{FINISHED_AT}}
-- Duration: {{DURATION}}
+- Gate: {{GATE_ID}}
+- Trial: {{TRIAL_ID}}
+- Test Item: {{TEST_ITEM_ID}}
+- Status: PASS / FAIL / BLOCKED / NOT_RUN
+- Tested commit: {{TESTED_COMMIT_FULL_SHA}}
+- Completion report: {{COMPLETION_REPORT_PATH}}
+- 07 Contract: {{PATH_07}}
+- Applicable 08: {{PATH_OR_NONE}}
+- Timestamp: {{TIMESTAMP_ISO8601_TZ}}
 
-## 1. Purpose
-{{PURPOSE}}
+## 1. Purpose / Acceptance mapping
 
-## 2. Acceptance Criteria
-{{ACCEPTANCE_CRITERIA}}
+- Covers AC: {{AC_IDS}}
+- Protected Gate regression: {{GATE_OR_NONE}}
+- Transition Debt relation: {{TD_ID_OR_NONE}}
 
-## 3. Preconditions / Environment
-### Runtime
-{{RUNTIME_ENVIRONMENT}}
-### External Services
-{{EXTERNAL_SERVICES}}
-### Environment Variables
-{{ENVIRONMENT_VARIABLE_REQUIREMENTS}}
+## 2. Preconditions
 
-## 4. Commands Executed
-{{COMMANDS_EXECUTED}}
+{{PRECONDITIONS}}
 
-## 5. Exact Result
-- passed: {{PASSED_COUNT}}
-- failed: {{FAILED_COUNT}}
-- skipped: {{SKIPPED_COUNT}}
-- warnings: {{WARNING_COUNT}}
-- exit code: {{EXIT_CODE}}
+## 3. Exact command
 
-## 6. Log / Evidence
-### stdout / stderr
-{{STDOUT_STDERR}}
-### Failure traceback / assertion
-{{FAILURE_TRACEBACK}}
-### Artifact paths
-{{ARTIFACT_PATHS}}
+```bash
+{{EXACT_COMMAND}}
+```
 
-## 7. Findings
-{{FINDINGS}}
+## 4. Exit code
 
-## 8. Required Correction
-{{REQUIRED_CORRECTION}}
+`{{EXIT_CODE_OR_NA}}`
 
-## 9. Reproduction Procedure
-{{REPRODUCTION_PROCEDURE}}
+## 5. Raw relevant evidence
 
-## 10. Expected Result
-{{EXPECTED_RESULT}}
+```text
+{{RAW_RELEVANT_OUTPUT}}
+```
 
-## 11. Decision Rationale
-{{DECISION_RATIONALE}}
+## 6. Observed facts
 
-## 12. Source Modification by Test Agent
-{{SOURCE_MODIFICATION_BY_TEST_AGENT}}
+{{FACTS}}
 
-## 13. Supplemental Execution Context
-{{SUPPLEMENTAL_EXECUTION_CONTEXT}}
+## 7. Interpretation
+
+{{INTERPRETATION}}
+
+## 8. Criterion evaluation
+
+| Criterion | Expected | Observed | Result |
+|---|---|---|---|
+| {{CRITERION}} | {{EXPECTED}} | {{OBSERVED}} | PASS / FAIL / BLOCKED |
+
+## 9. Source mutation audit
+
+- Production code changed by Test Agent: NONE / {{PATH}}
+- Automated test code changed by Test Agent: NONE / {{PATH}}
+- Migration changed by Test Agent: NONE / {{PATH}}
+- Dependency changed by Test Agent: NONE / {{DETAIL}}
+
+Normal PASS requires all above `NONE` unless the verification contract explicitly defines a non-mutating generated artifact exception.
+
+## 10. Reproduction procedure
+
+{{REPRODUCTION_STEPS}}
+
+## 11. Result rationale
+
+{{RATIONALE}}
