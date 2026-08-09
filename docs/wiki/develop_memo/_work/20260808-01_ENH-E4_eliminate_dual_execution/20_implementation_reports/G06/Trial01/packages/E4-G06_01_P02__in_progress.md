@@ -32,3 +32,32 @@ Commit the governing P02 instruction and these blocked-status artifacts. A subse
 
 - The active canonical writer inventory, structural writer cutover, and P02 runtime acceptance tests are NOT_RUN.
 - This report does not classify any P02 semantic writer or alter TD-004.
+
+---
+
+## Restart Completion Update
+
+| Field | Value |
+|---|---|
+| Status | COMPLETE |
+| P02 restart entry SHA | `4acedc047ad0128ee278c03ef196778b8e67051d` |
+| P02 implementation checkpoint SHA | `47902c3ae6f07a811d41223eb77c2a5efbc1efa7` |
+| Production changes | Exploratory/Predictive active canonical typed-input generic writes removed. |
+| Test changes | P02 static and real-PostgreSQL tests added. |
+| Migration | NONE |
+| Gate status | E4-G06 NOT_COMPLETE |
+| TD-004 | OPEN |
+
+### Facts
+
+- P02 instruction tracking passed on restart.
+- Canonical Exploratory and Predictive submit paths create zero P01-classified `TYPED_STRUCTURAL` generic rows in the focused PostgreSQL test.
+- Predictive retains only three explicitly unclassified active `USED_INPUT` rows: `ResearchContextVersion`, `AnalysisSpecification`, and `ExecutionPlan` to `Execution`.
+
+### Interpretation
+
+The P02 structural writer cutover is complete. Unclassified active rows were not reclassified or removed by inference; their authority remains a later-package/operator decision.
+
+### Unknown / Unconfirmed
+
+- P04 typed read reconstruction, P05 projection semantics, P06 mutation audit, and P03 generic-only convergence remain incomplete.
