@@ -63,3 +63,9 @@ Trial 01 は未完了である。次の実装順序は変更しない。
 2. generic envelope を family typed canonical Result / Artifact persistence に置換する。
 3. その後に限り Phase B/C の read projection と lifecycle delegation、Phase D の旧 authority shutdown、Phase E の real PostgreSQL verification へ進む。
 4. 全 completion condition が `DONE` になるまで fixed commit、completion report、ledger、`READY_FOR_TEST` は作成しない。
+
+# 指示
+
+```
+06d に記録された NEEDS_COMPLETION / NEEDS_CORRECTION を全て閉じ、Phase A→B→C→D→Eを継続し、READY_FOR_TESTまで停止せず完遂せよ
+```
