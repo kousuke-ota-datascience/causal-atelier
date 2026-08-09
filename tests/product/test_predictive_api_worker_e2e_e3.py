@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, timezone
 
 import pytest
 from sqlalchemy import select
@@ -9,8 +10,9 @@ from ariadne.interfaces.web_api import dependencies
 from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
 from ariadne.scientific.core_adapter import ScientificCoreAdapter
 from ariadne.product.persistence.orm_models import (
-    FamilyExecutionOrm,
-    FamilyStageExecutionOrm,
+    ExecutionOrm,
+    StageAttemptOrm,
+    StageExecutionOrm,
 )
 
 
@@ -390,24 +392,25 @@ async def test_failed_predictive_execution_retry_resets_and_can_succeed(
 
     factory = dependencies._get_session_factory()
     with factory() as session:
-        execution = session.get(FamilyExecutionOrm, execution_id)
+        execution = session.get(ExecutionOrm, execution_id)
         assert execution is not None
         execution.status = "FAILED"
-        execution.last_error_json = {
-            "type": "SyntheticFailure",
-            "message": "retry contract fixture",
-        }
+        execution.last_error_summary = "retry contract fixture"
         first_stage = session.scalar(
-            select(FamilyStageExecutionOrm)
-            .where(FamilyStageExecutionOrm.execution_id == execution_id)
-            .order_by(FamilyStageExecutionOrm.ordinal)
+            select(StageExecutionOrm)
+            .where(StageExecutionOrm.execution_id == execution_id)
+            .order_by(StageExecutionOrm.ordinal)
         )
         assert first_stage is not None
         first_stage.status = "FAILED"
-        first_stage.last_error_json = execution.last_error_json
-        first_stage.attempt_history_json = [{"attempt_number": 1}]
+        first_stage.last_error_json = {"code": "SyntheticFailure"}
         first_stage.input_binding_json = {"fixture": True}
-        first_stage.output_binding_json = {"fixture": True}
+        first_stage.output_binding_json = {}
+        session.add(StageAttemptOrm(
+            stage_execution_id=first_stage.stage_execution_id, attempt_number=1,
+            worker_id="fixture", started_at=datetime.now(timezone.utc),
+            finished_at=datetime.now(timezone.utc), error_json={"code": "SyntheticFailure"},
+        ))
         session.commit()
 
     retry = await client.post(
@@ -418,14 +421,14 @@ async def test_failed_predictive_execution_retry_resets_and_can_succeed(
     assert retry.json()["status"] == "QUEUED"
     assert retry.json()["retry_count"] == 1
     assert retry.json()["last_error"] is None
-    reset_stages = (await client.get(
+    retried_stages = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}/stages"
     )).json()["items"]
-    assert {stage["status"] for stage in reset_stages} == {"PENDING"}
-    assert all(stage["attempt_history"] == [] for stage in reset_stages)
-    assert all(stage["input_binding"] == {} for stage in reset_stages)
-    assert all(stage["output_binding"] == {} for stage in reset_stages)
-    assert all(stage["last_error"] is None for stage in reset_stages)
+    first = retried_stages[0]
+    assert first["status"] == "PENDING"
+    assert [attempt["attempt_number"] for attempt in first["attempt_history"]] == [1]
+    assert first["input_binding"] == {"fixture": True}
+    assert first["last_error"] == {"code": "SyntheticFailure"}
 
     token = str(uuid.uuid4())
     _process_canonical_predictive(execution_id, token, "g4-retry-worker")
@@ -435,6 +438,10 @@ async def test_failed_predictive_execution_retry_resets_and_can_succeed(
     assert completed.status_code == 200
     assert completed.json()["status"] == "SUCCEEDED"
     assert completed.json()["retry_count"] == 1
+    completed_stages = (await client.get(
+        f"/api/v1/projects/{project_id}/executions/{execution_id}/stages"
+    )).json()["items"]
+    assert [attempt["attempt_number"] for attempt in completed_stages[0]["attempt_history"]] == [1, 2]
 
 
 @pytest.mark.anyio

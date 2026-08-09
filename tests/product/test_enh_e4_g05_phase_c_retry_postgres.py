@@ -222,6 +222,7 @@ def test_g05_phase_c_predictive_retry_is_canonical_and_append_preserving(postgre
         assert execution.analysis_family == "PREDICTIVE" and execution.random_seed == 719
         assert execution.analysis_spec_json["execution_plan_id"] == "predictive-plan-c2"
         assert len(stages) == 1 and stages[0].stage_execution_id == ids["failed_stage"]
+        assert stages[0].status == "PENDING"
         assert result is not None and result.execution_id == ids["execution"]
         assert artifact is not None and artifact.execution_id == ids["execution"] and artifact.result_id == ids["result"]
         assert _family_counts(session) == family_counts_before
@@ -237,6 +238,8 @@ def test_g05_phase_c_predictive_retry_is_canonical_and_append_preserving(postgre
         stage = stages.get(ids["failed_stage"])
         assert stage is not None and [attempt.attempt_number for attempt in stage.attempts] == [1]
         assert stage.attempts[0].error == {"code": "TRANSIENT"}
+        stage.mark_ready()
+        stages.update(stage, owner="c2-retry-worker")
         stages.start_attempt(stage, owner="c2-retry-worker", worker_id="c2-retry-worker", at=now)
         stage.succeed({"model": ids["artifact"]}, now + timedelta(seconds=1))
         stages.update(stage, owner="c2-retry-worker")

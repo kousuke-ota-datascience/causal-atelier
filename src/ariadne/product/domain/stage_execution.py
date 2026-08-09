@@ -66,6 +66,11 @@ class StageExecution:
         self.attempts[-1].finished_at = at
         self.attempts[-1].error = error
 
+    def prepare_retry(self) -> None:
+        """Make a failed stage eligible for the next append-only attempt."""
+        self._transition({StageExecutionStatus.FAILED}, StageExecutionStatus.PENDING)
+        self.finished_at = None
+
     def skip(self, at: datetime) -> None:
         self._transition(
             {StageExecutionStatus.PENDING, StageExecutionStatus.READY},

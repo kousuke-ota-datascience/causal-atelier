@@ -369,6 +369,10 @@ class ExecutionService:
             require_active_project(project)
             execution.increment_retry()
             uow.executions.update(execution)
+            for stage in uow.stage_executions.list_for_execution(execution_id):
+                if stage.status is StageExecutionStatus.FAILED:
+                    stage.prepare_retry()
+                    uow.stage_executions.update(stage)
             uow.commit()
 
 
