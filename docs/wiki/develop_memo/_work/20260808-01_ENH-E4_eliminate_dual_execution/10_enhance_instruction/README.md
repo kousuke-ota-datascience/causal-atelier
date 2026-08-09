@@ -720,3 +720,124 @@ Agentへ06/07を渡す前に、人間または作業設計LLMが以下を確認�
 [ ] required report pathが具体的
 [ ] Coding AgentとTest Agentの責務が混ざっていない
 ```
+---
+
+# 5. Addendum
+
+## Gate-localized execution contract policy
+
+ENH-E4以降、本Enhanceの06/07はGate単位で管理する。
+
+```text
+10_enhance_instruction/
+├── README.md
+├── 06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_実装指示書.md
+├── 07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_テスト指示書.md
+├── G02/
+│   ├── 06_Ariadne_ENH-E4_実装指示書.md
+│   └── 07_Ariadne_ENH-E4_テスト指示書.md
+├── G03/
+│   ├── 06_Ariadne_ENH-E4_実装指示書.md
+│   └── 07_Ariadne_ENH-E4_テスト指示書.md
+...
+└── G08/
+    ├── 06_Ariadne_ENH-E4_実装指示書.md
+    └── 07_Ariadne_ENH-E4_テスト指示書.md
+```
+
+### Contract authority
+
+root直下の
+
+```text
+06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_実装指示書.md
+07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_テスト指示書.md
+```
+
+はauthoring templateであり、Coding Agent / Test Agentへ直接渡す実行契約ではない。
+
+実際のAgent executionでは、Active Gate directory配下の06/07だけを正本とする。
+
+例:
+
+```text
+Active Gate = E4-G02
+
+Coding Agent Source of Truth:
+10_enhance_instruction/G02/06_Ariadne_ENH-E4_実装指示書.md
+
+Test / Audit Agent Source of Truth:
+10_enhance_instruction/G02/07_Ariadne_ENH-E4_テスト指示書.md
+```
+
+### Gate isolation
+
+一回のAgent executionで扱ってよいGateは一つだけとする。
+
+```text
+PASS済みGate
+    = immutable baselineとして扱う
+
+Active Gate
+    = 今回変更・検証してよい唯一のGate
+
+Future Gate
+    = implementation / testへの先行着手禁止
+```
+
+後続Gateの最終architectureを知っていることは、Active Gateを越境して先行実装してよい理由にはならない。
+
+temporary coexistenceまたはtransition debtがGate decompositionで明示されている場合、Active Gateではそのtemporary stateを契約どおり維持する。
+
+### Gate contract immutability
+
+GateがPASSした後、そのGateの06/07は原則として変更しない。
+
+後続GateでPASS済みGateのcontract自体に問題が見つかった場合は、既存06/07をsilent rewriteせず、
+
+* affected Gate
+* conflict
+* reason
+* approved correction
+* required regression
+
+を新しいdecision evidenceとして記録する。
+
+### Report localization
+
+Implementation / Test evidenceはGate IDとTrial IDで対応付ける。
+
+```text
+20_implementation_reports/
+E4-G02_01_implementation_completion_report.md
+
+30_test_report/
+E4-G02_01_001_*.md
+E4-G02_01_002_*.md
+...
+E4-G02_01_999_gate_decision.md
+```
+
+Trial IDは2桁、Test Item IDは3桁とする。
+
+`999` はGate Decision専用であり、通常Test Itemには使用しない。
+
+### Gate progression
+
+```text
+Gate N / Coding Trial
+        ↓
+READY_FOR_TEST
+        ↓
+Gate N / Independent Test Trial
+        ↓
+PASS
+        ↓
+Gate N+1 contract authoring / execution
+```
+
+FAILの場合は同一Gateの次Trialへ進む。
+
+BLOCKEDの場合、別Gateのimplementationで迂回してはならない。
+
+PASSしていないGateを前提として次Gateへ進んではならない。
