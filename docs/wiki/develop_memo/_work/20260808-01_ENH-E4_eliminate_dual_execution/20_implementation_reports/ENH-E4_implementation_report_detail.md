@@ -32,7 +32,7 @@
 ## 4. Current Working State
 
 - Current active Gate: E4-G04 Trial 01 handoff.
-- Current HEAD: `89afc28e4cf326a9fb7f571c7c1479a35271901e` before final evidence metadata update.
+- Current HEAD: `b77102c29bb445d3246b552916bd9585ba894581`.
 - Working tree: implementation commit fixed; report/detail files pending report commit; unrelated `.nfs` deletion remains.
 - Migration head: `20260809_product_0009`.
 - Uncommitted implementation files: NONE.
