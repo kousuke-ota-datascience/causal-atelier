@@ -15,24 +15,27 @@
 | Project | Ariadne / causal-atelier |
 | Enhancement | ENH-E4 eliminate dual execution |
 | Branch | `refactor/ariadne_mvp_e4` |
-| Control Sheet Snapshot | **after E4-G03 Trial 02 PASS / before G04** |
-| Repository report ref | `852a276` (`E4-G03 trial 02, PASSED`) |
-| G03 tested implementation | `bac1814bb713f32b859fbe7e2b445fa6cd557f2b` |
-| G03 handoff/report ref | `c9afee351f3724823c3fd19062e9bdc9eb213c80` |
-| Product migration head | `20260809_product_0008` |
-| Current Gate | **G04 NEXT — Result/Artifact ownership boundary** |
-| OPEN Transition Debt | `E4-TD-001`, `E4-TD-002` |
-| G03 authoritative PostgreSQL result | `22 passed`, exit `0` |
-| G03 GenericExecutor unit/boundary result | `6 passed`, exit `0` |
+| Control Sheet Snapshot | **after E4-G04 Trial 02 PASS / before G05** |
+| Repository evidence ref | `d2b0f311fda209608629114aaae9a1ea142bdd2d` |
+| G04 tested implementation | `9c9db4454e0f08c4d46cb002f723ca6827917564` |
+| Product migration head | `20260809_product_0009` |
+| Current Gate | **G05 NEXT — Product Execution Convergence** |
+| OPEN Transition Debt | `E4-TD-001`, `E4-TD-002`, `E4-TD-003` |
+| G04 Trial 02 regression | `27 passed`, standardized PostgreSQL runner exit `0` |
+| G04 targeted PostgreSQL | `3 passed` |
+| G04 pure contract tests | `6 passed` |
 
 ### Snapshot Evidence
 
 ```text
+30_test_report/G04/
+E4-G04_02_999_gate_decision.md
+
+20_implementation_reports/G04/
+E4-G04_02_implementation_completion_report.md
+
 30_test_report/G03/
 E4-G03_02_999_gate_decision.md
-
-20_implementation_reports/G03/
-E4-G03_02_implementation_completion_report.md
 
 40_operator_prompts/architecture_review/
 06_target_architecture_decision_record_result.md
@@ -117,14 +120,21 @@ Canonical Execution identity/lifecycle/claim/lease        ESTABLISHED
 Persistent StageExecution across all 3 families           ESTABLISHED
 GenericExecutor subordinate workflow-only boundary        ESTABLISHED
 
-Old Causal/Family new Execution write paths                STILL TRANSITIONAL
-Old/ephemeral stage paths                                  STILL TRANSITIONAL
+Explicit ExecutionResult / StageResult levels             ESTABLISHED
+Canonical Result/Artifact typed ownership contract        ESTABLISHED
+Artifact semantic ID != object_key                        ESTABLISHED
+ArtifactStore physical/metadata boundary                  ESTABLISHED
+Store/DB compensation + reconciliation contract           ESTABLISHED
+Typed downstream Result reuse role/context                ESTABLISHED
 
-Unified Result ownership                                   NOT YET ESTABLISHED
-Unified Artifact metadata ownership                        NOT YET ESTABLISHED
-Final lineage authority consolidation                      NOT YET ESTABLISHED
-Legacy runtime retirement                                  NOT YET FINALIZED
-Final Product-only clean bootstrap audit                   NOT YET FINALIZED
+Old Causal/Family new Execution write paths               STILL TRANSITIONAL
+Old/ephemeral stage paths                                 STILL TRANSITIONAL
+Old Causal/Family Result/Artifact metadata writers        STILL TRANSITIONAL
+
+Final Product path convergence                            NOT YET ESTABLISHED
+Final lineage authority consolidation                     NOT YET ESTABLISHED
+Legacy runtime retirement                                 NOT YET FINALIZED
+Final Product-only clean bootstrap audit                  NOT YET FINALIZED
 ```
 
 ---
@@ -137,8 +147,8 @@ Final Product-only clean bootstrap audit                   NOT YET FINALIZED
 | G02 | Canonical Execution aggregate and claim | **PASS** | Canonical Execution identity, family discriminator, lifecycle, claim/lease, retry/rerun/revise/cancel |
 | Preflight | Test PostgreSQL infrastructure | **PASS** | Repository-managed isolated real PostgreSQL verification path |
 | G03 | Persistent StageExecution and runner boundary | **PASS** | Persistent stage model for all families; queryable attempt/bindings; GenericExecutor authority removed |
-| **G04** | **Result/Artifact ownership boundary** | **NEXT** | ExecutionResult/StageResult levels + one Artifact metadata ownership boundary |
-| G05 | Product Execution Convergence | PENDING | Make canonical Execution/Stage/Result/Artifact the **sole** Product new-write path |
+| G04 | Result/Artifact ownership boundary | **PASS** | Explicit Result levels; typed Result/Artifact ownership; physical-store separation; compensation/reconciliation; typed reuse |
+| **G05** | **Product Execution Convergence** | **NEXT** | Cut over Causal/Exploratory/Predictive submissions, claim, stage, Result and Artifact to the sole canonical Product path |
 | G06 | Lineage authority consolidation | PENDING | typed structural vs generic-only authority; closure/export projection |
 | G07 | Legacy, CLI, migration boundary | PENDING | legacy retirement boundary, shared science preservation, Product-only bootstrap/CLI boundary |
 | G08 | Final clean bootstrap and architecture audit | PENDING | final convergence; all invariants/requirements/constraints; OPEN TD = 0 |
@@ -158,6 +168,24 @@ G02/G03/G04 establish canonical contracts before the old write paths are finally
 
 | Domain | Current Canonical State | Transitional / Old Authority | Status | Exit / Next Gate |
 |---|---|---|---|---|
+| Product runtime | Product runtime is canonical direction | legacy roots remain in source | TARGET FIXED / RETIRE PENDING | G07 |
+| Execution identity | canonical Product Execution aggregate | old Causal/Family new-write paths remain | **ESTABLISHED / TRANSITION OPEN** | TD-001 → G05 |
+| Execution lifecycle | common state/claim/lease/mutation contract | old lifecycle paths may still exist | **ESTABLISHED / TRANSITION OPEN** | G05 |
+| StageExecution | persistent canonical child for CAUSAL/EXPLORATORY/PREDICTIVE | old stage persistence/ephemeral behavior remains | **ESTABLISHED / TRANSITION OPEN** | TD-002 → G05 |
+| GenericExecutor | plan/order/binding/runner outcome only | must not become lifecycle/output authority | **ESTABLISHED** | preserve through G08 |
+| Result | explicit `EXECUTION_RESULT` / `STAGE_RESULT`, typed canonical ownership | old Causal/Family Result writers remain | **ESTABLISHED / TRANSITION OPEN** | TD-003 → G05 |
+| Artifact metadata | canonical typed ownership; `artifact_id` is semantic identity | old Causal/Family Artifact writers remain | **ESTABLISHED / TRANSITION OPEN** | TD-003 → G05 |
+| Physical Artifact storage | `ArtifactStorePort`; physical locator separate from Product identity | non-atomic DB/store writes handled by compensation/reconciliation | **ESTABLISHED** | preserve |
+| Typed downstream reuse | Result ID + typed role/context; Artifact ID for artifact reuse | old physical-key/untyped paths may remain outside converged route | **ESTABLISHED / TRANSITION OPEN** | G05 route convergence |
+| Lineage | target policy fixed: typed structural + generic-only | current hybrid/duplicate representation may remain | TARGET FIXED / PENDING | G06 |
+| Closure/export | target = read projection, never authority | current hybrid readers require consolidation | PENDING | G06 |
+| Legacy runtime | non-canonical target | source / compatibility boundary remains | RETIRE PENDING | G07 |
+| Shared science | must survive legacy retirement | used independently of orchestration | TARGET FIXED | verify G07/G08 |
+| Migration/bootstrap | Product-only target; current head `0009` | root legacy migrations remain historical | TARGET FIXED | final verification G07/G08 |
+| Low-level CLI | target = outside persistent Product lifecycle | final boundary not yet audited | TARGET FIXED | G07 |
+| Auditable Product CLI | must submit canonical Execution | convergence not final | PENDING | G05/G07 |
+
+---|---|---|---|---|
 | Product runtime | Product runtime is canonical direction | legacy roots remain in source | TARGET FIXED / RETIRE PENDING | G07 |
 | Execution identity | canonical Product Execution aggregate | old Causal/Family new-write paths remain | **ESTABLISHED / TRANSITION OPEN** | TD-001 → G05 |
 | Execution lifecycle | common state/claim/lease/mutation contract | old lifecycle paths may still exist | **ESTABLISHED / TRANSITION OPEN** | G05 |
@@ -282,6 +310,82 @@ E4-TD-002 = OPEN until G05
 
 ---
 
+## 5.3 G04 — Result / Artifact Ownership Contract
+
+The following are now protected architecture:
+
+```text
+Result semantic level:
+    EXECUTION_RESULT
+    STAGE_RESULT
+
+ExecutionResult:
+    belongs to canonical Execution
+    must not carry StageExecution association
+
+StageResult:
+    belongs to canonical Execution
+    must carry canonical StageExecution association
+    stage.execution_id == result.execution_id
+
+Result level != scientific result_type
+
+Artifact:
+    artifact_id = semantic Product identity
+    object_key = physical ArtifactStore locator
+    content_hash = integrity evidence
+
+Canonical execution-output ownership:
+    one common Product application/repository boundary
+    typed Execution association
+    optional typed StageExecution association
+    optional typed Result association
+    cross-execution mismatches rejected
+
+Physical store:
+    ArtifactStorePort remains physical-only
+    DB/store failure is compensated/reconciled
+    cleanup failure is observable, not silent success
+
+Typed downstream reuse:
+    Result reuse = result_id + typed ResultReuseRole/context
+    Artifact reuse = artifact_id
+    object_key/content_hash cannot substitute semantic identity
+
+Artifact-only output:
+    explicitly allowed/rejected by workflow/family output contract
+```
+
+### G04 evidence
+
+```text
+Trial 01 = FAIL
+    AC-003: compensation durability used MemoryUow only
+    AC-004: ResultReuseRef lacked typed role/context
+
+Trial 02 implementation:
+    9c9db4454e0f08c4d46cb002f723ca6827917564
+
+Trial 02:
+    AC-001 PASS
+    AC-002 PASS
+    AC-003 PASS
+    AC-004 PASS
+    AC-005 PASS
+    pure contract: 6 passed
+    targeted PostgreSQL: 3 passed
+    G02/G03/G04 regression: 27 passed
+    migration: 20260809_product_0009
+```
+
+### Current caveat
+
+```text
+E4-TD-003 = OPEN until G05
+```
+
+G05 must stop old Result/Artifact new-write authorities rather than introducing permanent dual-write.
+
 # 6. Transition Debt — Current Control Register
 
 ## 6.1 Active Now
@@ -290,12 +394,12 @@ E4-TD-002 = OPEN until G05
 |---|---|---|---|---|---|
 | **E4-TD-001** | **OPEN** | old Causal/Family new Execution writes | G02 established canonical Execution before full path cutover | G05 | old lifecycle accepts no new Product writes |
 | **E4-TD-002** | **OPEN** | old stage persistence / ephemeral behavior | G03 established persistent canonical StageExecution before full path cutover | G05 | all Product paths use canonical persistent StageExecution |
+| **E4-TD-003** | **OPEN** | old Causal/Family Result/Artifact metadata ownership | G04 established canonical output ownership before full path cutover | G05 | one canonical Result/Artifact new-write boundary |
 
 ## 6.2 Planned but Not Yet Introduced
 
 | TD | Introduced By | Purpose / Temporary Authority | Exit |
 |---|---|---|---|
-| E4-TD-003 | G04 | dual Result/Artifact metadata ownership during transition | G05 |
 | E4-TD-004 | G05 | structural lineage generic duplicate writes | G06 |
 | E4-TD-005 | G06 | legacy runtime/migration surface | G07 |
 | E4-TD-006 | G07 | temporary compatibility/read projection | G08 |
@@ -336,8 +440,8 @@ OPEN TRANSITION DEBT = 0
 | E4-ADR-003 | Common Execution identity and mutation semantics | **ESTABLISHED G02**, reverify later |
 | E4-ADR-004 | Persistent StageExecution for canonical workflows | **ESTABLISHED G03**, full path convergence G05 |
 | E4-ADR-005 | GenericExecutor remains workflow infrastructure | **ESTABLISHED G03** |
-| E4-ADR-006 | Explicit Result semantic levels under one ownership contract | **NEXT: G04** |
-| E4-ADR-007 | One Product Artifact metadata authority, separate physical store | **NEXT: G04** |
+| E4-ADR-006 | Explicit Result semantic levels under one ownership contract | **ESTABLISHED G04**, sole-path convergence G05 |
+| E4-ADR-007 | One Product Artifact metadata authority, separate physical store | **ESTABLISHED G04**, sole-path convergence G05 |
 | E4-ADR-008 | Typed authority plus generic-only lineage | contract fixed; runtime consolidation G06 |
 | E4-ADR-009 | Legacy runtime retirement/archive boundary | G07 |
 | E4-ADR-010 | Product-only canonical migration/bootstrap | direction/evidence exists; final boundary G07/G08 |
@@ -357,9 +461,9 @@ OPEN TRANSITION DEBT = 0
 | E4-INV-005 | centralized claim/lease authority | **ESTABLISHED / TD-001 OPEN** | G02 |
 | E4-INV-006 | every canonical Execution has persistent stages | **ESTABLISHED / TD-002 OPEN** | G03 |
 | E4-INV-007 | GenericExecutor cannot commit canonical lifecycle/Result/Artifact metadata | **ESTABLISHED** | G03 |
-| E4-INV-008 | every Result belongs to canonical Execution and declares level | PENDING | G04 |
-| E4-INV-009 | one Artifact metadata owner; locator distinct | PENDING | G04 |
-| E4-INV-010 | DB/store compensation/reconciliation semantics | PENDING | G04 |
+| E4-INV-008 | every Result belongs to canonical Execution and declares level | **ESTABLISHED / TD-003 OPEN** | G04/G05 |
+| E4-INV-009 | one Artifact metadata owner; locator distinct | **ESTABLISHED / TD-003 OPEN** | G04/G05 |
+| E4-INV-010 | DB/store compensation/reconciliation semantics | **ESTABLISHED** | G04 |
 | E4-INV-011 | one lineage authority per semantic relation | TARGET FIXED; runtime pending | G06 |
 | E4-INV-012 | closure/export cannot become lineage authority | TARGET FIXED; runtime pending | G06 |
 | E4-INV-013 | canonical runtime imports no retired legacy runtime | PENDING final audit | G07 |
@@ -379,7 +483,7 @@ The 35 requirements should not be memorized individually during normal implement
 | E4-REQ-003..010 | Execution identity/lifecycle/claim/mutations | **G02 established** |
 | E4-REQ-011..014 | persistent stage / query / GenericExecutor boundary | **G03 established** |
 | E4-REQ-013 | stage-side ownership relation | stage side established; Result/Artifact completion continues in G04 |
-| **E4-REQ-015..020** | **Result / Artifact / typed downstream reuse** | **G04 NEXT** |
+| E4-REQ-015..020 | Result / Artifact / typed downstream reuse | **G04 established; sole-path convergence G05** |
 | E4-REQ-021..025 | lineage authority | G06 |
 | E4-REQ-026..029 | shared science / legacy retirement classification | G07 |
 | E4-REQ-030..032 | Product-only migration/bootstrap/data policy | evidence exists; final G07/G08 |
@@ -413,115 +517,111 @@ Detailed wording remains in:
 
 # 11. G04 — Immediate Next Gate Control Card
 
+# 11. G05 — Immediate Next Gate Control Card
+
 ## 11.1 Objective
 
-> Establish explicit `ExecutionResult` / `StageResult` semantic levels and one Product Artifact metadata ownership boundary.
+> Cut over Causal / Exploratory / Predictive so that every new Product submission, claim, stage, Result and Artifact uses the sole canonical Product Execution authority.
 
-## 11.2 Architecture Before G04
+G05 is the **only Product Execution Convergence Gate**.
+
+## 11.2 Architecture Before G05
 
 ```text
-Execution authority        canonical contract established
-StageExecution             persistent canonical contract established
+G02 canonical Execution contract          established
+G03 persistent StageExecution contract    established
+G04 Result/Artifact ownership contract    established
 
-Result ownership           still Causal/Family split
-Artifact metadata          still Causal/Family split
-physical Artifact storage  shared port exists, ownership/compensation not yet canonical
+BUT:
+
+TD-001 old Execution new-write paths      OPEN
+TD-002 old/ephemeral stage paths          OPEN
+TD-003 old Result/Artifact writers        OPEN
 ```
 
-## 11.3 G04 Must Establish
+## 11.3 G05 Must Establish
 
 ```text
-Result:
-    explicit level:
-        ExecutionResult
-        StageResult
+CAUSAL submission       -> canonical Execution
+EXPLORATORY submission  -> canonical Execution
+PREDICTIVE submission   -> canonical Execution
 
-    canonical Execution association
-    explicit stage association where applicable
-    explicit cardinality
+All three families:
+    same canonical claim authority
+    persistent StageExecution
+    canonical Result owner
+    canonical Artifact owner
 
-Artifact metadata:
-    one Product ownership API/service boundary
-    canonical Execution association
-    optional StageExecution / Result association as contract allows
-    artifact ID != physical object_key
+Old Product lifecycle:
+    accepts no new Product writes
 
-Physical object:
-    ArtifactStorePort remains storage boundary
-    DB metadata commit and object-store write are separate resources
-    compensation / reconciliation behavior must be testable
-
-Downstream reuse:
-    typed Product IDs
-    object_key is locator, not semantic identity
-
-Artifact-only output:
-    explicitly allowed/rejected by family contract
+GenericExecutor:
+    remains subordinate workflow infrastructure
 ```
 
-## 11.4 G04 Acceptance Criteria
+## 11.4 G05 Acceptance Criteria
 
 ```text
-E4-G04-AC-001
-Result declares ExecutionResult / StageResult level.
+E4-G05-AC-001
+Causal submission creates canonical Execution.
 
-E4-G04-AC-002
-Result/Artifact has typed association to canonical Execution.
+E4-G05-AC-002
+Exploratory submission creates canonical Execution.
 
-E4-G04-AC-003
-Metadata commit / physical-store failure compensation is verifiable.
+E4-G05-AC-003
+Predictive submission creates canonical Execution.
 
-E4-G04-AC-004
-object_key alone cannot represent downstream ownership or Result identity.
+E4-G05-AC-004
+All three families use the same claim authority,
+persistent StageExecution, and canonical Result/Artifact owner.
 
-E4-G04-AC-005
-Artifact-only output is explicitly allowed/rejected by family contract.
+E4-G05-AC-005
+Old Causal/Family lifecycle accepts no new Product writes,
+and GenericExecutor remains non-authoritative.
 ```
 
-## 11.5 G04 MUST NOT Do
+## 11.5 G05 Must Close
 
 ```text
-DO NOT weaken G02 Execution contract.
-DO NOT weaken G03 persistent StageExecution contract.
-DO NOT give GenericExecutor Result/Artifact persistence authority.
-DO NOT perform G05 full Product path convergence.
-DO NOT perform G06 lineage final cutover.
-DO NOT retire legacy runtime/source.
-DO NOT redesign scientific payload schemas.
-DO NOT make object_key semantic identity.
-DO NOT change root legacy migration chain.
-```
-
-## 11.6 Expected Transition Debt
-
-G04 introduces:
-
-```text
+E4-TD-001
+E4-TD-002
 E4-TD-003
-dual Result/Artifact metadata ownership
-Exit Gate: G05
 ```
 
-G04 is allowed to establish the canonical ownership contract **before** G05 removes every old Product write path.
+## 11.6 G05 MUST NOT Do
 
----
+```text
+DO NOT finalize generic-only lineage consolidation.  # G06
+DO NOT delete/archive legacy source broadly.         # G07
+DO NOT perform historical application-data migration.
+DO NOT redesign scientific algorithms/payload semantics.
+DO NOT resurrect old write authority as rollback strategy.
+DO NOT weaken G02/G03/G04 contracts.
+DO NOT make GenericExecutor lifecycle/output owner.
+```
+
+## 11.7 Expected New Transition Debt
+
+```text
+E4-TD-004
+Introduced: G05
+Exit Gate: G06
+Authority: structural lineage generic duplicate writes
+```
 
 # 12. What Is Deliberately Still Unresolved
 
 The following are **not defects at this snapshot** because their exit Gates are later.
 
-### Execution / Stage convergence
+### Product path convergence
 
 ```text
 E4-TD-001 OPEN
 E4-TD-002 OPEN
+E4-TD-003 OPEN
 ```
 
-Old Product paths may still exist until G05.
-
-### Result / Artifact
-
-Canonical ownership has not yet been Gate-established. This is G04.
+Canonical Execution, StageExecution and Result/Artifact contracts are established, but old Product new-write paths may still exist until G05.
 
 ### Lineage
 
@@ -604,6 +704,48 @@ Repository report commit:
 ```
 
 ---
+
+## G04
+
+Trial 01 implementation:
+
+```text
+3d88781c1b69ba03bb06c0b8f143612b81feb4bf
+```
+
+Trial 01 decision:
+
+```text
+E4-G04_01_999_gate_decision.md
+Decision: FAIL
+```
+
+Trial 02 implementation:
+
+```text
+9c9db4454e0f08c4d46cb002f723ca6827917564
+```
+
+Trial 02 implementation report:
+
+```text
+20_implementation_reports/G04/
+E4-G04_02_implementation_completion_report.md
+```
+
+Trial 02 final decision:
+
+```text
+30_test_report/G04/
+E4-G04_02_999_gate_decision.md
+Decision: PASS
+```
+
+Repository evidence commit:
+
+```text
+d2b0f311fda209608629114aaae9a1ea142bdd2d
+```
 
 # 14. Operational Rules for Future Gates
 
@@ -715,31 +857,36 @@ Before approving any next action, answer these questions:
 
 ```text
 1. Which Gate are we in?
-   → G04 NEXT
+   → G05 NEXT
 
 2. What is already protected?
    → G02 canonical Execution
    → G03 persistent StageExecution
-   → GenericExecutor non-authority
+   → G03 GenericExecutor non-authority
+   → G04 explicit Result levels
+   → G04 canonical Result/Artifact ownership
+   → G04 ArtifactStore compensation/reconciliation
+   → G04 typed Result/Artifact reuse identity
 
 3. What old authority is still intentionally alive?
    → TD-001 old Execution writes
    → TD-002 old/ephemeral stage paths
+   → TD-003 old Result/Artifact writers
 
-4. What is the next unresolved authority?
-   → Result / Artifact ownership
+4. What must G05 do?
+   → cut over CAUSAL / EXPLORATORY / PREDICTIVE
+   → make canonical Product path the sole new-write authority
+   → close TD-001 / TD-002 / TD-003
 
 5. What must NOT be touched yet?
-   → G05 convergence
    → G06 lineage final cutover
    → G07 legacy retirement
    → G08 final bootstrap/audit
 
-6. What is the next Gate exit condition?
-   → one canonical Result/Artifact ownership contract
-   → physical storage remains separate
-   → Artifact-only semantics explicit
-   → G04 AC-001..005 PASS
+6. What is the G05 exit condition?
+   → all three families submit/claim/stage/result/artifact canonically
+   → old Causal/Family lifecycle accepts no new Product writes
+   → GenericExecutor remains non-authoritative
 ```
 
 If these six answers remain true, the work is still aligned with ENH-E4.

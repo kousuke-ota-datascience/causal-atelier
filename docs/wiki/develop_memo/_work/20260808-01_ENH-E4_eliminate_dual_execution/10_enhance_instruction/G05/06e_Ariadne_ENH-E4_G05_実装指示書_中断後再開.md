@@ -52,3 +52,9 @@
 ## 継続判断
 
 現在の問題は minimal typed extension と migration で解決可能であり、`DESIGN_BLOCKED` ではない。次の作業は Phase A の Artifact/result association、schema version projection、migration/repository/PostgreSQL round-trip test を閉じることである。Phase A の完了後にのみ Phase B→C→D→Eへ進む。
+
+# 指示
+
+```
+06e を最新checkpointとして読み、そこに記載された NEEDS_COMPLETION / NEEDS_CORRECTION を全て閉じること。Phase Aを完全に完了し、standard PostgreSQL round-tripまでPASSした後にのみPhase B→C→D→Eへ進み、G05 Trial 01をREADY_FOR_TESTまで完遂せよ。途中状態の列挙を停止理由としてはならない。
+```
