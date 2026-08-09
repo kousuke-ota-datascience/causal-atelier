@@ -14,7 +14,7 @@
 | E4-G01 | PASS (documentation review) | N/A | N/A | prior architecture review evidence |
 | E4-G02 | PASS | 01 | `166e90cd1c2d0e523fb863795a88343403d8cc44` | `30_test_report/G02` evidence |
 | E4-G03 | PASS | 02 | `bac1814bb713f32b859fbe7e2b445fa6cd557f2b` | `30_test_report/G03/E4-G03_02_999_gate_decision.md` |
-| E4-G04 | NOT_STARTED | N/A | N/A | future Gate |
+| E4-G04 | READY_FOR_TEST | 02 | `9c9db4454e0f08c4d46cb002f723ca6827917564` | NOT_RUN_BY_CODING_AGENT |
 | E4-G05 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G06 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G07 | NOT_STARTED | N/A | N/A | future Gate |
@@ -27,13 +27,14 @@
 | E4-G02 | 01 | READY_FOR_TEST | `166e90cd1c2d0e523fb863795a88343403d8cc44` | PASS | G02 test report evidence |
 | E4-G03 | 01 | READY_FOR_TEST | `f455354e3724b66360bed6d3cfd4646ca1463a89` | FAIL | `30_test_report/G03/E4-G03_01_999_gate_decision.md` |
 | E4-G03 | 02 | READY_FOR_TEST | `bac1814bb713f32b859fbe7e2b445fa6cd557f2b` | PASS | `30_test_report/G03/E4-G03_02_999_gate_decision.md` |
-| E4-G04 | 01 | READY_FOR_TEST | `3d88781c1b69ba03bb06c0b8f143612b81feb4bf` | NOT_RUN_BY_CODING_AGENT | `20_implementation_reports/G04/E4-G04_01_implementation_completion_report.md` |
+| E4-G04 | 01 | READY_FOR_TEST | `3d88781c1b69ba03bb06c0b8f143612b81feb4bf` | FAIL | `30_test_report/G04/E4-G04_01_999_gate_decision.md` |
+| E4-G04 | 02 | READY_FOR_TEST | `9c9db4454e0f08c4d46cb002f723ca6827917564` | NOT_RUN_BY_CODING_AGENT | `20_implementation_reports/G04/E4-G04_02_implementation_completion_report.md` |
 
 ## 4. Current Working State
 
-- Current active Gate: E4-G04 Trial 01 handoff.
-- Current HEAD: `b77102c29bb445d3246b552916bd9585ba894581`.
-- Working tree: implementation commit fixed; report/detail files pending report commit; unrelated `.nfs` deletion remains.
+- Current active Gate: E4-G04 Trial 02 handoff after Trial 01 Gate FAIL remediation.
+- Current implementation HEAD: `9c9db4454e0f08c4d46cb002f723ca6827917564`.
+- Working tree: Trial 02 implementation is committed; report/detail files are pending report commit; unrelated `.nfs` deletion and independent Test Agent reports remain.
 - Migration head: `20260809_product_0009`.
 - Uncommitted implementation files: NONE.
 - Saved future-Gate drafts: G04 instruction only; no G05 implementation started.
@@ -46,6 +47,10 @@ validation, source-versus-execution Artifact scope, typed downstream reuse,
 family output cardinality/Artifact-only contracts, and physical-store/database
 compensation with reconciliation visibility. Product migration `0009` is the
 direct child of `0008`. Existing source Artifact semantics are retained.
+
+Trial 02 remediates the Trial 01 Gate FAIL by adding `ResultReuseRole` to the
+typed Result reuse reference and real PostgreSQL commit-failure compensation
+tests, including fresh-session metadata rollback verification.
 
 ## 6. Outstanding Work
 
@@ -71,8 +76,8 @@ database issue outside the standardized runner is not changed.
 ## 9. Evidence Index
 
 - G04 instruction: `10_enhance_instruction/G04/06_Ariadne_ENH-E4_G04_実装指示書.md`
-- Implementation commit: `3d88781c1b69ba03bb06c0b8f143612b81feb4bf`
-- Completion report: `20_implementation_reports/G04/E4-G04_01_implementation_completion_report.md`
+- Trial 02 implementation commit: `9c9db4454e0f08c4d46cb002f723ca6827917564`
+- Trial 02 completion report: `20_implementation_reports/G04/E4-G04_02_implementation_completion_report.md`
 - Migration: `product_migrations/versions/20260809_product_0009_enh_e4_g04_result_artifact_ownership.py`
 - Pure tests: `tests/product/test_enh_e4_g04_result_artifact_contract.py`
 - PostgreSQL tests: `tests/product/test_enh_e4_g04_result_artifact_postgres.py`
@@ -80,8 +85,8 @@ database issue outside the standardized runner is not changed.
 
 ## 10. Supplemental State
 
-Coding Agent self-check passed: pure `17 passed, 1 skipped`; standardized
-PostgreSQL G04/regression subset `17 passed`; migration current/head
-`20260809_product_0009`. Final report-descendant SHA
-`89afc28e4cf326a9fb7f571c7c1479a35271901e` was tested by the runner. This detail ledger records implementation state only;
-an independent Test Agent owns the G04 Gate decision.
+Trial 02 Coding Agent self-check passed: pure G04 contract `6 passed`; real
+PostgreSQL G04 `3 passed`; standardized PostgreSQL G02/G03/G04 regression
+`27 passed`; migration current/head `20260809_product_0009`. This detail ledger
+records implementation state only; an independent Test Agent owns the G04 Gate
+decision.
