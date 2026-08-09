@@ -88,7 +88,7 @@ PASS by Compose inspection and file review. The test stack references only `data
 
 ## 19. Git Diff / Commit
 
-Implementation commit: `6d85330` (`test: standardize isolated PostgreSQL infrastructure`). The pre-existing unrelated deletion and operator prompt source remain unstaged.
+Implementation commit: `d2e2187` (`test: standardize isolated PostgreSQL infrastructure`). The pre-existing unrelated deletion and operator prompt source remain unstaged.
 
 ## 20. Remaining Limitations
 
