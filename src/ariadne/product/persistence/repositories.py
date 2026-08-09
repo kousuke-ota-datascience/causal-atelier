@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.orm import Session
 
 from ariadne.product.domain.annotation import Annotation
@@ -13,6 +13,7 @@ from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.dataset_version import DatasetVersion
 from ariadne.product.domain.enums import (
     ArtifactType,
+    AnalysisFamily,
     ExecutionOperation,
     ExecutionStatus,
     GraphOrigin,
@@ -141,6 +142,7 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
     return Execution(
         execution_id=orm.execution_id,
         project_id=orm.project_id,
+        analysis_family=AnalysisFamily(orm.analysis_family),
         dataset_version_id=orm.dataset_version_id,
         input_graph_version_id=orm.input_graph_version_id,
         input_result_id=orm.input_result_id,
@@ -163,6 +165,11 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
         requested_at=orm.requested_at,
         started_at=orm.started_at,
         finished_at=orm.finished_at,
+        base_execution_id=orm.base_execution_id,
+        revision_kind=orm.revision_kind,
+        change_reason=orm.change_reason,
+        lease_owner=orm.lease_owner,
+        lease_expires_at=orm.lease_expires_at,
     )
 
 
@@ -170,6 +177,7 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
     orm = existing or ExecutionOrm()
     orm.execution_id = e.execution_id
     orm.project_id = e.project_id
+    orm.analysis_family = e.analysis_family.value
     orm.dataset_version_id = e.dataset_version_id
     orm.input_graph_version_id = e.input_graph_version_id
     orm.input_result_id = e.input_result_id
@@ -193,6 +201,11 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
         orm.requested_at = e.requested_at
     orm.started_at = e.started_at
     orm.finished_at = e.finished_at
+    orm.base_execution_id = e.base_execution_id
+    orm.revision_kind = e.revision_kind
+    orm.change_reason = e.change_reason
+    orm.lease_owner = e.lease_owner
+    orm.lease_expires_at = e.lease_expires_at
     return orm
 
 
@@ -369,11 +382,30 @@ class SqlExecutionRepository:
         ).all()
         return [_orm_to_execution(r) for r in rows]
 
-    def claim_next(self, worker_token: str) -> Execution | None:
-        """Lock and mark one row RUNNING; the caller commits this transaction."""
+    def claim_next(
+        self,
+        worker_token: str,
+        *,
+        worker_id: str | None = None,
+        lease_seconds: int = 1800,
+    ) -> Execution | None:
+        """Atomically claim one canonical Execution; the caller commits."""
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
+        now = datetime.now(timezone.utc)
+        owner = worker_id or worker_token
         orm = self._session.scalars(
             select(ExecutionOrm)
-            .where(ExecutionOrm.status == "QUEUED")
+            .where(
+                or_(
+                    ExecutionOrm.status == "QUEUED",
+                    (
+                        (ExecutionOrm.status == "RUNNING")
+                        & ExecutionOrm.lease_expires_at.is_not(None)
+                        & (ExecutionOrm.lease_expires_at <= now)
+                    ),
+                )
+            )
             .order_by(ExecutionOrm.requested_at)
             .with_for_update(skip_locked=True)
             .limit(1)
@@ -381,15 +413,34 @@ class SqlExecutionRepository:
         if orm is None:
             return None
         orm.status = ExecutionStatus.RUNNING.value
-        orm.started_at = datetime.now(timezone.utc)
+        orm.started_at = now
+        orm.lease_owner = owner
+        orm.lease_expires_at = now + timedelta(seconds=lease_seconds)
         orm._worker_token = worker_token
         self._session.flush()
         return _orm_to_execution(orm)
 
-    def update(self, execution: Execution) -> None:
+    def renew_lease(self, execution_id: str, owner: str, lease_seconds: int = 1800) -> None:
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
+        orm = self._session.get(ExecutionOrm, execution_id)
+        if orm is None:
+            raise ValueError(f"Execution not found: {execution_id}")
+        if orm.lease_owner != owner or orm.status != ExecutionStatus.RUNNING.value:
+            raise PermissionError("lease owner mismatch")
+        orm.lease_expires_at = datetime.now(timezone.utc) + timedelta(seconds=lease_seconds)
+
+    def update(self, execution: Execution, *, owner: str | None = None) -> None:
         orm = self._session.get(ExecutionOrm, execution.execution_id)
-        if orm:
-            _execution_to_orm(execution, existing=orm)
+        if orm is None:
+            raise ValueError(f"Execution not found: {execution.execution_id}")
+        if orm.lease_owner is not None and owner != orm.lease_owner:
+            raise PermissionError("lease owner mismatch")
+        _execution_to_orm(execution, existing=orm)
+
+    def complete(self, execution: Execution, owner: str) -> None:
+        """Persist a lifecycle mutation only for the current lease owner."""
+        self.update(execution, owner=owner)
 
 
 class SqlResultRepository:

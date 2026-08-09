@@ -41,6 +41,7 @@ def run_worker(
 
     engine = create_engine(database_url)
     session_factory = sessionmaker(bind=engine)
+    worker_token = str(uuid.uuid4())
 
     @contextmanager
     def uow_context():  # type: ignore[no-untyped-def]
@@ -57,6 +58,7 @@ def run_worker(
         uow_factory=uow_context,
         scientific_core=scientific_core,
         artifact_store=artifact_store,
+        owner_token=worker_token,
     )
     exploratory_processor = ExploratoryWorkspaceService(session_factory, artifact_store)
     predictive_processor = PredictiveWorkflowService(session_factory, artifact_store)
@@ -67,13 +69,12 @@ def run_worker(
     logger.info("Worker started. Polling every %.1fs", poll_seconds)
     global _stop
     _stop = False
-    worker_token = str(uuid.uuid4())
     worker_id = f"{socket.gethostname()}:{os.getpid()}"
 
     while not _stop:
         try:
             with uow_context() as uow:
-                execution = uow.executions.claim_next(worker_token)
+                execution = uow.executions.claim_next(worker_token, worker_id=worker_token)
                 uow.commit()
 
             if execution is not None:

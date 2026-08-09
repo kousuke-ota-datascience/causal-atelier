@@ -44,11 +44,13 @@ class ExecutionProcessor:
         scientific_core: ScientificCorePort,
         artifact_store: ArtifactStorePort,
         clock: ClockPort | None = None,
+        owner_token: str | None = None,
     ) -> None:
         self._uow_factory = uow_factory
         self._core = scientific_core
         self._store = artifact_store
         self._clock = clock or SystemClock()
+        self._owner_token = owner_token
 
     def process(self, execution: Execution) -> None:
         """Process an execution atomically claimed as RUNNING."""
@@ -56,6 +58,11 @@ class ExecutionProcessor:
             execution = uow.executions.get(execution.execution_id)
             if execution is None or execution.status != ExecutionStatus.RUNNING:
                 return
+            # Existing test/adapter callers pass only the claimed entity.  The
+            # persisted lease remains the source of truth for the completion
+            # owner; the long-running worker passes owner_token explicitly.
+            if self._owner_token is None:
+                self._owner_token = execution.lease_owner
 
         try:
             self._execute(execution)
@@ -167,7 +174,10 @@ class ExecutionProcessor:
                     uow.results.add_many(results)
                     uow.artifacts.add_many(stored_artifacts)
                     exec_entity.mark_succeeded(now)
-                    uow.executions.update(exec_entity)
+                    if self._owner_token is None:
+                        uow.executions.update(exec_entity)
+                    else:
+                        uow.executions.complete(exec_entity, self._owner_token)
                     uow.commit()
             except Exception:
                 for key in stored_keys:
@@ -283,7 +293,10 @@ class ExecutionProcessor:
             execution = uow.executions.get(execution_id)
             if execution and execution.status == ExecutionStatus.RUNNING:
                 execution.mark_failed(now, error_summary)
-                uow.executions.update(execution)
+                if self._owner_token is None:
+                    uow.executions.update(execution)
+                else:
+                    uow.executions.complete(execution, self._owner_token)
                 uow.commit()
 
 

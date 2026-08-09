@@ -120,6 +120,7 @@ class ExecutionOrm(ProductBase):
 
     execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_family: Mapped[str] = mapped_column(String(20), nullable=False, default="CAUSAL", index=True)
     dataset_version_id: Mapped[str] = mapped_column(ForeignKey("product_dataset_version.dataset_version_id", ondelete="RESTRICT"), nullable=False, index=True)
     input_graph_version_id: Mapped[str | None] = mapped_column(ForeignKey("product_graph_version.graph_version_id", ondelete="RESTRICT"), index=True)
     input_result_id: Mapped[str | None] = mapped_column(ForeignKey("product_result.result_id", ondelete="RESTRICT"), index=True)
@@ -144,6 +145,11 @@ class ExecutionOrm(ProductBase):
     requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    base_execution_id: Mapped[str | None] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), index=True)
+    revision_kind: Mapped[str | None] = mapped_column(String(20))
+    change_reason: Mapped[str | None] = mapped_column(Text)
+    lease_owner: Mapped[str | None] = mapped_column(String(200), index=True)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     # internal worker token - not exposed as domain attribute
     _worker_token: Mapped[str | None] = mapped_column("worker_token", String(36))
 
@@ -157,6 +163,14 @@ class ExecutionOrm(ProductBase):
             name="ck_product_execution_status",
         ),
         CheckConstraint("retry_count >= 0", name="ck_product_execution_retry_count"),
+        CheckConstraint(
+            "analysis_family IN ('CAUSAL','EXPLORATORY','PREDICTIVE')",
+            name="ck_product_execution_analysis_family",
+        ),
+        CheckConstraint(
+            "revision_kind IS NULL OR revision_kind IN ('RERUN','REVISED')",
+            name="ck_product_execution_revision_kind",
+        ),
         CheckConstraint(
             "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL AND input_result_id IS NULL) OR "
             "(operation = 'IDENTIFICATION' AND input_graph_version_id IS NOT NULL AND input_result_id IS NULL) OR "

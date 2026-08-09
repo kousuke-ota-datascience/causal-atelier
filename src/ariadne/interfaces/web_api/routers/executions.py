@@ -21,7 +21,7 @@ from ariadne.product.application.execution_service import (
     CreateExecutionBatchCommand,
     ExecutionVariantSpec,
 )
-from ariadne.product.domain.enums import ExecutionOperation
+from ariadne.product.domain.enums import AnalysisFamily, ExecutionOperation
 from ariadne.product.domain.execution import Execution
 
 router = APIRouter(tags=["executions"])
@@ -32,6 +32,7 @@ def _execution_to_response(e: Execution) -> ExecutionResponse:
         execution_id=e.execution_id,
         project_id=e.project_id,
         dataset_version_id=e.dataset_version_id,
+        analysis_family=e.analysis_family.value,
         input_graph_version_id=e.input_graph_version_id,
         input_result_id=e.input_result_id,
         snapshot_schema_version=e.snapshot_schema_version,
@@ -65,6 +66,7 @@ async def create_execution_batch(
         result = svc.create_execution_batch(CreateExecutionBatchCommand(
             project_id=project_id, dataset_version_id=body.dataset_version_id,
             operation=ExecutionOperation(body.operation),
+            analysis_family=AnalysisFamily(body.analysis_family),
             variants=[ExecutionVariantSpec(
                 algorithm_or_estimator=v.algorithm_or_estimator,
                 parameter_json=v.parameters, random_seed=v.random_seed,

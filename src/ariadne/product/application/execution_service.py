@@ -10,7 +10,7 @@ from decimal import Decimal
 from dataclasses import dataclass, field
 from typing import Any
 
-from ariadne.product.domain.enums import ExecutionOperation, GraphVersionStatus
+from ariadne.product.domain.enums import AnalysisFamily, ExecutionOperation, GraphVersionStatus
 from ariadne.product.domain.analysis_spec import SCHEMA_VERSION
 from ariadne.product.domain.errors import (
     EntityNotFound,
@@ -42,6 +42,7 @@ class CreateExecutionBatchCommand:
     dataset_version_id: str
     operation: ExecutionOperation
     variants: list[ExecutionVariantSpec]
+    analysis_family: AnalysisFamily = AnalysisFamily.CAUSAL
     input_graph_version_id: str | None = None
     input_result_id: str | None = None
     code_version: str = ""
@@ -82,6 +83,8 @@ class ExecutionService:
             )
         if command.base_execution_id is None and command.change_reason is not None:
             raise InvalidAnalysisSpec("change_reason requires base_execution_id")
+        if not isinstance(command.analysis_family, AnalysisFamily):
+            command.analysis_family = AnalysisFamily(command.analysis_family)
 
         now = self._clock.now()
         batch_key = str(uuid.uuid4())
@@ -99,6 +102,8 @@ class ExecutionService:
                     raise EntityNotFound("Execution", command.base_execution_id)
                 if base_execution.project_id != command.project_id:
                     raise ProjectBoundaryViolation("Base Execution does not belong to project")
+                if base_execution.analysis_family != command.analysis_family:
+                    raise InvalidAnalysisSpec("rerun/revise cannot change analysis family")
 
             dataset_version = uow.dataset_versions.get(command.dataset_version_id)
             if dataset_version is None:
@@ -189,6 +194,7 @@ class ExecutionService:
                 )
                 execution = Execution(
                     project_id=command.project_id,
+                    analysis_family=command.analysis_family,
                     dataset_version_id=command.dataset_version_id,
                     input_graph_version_id=command.input_graph_version_id,
                     input_result_id=command.input_result_id,
@@ -206,6 +212,10 @@ class ExecutionService:
                     snapshot_schema_version=SCHEMA_VERSION,
                     requested_by=command.requested_by,
                     requested_at=now,
+                    base_execution_id=base_execution.execution_id if base_execution else None,
+                    revision_kind=("REVISED" if command.change_reason is not None else "RERUN")
+                    if base_execution else None,
+                    change_reason=command.change_reason,
                 )
                 executions.append(execution)
 
