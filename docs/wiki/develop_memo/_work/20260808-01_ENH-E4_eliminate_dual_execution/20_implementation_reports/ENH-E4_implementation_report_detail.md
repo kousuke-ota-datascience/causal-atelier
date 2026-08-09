@@ -13,7 +13,7 @@
 |---|---|---:|---|---|
 | E4-G01 | PASS (documentation review) | N/A | N/A | prior architecture review evidence |
 | E4-G02 | READY_FOR_TEST | 01 | 166e90cd1c2d0e523fb863795a88343403d8cc44 | N/A |
-| E4-G03 | NOT_STARTED | N/A | N/A | future Gate |
+| E4-G03 | READY_FOR_TEST | 01 | f455354 | E4-G03_01_implementation_completion_report.md |
 | E4-G04 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G05 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G06 | NOT_STARTED | N/A | N/A | future Gate |
@@ -69,3 +69,17 @@ The existing operation enum remains Causal-oriented; G02 introduces analysis_fam
 ## 10. Supplemental State
 
 G02 is handed off to an independent Test Agent. No Gate PASS decision is recorded.
+
+## 11. E4-G03 Trial 01 Implementation
+
+- Status: `READY_FOR_TEST` (Coding Agent handoff; no Gate PASS decision)
+- Starting/previous Product head: `20260809_product_0007`
+- New Product head: `20260809_product_0008`
+- Implementation commit: `f455354`
+- Completion report: `20_implementation_reports/G03/E4-G03_01_implementation_completion_report.md`
+- Scope: canonical persistent `StageExecution` and append-only `StageAttempt`, common family plan materialization, owner-checked stage mutation, and GenericExecutor boundary cleanup.
+- AC coverage: direct unit/boundary tests plus real PostgreSQL round-trip for AC-001 through AC-005.
+- Self-check: full pytest `198 passed, 5 skipped`; standardized PostgreSQL runner `10 passed` with migration head `20260809_product_0008`.
+- `E4-TD-001`: OPEN until G05.
+- `E4-TD-002`: OPEN until G05.
+- G04-G08 scope remains unimplemented.
