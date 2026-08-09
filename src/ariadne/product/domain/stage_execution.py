@@ -17,6 +17,7 @@ class StageAttempt:
     attempt_number: int
     worker_id: str
     started_at: datetime
+    stage_attempt_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     finished_at: datetime | None = None
     error: dict[str, Any] | None = None
 
@@ -28,6 +29,7 @@ class StageExecution:
     stage_key: str = ""
     stage_type: StageType = field(default_factory=lambda: StageType("core", "stage", "1"))
     ordinal: int = 0
+    dependencies: tuple[str, ...] = ()
     status: StageExecutionStatus = StageExecutionStatus.PENDING
     input_binding: dict[str, Any] = field(default_factory=dict)
     output_binding: dict[str, Any] = field(default_factory=dict)
@@ -41,7 +43,11 @@ class StageExecution:
 
     def start_attempt(self, worker_id: str, at: datetime) -> StageAttempt:
         self._transition({StageExecutionStatus.READY, StageExecutionStatus.FAILED}, StageExecutionStatus.RUNNING)
-        attempt = StageAttempt(len(self.attempts) + 1, worker_id, at)
+        attempt = StageAttempt(
+            attempt_number=len(self.attempts) + 1,
+            worker_id=worker_id,
+            started_at=at,
+        )
         self.attempts.append(attempt)
         self.started_at = at
         self.last_error = None
@@ -66,6 +72,17 @@ class StageExecution:
             StageExecutionStatus.SKIPPED_DUE_TO_PREREQUISITE,
         )
         self.finished_at = at
+
+    def cancel(self, at: datetime, error: dict[str, Any] | None = None) -> None:
+        self._transition(
+            {StageExecutionStatus.PENDING, StageExecutionStatus.READY,
+             StageExecutionStatus.RUNNING},
+            StageExecutionStatus.CANCELLED,
+        )
+        self.last_error = error
+        self.finished_at = at
+        if self.attempts and self.attempts[-1].finished_at is None:
+            self.attempts[-1].finished_at = at
 
     def _transition(self, allowed: set[StageExecutionStatus], target: StageExecutionStatus) -> None:
         if self.status not in allowed:

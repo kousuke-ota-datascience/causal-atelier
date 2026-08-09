@@ -12,6 +12,7 @@ from ariadne.product.persistence.repositories import (
     SqlGraphVersionRepository,
     SqlProjectRepository,
     SqlResultRepository,
+    SqlStageExecutionRepository,
 )
 
 
@@ -61,3 +62,7 @@ class SqlUnitOfWork:
     @property
     def annotations(self) -> SqlAnnotationRepository:
         return SqlAnnotationRepository(self._session)
+
+    @property
+    def stage_executions(self) -> SqlStageExecutionRepository:
+        return SqlStageExecutionRepository(self._session)

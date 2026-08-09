@@ -182,6 +182,65 @@ class ExecutionOrm(ProductBase):
     )
 
 
+class StageExecutionOrm(ProductBase):
+    """Canonical persistent workflow stage owned by a Product Execution."""
+
+    __tablename__ = "product_stage_execution"
+
+    stage_execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    execution_id: Mapped[str] = mapped_column(
+        ForeignKey("product_execution.execution_id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    stage_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    stage_type_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    ordinal: Mapped[int] = mapped_column(Integer, nullable=False)
+    dependencies_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, default="PENDING")
+    input_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    output_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    last_error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("execution_id", "stage_key", name="uq_product_stage_execution_key"),
+        CheckConstraint(
+            "status IN ('PENDING','READY','RUNNING','SUCCEEDED','FAILED','SKIPPED_DUE_TO_PREREQUISITE','CANCELLED')",
+            name="ck_product_stage_execution_status",
+        ),
+        CheckConstraint("ordinal >= 0", name="ck_product_stage_execution_ordinal"),
+    )
+
+
+class StageAttemptOrm(ProductBase):
+    """Append-only attempt history for a canonical StageExecution."""
+
+    __tablename__ = "product_stage_attempt"
+
+    stage_attempt_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    stage_execution_id: Mapped[str] = mapped_column(
+        ForeignKey("product_stage_execution.stage_execution_id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    worker_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "stage_execution_id", "attempt_number",
+            name="uq_product_stage_attempt_number",
+        ),
+        CheckConstraint("attempt_number > 0", name="ck_product_stage_attempt_number"),
+    )
+
+
 class ResultOrm(ProductBase):
     __tablename__ = "product_result"
 

@@ -216,13 +216,27 @@ class ExecutionProcessor:
             external_inputs={stage_key: inputs},
             snapshots={"snapshot_hash": execution.snapshot_hash},
             cancelled=lambda: self._is_cancelled(execution.execution_id),
+            worker_id=self._owner_token or execution.lease_owner or "worker",
+            stage_executions=tuple(self._load_stages(execution.execution_id)),
         )
+        self._persist_stages(execution.execution_id, outcome.stages)
         if outcome.status == "CANCELLED":
             return []
         if outcome.status != "SUCCEEDED":
             error = outcome.stages[-1].last_error or {"message": "Causal Stage failed"}
             raise RuntimeError(str(error.get("message", error)))
         return list(outcome.stages[-1].output_binding["scientific_descriptors"])
+
+    def _load_stages(self, execution_id: str) -> list[Any]:
+        with self._uow_factory() as uow:
+            return uow.stage_executions.list_for_execution(execution_id)
+
+    def _persist_stages(self, execution_id: str, stages: tuple[Any, ...]) -> None:
+        owner = self._owner_token
+        with self._uow_factory() as uow:
+            for stage in stages:
+                uow.stage_executions.update(stage, owner=owner)
+            uow.commit()
 
     def _retrieve_upstream(self, execution: Execution) -> tuple[Result | None, Execution | None]:
         if execution.input_result_id is None:

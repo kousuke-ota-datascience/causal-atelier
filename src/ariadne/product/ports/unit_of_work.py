@@ -12,6 +12,7 @@ from ariadne.product.ports.repositories import (
     GraphVersionRepository,
     ProjectRepository,
     ResultRepository,
+    StageExecutionRepository,
 )
 
 
@@ -23,6 +24,7 @@ class UnitOfWork(Protocol):
     artifacts: ArtifactRepository
     graph_versions: GraphVersionRepository
     annotations: AnnotationRepository
+    stage_executions: StageExecutionRepository
 
     def __enter__(self) -> "UnitOfWork": ...
     def __exit__(self, *args: object) -> None: ...

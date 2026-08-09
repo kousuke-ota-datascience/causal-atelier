@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from dataclasses import asdict, is_dataclass
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy import or_, select, text
@@ -22,11 +24,15 @@ from ariadne.product.domain.enums import (
     ProjectStatus,
     ResultType,
     ScientificStatus,
+    StageExecutionStatus,
 )
 from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.stage_execution import StageAttempt, StageExecution
+from ariadne.product.domain.execution_plan import StageType
 from ariadne.product.domain.graph_version import GraphVersion
 from ariadne.product.domain.project import Project
 from ariadne.product.domain.result import Result
+from ariadne.product.domain.errors import InvalidStateTransition
 from ariadne.product.persistence.orm_models import (
     AnnotationOrm,
     ArtifactOrm,
@@ -35,6 +41,8 @@ from ariadne.product.persistence.orm_models import (
     GraphVersionOrm,
     ProjectOrm,
     ResultOrm,
+    StageAttemptOrm,
+    StageExecutionOrm,
 )
 
 
@@ -440,7 +448,171 @@ class SqlExecutionRepository:
 
     def complete(self, execution: Execution, owner: str) -> None:
         """Persist a lifecycle mutation only for the current lease owner."""
+        if execution.status is ExecutionStatus.SUCCEEDED:
+            stages = list(self._session.scalars(select(StageExecutionOrm).where(
+                StageExecutionOrm.execution_id == execution.execution_id
+            )))
+            if not stages or any(
+                row.status not in {"SUCCEEDED", "SKIPPED_DUE_TO_PREREQUISITE"}
+                for row in stages
+            ):
+                raise InvalidStateTransition(
+                    "Execution", ExecutionStatus.RUNNING, ExecutionStatus.SUCCEEDED
+                )
         self.update(execution, owner=owner)
+
+
+def _stage_type(value: dict[str, Any]) -> StageType:
+    return StageType(value["namespace"], value["name"], value["version"])
+
+
+def _json_safe(value: Any) -> Any:
+    """Persist orchestration projections, never arbitrary runner objects."""
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, Path):
+        return str(value)
+    if is_dataclass(value) and not isinstance(value, type):
+        return _json_safe(asdict(value))
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    return str(value)
+
+
+def _orm_to_stage(orm: StageExecutionOrm, attempts: list[StageAttemptOrm]) -> StageExecution:
+    return StageExecution(
+        stage_execution_id=orm.stage_execution_id,
+        execution_id=orm.execution_id,
+        stage_key=orm.stage_key,
+        stage_type=_stage_type(orm.stage_type_json),
+        ordinal=orm.ordinal,
+        dependencies=tuple(orm.dependencies_json or []),
+        status=StageExecutionStatus(orm.status),
+        input_binding=orm.input_binding_json or {},
+        output_binding=orm.output_binding_json or {},
+        attempts=[StageAttempt(
+            attempt_number=item.attempt_number,
+            worker_id=item.worker_id,
+            started_at=item.started_at,
+            stage_attempt_id=item.stage_attempt_id,
+            finished_at=item.finished_at,
+            error=item.error_json,
+        ) for item in attempts],
+        last_error=orm.last_error_json,
+        started_at=orm.started_at,
+        finished_at=orm.finished_at,
+    )
+
+
+class SqlStageExecutionRepository:
+    """Canonical StageExecution persistence; claim authority remains Execution."""
+
+    def __init__(self, session: Session) -> None:
+        self._session = session
+
+    def _owner_check(self, execution_id: str, owner: str | None) -> ExecutionOrm:
+        parent = self._session.get(ExecutionOrm, execution_id)
+        if parent is None:
+            raise ValueError(f"Execution not found: {execution_id}")
+        if parent.lease_owner is not None and owner != parent.lease_owner:
+            raise PermissionError("lease owner mismatch")
+        expiry = parent.lease_expires_at
+        expired = (
+            expiry <= datetime.now() if expiry is not None and expiry.tzinfo is None
+            else expiry <= datetime.now(timezone.utc) if expiry is not None else False
+        )
+        if owner is not None and expired:
+            raise PermissionError("execution lease expired")
+        return parent
+
+    def add_many(self, stages: list[StageExecution]) -> None:
+        for stage in stages:
+            self._owner_check(stage.execution_id, None)
+            self._session.add(StageExecutionOrm(
+                stage_execution_id=stage.stage_execution_id,
+                execution_id=stage.execution_id,
+                stage_key=stage.stage_key,
+                stage_type_json=stage.stage_type.as_dict(),
+                ordinal=stage.ordinal,
+                dependencies_json=list(stage.dependencies),
+                status=stage.status.value,
+                input_binding_json=_json_safe(stage.input_binding),
+                output_binding_json=_json_safe(stage.output_binding),
+                last_error_json=_json_safe(stage.last_error),
+                started_at=stage.started_at,
+                finished_at=stage.finished_at,
+            ))
+
+    def add(self, stage: StageExecution) -> None:
+        self.add_many([stage])
+
+    def get(self, stage_execution_id: str) -> StageExecution | None:
+        orm = self._session.get(StageExecutionOrm, stage_execution_id)
+        if orm is None:
+            return None
+        attempts = list(self._session.scalars(
+            select(StageAttemptOrm)
+            .where(StageAttemptOrm.stage_execution_id == stage_execution_id)
+            .order_by(StageAttemptOrm.attempt_number)
+        ))
+        return _orm_to_stage(orm, attempts)
+
+    def list_for_execution(self, execution_id: str) -> list[StageExecution]:
+        rows = list(self._session.scalars(
+            select(StageExecutionOrm)
+            .where(StageExecutionOrm.execution_id == execution_id)
+            .order_by(StageExecutionOrm.ordinal, StageExecutionOrm.stage_key)
+        ))
+        return [self.get(row.stage_execution_id) for row in rows]  # type: ignore[misc]
+
+    def update(self, stage: StageExecution, *, owner: str | None = None) -> None:
+        parent = self._owner_check(stage.execution_id, owner)
+        if stage.status is StageExecutionStatus.RUNNING and parent.status != ExecutionStatus.RUNNING.value:
+            raise InvalidStateTransition("StageExecution", parent.status, StageExecutionStatus.RUNNING)
+        orm = self._session.get(StageExecutionOrm, stage.stage_execution_id)
+        if orm is None:
+            raise ValueError(f"StageExecution not found: {stage.stage_execution_id}")
+        orm.status = stage.status.value
+        orm.input_binding_json = _json_safe(stage.input_binding)
+        orm.output_binding_json = _json_safe(stage.output_binding)
+        orm.last_error_json = _json_safe(stage.last_error)
+        orm.started_at = stage.started_at
+        orm.finished_at = stage.finished_at
+        existing = {
+            item.attempt_number: item
+            for item in self._session.scalars(select(StageAttemptOrm).where(
+                StageAttemptOrm.stage_execution_id == stage.stage_execution_id
+            ))
+        }
+        for attempt in stage.attempts:
+            row = existing.get(attempt.attempt_number)
+            if row is None:
+                self._session.add(StageAttemptOrm(
+                    stage_attempt_id=attempt.stage_attempt_id,
+                    stage_execution_id=stage.stage_execution_id,
+                    attempt_number=attempt.attempt_number,
+                    worker_id=attempt.worker_id,
+                    started_at=attempt.started_at,
+                    finished_at=attempt.finished_at,
+                    error_json=_json_safe(attempt.error),
+                ))
+            else:
+                if row.stage_attempt_id != attempt.stage_attempt_id:
+                    raise ValueError("stage attempt identity cannot be rewritten")
+                row.finished_at = attempt.finished_at
+                row.error_json = _json_safe(attempt.error)
+
+    def start_attempt(self, stage: StageExecution, *, owner: str, worker_id: str, at: datetime) -> StageAttempt:
+        self._owner_check(stage.execution_id, owner)
+        attempt = stage.start_attempt(worker_id, at)
+        self.update(stage, owner=owner)
+        return attempt
+
+    def attempts(self, stage_execution_id: str) -> list[StageAttempt]:
+        stage = self.get(stage_execution_id)
+        return [] if stage is None else stage.attempts
 
 
 class SqlResultRepository:

@@ -318,11 +318,6 @@ class PredictiveWorkflowService:
                 ),
                 "materialized_hash": view_manifest["materialized_hash"],
             }
-            committed: list[tuple[str, Any]] = []
-
-            def capture(stage: Any, result: Any) -> None:
-                committed.append((stage.stage_key, result))
-
             def cancelled() -> bool:
                 with self._session_factory() as session:
                     current = session.get(FamilyExecutionOrm, execution_id)
@@ -332,9 +327,7 @@ class PredictiveWorkflowService:
                         or current.worker_token != worker_token
                     )
 
-            outcome = GenericExecutor(
-                self._runner_registry(), commit=capture
-            ).execute(
+            outcome = GenericExecutor(self._runner_registry()).execute(
                 execution_id,
                 plan,
                 external_inputs={
@@ -369,7 +362,7 @@ class PredictiveWorkflowService:
                 artifacts_by_stage: dict[str, list[str]] = {}
                 result_ids_by_type: dict[str, str] = {}
                 artifact_ids_by_type: dict[str, str] = {}
-                for stage_key, run_result in committed:
+                for stage_key, run_result in outcome.stage_results:
                     stage_row = stage_rows[stage_key]
                     result_ids: list[str] = []
                     for draft in run_result.results:

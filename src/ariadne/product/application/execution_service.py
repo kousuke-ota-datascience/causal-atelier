@@ -21,9 +21,12 @@ from ariadne.product.domain.errors import (
     ScientificContractViolation,
 )
 from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.execution_plan import ExecutionPlan
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.application.scientific_validation_service import ScientificValidationService
 from ariadne.product.application.project_policy import require_active_project
+from ariadne.product.workflow.stage_materialization import StagePlanMaterializer
+from ariadne.product.workflow.canonical_plan_provider import CanonicalPlanProvider
 
 
 @dataclass
@@ -60,10 +63,31 @@ class ExecutionBatchResult:
 
 
 class ExecutionService:
-    def __init__(self, uow_factory: Any, clock: ClockPort | None = None) -> None:
+    def __init__(
+        self,
+        uow_factory: Any,
+        clock: ClockPort | None = None,
+        plan_provider: Any | None = None,
+    ) -> None:
         self._uow_factory = uow_factory
         self._clock = clock or SystemClock()
         self._validation = ScientificValidationService()
+        self._plan_provider = plan_provider
+
+    def _plan_for(self, execution: Execution) -> ExecutionPlan:
+        if self._plan_provider is not None:
+            plan = self._plan_provider(execution)
+        else:
+            try:
+                plan = CanonicalPlanProvider()(execution)
+            except Exception as exc:
+                raise InvalidAnalysisSpec(
+                    "Canonical family workflow plan materialization failed: "
+                    f"{execution.analysis_family.value}"
+                ) from exc
+        if not isinstance(plan, ExecutionPlan):
+            raise InvalidAnalysisSpec("Canonical planner returned an invalid ExecutionPlan")
+        return plan
 
     def create_execution_batch(self, command: CreateExecutionBatchCommand) -> ExecutionBatchResult:
         if not command.variants:
@@ -219,7 +243,13 @@ class ExecutionService:
                 )
                 executions.append(execution)
 
+            stages = []
+            for execution in executions:
+                stages.extend(
+                    StagePlanMaterializer.materialize(execution, self._plan_for(execution))
+                )
             uow.executions.add_many(executions)
+            uow.stage_executions.add_many(stages)
             uow.commit()
 
         return ExecutionBatchResult(

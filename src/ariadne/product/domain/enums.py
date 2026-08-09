@@ -33,6 +33,7 @@ class StageExecutionStatus(str, Enum):
     SUCCEEDED = "SUCCEEDED"
     FAILED = "FAILED"
     SKIPPED_DUE_TO_PREREQUISITE = "SKIPPED_DUE_TO_PREREQUISITE"
+    CANCELLED = "CANCELLED"
 
 
 class RevisionKind(str, Enum):
