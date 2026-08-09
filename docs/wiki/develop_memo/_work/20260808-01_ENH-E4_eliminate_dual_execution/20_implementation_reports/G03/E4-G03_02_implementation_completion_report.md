@@ -1,97 +1,134 @@
 # E4-G03 Trial 02 Implementation Completion Report
 
-## Status
-
-`READY_FOR_TEST`
-
-This is a Coding Agent handoff, not a Gate PASS/FAIL decision.
-
-## Metadata
-
 - Project: Ariadne / causal-atelier
 - Enhancement: ENH-E4 eliminate dual execution
-- Gate / Trial: E4-G03 / 02
+- Gate: E4-G03
+- Trial: 02
+- Status: READY_FOR_TEST
 - Branch: `refactor/ariadne_mvp_e4`
-- Trial 02 starting SHA: `de4b120b452c019cf0863c6846b06261df6de8a4`
-- Trial 01 implementation SHA: `f455354e3724b66360bed6d3cfd4646ca1463a89`
-- Trial 01 FAIL/report SHA: `de4b120b452c019cf0863c6846b06261df6de8a4`
-- Trial 02 implementation/test SHA: `bac1814bb713f32b859fbe7e2b445fa6cd557f2b`
-- Product migration head: `20260809_product_0008`
-- New Product migration: `NONE`
+- Baseline commit: `cb28a18c07cad00cf12f01e9124651aa45aab16f`
+- Starting commit: `de4b120b452c019cf0863c6846b06261df6de8a4`
+- Implementation commit: `bac1814bb713f32b859fbe7e2b445fa6cd557f2b`
+- Report commit: `c9afee351f3724823c3fd19062e9bdc9eb213c80` (initial handoff report)
+- Migration head: `20260809_product_0008`
+- Started at: `2026-08-09T04:17:52Z` (Trial 01 FAIL/report commit time)
+- Finished at: `2026-08-09T04:44:50Z` (initial handoff report commit time)
 
-## Prior FAIL and remediation
+This is a Coding Agent handoff, not a Gate PASS/FAIL decision. The subsequent
+independent Test Agent decision is recorded separately and is not altered here.
 
-Trial 01 was a required-evidence FAIL, not a production failure.  The missing
-automated evidence was remediated as follows.
+## 1. Input
 
-| Area | Trial 02 test evidence |
-|---|---|
-| R-01 cross-family persistence | CAUSAL, EXPLORATORY, and PREDICTIVE submit through `ExecutionService`, then reload persistent children in a new session. |
-| R-02 query / round-trip | `list_for_execution`, `get`, dependencies, bindings, errors/timestamps, and retry attempts `[1,2]` are reloaded from PostgreSQL. |
-| R-03 executor negative | A failing runner returns the in-memory failure outcome; no persistence/claim/retry/result/artifact/lineage authority is invoked. |
-| R-04/R-05 lifecycle | durable failure, retry with stable IDs, cancellation, wrong/expired owner rejection, and invalid parent success are tested. |
-| R-06/R-07 atomicity | invalid empty plan and injected stage-write failure roll back parent/stages; successful resubmission has exactly one child per key. |
+- Implementation instruction: `10_enhance_instruction/G03/08_E4-G03_Trial02_Coding_Agent_Remediation_Instruction.md`
+- Previous Gate Decision report: `30_test_report/G03/E4-G03_01_999_gate_decision.md` (`FAIL`: required automated evidence absent)
 
-## Changed files
+## 2. Scope Implemented
 
-### Test changes
+Trial 01's production implementation was retained. Trial 02 adds only the
+required acceptance evidence: canonical `ExecutionService` submission and
+PostgreSQL reload for all families; persistent query/attempt round-trip;
+GenericExecutor runner-failure negative behavior; lifecycle/lease negatives;
+and materialization/stage-write rollback including Causal zero-stage prevention.
+
+No production architecture, migration, test infrastructure, or G04+ scope was
+changed.
+
+## 3. Files Changed
+
+### Added
 
 - `tests/product/test_enh_e4_g03_acceptance_postgres.py`
+
+### Modified
+
 - `tests/product/test_enh_e4_g03_generic_executor_boundary.py`
 
-### Production changes
+### Deleted
 
 `NONE`
 
-### Migration changes
+The report file itself is documentation created in the report commit. The
+unrelated `deploy/.nfs000000000076202f00000088` deletion is pre-existing and
+was not staged, restored, deleted, or recreated by this trial.
 
-`NONE`
+## 4. Implementation Details
 
-### Documentation/report changes
+- R-01: parameterized CAUSAL/EXPLORATORY/PREDICTIVE canonical application-path persistence and new-session reload.
+- R-02: `list_for_execution`, stage-ID lookup, dependencies, bindings, errors/timestamps, and append-preserved attempts `[1,2]`.
+- R-03: failing runner yields only an in-memory `FAILED` outcome; no persistence/claim/retry/result/artifact/lineage authority.
+- R-04/R-05: durable failure, retry retaining execution/stage IDs, cancellation, wrong/expired owner rejection, and invalid parent success rejection.
+- R-06/R-07: empty plan and injected stage persistence failure roll back; successful retry contains no orphan/duplicate stage rows.
 
-- this report
+## 5. Automated Test Code Added / Changed
 
-## Acceptance-criteria mapping
-
-| AC | Exact pytest node | Verification |
+| Test node | Type | Contract proved |
 |---|---|---|
-| AC-001 | `test_g03_ac001_canonical_application_path_persists_and_reloads_each_family[EXPLORATORY]`, `[CAUSAL]`, `[PREDICTIVE]` | real PostgreSQL canonical application submission, child persistence, new-session reload, same execution ID |
-| AC-002 | `test_g03_ac002_persistent_round_trip_lists_bindings_timestamps_and_retry_history` | real PostgreSQL list/get, dependencies, input/output/error/timestamps, `[1,2]` attempts after reload |
-| AC-003 | `test_g03_ac003_generic_executor_has_no_persistence_or_retry_authority`; `test_g03_ac003_runner_failure_has_no_persistence_claim_or_retry_side_effect` | static boundary and pure behavioral negative |
-| AC-004 | `test_g03_ac004_ac007_materialization_failure_rolls_back_without_orphans_or_zero_stage_execution` | Causal zero-stage prevention, injected stage persistence rollback, no orphan/duplicate after resubmission |
-| AC-005 | `test_g03_ac005_persistent_failure_retry_cancellation_owner_and_invalid_success` | persisted failure/retry/cancellation, wrong and expired owner rejection, invalid success rejection |
+| `test_g03_ac001_canonical_application_path_persists_and_reloads_each_family[EXPLORATORY]`, `[CAUSAL]`, `[PREDICTIVE]` | real PostgreSQL | AC-001 cross-family child persistence/reload |
+| `test_g03_ac002_persistent_round_trip_lists_bindings_timestamps_and_retry_history` | real PostgreSQL | AC-002 query and `[1,2]` attempt history |
+| `test_g03_ac005_persistent_failure_retry_cancellation_owner_and_invalid_success` | real PostgreSQL | AC-005 lifecycle and lease negatives |
+| `test_g03_ac004_ac007_materialization_failure_rolls_back_without_orphans_or_zero_stage_execution` | real PostgreSQL | AC-004 atomicity and zero-stage prohibition |
+| `test_g03_ac003_runner_failure_has_no_persistence_claim_or_retry_side_effect` | pure unit | AC-003 behavioral negative |
 
-## Production defect findings
+The pre-existing static AC-003 boundary test remains in the modified boundary
+test module.
 
-All added mandatory acceptance tests passed after correcting only test defects:
+## 6. Migration
 
-- PostgreSQL seed SQL reused one bind parameter across incompatible column types.
-- The expired-lease fixture remained claimable by the subsequent invalid-success scenario.
+- Added migration: `NONE`
+- Previous head: `20260809_product_0008`
+- New head: `20260809_product_0008`
+- Destructive change: `NONE`
+- Data migration: `NONE`
 
-No production defect was exposed by the added mandatory acceptance tests.
+## 7. Changes to Already-Passed Gates
 
-## Self-check
+Production changes: `NONE`. The required final runner includes
+`tests/product/test_postgres_contract.py` and
+`tests/product/test_enh_e4_g02_canonical_execution.py`; both passed as part of
+the `22 passed` result. No G02 production implementation was changed.
 
-- `UV_CACHE_DIR=/tmp/ariadne-uv-cache PYTHONDONTWRITEBYTECODE=1 uv run pytest -q tests/product/test_enh_e4_g03_generic_executor_boundary.py` → exit `0`, `6 passed`.
-- `scripts/test/run_product_postgres_tests.sh tests/product/test_enh_e4_g03_acceptance_postgres.py::test_g03_ac005_persistent_failure_retry_cancellation_owner_and_invalid_success` → exit `0`, `1 passed`; evidence `test-results/postgres/run-20260809T044238Z.metadata.txt`.
-- `scripts/test/run_product_postgres_tests.sh tests/product/test_enh_e4_g03_generic_executor_boundary.py tests/product/test_enh_e4_g03_persistent_stage_execution.py tests/product/test_enh_e4_g03_acceptance_postgres.py tests/product/test_postgres_contract.py tests/product/test_enh_e4_g02_canonical_execution.py` → exit `0`, `22 passed`; migration current `20260809_product_0008 (head)`; evidence `test-results/postgres/run-20260809T044350Z.metadata.txt`.
+## 8. Known Limitations / Unresolved Items
 
-The evidence metadata records the pre-commit SHA because verification preceded
-the required implementation/test commit; the committed test content is the
-content that was verified.
+- `E4-TD-001`: OPEN until G05.
+- `E4-TD-002`: OPEN until G05.
+- The standardized-runner-external old database configuration issue was not
+  changed; it was not observed in this trial's authoritative runner.
 
-## Regression and scope
+## 9. Out-of-Scope Work
 
-The final standard-runner command includes the G03 tests, PostgreSQL contract,
-and G02 canonical execution regression: `22 passed`.
+G04 Result/Artifact consolidation, G05 convergence, G06 lineage, G07 legacy
+retirement/CLI, G08 bootstrap/final audit, root legacy migration, scientific
+algorithm redesign, and PostgreSQL test-infrastructure redesign.
 
-- `E4-TD-001`: `OPEN` until G05.
-- `E4-TD-002`: `OPEN` until G05.
-- G04 Result/Artifact consolidation and later gates remain unimplemented.
+## 10. Git Evidence
 
-## Environment and working tree
+- `git rev-parse HEAD` at initial handoff: `c9afee351f3724823c3fd19062e9bdc9eb213c80`
+- `git status --short` at initial handoff: pre-existing `D deploy/.nfs000000000076202f00000088` and untracked Trial 02 instruction only.
+- Diff stat for implementation commit: 2 test files, 303 insertions; no production or migration files.
 
-The known standard-runner-external old DB configuration issue was not observed
-in Trial 02 and was not modified. The unrelated deletion
-`deploy/.nfs000000000076202f00000088` and untracked Trial 02 instruction file
-were left untouched and excluded from both implementation/test commits.
+## 11. Handoff to Test Agent
+
+- Test target implementation commit: `bac1814bb713f32b859fbe7e2b445fa6cd557f2b`
+- Active Gate: `E4-G03 Trial 02`
+- Implementation report path: this file
+- Coding Agent test execution: pure unit `6 passed`; standardized PostgreSQL final subset `22 passed`, exit `0`, evidence `test-results/postgres/run-20260809T044350Z.metadata.txt`.
+- Ready for independent test: `YES`
+
+## 12. Design Block
+
+- Contradiction: `NONE`
+- Observed facts: all new mandatory acceptance tests passed without production changes.
+- Impact: `NONE`
+- Minimal choices: `NONE`
+- Decision required: `NONE`
+
+## 13. Supplemental Implementation Evidence
+
+- Trial 01 implementation: `f455354e3724b66360bed6d3cfd4646ca1463a89`.
+- Trial 01 FAIL/report: `de4b120b452c019cf0863c6846b06261df6de8a4`.
+- Production defect findings: no production defect was exposed. Two test defects
+  were corrected: a PostgreSQL seed bind-type conflict and a stale fixture that
+  was still eligible for a later claim.
+- Dependency changes: `NONE`.
+- Risk notes: persistence uses the canonical service path and repository-managed
+  PostgreSQL runner; the independent Test Agent remains the Gate decision owner.
