@@ -134,3 +134,20 @@ No G02–G05 aggregate, lifecycle, Result, Artifact, or migration implementation
 ?? docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/10_enhance_instruction/G06/
 ?? docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/20_implementation_reports/G06/
 ```
+-----
+# Addendum
+
+## Process deviation
+
+P01 implementation began from aae4915... while the G06 P00/P01
+instruction documents were present in the working tree but had not yet
+been committed.
+
+This deviated from the P01 entry-SHA rule requiring P00 to be committed
+before package execution.
+
+The deviation did not change the fixed G06 architecture baseline or the
+P01 implementation checkpoint identity.
+
+P02 and subsequent packages must start only after their governing
+instruction artifacts are committed.
