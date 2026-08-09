@@ -93,6 +93,13 @@ class ExploratoryWorkspaceService:
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
         self._execution_service = execution_service
 
+    def _require_execution_service(self) -> ExecutionService:
+        if self._execution_service is None:
+            raise LegacyProductAuthorityDisabled(
+                "ExploratoryWorkspaceService Product execution operation"
+            )
+        return self._execution_service
+
     def create_view(
         self,
         project_id: str,
@@ -242,6 +249,7 @@ class ExploratoryWorkspaceService:
         family_spec: dict[str, Any],
         requested_by: str = "system",
     ) -> FamilyExecutionOrm | Execution:
+        execution_service = self._require_execution_service()
         self._validate_exploratory_spec(family_spec)
         with self._session_factory() as session:
             self._active_project(session, project_id)
@@ -286,12 +294,10 @@ class ExploratoryWorkspaceService:
                 "plan_hash": plan.plan_hash,
                 "runtime": {"runner": "exploratory-runners/1"},
             }
-            if self._execution_service is not None:
-                # Product API wiring supplies this service.  Keep the old ORM
-                # branch solely as historical/low-level compatibility until
-                # G07 source retirement; it is no longer a Product write path.
-                session.commit()
-                canonical = self._execution_service.create_family_execution(
+            # Product API wiring supplies this service.  The retained Family
+            # ORM branch below is not reachable through a Product mutation.
+            session.commit()
+            canonical = execution_service.create_family_execution(
                     project_id=project_id,
                     dataset_version_id=dataset_version_id,
                     analysis_family=AnalysisFamily.EXPLORATORY,
@@ -301,20 +307,20 @@ class ExploratoryWorkspaceService:
                     execution_plan_id=plan_row.execution_plan_id,
                     code_version="exploratory-runners/1",
                     runtime_version_json={"family_snapshot": snapshot},
-                )
+            )
+            self._add_lineage(
+                session, project_id, "DatasetVersion", dataset_version_id,
+                "USED_INPUT", "Execution", canonical.execution_id,
+                {"snapshot_hash": canonical.snapshot_hash},
+            )
+            if view:
                 self._add_lineage(
-                    session, project_id, "DatasetVersion", dataset_version_id,
+                    session, project_id, "AnalysisView", view.analysis_view_id,
                     "USED_INPUT", "Execution", canonical.execution_id,
-                    {"snapshot_hash": canonical.snapshot_hash},
+                    {"content_hash": view.content_hash},
                 )
-                if view:
-                    self._add_lineage(
-                        session, project_id, "AnalysisView", view.analysis_view_id,
-                        "USED_INPUT", "Execution", canonical.execution_id,
-                        {"content_hash": view.content_hash},
-                    )
-                session.commit()
-                return canonical
+            session.commit()
+            return canonical
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()), project_id=project_id,
                 dataset_version_id=dataset_version_id, analysis_view_id=analysis_view_id,
@@ -490,8 +496,9 @@ class ExploratoryWorkspaceService:
             raise
 
     def get_execution(self, project_id: str, execution_id: str) -> FamilyExecutionOrm | Execution:
-        if self._execution_service is not None:
-            execution = self._execution_service.get_execution(execution_id)
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
+            execution = execution_service.get_execution(execution_id)
             if (
                 execution.project_id != project_id
                 or execution.analysis_family is not AnalysisFamily.EXPLORATORY
@@ -504,7 +511,8 @@ class ExploratoryWorkspaceService:
             return row
 
     def list_executions(self, project_id: str) -> list[FamilyExecutionOrm | Execution]:
-        if self._execution_service is not None:
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
             # ExecutionService intentionally exposes one identity at a time;
             # the canonical repository is the read authority for new writes.
             # The session factory remains available for query projection only.
@@ -514,7 +522,7 @@ class ExploratoryWorkspaceService:
                     ExecutionOrm.project_id == project_id,
                     ExecutionOrm.analysis_family == "EXPLORATORY",
                 ).order_by(ExecutionOrm.requested_at.desc())))
-            return [self._execution_service.get_execution(row.execution_id) for row in rows]
+            return [execution_service.get_execution(row.execution_id) for row in rows]
         with self._session_factory() as session:
             return list(session.scalars(select(FamilyExecutionOrm).where(
                 FamilyExecutionOrm.project_id == project_id,
@@ -522,6 +530,7 @@ class ExploratoryWorkspaceService:
             ).order_by(FamilyExecutionOrm.requested_at.desc())))
 
     def list_results(self, project_id: str) -> list[FamilyResultOrm | ExploratoryResultProjection]:
+        self._require_execution_service()
         if self._execution_service is not None:
             with self._session_factory() as session:
                 rows = session.execute(
@@ -541,6 +550,7 @@ class ExploratoryWorkspaceService:
             ).order_by(FamilyResultOrm.created_at.desc())))
 
     def get_result(self, project_id: str, result_id: str) -> FamilyResultOrm | ExploratoryResultProjection:
+        self._require_execution_service()
         if self._execution_service is not None:
             with self._session_factory() as session:
                 row = session.execute(
@@ -563,6 +573,7 @@ class ExploratoryWorkspaceService:
     def create_analysis_draft(
         self, project_id: str, result_id: str, target_family: str
     ) -> dict[str, Any]:
+        self._require_execution_service()
         if target_family not in {"CAUSAL", "PREDICTIVE"}:
             raise InvalidSchema("target_family must be CAUSAL or PREDICTIVE")
         if self._execution_service is not None:

@@ -82,6 +82,13 @@ class PredictiveWorkflowService:
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
         self._execution_service = execution_service
 
+    def _require_execution_service(self) -> ExecutionService:
+        if self._execution_service is None:
+            raise LegacyProductAuthorityDisabled(
+                "PredictiveWorkflowService Product execution operation"
+            )
+        return self._execution_service
+
     def create_plan(self, project_id: str, specification_id: str) -> dict[str, Any]:
         with self._session_factory() as session:
             self._active_project(session, project_id)
@@ -139,6 +146,7 @@ class PredictiveWorkflowService:
         revision_kind: str | None = None,
         change_reason: str | None = None,
     ) -> dict[str, Any]:
+        self._require_execution_service()
         if isinstance(seed, bool) or not isinstance(seed, int):
             raise InvalidSchema("Execution seed must be an integer")
         with self._session_factory() as session:
@@ -655,13 +663,14 @@ class PredictiveWorkflowService:
             raise
 
     def list_executions(self, project_id: str) -> list[dict[str, Any]]:
-        if self._execution_service is not None:
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
             with self._session_factory() as session:
                 rows = list(session.scalars(select(ExecutionOrm).where(
                     ExecutionOrm.project_id == project_id,
                     ExecutionOrm.analysis_family == AnalysisFamily.PREDICTIVE.value,
                 ).order_by(ExecutionOrm.requested_at.desc())))
-            return [self._canonical_execution_response(self._execution_service.get_execution(row.execution_id)) for row in rows]
+            return [self._canonical_execution_response(execution_service.get_execution(row.execution_id)) for row in rows]
         with self._session_factory() as session:
             self._project(session, project_id)
             rows = session.scalars(select(FamilyExecutionOrm).where(
@@ -673,6 +682,7 @@ class PredictiveWorkflowService:
 
     def list_family_executions(self, project_id: str) -> list[dict[str, Any]]:
         """Return user-visible Generic Workflow executions across analysis families."""
+        self._require_execution_service()
         if self._execution_service is not None:
             with self._session_factory() as session:
                 self._project(session, project_id)
@@ -693,12 +703,14 @@ class PredictiveWorkflowService:
             return [self._execution_response(row) for row in rows]
 
     def get_execution(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             return self._canonical_execution_response(self._canonical_execution(project_id, execution_id))
         with self._session_factory() as session:
             return self._execution_response(self._execution(session, project_id, execution_id))
 
     def get_stages(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             with self._session_factory() as session:
@@ -720,6 +732,7 @@ class PredictiveWorkflowService:
             return [self._stage_response(row) for row in rows]
 
     def list_results(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             with self._session_factory() as session:
@@ -733,6 +746,7 @@ class PredictiveWorkflowService:
             return [self._result_response(row) for row in rows]
 
     def list_artifacts(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             with self._session_factory() as session:
@@ -746,6 +760,7 @@ class PredictiveWorkflowService:
             return [self._artifact_response(row) for row in rows]
 
     def list_lineage(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             with self._session_factory() as session:
@@ -776,6 +791,7 @@ class PredictiveWorkflowService:
             return [self._lineage_response(row) for row in rows]
 
     def cancel(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             self._execution_service.request_cancel(execution_id)
@@ -798,6 +814,7 @@ class PredictiveWorkflowService:
             return self._execution_response(row)
 
     def retry(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             self._execution_service.retry_execution(execution_id)
@@ -850,6 +867,7 @@ class PredictiveWorkflowService:
         return response
 
     def rerun(self, project_id: str, execution_id: str, *, requested_by: str) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             base = self._canonical_execution(project_id, execution_id)
             if base.status not in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED, ExecutionStatus.CANCELLED}:
@@ -883,6 +901,7 @@ class PredictiveWorkflowService:
         change_reason: str,
         requested_by: str,
     ) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             base = self._canonical_execution(project_id, execution_id)
             if base.status not in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED, ExecutionStatus.CANCELLED}:
@@ -905,6 +924,7 @@ class PredictiveWorkflowService:
         )
 
     def prefill(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
         if self._execution_service is not None:
             execution = self._canonical_execution(project_id, execution_id)
             family = execution.analysis_spec_json
