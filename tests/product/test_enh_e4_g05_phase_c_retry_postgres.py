@@ -230,6 +230,22 @@ def test_g05_phase_c_predictive_retry_is_canonical_and_append_preserving(postgre
     # G03-compatible claim and second attempt append to the same persistent StageExecution.
     now = datetime.now(timezone.utc)
     with Session(bind=postgres_engine) as session:
+        # R1 diagnostic contract: global claim_next is FIFO over eligible
+        # canonical rows.  This fixture must therefore expose exactly the
+        # retried target before asserting the following claim.
+        candidates = list(session.execute(
+            select(
+                ExecutionOrm.execution_id, ExecutionOrm.project_id,
+                ExecutionOrm.analysis_family, ExecutionOrm.status,
+                ExecutionOrm.requested_at, ExecutionOrm.retry_count,
+                ExecutionOrm.lease_owner, ExecutionOrm.lease_expires_at,
+                ExecutionOrm.base_execution_id, ExecutionOrm.revision_kind,
+            ).where(
+                (ExecutionOrm.status == "QUEUED")
+                | ((ExecutionOrm.status == "RUNNING") & (ExecutionOrm.lease_expires_at <= now))
+            ).order_by(ExecutionOrm.requested_at, ExecutionOrm.execution_id)
+        ))
+        assert [row.execution_id for row in candidates] == [ids["execution"]]
         executions = SqlExecutionRepository(session)
         stages = SqlStageExecutionRepository(session)
         claimed = executions.claim_next("c2-retry-token", worker_id="c2-retry-worker")
