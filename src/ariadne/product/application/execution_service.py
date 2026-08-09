@@ -187,13 +187,15 @@ class ExecutionService:
                 )
                 if warnings:
                     analysis_spec["scientific_warnings"] = warnings
+                revision_context = None
                 if base_execution is not None:
-                    analysis_spec["revision_context"] = _build_revision_context(
+                    revision_context = _build_revision_context(
                         base=base_execution,
                         command=command,
                         variant=variant,
                         analysis_spec=analysis_spec,
                     )
+                    analysis_spec["revision_context"] = revision_context
                 if is_causal:
                     self._validation.validate_submission(
                         uow=uow,
@@ -243,9 +245,8 @@ class ExecutionService:
                     requested_by=command.requested_by,
                     requested_at=now,
                     base_execution_id=base_execution.execution_id if base_execution else None,
-                    revision_kind=("REVISED" if command.change_reason is not None else "RERUN")
-                    if base_execution else None,
-                    change_reason=command.change_reason,
+                    revision_kind=revision_context["revision_kind"] if revision_context else None,
+                    change_reason=revision_context["change_reason"] if revision_context else None,
                 )
                 executions.append(execution)
 
