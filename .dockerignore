@@ -9,6 +9,8 @@ docs
 experiments
 notebooks
 tests/*
+!tests/product/
+!tests/product/**
 !tests/browser_e2e/
 tests/browser_e2e/*
 !tests/browser_e2e/run_enh_e1a.py
