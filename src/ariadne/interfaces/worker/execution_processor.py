@@ -46,6 +46,7 @@ from ariadne.product.ports.scientific_core import (
 )
 from ariadne.product.ports.unit_of_work import UnitOfWork
 from ariadne.product.persistence.orm_models import LineageEdgeOrm
+from ariadne.product.domain.lineage import assert_generic_lineage_allowed
 
 import logging
 
@@ -216,21 +217,16 @@ class ExecutionProcessor:
                         return
                     uow.results.add_many(results)
                     uow.artifacts.add_many(stored_artifacts)
-                    for result in results:
-                        uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Execution", source_id=execution.execution_id, relation_type="GENERATED", target_type="Result", target_id=result.result_id, evidence_json={}, created_by="worker", created_at=now))
                     artifact_by_type = {artifact.artifact_type: artifact for artifact in stored_artifacts}
                     result_by_type = {result.result_type: result for result in results}
-                    for artifact in stored_artifacts:
-                        source_type, source_id = ("Execution", execution.execution_id) if artifact.artifact_type is ArtifactType.FITTED_PREPROCESSOR else ("Result", artifact.result_id)
-                        if artifact.artifact_type is ArtifactType.PREDICTION and ResultType.EVALUATION_RESULT in result_by_type:
-                            source_id = result_by_type[ResultType.EVALUATION_RESULT].result_id
-                        uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type=source_type, source_id=source_id, relation_type="GENERATED", target_type="Artifact", target_id=artifact.artifact_id, evidence_json={}, created_by="worker", created_at=now))
                     for child, parent in ((ArtifactType.FITTED_PREPROCESSOR, ArtifactType.PARTITION_INDEX), (ArtifactType.FITTED_MODEL, ArtifactType.FITTED_PREPROCESSOR), (ArtifactType.PREDICTION, ArtifactType.FITTED_MODEL)):
                         if child in artifact_by_type and parent in artifact_by_type:
+                            assert_generic_lineage_allowed("Artifact", "DERIVED_FROM", "Artifact")
                             uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Artifact", source_id=artifact_by_type[child].artifact_id, relation_type="DERIVED_FROM", target_type="Artifact", target_id=artifact_by_type[parent].artifact_id, evidence_json={}, created_by="worker", created_at=now))
                     prediction = artifact_by_type.get(ArtifactType.PREDICTION)
                     evaluation = next((result for result in results if result.result_type is ResultType.EVALUATION_RESULT), None)
                     if prediction is not None and evaluation is not None:
+                        assert_generic_lineage_allowed("Artifact", "EVIDENCE_FOR", "Result")
                         uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Artifact", source_id=prediction.artifact_id, relation_type="EVIDENCE_FOR", target_type="Result", target_id=evaluation.result_id, evidence_json={}, created_by="worker", created_at=now))
                     if execution.analysis_family is AnalysisFamily.PREDICTIVE:
                         _add_predictive_output_lineage(
@@ -520,6 +516,7 @@ def _add_predictive_output_lineage(
         source_type: str, source_id: str, relation_type: str,
         target_type: str, target_id: str, evidence: dict[str, Any],
     ) -> None:
+        assert_generic_lineage_allowed(source_type, relation_type, target_type)
         session.add(LineageEdgeOrm(
             lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id,
             source_type=source_type, source_id=source_id, relation_type=relation_type,
@@ -530,14 +527,6 @@ def _add_predictive_output_lineage(
     explanation = results.get(ResultType.PREDICTIVE_EXPLANATION_RESULT)
     model_card = results.get(ResultType.MODEL_CARD_RESULT)
     if explanation is not None:
-        for artifact_type in (
-            ArtifactType.FITTED_PREPROCESSOR, ArtifactType.FITTED_MODEL,
-            ArtifactType.PREDICTION,
-        ):
-            artifact = artifacts.get(artifact_type)
-            if artifact is not None:
-                add("Artifact", artifact.artifact_id, "USED_INPUT", "Result",
-                    explanation.result_id, {"purpose": "predictive_explanation"})
         explanation_artifact = artifacts.get(ArtifactType.PREDICTIVE_EXPLANATION)
         if explanation_artifact is not None:
             add("Artifact", explanation_artifact.artifact_id, "EVIDENCE_FOR", "Result",
