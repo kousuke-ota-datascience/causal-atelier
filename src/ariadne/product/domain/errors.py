@@ -35,6 +35,16 @@ class InvalidStateTransition(DomainError):
         )
 
 
+class LegacyProductAuthorityDisabled(DomainError):
+    """A retained legacy facade cannot perform Product lifecycle authority."""
+
+    def __init__(self, operation: str) -> None:
+        super().__init__(
+            f"Legacy Family lifecycle authority is disabled for Product operation: {operation}"
+        )
+        self.operation = operation
+
+
 class InvalidAnalysisSpec(DomainError):
     pass
 

@@ -160,6 +160,10 @@ class ExecutionProcessor:
             # Store artifacts in artifact store
             stored_artifacts: list[Artifact] = []
             stored_keys: list[str] = []
+            family_snapshot = dict(
+                execution.runtime_version_json.get("family_snapshot", {})
+            )
+            analysis_view_snapshot = dict(family_snapshot.get("analysis_view", {}))
             for result, descriptor in zip(results, descriptors, strict=True):
                 for art in descriptor.artifacts:
                     art_path = art.path
@@ -188,6 +192,16 @@ class ExecutionProcessor:
                         metadata_json={
                             "content_role": art.content_role,
                             "schema_version": artifact_schema_version or "artifact/1",
+                            **(
+                                {
+                                    "view_manifest": {
+                                        "source_dataset_content_hash": dsv.content_hash,
+                                        "view_spec_hash": analysis_view_snapshot.get("hash"),
+                                    }
+                                }
+                                if execution.analysis_family is AnalysisFamily.EXPLORATORY
+                                else {}
+                            ),
                         },
                         created_at=now,
                     ))
@@ -218,6 +232,11 @@ class ExecutionProcessor:
                     evaluation = next((result for result in results if result.result_type is ResultType.EVALUATION_RESULT), None)
                     if prediction is not None and evaluation is not None:
                         uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Artifact", source_id=prediction.artifact_id, relation_type="EVIDENCE_FOR", target_type="Result", target_id=evaluation.result_id, evidence_json={}, created_by="worker", created_at=now))
+                    if execution.analysis_family is AnalysisFamily.PREDICTIVE:
+                        _add_predictive_output_lineage(
+                            uow._session, execution, result_by_type,
+                            artifact_by_type, now,
+                        )
                     exec_entity.mark_succeeded(now)
                     if self._owner_token is None:
                         uow.executions.update(exec_entity)
@@ -279,7 +298,12 @@ class ExecutionProcessor:
                 "dataset_version_id": execution.dataset_version_id,
                 "dataset_content_hash": _sha256_file(dataset_path),
                 "analysis_view_id": execution.analysis_spec_json.get("analysis_view_id"),
-                "analysis_view_hash": None,
+                "analysis_view_hash": (
+                    execution.runtime_version_json
+                    .get("family_snapshot", {})
+                    .get("analysis_view", {})
+                    .get("hash")
+                ),
                 "materialized_hash": _sha256_file(dataset_path),
             }
             inputs = {
@@ -292,7 +316,10 @@ class ExecutionProcessor:
             execution.execution_id,
             plan,
             external_inputs=inputs,
-            snapshots={"snapshot_hash": execution.snapshot_hash},
+            snapshots={
+                **execution.runtime_version_json.get("family_snapshot", {}),
+                "snapshot_hash": execution.snapshot_hash,
+            },
             cancelled=lambda: self._is_cancelled(execution.execution_id),
             worker_id=self._owner_token or execution.lease_owner or "worker",
             stage_executions=tuple(self._load_stages(execution.execution_id)),
@@ -439,17 +466,29 @@ def _family_descriptors(outcome: Any, output_dir: Path) -> list[ScientificResult
     descriptors: list[ScientificResultDescriptor] = []
     pending_artifacts: list[ArtifactDescriptor] = []
     for stage_key, run_result in outcome.stage_results:
-        artifacts = []
+        artifacts_by_result_type: dict[str, list[ArtifactDescriptor]] = {}
+        unbound_artifacts: list[ArtifactDescriptor] = []
         for index, draft in enumerate(run_result.artifacts):
             path = output_dir / f"{draft.artifact_type}-{stage_key}-{index}.json"
             path.write_bytes(draft.content)
-            artifacts.append(ArtifactDescriptor(
-                path, content_role=f"{draft.artifact_type}|{draft.schema_version}"
-            ))
+            descriptor = ArtifactDescriptor(
+                path,
+                content_role=f"{draft.artifact_type}|{draft.schema_version}",
+                result_type=draft.result_type,
+            )
+            if draft.result_type:
+                artifacts_by_result_type.setdefault(draft.result_type, []).append(descriptor)
+            else:
+                unbound_artifacts.append(descriptor)
         if not run_result.results:
-            pending_artifacts.extend(artifacts)
+            pending_artifacts.extend(unbound_artifacts)
+            for values in artifacts_by_result_type.values():
+                pending_artifacts.extend(values)
             continue
         for result_index, draft in enumerate(run_result.results):
+            artifacts = list(artifacts_by_result_type.get(draft.result_type, ()))
+            if result_index == 0:
+                artifacts = [*pending_artifacts, *unbound_artifacts, *artifacts]
             descriptors.append(ScientificResultDescriptor(
                 result_type=ResultType(draft.result_type),
                 scientific_status=ScientificStatus(draft.analytical_status),
@@ -461,11 +500,70 @@ def _family_descriptors(outcome: Any, output_dir: Path) -> list[ScientificResult
                 },
                 diagnostics=draft.diagnostics,
                 warnings=list(draft.warnings),
-                artifacts=[*pending_artifacts, *artifacts] if result_index == 0 else [],
+                artifacts=artifacts,
             ))
             if result_index == 0:
                 pending_artifacts = []
     return descriptors
+
+
+def _add_predictive_output_lineage(
+    session: Any,
+    execution: Execution,
+    results: dict[ResultType, Result],
+    artifacts: dict[ArtifactType, Artifact],
+    created_at: Any,
+) -> None:
+    """Preserve predictive explanation/model-card scientific provenance."""
+
+    def add(
+        source_type: str, source_id: str, relation_type: str,
+        target_type: str, target_id: str, evidence: dict[str, Any],
+    ) -> None:
+        session.add(LineageEdgeOrm(
+            lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id,
+            source_type=source_type, source_id=source_id, relation_type=relation_type,
+            target_type=target_type, target_id=target_id, evidence_json=evidence,
+            created_by="worker", created_at=created_at,
+        ))
+
+    explanation = results.get(ResultType.PREDICTIVE_EXPLANATION_RESULT)
+    model_card = results.get(ResultType.MODEL_CARD_RESULT)
+    if explanation is not None:
+        for artifact_type in (
+            ArtifactType.FITTED_PREPROCESSOR, ArtifactType.FITTED_MODEL,
+            ArtifactType.PREDICTION,
+        ):
+            artifact = artifacts.get(artifact_type)
+            if artifact is not None:
+                add("Artifact", artifact.artifact_id, "USED_INPUT", "Result",
+                    explanation.result_id, {"purpose": "predictive_explanation"})
+        explanation_artifact = artifacts.get(ArtifactType.PREDICTIVE_EXPLANATION)
+        if explanation_artifact is not None:
+            add("Artifact", explanation_artifact.artifact_id, "EVIDENCE_FOR", "Result",
+                explanation.result_id, {"purpose": "predictive_explanation"})
+    if model_card is None:
+        return
+    for target_type, target_id in (
+        ("AnalysisSpecification", execution.analysis_spec_json.get("analysis_specification_id")),
+        ("DatasetVersion", execution.dataset_version_id),
+        ("AnalysisView", execution.analysis_spec_json.get("analysis_view_id")),
+    ):
+        if target_id:
+            add("Result", model_card.result_id, "DOCUMENTS", target_type, target_id,
+                {"document": "model_card"})
+    for artifact_type in (
+        ArtifactType.PARTITION_INDEX, ArtifactType.FITTED_PREPROCESSOR,
+        ArtifactType.FITTED_MODEL, ArtifactType.PREDICTION,
+    ):
+        artifact = artifacts.get(artifact_type)
+        if artifact is not None:
+            add("Result", model_card.result_id, "SUMMARIZES", "Artifact",
+                artifact.artifact_id, {"artifact_type": artifact_type.value})
+    evaluation = results.get(ResultType.EVALUATION_RESULT)
+    if evaluation is not None:
+        add("Result", model_card.result_id, "SUMMARIZES", "Result",
+            evaluation.result_id, {"result_type": ResultType.EVALUATION_RESULT.value})
 
 
 def _result_document(result: Result) -> dict[str, Any]:

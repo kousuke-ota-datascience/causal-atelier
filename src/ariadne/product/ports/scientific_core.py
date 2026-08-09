@@ -13,6 +13,7 @@ from ariadne.product.domain.enums import ResultType, ScientificStatus
 class ArtifactDescriptor:
     path: Path
     content_role: str = "SCIENTIFIC_RESULT"
+    result_type: str | None = None
 
 
 @dataclass(frozen=True)

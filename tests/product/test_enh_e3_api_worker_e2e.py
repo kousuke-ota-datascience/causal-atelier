@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import uuid
 from pathlib import Path
 
 import pytest
 
 from ariadne.interfaces.web_api import dependencies
 from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
-from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
-from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
 from ariadne.product.domain.enums import ResultType, ScientificStatus
 from ariadne.product.ports.scientific_core import ScientificResultDescriptor
+from ariadne.scientific.core_adapter import ScientificCoreAdapter
 
 
 class FinalE2ECausalCore:
@@ -27,6 +25,17 @@ class FinalE2ECausalCore:
                 }],
             },
         )]
+
+
+def _process_canonical(execution_id: str, worker_id: str, core) -> None:  # type: ignore[no-untyped-def]
+    with dependencies._uow_context() as uow:
+        claimed = uow.executions.claim_next(worker_id, worker_id=worker_id)
+        uow.commit()
+    assert claimed is not None and claimed.execution_id == execution_id
+    ExecutionProcessor(
+        dependencies._uow_context, core, dependencies._get_artifact_store(),
+        owner_token=worker_id,
+    ).process(claimed)
 
 
 def _predictive_spec(factory) -> dict:  # type: ignore[no-untyped-def]
@@ -136,12 +145,7 @@ async def test_research_context_to_cross_family_results_lineage_annotation_and_e
         json=exploration_request,
     )
     explore_execution_id = submitted_explore.json()["execution_id"]
-    explore_worker = ExploratoryWorkspaceService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
-    explore_token = str(uuid.uuid4())
-    assert explore_worker.claim_next(explore_token, worker_id="g6-explore") == explore_execution_id
-    explore_worker.process_execution(explore_execution_id, worker_token=explore_token)
+    _process_canonical(explore_execution_id, "g6-explore", ScientificCoreAdapter())
     explore_result = (await client.get(
         f"/api/v1/projects/{project_id}/exploration/results"
     )).json()["items"][0]
@@ -175,12 +179,7 @@ async def test_research_context_to_cross_family_results_lineage_annotation_and_e
         },
     )
     predictive_execution_id = predictive_execution.json()["execution_id"]
-    predictive_worker = PredictiveWorkflowService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
-    predictive_token = str(uuid.uuid4())
-    assert predictive_worker.claim_next(predictive_token, worker_id="g6-predictive") == predictive_execution_id
-    predictive_worker.process_execution(predictive_execution_id, worker_token=predictive_token)
+    _process_canonical(predictive_execution_id, "g6-predictive", ScientificCoreAdapter())
     predictive_results = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{predictive_execution_id}/results"
     )).json()["items"]

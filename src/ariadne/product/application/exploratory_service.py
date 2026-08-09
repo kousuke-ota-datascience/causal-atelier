@@ -27,6 +27,7 @@ from ariadne.product.domain.errors import (
     ArtifactHashMismatch,
     EntityNotFound,
     InvalidSchema,
+    LegacyProductAuthorityDisabled,
     ProjectArchived,
     ResourceImmutable,
 )
@@ -290,7 +291,7 @@ class ExploratoryWorkspaceService:
                 # branch solely as historical/low-level compatibility until
                 # G07 source retirement; it is no longer a Product write path.
                 session.commit()
-                return self._execution_service.create_family_execution(
+                canonical = self._execution_service.create_family_execution(
                     project_id=project_id,
                     dataset_version_id=dataset_version_id,
                     analysis_family=AnalysisFamily.EXPLORATORY,
@@ -301,6 +302,19 @@ class ExploratoryWorkspaceService:
                     code_version="exploratory-runners/1",
                     runtime_version_json={"family_snapshot": snapshot},
                 )
+                self._add_lineage(
+                    session, project_id, "DatasetVersion", dataset_version_id,
+                    "USED_INPUT", "Execution", canonical.execution_id,
+                    {"snapshot_hash": canonical.snapshot_hash},
+                )
+                if view:
+                    self._add_lineage(
+                        session, project_id, "AnalysisView", view.analysis_view_id,
+                        "USED_INPUT", "Execution", canonical.execution_id,
+                        {"content_hash": view.content_hash},
+                    )
+                session.commit()
+                return canonical
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()), project_id=project_id,
                 dataset_version_id=dataset_version_id, analysis_view_id=analysis_view_id,
@@ -335,7 +349,12 @@ class ExploratoryWorkspaceService:
         worker_id: str,
         lease_seconds: int = 300,
     ) -> str | None:
-        """Atomically claim the oldest queued exploratory Execution."""
+        """Reject the retired Family-table claim authority.
+
+        Product workers must use ``uow.executions.claim_next`` and dispatch only
+        after the canonical Execution has been leased.
+        """
+        raise LegacyProductAuthorityDisabled("ExploratoryWorkspaceService.claim_next")
         with self._session_factory() as session:
             execution = session.scalar(
                 select(FamilyExecutionOrm)
@@ -372,7 +391,13 @@ class ExploratoryWorkspaceService:
             return execution_id
 
     def process_execution(self, execution_id: str, *, worker_token: str) -> None:
-        """Process an Execution that this worker has already claimed."""
+        """Reject the retired Family-table processing authority.
+
+        Canonical ``ExecutionProcessor`` owns Product stage lifecycle and output
+        persistence; retained scientific helpers are not reached through this
+        legacy facade.
+        """
+        raise LegacyProductAuthorityDisabled("ExploratoryWorkspaceService.process_execution")
         stored_keys: list[str] = []
         with self._session_factory() as session:
             execution = session.get(FamilyExecutionOrm, execution_id)

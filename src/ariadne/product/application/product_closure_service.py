@@ -700,22 +700,25 @@ class ProductClosureService:
                 "analysis_specification_id": execution.analysis_specification_id,
                 "created_at": row.created_at,
             })
-        legacy_rows = list(session.scalars(select(ResultOrm).join(
+        canonical_rows = list(session.scalars(select(ResultOrm).join(
             ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id
         ).where(ExecutionOrm.project_id == project_id)))
-        for row in legacy_rows:
+        for row in canonical_rows:
             execution = session.get(ExecutionOrm, row.execution_id)
             artifacts = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.result_id == row.result_id)))
+            family_snapshot = dict(execution.runtime_version_json.get("family_snapshot", {}))
             values.append({
                 "result_id": row.result_id, "project_id": project_id,
-                "execution_id": row.execution_id, "analysis_family": "CAUSAL",
-                "result_type": row.result_type, "schema_version": "causal-result/1",
+                "execution_id": row.execution_id, "analysis_family": execution.analysis_family,
+                "result_type": row.result_type,
+                "schema_version": row.payload_json.get("schema_version", "causal-result/1"),
                 "analytical_status": row.scientific_status, "summary": row.summary_json,
                 "payload": row.payload_json, "diagnostics": row.diagnostics_json,
                 "warnings": row.warning_json, "artifact_ids": [item.artifact_id for item in artifacts],
-                "research_context_version_id": None,
+                "research_context_version_id": family_snapshot.get("research_context", {}).get("id"),
                 "dataset_version_id": execution.dataset_version_id,
-                "analysis_view_id": None, "analysis_specification_id": None,
+                "analysis_view_id": execution.analysis_spec_json.get("analysis_view_id"),
+                "analysis_specification_id": execution.analysis_spec_json.get("analysis_specification_id"),
                 "created_at": row.created_at,
             })
         return values

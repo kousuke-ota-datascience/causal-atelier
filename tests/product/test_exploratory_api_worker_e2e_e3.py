@@ -1,13 +1,24 @@
 from __future__ import annotations
 
-import uuid
-
 import pytest
 from sqlalchemy import select
 
 from ariadne.interfaces.web_api import dependencies
-from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
-from ariadne.product.persistence.orm_models import FamilyArtifactOrm, LineageEdgeOrm
+from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
+from ariadne.product.persistence.orm_models import ArtifactOrm, LineageEdgeOrm
+from ariadne.scientific.core_adapter import ScientificCoreAdapter
+
+
+def _process_canonical_exploratory(execution_id: str) -> None:
+    token = "test-exploratory-worker"
+    with dependencies._uow_context() as uow:
+        claimed = uow.executions.claim_next(token, worker_id=token)
+        uow.commit()
+    assert claimed is not None and claimed.execution_id == execution_id
+    ExecutionProcessor(
+        dependencies._uow_context, ScientificCoreAdapter(),
+        dependencies._get_artifact_store(), owner_token=token,
+    ).process(claimed)
 
 
 @pytest.mark.anyio
@@ -37,17 +48,11 @@ async def test_saved_exploration_result_artifact_manifest_and_draft_lineage(clie
     assert submitted.status_code == 202
     assert submitted.json()["status"] == "QUEUED"
     execution_id = submitted.json()["execution_id"]
-    worker_token = str(uuid.uuid4())
-    worker = ExploratoryWorkspaceService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
-    claimed_id = worker.claim_next(worker_token, worker_id="test-exploratory-worker")
-    assert claimed_id == execution_id
+    _process_canonical_exploratory(execution_id)
     running = (await client.get(
         f"/api/v1/projects/{project_id}/exploration/executions/{execution_id}"
     )).json()
-    assert running["status"] == "RUNNING"
-    worker.process_execution(execution_id, worker_token=worker_token)
+    assert running["status"] == "SUCCEEDED"
     execution = (await client.get(
         f"/api/v1/projects/{project_id}/exploration/executions/{execution_id}"
     )).json()
@@ -66,8 +71,8 @@ async def test_saved_exploration_result_artifact_manifest_and_draft_lineage(clie
 
     factory = dependencies._get_session_factory()
     with factory() as session:
-        artifact = session.scalar(select(FamilyArtifactOrm).where(
-            FamilyArtifactOrm.execution_id == execution_id
+        artifact = session.scalar(select(ArtifactOrm).where(
+            ArtifactOrm.execution_id == execution_id
         ))
         assert artifact is not None
         assert artifact.metadata_json["view_manifest"]["source_dataset_content_hash"]

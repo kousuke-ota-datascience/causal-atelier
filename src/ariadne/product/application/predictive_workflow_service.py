@@ -35,6 +35,7 @@ from ariadne.product.domain.errors import (
     InvalidExecutionPlan,
     InvalidSchema,
     InvalidStateTransition,
+    LegacyProductAuthorityDisabled,
     ProjectArchived,
 )
 from ariadne.product.domain.execution_plan import (
@@ -328,6 +329,12 @@ class PredictiveWorkflowService:
                 ("ExecutionPlan", plan.execution_plan_id, {"hash": family_snapshot["execution_plan"]["hash"]}),
             ):
                 self._lineage(session, project_id, source_type, source_id, "USED_INPUT", "Execution", canonical.execution_id, evidence)
+            if family_snapshot["analysis_view"]["id"]:
+                self._lineage(
+                    session, project_id, "AnalysisView", family_snapshot["analysis_view"]["id"],
+                    "USED_INPUT", "Execution", canonical.execution_id,
+                    {"hash": family_snapshot["analysis_view"]["hash"]},
+                )
             session.commit()
         return self._canonical_execution_response(canonical, snapshot=snapshot)
 
@@ -369,6 +376,11 @@ class PredictiveWorkflowService:
     def claim_next(
         self, worker_token: str, *, worker_id: str, lease_seconds: int = 1800
     ) -> str | None:
+        """Reject the retired Family-table claim authority.
+
+        Product workers claim only through the canonical Execution repository.
+        """
+        raise LegacyProductAuthorityDisabled("PredictiveWorkflowService.claim_next")
         with self._session_factory() as session:
             execution = session.scalar(
                 select(FamilyExecutionOrm)
@@ -392,6 +404,12 @@ class PredictiveWorkflowService:
             return execution.execution_id
 
     def process_execution(self, execution_id: str, *, worker_token: str) -> None:
+        """Reject the retired Family-table processing authority.
+
+        Product processing and Result/Artifact persistence belong to the
+        canonical ``ExecutionProcessor`` path.
+        """
+        raise LegacyProductAuthorityDisabled("PredictiveWorkflowService.process_execution")
         stored_keys: list[str] = []
         outcome: Any | None = None
         with self._session_factory() as session:
