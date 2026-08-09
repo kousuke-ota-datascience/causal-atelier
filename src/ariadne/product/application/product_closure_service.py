@@ -19,6 +19,10 @@ from ariadne.product.domain.errors import (
     ProjectAccessDenied,
     ProjectBoundaryViolation,
 )
+from ariadne.product.domain.lineage import (
+    LINEAGE_RELATION_TYPES,
+    assert_generic_lineage_allowed,
+)
 from ariadne.product.domain.schemas import canonical_bytes
 from ariadne.product.persistence.orm_models import (
     AnalysisSpecificationOrm,
@@ -45,10 +49,7 @@ from ariadne.product.ports.artifact_store import ArtifactStorePort
 
 READ_ROLES = frozenset({"OWNER", "EDITOR", "VIEWER"})
 WRITE_ROLES = frozenset({"OWNER", "EDITOR"})
-LINEAGE_RELATIONS = frozenset({
-    "USED_INPUT", "GENERATED", "DERIVED_FROM", "REVISED_FROM",
-    "SUPPORTED_BY", "MOTIVATED", "SELECTED", "REJECTED",
-})
+LINEAGE_RELATIONS = LINEAGE_RELATION_TYPES
 ANNOTATION_TARGETS = frozenset({
     "Project", "ResearchContextVersion", "AnalysisView", "AnalysisSpecification",
     "Execution", "Result", "GraphVersion",
@@ -445,6 +446,7 @@ class ProductClosureService:
             self._require_role(session, project_id, user_id, WRITE_ROLES)
             self._assert_resource_project(session, source_type, source_id, project_id)
             self._assert_resource_project(session, target_type, target_id, project_id)
+            assert_generic_lineage_allowed(source_type, relation, target_type)
             row = LineageEdgeOrm(
                 lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
                 source_type=source_type, source_id=source_id,
