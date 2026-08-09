@@ -105,3 +105,32 @@ TEST_CONTRACT_NOT_READY
 
 No Independent Test procedure has been invented in this report.
 
+## P07 Handoff Update — Independent Test Contract Available
+
+### Facts
+
+- The Independent Test Contract now exists as committed documentation: `10_enhance_instruction/G06/07_Ariadne_ENH-E4_G06_テスト指示書.md`, commit `26f9d0a22a573292a5bdb5ba90791e35b8c24d74`.
+- It names the same fixed candidate: `9816ed87daec1efcb1c860f0c9c0ebe72fb9bc92`.
+- The post-candidate paths through the current documentation HEAD are limited to G06 instruction/report documentation; no production source, test source, migration, runner, configuration, or runtime state changed after the candidate.
+- The contract explicitly assigns execution and the PASS/FAIL/BLOCKED gate decision to the Independent Test Agent under `30_test_report/G06/Trial01/`.
+
+### Correction of Prior Handoff State
+
+The earlier `TEST_CONTRACT_NOT_READY` statement is superseded. It was accurate when this completion report was first committed, but is no longer current.
+
+```text
+Coding Agent P07: COMPLETE
+Gate: READY_FOR_TEST
+Fixed Implementation/Test Candidate: 9816ed87daec1efcb1c860f0c9c0ebe72fb9bc92
+Independent Test Contract: READY
+TD-004: CLOSURE_CANDIDATE, pending Independent Test Agent PASS
+```
+
+### Interpretation
+
+The Coding Agent handoff preconditions in P07 §17 are now satisfied. This update does not execute the Independent Test Contract and does not change TD-004 to CLOSED.
+
+### Unknown / Unconfirmed
+
+- No Independent Test Agent result exists yet.
+- E4-G06 is not PASS until the Independent Test Agent writes its formal gate decision.
