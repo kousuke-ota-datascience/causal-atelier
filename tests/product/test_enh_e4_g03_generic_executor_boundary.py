@@ -11,6 +11,8 @@ from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.execution_plan import ExecutionPlan, StageDefinition, StageType
 from ariadne.product.domain.stage_execution import StageExecution
 from ariadne.product.workflow.executor import GenericExecutor
+from ariadne.product.workflow.contracts import StageRunResult
+from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 from ariadne.product.workflow.stage_materialization import StagePlanMaterializer
 
 
@@ -78,3 +80,39 @@ def test_g03_ac005_cancellation_is_explicit_and_terminal() -> None:
     stage = StageExecution(execution_id="execution", stage_key="prepare")
     stage.cancel(datetime.now(timezone.utc))
     assert stage.status is StageExecutionStatus.CANCELLED
+
+
+def test_g03_ac003_runner_failure_has_no_persistence_claim_or_retry_side_effect() -> None:
+    """A runner failure is an in-memory outcome; the orchestration owner persists it."""
+    stage_type = StageType("core", "failing", "1")
+
+    class FailingRunner:
+        def validate(self, context) -> None:  # type: ignore[no-untyped-def]
+            return None
+
+        def run(self, context) -> StageRunResult:  # type: ignore[no-untyped-def]
+            raise RuntimeError("runner failed")
+
+    FailingRunner.stage_type = stage_type
+
+    registry = StageRunnerRegistry()
+    registry.register(FailingRunner())
+    calls = {"compensate": 0, "commit": 0, "claim": 0, "retry": 0,
+             "result": 0, "artifact": 0, "lineage": 0}
+
+    def compensate(stage, error) -> None:  # type: ignore[no-untyped-def]
+        calls["compensate"] += 1
+
+    plan = ExecutionPlan.build(
+        project_id="project", analysis_specification_id="specification",
+        analysis_family=AnalysisFamily.CAUSAL, planner_id="test", planner_version="1",
+        stages=(StageDefinition("failing", stage_type),),
+    )
+    outcome = GenericExecutor(registry, compensate=compensate).execute("execution", plan)
+
+    assert outcome.status == "FAILED"
+    assert len(outcome.stages[0].attempts) == 1
+    assert calls["compensate"] == 1
+    assert {key: value for key, value in calls.items() if key != "compensate"} == {
+        "commit": 0, "claim": 0, "retry": 0, "result": 0, "artifact": 0, "lineage": 0,
+    }
