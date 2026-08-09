@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from ariadne.product.domain.artifact import Artifact
-from ariadne.product.domain.enums import ArtifactScope, ArtifactType, ResultLevel
+from ariadne.product.domain.enums import ArtifactScope, ArtifactType, ResultLevel, ResultReuseRole
 from ariadne.product.domain.errors import OutputCompensationError, OutputOwnershipError
 from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.result import Result
@@ -29,6 +29,11 @@ class OutputArtifact:
 @dataclass(frozen=True)
 class ResultReuseRef:
     result_id: str
+    role: ResultReuseRole
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.role, ResultReuseRole):
+            raise TypeError("Result reuse role must be a typed ResultReuseRole")
 
 
 @dataclass(frozen=True)

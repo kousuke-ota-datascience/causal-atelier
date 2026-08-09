@@ -8,16 +8,42 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from ariadne.adapters.local_artifact_store import LocalArtifactStore
 from ariadne.product.application.output_ownership_service import OutputArtifact, OutputOwnershipService
 from ariadne.product.domain.enums import AnalysisFamily, ArtifactScope, ArtifactType, ResultLevel, ResultType, ScientificStatus
-from ariadne.product.domain.errors import OutputOwnershipError
+from ariadne.product.domain.errors import OutputCompensationError, OutputOwnershipError
 from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.result import Result
 from ariadne.product.domain.stage_execution import StageExecution
 from ariadne.product.persistence.repositories import SqlStageExecutionRepository
 from ariadne.product.persistence.unit_of_work import SqlUnitOfWork
 from ariadne.product.workflow.output_contract import output_contract_for
-from ariadne.adapters.local_artifact_store import LocalArtifactStore
+
+
+class _RecordingLocalArtifactStore(LocalArtifactStore):
+    def __init__(self, root, *, fail_delete: bool = False) -> None:  # type: ignore[no-untyped-def]
+        super().__init__(root)
+        self.stored_keys: list[str] = []
+        self.fail_delete = fail_delete
+
+    def store(self, source_path, object_key: str, media_type: str = "application/octet-stream"):  # type: ignore[no-untyped-def]
+        saved = super().store(source_path, object_key, media_type)
+        self.stored_keys.append(saved.object_key)
+        return saved
+
+    def delete(self, object_key: str) -> None:
+        if self.fail_delete:
+            raise OSError("injected physical cleanup failure")
+        super().delete(object_key)
+
+
+class _PostgresCommitFailureUow(SqlUnitOfWork):
+    """Inject a failure only after SQLAlchemy has flushed metadata to PostgreSQL."""
+
+    def commit(self) -> None:
+        self._session.flush()
+        self._session.rollback()
+        raise OSError("injected PostgreSQL metadata commit failure")
 
 
 def _ids() -> dict[str, str]:
@@ -56,6 +82,25 @@ def _service(engine, root):  # type: ignore[no-untyped-def]
     return OutputOwnershipService(factory, LocalArtifactStore(root))
 
 
+def _commit_failure_service(engine, root, *, fail_delete: bool = False):  # type: ignore[no-untyped-def]
+    store = _RecordingLocalArtifactStore(root, fail_delete=fail_delete)
+    uow_count = 0
+
+    @contextmanager
+    def factory():
+        nonlocal uow_count
+        session = Session(bind=engine)
+        uow_count += 1
+        uow = SqlUnitOfWork(session) if uow_count == 1 else _PostgresCommitFailureUow(session)
+        try:
+            with uow:
+                yield uow
+        finally:
+            session.close()
+
+    return OutputOwnershipService(factory, store), store
+
+
 @pytest.mark.postgres
 def test_g04_ac001_ac002_postgres_round_trip_typed_result_and_artifact_ownership(postgres_engine, tmp_path) -> None:  # type: ignore[no-untyped-def]
     ids = _ids(); _seed(postgres_engine, ids)
@@ -82,5 +127,38 @@ def test_g04_ac001_ac002_postgres_round_trip_typed_result_and_artifact_ownership
             service.persist(execution, stage=wrong_stage, results=(result,), contract=output_contract_for(AnalysisFamily.CAUSAL))
         with pytest.raises(OutputOwnershipError):
             service.persist(execution, stage=stage, results=(Result(execution_id=str(uuid.uuid4()), result_level=ResultLevel.STAGE_RESULT, stage_execution_id=ids["stage"], result_type=ResultType.DIAGNOSTICS_RESULT, scientific_status=ScientificStatus.PASS),), contract=output_contract_for(AnalysisFamily.CAUSAL))
+    finally:
+        _cleanup(postgres_engine, ids)
+
+
+@pytest.mark.postgres
+@pytest.mark.parametrize("fail_delete", [False, True], ids=["cleanup_succeeds", "cleanup_requires_reconciliation"])
+def test_g04_ac003_postgres_commit_failure_rolls_back_metadata_and_compensates_physical_store(postgres_engine, tmp_path, fail_delete: bool) -> None:  # type: ignore[no-untyped-def]
+    ids = _ids(); _seed(postgres_engine, ids)
+    try:
+        execution = Execution(execution_id=ids["execution"], project_id=ids["project"], analysis_family=AnalysisFamily.CAUSAL)
+        stage = StageExecution(stage_execution_id=ids["stage"], execution_id=ids["execution"], stage_key="analysis")
+        session = Session(bind=postgres_engine); SqlStageExecutionRepository(session).add(stage); session.commit(); session.close()
+        result = Result(execution_id=ids["execution"], result_level=ResultLevel.STAGE_RESULT, stage_execution_id=ids["stage"], result_type=ResultType.DIAGNOSTICS_RESULT, scientific_status=ScientificStatus.PASS)
+        service, store = _commit_failure_service(postgres_engine, tmp_path, fail_delete=fail_delete)
+
+        if fail_delete:
+            with pytest.raises(OutputCompensationError) as caught:
+                service.persist(execution, stage=stage, results=(result,), artifacts=(OutputArtifact(ArtifactType.LOG, b"rollback-proof", "text/plain"),), contract=output_contract_for(AnalysisFamily.CAUSAL))
+            reconciliation = caught.value.reconciliation
+            assert len(reconciliation) == 1
+            assert reconciliation[0]["artifact_id"]
+            assert reconciliation[0]["object_key"] == store.stored_keys[0]
+            assert reconciliation[0]["error"] == "injected physical cleanup failure"
+        else:
+            with pytest.raises(OSError, match="injected PostgreSQL metadata commit failure"):
+                service.persist(execution, stage=stage, results=(result,), artifacts=(OutputArtifact(ArtifactType.LOG, b"rollback-proof", "text/plain"),), contract=output_contract_for(AnalysisFamily.CAUSAL))
+
+        with Session(bind=postgres_engine) as verification:
+            result_count = verification.execute(text("SELECT count(*) FROM product_result WHERE execution_id=:execution"), ids).scalar_one()
+            artifact_count = verification.execute(text("SELECT count(*) FROM product_artifact WHERE execution_id=:execution"), ids).scalar_one()
+        assert result_count == 0 and artifact_count == 0
+        assert len(store.stored_keys) == 1
+        assert store.exists(store.stored_keys[0]) is fail_delete
     finally:
         _cleanup(postgres_engine, ids)

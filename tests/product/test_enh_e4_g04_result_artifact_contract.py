@@ -13,7 +13,7 @@ from ariadne.product.application.output_ownership_service import (
 )
 from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.enums import (
-    AnalysisFamily, ArtifactScope, ArtifactType, ResultLevel, ResultType, ScientificStatus,
+    AnalysisFamily, ArtifactScope, ArtifactType, ResultLevel, ResultReuseRole, ResultType, ScientificStatus,
 )
 from ariadne.product.domain.errors import (
     InvalidAnalysisSpec, OutputCompensationError, OutputOwnershipError,
@@ -186,7 +186,7 @@ def test_g04_ac003_db_failure_cleans_physical_object_and_cleanup_failure_is_reco
     assert "artifact_id" in caught.value.reconciliation[0]
 
 
-def test_g04_ac004_typed_reuse_rejects_object_key_and_requires_semantic_ids() -> None:
+def test_g04_ac004_typed_reuse_requires_semantic_id_and_typed_role() -> None:
     stage = _stage(); store = MemoryStore(); uow = MemoryUow(stage=stage)
     result = _result(); artifact = Artifact(
         project_id="project", artifact_scope=ArtifactScope.EXECUTION_OUTPUT,
@@ -196,12 +196,18 @@ def test_g04_ac004_typed_reuse_rejects_object_key_and_requires_semantic_ids() ->
     uow.results.items[result.result_id] = result
     uow.artifacts.items[artifact.artifact_id] = artifact
     service = _service(store, uow)
-    assert service.reuse_result(ResultReuseRef(result.result_id)) is result
+    assert service.reuse_result(ResultReuseRef(result.result_id, ResultReuseRole.UPSTREAM_INPUT)) is result
     assert service.reuse_artifact(ArtifactReuseRef(artifact.artifact_id)) is artifact
     with pytest.raises(TypeError):
         service.reuse_result("physical/key")  # type: ignore[arg-type]
     with pytest.raises(TypeError):
+        service.reuse_result("content-hash-only")  # type: ignore[arg-type]
+    with pytest.raises(TypeError):
         service.reuse_artifact("physical/key")  # type: ignore[arg-type]
+    with pytest.raises(TypeError):
+        service.reuse_artifact("content-hash-only")  # type: ignore[arg-type]
+    with pytest.raises(TypeError):
+        ResultReuseRef(result.result_id, "UPSTREAM_INPUT")  # type: ignore[arg-type]
 
 
 def test_g04_ac005_artifact_only_is_explicitly_allowed_or_rejected() -> None:

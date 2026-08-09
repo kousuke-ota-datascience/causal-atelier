@@ -41,6 +41,12 @@ class ResultLevel(str, Enum):
     STAGE_RESULT = "STAGE_RESULT"
 
 
+class ResultReuseRole(str, Enum):
+    """The semantic role a canonical Result plays for a downstream consumer."""
+
+    UPSTREAM_INPUT = "UPSTREAM_INPUT"
+
+
 class ArtifactScope(str, Enum):
     SOURCE = "SOURCE"
     EXECUTION_OUTPUT = "EXECUTION_OUTPUT"
