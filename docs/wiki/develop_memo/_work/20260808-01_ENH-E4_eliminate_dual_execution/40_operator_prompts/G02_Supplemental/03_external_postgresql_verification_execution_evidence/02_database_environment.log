@@ -1,0 +1,18 @@
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: .venv
+   Building ariadne @ file:///tmp/causal-atelier-g02-ext-verify-20260809021919
+Downloading playwright (45.5MiB)
+      Built ariadne @ file:///tmp/causal-atelier-g02-ext-verify-20260809021919
+ Downloaded playwright
+Installed 117 packages in 916ms
+ARIADNE_PRODUCT_DATABASE_URL_SET=True
+ARIADNE_PRODUCT_DATABASE_URL_DRIVER=postgresql+psycopg
+ARIADNE_PRODUCT_DATABASE_URL_HOST=172.17.0.1
+ARIADNE_PRODUCT_DATABASE_URL_PORT=55432
+ARIADNE_PRODUCT_DATABASE_URL_DATABASE=ariadne_g02_test
+ARIADNE_PRODUCT_TEST_DATABASE_URL_SET=True
+ARIADNE_PRODUCT_TEST_DATABASE_URL_DRIVER=postgresql+psycopg
+ARIADNE_PRODUCT_TEST_DATABASE_URL_HOST=172.17.0.1
+ARIADNE_PRODUCT_TEST_DATABASE_URL_PORT=55432
+ARIADNE_PRODUCT_TEST_DATABASE_URL_DATABASE=ariadne_g02_test
+EXIT_CODE=0

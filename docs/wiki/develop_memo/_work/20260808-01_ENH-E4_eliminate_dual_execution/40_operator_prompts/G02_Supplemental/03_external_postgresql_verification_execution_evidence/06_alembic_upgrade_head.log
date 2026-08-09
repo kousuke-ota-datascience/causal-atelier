@@ -1,0 +1,10 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 20260805_product_0001, 20260805_0001_product_domain_baseline
+INFO  [alembic.runtime.migration] Running upgrade 20260805_product_0001 -> 20260806_product_0002, ENH-E1 scientific validity foundation.
+INFO  [alembic.runtime.migration] Running upgrade 20260806_product_0002 -> 20260806_product_0003, ENH-E2 outcome inheritance for Graph Version.
+INFO  [alembic.runtime.migration] Running upgrade 20260806_product_0003 -> 20260807_product_0004, ENH-E3 generic workspace and exploratory persistence.
+INFO  [alembic.runtime.migration] Running upgrade 20260807_product_0004 -> 20260807_product_0005, ENH-E3 G4 Research Context, Analysis Specification, and predictive references.
+INFO  [alembic.runtime.migration] Running upgrade 20260807_product_0005 -> 20260807_product_0006, ENH-E3 G6 workspace closure, annotations, access, and export bundles.
+INFO  [alembic.runtime.migration] Running upgrade 20260807_product_0006 -> 20260809_product_0007, ENH-E4 G02 canonical Execution discriminator and lease contract.
+EXIT_CODE=0

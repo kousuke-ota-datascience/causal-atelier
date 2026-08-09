@@ -1,0 +1,5 @@
+current_database= ariadne_g02_test
+current_user= ariadne
+server_version= 17.10
+SQLALCHEMY_POSTGRESQL_PREFLIGHT=PASS
+EXIT_CODE=0
