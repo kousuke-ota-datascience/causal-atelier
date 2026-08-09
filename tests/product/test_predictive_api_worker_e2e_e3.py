@@ -6,11 +6,23 @@ import pytest
 from sqlalchemy import select
 
 from ariadne.interfaces.web_api import dependencies
-from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
+from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
+from ariadne.scientific.core_adapter import ScientificCoreAdapter
 from ariadne.product.persistence.orm_models import (
     FamilyExecutionOrm,
     FamilyStageExecutionOrm,
 )
+
+
+def _process_canonical_predictive(execution_id: str, token: str, worker_id: str) -> None:
+    with dependencies._uow_context() as uow:
+        claimed = uow.executions.claim_next(token, worker_id=worker_id)
+        uow.commit()
+    assert claimed is not None and claimed.execution_id == execution_id
+    ExecutionProcessor(
+        dependencies._uow_context, ScientificCoreAdapter(), dependencies._get_artifact_store(),
+        owner_token=worker_id,
+    ).process(claimed)
 
 
 async def _workspace(client, predictive_spec_factory):  # type: ignore[no-untyped-def]
@@ -145,17 +157,8 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
 
     listed = await client.get(f"/api/v1/projects/{project_id}/executions")
     assert execution_id in {item["execution_id"] for item in listed.json()["items"]}
-    worker = PredictiveWorkflowService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
     token = str(uuid.uuid4())
-    assert worker.claim_next(token, worker_id="g4-test-worker") == execution_id
-    running = await client.get(
-        f"/api/v1/projects/{project_id}/executions/{execution_id}"
-    )
-    assert running.json()["status"] == "RUNNING"
-    worker.process_execution(execution_id, worker_token=token)
-
+    _process_canonical_predictive(execution_id, token, "g4-test-worker")
     completed = await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}"
     )
@@ -189,6 +192,8 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
         f"/api/v1/projects/{project_id}/executions/{execution_id}/artifacts"
     )).json()["items"]
     artifacts_by_type = {item["artifact_type"]: item for item in artifacts}
+    assert len(artifacts) == 4
+    assert len(artifacts_by_type) == 4
     assert set(artifacts_by_type) == {
         "PARTITION_INDEX",
         "FITTED_PREPROCESSOR",
@@ -422,12 +427,8 @@ async def test_failed_predictive_execution_retry_resets_and_can_succeed(
     assert all(stage["output_binding"] == {} for stage in reset_stages)
     assert all(stage["last_error"] is None for stage in reset_stages)
 
-    worker = PredictiveWorkflowService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
     token = str(uuid.uuid4())
-    assert worker.claim_next(token, worker_id="g4-retry-worker") == execution_id
-    worker.process_execution(execution_id, worker_token=token)
+    _process_canonical_predictive(execution_id, token, "g4-retry-worker")
     completed = await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}"
     )

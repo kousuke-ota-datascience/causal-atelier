@@ -5,6 +5,7 @@ from __future__ import annotations
 import tempfile
 import hashlib
 import json
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,7 @@ import pandas as pd
 from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.enums import (
     AnalysisFamily,
+    ArtifactScope,
     ArtifactType,
     ExecutionOperation,
     ExecutionStatus,
@@ -43,6 +45,7 @@ from ariadne.product.ports.scientific_core import (
     ScientificCorePort,
 )
 from ariadne.product.ports.unit_of_work import UnitOfWork
+from ariadne.product.persistence.orm_models import LineageEdgeOrm
 
 import logging
 
@@ -161,22 +164,31 @@ class ExecutionProcessor:
                 for art in descriptor.artifacts:
                     art_path = art.path
                     artifact_type = _guess_artifact_type(art_path)
+                    _, _, artifact_schema_version = art.content_role.partition("|")
                     object_key = (
                         f"projects/{execution.project_id}/executions/{execution.execution_id}"
                         f"/{result.result_id}/{art_path.name}"
                     )
-                    stored = self._store.store(art_path, object_key)
+                    stored = self._store.store(
+                        art_path, object_key,
+                        media_type="application/json" if "|" in art.content_role else "application/octet-stream",
+                    )
                     stored_keys.append(stored.object_key)
                     stored_artifacts.append(Artifact(
                         project_id=execution.project_id,
                         execution_id=execution.execution_id,
+                        stage_execution_id=result.stage_execution_id,
                         result_id=result.result_id,
+                        artifact_scope=ArtifactScope.EXECUTION_OUTPUT,
                         artifact_type=artifact_type,
                         object_key=stored.object_key,
                         content_hash=stored.content_hash,
                         media_type=stored.media_type,
                         size_bytes=stored.size_bytes,
-                        metadata_json={"content_role": art.content_role},
+                        metadata_json={
+                            "content_role": art.content_role,
+                            "schema_version": artifact_schema_version or "artifact/1",
+                        },
                         created_at=now,
                     ))
 
@@ -190,6 +202,22 @@ class ExecutionProcessor:
                         return
                     uow.results.add_many(results)
                     uow.artifacts.add_many(stored_artifacts)
+                    for result in results:
+                        uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Execution", source_id=execution.execution_id, relation_type="GENERATED", target_type="Result", target_id=result.result_id, evidence_json={}, created_by="worker", created_at=now))
+                    artifact_by_type = {artifact.artifact_type: artifact for artifact in stored_artifacts}
+                    result_by_type = {result.result_type: result for result in results}
+                    for artifact in stored_artifacts:
+                        source_type, source_id = ("Execution", execution.execution_id) if artifact.artifact_type is ArtifactType.FITTED_PREPROCESSOR else ("Result", artifact.result_id)
+                        if artifact.artifact_type is ArtifactType.PREDICTION and ResultType.EVALUATION_RESULT in result_by_type:
+                            source_id = result_by_type[ResultType.EVALUATION_RESULT].result_id
+                        uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type=source_type, source_id=source_id, relation_type="GENERATED", target_type="Artifact", target_id=artifact.artifact_id, evidence_json={}, created_by="worker", created_at=now))
+                    for child, parent in ((ArtifactType.FITTED_PREPROCESSOR, ArtifactType.PARTITION_INDEX), (ArtifactType.FITTED_MODEL, ArtifactType.FITTED_PREPROCESSOR), (ArtifactType.PREDICTION, ArtifactType.FITTED_MODEL)):
+                        if child in artifact_by_type and parent in artifact_by_type:
+                            uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Artifact", source_id=artifact_by_type[child].artifact_id, relation_type="DERIVED_FROM", target_type="Artifact", target_id=artifact_by_type[parent].artifact_id, evidence_json={}, created_by="worker", created_at=now))
+                    prediction = artifact_by_type.get(ArtifactType.PREDICTION)
+                    evaluation = next((result for result in results if result.result_type is ResultType.EVALUATION_RESULT), None)
+                    if prediction is not None and evaluation is not None:
+                        uow._session.add(LineageEdgeOrm(lineage_edge_id=str(uuid.uuid4()), project_id=execution.project_id, source_type="Artifact", source_id=prediction.artifact_id, relation_type="EVIDENCE_FOR", target_type="Result", target_id=evaluation.result_id, evidence_json={}, created_by="worker", created_at=now))
                     exec_entity.mark_succeeded(now)
                     if self._owner_token is None:
                         uow.executions.update(exec_entity)
@@ -409,13 +437,19 @@ def _family_descriptors(outcome: Any, output_dir: Path) -> list[ScientificResult
     claim that the result is causal diagnostics.
     """
     descriptors: list[ScientificResultDescriptor] = []
+    pending_artifacts: list[ArtifactDescriptor] = []
     for stage_key, run_result in outcome.stage_results:
         artifacts = []
         for index, draft in enumerate(run_result.artifacts):
-            path = output_dir / f"{draft.artifact_type}-{stage_key}-{index}.bin"
+            path = output_dir / f"{draft.artifact_type}-{stage_key}-{index}.json"
             path.write_bytes(draft.content)
-            artifacts.append(ArtifactDescriptor(path, content_role=draft.artifact_type))
-        for draft in run_result.results:
+            artifacts.append(ArtifactDescriptor(
+                path, content_role=f"{draft.artifact_type}|{draft.schema_version}"
+            ))
+        if not run_result.results:
+            pending_artifacts.extend(artifacts)
+            continue
+        for result_index, draft in enumerate(run_result.results):
             descriptors.append(ScientificResultDescriptor(
                 result_type=ResultType(draft.result_type),
                 scientific_status=ScientificStatus(draft.analytical_status),
@@ -427,8 +461,10 @@ def _family_descriptors(outcome: Any, output_dir: Path) -> list[ScientificResult
                 },
                 diagnostics=draft.diagnostics,
                 warnings=list(draft.warnings),
-                artifacts=artifacts,
+                artifacts=[*pending_artifacts, *artifacts] if result_index == 0 else [],
             ))
+            if result_index == 0:
+                pending_artifacts = []
     return descriptors
 
 
