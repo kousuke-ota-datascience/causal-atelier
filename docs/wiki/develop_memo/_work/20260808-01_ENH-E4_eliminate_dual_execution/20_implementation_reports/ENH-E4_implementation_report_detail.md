@@ -2,18 +2,18 @@
 
 ## 1. Baseline
 
-- Branch: refactor/ariadne_mvp_e4
-- Baseline commit: e70c6f7f1f63ce2568c85482bc20a355da66b7cf
-- Initial migration head: 20260807_product_0006
-- Enhancement root: docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution
+- Branch: `refactor/ariadne_mvp_e4`
+- Baseline commit: `14bc705938d0fda6ea0ab1b80c53ca677a19d794`
+- Initial migration head: `20260807_product_0006`
+- Enhancement root: `docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution`
 
 ## 2. Gate Status
 
 | Gate | Status | Latest Trial | Implementation Commit | Gate Decision Report |
 |---|---|---:|---|---|
 | E4-G01 | PASS (documentation review) | N/A | N/A | prior architecture review evidence |
-| E4-G02 | READY_FOR_TEST | 01 | 166e90cd1c2d0e523fb863795a88343403d8cc44 | N/A |
-| E4-G03 | READY_FOR_TEST | 01 | f455354 | E4-G03_01_implementation_completion_report.md |
+| E4-G02 | PASS | 01 | `166e90cd1c2d0e523fb863795a88343403d8cc44` | `30_test_report/G02` evidence |
+| E4-G03 | PASS | 02 | `bac1814bb713f32b859fbe7e2b445fa6cd557f2b` | `30_test_report/G03/E4-G03_02_999_gate_decision.md` |
 | E4-G04 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G05 | NOT_STARTED | N/A | N/A | future Gate |
 | E4-G06 | NOT_STARTED | N/A | N/A | future Gate |
@@ -24,62 +24,63 @@
 
 | Gate | Trial | Coding Status | Implementation Commit | Test Decision | Evidence |
 |---|---:|---|---|---|---|
-| E4-G02 | 01 | READY_FOR_TEST | 166e90cd1c2d0e523fb863795a88343403d8cc44 | NOT_RUN_BY_CODING_AGENT | E4-G02_01 completion report |
+| E4-G02 | 01 | READY_FOR_TEST | `166e90cd1c2d0e523fb863795a88343403d8cc44` | PASS | G02 test report evidence |
+| E4-G03 | 01 | READY_FOR_TEST | `f455354e3724b66360bed6d3cfd4646ca1463a89` | FAIL | `30_test_report/G03/E4-G03_01_999_gate_decision.md` |
+| E4-G03 | 02 | READY_FOR_TEST | `bac1814bb713f32b859fbe7e2b445fa6cd557f2b` | PASS | `30_test_report/G03/E4-G03_02_999_gate_decision.md` |
+| E4-G04 | 01 | READY_FOR_TEST | `3d88781c1b69ba03bb06c0b8f143612b81feb4bf` | NOT_RUN_BY_CODING_AGENT | `20_implementation_reports/G04/E4-G04_01_implementation_completion_report.md` |
 
 ## 4. Current Working State
 
-- Current active Gate: E4-G02
-- Current HEAD: 166e90cd1c2d0e523fb863795a88343403d8cc44
-- Working tree: report files and pre-existing unrelated changes pending
-- Migration head: 20260809_product_0007
-- Uncommitted implementation files: NONE after implementation commit
-- Saved future-Gate drafts: NONE
-- Known environmental blocks: isolated PostgreSQL migration/concurrency execution not run
+- Current active Gate: E4-G04 Trial 01 handoff.
+- Current HEAD: `3d88781c1b69ba03bb06c0b8f143612b81feb4bf` before report commit.
+- Working tree: implementation commit fixed; report/detail files pending report commit; unrelated `.nfs` deletion remains.
+- Migration head: `20260809_product_0009`.
+- Uncommitted implementation files: NONE.
+- Saved future-Gate drafts: G04 instruction only; no G05 implementation started.
+- Known environmental blocks: NONE for standardized PostgreSQL verification.
 
 ## 5. Completed Implementation
 
-G02 canonical Execution identity/family discriminator, additive persistence contract, canonical row-lock claim/lease owner, common state domain, retry/rerun/revise/cancel identity fields, owner-checked completion, and worker compatibility wiring.
+G04 adds explicit Result semantic levels, canonical Result/Artifact ownership
+validation, source-versus-execution Artifact scope, typed downstream reuse,
+family output cardinality/Artifact-only contracts, and physical-store/database
+compensation with reconciliation visibility. Product migration `0009` is the
+direct child of `0008`. Existing source Artifact semantics are retained.
 
 ## 6. Outstanding Work
 
-- E4-TD-001 old Causal/Family lifecycle paths remain until G05.
-- G03 persistent StageExecution.
-- G04 Result/Artifact ownership.
-- G05 full Product runtime convergence.
-- G06 lineage authority implementation.
+- `E4-TD-001`: OPEN until G05.
+- `E4-TD-002`: OPEN until G05.
+- `E4-TD-003`: OPEN until G05; old family Result/Artifact writers remain transitional.
+- G05 Product Execution convergence.
+- G06 lineage authority consolidation.
 - G07 legacy/CLI/migration boundary.
-- G08 final audit/bootstrap.
+- G08 final clean bootstrap and architecture audit.
 
 ## 7. Cross-Gate Changes
 
-NONE. GenericExecutor, StageExecution, Result/Artifact, lineage, legacy runtime, and root migration areas were not modified.
+No G02/G03 production or report artifact was modified. G04 regression included
+G02/G03/PostgreSQL contract tests and passed.
 
 ## 8. Known Deviations
 
-The existing operation enum remains Causal-oriented; G02 introduces analysis_family as the canonical family discriminator without redesigning family-specific scientific operation schemas. This is an intentional G02 scope boundary, not a new architecture decision.
+G04 establishes the canonical ownership boundary but does not cut over every
+family submission/output route; that is explicitly G05 scope. The old external
+database issue outside the standardized runner is not changed.
 
 ## 9. Evidence Index
 
-- Implementation instruction: 10_enhance_instruction/G02/06_Ariadne_ENH-E4_実装指示書.md
-- Implementation commit: 166e90cd1c2d0e523fb863795a88343403d8cc44
-- Completion report: 20_implementation_reports/E4-G02_01_implementation_completion_report.md
-- G02 tests: tests/product/test_enh_e4_g02_canonical_execution.py
-- Migration: product_migrations/versions/20260809_product_0007_enh_e4_g02_canonical_execution.py
+- G04 instruction: `10_enhance_instruction/G04/06_Ariadne_ENH-E4_G04_実装指示書.md`
+- Implementation commit: `3d88781c1b69ba03bb06c0b8f143612b81feb4bf`
+- Completion report: `20_implementation_reports/G04/E4-G04_01_implementation_completion_report.md`
+- Migration: `product_migrations/versions/20260809_product_0009_enh_e4_g04_result_artifact_ownership.py`
+- Pure tests: `tests/product/test_enh_e4_g04_result_artifact_contract.py`
+- PostgreSQL tests: `tests/product/test_enh_e4_g04_result_artifact_postgres.py`
+- Regression evidence: `test-results/postgres/run-20260809T052335Z.metadata.txt`
 
 ## 10. Supplemental State
 
-G02 is handed off to an independent Test Agent. No Gate PASS decision is recorded.
-
-## 11. E4-G03 Trial 01 Implementation
-
-- Status: `READY_FOR_TEST` (Coding Agent handoff; no Gate PASS decision)
-- Starting/previous Product head: `20260809_product_0007`
-- New Product head: `20260809_product_0008`
-- Implementation commit: `f455354`
-- Completion report: `20_implementation_reports/G03/E4-G03_01_implementation_completion_report.md`
-- Scope: canonical persistent `StageExecution` and append-only `StageAttempt`, common family plan materialization, owner-checked stage mutation, and GenericExecutor boundary cleanup.
-- AC coverage: direct unit/boundary tests plus real PostgreSQL round-trip for AC-001 through AC-005.
-- Self-check: full pytest `198 passed, 5 skipped`; standardized PostgreSQL runner `10 passed` with migration head `20260809_product_0008`.
-- `E4-TD-001`: OPEN until G05.
-- `E4-TD-002`: OPEN until G05.
-- G04-G08 scope remains unimplemented.
+Coding Agent self-check passed: pure `17 passed, 1 skipped`; standardized
+PostgreSQL G04/regression subset `17 passed`; migration current/head
+`20260809_product_0009`. This detail ledger records implementation state only;
+an independent Test Agent owns the G04 Gate decision.
