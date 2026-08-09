@@ -79,6 +79,20 @@ class Result:
                 ScientificStatus.FRAGILE,
                 ScientificStatus.INCONCLUSIVE,
             },
+            ResultType.DATA_PROFILE_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.DISTRIBUTION_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.ASSOCIATION_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.GROUP_SUMMARY_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.CHART_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.SPLIT_RESULT: {ScientificStatus.PASS},
+            ResultType.TRAINING_RESULT: {ScientificStatus.TRAINED, ScientificStatus.TRAINED_WITH_WARNINGS},
+            ResultType.EVALUATION_RESULT: {ScientificStatus.EVALUATED, ScientificStatus.INSUFFICIENT_TEST_SAMPLE},
+            ResultType.ERROR_ANALYSIS_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.PREDICTIVE_EXPLANATION_RESULT: {
+                ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS,
+                ScientificStatus.NOT_APPLICABLE,
+            },
+            ResultType.MODEL_CARD_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
         }
         if self.scientific_status not in allowed[self.result_type]:
             raise InvalidAnalysisSpec(

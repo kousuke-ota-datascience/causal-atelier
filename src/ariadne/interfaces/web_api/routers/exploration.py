@@ -9,6 +9,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field
 
 from ariadne.interfaces.web_api.dependencies import ExploratoryWorkspaceServiceDep
+from ariadne.product.domain.execution import Execution
 from ariadne.product.persistence.orm_models import AnalysisViewOrm, FamilyExecutionOrm, FamilyResultOrm
 
 router = APIRouter(tags=["analysis-views", "exploration"])
@@ -126,7 +127,23 @@ def _view(row: AnalysisViewOrm) -> AnalysisViewResponse:
     )
 
 
-def _execution(row: FamilyExecutionOrm) -> FamilyExecutionResponse:
+def _execution(row: FamilyExecutionOrm | Execution) -> FamilyExecutionResponse:
+    if isinstance(row, Execution):
+        family = row.analysis_spec_json
+        return FamilyExecutionResponse(
+            execution_id=row.execution_id, project_id=row.project_id,
+            dataset_version_id=row.dataset_version_id,
+            analysis_view_id=family.get("analysis_view_id"),
+            execution_plan_id=family.get("execution_plan_id") or "canonical",
+            analysis_family=row.analysis_family.value,
+            specification_schema_version="exploratory-analysis-spec/1",
+            snapshot_hash=row.snapshot_hash, status=row.status.value,
+            requested_at=row.requested_at, started_at=row.started_at,
+            finished_at=row.finished_at,
+            last_error=(
+                {"message": row.last_error_summary} if row.last_error_summary else None
+            ),
+        )
     return FamilyExecutionResponse(
         execution_id=row.execution_id, project_id=row.project_id,
         dataset_version_id=row.dataset_version_id, analysis_view_id=row.analysis_view_id,

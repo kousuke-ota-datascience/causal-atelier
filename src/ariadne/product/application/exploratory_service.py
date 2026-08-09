@@ -31,6 +31,9 @@ from ariadne.product.domain.errors import (
 )
 from ariadne.product.domain.schemas import SchemaRegistry, canonical_hash
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
+from ariadne.product.application.execution_service import ExecutionService
+from ariadne.product.domain.enums import AnalysisFamily
+from ariadne.product.domain.execution import Execution
 from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
     ArtifactOrm,
@@ -54,11 +57,18 @@ _WORKSPACE_SCHEMAS.register(EXPLORATORY_SCHEMA_VERSION, validate_exploratory_spe
 
 
 class ExploratoryWorkspaceService:
-    def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
+    def __init__(
+        self,
+        session_factory: Any,
+        artifact_store: ArtifactStorePort,
+        *,
+        execution_service: ExecutionService | None = None,
+    ) -> None:
         self._session_factory = session_factory
         self._store = artifact_store
         self._compiler = AnalysisViewCompiler()
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
+        self._execution_service = execution_service
 
     def create_view(
         self,
@@ -208,7 +218,7 @@ class ExploratoryWorkspaceService:
         analysis_view_id: str | None,
         family_spec: dict[str, Any],
         requested_by: str = "system",
-    ) -> FamilyExecutionOrm:
+    ) -> FamilyExecutionOrm | Execution:
         self._validate_exploratory_spec(family_spec)
         with self._session_factory() as session:
             self._active_project(session, project_id)
@@ -253,6 +263,22 @@ class ExploratoryWorkspaceService:
                 "plan_hash": plan.plan_hash,
                 "runtime": {"runner": "exploratory-runners/1"},
             }
+            if self._execution_service is not None:
+                # Product API wiring supplies this service.  Keep the old ORM
+                # branch solely as historical/low-level compatibility until
+                # G07 source retirement; it is no longer a Product write path.
+                session.commit()
+                return self._execution_service.create_family_execution(
+                    project_id=project_id,
+                    dataset_version_id=dataset_version_id,
+                    analysis_family=AnalysisFamily.EXPLORATORY,
+                    family_spec=family_spec,
+                    requested_by=requested_by,
+                    analysis_view_id=analysis_view_id,
+                    execution_plan_id=plan_row.execution_plan_id,
+                    code_version="exploratory-runners/1",
+                    runtime_version_json={"family_snapshot": snapshot},
+                )
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()), project_id=project_id,
                 dataset_version_id=dataset_version_id, analysis_view_id=analysis_view_id,
@@ -416,13 +442,32 @@ class ExploratoryWorkspaceService:
                     session.commit()
             raise
 
-    def get_execution(self, project_id: str, execution_id: str) -> FamilyExecutionOrm:
+    def get_execution(self, project_id: str, execution_id: str) -> FamilyExecutionOrm | Execution:
+        if self._execution_service is not None:
+            execution = self._execution_service.get_execution(execution_id)
+            if (
+                execution.project_id != project_id
+                or execution.analysis_family is not AnalysisFamily.EXPLORATORY
+            ):
+                raise EntityNotFound("Execution", execution_id)
+            return execution
         with self._session_factory() as session:
             row = session.get(FamilyExecutionOrm, execution_id)
             if row is None or row.project_id != project_id: raise EntityNotFound("Execution", execution_id)
             return row
 
-    def list_executions(self, project_id: str) -> list[FamilyExecutionOrm]:
+    def list_executions(self, project_id: str) -> list[FamilyExecutionOrm | Execution]:
+        if self._execution_service is not None:
+            # ExecutionService intentionally exposes one identity at a time;
+            # the canonical repository is the read authority for new writes.
+            # The session factory remains available for query projection only.
+            with self._session_factory() as session:
+                from ariadne.product.persistence.orm_models import ExecutionOrm
+                rows = list(session.scalars(select(ExecutionOrm).where(
+                    ExecutionOrm.project_id == project_id,
+                    ExecutionOrm.analysis_family == "EXPLORATORY",
+                ).order_by(ExecutionOrm.requested_at.desc())))
+            return [self._execution_service.get_execution(row.execution_id) for row in rows]
         with self._session_factory() as session:
             return list(session.scalars(select(FamilyExecutionOrm).where(
                 FamilyExecutionOrm.project_id == project_id,

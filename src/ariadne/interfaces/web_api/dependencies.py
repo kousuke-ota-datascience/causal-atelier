@@ -99,7 +99,10 @@ async def get_idempotency_service() -> IdempotencyService:
 
 
 async def get_exploratory_workspace_service() -> ExploratoryWorkspaceService:
-    return ExploratoryWorkspaceService(_get_session_factory(), _get_artifact_store())
+    return ExploratoryWorkspaceService(
+        _get_session_factory(), _get_artifact_store(),
+        execution_service=ExecutionService(uow_factory=_uow_context),
+    )
 
 
 async def get_predictive_split_service() -> PredictiveSplitService:
@@ -111,7 +114,10 @@ async def get_workspace_lifecycle_service() -> WorkspaceLifecycleService:
 
 
 async def get_predictive_workflow_service() -> PredictiveWorkflowService:
-    return PredictiveWorkflowService(_get_session_factory(), _get_artifact_store())
+    return PredictiveWorkflowService(
+        _get_session_factory(), _get_artifact_store(),
+        execution_service=ExecutionService(uow_factory=_uow_context),
+    )
 
 
 async def get_product_closure_service() -> ProductClosureService:

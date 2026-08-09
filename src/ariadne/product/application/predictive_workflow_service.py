@@ -21,12 +21,14 @@ from ariadne.capabilities.predictive import (
 )
 from ariadne.capabilities.predictive.modeling import MODEL_REGISTRY
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
+from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.domain.analysis_specification import AnalysisSpecification
 from ariadne.product.domain.enums import (
     AnalysisFamily,
     AnalysisMode,
     VersionedResourceStatus,
 )
+from ariadne.product.domain.execution import Execution
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidExecutionPlan,
@@ -61,10 +63,17 @@ from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 
 
 class PredictiveWorkflowService:
-    def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
+    def __init__(
+        self,
+        session_factory: Any,
+        artifact_store: ArtifactStorePort,
+        *,
+        execution_service: ExecutionService | None = None,
+    ) -> None:
         self._session_factory = session_factory
         self._store = artifact_store
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
+        self._execution_service = execution_service
 
     def create_plan(self, project_id: str, specification_id: str) -> dict[str, Any]:
         with self._session_factory() as session:
@@ -188,6 +197,21 @@ class PredictiveWorkflowService:
                     "kind": revision_kind,
                 } if base_execution_id else None,
             }
+            if self._execution_service is not None:
+                # ``ExecutionPlanOrm`` is a read/planning projection, not a
+                # lifecycle owner.  Commit it before entering the independent
+                # canonical UoW so the immutable plan reference is visible.
+                session.commit()
+                return self._canonical_submission(
+                    project_id=project_id,
+                    specification=spec_row,
+                    plan=plan_row,
+                    snapshot=snapshot,
+                    seed=seed,
+                    requested_by=requested_by,
+                    base_execution_id=base_execution_id,
+                    revision_kind=revision_kind,
+                )
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()),
                 project_id=project_id,
@@ -261,6 +285,71 @@ class PredictiveWorkflowService:
                 )
             session.commit()
             return self._execution_response(execution)
+
+    def _canonical_submission(
+        self,
+        *,
+        project_id: str,
+        specification: AnalysisSpecificationOrm,
+        plan: ExecutionPlanOrm,
+        snapshot: dict[str, Any],
+        seed: int,
+        requested_by: str,
+        base_execution_id: str | None,
+        revision_kind: str | None,
+    ) -> dict[str, Any]:
+        assert self._execution_service is not None
+        canonical = self._execution_service.create_family_execution(
+            project_id=project_id,
+            dataset_version_id=specification.dataset_version_id,
+            analysis_family=AnalysisFamily.PREDICTIVE,
+            family_spec=dict(specification.family_spec_json),
+            requested_by=requested_by,
+            analysis_view_id=specification.analysis_view_id,
+            analysis_specification_id=specification.analysis_specification_id,
+            execution_plan_id=plan.execution_plan_id,
+            seed=seed,
+            code_version=str(snapshot["versions"]["code"]),
+            runtime_version_json={"family_snapshot": snapshot},
+            base_execution_id=base_execution_id,
+            change_reason=(revision_kind or "").lower() if base_execution_id else None,
+        )
+        return self._canonical_execution_response(canonical, snapshot=snapshot)
+
+    @staticmethod
+    def _canonical_execution_response(
+        execution: Execution, *, snapshot: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        family = execution.analysis_spec_json
+        return {
+            "execution_id": execution.execution_id,
+            "project_id": execution.project_id,
+            "dataset_version_id": execution.dataset_version_id,
+            "analysis_view_id": family.get("analysis_view_id"),
+            "research_context_version_id": (
+                (snapshot or execution.runtime_version_json.get("family_snapshot", {}))
+                .get("research_context", {}).get("id")
+            ),
+            "analysis_specification_id": family.get("analysis_specification_id"),
+            "execution_plan_id": family.get("execution_plan_id"),
+            "analysis_family": execution.analysis_family.value,
+            "specification_schema_version": "predictive-analysis-spec/1",
+            "specification_snapshot": family.get("family_spec", {}),
+            "snapshot": snapshot or execution.runtime_version_json.get("family_snapshot", {}),
+            "snapshot_hash": execution.snapshot_hash,
+            "status": execution.status.value,
+            "retry_count": execution.retry_count,
+            "requested_by": execution.requested_by,
+            "requested_at": execution.requested_at,
+            "started_at": execution.started_at,
+            "finished_at": execution.finished_at,
+            "last_error": (
+                {"message": execution.last_error_summary}
+                if execution.last_error_summary else None
+            ),
+            "base_execution_id": execution.base_execution_id,
+            "revision_kind": execution.revision_kind,
+        }
 
     def claim_next(
         self, worker_token: str, *, worker_id: str, lease_seconds: int = 1800
