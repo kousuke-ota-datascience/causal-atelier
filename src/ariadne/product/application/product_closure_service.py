@@ -21,7 +21,9 @@ from ariadne.product.domain.errors import (
 )
 from ariadne.product.domain.lineage import (
     LINEAGE_RELATION_TYPES,
+    LineageAuthority,
     assert_generic_lineage_allowed,
+    classify_lineage_authority,
 )
 from ariadne.product.domain.schemas import canonical_bytes
 from ariadne.product.persistence.orm_models import (
@@ -334,21 +336,31 @@ class ProductClosureService:
                     edge("ResearchContextVersion", row.research_context_version_id, "SUPPORTED_BY", "Execution", row.execution_id)
                 if row.analysis_specification_id:
                     edge("AnalysisSpecification", row.analysis_specification_id, "USED_INPUT", "Execution", row.execution_id)
-            causal_execs = list(session.scalars(select(ExecutionOrm).where(ExecutionOrm.project_id == project_id)))
-            for row in causal_execs:
-                node("Execution", row.execution_id, f"CAUSAL {row.operation}", family="CAUSAL", status=row.status)
+            canonical_execs = list(session.scalars(select(ExecutionOrm).where(ExecutionOrm.project_id == project_id)))
+            for row in canonical_execs:
+                node("Execution", row.execution_id, f"{row.analysis_family} {row.operation}", family=row.analysis_family, status=row.status)
                 edge("DatasetVersion", row.dataset_version_id, "USED_INPUT", "Execution", row.execution_id)
-                if row.input_graph_version_id:
-                    edge("GraphVersion", row.input_graph_version_id, "USED_INPUT", "Execution", row.execution_id)
+                analysis_view_id = row.analysis_spec_json.get("analysis_view_id")
+                if isinstance(analysis_view_id, str) and analysis_view_id:
+                    edge("AnalysisView", analysis_view_id, "USED_INPUT", "Execution", row.execution_id)
                 if row.input_result_id:
                     edge("Result", row.input_result_id, "USED_INPUT", "Execution", row.execution_id)
-                revision = row.analysis_spec_json.get("revision_context") or {}
-                base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
-                if base_id:
+                if row.base_execution_id:
+                    relation = "REVISED_FROM" if row.revision_kind == "REVISED" else "DERIVED_FROM"
                     edge(
-                        "Execution", base_id, "REVISED_FROM", "Execution", row.execution_id,
-                        evidence={"revision_context": revision},
+                        "Execution", row.base_execution_id, relation, "Execution", row.execution_id,
+                        evidence={"revision_kind": row.revision_kind},
                     )
+                else:
+                    # Compatibility for canonical rows created before the
+                    # dedicated revision columns were populated.
+                    revision = row.analysis_spec_json.get("revision_context") or {}
+                    base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
+                    if isinstance(base_id, str) and base_id:
+                        edge(
+                            "Execution", base_id, "REVISED_FROM", "Execution", row.execution_id,
+                            evidence={"revision_context": revision},
+                        )
 
             for item in self._all_results(session, project_id):
                 node("Result", item["result_id"], item["result_type"], family=item["analysis_family"], analytical_status=item["analytical_status"])
@@ -383,6 +395,10 @@ class ProductClosureService:
                     edge("GraphVersion", row.target_graph_version_id, "SUPPORTED_BY", "Annotation", row.annotation_id)
             explicit_rows = list(session.scalars(select(LineageEdgeOrm).where(LineageEdgeOrm.project_id == project_id)))
             for row in explicit_rows:
+                if classify_lineage_authority(
+                    row.source_type, row.relation_type, row.target_type,
+                ) is not LineageAuthority.GENERIC_ONLY:
+                    continue
                 if (row.source_type, row.source_id) not in nodes:
                     node(row.source_type, row.source_id, f"{row.source_type} {row.source_id}")
                 if (row.target_type, row.target_id) not in nodes:

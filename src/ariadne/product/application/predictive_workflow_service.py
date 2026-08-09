@@ -30,6 +30,7 @@ from ariadne.product.domain.enums import (
     VersionedResourceStatus,
 )
 from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.lineage import LineageAuthority, classify_lineage_authority
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidExecutionPlan,
@@ -748,6 +749,9 @@ class PredictiveWorkflowService:
         if self._execution_service is not None:
             self._canonical_execution(project_id, execution_id)
             with self._session_factory() as session:
+                execution = session.get(ExecutionOrm, execution_id)
+                assert execution is not None
+                typed = self._canonical_typed_lineage(execution, session)
                 result_ids = list(session.scalars(select(ResultOrm.result_id).where(ResultOrm.execution_id == execution_id)))
                 artifact_ids = list(session.scalars(select(ArtifactOrm.artifact_id).where(ArtifactOrm.execution_id == execution_id)))
                 owned_ids = {execution_id, *result_ids, *artifact_ids}
@@ -755,7 +759,13 @@ class PredictiveWorkflowService:
                     LineageEdgeOrm.project_id == project_id,
                     (LineageEdgeOrm.source_id.in_(owned_ids) | LineageEdgeOrm.target_id.in_(owned_ids)),
                 ).order_by(LineageEdgeOrm.created_at, LineageEdgeOrm.lineage_edge_id)))
-            return [self._lineage_response(row) for row in rows]
+            generic = [
+                self._lineage_response(row) for row in rows
+                if classify_lineage_authority(
+                    row.source_type, row.relation_type, row.target_type,
+                ) is LineageAuthority.GENERIC_ONLY
+            ]
+            return self._deduplicated_lineage([*typed, *generic])
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
             result_ids = list(session.scalars(select(FamilyResultOrm.result_id).where(
@@ -1264,6 +1274,53 @@ class PredictiveWorkflowService:
             "target_id": row.target_id,
             "evidence": row.evidence_json,
         }
+
+    @staticmethod
+    def _canonical_typed_lineage(execution: ExecutionOrm, session: Any) -> list[dict[str, Any]]:
+        """Project the P01 typed structural relations from canonical ownership."""
+        edges: list[dict[str, Any]] = []
+
+        def add(source_type: str, source_id: str, relation_type: str, target_type: str, target_id: str, *, evidence: dict[str, Any] | None = None) -> None:
+            edges.append({
+                "lineage_edge_id": None,
+                "source_type": source_type, "source_id": source_id,
+                "relation_type": relation_type,
+                "target_type": target_type, "target_id": target_id,
+                "evidence": evidence or {},
+            })
+
+        results = list(session.scalars(select(ResultOrm).where(ResultOrm.execution_id == execution.execution_id)))
+        for result in results:
+            add("Execution", execution.execution_id, "GENERATED", "Result", result.result_id)
+        artifacts = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.execution_id == execution.execution_id)))
+        for artifact in artifacts:
+            if artifact.result_id:
+                add("Result", artifact.result_id, "GENERATED", "Artifact", artifact.artifact_id)
+            else:
+                # This is an existing ownership projection for a valid direct
+                # execution-scoped artifact, not a persisted generic edge.
+                add("Execution", execution.execution_id, "GENERATED", "Artifact", artifact.artifact_id)
+        add("DatasetVersion", execution.dataset_version_id, "USED_INPUT", "Execution", execution.execution_id)
+        analysis_view_id = (execution.analysis_spec_json or {}).get("analysis_view_id")
+        if isinstance(analysis_view_id, str) and analysis_view_id:
+            add("AnalysisView", analysis_view_id, "USED_INPUT", "Execution", execution.execution_id)
+        if execution.input_result_id:
+            add("Result", execution.input_result_id, "USED_INPUT", "Execution", execution.execution_id)
+        if execution.base_execution_id:
+            relation = "REVISED_FROM" if execution.revision_kind == "REVISED" else "DERIVED_FROM"
+            add("Execution", execution.base_execution_id, relation, "Execution", execution.execution_id, evidence={"revision_kind": execution.revision_kind})
+        return edges
+
+    @staticmethod
+    def _deduplicated_lineage(edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        merged: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
+        for edge in edges:
+            key = (
+                edge["source_type"], edge["source_id"], edge["relation_type"],
+                edge["target_type"], edge["target_id"],
+            )
+            merged.setdefault(key, edge)
+        return list(merged.values())
 
     @staticmethod
     def _validate_result(result_type: str, status: str) -> None:
