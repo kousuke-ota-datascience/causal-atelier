@@ -310,16 +310,20 @@ git status --short; \
 
 ```text
 Executed at:
-<RECORD_HERE>
+2026-08-09T02:16:11+00:00
 
 Branch:
-<RECORD_HERE>
+refactor/ariadne_mvp_e4
 
 Original repository HEAD:
-<RECORD_HERE>
+578662992c86792d71062dea1b974f7e64614f7c
 
 Original git status:
-<RECORD_HERE>
+ D deploy/.nfs000000000076202f00000088
+?? docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/30_test_report/G02/E4-G02_01_retry_005_preflight_tcp_and_protocol.md
+?? docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/30_test_report/G02/E4-G02_01_retry_999b_gate_decision.md
+?? docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/40_operator_prompts/G02_Supplemental/03_external_postgresql_verification_execution.md
+
 
 -----
 
@@ -532,8 +536,8 @@ DATABASE=ariadne_g02_test
 Evidence: 
 ```
 bigbrother@mandam:/tmp/causal-atelier-g02-ext-verify-20260809021919$ env | grep '^ARIADNE_PRODUCT_.*DATABASE_URL='
-ARIADNE_PRODUCT_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@172.17.0.1:55432/ariadne_g02_test
-ARIADNE_PRODUCT_TEST_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@172.17.0.1:55432/ariadne_g02_test
+ARIADNE_PRODUCT_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@172.17.0.1:55432/[MASKED_PASSWORD]
+ARIADNE_PRODUCT_TEST_DATABASE_URL=postgresql+psycopg://ariadne:ariadne@172.17.0.1:55432/[MASKED_PASSWORD]
 bigbrother@mandam:/tmp/causal-atelier-g02-ext-verify-20260809021919$ uv run python - <<'PY' \
   2>&1 | tee "$EVIDENCE_DIR/02_database_environment.log"
 import os
@@ -1243,96 +1247,67 @@ bigbrother@mandam:/tmp/causal-atelier-g02-ext-verify-20260809021919$ {
 
 # 28. Human Execution Record
 
-以下をHuman Operatorが埋める。
+本verificationの詳細な実行結果、stdout/stderr、exit code、implementation commit、migration state、pytest結果は、Step H01〜H18および対応するraw evidence filesに記録済みである。
 
-## Execution metadata
+本Sectionでは同一情報を再転記せず、evidence locationとHuman Operator責務境界のみを記録する。
+
+## Execution Evidence Index
+
+* Original repository pre-flight: Step H01
+* Evidence directory: Step H02
+* Implementation commit fixation: Step H03
+* Detached verification worktree: Step H04
+* PostgreSQL environment: Step H05
+* SQLAlchemy/PostgreSQL preflight: Step H06
+* Product migration head: Step H07
+* Pre-migration current state: Step H08
+* Product migration upgrade: Step H09
+* Post-migration current state: Step H10
+* Product migration revision table: Step H11
+* Real PostgreSQL contract suite: Step H12
+* Concurrent claim verification: Step H13
+* G02 targeted contract suite: Step H14
+* AC-002 targeted evidence: Step H15
+* AC-005 targeted evidence: Step H16
+* Verification worktree integrity: Step H17
+* Raw evidence inventory: Step H18
+
+Raw evidence directory:
 
 ```text
-Executed by:
-<RECORD_HERE>
-
-Started at:
-<RECORD_HERE>
-
-Finished at:
-<RECORD_HERE>
-
-Implementation commit:
-166e90cd1c2d0e523fb863795a88343403d8cc44
-
-Verification worktree:
-<RECORD_HERE>
+03_external_postgresql_verification_execution_evidence/
 ```
 
-## PostgreSQL
+## Human Operator Boundary
 
 ```text
-Container:
-ariadne-g02-postgres
+Gate decision performed by Human Operator:
+NO
 
-Endpoint:
-172.17.0.1:55432
+Acceptance Criteria interpreted by Human Operator:
+NO
 
-Database:
-ariadne_g02_test
+Production source modified during verification:
+NO
 
-SQLAlchemy preflight exit:
-<RECORD_HERE>
-```
+Automated test source modified during verification:
+NO
 
-## Migration
+Product migration source modified during verification:
+NO
 
-```text
-alembic heads exit:
-<RECORD_HERE>
-
-upgrade head exit:
-<RECORD_HERE>
-
-current after upgrade exit:
-<RECORD_HERE>
-
-Observed Product migration revision:
-<RECORD_HERE>
-```
-
-## Tests
-
-```text
-PostgreSQL contract suite exit:
-<RECORD_HERE>
-
-Atomic claim test exit:
-<RECORD_HERE>
-
-G02 targeted contract exit:
-<RECORD_HERE>
-
-AC-002 targeted node exit:
-<RECORD_HERE>
-
-AC-005 lease node exit:
-<RECORD_HERE>
-```
-
-## Repository integrity
-
-```text
-Implementation worktree HEAD unchanged:
-<YES / NO>
+Implementation worktree remained at fixed implementation commit:
+YES
 
 Implementation worktree clean after verification:
-<YES / NO>
+YES
 
-Production source modified:
-<YES / NO>
-
-Automated tests modified:
-<YES / NO>
-
-Migration modified:
-<YES / NO>
+Raw evidence prepared for independent Test Agent audit:
+YES
 ```
+
+Acceptance CriteriaおよびE4-G02 Gate Decisionの最終判定はTest Agentへ委ねる。
+
 
 ---
 
