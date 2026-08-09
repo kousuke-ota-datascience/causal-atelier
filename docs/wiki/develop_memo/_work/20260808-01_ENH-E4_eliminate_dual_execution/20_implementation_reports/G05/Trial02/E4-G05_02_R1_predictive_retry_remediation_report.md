@@ -11,7 +11,7 @@
 - Migration head: 20260809_product_0010
 - Started at: 2026-08-09 UTC
 - Finished at: 2026-08-09 UTC
-- Report commit: PENDING
+- Report commit: 6269b8031f2cfa8d661cc432e5aea61709e7e4fe
 
 ## 1. Trial 01 Failure Input
 Test Agent item 005 reported that retry target was not returned by canonical `claim_next` in an isolated run.
