@@ -358,10 +358,13 @@ async def test_annotation_target_matrix_history_and_export_manifest_contracts(
         "DatasetVersion", resources["dataset_id"], "USED_INPUT",
         "Execution", resources["execution_id"],
     ) in lineage_refs
-    assert (
-        "AnalysisSpecification", resources["specification_id"], "USED_INPUT",
-        "Execution", resources["execution_id"],
-    ) in lineage_refs
+    assert all(item["source_class"] in {"TYPED_STRUCTURAL", "GENERIC_ONLY"} for item in manifest["lineage_references"])
+    assert not any(
+        item["source_type"] == "AnalysisSpecification"
+        and item["relation_type"] == "USED_INPUT"
+        and item["target_type"] == "Execution"
+        for item in manifest["lineage_references"]
+    )
 
     detail = (await client.get(
         f"/api/v1/projects/{project_id}/results/{result_id}"
