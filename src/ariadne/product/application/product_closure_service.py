@@ -313,6 +313,8 @@ class ProductClosureService:
             for row in specs:
                 node("AnalysisSpecification", row.analysis_specification_id, f"{row.analysis_family} {row.specification_key} v{row.version_number}", status=row.status)
 
+            # TD-006 archive: retained historical rows are read-only inputs to
+            # this derived projection, never Product lifecycle authority.
             family_execs = list(session.scalars(select(FamilyExecutionOrm).where(FamilyExecutionOrm.project_id == project_id)))
             for row in family_execs:
                 node("Execution", row.execution_id, f"{row.analysis_family} Execution", family=row.analysis_family, status=row.status)
@@ -335,8 +337,9 @@ class ProductClosureService:
                         evidence={"revision_kind": row.revision_kind},
                     )
                 else:
-                    # Compatibility for canonical rows created before the
-                    # dedicated revision columns were populated.
+                    # TD-006 archive: compatibility read projection for
+                    # canonical rows created before dedicated revision columns.
+                    # It derives lineage only and must not write structural state.
                     revision = row.analysis_spec_json.get("revision_context") or {}
                     base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
                     if isinstance(base_id, str) and base_id:
@@ -666,6 +669,8 @@ class ProductClosureService:
     @staticmethod
     def _all_results(session: Any, project_id: str) -> list[dict[str, Any]]:
         values: list[dict[str, Any]] = []
+        # TD-006 archive: Family rows are historical read-only compatibility
+        # inputs. Canonical Result/Artifact rows own all current writes.
         family_rows = list(session.scalars(select(FamilyResultOrm).where(FamilyResultOrm.project_id == project_id)))
         for row in family_rows:
             execution = session.get(FamilyExecutionOrm, row.execution_id)

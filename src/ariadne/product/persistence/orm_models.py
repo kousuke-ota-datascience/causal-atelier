@@ -524,6 +524,13 @@ class ExecutionPlanOrm(ProductBase):
 
 
 class FamilyExecutionOrm(ProductBase):
+    """Archived historical execution read model; never Product lifecycle authority.
+
+    Rows remain readable so Product closure and compatibility views can expose
+    pre-canonical records.  New Product lifecycle writes are owned exclusively
+    by :class:`ExecutionOrm` and its canonical repositories.
+    """
+
     __tablename__ = "product_family_execution"
 
     execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -569,6 +576,8 @@ class FamilyExecutionOrm(ProductBase):
 
 
 class FamilyStageExecutionOrm(ProductBase):
+    """Archived historical stage read model; retained only with Family rows."""
+
     __tablename__ = "product_family_stage_execution"
 
     stage_execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -591,6 +600,8 @@ class FamilyStageExecutionOrm(ProductBase):
 
 
 class FamilyResultOrm(ProductBase):
+    """Archived historical result read model; not canonical Result ownership."""
+
     __tablename__ = "product_family_result"
 
     result_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -613,6 +624,8 @@ class FamilyResultOrm(ProductBase):
 
 
 class FamilyArtifactOrm(ProductBase):
+    """Archived historical artifact read model; not canonical Artifact ownership."""
+
     __tablename__ = "product_family_artifact"
 
     artifact_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
