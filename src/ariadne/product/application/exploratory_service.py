@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tempfile
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -39,12 +40,14 @@ from ariadne.product.persistence.orm_models import (
     ArtifactOrm,
     DatasetVersionOrm,
     ExecutionPlanOrm,
+    ExecutionOrm,
     FamilyArtifactOrm,
     FamilyExecutionOrm,
     FamilyResultOrm,
     FamilyStageExecutionOrm,
     LineageEdgeOrm,
     ProjectOrm,
+    ResultOrm,
 )
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.workflow.executor import GenericExecutor
@@ -54,6 +57,25 @@ EXPLORATORY_SCHEMA_VERSION = "exploratory-analysis-spec/1"
 _WORKSPACE_SCHEMAS = SchemaRegistry()
 _WORKSPACE_SCHEMAS.register(VIEW_SCHEMA_VERSION, validate_analysis_view_payload)
 _WORKSPACE_SCHEMAS.register(EXPLORATORY_SCHEMA_VERSION, validate_exploratory_spec)
+
+
+@dataclass(frozen=True)
+class ExploratoryResultProjection:
+    """Family-facing read model backed by a canonical Product Result."""
+
+    result_id: str
+    project_id: str
+    execution_id: str
+    stage_execution_id: str
+    analysis_family: str
+    result_type: str
+    schema_version: str
+    analytical_status: str
+    summary_json: dict[str, Any]
+    payload_json: dict[str, Any]
+    diagnostics_json: dict[str, Any]
+    warning_json: list[Any]
+    created_at: datetime | None
 
 
 class ExploratoryWorkspaceService:
@@ -474,14 +496,40 @@ class ExploratoryWorkspaceService:
                 FamilyExecutionOrm.analysis_family == "EXPLORATORY",
             ).order_by(FamilyExecutionOrm.requested_at.desc())))
 
-    def list_results(self, project_id: str) -> list[FamilyResultOrm]:
+    def list_results(self, project_id: str) -> list[FamilyResultOrm | ExploratoryResultProjection]:
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                rows = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                    .order_by(ResultOrm.created_at.desc(), ResultOrm.result_id)
+                ).all()
+            return [self._canonical_result_projection(result, execution) for result, execution in rows]
         with self._session_factory() as session:
             return list(session.scalars(select(FamilyResultOrm).where(
                 FamilyResultOrm.project_id == project_id,
                 FamilyResultOrm.analysis_family == "EXPLORATORY",
             ).order_by(FamilyResultOrm.created_at.desc())))
 
-    def get_result(self, project_id: str, result_id: str) -> FamilyResultOrm:
+    def get_result(self, project_id: str, result_id: str) -> FamilyResultOrm | ExploratoryResultProjection:
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                row = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ResultOrm.result_id == result_id,
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                ).one_or_none()
+            if row is None:
+                raise EntityNotFound("Result", result_id)
+            return self._canonical_result_projection(*row)
         with self._session_factory() as session:
             row = session.get(FamilyResultOrm, result_id)
             if row is None or row.project_id != project_id: raise EntityNotFound("Result", result_id)
@@ -492,6 +540,37 @@ class ExploratoryWorkspaceService:
     ) -> dict[str, Any]:
         if target_family not in {"CAUSAL", "PREDICTIVE"}:
             raise InvalidSchema("target_family must be CAUSAL or PREDICTIVE")
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                row = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ResultOrm.result_id == result_id,
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                ).one_or_none()
+                if row is None:
+                    raise EntityNotFound("Result", result_id)
+                _, execution = row
+                draft_id = str(uuid.uuid4())
+                relation = {
+                    "relation_type": "MOTIVATED",
+                    "source_result_id": result_id,
+                    "analysis_mode": "EXPLORATORY",
+                    "warning": "This draft was motivated by exploratory analysis on the same data.",
+                }
+                self._add_lineage(session, project_id, "Result", result_id, "MOTIVATED",
+                                  "AnalysisSpecificationDraft", draft_id, relation)
+                session.commit()
+                return {
+                    "analysis_specification_draft_id": draft_id,
+                    "analysis_family": target_family,
+                    "dataset_version_id": execution.dataset_version_id,
+                    "analysis_view_id": (execution.analysis_spec_json or {}).get("analysis_view_id"),
+                    "source_relation": relation,
+                }
         with self._session_factory() as session:
             result = session.get(FamilyResultOrm, result_id)
             if result is None or result.project_id != project_id: raise EntityNotFound("Result", result_id)
@@ -513,6 +592,34 @@ class ExploratoryWorkspaceService:
                 "analysis_view_id": execution.analysis_view_id,
                 "source_relation": relation,
             }
+
+    @staticmethod
+    def _canonical_result_projection(
+        result: ResultOrm, execution: ExecutionOrm,
+    ) -> ExploratoryResultProjection:
+        payload = result.payload_json or {}
+        schema_version = payload.get("schema_version")
+        if not isinstance(schema_version, str) or not schema_version:
+            raise InvalidSchema(
+                "Canonical Exploratory Result is missing its preserved schema_version"
+            )
+        if result.stage_execution_id is None:
+            raise InvalidSchema("Canonical Exploratory Result must retain StageExecution ownership")
+        return ExploratoryResultProjection(
+            result_id=result.result_id,
+            project_id=execution.project_id,
+            execution_id=result.execution_id,
+            stage_execution_id=result.stage_execution_id,
+            analysis_family=execution.analysis_family,
+            result_type=result.result_type,
+            schema_version=schema_version,
+            analytical_status=result.scientific_status,
+            summary_json=result.summary_json or {},
+            payload_json=payload,
+            diagnostics_json=result.diagnostics_json or {},
+            warning_json=result.warning_json or [],
+            created_at=result.created_at,
+        )
 
     def _analysis_frame(
         self, project_id: str, dataset_version_id: str, analysis_view_id: str | None

@@ -9,6 +9,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, ConfigDict, Field
 
 from ariadne.interfaces.web_api.dependencies import ExploratoryWorkspaceServiceDep
+from ariadne.product.application.exploratory_service import ExploratoryResultProjection
 from ariadne.product.domain.execution import Execution
 from ariadne.product.persistence.orm_models import AnalysisViewOrm, FamilyExecutionOrm, FamilyResultOrm
 
@@ -154,7 +155,7 @@ def _execution(row: FamilyExecutionOrm | Execution) -> FamilyExecutionResponse:
     )
 
 
-def _result(row: FamilyResultOrm) -> FamilyResultResponse:
+def _result(row: FamilyResultOrm | ExploratoryResultProjection) -> FamilyResultResponse:
     return FamilyResultResponse(
         result_id=row.result_id, project_id=row.project_id, execution_id=row.execution_id,
         stage_execution_id=row.stage_execution_id, analysis_family=row.analysis_family,
