@@ -308,18 +308,6 @@ class ExploratoryWorkspaceService:
                     code_version="exploratory-runners/1",
                     runtime_version_json={"family_snapshot": snapshot},
             )
-            self._add_lineage(
-                session, project_id, "DatasetVersion", dataset_version_id,
-                "USED_INPUT", "Execution", canonical.execution_id,
-                {"snapshot_hash": canonical.snapshot_hash},
-            )
-            if view:
-                self._add_lineage(
-                    session, project_id, "AnalysisView", view.analysis_view_id,
-                    "USED_INPUT", "Execution", canonical.execution_id,
-                    {"content_hash": view.content_hash},
-                )
-            session.commit()
             return canonical
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()), project_id=project_id,

@@ -332,17 +332,10 @@ class PredictiveWorkflowService:
             family_snapshot = snapshot
             for source_type, source_id, evidence in (
                 ("ResearchContextVersion", family_snapshot["research_context"]["id"], {"hash": family_snapshot["research_context"]["hash"]}),
-                ("DatasetVersion", specification.dataset_version_id, {"hash": family_snapshot["dataset_version"]["hash"]}),
                 ("AnalysisSpecification", specification.analysis_specification_id, {"hash": family_snapshot["analysis_specification"]["hash"]}),
                 ("ExecutionPlan", plan.execution_plan_id, {"hash": family_snapshot["execution_plan"]["hash"]}),
             ):
                 self._lineage(session, project_id, source_type, source_id, "USED_INPUT", "Execution", canonical.execution_id, evidence)
-            if family_snapshot["analysis_view"]["id"]:
-                self._lineage(
-                    session, project_id, "AnalysisView", family_snapshot["analysis_view"]["id"],
-                    "USED_INPUT", "Execution", canonical.execution_id,
-                    {"hash": family_snapshot["analysis_view"]["hash"]},
-                )
             session.commit()
         return self._canonical_execution_response(canonical, snapshot=snapshot)
 
