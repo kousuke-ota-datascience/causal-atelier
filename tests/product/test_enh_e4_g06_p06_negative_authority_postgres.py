@@ -72,7 +72,9 @@ def test_p06_retry_revision_and_persisted_authority_invariant(postgres_engine, t
     with Session(bind=postgres_engine) as session:
         retried = session.get(ExecutionOrm, ids["retry"])
         assert retried is not None and retried.execution_id == ids["retry"] and retried.retry_count == 1 and retried.status == "QUEUED"
-        assert session.scalar(select(func.count()).select_from(ExecutionOrm)) == 4
+        assert session.scalar(select(func.count()).select_from(ExecutionOrm).where(
+            ExecutionOrm.project_id == ids["project"],
+        )) == 4
         rows = list(session.scalars(select(LineageEdgeOrm).where(LineageEdgeOrm.project_id == ids["project"])))
     assert rows
     classifications = [classify_lineage_authority(row.source_type, row.relation_type, row.target_type) for row in rows]
