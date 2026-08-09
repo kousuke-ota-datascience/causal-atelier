@@ -13,7 +13,7 @@
 - R2 checkpoint commit: 1dd20d2a6b2d7e85c3116e7b019024883e7d9786
 - R2 checkpoint type: empty evidence/remediation boundary commit
 - Report commit: 9e7b88dfd6422021fcad5e63b8520316137235a4
-- R2 report correction commit: PENDING
+- R2 report correction commit: 59568db0f9254eef2a6a244fb7060a822bef7610
 - Migration head: 20260809_product_0010
 - Started at: 2026-08-09 UTC
 - Finished at: 2026-08-09 UTC
