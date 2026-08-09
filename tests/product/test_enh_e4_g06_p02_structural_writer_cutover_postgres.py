@@ -136,14 +136,10 @@ def test_p02_canonical_exploratory_and_predictive_submit_do_not_write_typed_edge
         assert row.analysis_spec_json["analysis_specification_id"] == specification["analysis_specification_id"]
         assert row.analysis_spec_json["execution_plan_id"] == plan["execution_plan_id"]
         assert _typed_edges(session, row.execution_id) == []
-        unclassified = list(session.scalars(select(LineageEdgeOrm).where(
+        generic_edges = list(session.scalars(select(LineageEdgeOrm).where(
             LineageEdgeOrm.target_type == "Execution", LineageEdgeOrm.target_id == row.execution_id,
         )))
-        assert {(edge.source_type, edge.relation_type) for edge in unclassified} == {
-            ("ResearchContextVersion", "USED_INPUT"),
-            ("AnalysisSpecification", "USED_INPUT"),
-            ("ExecutionPlan", "USED_INPUT"),
-        }
+        assert generic_edges == []
 
     with pytest.raises(LegacyProductAuthorityDisabled):
         predictive.claim_next("token", worker_id="g06-p02")

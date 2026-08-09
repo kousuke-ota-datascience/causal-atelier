@@ -31,6 +31,7 @@ from ariadne.product.domain.errors import (
     ProjectArchived,
     ResourceImmutable,
 )
+from ariadne.product.domain.lineage import assert_generic_lineage_allowed
 from ariadne.product.domain.schemas import SchemaRegistry, canonical_hash
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
 from ariadne.product.application.execution_service import ExecutionService
@@ -196,11 +197,6 @@ class ExploratoryWorkspaceService:
             row.content_hash = canonical_hash(row.spec_json)
             row.manifest_json = compiled.manifest
             row.fixed_at = _now()
-            self._add_lineage(
-                session, project_id, "DatasetVersion", dataset.dataset_version_id,
-                "USED_INPUT", "AnalysisView", row.analysis_view_id,
-                {"view_spec_hash": row.content_hash, "materialized_hash": compiled.materialized_hash},
-            )
             session.commit(); session.refresh(row)
             return row
 
@@ -711,6 +707,7 @@ class ExploratoryWorkspaceService:
         session: Any, project_id: str, source_type: str, source_id: str,
         relation_type: str, target_type: str, target_id: str, evidence: dict[str, Any],
     ) -> None:
+        assert_generic_lineage_allowed(source_type, relation_type, target_type)
         session.add(LineageEdgeOrm(
             lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
             source_type=source_type, source_id=source_id, relation_type=relation_type,

@@ -328,15 +328,6 @@ class PredictiveWorkflowService:
             base_execution_id=base_execution_id,
             change_reason=change_reason,
         )
-        with self._session_factory() as session:
-            family_snapshot = snapshot
-            for source_type, source_id, evidence in (
-                ("ResearchContextVersion", family_snapshot["research_context"]["id"], {"hash": family_snapshot["research_context"]["hash"]}),
-                ("AnalysisSpecification", specification.analysis_specification_id, {"hash": family_snapshot["analysis_specification"]["hash"]}),
-                ("ExecutionPlan", plan.execution_plan_id, {"hash": family_snapshot["execution_plan"]["hash"]}),
-            ):
-                self._lineage(session, project_id, source_type, source_id, "USED_INPUT", "Execution", canonical.execution_id, evidence)
-            session.commit()
         return self._canonical_execution_response(canonical, snapshot=snapshot)
 
     @staticmethod

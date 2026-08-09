@@ -496,6 +496,7 @@ class ProductClosureService:
             session.add(row)
             session.flush()
             if decision in {"SELECTED", "REJECTED"}:
+                assert_generic_lineage_allowed(target_type, decision, "Annotation")
                 session.add(LineageEdgeOrm(
                     lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
                     source_type=target_type, source_id=target_id,
