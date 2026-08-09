@@ -10,7 +10,7 @@
 - Phase baseline checkpoint: `b8a3f5502f82fcca8cb9634bd8368e3ebc9f0344`
 - Phase starting commit: `5d0718ead97a55df81c4c6db1d2283a451c828f0`
 - Phase checkpoint implementation commit: `b77e3febd9c6c48b553bc59cd8e5be29f2aba998`
-- Report commit: UNKNOWN（本報告書を含む commit は自己参照となるため、commit 後の Git evidence で確定する）
+- Report commit: e6c410de6ec4d928c6c3ec8b9647d6ff39a92008
 - Migration head: `20260809_product_0010`
 - Started at: UNKNOWN
 - Finished at: `2026-08-09T07:49:54Z`
@@ -31,7 +31,7 @@ Exploratory の Product-facing Result read と downstream draft 作成を canoni
 ### Added
 
 - `tests/product/test_enh_e4_g05_phase_b_exploratory_postgres.py`
-- `docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/20_implementation_reports/G05/PhaseB/E4-G05_01_PhaseB_implementation_checkpoint_report.md`
+- `docs/wiki/develop_memo/_work/20260808-01_ENH-E4_eliminate_dual_execution/20_implementation_reports/G05/Trial01/E4-G05_01_PhaseB_implementation_checkpoint_report.md`
 
 ### Modified
 
