@@ -135,6 +135,18 @@ class ArtifactHashMismatch(InfrastructureError):
     pass
 
 
+class OutputOwnershipError(DomainError):
+    """Output metadata violates the canonical Result/Artifact ownership contract."""
+
+
+class OutputCompensationError(InfrastructureError):
+    """A failed output operation left physical locators for reconciliation."""
+
+    def __init__(self, message: str, reconciliation: list[dict[str, str]]) -> None:
+        super().__init__(message)
+        self.reconciliation = reconciliation
+
+
 class DatabaseUnavailable(InfrastructureError):
     pass
 

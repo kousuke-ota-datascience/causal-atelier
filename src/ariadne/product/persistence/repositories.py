@@ -14,6 +14,7 @@ from ariadne.product.domain.annotation import Annotation
 from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.dataset_version import DatasetVersion
 from ariadne.product.domain.enums import (
+    ArtifactScope,
     ArtifactType,
     AnalysisFamily,
     ExecutionOperation,
@@ -23,6 +24,7 @@ from ariadne.product.domain.enums import (
     GraphVersionStatus,
     ProjectStatus,
     ResultType,
+    ResultLevel,
     ScientificStatus,
     StageExecutionStatus,
 )
@@ -81,7 +83,9 @@ def _orm_to_artifact(orm: ArtifactOrm) -> Artifact:
         artifact_id=orm.artifact_id,
         project_id=orm.project_id,
         execution_id=orm.execution_id,
+        stage_execution_id=orm.stage_execution_id,
         result_id=orm.result_id,
+        artifact_scope=ArtifactScope(orm.artifact_scope),
         artifact_type=ArtifactType(orm.artifact_type),
         object_key=orm.object_key,
         content_hash=orm.content_hash,
@@ -97,7 +101,9 @@ def _artifact_to_orm(a: Artifact) -> ArtifactOrm:
     orm.artifact_id = a.artifact_id
     orm.project_id = a.project_id
     orm.execution_id = a.execution_id
+    orm.stage_execution_id = a.stage_execution_id
     orm.result_id = a.result_id
+    orm.artifact_scope = a.artifact_scope.value
     orm.artifact_type = a.artifact_type.value
     orm.object_key = a.object_key
     orm.content_hash = a.content_hash
@@ -221,6 +227,8 @@ def _orm_to_result(orm: ResultOrm) -> Result:
     return Result(
         result_id=orm.result_id,
         execution_id=orm.execution_id,
+        result_level=ResultLevel(orm.result_level),
+        stage_execution_id=orm.stage_execution_id,
         result_type=ResultType(orm.result_type),
         scientific_status=ScientificStatus(orm.scientific_status),
         summary_json=orm.summary_json or {},
@@ -235,6 +243,8 @@ def _result_to_orm(r: Result) -> ResultOrm:
     orm = ResultOrm()
     orm.result_id = r.result_id
     orm.execution_id = r.execution_id
+    orm.result_level = r.result_level.value
+    orm.stage_execution_id = r.stage_execution_id
     orm.result_type = r.result_type.value
     orm.scientific_status = r.scientific_status.value
     orm.summary_json = r.summary_json

@@ -72,7 +72,9 @@ class ArtifactOrm(ProductBase):
     artifact_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
     execution_id: Mapped[str | None] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), index=True)
+    stage_execution_id: Mapped[str | None] = mapped_column(String(36), index=True)
     result_id: Mapped[str | None] = mapped_column(ForeignKey("product_result.result_id", ondelete="RESTRICT"), index=True)
+    artifact_scope: Mapped[str] = mapped_column(String(30), nullable=False, default="SOURCE", server_default="SOURCE")
     artifact_type: Mapped[str] = mapped_column(String(40), nullable=False)
     object_key: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     content_hash: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -87,6 +89,13 @@ class ArtifactOrm(ProductBase):
             "artifact_type IN ('DATASET_FILE','GRAPH_JSON','GRAPH_IMAGE','EFFECT_TABLE','DIAGNOSTICS_TABLE','MANIFEST','CONFIG_SNAPSHOT','LOG','SCIENTIFIC_RESULT_JSON','SCIENTIFIC_REPORT')",
             name="ck_product_artifact_type",
         ),
+        CheckConstraint(
+            "(artifact_scope = 'SOURCE' AND execution_id IS NULL AND stage_execution_id IS NULL AND result_id IS NULL) OR "
+            "(artifact_scope = 'EXECUTION_OUTPUT' AND execution_id IS NOT NULL)",
+            name="ck_product_artifact_scope_ownership",
+        ),
+        CheckConstraint("artifact_scope IN ('SOURCE','EXECUTION_OUTPUT')", name="ck_product_artifact_scope"),
+        UniqueConstraint("artifact_id", "execution_id", name="uq_product_artifact_execution_identity"),
     )
 
 
@@ -207,6 +216,7 @@ class StageExecutionOrm(ProductBase):
 
     __table_args__ = (
         UniqueConstraint("execution_id", "stage_key", name="uq_product_stage_execution_key"),
+        UniqueConstraint("stage_execution_id", "execution_id", name="uq_product_stage_execution_identity"),
         CheckConstraint(
             "status IN ('PENDING','READY','RUNNING','SUCCEEDED','FAILED','SKIPPED_DUE_TO_PREREQUISITE','CANCELLED')",
             name="ck_product_stage_execution_status",
@@ -246,6 +256,8 @@ class ResultOrm(ProductBase):
 
     result_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     execution_id: Mapped[str] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    result_level: Mapped[str] = mapped_column(String(30), nullable=False, default="EXECUTION_RESULT", server_default="EXECUTION_RESULT")
+    stage_execution_id: Mapped[str | None] = mapped_column(String(36), index=True)
     result_type: Mapped[str] = mapped_column(String(40), nullable=False)
     scientific_status: Mapped[str] = mapped_column(String(40), nullable=False)
     summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
@@ -255,6 +267,13 @@ class ResultOrm(ProductBase):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     __table_args__ = (
+        CheckConstraint("result_level IN ('EXECUTION_RESULT','STAGE_RESULT')", name="ck_product_result_level"),
+        CheckConstraint(
+            "(result_level = 'EXECUTION_RESULT' AND stage_execution_id IS NULL) OR "
+            "(result_level = 'STAGE_RESULT' AND stage_execution_id IS NOT NULL)",
+            name="ck_product_result_level_stage",
+        ),
+        UniqueConstraint("result_id", "execution_id", name="uq_product_result_execution_identity"),
         CheckConstraint(
             "result_type IN ('DISCOVERY_GRAPH_RESULT','IDENTIFICATION_RESULT','DATA_ELIGIBILITY_RESULT','TREATMENT_EFFECT_RESULT','DIAGNOSTICS_RESULT','REFUTATION_RESULT','SENSITIVITY_RESULT')",
             name="ck_product_result_type",

@@ -36,6 +36,16 @@ class StageExecutionStatus(str, Enum):
     CANCELLED = "CANCELLED"
 
 
+class ResultLevel(str, Enum):
+    EXECUTION_RESULT = "EXECUTION_RESULT"
+    STAGE_RESULT = "STAGE_RESULT"
+
+
+class ArtifactScope(str, Enum):
+    SOURCE = "SOURCE"
+    EXECUTION_OUTPUT = "EXECUTION_OUTPUT"
+
+
 class RevisionKind(str, Enum):
     RERUN = "RERUN"
     REVISED = "REVISED"
