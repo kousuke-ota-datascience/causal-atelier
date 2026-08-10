@@ -1,45 +1,51 @@
 # ENH-E4 Current Architecture Control Sheet
 
-> **Purpose:** ENH-E4「二重アーキテクチャ解消」の現在地を、開発者・Coding Agent・Test Agentが短時間で把握するための control plane。
+> **Purpose:** ENH-E4「二重アーキテクチャ解消」の現在地を、開発者・Coding Agent・Test Agent が短時間で把握するための control plane。
 >
-> **This document is NOT a new source of truth.**  
-> 詳細なsemantic contractはArchitecture Decision Record / Gate-local 06・07 / passed Gate Decision / verified source codeを正本とする。  
-> 本書はそれらの **現在状態・authority・未完了領域・traceabilityへの索引** を圧縮したものである。
+> **This document is NOT a new source of truth.**
+> 詳細な semantic contract は Architecture Decision Record / Gate-local `06`・`07` / passed Gate Decision / verified source code を正本とする。
+> 本書はそれらの **現在状態・authority・未完了領域・traceability への索引** を圧縮したものである。
 
 ---
 
 ## 0. Control Metadata
 
-| Item | Current Value |
-|---|---|
-| Project | Ariadne / causal-atelier |
-| Enhancement | ENH-E4 eliminate dual execution |
-| Branch | `refactor/ariadne_mvp_e4` |
-| Control Sheet Snapshot | **after E4-G05 Trial 02 PASS / before G06** |
-| G05 tested implementation | `ad3e3e124ee47f9cbaa2470b25263b7289795262` |
-| G05 final Gate Decision | `30_test_report/G05/E4-G05_02_999_gate_decision.md` |
-| Product migration head | `20260809_product_0010` |
-| Current Gate | **G06 NEXT — Lineage authority consolidation** |
-| OPEN Transition Debt | `E4-TD-004` |
-| G05 Test Items | `001–010 PASS` |
-| G05 Acceptance Criteria | `AC-001..005 SATISFIED` |
-| G05 Blocking Findings | `NONE` |
+| Item                                    | Current Value                                               |
+| --------------------------------------- | ----------------------------------------------------------- |
+| Project                                 | Ariadne / causal-atelier                                    |
+| Enhancement                             | ENH-E4 eliminate dual execution                             |
+| Branch                                  | `refactor/ariadne_mvp_e4`                                   |
+| Control Sheet Snapshot                  | **after E4-G07 Trial01 PASS / before G08**                  |
+| G06 fixed implementation/test candidate | `9816ed87daec1efcb1c860f0c9c0ebe72fb9bc92`                  |
+| G06 tested repository state             | `8a4c0042cd766fa182fdc8c5edc346a8e22c807b`                  |
+| G07 fixed implementation/test candidate | `8e4d7cd6119bc995fca7ea44183bfc7d13ed3445`                  |
+| G07 Independent Test execution HEAD     | `0923461bbc724bbfbc6410b7b18793ff4cf2f491`                  |
+| G07 Independent Test Contract           | `b3d03b270f3c64bf380a37a1934d871ba7406696`                  |
+| G07 Independent Test report commit      | `5edf48a2a2fb38aa8bb3bdfb76373e223b1bf7be`                  |
+| Product migration head                  | `20260809_product_0010`                                     |
+| Current Gate                            | **G08 NEXT — Final clean bootstrap and architecture audit** |
+| OPEN Transition Debt                    | `E4-TD-006`                                                 |
+| G07 Test Items                          | `001–007 PASS`                                              |
+| G07 Acceptance Criteria                 | `AC-001..005 PASS`                                          |
+| G07 Blocking Findings                   | `NONE`                                                      |
 
 ### Snapshot Evidence
 
 ```text
-30_test_report/G05/
-E4-G05_02_999_gate_decision.md
+30_test_report/G07/Trial01/
+E4-G07_01_999_gate_decision.md
 
-20_implementation_reports/G05/Trial02/
-E4-G05_02_implementation_completion_report.md
+20_implementation_reports/G07/Trial01/
+E4-G07_01_implementation_completion_report.md
 
-20_implementation_reports/G05/Trial02/
-E4-G05_02_R1_predictive_retry_remediation_report.md
-E4-G05_02_R2_combined_regression_remediation_report.md
+30_test_report/G07/Trial01/
+E4-G07_01_007_architecture_exit_audit.md
 
-30_test_report/G04/
-E4-G04_02_999_gate_decision.md
+30_test_report/G06/Trial01/
+E4-G06_01_999_gate_decision.md
+
+20_implementation_reports/G06/Trial01/
+E4-G06_01_implementation_completion_report.md
 
 40_operator_prompts/architecture_review/
 06_target_architecture_decision_record_result.md
@@ -52,13 +58,16 @@ E4-G04_02_999_gate_decision.md
 
 ## 1.1 Status Vocabulary
 
-| Status | Meaning |
-|---|---|
-| **ESTABLISHED** | Production contract is implemented and independently Gate-tested. |
-| **ESTABLISHED / TRANSITION OPEN** | Canonical contract is proven, but old authority remains temporarily under registered Transition Debt. |
-| **TARGET FIXED** | Target semantic contract is decided/frozen, but runtime convergence is not yet Gate-proven. |
-| **PENDING** | Future Gate work; do not treat as current runtime architecture. |
-| **RETIRE PENDING** | Non-canonical/legacy boundary is identified, but final retirement verification has not occurred. |
+| Status                            | Meaning                                                                                              |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **ESTABLISHED**                   | production contract が実装され、Independent Test により Gate-level で検証済み。                                     |
+| **ESTABLISHED / TRANSITION OPEN** | canonical contract は検証済みだが、registered Transition Debt として bounded transition が残る。                    |
+| **TARGET FIXED**                  | target semantic contract は確定しているが、runtime/final convergence はまだ Gate-proven ではない。                    |
+| **PENDING**                       | future Gate work。current verified architecture として扱わない。                                              |
+| **RETIRED_UNREACHABLE**           | physical source/history は存在し得るが、canonical Product runtime/deployment/bootstrap から authority として到達不能。 |
+| **HISTORY_ONLY**                  | historical surface として保持。active Product authority ではない。                                              |
+| **RETAIN_SHARED_CAPABILITY**      | shared/scientific capability として意図的に保持。retired orchestration authority とは別物。                         |
+| **LOW_LEVEL_UTILITY**             | canonical Product lifecycle の外側にある standalone non-persistent utility。                                |
 
 ## 1.2 Precedence
 
@@ -71,7 +80,8 @@ E4-G04_02_999_gate_decision.md
 4. This Control Sheet
 ```
 
-本書が上位正本と矛盾した場合、**本書を修正する**。上位正本を本書に合わせて変更しない。
+本書が上位 source of truth と矛盾した場合、**本書を修正する**。
+上位 source of truth を本書に合わせて変更しない。
 
 ---
 
@@ -108,7 +118,8 @@ Product API / auditable promoted CLI
             └─ closure/export = read projection only
 
 Legacy API / CLI / worker / persistence
-    = non-canonical retirement/archive boundary
+    = retired / unreachable from canonical Product runtime
+    = historical or compatibility role only where explicitly classified
 
 Shared scientific implementation
     = retained independently
@@ -145,29 +156,46 @@ new Product write authority                                    NONE
 Canonical failure -> old Product authority fallback            NONE
 GenericExecutor Product lifecycle/output authority             NONE
 
-Final lineage authority consolidation                          NOT YET ESTABLISHED
-Legacy source/runtime retirement                               NOT YET FINALIZED
-Final Product-only clean bootstrap audit                       NOT YET FINALIZED
+Typed structural lineage authority                             ESTABLISHED
+Generic-only persisted semantic lineage authority              ESTABLISHED
+Structural relation generic duplicate authority                NONE
+Closure/export lineage authority                               NONE
+
+Canonical Product runtime -> retired legacy dependency         NONE
+Repository-managed deployment -> retired legacy invocation     NONE
+Canonical Product bootstrap -> root legacy migration           NONE
+
+Shared scientific capability                                   ESTABLISHED / RETAINED
+Standalone scientific CLI                                      ESTABLISHED / LOW_LEVEL_UTILITY
+
+Final TD-006 compatibility/read transition resolution          NOT YET FINALIZED
+Final clean bootstrap + application startup audit              NOT YET FINALIZED
+Final integrated architecture audit                            NOT YET FINALIZED
 ```
 
-G05 established the **sole new Product authority** for Execution / StageExecution / Result / Artifact.
-Legacy source and bounded compatibility/read surfaces may still exist, but they are not permitted to become a new Product write authority.
+G05 により、Execution / StageExecution / Result / Artifact に対する **sole new Product authority** が確立された。
+
+G06 により、structural lineage に対する **single authority model** が確立され、generic representation との dual authority は解消された。
+
+G07 により、legacy runtime / deployment / Product bootstrap boundary が確立され、shared scientific capability と standalone scientific CLI の役割が明確化された。
+
+Physical legacy source、historical migrations、compatibility/read surfaces が存在すること自体は active Product authority を意味しない。
 
 ---
 
 # 3. Gate Progress
 
-| Gate | Name | Status | Architecture Established / Purpose |
-|---|---|---|---|
-| G01 | Canonical contract/schema foundation | **PASS** | Target domain/schema contracts, relation authority allowlist, traceability foundation |
-| G02 | Canonical Execution aggregate and claim | **PASS** | Canonical Execution identity, family discriminator, lifecycle, claim/lease, retry/rerun/revise/cancel |
-| Preflight | Test PostgreSQL infrastructure | **PASS** | Repository-managed isolated real PostgreSQL verification path |
-| G03 | Persistent StageExecution and runner boundary | **PASS** | Persistent stage model for all families; queryable attempt/bindings; GenericExecutor authority removed |
-| G04 | Result/Artifact ownership boundary | **PASS** | Explicit Result levels; typed Result/Artifact ownership; physical-store separation; compensation/reconciliation; typed reuse |
-| G05 | Product Execution Convergence | **PASS** | Causal/Exploratory/Predictive Product submissions, claim, stage, Result and Artifact converge on the sole canonical Product authority |
-| **G06** | **Lineage authority consolidation** | **NEXT** | Eliminate duplicate lineage authority; typed structural authority + generic-only persisted authority; closure/export projection only |
-| G07 | Legacy, CLI, migration boundary | PENDING | legacy retirement boundary, shared science preservation, Product-only bootstrap/CLI boundary |
-| G08 | Final clean bootstrap and architecture audit | PENDING | final convergence; all invariants/requirements/constraints; OPEN TD = 0 |
+| Gate      | Name                                             | Status   | Architecture Established / Purpose                                                                                               |
+| --------- | ------------------------------------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| G01       | Canonical contract/schema foundation             | **PASS** | target domain/schema contracts, relation authority allowlist, traceability foundation                                            |
+| G02       | Canonical Execution aggregate and claim          | **PASS** | canonical Execution identity, family discriminator, lifecycle, claim/lease, retry/rerun/revise/cancel                            |
+| Preflight | Test PostgreSQL infrastructure                   | **PASS** | repository-managed isolated real PostgreSQL verification path                                                                    |
+| G03       | Persistent StageExecution and runner boundary    | **PASS** | persistent stage model for all families; queryable attempt/bindings; GenericExecutor authority removed                           |
+| G04       | Result/Artifact ownership boundary               | **PASS** | explicit Result levels; typed Result/Artifact ownership; physical-store separation; compensation/reconciliation; typed reuse     |
+| G05       | Product Execution Convergence                    | **PASS** | Causal/Exploratory/Predictive Product submission, claim, stage, Result and Artifact converge on sole canonical Product authority |
+| G06       | Lineage authority consolidation                  | **PASS** | typed structural authority + generic-only persisted authority; structural dual authority removed; closure/export projection only |
+| G07       | Legacy, CLI, migration boundary                  | **PASS** | retired legacy runtime/deployment boundary; shared science preservation; Product-only bootstrap; standalone CLI boundary         |
+| **G08**   | **Final clean bootstrap and architecture audit** | **NEXT** | final clean bootstrap/startup; three-family Golden Path; mutation/lineage; final authority audit; OPEN TD = 0                    |
 
 ### Gate Sequencing Rule
 
@@ -175,32 +203,39 @@ Legacy source and bounded compatibility/read surfaces may still exist, but they 
 G01 → G02 → G03 → G04 → G05 → G06 → G07 → G08
 ```
 
-G05 has completed the only Product Execution Convergence cutover.
-G06 must not reopen Execution / StageExecution / Result / Artifact authority; it may only consolidate lineage authority while preserving the passed G02–G05 contracts.
+G05 completed Product Execution Convergence.
+
+G06 completed lineage authority consolidation.
+
+G07 completed legacy/runtime/deployment/bootstrap/CLI boundary establishment.
+
+G08 は ENH-E4 の final Gate であり、passed G02–G07 contracts を再設計するのではなく、final integrated verification と TD-006 closure を行う。
 
 ---
 
 # 4. Current Authority Map
 
-| Domain | Current Canonical State | Transitional / Old Authority | Status | Exit / Next Gate |
-|---|---|---|---|---|
-| Product runtime | new Causal/Exploratory/Predictive Product analysis uses canonical Product Execution authority | legacy roots remain in source/compatibility boundary only | **ESTABLISHED / RETIRE PENDING** | G07 |
-| Execution identity | one canonical Product Execution aggregate | no old Causal/Family new Product write authority | **ESTABLISHED** | preserve |
-| Execution lifecycle | one common state/claim/lease/mutation contract | family-specific legacy mutation/claim authority disabled | **ESTABLISHED** | preserve |
-| StageExecution | persistent canonical child for CAUSAL/EXPLORATORY/PREDICTIVE | no old/ephemeral Product stage authority | **ESTABLISHED** | preserve |
-| GenericExecutor | plan/order/binding/runner outcome only | must not become lifecycle/output authority | **ESTABLISHED** | preserve through G08 |
-| Result | explicit `EXECUTION_RESULT` / `STAGE_RESULT`, typed canonical ownership | no Causal/Family new Product Result authority | **ESTABLISHED** | preserve |
-| Artifact metadata | canonical typed ownership; `artifact_id` is semantic identity | no Causal/Family new Product Artifact metadata authority | **ESTABLISHED** | preserve |
-| Physical Artifact storage | `ArtifactStorePort`; physical locator separate from Product identity | non-atomic DB/store writes handled by compensation/reconciliation | **ESTABLISHED** | preserve |
-| Typed downstream reuse | Result ID + typed role/context; Artifact ID for artifact reuse | no authoritative physical-key/untyped fallback on converged Product paths | **ESTABLISHED** | preserve |
-| Family read projection | family-specific URL/DTO/read surfaces may project canonical data | bounded read compatibility may remain | **ESTABLISHED / RETIRE PENDING** | G07 |
-| Lineage | target policy fixed: typed structural authority + generic-only persisted authority | structural relation may still be duplicated through generic lineage write paths | **ESTABLISHED / TRANSITION OPEN** | TD-004 → G06 |
-| Closure/export | must be read projection only, never lineage authority | hybrid readers/projections still require consolidation | **TARGET FIXED / PENDING** | G06 |
-| Legacy runtime | non-canonical; cannot receive new Product authority | source / compatibility boundary remains | **RETIRE PENDING** | G07 |
-| Shared science | retained independently of legacy orchestration | scientific implementation remains reusable | **TARGET FIXED** | verify G07/G08 |
-| Migration/bootstrap | Product migration head `0010`; canonical direction established | root legacy migrations remain historical | **TARGET FIXED** | final verification G07/G08 |
-| Low-level scientific CLI | outside persistent Product lifecycle | final retirement/classification audit remains | **ESTABLISHED / RETIRE PENDING** | G07 |
-| Auditable Product CLI | submits canonical Execution | compatibility/legacy CLI cleanup remains | **ESTABLISHED / RETIRE PENDING** | G07 |
+| Domain                             | Current Canonical State                                                                    | Transitional / Old Authority                             | Status                            | Exit / Next Gate                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------- | ------------------------------- |
+| Product runtime                    | Causal/Exploratory/Predictive Product analysis は canonical Product Execution authority を使用 | physical legacy source は存在し得るが runtime authority ではない    | **ESTABLISHED**                   | preserve / final G08 audit      |
+| Execution identity                 | one canonical Product Execution aggregate                                                  | old Causal/Family new Product write authority なし         | **ESTABLISHED**                   | preserve                        |
+| Execution lifecycle                | one common state/claim/lease/mutation contract                                             | family-specific legacy mutation/claim authority なし       | **ESTABLISHED**                   | preserve                        |
+| StageExecution                     | persistent canonical child for CAUSAL/EXPLORATORY/PREDICTIVE                               | old/ephemeral Product stage authority なし                 | **ESTABLISHED**                   | preserve                        |
+| GenericExecutor                    | plan/order/binding/runner outcome を担当                                                      | lifecycle/output authority なし                            | **ESTABLISHED**                   | preserve through G08            |
+| Result                             | explicit `EXECUTION_RESULT` / `STAGE_RESULT`; typed canonical ownership                    | Causal/Family new Product Result authority なし            | **ESTABLISHED**                   | preserve                        |
+| Artifact metadata                  | canonical typed ownership; `artifact_id` = semantic identity                               | Causal/Family new Product Artifact metadata authority なし | **ESTABLISHED**                   | preserve                        |
+| Physical Artifact storage          | `ArtifactStorePort`; physical locator と Product identity を分離                               | DB/store non-atomicity は compensation/reconciliation で処理 | **ESTABLISHED**                   | preserve                        |
+| Typed downstream reuse             | Result ID + typed role/context; Artifact ID                                                | authoritative physical-key/untyped fallback なし           | **ESTABLISHED**                   | preserve                        |
+| Family read projection             | family-specific URL/DTO/read surface は canonical data を projection 可                       | bounded compatibility/read projection が残る可能性あり           | **ESTABLISHED / TRANSITION OPEN** | TD-006 → G08                    |
+| Lineage                            | typed structural authority + approved generic-only persisted authority                     | structural generic duplicate authority なし                | **ESTABLISHED**                   | preserve                        |
+| Closure/export                     | derived read projection / traversal                                                        | independent lineage authority なし                         | **ESTABLISHED**                   | preserve                        |
+| Legacy runtime                     | canonical Product runtime/deployment から非到達                                                 | physical `src/ariadne/legacy/` は存在し得る                    | **RETIRED_UNREACHABLE**           | final G08 classification/audit  |
+| Shared science                     | legacy orchestration から独立して利用可能                                                            | scientific implementation を継続利用                          | **RETAIN_SHARED_CAPABILITY**      | preserve G08                    |
+| Migration/bootstrap                | `alembic_product.ini -> product_migrations/`; head `0010`                                  | root legacy migrations は historical                      | **ESTABLISHED**                   | final clean-bootstrap audit G08 |
+| Root `alembic.ini` / `migrations/` | canonical Product bootstrap authority なし                                                   | historical migration surface                             | **HISTORY_ONLY**                  | final G08 classification/audit  |
+| Low-level scientific CLI           | persistent Product lifecycle の外側                                                           | standalone scientific utility として存続                      | **LOW_LEVEL_UTILITY**             | preserve                        |
+| Auditable Product submission       | canonical Execution submission boundary                                                    | alternate lifecycle authority なし                         | **ESTABLISHED**                   | preserve                        |
+| Compatibility/read projection      | non-authoritative compatibility surface                                                    | exact TD-006 scope は未確定                                  | **ESTABLISHED / TRANSITION OPEN** | TD-006 → G08                    |
 
 ---
 
@@ -208,10 +243,11 @@ G06 must not reopen Execution / StageExecution / Result / Artifact authority; it
 
 ## 5.1 G02 — Execution Contract
 
-The following are now protected architecture:
+以下は protected architecture である。
 
 ```text
 one canonical Execution identity
+
 family discriminator:
     CAUSAL
     EXPLORATORY
@@ -222,11 +258,23 @@ one repository/service claim authority
 atomic claim
 explicit lease owner / expiry
 owner-checked mutation
-retry = same Execution ID
-rerun = new Execution ID + typed source relation
-revise = new Execution ID + typed base relation
-cancel = terminal Execution transition
-GenericExecutor != claim/lifecycle authority
+
+retry:
+    same Execution ID
+
+rerun:
+    new Execution ID
+    typed source relation
+
+revise:
+    new Execution ID
+    typed base relation
+
+cancel:
+    terminal canonical Execution transition
+
+GenericExecutor:
+    != claim/lifecycle authority
 ```
 
 ### G05 convergence status
@@ -235,13 +283,13 @@ GenericExecutor != claim/lifecycle authority
 E4-TD-001 = CLOSED by G05
 ```
 
-G05 independently verified that new Product identity / lifecycle / claim authority no longer falls back to old Causal/Family authority.
+G05 により、new Product identity / lifecycle / claim authority が old Causal/Family authority へ fallback しないことが independently verified された。
 
 ---
 
 ## 5.2 G03 — Stage Contract
 
-The following are now protected architecture:
+以下は protected architecture である。
 
 ```text
 Every canonical Execution family has persistent StageExecution children.
@@ -255,12 +303,13 @@ StageExecution is queryable outside scientific runner internals:
 
 Retry:
     same Execution ID
-    same StageExecution ID
+    persistent StageExecution semantics
     append attempt history
 
 Execution ↔ Stage state must remain consistent.
 
-Stage mutation is governed by canonical Execution claim/lease ownership.
+Stage mutation:
+    governed by canonical Execution claim/lease ownership
 
 GenericExecutor:
     MAY:
@@ -274,28 +323,9 @@ GenericExecutor:
         claim Execution
         own lease
         commit Product DB/UoW
-        persist canonical StageExecution
+        own canonical StageExecution lifecycle
         decide canonical retry policy
-        persist Result
-        persist Artifact metadata
-        persist lineage
-```
-
-### G03 independent evidence
-
-```text
-AC-001 PASS — all 3 canonical families persist/reload stages
-AC-002 PASS — queryable state and attempts [1,2]
-AC-003 PASS — no GenericExecutor persistence/claim/retry authority
-AC-004 PASS — zero-stage/materialization failures rollback
-AC-005 PASS — failure/retry/cancel/lease/invalid-success consistency
-
-GenericExecutor boundary/unit:
-    6 passed
-
-Standardized PostgreSQL:
-    22 passed
-    migration current = 20260809_product_0008
+        own canonical Result/Artifact persistence
 ```
 
 ### G05 convergence status
@@ -304,14 +334,15 @@ Standardized PostgreSQL:
 E4-TD-002 = CLOSED by G05
 ```
 
-All three Product families use persistent canonical StageExecution under canonical claim/lease authority.
-Legacy stage source may remain for later retirement, but it is not a new Product stage authority.
+全3 Product families が canonical claim/lease authority 配下の persistent StageExecution を使用する。
+
+Legacy stage source が physical に存在しても、それは new Product stage authority ではない。
 
 ---
 
 ## 5.3 G04 — Result / Artifact Ownership Contract
 
-The following are now protected architecture:
+以下は protected architecture である。
 
 ```text
 Result semantic level:
@@ -350,31 +381,6 @@ Typed downstream reuse:
     Result reuse = result_id + typed ResultReuseRole/context
     Artifact reuse = artifact_id
     object_key/content_hash cannot substitute semantic identity
-
-Artifact-only output:
-    explicitly allowed/rejected by workflow/family output contract
-```
-
-### G04 evidence
-
-```text
-Trial 01 = FAIL
-    AC-003: compensation durability used MemoryUow only
-    AC-004: ResultReuseRef lacked typed role/context
-
-Trial 02 implementation:
-    9c9db4454e0f08c4d46cb002f723ca6827917564
-
-Trial 02:
-    AC-001 PASS
-    AC-002 PASS
-    AC-003 PASS
-    AC-004 PASS
-    AC-005 PASS
-    pure contract: 6 passed
-    targeted PostgreSQL: 3 passed
-    G02/G03/G04 regression: 27 passed
-    migration: 20260809_product_0009
 ```
 
 ### G05 convergence status
@@ -383,12 +389,13 @@ Trial 02:
 E4-TD-003 = CLOSED by G05
 ```
 
-G05 verified that new Product Result / Artifact metadata ownership is canonical across Causal / Exploratory / Predictive and that old Family writers are not reachable as new Product authority.
+G05 により、Causal / Exploratory / Predictive の new Product Result / Artifact metadata ownership が canonical boundary に収束し、old Family writers が new Product authority として reachable でないことが verified された。
 
+---
 
 ## 5.4 G05 — Product Execution Convergence Contract
 
-The following is now protected architecture:
+以下は protected architecture である。
 
 ```text
 CAUSAL Product submission
@@ -410,28 +417,24 @@ FamilyExecution / FamilyStageExecution / FamilyResult / FamilyArtifact:
     no new Product write authority
 
 Canonical processing failure:
-    must not fall back to old Product authority
+    no fallback to old Product authority
 
 Family-facing mutations:
     delegate canonical retry / rerun / revise / cancel semantics
 
 Family-facing read surfaces:
     may remain as adapters/projections
-    must project canonical authority
+    project canonical authority
 
 GenericExecutor:
     workflow/scientific infrastructure only
     not Product lifecycle / Result / Artifact authority
-
-CLI boundary:
-    auditable Product CLI submits canonical Execution
-    low-level scientific CLI remains outside persistent Product lifecycle
 ```
 
 ### G05 independent evidence
 
 ```text
-Trial 02 tested implementation:
+Trial02 tested implementation:
     ad3e3e124ee47f9cbaa2470b25263b7289795262
 
 Test Items:
@@ -459,13 +462,216 @@ Migration head:
 
 ### G05 residual boundary
 
-G05 does **not** imply final lineage consolidation or broad legacy deletion.
+G05 は final lineage consolidation や broad legacy deletion を意味しない。
 
 ```text
-E4-TD-004 = OPEN until G06
-legacy source/runtime retirement = G07
-final clean bootstrap / architecture audit = G08
+E4-TD-004 -> G06
+legacy runtime boundary -> G07
+final clean bootstrap / architecture audit -> G08
 ```
+
+---
+
+## 5.5 G06 — Lineage Authority Consolidation Contract
+
+以下は protected architecture である。
+
+```text
+For every lineage semantic relation:
+
+typed structural relation
+    -> canonical typed structural authority
+
+approved generic-only semantic relation
+    -> generic persisted authority
+
+closure / traversal / export
+    -> derived read projection only
+```
+
+Authority classification は relation name 単独ではなく semantic tuple により決まる。
+
+Example:
+
+```text
+Execution DERIVED_FROM Execution
+    = TYPED_STRUCTURAL
+
+Artifact DERIVED_FROM Artifact
+    = may be GENERIC_ONLY when explicitly approved
+```
+
+Canonical projection:
+
+```text
+typed reconstructed structural edges
++
+persisted approved GENERIC_ONLY edges
+    ->
+deduplicated lineage projection
+```
+
+Structural relation は generic authority として duplicate persistence しない。
+
+Mutation lineage:
+
+```text
+retry:
+    same Execution ID
+    no lineage authority relation solely because of retry
+
+rerun:
+    new Execution ID
+    base_execution_id = original
+    revision_kind = RERUN
+    typed DERIVED_FROM
+
+revise:
+    new Execution ID
+    base_execution_id = original
+    revision_kind = REVISED
+    change_reason preserved
+    typed REVISED_FROM
+```
+
+### G06 independent evidence
+
+```text
+Trial:
+    E4-G06 Trial01 PASS
+
+Fixed implementation/test candidate:
+    9816ed87daec1efcb1c860f0c9c0ebe72fb9bc92
+
+Tested repository state:
+    8a4c0042cd766fa182fdc8c5edc346a8e22c807b
+
+Acceptance:
+    AC-001 PASS
+    AC-002 PASS
+    AC-003 PASS
+    AC-004 PASS
+    AC-005 PASS
+
+Persisted lineage authority audit:
+    TYPED_STRUCTURAL generic duplicate = 0
+    unapproved persisted relation = 0
+
+Migration head:
+    20260809_product_0010
+```
+
+### G06 convergence status
+
+```text
+E4-TD-004 = CLOSED by G06
+E4-TD-005 = handed to G07
+```
+
+G06 は G02–G05 で成立した Product Execution / StageExecution / Result / Artifact authority を維持したまま lineage authority を consolidate した。
+
+---
+
+## 5.6 G07 — Legacy / CLI / Migration Boundary Contract
+
+以下は protected architecture である。
+
+```text
+canonical Product runtime
+    -> no retired legacy runtime dependency
+
+repository-managed deployment
+    -> no retired legacy API / CLI / worker invocation
+
+shared scientific capability
+    -> usable independently of retired legacy orchestration
+
+canonical Product bootstrap
+    -> Product migration chain only
+
+standalone scientific CLI
+    -> low-level non-persistent utility
+    -> not Product lifecycle authority
+```
+
+Physical legacy source や historical root migrations は、non-authoritative であれば残存可能である。
+
+Classification は filename や terminology ではなく:
+
+```text
+runtime reachability
+deployment reachability
+bootstrap reachability
+persistent authority
+consumer semantics
+```
+
+に基づく。
+
+### G07 independent evidence
+
+```text
+E4-G07 Trial01:
+    PASS
+
+E4-G07:
+    PASS
+
+Fixed implementation/test candidate:
+    8e4d7cd6119bc995fca7ea44183bfc7d13ed3445
+
+Independent Test execution HEAD:
+    0923461bbc724bbfbc6410b7b18793ff4cf2f491
+
+Independent Test Contract:
+    b3d03b270f3c64bf380a37a1934d871ba7406696
+
+Candidate equivalence:
+    PASS
+
+Test Items:
+    001 Candidate identity                  PASS
+    002 Runtime/deployment boundary         PASS
+    003 Shared scientific boundary          PASS
+    004 Product-only bootstrap              PASS
+    005 CLI/compatibility boundary          PASS
+    006 Protected G02-G06 regression        PASS
+    007 Architecture exit audit             PASS
+
+Acceptance:
+    AC-001 PASS
+    AC-002 PASS
+    AC-003 PASS
+    AC-004 PASS
+    AC-005 PASS
+
+Protected regression:
+    42 local tests PASS
+    18 PostgreSQL tests PASS
+
+Product runtime legacy dependency:
+    0
+
+Product bootstrap legacy migration dependency:
+    0
+
+Material Unknown:
+    NONE
+
+Migration head:
+    20260809_product_0010
+```
+
+### G07 convergence status
+
+```text
+E4-TD-005 = CLOSED by G07
+E4-TD-006 = OPEN -> G08
+```
+
+G07 は physical legacy source の一律削除を要求していない。
+
+G08 では、remaining compatibility/read projection が genuine Transition Debt かを current consumer / reachability / authority から判断し、必要なものだけを remove または explicitly archive する。
 
 ---
 
@@ -473,24 +679,29 @@ final clean bootstrap / architecture audit = G08
 
 ## 6.1 Active Now
 
-| TD | State | Temporary Authority | Why It Is Allowed | Exit Gate | Exit Criterion |
-|---|---|---|---|---|---|
-| **E4-TD-004** | **OPEN** | structural lineage relation may still be persisted through generic lineage representation in addition to typed structural authority | G05 intentionally deferred final lineage consolidation to a dedicated Gate | G06 | each semantic relation has one authoritative lineage representation; generic persistence is generic-only; closure/export is projection only |
+| TD            | State    | Temporary Authority / Transition          | Why It Is Allowed                                                                                                     | Exit Gate | Exit Criterion                                        |
+| ------------- | -------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------- | ----------------------------------------------------- |
+| **E4-TD-006** | **OPEN** | temporary compatibility / read projection | G07 では active legacy/runtime/bootstrap authority の retirement を完了し、final compatibility/read classification を G08 に残した | G08       | bounded transition removed **OR** explicitly archived |
 
 ## 6.2 Closed by Passed Gates
 
-| TD | State | Closed By | Verified Exit |
-|---|---|---|---|
-| E4-TD-001 | **CLOSED** | G05 | old Causal/Family lifecycle accepts no new Product writes |
-| E4-TD-002 | **CLOSED** | G05 | all Product paths use persistent canonical StageExecution |
-| E4-TD-003 | **CLOSED** | G05 | one canonical Result/Artifact new-write ownership boundary |
+| TD        | State      | Closed By | Verified Exit                                                                                                                    |
+| --------- | ---------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| E4-TD-001 | **CLOSED** | G05       | old Causal/Family lifecycle accepts no new Product writes                                                                        |
+| E4-TD-002 | **CLOSED** | G05       | all Product paths use persistent canonical StageExecution                                                                        |
+| E4-TD-003 | **CLOSED** | G05       | one canonical Result/Artifact new-write ownership boundary                                                                       |
+| E4-TD-004 | **CLOSED** | G06       | one authority representation per lineage semantic relation; generic persistence = generic-only; closure/export = projection-only |
+| E4-TD-005 | **CLOSED** | G07       | Product runtime legacy dependency = 0; Product bootstrap legacy migration dependency = 0                                         |
 
 ## 6.3 Planned but Not Yet Introduced
 
-| TD | Introduced By | Purpose / Temporary Authority | Exit |
-|---|---|---|---|
-| E4-TD-005 | G06 | legacy runtime/migration surface pending explicit retirement boundary | G07 |
-| E4-TD-006 | G07 | temporary compatibility/read projection pending final clean audit | G08 |
+```text
+NONE
+```
+
+G08 が final ENH-E4 Gate である。
+
+G08 より後に Transition Debt を残す計画はない。
 
 ### Rule
 
@@ -498,14 +709,16 @@ final clean bootstrap / architecture audit = G08
 No transition debt may become indefinite architecture.
 ```
 
-Any temporary dual-read/write must have:
+Temporary compatibility/read transition には:
 
 ```text
 owner
 bounded duration
 exit criterion
-reconciliation / verification evidence
+verification evidence
 ```
+
+が必要である。
 
 Final G08 requires:
 
@@ -519,65 +732,64 @@ OPEN TRANSITION DEBT = 0
 
 > Original Phase-06 ADR records retain `PROPOSED_FOR_HUMAN_APPROVAL` metadata.
 > For ENH-E4 execution, the target set was subsequently taken forward through G01 and the approved Gate sequence.
-> The status below therefore means **runtime realization status**, not a rewrite of the original ADR metadata.
+> 以下の status は **runtime realization status** を表し、original ADR metadata の rewrite ではない。
 
-| ADR | Decision | Runtime Realization |
-|---|---|---|
-| E4-ADR-001 | Canonical Product runtime | **ESTABLISHED for new Product authority by G05**; final legacy/runtime retirement boundary G07 |
-| E4-ADR-002 | Unified canonical persistent Execution aggregate | **ESTABLISHED G02; sole Product authority verified G05** |
-| E4-ADR-003 | Common Execution identity and mutation semantics | **ESTABLISHED G02; cross-family convergence reverified G05** |
-| E4-ADR-004 | Persistent StageExecution for canonical workflows | **ESTABLISHED G03; full Product path convergence verified G05** |
-| E4-ADR-005 | GenericExecutor remains workflow infrastructure | **ESTABLISHED G03; reverified non-authoritative G05** |
-| E4-ADR-006 | Explicit Result semantic levels under one ownership contract | **ESTABLISHED G04; sole Product path verified G05** |
-| E4-ADR-007 | One Product Artifact metadata authority, separate physical store | **ESTABLISHED G04; sole Product path verified G05** |
-| E4-ADR-008 | Typed authority plus generic-only lineage | contract fixed; **runtime consolidation NEXT G06** |
-| E4-ADR-009 | Legacy runtime retirement/archive boundary | G07 |
-| E4-ADR-010 | Product-only canonical migration/bootstrap | migration head `0010`; final boundary G07/G08 |
-| E4-ADR-011 | Standalone CLI boundary | Product canonical-submit boundary **verified G05**; final legacy/standalone cleanup G07 |
-| E4-ADR-012 | Compatibility terminology is non-architectural unless consumed | G07 |
+| ADR        | Decision                                                         | Runtime Realization                                                      |
+| ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| E4-ADR-001 | Canonical Product runtime                                        | **ESTABLISHED G05; retired legacy runtime boundary verified G07**        |
+| E4-ADR-002 | Unified canonical persistent Execution aggregate                 | **ESTABLISHED G02; sole Product authority verified G05**                 |
+| E4-ADR-003 | Common Execution identity and mutation semantics                 | **ESTABLISHED G02; cross-family convergence G05; lineage semantics G06** |
+| E4-ADR-004 | Persistent StageExecution for canonical workflows                | **ESTABLISHED G03; full Product convergence G05**                        |
+| E4-ADR-005 | GenericExecutor remains workflow infrastructure                  | **ESTABLISHED G03; non-authoritative boundary reverified G05/G06**       |
+| E4-ADR-006 | Explicit Result semantic levels under one ownership contract     | **ESTABLISHED G04; sole Product path verified G05**                      |
+| E4-ADR-007 | One Product Artifact metadata authority, separate physical store | **ESTABLISHED G04; sole Product path verified G05**                      |
+| E4-ADR-008 | Typed authority plus generic-only lineage                        | **ESTABLISHED G06**                                                      |
+| E4-ADR-009 | Legacy runtime retirement/archive boundary                       | **ESTABLISHED G07**                                                      |
+| E4-ADR-010 | Product-only canonical migration/bootstrap                       | **ESTABLISHED G07; final clean-bootstrap audit G08**                     |
+| E4-ADR-011 | Standalone CLI boundary                                          | **ESTABLISHED G05/G07**                                                  |
+| E4-ADR-012 | Compatibility terminology is non-architectural unless consumed   | **POLICY ESTABLISHED; final TD-006 classification G08**                  |
 
 ---
 
 # 8. Invariant Status
 
-| Invariant | Short Meaning | Current Status | Primary Gate |
-|---|---|---|---|
-| E4-INV-001 | one canonical persistent Execution identity | **ESTABLISHED; TD-001 CLOSED G05** | G02/G05 |
-| E4-INV-002 | family changes workflow, not lifecycle authority | **ESTABLISHED; sole authority verified G05** | G02/G05 |
-| E4-INV-003 | retry keeps identity; differs from rerun/revise | **ESTABLISHED** | G02 |
-| E4-INV-004 | auditable claim/state transitions | **ESTABLISHED; REVERIFIED G03/G05** | G02/G03/G05 |
-| E4-INV-005 | centralized claim/lease authority | **ESTABLISHED; TD-001 CLOSED G05** | G02/G05 |
-| E4-INV-006 | every canonical Execution has persistent stages | **ESTABLISHED; TD-002 CLOSED G05** | G03/G05 |
-| E4-INV-007 | GenericExecutor cannot commit canonical lifecycle/Result/Artifact metadata | **ESTABLISHED; REVERIFIED G05** | G03/G05 |
-| E4-INV-008 | every Result belongs to canonical Execution and declares level | **ESTABLISHED; TD-003 CLOSED G05** | G04/G05 |
-| E4-INV-009 | one Artifact metadata owner; locator distinct | **ESTABLISHED; TD-003 CLOSED G05** | G04/G05 |
-| E4-INV-010 | DB/store compensation/reconciliation semantics | **ESTABLISHED** | G04 |
-| E4-INV-011 | one lineage authority per semantic relation | **TARGET FIXED / TD-004 OPEN** | G06 |
-| E4-INV-012 | closure/export cannot become lineage authority | **TARGET FIXED; runtime consolidation G06** | G06 |
-| E4-INV-013 | canonical runtime imports no retired legacy runtime | PENDING final audit | G07 |
-| E4-INV-014 | shared science survives without legacy orchestration | TARGET FIXED; verify later | G07 |
-| E4-INV-015 | canonical bootstrap does not invoke root legacy migrations | TARGET FIXED; final verify later | G07/G08 |
-| E4-INV-016 | no indefinite dual read/write final architecture | **NOT FINAL; bounded TD-004 active** | G06/G08 |
+| Invariant  | Short Meaning                                                              | Current Status                                       | Primary Gate |
+| ---------- | -------------------------------------------------------------------------- | ---------------------------------------------------- | ------------ |
+| E4-INV-001 | one canonical persistent Execution identity                                | **ESTABLISHED; TD-001 CLOSED G05**                   | G02/G05      |
+| E4-INV-002 | family changes workflow, not lifecycle authority                           | **ESTABLISHED; sole authority verified G05**         | G02/G05      |
+| E4-INV-003 | retry keeps identity; differs from rerun/revise                            | **ESTABLISHED; lineage semantics reverified G06**    | G02/G06      |
+| E4-INV-004 | auditable claim/state transitions                                          | **ESTABLISHED; REVERIFIED G03/G05**                  | G02/G03/G05  |
+| E4-INV-005 | centralized claim/lease authority                                          | **ESTABLISHED; TD-001 CLOSED G05**                   | G02/G05      |
+| E4-INV-006 | every canonical Execution has persistent stages                            | **ESTABLISHED; TD-002 CLOSED G05**                   | G03/G05      |
+| E4-INV-007 | GenericExecutor cannot own canonical lifecycle/Result/Artifact persistence | **ESTABLISHED; REVERIFIED G05/G06**                  | G03/G05/G06  |
+| E4-INV-008 | every Result belongs to canonical Execution and declares level             | **ESTABLISHED; TD-003 CLOSED G05**                   | G04/G05      |
+| E4-INV-009 | one Artifact metadata owner; locator distinct                              | **ESTABLISHED; TD-003 CLOSED G05**                   | G04/G05      |
+| E4-INV-010 | DB/store compensation/reconciliation semantics                             | **ESTABLISHED**                                      | G04          |
+| E4-INV-011 | one lineage authority per semantic relation                                | **ESTABLISHED; TD-004 CLOSED G06**                   | G06          |
+| E4-INV-012 | closure/export cannot become lineage authority                             | **ESTABLISHED G06**                                  | G06          |
+| E4-INV-013 | canonical runtime imports no retired legacy runtime                        | **ESTABLISHED G07**                                  | G07          |
+| E4-INV-014 | shared science survives without legacy orchestration                       | **ESTABLISHED G07**                                  | G07          |
+| E4-INV-015 | canonical bootstrap does not invoke root legacy migrations                 | **ESTABLISHED G07; final clean-bootstrap audit G08** | G07/G08      |
+| E4-INV-016 | no indefinite dual read/write final architecture                           | **TD-006 OPEN; final G08**                           | G08          |
 
 ---
 
 # 9. Requirement Families — Where to Look
 
-The 35 requirements should not be memorized individually during normal implementation. Use these ranges.
+35 requirements を通常実装時に個別記憶する必要はない。以下の range を使用する。
 
-| Requirement Range | Concern | Current State |
-|---|---|---|
-| E4-REQ-001..002 | Product runtime / legacy roots | **new Product authority converged G05**; final legacy root retirement G07/G08 |
-| E4-REQ-003..010 | Execution identity/lifecycle/claim/mutations | **G02 established; sole cross-family Product path verified G05** |
-| E4-REQ-011..014 | persistent stage / query / GenericExecutor boundary | **G03 established; full Product convergence verified G05** |
-| E4-REQ-013 | stage-side ownership relation | **G03/G04 established; G05 converged** |
-| E4-REQ-015..020 | Result / Artifact / typed downstream reuse | **G04 established; sole Product path verified G05** |
-| E4-REQ-021..025 | lineage authority | **G06 NEXT** |
-| E4-REQ-026..029 | shared science / legacy retirement classification | G07 |
-| E4-REQ-030..032 | Product-only migration/bootstrap/data policy | evidence exists through migration `0010`; final G07/G08 |
-| E4-REQ-033..035 | CLI / compatibility terminology | Product canonical-submit/read boundary verified G05; final legacy/terminology boundary G07 |
+| Requirement Range | Concern                                             | Current State                                                                 |
+| ----------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
+| E4-REQ-001..002   | Product runtime / legacy roots                      | **Product authority converged G05; runtime retirement boundary verified G07** |
+| E4-REQ-003..010   | Execution identity/lifecycle/claim/mutations        | **G02 established; sole cross-family Product path G05; mutation lineage G06** |
+| E4-REQ-011..014   | persistent stage / query / GenericExecutor boundary | **G03 established; full Product convergence G05**                             |
+| E4-REQ-015..020   | Result / Artifact / typed downstream reuse          | **G04 established; sole Product path G05**                                    |
+| E4-REQ-021..025   | lineage authority                                   | **ESTABLISHED G06**                                                           |
+| E4-REQ-026..029   | shared science / legacy retirement classification   | **ESTABLISHED G07**                                                           |
+| E4-REQ-030..032   | Product-only migration/bootstrap/data policy        | **Product-only authority ESTABLISHED G07; final clean-bootstrap G08**         |
+| E4-REQ-033..035   | CLI / compatibility terminology                     | **CLI boundary ESTABLISHED G07; final compatibility/read TD-006 audit G08**   |
 
-Detailed wording remains in:
+Detailed wording:
 
 ```text
 40_operator_prompts/architecture_review/
@@ -588,159 +800,330 @@ Detailed wording remains in:
 
 # 10. Constraints — Always-On Guardrails
 
-| Constraint | Guardrail |
-|---|---|
-| E4-CON-001 | Do not redesign scientific algorithms as part of Execution unification. |
-| E4-CON-002 | Do not make GenericExecutor the lifecycle owner. |
-| E4-CON-003 | Do not leave Causal/Family tables as independent **final** authorities. |
-| E4-CON-004 | Do not use physical object keys as Result/Artifact semantic IDs. |
-| E4-CON-005 | Do not dual-author the same structural lineage relation in final state. |
-| E4-CON-006 | Any temporary dual read/write must be bounded and have an exit criterion. |
-| E4-CON-007 | Do not run root legacy migrations in canonical Product bootstrap. |
-| E4-CON-008 | Do not remove legacy source before external compatibility decision. |
-| E4-CON-009 | Do not rename legacy-named data contracts solely because of terminology. |
-| E4-CON-010 | Do not modify unrelated frontend/auth/dataset behavior without dependency proof. |
+| Constraint | Guardrail                                                                               |
+| ---------- | --------------------------------------------------------------------------------------- |
+| E4-CON-001 | scientific algorithms は Execution unification の対象外。                                     |
+| E4-CON-002 | GenericExecutor を lifecycle owner にしない。                                                 |
+| E4-CON-003 | Causal/Family tables を independent **final authority** として残さない。                         |
+| E4-CON-004 | physical object key を Result/Artifact semantic ID として使用しない。                             |
+| E4-CON-005 | same structural lineage relation を final state で dual-author しない。                       |
+| E4-CON-006 | temporary dual read/write または compatibility transition は bounded かつ exit criterion を持つ。 |
+| E4-CON-007 | root legacy migrations を canonical Product bootstrap で実行しない。                            |
+| E4-CON-008 | compatibility evidence なしに legacy source を削除しない。                                        |
+| E4-CON-009 | legacy-named data contract を terminology だけを理由に rename しない。                             |
+| E4-CON-010 | dependency proof なしに unrelated frontend/auth/dataset behavior を変更しない。                   |
 
 ---
 
-# 11. G06 — Immediate Next Gate Control Card
+# 11. G08 — Immediate Next Gate Control Card
 
 ## 11.1 Objective
 
-> Consolidate lineage authority so that each semantic relation has exactly one authoritative representation: typed structural authority for known structural relations, generic persistence only for relations that are genuinely generic-only, and closure/export as read projection only.
+> final clean bootstrap and architecture audit を実施し、all three Product families、mutation、lineage、runtime/bootstrap boundary、shared science を含む canonical Product architecture 全体を検証し、OPEN Transition Debt を zero にする。
 
-G06 must close `E4-TD-004` without reopening the Product Execution authority already verified by G05.
+G08 は `E4-TD-006` を close しつつ、G02–G07 で verified された architecture contract を preserve する。
 
-## 11.2 Architecture Before G06
+## 11.2 Architecture Before G08
 
 ```text
-G02 canonical Execution authority              ESTABLISHED
-G03 persistent StageExecution                  ESTABLISHED
-G04 Result / Artifact ownership                ESTABLISHED
-G05 sole Product Execution convergence         ESTABLISHED
+G02 canonical Execution authority                  ESTABLISHED
+G03 persistent StageExecution                      ESTABLISHED
+G04 Result / Artifact ownership                    ESTABLISHED
+G05 sole Product Execution convergence             ESTABLISHED
+G06 lineage authority consolidation                ESTABLISHED
+G07 legacy/runtime/bootstrap/CLI boundary           ESTABLISHED
 
-TD-001                                           CLOSED
-TD-002                                           CLOSED
-TD-003                                           CLOSED
+TD-001                                             CLOSED
+TD-002                                             CLOSED
+TD-003                                             CLOSED
+TD-004                                             CLOSED
+TD-005                                             CLOSED
 
 BUT:
 
-TD-004 structural lineage generic duplication   OPEN
-typed structural lineage target                 FIXED
-generic-only persisted lineage target           FIXED
-closure/export projection-only target           FIXED
+TD-006 compatibility/read transition               OPEN
+final clean bootstrap/startup audit                PENDING
+final integrated three-family architecture audit   PENDING
+OPEN TRANSITION DEBT = 0                           NOT YET VERIFIED
 ```
 
-## 11.3 G06 Must Establish
+## 11.3 G08 Must Establish
 
 ```text
-For every lineage relation family:
+1. current repository における actual TD-006 scope を確定する
 
-1. identify semantic authority
-2. classify relation as:
-       typed structural
-       generic-only
-3. ensure one persisted authority per semantic relation
-4. stop duplicate generic writes for structural relations
-5. preserve generic persistence only for generic-only relations
-6. make closure/export read projection only
-7. keep lineage readers consistent with the authoritative relation model
+2. material residual を以下に classify する:
+       REMOVE
+       ARCHIVE
+       RETAIN_NON_AUTHORITY
+       RETAIN_SHARED_CAPABILITY
+       NOT_TD
+
+3. genuine bounded transition を:
+       remove
+       OR
+       explicitly archive
+
+4. empty Product DB から:
+       Product-only migration
+       current Product migration head
+       application startup
+   を verify する
+
+5. all 3 Product families:
+       CAUSAL
+       EXPLORATORY
+       PREDICTIVE
+
+   について:
+       Execution
+       StageExecution
+       Result
+       Artifact
+   を verify する
+
+6. mutation semantics:
+       retry
+       rerun
+       revise
+       cancel
+   と canonical lineage semantics を verify する
+
+7. final authority model:
+       Execution = Product lifecycle authority
+       StageExecution = persistent stage authority
+       Result / Artifact = output authority
+       typed structural lineage = structural authority
+       Product migrations = bootstrap authority
+       GenericExecutor = subordinate mechanism
+   を verify する
+
+8. shared scientific capability が利用可能であることを verify する
+
+9. final state:
+       TD-006 CLOSED
+       OPEN TRANSITION DEBT = 0
+   を establish する
 ```
 
-G06 must cover lineage emitted or consumed by Causal / Exploratory / Predictive canonical Product flows.
+## 11.4 G08 Primary Audit Question
 
-## 11.4 G06 Primary Audit Question
+> active Product path、lineage representation、bootstrap path、または compatibility/read surface に、second authority または unresolved Transition Debt が残っているか？
 
-> Can the same semantic lineage relation become authoritative in more than one persisted representation, or can a closure/export projection become an authority?
-
-G06 may PASS only if the verified answer is:
+G08 may PASS only if verified answer is:
 
 ```text
 NO
 ```
 
-## 11.5 G06 Must Close
+and:
 
 ```text
-E4-TD-004
+OPEN TRANSITION DEBT = 0
+```
+
+## 11.5 G08 Must Close
+
+```text
+E4-TD-006
 ```
 
 Exit criterion:
 
 ```text
-one semantic relation -> one authoritative lineage representation
-
-typed structural relations:
-    typed authority only
-
-generic-only relations:
-    generic persistence only
-
-closure/export:
-    projection only
-    never authority
+bounded transition removed
+OR
+explicitly archived
 ```
 
-## 11.6 G06 MUST NOT Do
+Final Transition Debt state:
 
 ```text
-DO NOT reopen G05 Product Execution / Stage / Result / Artifact authority.
-DO NOT reintroduce Family new-write authority.
-DO NOT make GenericExecutor a lineage persistence authority.
-DO NOT broadly delete/archive legacy runtime source.      # G07
-DO NOT finalize CLI / migration retirement.               # G07
-DO NOT perform final clean bootstrap architecture audit.  # G08
-DO NOT redesign scientific algorithms.
+TD-001 CLOSED
+TD-002 CLOSED
+TD-003 CLOSED
+TD-004 CLOSED
+TD-005 CLOSED
+TD-006 CLOSED
+
+OPEN TRANSITION DEBT = 0
 ```
 
-## 11.7 Expected Next Transition Debt
+## 11.6 G08 Preservation Boundary
 
-If required by the approved Gate decomposition:
+G08 は final convergence/audit Gate である。
+
+Implementation scope は:
 
 ```text
-E4-TD-005
-Introduced: G06
-Exit Gate: G07
-Purpose: bounded legacy runtime / migration surface pending explicit retirement boundary
+formal G08 Acceptance Criteria
++
+actual TD-006 evidence
+```
+
+によって決める。
+
+Physical legacy source、historical migration files、compatibility terminology は、それだけでは removal の根拠にならない。
+
+G08 preserves:
+
+```text
+G02 Execution authority
+G03 StageExecution / GenericExecutor boundary
+G04 Result / Artifact ownership
+G05 three-family Product convergence
+G06 lineage authority
+G07 runtime / deployment / bootstrap / shared-science / CLI boundary
+```
+
+## 11.7 G08 Exit Condition
+
+G08 may PASS only when:
+
+```text
+E4-G08-AC-001 PASS
+    clean Product bootstrap + application startup
+
+E4-G08-AC-002 PASS
+    three-family Golden Path
+
+E4-G08-AC-003 PASS
+    mutation + lineage
+
+E4-G08-AC-004 PASS
+    final authority audit
+
+E4-G08-AC-005 PASS
+    shared science + zero debt
+
+AND
+
+TD-001 CLOSED
+TD-002 CLOSED
+TD-003 CLOSED
+TD-004 CLOSED
+TD-005 CLOSED
+TD-006 CLOSED
+
+AND
+
+OPEN TRANSITION DEBT = 0
 ```
 
 This Control Card is a condensed operational index only.
-Formal G06 implementation/test acceptance authority must come from the G06 Gate-local `06` / `07` when created.
+
+Formal G08 implementation/test acceptance authority comes from Gate-local `06` / `07`.
 
 ---
 
 # 12. What Is Deliberately Still Unresolved
 
-The following are **not defects at this snapshot** because their exit Gates are later.
+以下は G08 exit scope であり、current snapshot における defect ではない。
 
-### Lineage — active Transition Debt
-
-```text
-E4-TD-004 OPEN -> G06
-```
-
-Canonical Product Execution / StageExecution / Result / Artifact authority is established.
-What remains is lineage authority consolidation: structural relations must stop being dual-authored through generic representations, generic persistence must become generic-only, and closure/export must remain projection-only.
-
-### Legacy retirement
-
-Legacy source/runtime/compatibility surfaces may remain, but they are **not** allowed to recover new Product authority.
-Their final retirement/archive classification is G07.
-
-### CLI / migration boundary
-
-G05 verified the canonical Product submission boundary and preserved low-level scientific CLI separation.
-Final legacy CLI classification and Product-only migration/bootstrap retirement boundary remain G07.
-
-### Final bootstrap / architecture audit
-
-The repository-managed PostgreSQL runner proves Product migration operation through:
+### TD-006 — active Transition Debt
 
 ```text
-20260809_product_0010
+E4-TD-006 OPEN -> G08
 ```
 
-The final clean-bootstrap convergence and `OPEN TRANSITION DEBT = 0` audit remain G08.
+Formal scope:
+
+```text
+temporary compatibility / read projection
+```
+
+Exact current material inventory はまだ確定していない。
+
+G08 は candidate residual を:
+
+```text
+current consumer
+runtime reachability
+deployment reachability
+bootstrap reachability
+persistent authority
+compatibility semantics
+```
+
+に基づいて classify する。
+
+Filename / directory name / terminology のみでは Transition Debt と判定しない。
+
+### Physical legacy source
+
+G07 independently established:
+
+```text
+Product runtime legacy dependency = 0
+repository-managed deployment legacy dependency = 0
+```
+
+したがって physical legacy source が存在しても active Product authority とは限らない。
+
+G08 では、それが:
+
+```text
+ARCHIVE
+RETAIN_NON_AUTHORITY
+RETAIN_SHARED_CAPABILITY
+NOT_TD
+```
+
+等のどれに相当するかを current evidence から判断する。
+
+### Root migration history
+
+G07 independently established:
+
+```text
+Product bootstrap legacy migration dependency = 0
+```
+
+Canonical Product bootstrap:
+
+```text
+alembic_product.ini
+    ->
+product_migrations/
+```
+
+Root migration history は historical surface として残存可能である。
+
+G08 では final:
+
+```text
+empty DB
++
+Product-only migration
++
+application startup
+```
+
+を verify する。
+
+### Compatibility/read projection
+
+Family/read/compatibility surface は stable non-authoritative contract であれば保持可能である。
+
+G08 は、それが genuine bounded transition なのか stable retained contract なのかを current consumer semantics から決定する。
+
+### Final architecture audit
+
+以下は個別には passed Gate により established 済みである。
+
+```text
+Execution authority
+StageExecution
+Result / Artifact ownership
+three-family convergence
+lineage authority
+legacy/runtime boundary
+Product bootstrap boundary
+shared science
+CLI boundary
+```
+
+G08 はそれらを one final candidate に対して integrated verification する。
 
 ---
 
@@ -775,29 +1158,31 @@ Final G02 decision ref:
 5888783
 ```
 
+---
+
 ## G03
 
-Trial 01 is retained as failed evidence:
+Trial01 failed evidence:
 
 ```text
 30_test_report/G03/
 E4-G03_01_999_gate_decision.md
 ```
 
-Trial 02 implementation:
+Trial02 implementation:
 
 ```text
 bac1814bb713f32b859fbe7e2b445fa6cd557f2b
 ```
 
-Trial 02 implementation report:
+Trial02 implementation report:
 
 ```text
 20_implementation_reports/G03/
 E4-G03_02_implementation_completion_report.md
 ```
 
-Trial 02 final decision:
+Trial02 final decision:
 
 ```text
 30_test_report/G03/
@@ -814,33 +1199,33 @@ Repository report commit:
 
 ## G04
 
-Trial 01 implementation:
+Trial01 implementation:
 
 ```text
 3d88781c1b69ba03bb06c0b8f143612b81feb4bf
 ```
 
-Trial 01 decision:
+Trial01 decision:
 
 ```text
 E4-G04_01_999_gate_decision.md
 Decision: FAIL
 ```
 
-Trial 02 implementation:
+Trial02 implementation:
 
 ```text
 9c9db4454e0f08c4d46cb002f723ca6827917564
 ```
 
-Trial 02 implementation report:
+Trial02 implementation report:
 
 ```text
 20_implementation_reports/G04/
 E4-G04_02_implementation_completion_report.md
 ```
 
-Trial 02 final decision:
+Trial02 final decision:
 
 ```text
 30_test_report/G04/
@@ -854,10 +1239,11 @@ Repository evidence commit:
 d2b0f311fda209608629114aaae9a1ea142bdd2d
 ```
 
+---
 
 ## G05
 
-Trial 01 is retained as failed evidence:
+Trial01 failed evidence:
 
 ```text
 30_test_report/G05/
@@ -865,20 +1251,20 @@ E4-G05_01_999_gate_decision.md
 Decision: FAIL
 ```
 
-Trial 02 fixed implementation/test candidate:
+Trial02 fixed implementation/test candidate:
 
 ```text
 ad3e3e124ee47f9cbaa2470b25263b7289795262
 ```
 
-Trial 02 implementation completion report:
+Trial02 implementation completion report:
 
 ```text
 20_implementation_reports/G05/Trial02/
 E4-G05_02_implementation_completion_report.md
 ```
 
-Trial 02 remediation evidence:
+Trial02 remediation evidence:
 
 ```text
 20_implementation_reports/G05/Trial02/
@@ -888,7 +1274,7 @@ E4-G05_02_R1_predictive_retry_remediation_report.md
 E4-G05_02_R2_combined_regression_remediation_report.md
 ```
 
-Trial 02 final decision:
+Trial02 final decision:
 
 ```text
 30_test_report/G05/
@@ -909,6 +1295,137 @@ Migration head: 20260809_product_0010
 
 ---
 
+## G06
+
+Fixed implementation/test candidate:
+
+```text
+9816ed87daec1efcb1c860f0c9c0ebe72fb9bc92
+```
+
+Tested repository state:
+
+```text
+8a4c0042cd766fa182fdc8c5edc346a8e22c807b
+```
+
+Implementation completion report:
+
+```text
+20_implementation_reports/G06/Trial01/
+E4-G06_01_implementation_completion_report.md
+```
+
+Final decision:
+
+```text
+30_test_report/G06/Trial01/
+E4-G06_01_999_gate_decision.md
+Decision: PASS
+```
+
+Verified summary:
+
+```text
+AC-001..005: PASS
+typed structural authority: ESTABLISHED
+generic-only persisted authority: ESTABLISHED
+structural generic duplicate authority: 0
+closure/export authority: 0
+TD-004: CLOSED
+TD-005: -> G07
+Migration head: 20260809_product_0010
+```
+
+---
+
+## G07
+
+Fixed implementation/test candidate:
+
+```text
+8e4d7cd6119bc995fca7ea44183bfc7d13ed3445
+```
+
+Independent Test execution HEAD:
+
+```text
+0923461bbc724bbfbc6410b7b18793ff4cf2f491
+```
+
+Independent Test Contract:
+
+```text
+b3d03b270f3c64bf380a37a1934d871ba7406696
+```
+
+Independent Test report commit:
+
+```text
+5edf48a2a2fb38aa8bb3bdfb76373e223b1bf7be
+```
+
+Implementation completion report:
+
+```text
+20_implementation_reports/G07/Trial01/
+E4-G07_01_implementation_completion_report.md
+```
+
+Final decision:
+
+```text
+30_test_report/G07/Trial01/
+E4-G07_01_999_gate_decision.md
+Decision: PASS
+```
+
+Architecture exit audit:
+
+```text
+30_test_report/G07/Trial01/
+E4-G07_01_007_architecture_exit_audit.md
+```
+
+Verified summary:
+
+```text
+Test Items 001–007: PASS
+AC-001..005: PASS
+
+Product runtime legacy dependency:
+    0
+
+Product bootstrap legacy migration dependency:
+    0
+
+Shared science:
+    preserved
+
+Standalone scientific CLI:
+    LOW_LEVEL_UTILITY
+    non-persistent
+    non-lifecycle-authority
+
+Protected regression:
+    42 local PASS
+    18 PostgreSQL PASS
+
+TD-005:
+    CLOSED
+
+TD-006:
+    OPEN -> G08
+
+Material Unknown:
+    NONE
+
+Migration head:
+    20260809_product_0010
+```
+
+---
+
 # 14. Operational Rules for Future Gates
 
 ## 14.1 Passed Gate Immutability
@@ -923,9 +1440,9 @@ passed acceptance evidence
 
 are protected.
 
-A later Gate may extend them, but must not silently redefine them.
+Later Gate はそれらを extend / verify できるが、silently redefine してはならない。
 
-If a later implementation needs to change a passed-Gate component:
+Passed-Gate component を変更する必要がある場合:
 
 ```text
 affected Gate
@@ -935,23 +1452,74 @@ preserved semantic
 regression test
 ```
 
-must be explicitly recorded.
+を明示する。
 
 ## 14.2 Gate-local Work Only
 
-At each Gate:
+各 Gate では:
 
 ```text
 implement current Gate
 preserve earlier Gate contracts
-do not pre-implement later authority cutovers
+perform changes required by:
+    current Gate acceptance
+    OR
+    registered Transition Debt
 ```
 
-Transition Debt is used to bridge Gates deliberately rather than doing uncontrolled cross-Gate work.
+に限定する。
 
-## 14.3 Test Evidence Discipline
+G08 では:
 
-Every Test Item report must keep:
+```text
+actual TD-006 inventory first
+implementation scope second
+```
+
+とする。
+
+## 14.3 Minimum Sufficient Context
+
+G08 Package execution の通常 input:
+
+```text
+1. current Package instruction
+2. G08 P00
+3. immediately previous checkpoint
+4. current relevant source/tests/migrations/config
+```
+
+Earlier Gate documents は:
+
+```text
+architecture contradiction
+unclear invariant
+unclear provenance
+unclear mutation/lineage contract
+```
+
+が発生した場合にのみ参照する。
+
+## 14.4 Positive Authority First
+
+判断の起点は final positive authority model とする。
+
+```text
+Execution
+StageExecution
+Result
+Artifact
+typed structural lineage
+approved generic-only semantic lineage
+Product migration chain
+shared science
+```
+
+Legacy name の列挙から architecture を逆算しない。
+
+## 14.5 Test Evidence Discipline
+
+Every Test Item report keeps:
 
 ```text
 exact command
@@ -960,14 +1528,17 @@ expected result
 actual result
 exit code
 raw evidence path
-fact findings
-interpretation
+Fact
+Interpretation
+Unknown
 PASS / FAIL / BLOCKED
 ```
 
-`PASS` is not accepted from prose-only inspection where the Gate requires executable evidence.
+Executable evidence が必要な Gate で prose-only inspection を `PASS` としない。
 
-## 14.4 Model / Agent Role Separation
+Migration/bootstrap/persistence semantics では real PostgreSQL evidence を使用する。
+
+## 14.6 Model / Agent Role Separation
 
 Architecture owner / developer:
 
@@ -992,6 +1563,34 @@ does not repair implementation
 issues PASS / FAIL / BLOCKED
 ```
 
+## 14.7 Trial Discipline
+
+```text
+Trial increments only after formal Independent Test FAIL.
+```
+
+Implementation/self-test correction within current Trial does not create a new Trial.
+
+## 14.8 Fixed Candidate Discipline
+
+Independent Test 前に:
+
+```text
+one fixed implementation/test candidate SHA
+```
+
+を確定する。
+
+Documentation/report commits により later HEAD が異なる場合:
+
+```text
+fixed candidate
+test execution HEAD
+test-report commit
+```
+
+を区別する。
+
 ---
 
 # 15. Control Sheet Update Rule
@@ -1006,20 +1605,22 @@ For each PASS:
 4. Add/close Transition Debt.
 5. Add Gate evidence refs.
 6. Replace the “Immediate Next Gate Control Card”.
-7. Do **not** duplicate detailed Gate-local 06/07 text.
-8. If a Gate FAILs, leave the current architecture snapshot unchanged; add no “established” state.
+7. Do **not** duplicate detailed Gate-local `06` / `07`.
+8. If a Gate FAILs, leave current architecture snapshot unchanged; add no `ESTABLISHED` state.
 
 This makes the sheet a record of **verified architecture**, not intended architecture.
+
+G08 instruction set が prepared であっても、それ自体は G08 architecture が `ESTABLISHED` である evidence ではない。
 
 ---
 
 # 16. Developer Quick Check — 30 Seconds
 
-Before approving any next action, answer these questions:
+Before approving any next action:
 
 ```text
 1. Which Gate are we in?
-   -> G06 NEXT
+   -> G08 NEXT
 
 2. What is already protected?
    -> G02 canonical Execution identity/lifecycle/claim
@@ -1028,30 +1629,57 @@ Before approving any next action, answer these questions:
    -> G04 Result / Artifact ownership and typed reuse
    -> G05 all-family canonical Product convergence
    -> G05 no Family new Product write authority
-   -> G05 no canonical-failure fallback to old authority
+   -> G06 typed structural lineage authority
+   -> G06 generic-only persisted lineage authority
+   -> G06 closure/export projection-only boundary
+   -> G07 retired legacy runtime/deployment boundary
+   -> G07 Product-only bootstrap authority
+   -> G07 shared science preservation
+   -> G07 LOW_LEVEL_UTILITY scientific CLI boundary
 
 3. What Transition Debt is intentionally alive?
-   -> TD-004 lineage authority duplication only
-   -> TD-001 / TD-002 / TD-003 are CLOSED
+   -> TD-006 only
 
-4. What must G06 do?
-   -> identify one authoritative lineage representation per semantic relation
-   -> keep typed structural relations typed-authoritative
-   -> keep generic persistence generic-only
-   -> make closure/export projection-only
-   -> close TD-004
+   CLOSED:
+   -> TD-001
+   -> TD-002
+   -> TD-003
+   -> TD-004
+   -> TD-005
 
-5. What must NOT be touched yet?
-   -> G07 broad legacy / CLI / migration retirement
-   -> G08 final clean bootstrap / architecture audit
-   -> passed G02-G05 authority contracts
+4. What must G08 do?
+   -> determine actual TD-006 inventory
+   -> classify material residuals
+   -> remove or explicitly archive genuine bounded transition
+   -> verify empty Product DB -> Product migration -> application startup
+   -> verify Causal / Exploratory / Predictive Golden Path
+   -> verify retry / rerun / revise / cancel
+   -> verify final lineage authority
+   -> verify final Product/runtime/bootstrap authority
+   -> preserve shared science
+   -> establish OPEN TRANSITION DEBT = 0
 
-6. What is the G06 exit condition?
-   -> no semantic lineage relation is dual-authoritative
-   -> structural relation generic duplicate writes are stopped
-   -> generic persistence is generic-only
-   -> closure/export is never authority
+5. What is not implied by G08?
+   -> physical legacy source != automatically active authority
+   -> historical root migrations != automatically Transition Debt
+   -> compatibility terminology != automatically Transition Debt
+   -> G08 != redesign of G02-G07 architecture
+
+6. What is the G08 exit condition?
+   -> AC-001 PASS
+   -> AC-002 PASS
+   -> AC-003 PASS
+   -> AC-004 PASS
+   -> AC-005 PASS
+
+   -> TD-001 CLOSED
+   -> TD-002 CLOSED
+   -> TD-003 CLOSED
    -> TD-004 CLOSED
+   -> TD-005 CLOSED
+   -> TD-006 CLOSED
+
+   -> OPEN TRANSITION DEBT = 0
 ```
 
 If these six answers remain true, the work is still aligned with ENH-E4.
