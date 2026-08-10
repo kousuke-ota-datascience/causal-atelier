@@ -15,7 +15,7 @@
 MUST:
 
 - final PASS済みGate evidenceだけをverified stateへ反映する。
-- FAIL / BLOCKED中の未検証implementationをcurrent truthとして昇格しない。
+- package completion / READY_FOR_TEST / FAIL / BLOCKED中のimplementationをcurrent truthへ昇格しない。
 - 06 / 07 / Gate Decision / approved designをoverrideしない。
 - source-of-truth文書へのpath / IDを示す。
 
@@ -29,17 +29,6 @@ MUST:
 ## 3. Verified current architecture / behavior
 
 {{VERIFIED_CURRENT_ARCHITECTURE_OR_BEHAVIOR}}
-
-記載対象例:
-
-- canonical runtime entrypoint
-- canonical write/read path
-- ownership / authority
-- persistence semantics
-- API/UI behavior
-- lineage semantics
-
-非architecture enhancementでは、検証済みの主要product behaviorを記載してよい。
 
 ## 4. Authority map
 
@@ -80,18 +69,26 @@ If none: `NONE`.
 - Active Gate: {{ACTIVE_GATE}}
 - Gate contract 06: {{PATH_06}}
 - Gate verification contract 07: {{PATH_07}}
-- Current Trial: {{TRIAL_ID}}
+- Execution Mode: SINGLE_EXECUTION / WORK_PACKAGE
+- Work Package Plan: {{P00_PATH_OR_NA}}
+- Current Trial: {{TRIAL_NO}}
+- Current Package: {{PACKAGE_ID_OR_NA}}
 - Applicable remediation 08: {{PATH_OR_NONE}}
+- Candidate state: NOT_ASSEMBLED / ASSEMBLING / READY_FOR_TEST / UNDER_TEST / DECIDED
+- Fixed Trial Candidate SHA: {{FIXED_CANDIDATE_SHA_OR_NONE}}
 - Allowed next action: {{ALLOWED_NEXT_ACTION}}
 - Explicitly prohibited next action: {{PROHIBITED_NEXT_ACTION}}
+
+**Active Gate / Trial / Package fields are orchestration pointersであり、未検証package semanticsをverified stateとして表現しない。**
 
 ## 10. Evidence index
 
 | Evidence type | Path / ID | Authority meaning |
 |---|---|---|
 | Last PASS Gate Decision | {{PATH}} | verified promotion basis |
-| Active implementation completion report | {{PATH_OR_NONE}} | unverified implementation transaction |
-| Active Gate detail ledger | {{PATH_OR_NONE}} | Coding-observed implementation state |
+| Active Trial Completion Report | {{PATH_OR_NONE}} | Fixed Trial Candidate identity / unverified implementation transaction |
+| Active Package Checkpoint | {{PATH_OR_NONE}} | package-local unverified implementation evidence |
+| Active Gate Detail Ledger | {{PATH_OR_NONE}} | Coding-observed implementation state |
 | Preflight result | {{PATH_OR_NA}} | execution prerequisite evidence |
 
 ## 11. Update log
@@ -102,7 +99,9 @@ If none: `NONE`.
 
 ### Update rule
 
-- `Gate PASS`: update verified state, protected contracts, TD status, active Gate.
-- `Gate FAIL`: do **not** promote failed implementation semantics.
-- `Gate BLOCKED`: do **not** promote product semantics; prerequisite status may be updated.
-- Contract amendment: record only after explicit human approval and link amendment evidence.
+- `Package COMPLETE`: verified stateを更新しない。
+- `READY_FOR_TEST`: verified stateを更新しない。
+- `Gate PASS`: verified state / protected contracts / TD status / active Gateを更新できる。
+- `Gate FAIL`: failed candidate semanticsをpromotionしない。
+- `Gate BLOCKED`: product semanticsをpromotionしない。prerequisite pointer等は更新可。
+- Contract amendment: explicit human approval evidenceへlinkする。

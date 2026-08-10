@@ -1,113 +1,116 @@
-# {{PROJECT_NAME}} {{ENHANCE_ID}} {{GATE_ID}} 実装指示書
+# {{PROJECT_NAME}} {{ENHANCE_ID}} {{GATE_ID}} 実装指示書 — Gate Coding Contract
 
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
-- Branch: {{BRANCH}}
-- Baseline commit: {{BASELINE_COMMIT_FULL_SHA}}
 - Active Gate: {{GATE_ID}}
-- Initial Trial: {{TRIAL_ID}}
-- Migration head: {{MIGRATION_HEAD_OR_NA}}
+- Branch: {{BRANCH}}
+- Baseline: {{BASELINE_FULL_SHA}}
+- Contract status: FROZEN
+- Execution Mode: SINGLE_EXECUTION / WORK_PACKAGE
 - Current State Control Sheet: {{CONTROL_SHEET_PATH}}
 
-## 1. Source of Truth and precedence
+## 1. Gate definition / acceptance claim
 
-1. 本書 = Active Gate Coding Contract。
-2. applicable 08 = current Trialのcorrection deltaのみ。
-3. final PASS previous Gate Decision = established previous contract evidence。
-4. Current State Control Sheet = verified-state index。
-5. current source/test/migration = observable implementation facts。
-
-本書の意味論と上位承認contractに矛盾がある場合、推測で解決せず停止する。
-
-## 2. Coding Agent role
-
-- Active Gateのproduction codeを実装する。
-- Active Gateに必要なautomated test codeを作成・修正する。
-- 必要なmigrationを作成する。
-- implementation commitを作成する。
-- completion report / Gate-local detailを作成・更新する。
-- `READY_FOR_TEST`で停止する。
-
-## 3. Prohibited work
-
-- Gate判定
-- Acceptance Criteria変更
-- independent auditの代替
-- PASS済みGateの無断再設計
-- next Gateへの先行着手
-- scope外refactor
-- assertion緩和 / failing test削除 / skip / xfail追加だけによる回避
-- destructive environment operation（明示runbookがない限り）
-- `git add .` 等で無関係変更を混入
-
-## 4. Verified current state
-
-{{VERIFIED_CURRENT_STATE_SUMMARY}}
-
-## 5. Protected passed-Gate contracts
-
-| Gate | Protected semantic / invariant | Evidence | Mandatory regression |
-|---|---|---|---|
-| {{PREVIOUS_GATE_OR_NONE}} | {{PROTECTED_SEMANTIC}} | {{DECISION_PATH}} | {{REGRESSION_REQUIREMENT}} |
-
-If none: `NONE`.
-
-## 6. Active Gate objective
+### Gate objective
 
 {{GATE_OBJECTIVE}}
 
-## 7. Implementation scope
+### Contract claim established by PASS
 
-### 7.1 In scope
-{{IN_SCOPE}}
+このGateがfinal PASSしたとき、後続工程は以下を成立済みcontractとして依存してよい。
 
-### 7.2 Out of scope
-{{OUT_OF_SCOPE}}
+{{DOWNSTREAM_USABLE_RESULT_AFTER_PASS}}
 
-### 7.3 Allowed change boundary
-{{ALLOWED_PATHS_OR_COMPONENTS}}
+### Why this is one Gate
 
-### 7.4 Prohibited change boundary
-{{PROHIBITED_PATHS_OR_COMPONENTS}}
+{{WHY_THIS_IS_ONE_ACCEPTANCE_BOUNDARY}}
 
-## 8. Gate implementation contract
+実装難易度やAgent execution sizeをGate境界理由として使用しない。
 
-{{IMPLEMENTATION_CONTRACT}}
+## 2. Execution Mode decision
 
-MUST express observable semantics, ownership/authority, schema/API/runtime invariants as applicable.
+- Selected: SINGLE_EXECUTION / WORK_PACKAGE
+- Reason: {{EXECUTION_MODE_REASON}}
+- P00 Plan: {{P00_PATH_OR_NA}}
 
-## 9. Transition Debt
+Work Package ModeであってもGate semantic contractは分割されない。
 
-| ID | Action this Gate | Temporary authority / exception | Scope guard | Exit Gate / criterion |
-|---|---|---|---|---|
-| {{TD_ID_OR_NONE}} | introduce / preserve / close / NONE | {{DETAIL}} | {{SCOPE_GUARD}} | {{EXIT}} |
+## 3. Required implementation semantics
 
-## 10. Required self-checks
+{{REQUIRED_IMPLEMENTATION_SEMANTICS}}
 
-Coding Agent self-checkはimplementation confidenceのためでありGate PASS evidenceではない。
+## 4. Allowed scope
 
-{{REQUIRED_SELF_CHECKS}}
+{{ALLOWED_SCOPE}}
 
-## 11. Required outputs
+## 5. Explicitly prohibited scope
 
-- Implementation commit full SHA
-- `20_implementation_reports/{{GATE_ID}}/{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_implementation_completion_report.md`
-- `20_implementation_reports/{{GATE_ID}}/{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md`
-- changed file list
-- migration/schema impact if applicable
-- Transition Debt impact
+{{PROHIBITED_SCOPE}}
 
-## 12. Completion condition
+## 6. Protected passed-Gate contracts
 
-{{COMPLETION_CONDITION}}
+| Gate | Protected semantic | Allowed interaction | Mandatory regression |
+|---|---|---|---|
+| {{PREVIOUS_GATE_OR_NONE}} | {{SEMANTIC}} | {{INTERACTION}} | {{REGRESSION}} |
+
+## 7. Transition Debt
+
+| TD ID | Required action in this Gate | Exit criterion / scope guard |
+|---|---|---|
+| {{TD_ID_OR_NONE}} | introduce / preserve / close / NONE | {{CRITERION}} |
+
+## 8. Schema / migration / API / runtime policy
+
+{{POLICY_OR_NA}}
+
+## 9. Automated test obligations
+
+{{TEST_OBLIGATIONS}}
+
+## 10. Candidate Assembly requirement
+
+Before READY_FOR_TEST:
+
+- all required execution units complete
+- integration / Gate-wide self-check complete
+- protected passed-Gate coding-side regression complete
+- unresolved candidate-affecting change = NONE
+- Fixed Trial Candidate SHA fixed
+- Implementation Completion Report created
+
+Package checkpoint aloneをFixed Trial Candidateと扱わない。
+
+## 11. Coding Agent prohibited work
+
+- Gate Decision
+- Acceptance Criteria変更
+- 07変更によるtest回避
+- passed-Gate semanticの無断変更
+- next Gate先行実装
+- package scope外の便乗変更
+
+## 12. Required outputs
+
+### SINGLE_EXECUTION
+
+- implementation status report
+- implementation completion report
+- Gate-local implementation detail update
+
+### WORK_PACKAGE
+
+各package:
+
+- package execution status report
+- implementation checkpoint report
+- checkpoint SHA
+
+Trial completion時:
+
+- Fixed Trial Candidate SHA
+- implementation completion report
+- Gate-local implementation detail update
 
 ## 13. Stop condition
 
-以下のいずれかで停止する。
-
-- `READY_FOR_TEST`
-- `BLOCKED_CONTRACT_AMBIGUITY`
-- `BLOCKED_PREREQUISITE`
-- `BLOCKED_UNSAFE_OPERATION`
-
-Coding AgentはGate PASSを宣言しない。
+Coding sideは`READY_FOR_TEST`または明示的`BLOCKED_*`で停止する。Gate PASSを宣言しない。

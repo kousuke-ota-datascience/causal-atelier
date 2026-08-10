@@ -18,3 +18,8 @@
 
 ## 5. Forbidden parallelization
 {{FORBIDDEN_PARALLELIZATION_OR_NONE}}
+
+
+## Gate vs Work Package boundary check
+
+For each proposed Gate, confirm that PASS creates a downstream-relyable semantic contract. If the split is only due to implementation size / Agent execution limits, keep one Gate and use Work Package Mode.

@@ -1,10 +1,10 @@
-# Generated Gate Implementation Reports
+# {{GATE_ID}} Implementation Evidence
 
-このdirectoryは実enhancementで`{{GATE_ID}}`を`G00`, `G01`, ...へ置換して使用する。
+Gate-local cumulative detailと、Trialごとのcandidate evidenceを保存する。
 
-生成物:
+```text
+{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
+Trial{{TRIAL_NO}}/
+```
 
-- `{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_implementation_completion_report.md`
-- `{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md`
-
-rootの`TEMPLATE_*.md`を使用して生成する。
+Trial directoryはhistorical evidenceとしてimmutableに扱う。

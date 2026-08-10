@@ -1,98 +1,166 @@
-# 10_enhance_instruction — Gate Execution Contract Specification v2
+# 10_enhance_instruction — Gate Execution Contract Specification v3
 
 ## 0. Purpose
 
-`10_enhance_instruction/`は、Coding AgentおよびTest / Audit Agentが従う**Gate-local execution contract**を保存する。
+`10_enhance_instruction/`は、Gateのsemantic contractと、それを実行するためのexecution decompositionを保存する。
 
 ```text
 {{GATE_ID}}/
-  06 = Coding Contract
-  07 = Verification Contract
-  08 = retry Trial remediation delta (conditional)
-  09 = explicit Gate Contract Amendment record (exceptional)
+  06 = Gate Coding Contract
+  P00 = Work Package Plan (conditional)
+  06_Gxx_Pxx = planned Coding execution package (conditional)
+  07 = Gate Verification Contract
+  08 = retry Trial remediation delta
+  08_Gxx_Rxx = remediation Coding execution package (conditional)
+  09 = explicit Gate Contract Amendment record
 ```
 
-## 1. Common rules
+## 1. Normative responsibility
 
-### 1.1. No unresolved meta variables — MUST
+### Gate
+
+Gateはacceptance contractであり、**作業結果が後続工程から依存可能になったか**を判定する単位である。
+
+### Work Package
+
+Work PackageはGate Contractを成立させるためのbounded Coding execution unitである。package completionはproduct / architecture acceptanceを成立させない。
+
+### Trial
+
+TrialはFixed Trial CandidateをIndependent Verificationへ提出して正式判定を受けるattemptである。Agent起動回数ではない。
+
+## 2. Common rules
+
+### 2.1. No unresolved meta variables — MUST
 Agentへ渡す時点で`{{...}}`を残さない。
 
-### 1.2. Gate localization — MUST
+### 2.2. Gate localization — MUST
 Active Gate以外の便乗実装を禁止する。
 
-### 1.3. Immutable Gate contract — MUST
-06/07はGate開始前にfreezeする。FAILを理由に意味論を変更しない。
+### 2.3. Immutable Gate contract — MUST
+06/07はGate開始前にfreezeする。FAILやpackage都合を理由に意味論を変更しない。
 
-### 1.4. Remediation delta — CONDITIONAL MUST
-FAIL後の次Trialでは08を追加する。08は06/07をoverrideしない。
+### 2.4. Execution Mode — MUST
+06で`SINGLE_EXECUTION`または`WORK_PACKAGE`を固定する。
 
-### 1.5. Passed-Gate protection — MUST when previous PASS exists
+### 2.5. Work Package decomposition — CONDITIONAL MUST
+Work Package ModeではP00を先に固定し、その後P01+ instructionを作成する。
+
+### 2.6. Remediation delta — CONDITIONAL MUST
+formal FAIL後の次Trialでは08を追加する。08は06/07をoverrideしない。
+
+### 2.7. Passed-Gate protection — MUST when previous PASS exists
 previous PASS Gateのprotected semanticsとmandatory regressionを明示する。
 
-### 1.6. Transition Debt — CONDITIONAL MUST
-temporary authority / exceptional behaviorが存在する場合、IDとexit criterionを明示する。
+### 2.8. Transition Debt — CONDITIONAL MUST
+temporary authority / exceptionが存在する場合、IDとexit criterionを明示する。
 
-### 1.7. Explicit precedence — MUST when multiple documents are readable
-各文書のauthority domainを明記する。
-
-## 2. 06 Coding Contract
-
-MUST include:
+## 3. 06 Gate Coding Contract MUST include
 
 - Project / Enhancement / Branch / Baseline / Active Gate
-- Source of Truth / precedence
-- Current verified state reference
-- Coding Agent role
-- prohibited work
+- Gate definition / objective
+- **Gate acceptance claim: PASS後に何がdownstream利用可能になるか**
+- Execution Mode
+- allowed scope / prohibited scope
 - protected passed-Gate contracts
-- implementation scope and change boundary
-- Gate-specific implementation contract
-- Transition Debt rules
-- required automated checks
-- required outputs
-- completion / stop condition
+- required implementation semantics
+- schema / migration / API / runtime policy
+- automated test obligations
+- Transition Debt constraints
+- candidate assembly requirement
+- required reports / stop condition
 
-## 3. 07 Verification Contract
+06はpackage instructionより上位である。
 
-MUST include:
-
-- exact implementation commit selection rule
-- Acceptance Criteria
-- test item plan
-- authority / precedence
-- mutation prohibition
-- protected passed-Gate regression requirements
-- Transition Debt scope / exit audit where applicable
-- PASS / FAIL / BLOCKED semantics
-- required evidence format
-
-07 is the Acceptance Criteria authority.
-06 may be read as implementation/scope context but may not relax or override 07.
-
-## 4. 08 Remediation Contract
-
-08 is created for a retry Trial after FAIL.
+## 4. P00 Work Package Plan — conditional
 
 MUST include:
 
-- failed Trial / Gate Decision path
-- observed failure facts
-- required correction delta
-- files / areas allowed to change
-- explicit non-solutions
-- unchanged 06/07 statement
-- regression / retest obligations
+- why Work Package Mode is required
+- package list
+- package semantic scope
+- dependency / execution DAG
+- entry criteria
+- exit criteria
+- focused verification
+- checkpoint rule
+- restart / interruption rule
+- package report path
+- Candidate Assembly owner / package
+- Fixed Trial Candidate fixation rule
+
+P00自体をimplementation packageとして実行しない。
+
+## 5. Package instruction P01-P99
+
+MUST include:
+
+- Gate / Trial / Package identity
+- parent 06 / P00
+- exact scope
+- explicit out-of-scope
+- dependencies
+- required implementation
+- focused verification
+- checkpoint commit rule
+- status report rule
+- checkpoint report rule
 - stop condition
 
-MUST NOT:
+Package AgentはGate-wide PASS/FAILを判定しない。
 
-- weaken Acceptance Criteria
-- redefine target architecture without explicit amendment
-- silently broaden Gate scope
-- convert environment/preflight problems into product-code changes
+## 6. 07 Verification Contract
 
-## 5. Contract amendment
+MUST include:
 
-06/07 itself is wrong -> Human-approved Gate Contract Amendment (`09_*_Gate_Contract_Amendment.md`).
-Retry implementation is wrong -> 08 Remediation Delta.
-These paths must not be conflated.
+- Acceptance Criteria
+- Fixed Trial Candidate identity rule
+- Test Item plan
+- candidate identity audit
+- protected passed-Gate regression
+- Transition Debt audit
+- FAIL / BLOCKED distinction
+- Gate Decision semantics
+
+07がAcceptance Criteria authorityである。
+
+## 7. 08 Remediation Delta
+
+formal FAIL後にHuman / workflow ownerが作成する。
+
+MUST include:
+
+- failed Trial
+- failed Gate Decision path
+- immutable 06 / 07 references
+- failure facts
+- required correction
+- forbidden workaround
+- re-verification requirements
+- next Trial identity
+- Work Package Modeの場合のRxx decomposition方針
+
+## 8. Remediation Package R01-R99
+
+Rxxはformal FAILによって生じたcorrection execution unitである。
+Original Pxxと区別し、FAIL前のplanned implementationとFAIL後のremediationをtraceableにする。
+
+## 9. 09 Gate Contract Amendment
+
+Contract defect時のみ使用する。Amendment IDは`A01-A99`。
+
+- amendment reason
+- affected 06 / 07
+- affected P00 / package instructions
+- protected passed-Gate impact
+- re-approval
+- re-baseline requirement
+- Trial handling
+
+## 10. Precedence
+
+```text
+Amendment > 07 > 06 > 08 > P00/package instruction > evidence/report
+```
+
+ただし08は06/07をoverrideせず、P00/package instructionはexecution HOWのみを支配する。

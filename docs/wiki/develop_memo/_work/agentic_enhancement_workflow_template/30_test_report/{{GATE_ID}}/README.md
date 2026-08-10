@@ -1,10 +1,11 @@
-# Generated Gate Test Reports
+# {{GATE_ID}} Independent Verification Evidence
 
-このdirectoryは実enhancementで`{{GATE_ID}}`を`G00`, `G01`, ...へ置換して使用する。
+Trialごとにdirectoryを分ける。
 
-生成物:
+```text
+Trial01/
+Trial02/
+...
+```
 
-- `{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_{{TEST_ITEM_ID}}_<name>.md`
-- `{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_999_gate_decision.md`
-
-rootの`TEMPLATE_*.md`を使用して生成する。
+判定済みTrial evidenceを上書きしない。

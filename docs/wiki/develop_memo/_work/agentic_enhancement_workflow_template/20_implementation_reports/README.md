@@ -1,77 +1,89 @@
-# 20_implementation_reports — Gate-local Implementation Evidence Specification v2
+# 20_implementation_reports — Execution Evidence Specification v3
 
 ## 0. Purpose
 
-Coding Agentが実際に行った実装を、Gate / Trial単位で再構成できる粒度で保存する。
+Coding Agent execution evidenceを、Gate / Trial / Work Package階層で保存する。
 
 ```text
+package execution status report
+  = 1 Agent executionの完了 / 中断 / blocker記録
+
+implementation checkpoint report
+  = 1 Work Packageのimplementation checkpoint evidence
+
 implementation completion report
-  = 1 Gate / 1 Trialのtransaction record
+  = 1 TrialのFixed Trial Candidate transaction record
 
 implementation report detail
-  = 1 Gateの累積implementation ledger
-  = 未検証stateを含んでよい
+  = 1 Gateの累積unverified implementation ledger
 ```
 
-**enhancement全体のverified current stateはここで管理しない。**
-verified stateはroot Current State Control Sheetへ、final PASS evidenceだけをpromotionする。
+verified current stateはここで管理しない。
 
-## 1. Directory rule
+## 1. Directory
 
 ```text
 20_implementation_reports/{{GATE_ID}}/
+  {{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
+  Trial{{TRIAL_NO}}/
+    packages/
+    {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
 ```
 
-10 / 20 / 30は同一Gate namespaceを使う。
-
-## 2. Common rules
-
-- commitは可能な限りfull SHA。
-- pathはrepository root相対。
-- blank fieldは禁止。`N/A / NONE / NOT_RUN / UNKNOWN`を使う。
-- FactsとInterpretationを分離する。
-- self-checkはGate PASS evidenceではない。
-- report commitとimplementation commitを区別する。
-
-## 3. Completion report
-
-File:
+## 2. Evidence identity
 
 ```text
-{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_implementation_completion_report.md
+Package Checkpoint SHA
+  ↓ package chain
+Fixed Trial Candidate SHA
+  ↓ Independent Verification
+Gate Decision
 ```
 
-MUST record:
+Report commit SHAとimplementation checkpoint SHAを分離する。
 
-- starting commit
-- implementation commit
-- applicable 06 / 08
+## 3. Package status report
+
+Coding executionが完了・中断・継続不能になった時点で記録する。checkpoint reportとは別artifactである。
+
+推奨file:
+
+```text
+{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
+```
+
+## 4. Implementation Checkpoint Report
+
+Work Package Modeで各Pxx/Rxxごとに作成する。
+
+MUST:
+
+- starting SHA
+- package implementation checkpoint SHA
+- report SHA if separate
 - changed files
-- implementation facts
-- migrations/schema/API impact
-- self-checks
-- protected passed-Gate impact
-- Transition Debt impact
-- READY_FOR_TEST / BLOCKED status
+- focused verification
+- dependency status
+- completion / blocker state
+- residual risk / next dependency
 
-## 4. Gate-local detail ledger
+MUST NOT claim Gate PASS。
 
-File:
+## 5. Implementation Completion Report
 
-```text
-{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
-```
+Trial candidate assembly後に作成する。
 
-MUST record:
+MUST:
 
-- all Trials within this Gate
-- current unverified implementation state
-- unresolved Coding observations
-- TD implementation actions
-- protected-contract touches
+- all required package checkpoints
+- candidate assembly evidence
+- Fixed Trial Candidate SHA
+- candidate-affecting diff state
+- Gate-wide self-check
+- protected previous-Gate self-regression
+- applicable remediation
+- READY_FOR_TEST / BLOCKED
 
-MUST NOT claim:
+## 6. Gate-local Detail Ledger
 
-- Gate PASS
-- verified architecture promotion
-- acceptance authority
+Trial / package progressを累積記録してよい。未検証stateであることを明示する。

@@ -1,57 +1,38 @@
-# 30_test_report — Gate-local Test / Audit Evidence Specification v2
+# 30_test_report — Independent Verification Specification v3
 
 ## 0. Purpose
 
-Test / Audit Agentが実際に行った検証とGate判定を、後から独立に追跡・追試・監査できる粒度で保存する。
+Fixed Trial Candidateに対する独立Test / Audit evidenceを、Gate / Trial単位で保存する。
+
+## 1. Directory
 
 ```text
-test item report
-  = 1 test itemの実行事実・結果・再現手順
-
-gate decision report
-  = 当該Gate / Trialのtest item evidenceを集約した最終判定
+30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/
+  ..._001_*.md
+  ...
+  ..._999_gate_decision.md
 ```
 
-## 1. Directory and naming
+## 2. Acceptance target
 
-```text
-30_test_report/{{GATE_ID}}/
-{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_{{TEST_ITEM_ID}}_<name>.md
-{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_ID}}_999_gate_decision.md
-```
+Gate acceptance対象は**Fixed Trial Candidate**である。
 
-## 2. Common evidence rules
+- package checkpoint単独をGate acceptance対象にしない。
+- Coding self-checkをIndependent Verificationへ代用しない。
+- completion reportからFixed Trial Candidate SHAを取得する。
+- Tested Repository Stateとの差分を最初に監査する。
 
-- tested commit full SHA — MUST
-- exact copy-paste executable command — MUST
-- exit code — MUST when command executed
-- raw relevant output — MUST
-- Facts / Interpretation separation — MUST
-- AC mapping — MUST
-- Test Agent source mutation = `NONE` — MUST for normal PASS evidence
-- timestamp = timezone付きISO 8601 — MUST
+## 3. Authority
 
-## 3. PASS / FAIL / BLOCKED
+- Test Item Report = item-level observed evidence
+- 999 Gate Decision = final PASS / FAIL / BLOCKED authority
 
-### PASS
-Required AC / regression / TD auditが必要evidence付きで成立。
+## 4. Trial transition
 
-### FAIL
-test実行可能でproduct / implementationがMUST contractを満たさない。
+- formal FAIL -> next Trial remediation
+- BLOCKED != FAIL
+- package failureはここでformal FAILになるまでTrial FAILではない
 
-### BLOCKED
-prerequisite、environment、contract ambiguity等で妥当なproduct判定不能。
+## 5. Immutability
 
-## 4. Protected passed-Gate regression
-
-後続Gateが以前のprotected semanticsへ触れる場合、該当regression itemをMUSTとする。
-regression failureはactive GateをFAILにできる。
-
-## 5. Transition Debt
-
-TDが存在する場合、scope expansion / exit criterion / authority overlapを必要に応じてTest Itemとして監査する。
-
-## 6. Gate Decision promotion semantics
-
-final PASS Gate DecisionだけがCurrent State Control Sheetのverified-state promotion triggerとなる。
-FAIL / BLOCKEDはpromotion triggerではない。
+判定済みTrial directoryを次Trialの結果で上書きしない。

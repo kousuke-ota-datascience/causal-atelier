@@ -1,35 +1,46 @@
-# Operator Workflows v2
+# 40_operator_workflows — Human-controlled Orchestration v3
 
 ## 0. Purpose
 
-Human / workflow ownerがAgent executionや高リスク操作を制御するためのorchestration layer。
+Agent起動、architecture discovery、preflight、destructive/controlled operation等の**orchestration**を保存する。
 
-このdirectoryの文書はproduct acceptance evidenceそのものではない。
-Acceptance evidenceは`30_test_report/`へ保存する。
+ここにあるartifact自体はproduct acceptance evidenceではない。
 
-## 1. Workflow classes
+## 1. Agent entry prompt policy
 
-### 1.1. `agent_entry_prompts/`
-Coding / retry Coding / Test Agentへ渡す最小入口prompt。
-詳細契約を外側promptへ重複させない。
+v3ではparameterized operator promptを標準とする。
 
-### 1.2. `architecture_review/`
-Architecture / authority / persistence / runtime boundaryを変更するenhancementの事前調査・target decision・Gate decomposition。
+```text
+Human-supplied identity variables
+  ↓
+Derived naming/path variables
+  ↓
+Expansion validation
+  ↓
+Agent execution
+```
 
-### 1.3. `preflight/`
-product Gateとは別のexecution prerequisite verification。
+### MUST
 
-### 1.4. `controlled_runbook/`
-DB reset、migration repair、data purge、infrastructure operation等を、Humanがstep-by-stepに制御するprompt/result pair workflow。
+- HumanはGate / Trial / Package等のidentityを明示する。
+- path / filenameは可能な限りderived variableから生成する。
+- variableはUPPER_SNAKE_CASE。
+- unresolved `{{...}}`が残った状態で実行しない。
+- instruction globが複数一致したら任意選択しない。
+- Work Package Agentはassigned packageだけを実行する。
+- Audit AgentはFixed Trial Candidateを対象とする。
 
-## 2. Principle
+## 2. Agent prompts
 
-- execution contractは10に一本化。
-- product evidenceは30に一本化。
-- verified current stateはControl Sheetに一本化。
-- operator workflowは「何を次に実行してよいか」を制御する。
+- `coding_agent_prompt.md`: SINGLE_EXECUTION Gate
+- `work_package_coding_agent_prompt.md`: Pxx/Rxx execution
+- `fail_rework_coding_agent_prompt.md`: formal FAIL後のretry Trial
+- `test_agent_prompt.md`: Independent Test / Audit
 
-## 3. Destructive operations
+## 3. Other workflows
 
-Destructive operationはAgentの広い裁量で実行させない。
-step promptにexact command / precondition / abort conditionを固定し、step resultを確認してから次stepへ進む。
+- `architecture_review/`
+- `preflight/`
+- `controlled_runbook/`
+
+Gate decompositionとWork Package decompositionは別責務である。

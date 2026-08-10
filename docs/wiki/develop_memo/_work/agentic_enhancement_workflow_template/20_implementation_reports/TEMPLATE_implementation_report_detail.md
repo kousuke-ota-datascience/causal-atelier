@@ -5,48 +5,50 @@
 - Gate: {{GATE_ID}}
 - 06 Contract: {{PATH_06}}
 - 07 Contract: {{PATH_07}}
+- Execution Mode: SINGLE_EXECUTION / WORK_PACKAGE
 - Current Trial: {{CURRENT_TRIAL}}
+- Current Package: {{CURRENT_PACKAGE_OR_NA}}
 - Ledger status: ACTIVE / FINALIZED_AFTER_PASS / ABANDONED
 
 ## 1. Purpose
 
-この文書は**当該Gate内部だけ**の累積implementation ledgerである。
-未検証implementation stateを記録してよいが、verified current stateやGate PASSを宣言してはならない。
+当該Gate内部の累積implementation ledger。未検証stateを記録してよいが、verified current stateやGate PASSを宣言しない。
 
 ## 2. Trial history
+| Trial | Fixed Candidate | Remediation | Completion report | Independent decision |
+|---|---|---|---|---|
+| {{TRIAL_NO}} | {{FIXED_SHA_OR_NONE}} | {{08_OR_NONE}} | {{REPORT_PATH_OR_PENDING}} | PASS / FAIL / BLOCKED / PENDING |
 
-| Trial | Starting commit | Implementation commit | Remediation | Completion report | Coding status |
-|---|---|---|---|---|---|
-| {{TRIAL_ID}} | {{START}} | {{IMPLEMENTATION}} | {{08_OR_NONE}} | {{REPORT_PATH}} | READY_FOR_TEST / BLOCKED |
+## 3. Package history
+| Trial | Package | Status | Checkpoint SHA | Status report | Checkpoint report | Restart count |
+|---|---|---|---|---|---|---:|
+| {{TRIAL}} | {{PACKAGE}} | COMPLETE / BLOCKED / IN_PROGRESS | {{SHA}} | {{PATH}} | {{PATH}} | {{COUNT}} |
 
-## 3. Current implementation state — unverified until Gate PASS
-
+## 4. Current implementation state — unverified until Gate PASS
 {{CURRENT_IMPLEMENTATION_STATE}}
 
-## 4. Files / components touched across this Gate
+## 5. Candidate assembly state
+- State: NOT_STARTED / IN_PROGRESS / READY_FOR_TEST / UNDER_TEST / DECIDED
+- Fixed Candidate SHA: {{SHA_OR_NONE}}
+- Outstanding candidate-affecting issue: {{NONE_OR_DETAIL}}
 
-{{TOUCHED_COMPONENTS}}
-
-## 5. Protected passed-Gate interactions
-
+## 6. Protected passed-Gate interactions
 {{PROTECTED_INTERACTIONS_OR_NONE}}
 
-## 6. Transition Debt implementation ledger
+## 7. Transition Debt implementation ledger
+| TD ID | Trial | Package | Action | Fact |
+|---|---|---|---|---|
+| {{TD_ID_OR_NONE}} | {{TRIAL}} | {{PACKAGE_OR_NA}} | introduce / preserve / close | {{FACT}} |
 
-| TD ID | Trial | Action | Fact |
-|---|---|---|---|
-| {{TD_ID_OR_NONE}} | {{TRIAL}} | introduce / preserve / close | {{FACT}} |
-
-## 7. Open Coding observations
-
+## 8. Open Coding observations
 {{OPEN_OBSERVATIONS_OR_NONE}}
 
-## 8. Finalization rule
+## 9. Finalization rule
 
-- final PASS後: `FINALIZED_AFTER_PASS`とし、Gate Decisionへのlinkを追加する。
-- verified stateそのものはCurrent State Control Sheetで管理する。
-- FAIL中: current implementation stateをverifiedとして表現しない。
+- package completeではfinalizeしない。
+- READY_FOR_TESTでもverified promotionしない。
+- final PASS後に`FINALIZED_AFTER_PASS`としてGate Decisionをlinkする。
+- verified stateはCurrent State Control Sheetで管理する。
 
-## 9. Final Gate Decision
-
+## 10. Final Gate Decision
 {{FINAL_GATE_DECISION_PATH_OR_PENDING}}
