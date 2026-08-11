@@ -21,17 +21,22 @@ from ariadne.capabilities.predictive import (
 )
 from ariadne.capabilities.predictive.modeling import MODEL_REGISTRY
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
+from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.domain.analysis_specification import AnalysisSpecification
 from ariadne.product.domain.enums import (
     AnalysisFamily,
     AnalysisMode,
+    ExecutionStatus,
     VersionedResourceStatus,
 )
+from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.lineage import LineageAuthority, classify_lineage_authority
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidExecutionPlan,
     InvalidSchema,
     InvalidStateTransition,
+    LegacyProductAuthorityDisabled,
     ProjectArchived,
 )
 from ariadne.product.domain.execution_plan import (
@@ -46,6 +51,11 @@ from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
     DatasetVersionOrm,
     ExecutionPlanOrm,
+    ExecutionOrm,
+    ArtifactOrm,
+    ResultOrm,
+    StageAttemptOrm,
+    StageExecutionOrm,
     FamilyArtifactOrm,
     FamilyExecutionOrm,
     FamilyResultOrm,
@@ -61,10 +71,24 @@ from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 
 
 class PredictiveWorkflowService:
-    def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
+    def __init__(
+        self,
+        session_factory: Any,
+        artifact_store: ArtifactStorePort,
+        *,
+        execution_service: ExecutionService | None = None,
+    ) -> None:
         self._session_factory = session_factory
         self._store = artifact_store
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
+        self._execution_service = execution_service
+
+    def _require_execution_service(self) -> ExecutionService:
+        if self._execution_service is None:
+            raise LegacyProductAuthorityDisabled(
+                "PredictiveWorkflowService Product execution operation"
+            )
+        return self._execution_service
 
     def create_plan(self, project_id: str, specification_id: str) -> dict[str, Any]:
         with self._session_factory() as session:
@@ -121,7 +145,9 @@ class PredictiveWorkflowService:
         requested_by: str,
         base_execution_id: str | None = None,
         revision_kind: str | None = None,
+        change_reason: str | None = None,
     ) -> dict[str, Any]:
+        self._require_execution_service()
         if isinstance(seed, bool) or not isinstance(seed, int):
             raise InvalidSchema("Execution seed must be an integer")
         with self._session_factory() as session:
@@ -183,11 +209,23 @@ class PredictiveWorkflowService:
                     ],
                 },
                 "seed": seed,
-                "revision": {
-                    "base_execution_id": base_execution_id,
-                    "kind": revision_kind,
-                } if base_execution_id else None,
             }
+            if self._execution_service is not None:
+                # ``ExecutionPlanOrm`` is a read/planning projection, not a
+                # lifecycle owner.  Commit it before entering the independent
+                # canonical UoW so the immutable plan reference is visible.
+                session.commit()
+                return self._canonical_submission(
+                    project_id=project_id,
+                    specification=spec_row,
+                    plan=plan_row,
+                    snapshot=snapshot,
+                    seed=seed,
+                    requested_by=requested_by,
+                    base_execution_id=base_execution_id,
+                    revision_kind=revision_kind,
+                    change_reason=change_reason,
+                )
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()),
                 project_id=project_id,
@@ -262,9 +300,80 @@ class PredictiveWorkflowService:
             session.commit()
             return self._execution_response(execution)
 
+    def _canonical_submission(
+        self,
+        *,
+        project_id: str,
+        specification: AnalysisSpecificationOrm,
+        plan: ExecutionPlanOrm,
+        snapshot: dict[str, Any],
+        seed: int,
+        requested_by: str,
+        base_execution_id: str | None,
+        revision_kind: str | None,
+        change_reason: str | None,
+    ) -> dict[str, Any]:
+        assert self._execution_service is not None
+        canonical = self._execution_service.create_family_execution(
+            project_id=project_id,
+            dataset_version_id=specification.dataset_version_id,
+            analysis_family=AnalysisFamily.PREDICTIVE,
+            family_spec=dict(specification.family_spec_json),
+            requested_by=requested_by,
+            analysis_view_id=specification.analysis_view_id,
+            analysis_specification_id=specification.analysis_specification_id,
+            execution_plan_id=plan.execution_plan_id,
+            seed=seed,
+            code_version=str(snapshot["versions"]["code"]),
+            runtime_version_json={"family_snapshot": snapshot},
+            base_execution_id=base_execution_id,
+            change_reason=change_reason,
+        )
+        return self._canonical_execution_response(canonical, snapshot=snapshot)
+
+    @staticmethod
+    def _canonical_execution_response(
+        execution: Execution, *, snapshot: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        family = execution.analysis_spec_json
+        return {
+            "execution_id": execution.execution_id,
+            "project_id": execution.project_id,
+            "dataset_version_id": execution.dataset_version_id,
+            "analysis_view_id": family.get("analysis_view_id"),
+            "research_context_version_id": (
+                (snapshot or execution.runtime_version_json.get("family_snapshot", {}))
+                .get("research_context", {}).get("id")
+            ),
+            "analysis_specification_id": family.get("analysis_specification_id"),
+            "execution_plan_id": family.get("execution_plan_id"),
+            "analysis_family": execution.analysis_family.value,
+            "specification_schema_version": "predictive-analysis-spec/1",
+            "specification_snapshot": family.get("family_spec", {}),
+            "snapshot": snapshot or execution.runtime_version_json.get("family_snapshot", {}),
+            "snapshot_hash": execution.snapshot_hash,
+            "status": execution.status.value,
+            "retry_count": execution.retry_count,
+            "requested_by": execution.requested_by,
+            "requested_at": execution.requested_at,
+            "started_at": execution.started_at,
+            "finished_at": execution.finished_at,
+            "last_error": (
+                {"message": execution.last_error_summary}
+                if execution.last_error_summary else None
+            ),
+            "base_execution_id": execution.base_execution_id,
+            "revision_kind": execution.revision_kind,
+        }
+
     def claim_next(
         self, worker_token: str, *, worker_id: str, lease_seconds: int = 1800
     ) -> str | None:
+        """Reject the retired Family-table claim authority.
+
+        Product workers claim only through the canonical Execution repository.
+        """
+        raise LegacyProductAuthorityDisabled("PredictiveWorkflowService.claim_next")
         with self._session_factory() as session:
             execution = session.scalar(
                 select(FamilyExecutionOrm)
@@ -288,6 +397,12 @@ class PredictiveWorkflowService:
             return execution.execution_id
 
     def process_execution(self, execution_id: str, *, worker_token: str) -> None:
+        """Reject the retired Family-table processing authority.
+
+        Product processing and Result/Artifact persistence belong to the
+        canonical ``ExecutionProcessor`` path.
+        """
+        raise LegacyProductAuthorityDisabled("PredictiveWorkflowService.process_execution")
         stored_keys: list[str] = []
         outcome: Any | None = None
         with self._session_factory() as session:
@@ -318,11 +433,6 @@ class PredictiveWorkflowService:
                 ),
                 "materialized_hash": view_manifest["materialized_hash"],
             }
-            committed: list[tuple[str, Any]] = []
-
-            def capture(stage: Any, result: Any) -> None:
-                committed.append((stage.stage_key, result))
-
             def cancelled() -> bool:
                 with self._session_factory() as session:
                     current = session.get(FamilyExecutionOrm, execution_id)
@@ -332,9 +442,7 @@ class PredictiveWorkflowService:
                         or current.worker_token != worker_token
                     )
 
-            outcome = GenericExecutor(
-                self._runner_registry(), commit=capture
-            ).execute(
+            outcome = GenericExecutor(self._runner_registry()).execute(
                 execution_id,
                 plan,
                 external_inputs={
@@ -369,7 +477,7 @@ class PredictiveWorkflowService:
                 artifacts_by_stage: dict[str, list[str]] = {}
                 result_ids_by_type: dict[str, str] = {}
                 artifact_ids_by_type: dict[str, str] = {}
-                for stage_key, run_result in committed:
+                for stage_key, run_result in outcome.stage_results:
                     stage_row = stage_rows[stage_key]
                     result_ids: list[str] = []
                     for draft in run_result.results:
@@ -540,6 +648,14 @@ class PredictiveWorkflowService:
             raise
 
     def list_executions(self, project_id: str) -> list[dict[str, Any]]:
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
+            with self._session_factory() as session:
+                rows = list(session.scalars(select(ExecutionOrm).where(
+                    ExecutionOrm.project_id == project_id,
+                    ExecutionOrm.analysis_family == AnalysisFamily.PREDICTIVE.value,
+                ).order_by(ExecutionOrm.requested_at.desc())))
+            return [self._canonical_execution_response(execution_service.get_execution(row.execution_id)) for row in rows]
         with self._session_factory() as session:
             self._project(session, project_id)
             rows = session.scalars(select(FamilyExecutionOrm).where(
@@ -551,6 +667,15 @@ class PredictiveWorkflowService:
 
     def list_family_executions(self, project_id: str) -> list[dict[str, Any]]:
         """Return user-visible Generic Workflow executions across analysis families."""
+        self._require_execution_service()
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                self._project(session, project_id)
+                legacy = list(session.scalars(select(FamilyExecutionOrm).where(
+                    FamilyExecutionOrm.project_id == project_id,
+                    FamilyExecutionOrm.analysis_family != "PREDICTIVE",
+                ).order_by(FamilyExecutionOrm.requested_at.desc())))
+            return [self._execution_response(row) for row in legacy] + self.list_executions(project_id)
         with self._session_factory() as session:
             self._project(session, project_id)
             rows = session.scalars(select(FamilyExecutionOrm).where(
@@ -563,10 +688,27 @@ class PredictiveWorkflowService:
             return [self._execution_response(row) for row in rows]
 
     def get_execution(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            return self._canonical_execution_response(self._canonical_execution(project_id, execution_id))
         with self._session_factory() as session:
             return self._execution_response(self._execution(session, project_id, execution_id))
 
     def get_stages(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            with self._session_factory() as session:
+                rows = list(session.scalars(select(StageExecutionOrm).where(
+                    StageExecutionOrm.execution_id == execution_id
+                ).order_by(StageExecutionOrm.ordinal)))
+                attempts = list(session.scalars(select(StageAttemptOrm).where(
+                    StageAttemptOrm.stage_execution_id.in_([row.stage_execution_id for row in rows])
+                ).order_by(StageAttemptOrm.stage_execution_id, StageAttemptOrm.attempt_number))) if rows else []
+            by_stage: dict[str, list[dict[str, Any]]] = {row.stage_execution_id: [] for row in rows}
+            for attempt in attempts:
+                by_stage[attempt.stage_execution_id].append({"stage_attempt_id": attempt.stage_attempt_id, "attempt_number": attempt.attempt_number, "worker_id": attempt.worker_id, "started_at": attempt.started_at, "finished_at": attempt.finished_at, "error": attempt.error_json})
+            return [self._canonical_stage_response(row, by_stage[row.stage_execution_id]) for row in rows]
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
             rows = session.scalars(select(FamilyStageExecutionOrm).where(
@@ -575,6 +717,12 @@ class PredictiveWorkflowService:
             return [self._stage_response(row) for row in rows]
 
     def list_results(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            with self._session_factory() as session:
+                rows = list(session.scalars(select(ResultOrm).where(ResultOrm.execution_id == execution_id).order_by(ResultOrm.created_at, ResultOrm.result_id)))
+            return [self._canonical_result_response(row) for row in rows]
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
             rows = session.scalars(select(FamilyResultOrm).where(
@@ -583,6 +731,12 @@ class PredictiveWorkflowService:
             return [self._result_response(row) for row in rows]
 
     def list_artifacts(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            with self._session_factory() as session:
+                rows = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.execution_id == execution_id).order_by(ArtifactOrm.created_at, ArtifactOrm.artifact_id)))
+            return [self._canonical_artifact_response(row) for row in rows]
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
             rows = session.scalars(select(FamilyArtifactOrm).where(
@@ -591,6 +745,27 @@ class PredictiveWorkflowService:
             return [self._artifact_response(row) for row in rows]
 
     def list_lineage(self, project_id: str, execution_id: str) -> list[dict[str, Any]]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            with self._session_factory() as session:
+                execution = session.get(ExecutionOrm, execution_id)
+                assert execution is not None
+                typed = self._canonical_typed_lineage(execution, session)
+                result_ids = list(session.scalars(select(ResultOrm.result_id).where(ResultOrm.execution_id == execution_id)))
+                artifact_ids = list(session.scalars(select(ArtifactOrm.artifact_id).where(ArtifactOrm.execution_id == execution_id)))
+                owned_ids = {execution_id, *result_ids, *artifact_ids}
+                rows = list(session.scalars(select(LineageEdgeOrm).where(
+                    LineageEdgeOrm.project_id == project_id,
+                    (LineageEdgeOrm.source_id.in_(owned_ids) | LineageEdgeOrm.target_id.in_(owned_ids)),
+                ).order_by(LineageEdgeOrm.created_at, LineageEdgeOrm.lineage_edge_id)))
+            generic = [
+                self._lineage_response(row) for row in rows
+                if classify_lineage_authority(
+                    row.source_type, row.relation_type, row.target_type,
+                ) is LineageAuthority.GENERIC_ONLY
+            ]
+            return self._deduplicated_lineage([*typed, *generic])
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
             result_ids = list(session.scalars(select(FamilyResultOrm.result_id).where(
@@ -610,6 +785,11 @@ class PredictiveWorkflowService:
             return [self._lineage_response(row) for row in rows]
 
     def cancel(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            self._execution_service.request_cancel(execution_id)
+            return self.get_execution(project_id, execution_id)
         with self._session_factory() as session:
             row = self._execution(session, project_id, execution_id)
             if row.status not in {"QUEUED", "RUNNING"}:
@@ -628,6 +808,11 @@ class PredictiveWorkflowService:
             return self._execution_response(row)
 
     def retry(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            self._canonical_execution(project_id, execution_id)
+            self._execution_service.retry_execution(execution_id)
+            return self.get_execution(project_id, execution_id)
         physical_keys: list[str] = []
         with self._session_factory() as session:
             row = self._execution(session, project_id, execution_id)
@@ -676,6 +861,13 @@ class PredictiveWorkflowService:
         return response
 
     def rerun(self, project_id: str, execution_id: str, *, requested_by: str) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            base = self._canonical_execution(project_id, execution_id)
+            if base.status not in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED, ExecutionStatus.CANCELLED}:
+                raise InvalidStateTransition("Execution", base.status, "RERUN")
+            family = base.analysis_spec_json
+            return self.submit_execution(project_id, specification_id=family["analysis_specification_id"], plan_id=family["execution_plan_id"], seed=int(base.random_seed), requested_by=requested_by, base_execution_id=execution_id, revision_kind="RERUN")
         with self._session_factory() as session:
             base = self._execution(session, project_id, execution_id)
             if base.status not in {"SUCCEEDED", "FAILED", "CANCELLED"}:
@@ -700,8 +892,16 @@ class PredictiveWorkflowService:
         *,
         specification_id: str,
         seed: int,
+        change_reason: str,
         requested_by: str,
     ) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            base = self._canonical_execution(project_id, execution_id)
+            if base.status not in {ExecutionStatus.SUCCEEDED, ExecutionStatus.FAILED, ExecutionStatus.CANCELLED}:
+                raise InvalidStateTransition("Execution", base.status, "REVISED")
+            plan = self.create_plan(project_id, specification_id)
+            return self.submit_execution(project_id, specification_id=specification_id, plan_id=plan["execution_plan_id"], seed=seed, requested_by=requested_by, base_execution_id=execution_id, revision_kind="REVISED", change_reason=change_reason)
         with self._session_factory() as session:
             base = self._execution(session, project_id, execution_id)
             if base.status not in {"SUCCEEDED", "FAILED", "CANCELLED"}:
@@ -718,6 +918,11 @@ class PredictiveWorkflowService:
         )
 
     def prefill(self, project_id: str, execution_id: str) -> dict[str, Any]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            execution = self._canonical_execution(project_id, execution_id)
+            family = execution.analysis_spec_json
+            return {"base_execution_id": execution_id, "analysis_specification_id": family.get("analysis_specification_id"), "execution_plan_id": family.get("execution_plan_id"), "seed": execution.random_seed, "revision_context": {"base_execution_id": execution.base_execution_id, "kind": execution.revision_kind, "change_reason": execution.change_reason}}
         with self._session_factory() as session:
             row = self._execution(session, project_id, execution_id)
             return {
@@ -935,6 +1140,30 @@ class PredictiveWorkflowService:
             raise EntityNotFound("ExecutionPlan", plan_id)
         return row
 
+    def _canonical_execution(self, project_id: str, execution_id: str) -> Execution:
+        assert self._execution_service is not None
+        execution = self._execution_service.get_execution(execution_id)
+        if execution.project_id != project_id or execution.analysis_family is not AnalysisFamily.PREDICTIVE:
+            raise EntityNotFound("Execution", execution_id)
+        return execution
+
+    @staticmethod
+    def _canonical_stage_response(row: StageExecutionOrm, attempts: list[dict[str, Any]]) -> dict[str, Any]:
+        return {"stage_execution_id": row.stage_execution_id, "execution_id": row.execution_id, "stage_key": row.stage_key, "stage_type": row.stage_type_json, "ordinal": row.ordinal, "status": row.status, "attempt_history": attempts, "input_binding": row.input_binding_json, "output_binding": row.output_binding_json, "last_error": row.last_error_json, "started_at": row.started_at, "finished_at": row.finished_at}
+
+    @staticmethod
+    def _canonical_result_response(row: ResultOrm) -> dict[str, Any]:
+        payload = row.payload_json or {}
+        schema_version = payload.get("schema_version")
+        if not isinstance(schema_version, str) or not schema_version:
+            raise InvalidSchema("Canonical Predictive Result is missing its preserved schema_version")
+        return {"result_id": row.result_id, "execution_id": row.execution_id, "stage_execution_id": row.stage_execution_id, "analysis_family": "PREDICTIVE", "result_type": row.result_type, "schema_version": schema_version, "analytical_status": row.scientific_status, "summary": row.summary_json or {}, "payload": payload, "diagnostics": row.diagnostics_json or {}, "warnings": row.warning_json or [], "created_at": row.created_at}
+
+    @staticmethod
+    def _canonical_artifact_response(row: ArtifactOrm) -> dict[str, Any]:
+        metadata = row.metadata_json or {}
+        return {"artifact_id": row.artifact_id, "execution_id": row.execution_id, "stage_execution_id": row.stage_execution_id, "result_id": row.result_id, "analysis_family": "PREDICTIVE", "family": "PREDICTIVE", "artifact_type": row.artifact_type, "schema_version": metadata.get("schema_version"), "media_type": row.media_type, "object_key": row.object_key, "content_hash": row.content_hash, "size_bytes": row.size_bytes, "metadata": metadata, "created_at": row.created_at}
+
     @staticmethod
     def _execution(session: Any, project_id: str, execution_id: str) -> FamilyExecutionOrm:
         row = session.get(FamilyExecutionOrm, execution_id)
@@ -1045,6 +1274,53 @@ class PredictiveWorkflowService:
             "target_id": row.target_id,
             "evidence": row.evidence_json,
         }
+
+    @staticmethod
+    def _canonical_typed_lineage(execution: ExecutionOrm, session: Any) -> list[dict[str, Any]]:
+        """Project the P01 typed structural relations from canonical ownership."""
+        edges: list[dict[str, Any]] = []
+
+        def add(source_type: str, source_id: str, relation_type: str, target_type: str, target_id: str, *, evidence: dict[str, Any] | None = None) -> None:
+            edges.append({
+                "lineage_edge_id": None,
+                "source_type": source_type, "source_id": source_id,
+                "relation_type": relation_type,
+                "target_type": target_type, "target_id": target_id,
+                "evidence": evidence or {},
+            })
+
+        results = list(session.scalars(select(ResultOrm).where(ResultOrm.execution_id == execution.execution_id)))
+        for result in results:
+            add("Execution", execution.execution_id, "GENERATED", "Result", result.result_id)
+        artifacts = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.execution_id == execution.execution_id)))
+        for artifact in artifacts:
+            if artifact.result_id:
+                add("Result", artifact.result_id, "GENERATED", "Artifact", artifact.artifact_id)
+            else:
+                # This is an existing ownership projection for a valid direct
+                # execution-scoped artifact, not a persisted generic edge.
+                add("Execution", execution.execution_id, "GENERATED", "Artifact", artifact.artifact_id)
+        add("DatasetVersion", execution.dataset_version_id, "USED_INPUT", "Execution", execution.execution_id)
+        analysis_view_id = (execution.analysis_spec_json or {}).get("analysis_view_id")
+        if isinstance(analysis_view_id, str) and analysis_view_id:
+            add("AnalysisView", analysis_view_id, "USED_INPUT", "Execution", execution.execution_id)
+        if execution.input_result_id:
+            add("Result", execution.input_result_id, "USED_INPUT", "Execution", execution.execution_id)
+        if execution.base_execution_id:
+            relation = "REVISED_FROM" if execution.revision_kind == "REVISED" else "DERIVED_FROM"
+            add("Execution", execution.base_execution_id, relation, "Execution", execution.execution_id, evidence={"revision_kind": execution.revision_kind})
+        return edges
+
+    @staticmethod
+    def _deduplicated_lineage(edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        merged: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
+        for edge in edges:
+            key = (
+                edge["source_type"], edge["source_id"], edge["relation_type"],
+                edge["target_type"], edge["target_id"],
+            )
+            merged.setdefault(key, edge)
+        return list(merged.values())
 
     @staticmethod
     def _validate_result(result_type: str, status: str) -> None:

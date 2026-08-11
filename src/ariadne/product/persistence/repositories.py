@@ -2,17 +2,21 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from dataclasses import asdict, is_dataclass
+from pathlib import Path
 from typing import Any
 
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.orm import Session
 
 from ariadne.product.domain.annotation import Annotation
 from ariadne.product.domain.artifact import Artifact
 from ariadne.product.domain.dataset_version import DatasetVersion
 from ariadne.product.domain.enums import (
+    ArtifactScope,
     ArtifactType,
+    AnalysisFamily,
     ExecutionOperation,
     ExecutionStatus,
     GraphOrigin,
@@ -20,12 +24,17 @@ from ariadne.product.domain.enums import (
     GraphVersionStatus,
     ProjectStatus,
     ResultType,
+    ResultLevel,
     ScientificStatus,
+    StageExecutionStatus,
 )
 from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.stage_execution import StageAttempt, StageExecution
+from ariadne.product.domain.execution_plan import StageType
 from ariadne.product.domain.graph_version import GraphVersion
 from ariadne.product.domain.project import Project
 from ariadne.product.domain.result import Result
+from ariadne.product.domain.errors import InvalidStateTransition
 from ariadne.product.persistence.orm_models import (
     AnnotationOrm,
     ArtifactOrm,
@@ -34,6 +43,8 @@ from ariadne.product.persistence.orm_models import (
     GraphVersionOrm,
     ProjectOrm,
     ResultOrm,
+    StageAttemptOrm,
+    StageExecutionOrm,
 )
 
 
@@ -72,7 +83,9 @@ def _orm_to_artifact(orm: ArtifactOrm) -> Artifact:
         artifact_id=orm.artifact_id,
         project_id=orm.project_id,
         execution_id=orm.execution_id,
+        stage_execution_id=orm.stage_execution_id,
         result_id=orm.result_id,
+        artifact_scope=ArtifactScope(orm.artifact_scope),
         artifact_type=ArtifactType(orm.artifact_type),
         object_key=orm.object_key,
         content_hash=orm.content_hash,
@@ -88,7 +101,9 @@ def _artifact_to_orm(a: Artifact) -> ArtifactOrm:
     orm.artifact_id = a.artifact_id
     orm.project_id = a.project_id
     orm.execution_id = a.execution_id
+    orm.stage_execution_id = a.stage_execution_id
     orm.result_id = a.result_id
+    orm.artifact_scope = a.artifact_scope.value
     orm.artifact_type = a.artifact_type.value
     orm.object_key = a.object_key
     orm.content_hash = a.content_hash
@@ -141,6 +156,7 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
     return Execution(
         execution_id=orm.execution_id,
         project_id=orm.project_id,
+        analysis_family=AnalysisFamily(orm.analysis_family),
         dataset_version_id=orm.dataset_version_id,
         input_graph_version_id=orm.input_graph_version_id,
         input_result_id=orm.input_result_id,
@@ -163,6 +179,11 @@ def _orm_to_execution(orm: ExecutionOrm) -> Execution:
         requested_at=orm.requested_at,
         started_at=orm.started_at,
         finished_at=orm.finished_at,
+        base_execution_id=orm.base_execution_id,
+        revision_kind=orm.revision_kind,
+        change_reason=orm.change_reason,
+        lease_owner=orm.lease_owner,
+        lease_expires_at=orm.lease_expires_at,
     )
 
 
@@ -170,6 +191,7 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
     orm = existing or ExecutionOrm()
     orm.execution_id = e.execution_id
     orm.project_id = e.project_id
+    orm.analysis_family = e.analysis_family.value
     orm.dataset_version_id = e.dataset_version_id
     orm.input_graph_version_id = e.input_graph_version_id
     orm.input_result_id = e.input_result_id
@@ -193,6 +215,11 @@ def _execution_to_orm(e: Execution, existing: ExecutionOrm | None = None) -> Exe
         orm.requested_at = e.requested_at
     orm.started_at = e.started_at
     orm.finished_at = e.finished_at
+    orm.base_execution_id = e.base_execution_id
+    orm.revision_kind = e.revision_kind
+    orm.change_reason = e.change_reason
+    orm.lease_owner = e.lease_owner
+    orm.lease_expires_at = e.lease_expires_at
     return orm
 
 
@@ -200,6 +227,8 @@ def _orm_to_result(orm: ResultOrm) -> Result:
     return Result(
         result_id=orm.result_id,
         execution_id=orm.execution_id,
+        result_level=ResultLevel(orm.result_level),
+        stage_execution_id=orm.stage_execution_id,
         result_type=ResultType(orm.result_type),
         scientific_status=ScientificStatus(orm.scientific_status),
         summary_json=orm.summary_json or {},
@@ -214,6 +243,8 @@ def _result_to_orm(r: Result) -> ResultOrm:
     orm = ResultOrm()
     orm.result_id = r.result_id
     orm.execution_id = r.execution_id
+    orm.result_level = r.result_level.value
+    orm.stage_execution_id = r.stage_execution_id
     orm.result_type = r.result_type.value
     orm.scientific_status = r.scientific_status.value
     orm.summary_json = r.summary_json
@@ -369,11 +400,30 @@ class SqlExecutionRepository:
         ).all()
         return [_orm_to_execution(r) for r in rows]
 
-    def claim_next(self, worker_token: str) -> Execution | None:
-        """Lock and mark one row RUNNING; the caller commits this transaction."""
+    def claim_next(
+        self,
+        worker_token: str,
+        *,
+        worker_id: str | None = None,
+        lease_seconds: int = 1800,
+    ) -> Execution | None:
+        """Atomically claim one canonical Execution; the caller commits."""
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
+        now = datetime.now(timezone.utc)
+        owner = worker_id or worker_token
         orm = self._session.scalars(
             select(ExecutionOrm)
-            .where(ExecutionOrm.status == "QUEUED")
+            .where(
+                or_(
+                    ExecutionOrm.status == "QUEUED",
+                    (
+                        (ExecutionOrm.status == "RUNNING")
+                        & ExecutionOrm.lease_expires_at.is_not(None)
+                        & (ExecutionOrm.lease_expires_at <= now)
+                    ),
+                )
+            )
             .order_by(ExecutionOrm.requested_at)
             .with_for_update(skip_locked=True)
             .limit(1)
@@ -381,15 +431,198 @@ class SqlExecutionRepository:
         if orm is None:
             return None
         orm.status = ExecutionStatus.RUNNING.value
-        orm.started_at = datetime.now(timezone.utc)
+        orm.started_at = now
+        orm.lease_owner = owner
+        orm.lease_expires_at = now + timedelta(seconds=lease_seconds)
         orm._worker_token = worker_token
         self._session.flush()
         return _orm_to_execution(orm)
 
-    def update(self, execution: Execution) -> None:
+    def renew_lease(self, execution_id: str, owner: str, lease_seconds: int = 1800) -> None:
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
+        orm = self._session.get(ExecutionOrm, execution_id)
+        if orm is None:
+            raise ValueError(f"Execution not found: {execution_id}")
+        if orm.lease_owner != owner or orm.status != ExecutionStatus.RUNNING.value:
+            raise PermissionError("lease owner mismatch")
+        orm.lease_expires_at = datetime.now(timezone.utc) + timedelta(seconds=lease_seconds)
+
+    def update(self, execution: Execution, *, owner: str | None = None) -> None:
         orm = self._session.get(ExecutionOrm, execution.execution_id)
-        if orm:
-            _execution_to_orm(execution, existing=orm)
+        if orm is None:
+            raise ValueError(f"Execution not found: {execution.execution_id}")
+        if orm.lease_owner is not None and owner != orm.lease_owner:
+            raise PermissionError("lease owner mismatch")
+        _execution_to_orm(execution, existing=orm)
+
+    def complete(self, execution: Execution, owner: str) -> None:
+        """Persist a lifecycle mutation only for the current lease owner."""
+        if execution.status is ExecutionStatus.SUCCEEDED:
+            stages = list(self._session.scalars(select(StageExecutionOrm).where(
+                StageExecutionOrm.execution_id == execution.execution_id
+            )))
+            if not stages or any(
+                row.status not in {"SUCCEEDED", "SKIPPED_DUE_TO_PREREQUISITE"}
+                for row in stages
+            ):
+                raise InvalidStateTransition(
+                    "Execution", ExecutionStatus.RUNNING, ExecutionStatus.SUCCEEDED
+                )
+        self.update(execution, owner=owner)
+
+
+def _stage_type(value: dict[str, Any]) -> StageType:
+    return StageType(value["namespace"], value["name"], value["version"])
+
+
+def _json_safe(value: Any) -> Any:
+    """Persist orchestration projections, never arbitrary runner objects."""
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    if isinstance(value, Path):
+        return str(value)
+    if is_dataclass(value) and not isinstance(value, type):
+        return _json_safe(asdict(value))
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_safe(item) for item in value]
+    return str(value)
+
+
+def _orm_to_stage(orm: StageExecutionOrm, attempts: list[StageAttemptOrm]) -> StageExecution:
+    return StageExecution(
+        stage_execution_id=orm.stage_execution_id,
+        execution_id=orm.execution_id,
+        stage_key=orm.stage_key,
+        stage_type=_stage_type(orm.stage_type_json),
+        ordinal=orm.ordinal,
+        dependencies=tuple(orm.dependencies_json or []),
+        status=StageExecutionStatus(orm.status),
+        input_binding=orm.input_binding_json or {},
+        output_binding=orm.output_binding_json or {},
+        attempts=[StageAttempt(
+            attempt_number=item.attempt_number,
+            worker_id=item.worker_id,
+            started_at=item.started_at,
+            stage_attempt_id=item.stage_attempt_id,
+            finished_at=item.finished_at,
+            error=item.error_json,
+        ) for item in attempts],
+        last_error=orm.last_error_json,
+        started_at=orm.started_at,
+        finished_at=orm.finished_at,
+    )
+
+
+class SqlStageExecutionRepository:
+    """Canonical StageExecution persistence; claim authority remains Execution."""
+
+    def __init__(self, session: Session) -> None:
+        self._session = session
+
+    def _owner_check(self, execution_id: str, owner: str | None) -> ExecutionOrm:
+        parent = self._session.get(ExecutionOrm, execution_id)
+        if parent is None:
+            raise ValueError(f"Execution not found: {execution_id}")
+        if parent.lease_owner is not None and owner != parent.lease_owner:
+            raise PermissionError("lease owner mismatch")
+        expiry = parent.lease_expires_at
+        expired = (
+            expiry <= datetime.now() if expiry is not None and expiry.tzinfo is None
+            else expiry <= datetime.now(timezone.utc) if expiry is not None else False
+        )
+        if owner is not None and expired:
+            raise PermissionError("execution lease expired")
+        return parent
+
+    def add_many(self, stages: list[StageExecution]) -> None:
+        for stage in stages:
+            self._owner_check(stage.execution_id, None)
+            self._session.add(StageExecutionOrm(
+                stage_execution_id=stage.stage_execution_id,
+                execution_id=stage.execution_id,
+                stage_key=stage.stage_key,
+                stage_type_json=stage.stage_type.as_dict(),
+                ordinal=stage.ordinal,
+                dependencies_json=list(stage.dependencies),
+                status=stage.status.value,
+                input_binding_json=_json_safe(stage.input_binding),
+                output_binding_json=_json_safe(stage.output_binding),
+                last_error_json=_json_safe(stage.last_error),
+                started_at=stage.started_at,
+                finished_at=stage.finished_at,
+            ))
+
+    def add(self, stage: StageExecution) -> None:
+        self.add_many([stage])
+
+    def get(self, stage_execution_id: str) -> StageExecution | None:
+        orm = self._session.get(StageExecutionOrm, stage_execution_id)
+        if orm is None:
+            return None
+        attempts = list(self._session.scalars(
+            select(StageAttemptOrm)
+            .where(StageAttemptOrm.stage_execution_id == stage_execution_id)
+            .order_by(StageAttemptOrm.attempt_number)
+        ))
+        return _orm_to_stage(orm, attempts)
+
+    def list_for_execution(self, execution_id: str) -> list[StageExecution]:
+        rows = list(self._session.scalars(
+            select(StageExecutionOrm)
+            .where(StageExecutionOrm.execution_id == execution_id)
+            .order_by(StageExecutionOrm.ordinal, StageExecutionOrm.stage_key)
+        ))
+        return [self.get(row.stage_execution_id) for row in rows]  # type: ignore[misc]
+
+    def update(self, stage: StageExecution, *, owner: str | None = None) -> None:
+        parent = self._owner_check(stage.execution_id, owner)
+        if stage.status is StageExecutionStatus.RUNNING and parent.status != ExecutionStatus.RUNNING.value:
+            raise InvalidStateTransition("StageExecution", parent.status, StageExecutionStatus.RUNNING)
+        orm = self._session.get(StageExecutionOrm, stage.stage_execution_id)
+        if orm is None:
+            raise ValueError(f"StageExecution not found: {stage.stage_execution_id}")
+        orm.status = stage.status.value
+        orm.input_binding_json = _json_safe(stage.input_binding)
+        orm.output_binding_json = _json_safe(stage.output_binding)
+        orm.last_error_json = _json_safe(stage.last_error)
+        orm.started_at = stage.started_at
+        orm.finished_at = stage.finished_at
+        existing = {
+            item.attempt_number: item
+            for item in self._session.scalars(select(StageAttemptOrm).where(
+                StageAttemptOrm.stage_execution_id == stage.stage_execution_id
+            ))
+        }
+        for attempt in stage.attempts:
+            row = existing.get(attempt.attempt_number)
+            if row is None:
+                self._session.add(StageAttemptOrm(
+                    stage_attempt_id=attempt.stage_attempt_id,
+                    stage_execution_id=stage.stage_execution_id,
+                    attempt_number=attempt.attempt_number,
+                    worker_id=attempt.worker_id,
+                    started_at=attempt.started_at,
+                    finished_at=attempt.finished_at,
+                    error_json=_json_safe(attempt.error),
+                ))
+            else:
+                if row.stage_attempt_id != attempt.stage_attempt_id:
+                    raise ValueError("stage attempt identity cannot be rewritten")
+                row.finished_at = attempt.finished_at
+                row.error_json = _json_safe(attempt.error)
+
+    def start_attempt(self, stage: StageExecution, *, owner: str, worker_id: str, at: datetime) -> StageAttempt:
+        self._owner_check(stage.execution_id, owner)
+        attempt = stage.start_attempt(worker_id, at)
+        self.update(stage, owner=owner)
+        return attempt
+
+    def attempts(self, stage_execution_id: str) -> list[StageAttempt]:
+        stage = self.get(stage_execution_id)
+        return [] if stage is None else stage.attempts
 
 
 class SqlResultRepository:

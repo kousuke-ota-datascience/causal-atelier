@@ -18,11 +18,10 @@ from ariadne.capabilities.predictive import (
     validate_predictive_specification,
 )
 from ariadne.interfaces.web_api import dependencies
-from ariadne.product.application.predictive_workflow_service import (
-    PredictiveWorkflowService,
-)
+from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
 from ariadne.product.domain.errors import InvalidSchema, PredictiveValidationError
-from ariadne.product.persistence.orm_models import FamilyArtifactOrm
+from ariadne.product.persistence.orm_models import ArtifactOrm
+from ariadne.scientific.core_adapter import ScientificCoreAdapter
 from ariadne.product.workflow.executor import GenericExecutor
 from ariadne.product.workflow.plan_validator import PlanValidator
 from ariadne.product.workflow.runner_registry import StageRunnerRegistry
@@ -31,6 +30,18 @@ from ariadne.product.workflow.runner_registry import StageRunnerRegistry
 TERMINOLOGY_LIMITATION = (
     "Predictive Explanation is not a Causal Explanation or Treatment Effect."
 )
+
+
+def _process_canonical_predictive(execution_id: str) -> None:
+    token = "g5-test-worker"
+    with dependencies._uow_context() as uow:
+        claimed = uow.executions.claim_next(token, worker_id=token)
+        uow.commit()
+    assert claimed is not None and claimed.execution_id == execution_id
+    ExecutionProcessor(
+        dependencies._uow_context, ScientificCoreAdapter(),
+        dependencies._get_artifact_store(), owner_token=token,
+    ).process(claimed)
 
 
 def _assert_predictive_export_terminology(document: dict) -> None:  # type: ignore[type-arg]
@@ -388,12 +399,7 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
         },
     )
     execution_id = execution.json()["execution_id"]
-    worker = PredictiveWorkflowService(
-        dependencies._get_session_factory(), dependencies._get_artifact_store()
-    )
-    token = str(uuid.uuid4())
-    assert worker.claim_next(token, worker_id="g5-test-worker") == execution_id
-    worker.process_execution(execution_id, worker_token=token)
+    _process_canonical_predictive(execution_id)
     completed = (await client.get(
         f"/api/v1/projects/{project_id}/executions/{execution_id}"
     )).json()
@@ -467,7 +473,7 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
     with factory() as session:
         for artifact_type in ("PREDICTIVE_EXPLANATION", "MODEL_CARD"):
             artifact_row = session.get(
-                FamilyArtifactOrm,
+                ArtifactOrm,
                 artifacts_by_type[artifact_type]["artifact_id"],
             )
             assert artifact_row is not None

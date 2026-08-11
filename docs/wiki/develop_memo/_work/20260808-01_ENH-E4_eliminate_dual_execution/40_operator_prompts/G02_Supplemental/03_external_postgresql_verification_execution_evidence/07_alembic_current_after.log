@@ -1,0 +1,4 @@
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+20260809_product_0007 (head)
+EXIT_CODE=0

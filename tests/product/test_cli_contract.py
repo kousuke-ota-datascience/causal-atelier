@@ -15,6 +15,7 @@ from ariadne.scientific.core_adapter import ScientificCoreAdapter
 def test_discovery_cli_writes_portable_manifest_without_web_identity(
     tmp_path: Path, monkeypatch,
 ) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.setenv("ARIADNE_PRODUCT_DATABASE_URL", "postgresql+psycopg://invalid.invalid:1/no-product-db")
     dataset = tmp_path / "data.csv"
     dataset.write_text("x,y\n1,2\n2,3\n", encoding="utf-8")
     output_dir = tmp_path / "output"
@@ -46,12 +47,13 @@ def test_discovery_cli_writes_portable_manifest_without_web_identity(
     assert manifest["scientific_status"] == "GENERATED"
     assert manifest["dataset"]["content_hash"]
     assert manifest["artifacts"][0]["content_hash"]
-    assert "execution_id" not in manifest
+    assert {"execution_id", "stage_execution_id", "result_id", "artifact_id"}.isdisjoint(manifest)
 
 
 def test_estimation_cli_scientific_negative_result_exits_zero(
     tmp_path: Path, monkeypatch,
 ) -> None:  # type: ignore[no-untyped-def]
+    monkeypatch.setenv("ARIADNE_PRODUCT_DATABASE_URL", "postgresql+psycopg://invalid.invalid:1/no-product-db")
     dataset = tmp_path / "data.csv"
     dataset.write_text("t,y\n0,1\n1,2\n", encoding="utf-8")
     graph = tmp_path / "graph.json"
@@ -102,6 +104,7 @@ def test_estimation_cli_scientific_negative_result_exits_zero(
     assert manifest["graph"]["content_hash"]
     assert manifest["result_summary"] == {"estimate": None}
     assert manifest["scientific_warnings"] == []
+    assert {"execution_id", "stage_execution_id", "result_id", "artifact_id"}.isdisjoint(manifest)
 
 
 def test_estimation_cli_uses_api_compatible_type_error_code(

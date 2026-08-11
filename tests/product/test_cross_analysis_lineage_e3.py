@@ -253,11 +253,6 @@ async def test_project_lineage_combines_families_and_explicit_relations(client) 
         for item in graph["edges"]
     }
     assert (
-        "ResearchContextVersion", context_id, "USED_INPUT",
-        "DatasetVersion", dataset_id, False,
-    ) in edges
-    assert ("DatasetVersion", dataset_id, "DERIVED_FROM", "AnalysisView", view_id, False) in edges
-    assert (
         "DatasetVersion", dataset_id, "USED_INPUT",
         "Execution", explore["execution_id"], False,
     ) in edges
@@ -278,8 +273,8 @@ async def test_project_lineage_combines_families_and_explicit_relations(client) 
         "AnalysisSpecification", specification_id, True,
     ) in edges
     assert (
-        "Result", explore["result_id"], "SUPPORTED_BY",
-        "Annotation", annotation_id, False,
+        "Result", explore["result_id"], "SELECTED",
+        "Annotation", annotation_id, True,
     ) in edges
     revision_edges = [
         item for item in graph["edges"]

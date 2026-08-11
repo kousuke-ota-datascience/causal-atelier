@@ -59,6 +59,7 @@ class ExecutionVariantRequest(StrictModel):
 
 class ExecutionBatchCreate(StrictModel):
     operation: Literal["DISCOVERY", "IDENTIFICATION", "ESTIMATION", "REFUTATION", "SENSITIVITY"]
+    analysis_family: Literal["CAUSAL", "EXPLORATORY", "PREDICTIVE"] = "CAUSAL"
     dataset_version_id: str
     input_graph_version_id: str | None = None
     input_result_id: str | None = None
@@ -111,6 +112,7 @@ class ExecutionBatchResponse(StrictModel):
 
 class ExecutionResponse(StrictModel):
     execution_id: str; project_id: str; dataset_version_id: str
+    analysis_family: str
     input_graph_version_id: str | None; input_result_id: str | None
     snapshot_schema_version: str; batch_key: str; operation: str
     algorithm_or_estimator: str; status: str; retry_count: int; requested_by: str

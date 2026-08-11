@@ -29,6 +29,7 @@ class PredictiveExecutionSubmit(StrictModel):
 class PredictiveExecutionRevise(StrictModel):
     analysis_specification_id: str
     seed: int
+    change_reason: str
 
 
 @router.post("/projects/{project_id}/execution-plans", status_code=201)
@@ -150,6 +151,7 @@ async def revise_predictive_execution(
         execution_id,
         specification_id=body.analysis_specification_id,
         seed=body.seed,
+        change_reason=body.change_reason,
         requested_by=request.headers.get("X-User-Id", "anonymous"),
     )
 

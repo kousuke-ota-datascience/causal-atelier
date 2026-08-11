@@ -35,6 +35,16 @@ class InvalidStateTransition(DomainError):
         )
 
 
+class LegacyProductAuthorityDisabled(DomainError):
+    """A retained legacy facade cannot perform Product lifecycle authority."""
+
+    def __init__(self, operation: str) -> None:
+        super().__init__(
+            f"Legacy Family lifecycle authority is disabled for Product operation: {operation}"
+        )
+        self.operation = operation
+
+
 class InvalidAnalysisSpec(DomainError):
     pass
 
@@ -133,6 +143,18 @@ class ArtifactStoreUnavailable(InfrastructureError):
 
 class ArtifactHashMismatch(InfrastructureError):
     pass
+
+
+class OutputOwnershipError(DomainError):
+    """Output metadata violates the canonical Result/Artifact ownership contract."""
+
+
+class OutputCompensationError(InfrastructureError):
+    """A failed output operation left physical locators for reconciliation."""
+
+    def __init__(self, message: str, reconciliation: list[dict[str, str]]) -> None:
+        super().__init__(message)
+        self.reconciliation = reconciliation
 
 
 class DatabaseUnavailable(InfrastructureError):

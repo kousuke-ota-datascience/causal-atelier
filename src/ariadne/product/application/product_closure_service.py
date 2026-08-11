@@ -19,6 +19,12 @@ from ariadne.product.domain.errors import (
     ProjectAccessDenied,
     ProjectBoundaryViolation,
 )
+from ariadne.product.domain.lineage import (
+    LINEAGE_RELATION_TYPES,
+    LineageAuthority,
+    assert_generic_lineage_allowed,
+    classify_lineage_authority,
+)
 from ariadne.product.domain.schemas import canonical_bytes
 from ariadne.product.persistence.orm_models import (
     AnalysisSpecificationOrm,
@@ -45,10 +51,7 @@ from ariadne.product.ports.artifact_store import ArtifactStorePort
 
 READ_ROLES = frozenset({"OWNER", "EDITOR", "VIEWER"})
 WRITE_ROLES = frozenset({"OWNER", "EDITOR"})
-LINEAGE_RELATIONS = frozenset({
-    "USED_INPUT", "GENERATED", "DERIVED_FROM", "REVISED_FROM",
-    "SUPPORTED_BY", "MOTIVATED", "SELECTED", "REJECTED",
-})
+LINEAGE_RELATIONS = LINEAGE_RELATION_TYPES
 ANNOTATION_TARGETS = frozenset({
     "Project", "ResearchContextVersion", "AnalysisView", "AnalysisSpecification",
     "Execution", "Result", "GraphVersion",
@@ -284,12 +287,14 @@ class ProductClosureService:
 
             def edge(source_type: str, source_id: str, relation: str,
                      target_type: str, target_id: str, *, explicit: bool = False,
+                     source_class: str = "TYPED_STRUCTURAL",
                      evidence: dict[str, Any] | None = None) -> None:
                 key = (source_type, source_id, relation, target_type, target_id)
                 edges[key] = {
                     "source_type": source_type, "source_id": source_id,
                     "relation_type": relation, "target_type": target_type,
                     "target_id": target_id, "explicit": explicit,
+                    "source_class": source_class,
                     "evidence": evidence or {},
                 }
 
@@ -305,88 +310,72 @@ class ProductClosureService:
                 node("DatasetVersion", row.dataset_version_id, f"{row.name} / {row.version_label}", content_hash=row.content_hash)
             for row in views:
                 node("AnalysisView", row.analysis_view_id, f"{row.name} v{row.version_number}", status=row.status, content_hash=row.content_hash)
-                edge("DatasetVersion", row.source_dataset_version_id, "DERIVED_FROM", "AnalysisView", row.analysis_view_id)
-            selections = list(session.scalars(select(WorkspaceSelectionOrm).where(
-                WorkspaceSelectionOrm.project_id == project_id
-            )))
-            for row in selections:
-                if row.research_context_version_id and row.dataset_version_id:
-                    edge(
-                        "ResearchContextVersion", row.research_context_version_id,
-                        "USED_INPUT", "DatasetVersion", row.dataset_version_id,
-                        evidence={"source": "workspace-selection"},
-                    )
             for row in specs:
                 node("AnalysisSpecification", row.analysis_specification_id, f"{row.analysis_family} {row.specification_key} v{row.version_number}", status=row.status)
-                edge("ResearchContextVersion", row.research_context_version_id, "SUPPORTED_BY", "AnalysisSpecification", row.analysis_specification_id)
-                edge("DatasetVersion", row.dataset_version_id, "USED_INPUT", "AnalysisSpecification", row.analysis_specification_id)
-                if row.analysis_view_id:
-                    edge("AnalysisView", row.analysis_view_id, "USED_INPUT", "AnalysisSpecification", row.analysis_specification_id)
 
+            # TD-006 archive: retained historical rows are read-only inputs to
+            # this derived projection, never Product lifecycle authority.
             family_execs = list(session.scalars(select(FamilyExecutionOrm).where(FamilyExecutionOrm.project_id == project_id)))
             for row in family_execs:
                 node("Execution", row.execution_id, f"{row.analysis_family} Execution", family=row.analysis_family, status=row.status)
                 edge("DatasetVersion", row.dataset_version_id, "USED_INPUT", "Execution", row.execution_id)
                 if row.analysis_view_id:
                     edge("AnalysisView", row.analysis_view_id, "USED_INPUT", "Execution", row.execution_id)
-                if row.research_context_version_id:
-                    edge("ResearchContextVersion", row.research_context_version_id, "SUPPORTED_BY", "Execution", row.execution_id)
-                if row.analysis_specification_id:
-                    edge("AnalysisSpecification", row.analysis_specification_id, "USED_INPUT", "Execution", row.execution_id)
-            causal_execs = list(session.scalars(select(ExecutionOrm).where(ExecutionOrm.project_id == project_id)))
-            for row in causal_execs:
-                node("Execution", row.execution_id, f"CAUSAL {row.operation}", family="CAUSAL", status=row.status)
+            canonical_execs = list(session.scalars(select(ExecutionOrm).where(ExecutionOrm.project_id == project_id)))
+            for row in canonical_execs:
+                node("Execution", row.execution_id, f"{row.analysis_family} {row.operation}", family=row.analysis_family, status=row.status)
                 edge("DatasetVersion", row.dataset_version_id, "USED_INPUT", "Execution", row.execution_id)
-                if row.input_graph_version_id:
-                    edge("GraphVersion", row.input_graph_version_id, "USED_INPUT", "Execution", row.execution_id)
+                analysis_view_id = row.analysis_spec_json.get("analysis_view_id")
+                if isinstance(analysis_view_id, str) and analysis_view_id:
+                    edge("AnalysisView", analysis_view_id, "USED_INPUT", "Execution", row.execution_id)
                 if row.input_result_id:
                     edge("Result", row.input_result_id, "USED_INPUT", "Execution", row.execution_id)
-                revision = row.analysis_spec_json.get("revision_context") or {}
-                base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
-                if base_id:
+                if row.base_execution_id:
+                    relation = "REVISED_FROM" if row.revision_kind == "REVISED" else "DERIVED_FROM"
                     edge(
-                        "Execution", base_id, "REVISED_FROM", "Execution", row.execution_id,
-                        evidence={"revision_context": revision},
+                        "Execution", row.base_execution_id, relation, "Execution", row.execution_id,
+                        evidence={"revision_kind": row.revision_kind},
                     )
+                else:
+                    # TD-006 archive: compatibility read projection for
+                    # canonical rows created before dedicated revision columns.
+                    # It derives lineage only and must not write structural state.
+                    revision = row.analysis_spec_json.get("revision_context") or {}
+                    base_id = revision.get("base_execution_id") if isinstance(revision, dict) else None
+                    if isinstance(base_id, str) and base_id:
+                        edge(
+                            "Execution", base_id, "REVISED_FROM", "Execution", row.execution_id,
+                            evidence={"revision_context": revision},
+                        )
 
             for item in self._all_results(session, project_id):
                 node("Result", item["result_id"], item["result_type"], family=item["analysis_family"], analytical_status=item["analytical_status"])
                 edge("Execution", item["execution_id"], "GENERATED", "Result", item["result_id"])
-                if item.get("research_context_version_id"):
-                    edge("Result", item["result_id"], "SUPPORTED_BY", "ResearchContextVersion", item["research_context_version_id"])
             legacy_artifacts = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.project_id == project_id)))
             family_artifacts = list(session.scalars(select(FamilyArtifactOrm).where(FamilyArtifactOrm.project_id == project_id)))
             for row in [*legacy_artifacts, *family_artifacts]:
                 node("Artifact", row.artifact_id, row.artifact_type, content_hash=row.content_hash, media_type=row.media_type)
                 if row.result_id:
                     edge("Result", row.result_id, "GENERATED", "Artifact", row.artifact_id)
-                elif row.execution_id:
-                    edge("Execution", row.execution_id, "GENERATED", "Artifact", row.artifact_id)
             graphs = list(session.scalars(select(GraphVersionOrm).where(GraphVersionOrm.project_id == project_id)))
             for row in graphs:
                 node("GraphVersion", row.graph_version_id, row.name, status=row.status, graph_origin=row.graph_origin)
                 if row.source_result_id:
                     edge("Result", row.source_result_id, "DERIVED_FROM", "GraphVersion", row.graph_version_id)
-                if row.parent_graph_version_id:
-                    edge("GraphVersion", row.parent_graph_version_id, "REVISED_FROM", "GraphVersion", row.graph_version_id)
-            annotations = list(session.scalars(select(WorkspaceAnnotationOrm).where(WorkspaceAnnotationOrm.project_id == project_id)))
-            for row in annotations:
-                node("Annotation", row.annotation_id, row.statement[:80], decision=row.decision)
-                edge(row.target_type, row.target_id, "SUPPORTED_BY", "Annotation", row.annotation_id)
-            legacy_annotations = list(session.scalars(select(AnnotationOrm).where(AnnotationOrm.project_id == project_id)))
-            for row in legacy_annotations:
-                node("Annotation", row.annotation_id, row.statement[:80], decision=None)
-                if row.target_result_id:
-                    edge("Result", row.target_result_id, "SUPPORTED_BY", "Annotation", row.annotation_id)
-                if row.target_graph_version_id:
-                    edge("GraphVersion", row.target_graph_version_id, "SUPPORTED_BY", "Annotation", row.annotation_id)
             explicit_rows = list(session.scalars(select(LineageEdgeOrm).where(LineageEdgeOrm.project_id == project_id)))
             for row in explicit_rows:
+                if classify_lineage_authority(
+                    row.source_type, row.relation_type, row.target_type,
+                ) is not LineageAuthority.GENERIC_ONLY:
+                    continue
                 if (row.source_type, row.source_id) not in nodes:
                     node(row.source_type, row.source_id, f"{row.source_type} {row.source_id}")
                 if (row.target_type, row.target_id) not in nodes:
                     node(row.target_type, row.target_id, f"{row.target_type} {row.target_id}")
-                edge(row.source_type, row.source_id, row.relation_type, row.target_type, row.target_id, explicit=True, evidence=row.evidence_json)
+                edge(
+                    row.source_type, row.source_id, row.relation_type, row.target_type, row.target_id,
+                    explicit=True, source_class="GENERIC_ONLY", evidence=row.evidence_json,
+                )
             return {
                 "schema_version": "project-lineage/1", "project_id": project_id,
                 "nodes": list(nodes.values()), "edges": list(edges.values()),
@@ -445,6 +434,7 @@ class ProductClosureService:
             self._require_role(session, project_id, user_id, WRITE_ROLES)
             self._assert_resource_project(session, source_type, source_id, project_id)
             self._assert_resource_project(session, target_type, target_id, project_id)
+            assert_generic_lineage_allowed(source_type, relation, target_type)
             row = LineageEdgeOrm(
                 lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
                 source_type=source_type, source_id=source_id,
@@ -494,6 +484,7 @@ class ProductClosureService:
             session.add(row)
             session.flush()
             if decision in {"SELECTED", "REJECTED"}:
+                assert_generic_lineage_allowed(target_type, decision, "Annotation")
                 session.add(LineageEdgeOrm(
                     lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
                     source_type=target_type, source_id=target_id,
@@ -557,6 +548,7 @@ class ProductClosureService:
             raise InvalidSchema("export requires 1 to 100 distinct result_ids")
         export_id = str(uuid.uuid4())
         object_key = f"projects/{project_id}/exports/{export_id}/manifest.json"
+        lineage_references = self._export_lineage_references(project_id, result_ids, user_id=user_id)
         with self._session_factory() as session:
             self._require_role(session, project_id, user_id, WRITE_ROLES)
             results = [self._find_result(session, project_id, value) for value in result_ids]
@@ -567,6 +559,8 @@ class ProductClosureService:
             specifications = []
             for value in specification_ids:
                 row = session.get(AnalysisSpecificationOrm, value)
+                if row is None:
+                    continue
                 specifications.append({
                     "analysis_specification_id": value,
                     "schema_version": row.schema_version,
@@ -580,9 +574,6 @@ class ProductClosureService:
                     artifacts.append(self._artifact_value(row, "FAMILY"))
                 for row in session.scalars(select(ArtifactOrm).where(ArtifactOrm.result_id == result_id)):
                     artifacts.append(self._artifact_value(row, "CAUSAL"))
-            explicit = list(session.scalars(select(LineageEdgeOrm).where(
-                LineageEdgeOrm.project_id == project_id,
-            )))
             manifest = {
                 "schema_version": "ariadne-export-manifest/1",
                 "export_id": export_id,
@@ -600,12 +591,7 @@ class ProductClosureService:
                     key: value for key, value in item.items()
                     if key in {"artifact_id", "artifact_type", "schema_version", "content_hash", "media_type", "size_bytes"}
                 } for item in artifacts],
-                "lineage_references": [
-                    *[self._lineage_edge_value(row) for row in explicit if (
-                        row.source_id in result_ids or row.target_id in result_ids
-                    )],
-                    *self._synthetic_export_lineage(results),
-                ],
+                "lineage_references": lineage_references,
             }
             content = canonical_bytes(manifest)
             with tempfile.TemporaryDirectory() as directory:
@@ -683,6 +669,8 @@ class ProductClosureService:
     @staticmethod
     def _all_results(session: Any, project_id: str) -> list[dict[str, Any]]:
         values: list[dict[str, Any]] = []
+        # TD-006 archive: Family rows are historical read-only compatibility
+        # inputs. Canonical Result/Artifact rows own all current writes.
         family_rows = list(session.scalars(select(FamilyResultOrm).where(FamilyResultOrm.project_id == project_id)))
         for row in family_rows:
             execution = session.get(FamilyExecutionOrm, row.execution_id)
@@ -700,22 +688,25 @@ class ProductClosureService:
                 "analysis_specification_id": execution.analysis_specification_id,
                 "created_at": row.created_at,
             })
-        legacy_rows = list(session.scalars(select(ResultOrm).join(
+        canonical_rows = list(session.scalars(select(ResultOrm).join(
             ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id
         ).where(ExecutionOrm.project_id == project_id)))
-        for row in legacy_rows:
+        for row in canonical_rows:
             execution = session.get(ExecutionOrm, row.execution_id)
             artifacts = list(session.scalars(select(ArtifactOrm).where(ArtifactOrm.result_id == row.result_id)))
+            family_snapshot = dict(execution.runtime_version_json.get("family_snapshot", {}))
             values.append({
                 "result_id": row.result_id, "project_id": project_id,
-                "execution_id": row.execution_id, "analysis_family": "CAUSAL",
-                "result_type": row.result_type, "schema_version": "causal-result/1",
+                "execution_id": row.execution_id, "analysis_family": execution.analysis_family,
+                "result_type": row.result_type,
+                "schema_version": row.payload_json.get("schema_version", "causal-result/1"),
                 "analytical_status": row.scientific_status, "summary": row.summary_json,
                 "payload": row.payload_json, "diagnostics": row.diagnostics_json,
                 "warnings": row.warning_json, "artifact_ids": [item.artifact_id for item in artifacts],
-                "research_context_version_id": None,
+                "research_context_version_id": family_snapshot.get("research_context", {}).get("id"),
                 "dataset_version_id": execution.dataset_version_id,
-                "analysis_view_id": None, "analysis_specification_id": None,
+                "analysis_view_id": execution.analysis_spec_json.get("analysis_view_id"),
+                "analysis_specification_id": execution.analysis_spec_json.get("analysis_specification_id"),
                 "created_at": row.created_at,
             })
         return values
@@ -849,32 +840,20 @@ class ProductClosureService:
             "created_by": row.created_by, "created_at": row.created_at,
         }
 
-    @staticmethod
-    def _synthetic_export_lineage(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        references: list[dict[str, Any]] = []
-        for item in results:
-            references.append({
-                "source_type": "Execution", "source_id": item["execution_id"],
-                "relation_type": "GENERATED", "target_type": "Result",
-                "target_id": item["result_id"], "explicit": False,
-            })
-            references.append({
-                "source_type": "DatasetVersion", "source_id": item["dataset_version_id"],
-                "relation_type": "USED_INPUT", "target_type": "Execution",
-                "target_id": item["execution_id"], "explicit": False,
-            })
-            for source_type, field in (
-                ("ResearchContextVersion", "research_context_version_id"),
-                ("AnalysisView", "analysis_view_id"),
-                ("AnalysisSpecification", "analysis_specification_id"),
-            ):
-                if item.get(field):
-                    references.append({
-                        "source_type": source_type, "source_id": item[field],
-                        "relation_type": "USED_INPUT", "target_type": "Execution",
-                        "target_id": item["execution_id"], "explicit": False,
-                    })
-        return references
+    def _export_lineage_references(
+        self, project_id: str, result_ids: list[str], *, user_id: str,
+    ) -> list[dict[str, Any]]:
+        """Reuse the authority-labelled closure; exports never infer authority."""
+        references: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
+        for result_id in result_ids:
+            graph = self.result_lineage(project_id, result_id, user_id=user_id)
+            for edge in graph["edges"]:
+                key = (
+                    edge["source_type"], edge["source_id"], edge["relation_type"],
+                    edge["target_type"], edge["target_id"],
+                )
+                references.setdefault(key, dict(edge))
+        return list(references.values())
 
 
 def _redact(value: Any) -> Any:

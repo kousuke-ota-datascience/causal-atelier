@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import tempfile
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -26,22 +27,29 @@ from ariadne.product.domain.errors import (
     ArtifactHashMismatch,
     EntityNotFound,
     InvalidSchema,
+    LegacyProductAuthorityDisabled,
     ProjectArchived,
     ResourceImmutable,
 )
+from ariadne.product.domain.lineage import assert_generic_lineage_allowed
 from ariadne.product.domain.schemas import SchemaRegistry, canonical_hash
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
+from ariadne.product.application.execution_service import ExecutionService
+from ariadne.product.domain.enums import AnalysisFamily
+from ariadne.product.domain.execution import Execution
 from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
     ArtifactOrm,
     DatasetVersionOrm,
     ExecutionPlanOrm,
+    ExecutionOrm,
     FamilyArtifactOrm,
     FamilyExecutionOrm,
     FamilyResultOrm,
     FamilyStageExecutionOrm,
     LineageEdgeOrm,
     ProjectOrm,
+    ResultOrm,
 )
 from ariadne.product.ports.artifact_store import ArtifactStorePort
 from ariadne.product.workflow.executor import GenericExecutor
@@ -53,12 +61,45 @@ _WORKSPACE_SCHEMAS.register(VIEW_SCHEMA_VERSION, validate_analysis_view_payload)
 _WORKSPACE_SCHEMAS.register(EXPLORATORY_SCHEMA_VERSION, validate_exploratory_spec)
 
 
+@dataclass(frozen=True)
+class ExploratoryResultProjection:
+    """Family-facing read model backed by a canonical Product Result."""
+
+    result_id: str
+    project_id: str
+    execution_id: str
+    stage_execution_id: str
+    analysis_family: str
+    result_type: str
+    schema_version: str
+    analytical_status: str
+    summary_json: dict[str, Any]
+    payload_json: dict[str, Any]
+    diagnostics_json: dict[str, Any]
+    warning_json: list[Any]
+    created_at: datetime | None
+
+
 class ExploratoryWorkspaceService:
-    def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
+    def __init__(
+        self,
+        session_factory: Any,
+        artifact_store: ArtifactStorePort,
+        *,
+        execution_service: ExecutionService | None = None,
+    ) -> None:
         self._session_factory = session_factory
         self._store = artifact_store
         self._compiler = AnalysisViewCompiler()
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
+        self._execution_service = execution_service
+
+    def _require_execution_service(self) -> ExecutionService:
+        if self._execution_service is None:
+            raise LegacyProductAuthorityDisabled(
+                "ExploratoryWorkspaceService Product execution operation"
+            )
+        return self._execution_service
 
     def create_view(
         self,
@@ -156,11 +197,6 @@ class ExploratoryWorkspaceService:
             row.content_hash = canonical_hash(row.spec_json)
             row.manifest_json = compiled.manifest
             row.fixed_at = _now()
-            self._add_lineage(
-                session, project_id, "DatasetVersion", dataset.dataset_version_id,
-                "USED_INPUT", "AnalysisView", row.analysis_view_id,
-                {"view_spec_hash": row.content_hash, "materialized_hash": compiled.materialized_hash},
-            )
             session.commit(); session.refresh(row)
             return row
 
@@ -208,7 +244,8 @@ class ExploratoryWorkspaceService:
         analysis_view_id: str | None,
         family_spec: dict[str, Any],
         requested_by: str = "system",
-    ) -> FamilyExecutionOrm:
+    ) -> FamilyExecutionOrm | Execution:
+        execution_service = self._require_execution_service()
         self._validate_exploratory_spec(family_spec)
         with self._session_factory() as session:
             self._active_project(session, project_id)
@@ -253,6 +290,21 @@ class ExploratoryWorkspaceService:
                 "plan_hash": plan.plan_hash,
                 "runtime": {"runner": "exploratory-runners/1"},
             }
+            # Product API wiring supplies this service.  The retained Family
+            # ORM branch below is not reachable through a Product mutation.
+            session.commit()
+            canonical = execution_service.create_family_execution(
+                    project_id=project_id,
+                    dataset_version_id=dataset_version_id,
+                    analysis_family=AnalysisFamily.EXPLORATORY,
+                    family_spec=family_spec,
+                    requested_by=requested_by,
+                    analysis_view_id=analysis_view_id,
+                    execution_plan_id=plan_row.execution_plan_id,
+                    code_version="exploratory-runners/1",
+                    runtime_version_json={"family_snapshot": snapshot},
+            )
+            return canonical
             execution = FamilyExecutionOrm(
                 execution_id=str(uuid.uuid4()), project_id=project_id,
                 dataset_version_id=dataset_version_id, analysis_view_id=analysis_view_id,
@@ -287,7 +339,12 @@ class ExploratoryWorkspaceService:
         worker_id: str,
         lease_seconds: int = 300,
     ) -> str | None:
-        """Atomically claim the oldest queued exploratory Execution."""
+        """Reject the retired Family-table claim authority.
+
+        Product workers must use ``uow.executions.claim_next`` and dispatch only
+        after the canonical Execution has been leased.
+        """
+        raise LegacyProductAuthorityDisabled("ExploratoryWorkspaceService.claim_next")
         with self._session_factory() as session:
             execution = session.scalar(
                 select(FamilyExecutionOrm)
@@ -324,7 +381,13 @@ class ExploratoryWorkspaceService:
             return execution_id
 
     def process_execution(self, execution_id: str, *, worker_token: str) -> None:
-        """Process an Execution that this worker has already claimed."""
+        """Reject the retired Family-table processing authority.
+
+        Canonical ``ExecutionProcessor`` owns Product stage lifecycle and output
+        persistence; retained scientific helpers are not reached through this
+        legacy facade.
+        """
+        raise LegacyProductAuthorityDisabled("ExploratoryWorkspaceService.process_execution")
         stored_keys: list[str] = []
         with self._session_factory() as session:
             execution = session.get(FamilyExecutionOrm, execution_id)
@@ -416,27 +479,76 @@ class ExploratoryWorkspaceService:
                     session.commit()
             raise
 
-    def get_execution(self, project_id: str, execution_id: str) -> FamilyExecutionOrm:
+    def get_execution(self, project_id: str, execution_id: str) -> FamilyExecutionOrm | Execution:
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
+            execution = execution_service.get_execution(execution_id)
+            if (
+                execution.project_id != project_id
+                or execution.analysis_family is not AnalysisFamily.EXPLORATORY
+            ):
+                raise EntityNotFound("Execution", execution_id)
+            return execution
         with self._session_factory() as session:
             row = session.get(FamilyExecutionOrm, execution_id)
             if row is None or row.project_id != project_id: raise EntityNotFound("Execution", execution_id)
             return row
 
-    def list_executions(self, project_id: str) -> list[FamilyExecutionOrm]:
+    def list_executions(self, project_id: str) -> list[FamilyExecutionOrm | Execution]:
+        execution_service = self._require_execution_service()
+        if execution_service is not None:
+            # ExecutionService intentionally exposes one identity at a time;
+            # the canonical repository is the read authority for new writes.
+            # The session factory remains available for query projection only.
+            with self._session_factory() as session:
+                from ariadne.product.persistence.orm_models import ExecutionOrm
+                rows = list(session.scalars(select(ExecutionOrm).where(
+                    ExecutionOrm.project_id == project_id,
+                    ExecutionOrm.analysis_family == "EXPLORATORY",
+                ).order_by(ExecutionOrm.requested_at.desc())))
+            return [execution_service.get_execution(row.execution_id) for row in rows]
         with self._session_factory() as session:
             return list(session.scalars(select(FamilyExecutionOrm).where(
                 FamilyExecutionOrm.project_id == project_id,
                 FamilyExecutionOrm.analysis_family == "EXPLORATORY",
             ).order_by(FamilyExecutionOrm.requested_at.desc())))
 
-    def list_results(self, project_id: str) -> list[FamilyResultOrm]:
+    def list_results(self, project_id: str) -> list[FamilyResultOrm | ExploratoryResultProjection]:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                rows = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                    .order_by(ResultOrm.created_at.desc(), ResultOrm.result_id)
+                ).all()
+            return [self._canonical_result_projection(result, execution) for result, execution in rows]
         with self._session_factory() as session:
             return list(session.scalars(select(FamilyResultOrm).where(
                 FamilyResultOrm.project_id == project_id,
                 FamilyResultOrm.analysis_family == "EXPLORATORY",
             ).order_by(FamilyResultOrm.created_at.desc())))
 
-    def get_result(self, project_id: str, result_id: str) -> FamilyResultOrm:
+    def get_result(self, project_id: str, result_id: str) -> FamilyResultOrm | ExploratoryResultProjection:
+        self._require_execution_service()
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                row = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ResultOrm.result_id == result_id,
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                ).one_or_none()
+            if row is None:
+                raise EntityNotFound("Result", result_id)
+            return self._canonical_result_projection(*row)
         with self._session_factory() as session:
             row = session.get(FamilyResultOrm, result_id)
             if row is None or row.project_id != project_id: raise EntityNotFound("Result", result_id)
@@ -445,8 +557,40 @@ class ExploratoryWorkspaceService:
     def create_analysis_draft(
         self, project_id: str, result_id: str, target_family: str
     ) -> dict[str, Any]:
+        self._require_execution_service()
         if target_family not in {"CAUSAL", "PREDICTIVE"}:
             raise InvalidSchema("target_family must be CAUSAL or PREDICTIVE")
+        if self._execution_service is not None:
+            with self._session_factory() as session:
+                row = session.execute(
+                    select(ResultOrm, ExecutionOrm)
+                    .join(ExecutionOrm, ResultOrm.execution_id == ExecutionOrm.execution_id)
+                    .where(
+                        ResultOrm.result_id == result_id,
+                        ExecutionOrm.project_id == project_id,
+                        ExecutionOrm.analysis_family == AnalysisFamily.EXPLORATORY.value,
+                    )
+                ).one_or_none()
+                if row is None:
+                    raise EntityNotFound("Result", result_id)
+                _, execution = row
+                draft_id = str(uuid.uuid4())
+                relation = {
+                    "relation_type": "MOTIVATED",
+                    "source_result_id": result_id,
+                    "analysis_mode": "EXPLORATORY",
+                    "warning": "This draft was motivated by exploratory analysis on the same data.",
+                }
+                self._add_lineage(session, project_id, "Result", result_id, "MOTIVATED",
+                                  "AnalysisSpecificationDraft", draft_id, relation)
+                session.commit()
+                return {
+                    "analysis_specification_draft_id": draft_id,
+                    "analysis_family": target_family,
+                    "dataset_version_id": execution.dataset_version_id,
+                    "analysis_view_id": (execution.analysis_spec_json or {}).get("analysis_view_id"),
+                    "source_relation": relation,
+                }
         with self._session_factory() as session:
             result = session.get(FamilyResultOrm, result_id)
             if result is None or result.project_id != project_id: raise EntityNotFound("Result", result_id)
@@ -468,6 +612,34 @@ class ExploratoryWorkspaceService:
                 "analysis_view_id": execution.analysis_view_id,
                 "source_relation": relation,
             }
+
+    @staticmethod
+    def _canonical_result_projection(
+        result: ResultOrm, execution: ExecutionOrm,
+    ) -> ExploratoryResultProjection:
+        payload = result.payload_json or {}
+        schema_version = payload.get("schema_version")
+        if not isinstance(schema_version, str) or not schema_version:
+            raise InvalidSchema(
+                "Canonical Exploratory Result is missing its preserved schema_version"
+            )
+        if result.stage_execution_id is None:
+            raise InvalidSchema("Canonical Exploratory Result must retain StageExecution ownership")
+        return ExploratoryResultProjection(
+            result_id=result.result_id,
+            project_id=execution.project_id,
+            execution_id=result.execution_id,
+            stage_execution_id=result.stage_execution_id,
+            analysis_family=execution.analysis_family,
+            result_type=result.result_type,
+            schema_version=schema_version,
+            analytical_status=result.scientific_status,
+            summary_json=result.summary_json or {},
+            payload_json=payload,
+            diagnostics_json=result.diagnostics_json or {},
+            warning_json=result.warning_json or [],
+            created_at=result.created_at,
+        )
 
     def _analysis_frame(
         self, project_id: str, dataset_version_id: str, analysis_view_id: str | None
@@ -535,6 +707,7 @@ class ExploratoryWorkspaceService:
         session: Any, project_id: str, source_type: str, source_id: str,
         relation_type: str, target_type: str, target_id: str, evidence: dict[str, Any],
     ) -> None:
+        assert_generic_lineage_allowed(source_type, relation_type, target_type)
         session.add(LineageEdgeOrm(
             lineage_edge_id=str(uuid.uuid4()), project_id=project_id,
             source_type=source_type, source_id=source_id, relation_type=relation_type,

@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from ariadne.product.domain.enums import ExecutionOperation, ExecutionStatus
+from ariadne.product.domain.enums import AnalysisFamily, ExecutionOperation, ExecutionStatus
 from ariadne.product.domain.errors import InvalidStateTransition
 
 
@@ -23,6 +23,7 @@ def _new_id() -> str:
 class Execution:
     execution_id: str = field(default_factory=_new_id)
     project_id: str = ""
+    analysis_family: AnalysisFamily = AnalysisFamily.CAUSAL
     dataset_version_id: str = ""
     input_graph_version_id: str | None = None
     input_result_id: str | None = None
@@ -45,12 +46,19 @@ class Execution:
     requested_at: datetime | None = None
     started_at: datetime | None = None
     finished_at: datetime | None = None
+    base_execution_id: str | None = None
+    revision_kind: str | None = None
+    change_reason: str | None = None
+    lease_owner: str | None = None
+    lease_expires_at: datetime | None = None
 
     def __post_init__(self) -> None:
         self.validate_input_contract()
 
     def validate_input_contract(self) -> None:
         """Enforce the operation/input matrix before persistence."""
+        if not isinstance(self.analysis_family, AnalysisFamily):
+            self.analysis_family = AnalysisFamily(self.analysis_family)
         graph = self.input_graph_version_id is not None
         upstream = self.input_result_id is not None
         current = {
@@ -112,3 +120,13 @@ class Execution:
         self.started_at = None
         self.finished_at = None
         self.last_error_summary = None
+
+    def set_lease(self, owner: str, expires_at: datetime) -> None:
+        if not owner:
+            raise ValueError("lease owner is required")
+        self.lease_owner = owner
+        self.lease_expires_at = expires_at
+
+    def clear_lease(self) -> None:
+        self.lease_owner = None
+        self.lease_expires_at = None

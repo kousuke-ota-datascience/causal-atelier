@@ -16,9 +16,11 @@ from ariadne.capabilities.predictive import (
     validate_predictive_specification,
 )
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
+from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.domain.errors import (
     EntityNotFound,
     InvalidSchema,
+    LegacyProductAuthorityDisabled,
     PredictiveValidationError,
     ProjectArchived,
 )
@@ -41,9 +43,24 @@ _PREDICTIVE_SCHEMAS.register(PREDICTIVE_SCHEMA_VERSION, validate_predictive_spec
 
 
 class PredictiveSplitService:
-    def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
+    """Retained historical partition-artifact reader.
+
+    Split validation used to create a second, Family-ORM execution lifecycle.
+    G05 deliberately does not retain that Product mutation authority: predictive
+    submission is owned by ``PredictiveWorkflowService`` and canonical
+    ``ExecutionService``.
+    """
+
+    def __init__(
+        self,
+        session_factory: Any,
+        artifact_store: ArtifactStorePort,
+        *,
+        execution_service: ExecutionService,
+    ) -> None:
         self._session_factory = session_factory
         self._store = artifact_store
+        self._execution_service = execution_service
         self._frames = AnalysisFrameProvider(session_factory, artifact_store)
 
     def validate_and_save(
@@ -55,6 +72,14 @@ class PredictiveSplitService:
         family_spec: dict[str, Any],
         requested_by: str = "system",
     ) -> dict[str, Any]:
+        """Reject the retired Family-ORM split-validation write lifecycle.
+
+        The retained implementation below is intentionally unreachable until it
+        can be removed after historical data retirement.  It must never become a
+        fallback when canonical predictive submission fails.
+        """
+        raise LegacyProductAuthorityDisabled("PredictiveSplitService.validate_and_save")
+
         _PREDICTIVE_SCHEMAS.validate(PREDICTIVE_SCHEMA_VERSION, family_spec)
         with self._session_factory() as session:
             project = session.get(ProjectOrm, project_id)
@@ -249,6 +274,7 @@ class PredictiveSplitService:
         }
 
     def get_partition_artifact(self, project_id: str, artifact_id: str) -> FamilyArtifactOrm:
+        """Return a bounded read-only projection of a historical Family artifact."""
         with self._session_factory() as session:
             artifact = session.get(FamilyArtifactOrm, artifact_id)
             if (

@@ -72,7 +72,9 @@ class ArtifactOrm(ProductBase):
     artifact_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
     execution_id: Mapped[str | None] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), index=True)
+    stage_execution_id: Mapped[str | None] = mapped_column(String(36), index=True)
     result_id: Mapped[str | None] = mapped_column(ForeignKey("product_result.result_id", ondelete="RESTRICT"), index=True)
+    artifact_scope: Mapped[str] = mapped_column(String(30), nullable=False, default="SOURCE", server_default="SOURCE")
     artifact_type: Mapped[str] = mapped_column(String(40), nullable=False)
     object_key: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     content_hash: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -84,9 +86,16 @@ class ArtifactOrm(ProductBase):
     __table_args__ = (
         CheckConstraint("size_bytes >= 0", name="ck_product_artifact_size_bytes"),
         CheckConstraint(
-            "artifact_type IN ('DATASET_FILE','GRAPH_JSON','GRAPH_IMAGE','EFFECT_TABLE','DIAGNOSTICS_TABLE','MANIFEST','CONFIG_SNAPSHOT','LOG','SCIENTIFIC_RESULT_JSON','SCIENTIFIC_REPORT')",
+            "artifact_type IN ('DATASET_FILE','GRAPH_JSON','GRAPH_IMAGE','EFFECT_TABLE','DIAGNOSTICS_TABLE','MANIFEST','CONFIG_SNAPSHOT','LOG','SCIENTIFIC_RESULT_JSON','SCIENTIFIC_REPORT','CHART_SPECIFICATION','PARTITION_INDEX','FITTED_PREPROCESSOR','FITTED_MODEL','PREDICTION','PREDICTIVE_EXPLANATION','MODEL_CARD')",
             name="ck_product_artifact_type",
         ),
+        CheckConstraint(
+            "(artifact_scope = 'SOURCE' AND execution_id IS NULL AND stage_execution_id IS NULL AND result_id IS NULL) OR "
+            "(artifact_scope = 'EXECUTION_OUTPUT' AND execution_id IS NOT NULL)",
+            name="ck_product_artifact_scope_ownership",
+        ),
+        CheckConstraint("artifact_scope IN ('SOURCE','EXECUTION_OUTPUT')", name="ck_product_artifact_scope"),
+        UniqueConstraint("artifact_id", "execution_id", name="uq_product_artifact_execution_identity"),
     )
 
 
@@ -120,6 +129,7 @@ class ExecutionOrm(ProductBase):
 
     execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     project_id: Mapped[str] = mapped_column(ForeignKey("product_project.project_id", ondelete="RESTRICT"), nullable=False, index=True)
+    analysis_family: Mapped[str] = mapped_column(String(20), nullable=False, default="CAUSAL", index=True)
     dataset_version_id: Mapped[str] = mapped_column(ForeignKey("product_dataset_version.dataset_version_id", ondelete="RESTRICT"), nullable=False, index=True)
     input_graph_version_id: Mapped[str | None] = mapped_column(ForeignKey("product_graph_version.graph_version_id", ondelete="RESTRICT"), index=True)
     input_result_id: Mapped[str | None] = mapped_column(ForeignKey("product_result.result_id", ondelete="RESTRICT"), index=True)
@@ -144,6 +154,11 @@ class ExecutionOrm(ProductBase):
     requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=_utcnow)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    base_execution_id: Mapped[str | None] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), index=True)
+    revision_kind: Mapped[str | None] = mapped_column(String(20))
+    change_reason: Mapped[str | None] = mapped_column(Text)
+    lease_owner: Mapped[str | None] = mapped_column(String(200), index=True)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     # internal worker token - not exposed as domain attribute
     _worker_token: Mapped[str | None] = mapped_column("worker_token", String(36))
 
@@ -158,6 +173,14 @@ class ExecutionOrm(ProductBase):
         ),
         CheckConstraint("retry_count >= 0", name="ck_product_execution_retry_count"),
         CheckConstraint(
+            "analysis_family IN ('CAUSAL','EXPLORATORY','PREDICTIVE')",
+            name="ck_product_execution_analysis_family",
+        ),
+        CheckConstraint(
+            "revision_kind IS NULL OR revision_kind IN ('RERUN','REVISED')",
+            name="ck_product_execution_revision_kind",
+        ),
+        CheckConstraint(
             "(operation = 'DISCOVERY' AND input_graph_version_id IS NULL AND input_result_id IS NULL) OR "
             "(operation = 'IDENTIFICATION' AND input_graph_version_id IS NOT NULL AND input_result_id IS NULL) OR "
             "(operation = 'ESTIMATION' AND input_graph_version_id IS NOT NULL AND "
@@ -168,11 +191,73 @@ class ExecutionOrm(ProductBase):
     )
 
 
+class StageExecutionOrm(ProductBase):
+    """Canonical persistent workflow stage owned by a Product Execution."""
+
+    __tablename__ = "product_stage_execution"
+
+    stage_execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    execution_id: Mapped[str] = mapped_column(
+        ForeignKey("product_execution.execution_id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    stage_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    stage_type_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    ordinal: Mapped[int] = mapped_column(Integer, nullable=False)
+    dependencies_json: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    status: Mapped[str] = mapped_column(String(40), nullable=False, default="PENDING")
+    input_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    output_binding_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    last_error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("execution_id", "stage_key", name="uq_product_stage_execution_key"),
+        UniqueConstraint("stage_execution_id", "execution_id", name="uq_product_stage_execution_identity"),
+        CheckConstraint(
+            "status IN ('PENDING','READY','RUNNING','SUCCEEDED','FAILED','SKIPPED_DUE_TO_PREREQUISITE','CANCELLED')",
+            name="ck_product_stage_execution_status",
+        ),
+        CheckConstraint("ordinal >= 0", name="ck_product_stage_execution_ordinal"),
+    )
+
+
+class StageAttemptOrm(ProductBase):
+    """Append-only attempt history for a canonical StageExecution."""
+
+    __tablename__ = "product_stage_attempt"
+
+    stage_attempt_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    stage_execution_id: Mapped[str] = mapped_column(
+        ForeignKey("product_stage_execution.stage_execution_id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
+    )
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    worker_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "stage_execution_id", "attempt_number",
+            name="uq_product_stage_attempt_number",
+        ),
+        CheckConstraint("attempt_number > 0", name="ck_product_stage_attempt_number"),
+    )
+
+
 class ResultOrm(ProductBase):
     __tablename__ = "product_result"
 
     result_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     execution_id: Mapped[str] = mapped_column(ForeignKey("product_execution.execution_id", ondelete="RESTRICT"), nullable=False, index=True)
+    result_level: Mapped[str] = mapped_column(String(30), nullable=False, default="EXECUTION_RESULT", server_default="EXECUTION_RESULT")
+    stage_execution_id: Mapped[str | None] = mapped_column(String(36), index=True)
     result_type: Mapped[str] = mapped_column(String(40), nullable=False)
     scientific_status: Mapped[str] = mapped_column(String(40), nullable=False)
     summary_json: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
@@ -182,15 +267,27 @@ class ResultOrm(ProductBase):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
     __table_args__ = (
+        CheckConstraint("result_level IN ('EXECUTION_RESULT','STAGE_RESULT')", name="ck_product_result_level"),
         CheckConstraint(
-            "result_type IN ('DISCOVERY_GRAPH_RESULT','IDENTIFICATION_RESULT','DATA_ELIGIBILITY_RESULT','TREATMENT_EFFECT_RESULT','DIAGNOSTICS_RESULT','REFUTATION_RESULT','SENSITIVITY_RESULT')",
+            "(result_level = 'EXECUTION_RESULT' AND stage_execution_id IS NULL) OR "
+            "(result_level = 'STAGE_RESULT' AND stage_execution_id IS NOT NULL)",
+            name="ck_product_result_level_stage",
+        ),
+        UniqueConstraint("result_id", "execution_id", name="uq_product_result_execution_identity"),
+        CheckConstraint(
+            "result_type IN ('DISCOVERY_GRAPH_RESULT','IDENTIFICATION_RESULT','DATA_ELIGIBILITY_RESULT','TREATMENT_EFFECT_RESULT','DIAGNOSTICS_RESULT','REFUTATION_RESULT','SENSITIVITY_RESULT','DATA_PROFILE_RESULT','DISTRIBUTION_RESULT','ASSOCIATION_RESULT','GROUP_SUMMARY_RESULT','CHART_RESULT','SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT')",
             name="ck_product_result_type",
         ),
         CheckConstraint(
-            "scientific_status IN ('GENERATED','GENERATED_WITH_WARNINGS','UNRELIABLE','IDENTIFIED','NOT_IDENTIFIED','PARTIALLY_IDENTIFIED','REQUIRES_REVIEW','PASS','WARN','FAIL','ESTIMATED','INSUFFICIENT_OVERLAP','INSUFFICIENT_SAMPLE','ESTIMATION_UNRELIABLE','NO_FAILURE_DETECTED','FAILURE_DETECTED','INCONCLUSIVE','ROBUST','FRAGILE')",
+            "scientific_status IN ('GENERATED','GENERATED_WITH_WARNINGS','UNRELIABLE','IDENTIFIED','NOT_IDENTIFIED','PARTIALLY_IDENTIFIED','REQUIRES_REVIEW','PASS','WARN','FAIL','ESTIMATED','INSUFFICIENT_OVERLAP','INSUFFICIENT_SAMPLE','ESTIMATION_UNRELIABLE','NO_FAILURE_DETECTED','FAILURE_DETECTED','INCONCLUSIVE','ROBUST','FRAGILE','TRAINED','TRAINED_WITH_WARNINGS','EVALUATED','INSUFFICIENT_TEST_SAMPLE','NOT_APPLICABLE')",
             name="ck_product_result_scientific_status",
         ),
         CheckConstraint(
+            "(result_type IN ('DATA_PROFILE_RESULT','DISTRIBUTION_RESULT','ASSOCIATION_RESULT','GROUP_SUMMARY_RESULT','CHART_RESULT','ERROR_ANALYSIS_RESULT','MODEL_CARD_RESULT') AND scientific_status IN ('GENERATED','GENERATED_WITH_WARNINGS')) OR "
+            "(result_type = 'SPLIT_RESULT' AND scientific_status = 'PASS') OR "
+            "(result_type = 'TRAINING_RESULT' AND scientific_status IN ('TRAINED','TRAINED_WITH_WARNINGS')) OR "
+            "(result_type = 'EVALUATION_RESULT' AND scientific_status IN ('EVALUATED','INSUFFICIENT_TEST_SAMPLE')) OR "
+            "(result_type = 'PREDICTIVE_EXPLANATION_RESULT' AND scientific_status IN ('GENERATED','GENERATED_WITH_WARNINGS','NOT_APPLICABLE')) OR "
             "(result_type = 'DISCOVERY_GRAPH_RESULT' AND scientific_status IN ('GENERATED','GENERATED_WITH_WARNINGS','UNRELIABLE')) OR "
             "(result_type = 'IDENTIFICATION_RESULT' AND scientific_status IN ('IDENTIFIED','NOT_IDENTIFIED','PARTIALLY_IDENTIFIED','REQUIRES_REVIEW')) OR "
             "(result_type IN ('DATA_ELIGIBILITY_RESULT','DIAGNOSTICS_RESULT') AND scientific_status IN ('PASS','WARN','FAIL')) OR "
@@ -427,6 +524,13 @@ class ExecutionPlanOrm(ProductBase):
 
 
 class FamilyExecutionOrm(ProductBase):
+    """Archived historical execution read model; never Product lifecycle authority.
+
+    Rows remain readable so Product closure and compatibility views can expose
+    pre-canonical records.  New Product lifecycle writes are owned exclusively
+    by :class:`ExecutionOrm` and its canonical repositories.
+    """
+
     __tablename__ = "product_family_execution"
 
     execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -472,6 +576,8 @@ class FamilyExecutionOrm(ProductBase):
 
 
 class FamilyStageExecutionOrm(ProductBase):
+    """Archived historical stage read model; retained only with Family rows."""
+
     __tablename__ = "product_family_stage_execution"
 
     stage_execution_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -494,6 +600,8 @@ class FamilyStageExecutionOrm(ProductBase):
 
 
 class FamilyResultOrm(ProductBase):
+    """Archived historical result read model; not canonical Result ownership."""
+
     __tablename__ = "product_family_result"
 
     result_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
@@ -516,6 +624,8 @@ class FamilyResultOrm(ProductBase):
 
 
 class FamilyArtifactOrm(ProductBase):
+    """Archived historical artifact read model; not canonical Artifact ownership."""
+
     __tablename__ = "product_family_artifact"
 
     artifact_id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)

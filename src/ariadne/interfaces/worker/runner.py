@@ -14,8 +14,6 @@ from typing import Any
 
 from ariadne.adapters.local_artifact_store import LocalArtifactStore
 from ariadne.interfaces.worker.execution_processor import ExecutionProcessor
-from ariadne.product.application.exploratory_service import ExploratoryWorkspaceService
-from ariadne.product.application.predictive_workflow_service import PredictiveWorkflowService
 from ariadne.scientific.core_adapter import ScientificCoreAdapter
 
 logger = logging.getLogger(__name__)
@@ -41,6 +39,7 @@ def run_worker(
 
     engine = create_engine(database_url)
     session_factory = sessionmaker(bind=engine)
+    worker_token = str(uuid.uuid4())
 
     @contextmanager
     def uow_context():  # type: ignore[no-untyped-def]
@@ -57,9 +56,8 @@ def run_worker(
         uow_factory=uow_context,
         scientific_core=scientific_core,
         artifact_store=artifact_store,
+        owner_token=worker_token,
     )
-    exploratory_processor = ExploratoryWorkspaceService(session_factory, artifact_store)
-    predictive_processor = PredictiveWorkflowService(session_factory, artifact_store)
 
     signal.signal(signal.SIGTERM, _handle_signal)
     signal.signal(signal.SIGINT, _handle_signal)
@@ -67,40 +65,22 @@ def run_worker(
     logger.info("Worker started. Polling every %.1fs", poll_seconds)
     global _stop
     _stop = False
-    worker_token = str(uuid.uuid4())
     worker_id = f"{socket.gethostname()}:{os.getpid()}"
 
     while not _stop:
         try:
             with uow_context() as uow:
-                execution = uow.executions.claim_next(worker_token)
+                execution = uow.executions.claim_next(worker_token, worker_id=worker_token)
                 uow.commit()
 
             if execution is not None:
-                logger.info("Claimed execution %s (%s)", execution.execution_id, execution.operation.value)
+                logger.info(
+                    "Claimed execution %s (%s/%s)", execution.execution_id,
+                    execution.analysis_family.value, execution.operation.value,
+                )
                 processor.process(execution)
             else:
-                exploratory_execution_id = exploratory_processor.claim_next(
-                    worker_token, worker_id=worker_id,
-                )
-                if exploratory_execution_id is not None:
-                    logger.info("Claimed exploratory execution %s", exploratory_execution_id)
-                    exploratory_processor.process_execution(
-                        exploratory_execution_id, worker_token=worker_token,
-                    )
-                else:
-                    predictive_execution_id = predictive_processor.claim_next(
-                        worker_token, worker_id=worker_id,
-                    )
-                    if predictive_execution_id is not None:
-                        logger.info(
-                            "Claimed predictive execution %s", predictive_execution_id
-                        )
-                        predictive_processor.process_execution(
-                            predictive_execution_id, worker_token=worker_token,
-                        )
-                    else:
-                        time.sleep(poll_seconds)
+                time.sleep(poll_seconds)
         except Exception as exc:
             logger.exception("Worker loop error: %s", exc)
             time.sleep(poll_seconds)

@@ -10,7 +10,7 @@ from decimal import Decimal
 from dataclasses import dataclass, field
 from typing import Any
 
-from ariadne.product.domain.enums import ExecutionOperation, GraphVersionStatus
+from ariadne.product.domain.enums import AnalysisFamily, ExecutionOperation, GraphVersionStatus
 from ariadne.product.domain.analysis_spec import SCHEMA_VERSION
 from ariadne.product.domain.errors import (
     EntityNotFound,
@@ -21,9 +21,13 @@ from ariadne.product.domain.errors import (
     ScientificContractViolation,
 )
 from ariadne.product.domain.execution import Execution
+from ariadne.product.domain.enums import StageExecutionStatus
+from ariadne.product.domain.execution_plan import ExecutionPlan
 from ariadne.product.ports.clock import ClockPort, SystemClock
 from ariadne.product.application.scientific_validation_service import ScientificValidationService
 from ariadne.product.application.project_policy import require_active_project
+from ariadne.product.workflow.stage_materialization import StagePlanMaterializer
+from ariadne.product.workflow.canonical_plan_provider import CanonicalPlanProvider
 
 
 @dataclass
@@ -42,6 +46,7 @@ class CreateExecutionBatchCommand:
     dataset_version_id: str
     operation: ExecutionOperation
     variants: list[ExecutionVariantSpec]
+    analysis_family: AnalysisFamily = AnalysisFamily.CAUSAL
     input_graph_version_id: str | None = None
     input_result_id: str | None = None
     code_version: str = ""
@@ -59,14 +64,41 @@ class ExecutionBatchResult:
 
 
 class ExecutionService:
-    def __init__(self, uow_factory: Any, clock: ClockPort | None = None) -> None:
+    def __init__(
+        self,
+        uow_factory: Any,
+        clock: ClockPort | None = None,
+        plan_provider: Any | None = None,
+    ) -> None:
         self._uow_factory = uow_factory
         self._clock = clock or SystemClock()
         self._validation = ScientificValidationService()
+        self._plan_provider = plan_provider
+
+    def _plan_for(self, execution: Execution) -> ExecutionPlan:
+        if self._plan_provider is not None:
+            plan = self._plan_provider(execution)
+        else:
+            try:
+                plan = CanonicalPlanProvider()(execution)
+            except Exception as exc:
+                raise InvalidAnalysisSpec(
+                    "Canonical family workflow plan materialization failed: "
+                    f"{execution.analysis_family.value}"
+                ) from exc
+        if not isinstance(plan, ExecutionPlan):
+            raise InvalidAnalysisSpec("Canonical planner returned an invalid ExecutionPlan")
+        return plan
 
     def create_execution_batch(self, command: CreateExecutionBatchCommand) -> ExecutionBatchResult:
         if not command.variants:
             raise InvalidAnalysisSpec("At least one variant is required")
+        if not isinstance(command.analysis_family, AnalysisFamily):
+            command.analysis_family = AnalysisFamily(command.analysis_family)
+        # DISCOVERY is the common Product submission envelope for the two
+        # non-causal families.  Their scientific contract is deliberately kept
+        # in ``family_spec``; it must not be validated as a causal question.
+        is_causal = command.analysis_family is AnalysisFamily.CAUSAL
         graph_required = command.operation != ExecutionOperation.DISCOVERY
         upstream_required = command.operation in {
             ExecutionOperation.ESTIMATION,
@@ -99,6 +131,8 @@ class ExecutionService:
                     raise EntityNotFound("Execution", command.base_execution_id)
                 if base_execution.project_id != command.project_id:
                     raise ProjectBoundaryViolation("Base Execution does not belong to project")
+                if base_execution.analysis_family != command.analysis_family:
+                    raise InvalidAnalysisSpec("rerun/revise cannot change analysis family")
 
             dataset_version = uow.dataset_versions.get(command.dataset_version_id)
             if dataset_version is None:
@@ -121,7 +155,7 @@ class ExecutionService:
             for variant in command.variants:
                 analysis_spec = _strip_generated_snapshot_fields(variant.analysis_spec_json)
                 dataset_columns = _dataset_columns(dataset_version.schema_json)
-                if command.operation == ExecutionOperation.DISCOVERY:
+                if is_causal and command.operation == ExecutionOperation.DISCOVERY:
                     operation_spec = analysis_spec.get("operation_spec", {})
                     unknown = [
                         item for item in operation_spec.get("feature_columns", [])
@@ -132,7 +166,7 @@ class ExecutionService:
                     outcome = operation_spec.get("designated_outcome_node")
                     if outcome is not None and outcome not in dataset_columns:
                         raise InvalidAnalysisSpec("designated outcome is not in Dataset schema")
-                elif command.operation in {
+                elif is_causal and command.operation in {
                     ExecutionOperation.IDENTIFICATION, ExecutionOperation.ESTIMATION,
                 }:
                     if not gv.designated_outcome_node:
@@ -153,24 +187,27 @@ class ExecutionService:
                 )
                 if warnings:
                     analysis_spec["scientific_warnings"] = warnings
+                revision_context = None
                 if base_execution is not None:
-                    analysis_spec["revision_context"] = _build_revision_context(
+                    revision_context = _build_revision_context(
                         base=base_execution,
                         command=command,
                         variant=variant,
                         analysis_spec=analysis_spec,
                     )
-                self._validation.validate_submission(
-                    uow=uow,
-                    project_id=command.project_id,
-                    dataset_version_id=command.dataset_version_id,
-                    graph_version_id=command.input_graph_version_id,
-                    input_result_id=command.input_result_id,
-                    operation=command.operation,
-                    analysis_spec=analysis_spec,
-                    method=variant.algorithm_or_estimator,
-                    parameters=variant.parameter_json,
-                )
+                    analysis_spec["revision_context"] = revision_context
+                if is_causal:
+                    self._validation.validate_submission(
+                        uow=uow,
+                        project_id=command.project_id,
+                        dataset_version_id=command.dataset_version_id,
+                        graph_version_id=command.input_graph_version_id,
+                        input_result_id=command.input_result_id,
+                        operation=command.operation,
+                        analysis_spec=analysis_spec,
+                        method=variant.algorithm_or_estimator,
+                        parameters=variant.parameter_json,
+                    )
                 snapshot_hash = _compute_snapshot_hash(
                     objective=variant.objective_snapshot,
                     rationale=variant.rationale_snapshot,
@@ -189,6 +226,7 @@ class ExecutionService:
                 )
                 execution = Execution(
                     project_id=command.project_id,
+                    analysis_family=command.analysis_family,
                     dataset_version_id=command.dataset_version_id,
                     input_graph_version_id=command.input_graph_version_id,
                     input_result_id=command.input_result_id,
@@ -206,10 +244,19 @@ class ExecutionService:
                     snapshot_schema_version=SCHEMA_VERSION,
                     requested_by=command.requested_by,
                     requested_at=now,
+                    base_execution_id=base_execution.execution_id if base_execution else None,
+                    revision_kind=revision_context["revision_kind"] if revision_context else None,
+                    change_reason=revision_context["change_reason"] if revision_context else None,
                 )
                 executions.append(execution)
 
+            stages = []
+            for execution in executions:
+                stages.extend(
+                    StagePlanMaterializer.materialize(execution, self._plan_for(execution))
+                )
             uow.executions.add_many(executions)
+            uow.stage_executions.add_many(stages)
             uow.commit()
 
         return ExecutionBatchResult(
@@ -220,6 +267,53 @@ class ExecutionService:
                 for e in executions
             },
         )
+
+    def create_family_execution(
+        self,
+        *,
+        project_id: str,
+        dataset_version_id: str,
+        analysis_family: AnalysisFamily,
+        family_spec: dict[str, Any],
+        requested_by: str,
+        analysis_view_id: str | None = None,
+        analysis_specification_id: str | None = None,
+        execution_plan_id: str | None = None,
+        seed: int | None = None,
+        code_version: str = "",
+        runtime_version_json: dict[str, Any] | None = None,
+        base_execution_id: str | None = None,
+        change_reason: str | None = None,
+    ) -> Execution:
+        """Submit a non-causal family through the canonical lifecycle.
+
+        Family-specific identifiers remain immutable input snapshots.  They are
+        not a second lifecycle or a persistence authority.
+        """
+        if analysis_family is AnalysisFamily.CAUSAL:
+            raise InvalidAnalysisSpec("create_family_execution is for non-causal families")
+        result = self.create_execution_batch(CreateExecutionBatchCommand(
+            project_id=project_id,
+            dataset_version_id=dataset_version_id,
+            operation=ExecutionOperation.DISCOVERY,
+            analysis_family=analysis_family,
+            variants=[ExecutionVariantSpec(
+                algorithm_or_estimator=f"{analysis_family.value.lower()}-workflow",
+                random_seed=seed,
+                analysis_spec_json={
+                    "family_spec": family_spec,
+                    "analysis_view_id": analysis_view_id,
+                    "analysis_specification_id": analysis_specification_id,
+                    "execution_plan_id": execution_plan_id,
+                },
+            )],
+            code_version=code_version,
+            runtime_version_json=runtime_version_json or {},
+            requested_by=requested_by,
+            base_execution_id=base_execution_id,
+            change_reason=change_reason,
+        ))
+        return self.get_execution(result.execution_ids[0])
 
     def get_execution(self, execution_id: str) -> Execution:
         with self._uow_factory() as uow:
@@ -254,6 +348,14 @@ class ExecutionService:
             require_active_project(project)
             execution.request_cancel()
             uow.executions.update(execution)
+            for stage in uow.stage_executions.list_for_execution(execution_id):
+                if stage.status not in {
+                    StageExecutionStatus.SUCCEEDED,
+                    StageExecutionStatus.SKIPPED_DUE_TO_PREREQUISITE,
+                    StageExecutionStatus.CANCELLED,
+                }:
+                    stage.cancel(self._clock.now())
+                    uow.stage_executions.update(stage)
             uow.commit()
 
     def retry_execution(self, execution_id: str) -> None:
@@ -267,6 +369,10 @@ class ExecutionService:
             require_active_project(project)
             execution.increment_retry()
             uow.executions.update(execution)
+            for stage in uow.stage_executions.list_for_execution(execution_id):
+                if stage.status is StageExecutionStatus.FAILED:
+                    stage.prepare_retry()
+                    uow.stage_executions.update(stage)
             uow.commit()
 
 

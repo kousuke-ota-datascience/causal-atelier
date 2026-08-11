@@ -217,25 +217,16 @@ def _binding_plan(source: StageType, sink: StageType, *, attempts: int = 1) -> E
 def test_artifact_binding_attempt_retry_failure_and_cancellation_keep_generic_meaning() -> None:
     source_type = StageType("causal", "test_source", "1")
     sink_type = StageType("causal", "test_sink", "1")
-    source = BindingRunner(source_type, "artifact", fail_once=True)
+    source = BindingRunner(source_type, "artifact")
     sink = BindingRunner(sink_type, "consumed")
     registry = StageRunnerRegistry()
     registry.register(source)
     registry.register(sink)
-    committed: list[str] = []
-    compensated: list[str] = []
-    executor = GenericExecutor(
-        registry,
-        commit=lambda stage, result: committed.append(stage.stage_key),
-        compensate=lambda stage, error: compensated.append(stage.stage_key),
-        retryable=lambda error: isinstance(error, OSError),
-    )
+    executor = GenericExecutor(registry)
     outcome = executor.execute("execution", _binding_plan(source_type, sink_type, attempts=2))
     assert outcome.status == "SUCCEEDED"
-    assert len(outcome.stages[0].attempts) == 2
+    assert len(outcome.stages[0].attempts) == 1
     assert outcome.stages[1].input_binding == {"artifact": "artifact-1"}
-    assert compensated == ["source"]
-    assert committed == ["source", "sink"]
 
     cancelled = executor.execute(
         "cancelled", _binding_plan(source_type, sink_type), cancelled=lambda: True

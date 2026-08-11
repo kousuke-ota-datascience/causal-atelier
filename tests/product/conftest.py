@@ -6,10 +6,21 @@ from pathlib import Path
 import pytest
 import httpx
 from sqlalchemy import event
+from sqlalchemy import create_engine
 
 from ariadne.interfaces.web_api import dependencies
 from ariadne.interfaces.web_api.app import create_app
 from ariadne.product.persistence.orm_models import ProductBase
+
+
+@pytest.fixture
+def postgres_engine():  # type: ignore[no-untyped-def]
+    url = os.getenv("ARIADNE_PRODUCT_TEST_DATABASE_URL")
+    if not url:
+        pytest.skip("ARIADNE_PRODUCT_TEST_DATABASE_URL is not configured")
+    engine = create_engine(url, pool_pre_ping=True)
+    yield engine
+    engine.dispose()
 
 
 @pytest.fixture

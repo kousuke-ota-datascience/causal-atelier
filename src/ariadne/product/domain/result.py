@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from ariadne.product.domain.enums import ResultType, ScientificStatus
+from ariadne.product.domain.enums import ResultLevel, ResultType, ScientificStatus
 from ariadne.product.domain.errors import InvalidAnalysisSpec
 
 
@@ -19,6 +19,8 @@ def _new_id() -> str:
 class Result:
     result_id: str = field(default_factory=_new_id)
     execution_id: str = ""
+    result_level: ResultLevel = ResultLevel.EXECUTION_RESULT
+    stage_execution_id: str | None = None
     result_type: ResultType = ResultType.DISCOVERY_GRAPH_RESULT
     scientific_status: ScientificStatus = ScientificStatus.GENERATED
     summary_json: dict[str, Any] = field(default_factory=dict)
@@ -28,7 +30,18 @@ class Result:
     created_at: datetime | None = None
 
     def __post_init__(self) -> None:
+        self.validate_ownership()
         self.validate_status()
+
+    def validate_ownership(self) -> None:
+        # Detached scientific inputs may be used by the in-memory workflow
+        # boundary. Persistence/application ownership rejects an empty ID.
+        if not self.execution_id:
+            return
+        if self.result_level is ResultLevel.EXECUTION_RESULT and self.stage_execution_id is not None:
+            raise InvalidAnalysisSpec("ExecutionResult cannot reference a stage")
+        if self.result_level is ResultLevel.STAGE_RESULT and not self.stage_execution_id:
+            raise InvalidAnalysisSpec("StageResult requires a stage_execution_id")
 
     def validate_status(self) -> None:
         allowed = {
@@ -66,6 +79,20 @@ class Result:
                 ScientificStatus.FRAGILE,
                 ScientificStatus.INCONCLUSIVE,
             },
+            ResultType.DATA_PROFILE_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.DISTRIBUTION_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.ASSOCIATION_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.GROUP_SUMMARY_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.CHART_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.SPLIT_RESULT: {ScientificStatus.PASS},
+            ResultType.TRAINING_RESULT: {ScientificStatus.TRAINED, ScientificStatus.TRAINED_WITH_WARNINGS},
+            ResultType.EVALUATION_RESULT: {ScientificStatus.EVALUATED, ScientificStatus.INSUFFICIENT_TEST_SAMPLE},
+            ResultType.ERROR_ANALYSIS_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
+            ResultType.PREDICTIVE_EXPLANATION_RESULT: {
+                ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS,
+                ScientificStatus.NOT_APPLICABLE,
+            },
+            ResultType.MODEL_CARD_RESULT: {ScientificStatus.GENERATED, ScientificStatus.GENERATED_WITH_WARNINGS},
         }
         if self.scientific_status not in allowed[self.result_type]:
             raise InvalidAnalysisSpec(
