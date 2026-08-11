@@ -1,5 +1,9 @@
 # {{ENHANCE_ID}} Current State Control Sheet
 
+> **Document class: Planning / Evidence / State Artifact**  
+> **State self-containment**: このControl Sheetだけでverified current state、protected contracts、OPEN Transition Debt、active orchestration pointerを理解できるよう要約する。source-of-truth evidenceはpathで参照し、未検証stateをcurrent truthへ昇格しない。
+
+
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
 - Branch: {{BRANCH}}

@@ -1,8 +1,13 @@
-# Architecture Review Workflow
+# Architecture Review Workflow — 使用ガイド
 
-## Applicability
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけでarchitecture reviewの発動条件・実行順序・成果物責務が分かること。
 
-以下の場合に`CONDITIONAL MUST`:
+## 1. Purpose
+
+implementation contractを作成する前に、current architectureの事実、target architecture decision、Gate decompositionを明確化する補助workflowである。
+
+## 2. 使用条件 — CONDITIONAL MUST
 
 - runtime entrypoint / lifecycle change
 - authority / ownership change
@@ -11,10 +16,16 @@
 - migration strategy change
 - cross-subsystem canonical source-of-truth change
 
-## Standard outputs
+## 3. 実行順序
 
-1. architecture discovery result
-2. target architecture decision record / invariant set
-3. Gate decomposition
+1. Architecture Discovery — current implementation factsを調査。product codeを変更しない。
+2. Target Architecture Decision Record — target authority / invariant / transition policyを決定。
+3. Gate Decomposition — PASS後のdownstream reliance boundaryに基づきGateへ分解。
 
-これらをそのままCoding Agentへ自由探索させるのではなく、必要事項をGate-local 06 / 07へ抽出する。
+Gate decompositionをimplementation sizeで決めない。Execution sizeだけが問題ならGateを増やさずWork Packageを使う。
+
+## 4. Output rule
+
+各outputは自身の結論・事実・decisionを本文内に記載する。code / design / schemaはevidence sourceとして参照してよい。
+
+Architecture reviewのapproved decisionは00層の正式背景・要件・設計へ反映し、Agentへ直接必要なimplementation / acceptance semanticsは06 / 07へeffective formで記載する。

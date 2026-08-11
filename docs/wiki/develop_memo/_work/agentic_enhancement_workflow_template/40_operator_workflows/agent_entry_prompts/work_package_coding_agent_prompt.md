@@ -1,6 +1,9 @@
 # Coding Agent 作業開始プロンプト — WORK_PACKAGE
 
-以下の変数を、この作業のexecution parametersとする。
+**Document class:** Operator Artifact / Agent Entry Prompt  
+**Self-containment:** MUST for routing — このpromptだけで変数展開、Pxx/Rxx instruction特定、report path、stop ruleを理解できること。実装normative semanticsは特定されたPxx/Rxx primary contractに含まれる。
+
+以下の変数をexecution parametersとする。
 
 ```text
 PROJECT_NAME={{PROJECT_NAME}}
@@ -14,37 +17,41 @@ REMOTE_NAME={{REMOTE_NAME}}
 BRANCH_NAME={{BRANCH_NAME}}
 ```
 
-## 1. Derived variables
+## 1. Variable / package-kind rule
+
+- `PACKAGE_ID=P01-P99` -> planned package; instruction prefix=`06`
+- `PACKAGE_ID=R01-R99` -> remediation package; instruction prefix=`08`
+- その他 -> STOP
+- `{{VARIABLE}}`は再帰展開し、未解決placeholderが残ればSTOP。
+
+Derived variables:
 
 ```text
 WORK_ROOT=docs/wiki/develop_memo/_work/{{WORK_DIR_NAME}}
 INSTRUCTION_DIR={{WORK_ROOT}}/10_enhance_instruction/{{GATE_ID}}
-IMPLEMENTATION_INSTRUCTION_ID=06_{{GATE_ID}}_{{PACKAGE_ID}}
-IMPLEMENTATION_INSTRUCTION_PATTERN={{IMPLEMENTATION_INSTRUCTION_ID}}_*.md
 IMPLEMENTATION_REPORT_DIR={{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages
 IN_PROGRESS_REPORT_FILE={{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
 CHECKPOINT_REPORT_FILE={{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_implementation_checkpoint_report.md
 ```
 
-`{{VARIABLE_NAME}}`を再帰的に展開せよ。未解決`{{...}}`を残して実行してはならない。
-
-## 2. Execution instruction
-
-以下を実行せよ。
+Instruction pattern:
 
 ```text
-{{INSTRUCTION_DIR}}/{{IMPLEMENTATION_INSTRUCTION_PATTERN}}
+if PACKAGE_ID starts with P:
+  06_{{GATE_ID}}_{{PACKAGE_ID}}_*.md
+if PACKAGE_ID starts with R:
+  08_{{GATE_ID}}_{{PACKAGE_ID}}_*.md
 ```
 
-remediation package `Rxx`は`fail_rework_coding_agent_prompt.md`および08 Remediation Instructionに従う。本promptの標準planned packageはP01-P99である。
+## 2. Execution
 
-対象globに複数ファイルが一致し、対象を一意に決定できない場合は任意選択してはならない。
+上記patternに一致する**1ファイルだけ**を特定し、そのprimary execution contractを実行せよ。複数一致 / 0件なら任意選択せず停止せよ。
 
-Work Package scopeを越えて実装してはならない。
+Assigned Package scopeを越えて実装してはならない。
 
 ## 3. Execution status report
 
-実装が完了、中断、または継続不能になったら、`implementation_checkpoint_report`とは別に以下へ状況報告を記録せよ。
+完了、中断、継続不能のいずれでも以下へ記録する。
 
 ```text
 {{IMPLEMENTATION_REPORT_DIR}}/{{IN_PROGRESS_REPORT_FILE}}
@@ -52,12 +59,9 @@ Work Package scopeを越えて実装してはならない。
 
 最低限:
 
-- Gate ID
-- Trial No.
-- Package ID
+- Gate / Trial / Package
 - execution status
-- completed work
-- remaining work
+- completed work / remaining work
 - observed failures / blockers
 - executed verification
 - relevant commit SHA
@@ -65,19 +69,17 @@ Work Package scopeを越えて実装してはならない。
 
 ## 4. Checkpoint report
 
-`PACKAGE_COMPLETE`を主張する場合、以下も作成せよ。
+`PACKAGE_COMPLETE`を主張する場合:
 
 ```text
 {{IMPLEMENTATION_REPORT_DIR}}/{{CHECKPOINT_REPORT_FILE}}
 ```
 
-implementation checkpoint full SHAとreport-only commit SHAを分離して記録せよ。
+に、starting SHA、implementation checkpoint full SHA、changed files、focused verification、dependency state、limitationsを記載する。report-only commit SHAはcheckpoint SHAと区別する。
 
-Package completionをGate PASS / verified current stateとして表現してはならない。
+Package completionをGate PASS / verified current stateとして表現しない。
 
 ## 5. Repository recording
-
-状況報告作成後、以下を実行せよ。
 
 ```bash
 git add docs/wiki/develop_memo/_work/{{WORK_DIR_NAME}}/;\
@@ -87,4 +89,4 @@ git push -u {{REMOTE_NAME}} {{BRANCH_NAME}};\
 git log -1
 ```
 
-最後にexecution statusとrelevant SHAを明示して停止せよ。next packageへ勝手に進まないこと。
+最後にexecution statusとrelevant SHAを明示して停止する。next packageへ勝手に進まない。

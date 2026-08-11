@@ -1,5 +1,9 @@
 # {{RUNBOOK_ID}} Step {{STEP_ID}} Result — {{STEP_NAME}}
 
+> **Document class:** Evidence / Operator Decision Artifact  
+> **Self-containment:** MUST for own result/decision — observed facts / conclusion / authority effectを本文内に記載する。external step evidenceはpathで参照してよい。
+
+
 - Status: PASS / FAIL / BLOCKED
 - Timestamp: {{TIMESTAMP}}
 

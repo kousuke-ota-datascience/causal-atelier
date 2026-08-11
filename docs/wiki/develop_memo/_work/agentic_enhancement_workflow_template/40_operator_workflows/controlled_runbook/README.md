@@ -1,10 +1,20 @@
-# Controlled Runbook Workflow
+# Controlled Runbook Workflow — 使用ガイド
 
-## Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけでstep prompt / result / final decision recordの作成・実行境界が分かること。
 
-Destructive / irreversible / infrastructure-sensitive operationをHuman-controlled sequential executionで行う。
+## 1. Purpose
 
-## Pattern
+Destructive / irreversible / infrastructure-sensitive operationをHuman-controlled sequential executionとして実行・記録する。
+
+## 2. 使用する場面
+
+- DB reset / destructive cleanup
+- migration reset / rebuild
+- infrastructure-sensitive operation
+- stepごとのHuman判定が必要な作業
+
+## 3. Pattern
 
 ```text
 NN_step_prompt.md
@@ -16,10 +26,13 @@ next NN prompt or stop
 99_completion_summary_decision_record.md
 ```
 
-## Rules
+## 4. Authoring rules
 
-- previous resultを確認してからnext stepを確定する。
-- step promptにはexact command、precondition、expected result、abort conditionを固定する。
-- Agentに「必要なら他も直す」等の広い裁量を与えない。
-- step resultは実行事実を記録し、成功を推測しない。
-- 最終summaryは実施範囲、残余risk、next allowed actionを固定する。
+- step promptはexact command / allowed action / prohibited action / precondition / expected result / abort condition / **result schema**を自身に含む。
+- Agentへ別result templateを読ませなければ結果を書けない構造にしない。
+- step resultはcommand、exit code、raw relevant output、facts、deviation、conclusionを本文内に記録する。
+- previous resultは次stepのfact inputとして参照してよい。
+- step result自体はnext stepをauthorizeしない。Human / workflow ownerが次promptを確定する。
+- final summaryはobjective、executed steps、final state、destructive changes、residual risks、decision、next allowed actionを本文内に持つ。
+
+このworkflowのresult自体はGate PASS authorityを持たない。

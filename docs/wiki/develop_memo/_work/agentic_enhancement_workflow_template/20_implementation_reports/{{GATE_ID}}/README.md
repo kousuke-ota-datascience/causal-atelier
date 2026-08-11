@@ -1,10 +1,16 @@
-# {{GATE_ID}} Implementation Evidence
+# {{GATE_ID}} Implementation Evidence — 使用ガイド
 
-Gate-local cumulative detailと、Trialごとのcandidate evidenceを保存する。
+**Document class:** Authoring Guide  
+**Self-containment:** MUST for this Gate evidence namespace.
 
-```text
-{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
-Trial{{TRIAL_NO}}/
-```
+このdirectoryは1 Gateのunverified implementation ledgerとTrial evidenceを保存する。
 
-Trial directoryはhistorical evidenceとしてimmutableに扱う。
+- `{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md` — Gate全体の累積implementation ledger。
+- `TrialNN/` — Trialごとのcandidate-generation evidence。
+
+Rules:
+
+- Package completion / READY_FOR_TESTをGate PASSと表現しない。
+- Trialごとのcandidate evidenceを上書きしない。
+- report本文にstatus / facts / rationaleを記載し、SHA / source / logはevidence参照として使う。
+- final PASS後もhistorical implementation evidenceとして保持する。

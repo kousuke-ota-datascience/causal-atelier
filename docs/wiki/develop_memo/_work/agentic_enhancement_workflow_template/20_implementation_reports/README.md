@@ -1,89 +1,79 @@
-# 20_implementation_reports — Execution Evidence Specification v3
+# 20_implementation_reports — 実装証跡の作成ガイド
 
-## 0. Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけで各implementation reportの目的・作成時点・記載事項・authority boundaryが分かること。
 
-Coding Agent execution evidenceを、Gate / Trial / Work Package階層で保存する。
+## 1. Purpose
 
-```text
-package execution status report
-  = 1 Agent executionの完了 / 中断 / blocker記録
+`20_implementation_reports/`には、Coding Agentが何を実装し、どのcheckpointを作り、どのcandidateをIndependent Verificationへ提出したかを記録する。
 
-implementation checkpoint report
-  = 1 Work Packageのimplementation checkpoint evidence
+20層は**implementation evidence / unverified ledger**であり、Gate PASS authorityやverified current stateを持たない。
 
-implementation completion report
-  = 1 TrialのFixed Trial Candidate transaction record
+## 2. Evidence self-containment rule
 
-implementation report detail
-  = 1 Gateの累積unverified implementation ledger
-```
+各reportは、そのreportだけで「何を実施したか / 何が観測されたか / 現在statusは何か / 次に何が必要か」を理解できるようにする。
 
-verified current stateはここで管理しない。
+外部参照してよいもの:
 
-## 1. Directory
+- commit SHA / diff
+- source / migration / test path
+- command output / log
+- package instruction / Completion Report / Gate Decisionのtraceability path
+
+外部へ委譲してはいけないもの:
+
+- report自身のstatus意味
+- 実施内容summary
+- observed facts
+- completion / blocker rationale
+- candidate identity / checkpoint identity
+
+## 3. Directory
 
 ```text
 20_implementation_reports/{{GATE_ID}}/
   {{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
   Trial{{TRIAL_NO}}/
-    packages/
+    packages/                       # WORK_PACKAGE only
     {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
 ```
 
-## 2. Evidence identity
+## 4. Artifact responsibilities
+
+### Package Execution Status Report
+1 Agent executionの完了 / 中断 / blockerを記録する。Checkpoint Reportとは別artifact。
+
+### Implementation Checkpoint Report
+1 Work Packageのimplementation checkpoint evidence。Gate acceptanceを主張しない。
+
+### Implementation Completion Report
+1 TrialのCandidate AssemblyとFixed Trial Candidate identityを記録する。`READY_FOR_TEST`はCoding-side handoff statusでありPASSではない。
+
+### Gate-local Implementation Detail
+Gate内部の累積unverified ledger。Trial / package progress、open observation、TD implementation factsを記録する。
+
+## 5. Evidence identity
 
 ```text
 Package Checkpoint SHA
-  ↓ package chain
+  ↓ package chain / Candidate Assembly
 Fixed Trial Candidate SHA
   ↓ Independent Verification
-Gate Decision
+999 Gate Decision
 ```
 
-Report commit SHAとimplementation checkpoint SHAを分離する。
+implementation checkpoint SHA、Fixed Candidate SHA、report-only commit SHA、Test artifact commit SHAを混同しない。
 
-## 3. Package status report
+## 6. Required content summary
 
-Coding executionが完了・中断・継続不能になった時点で記録する。checkpoint reportとは別artifactである。
+Package status report:
+- execution status / completed / remaining / blocker / verification / relevant SHA / next action
 
-推奨file:
+Checkpoint report:
+- starting SHA / checkpoint SHA / changed files / focused verification / dependency state / limitations
 
-```text
-{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
-```
+Completion report:
+- package chain or single-execution evidence / Candidate Assembly / Fixed Candidate SHA / Gate-wide self-check / protected regression / post-candidate diff state
 
-## 4. Implementation Checkpoint Report
-
-Work Package Modeで各Pxx/Rxxごとに作成する。
-
-MUST:
-
-- starting SHA
-- package implementation checkpoint SHA
-- report SHA if separate
-- changed files
-- focused verification
-- dependency status
-- completion / blocker state
-- residual risk / next dependency
-
-MUST NOT claim Gate PASS。
-
-## 5. Implementation Completion Report
-
-Trial candidate assembly後に作成する。
-
-MUST:
-
-- all required package checkpoints
-- candidate assembly evidence
-- Fixed Trial Candidate SHA
-- candidate-affecting diff state
-- Gate-wide self-check
-- protected previous-Gate self-regression
-- applicable remediation
-- READY_FOR_TEST / BLOCKED
-
-## 6. Gate-local Detail Ledger
-
-Trial / package progressを累積記録してよい。未検証stateであることを明示する。
+Detail ledger:
+- Trial history / package history / current unverified implementation state / candidate assembly state / open observations / final Gate Decision link after completion

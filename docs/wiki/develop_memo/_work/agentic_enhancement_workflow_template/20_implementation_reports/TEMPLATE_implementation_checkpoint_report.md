@@ -1,5 +1,12 @@
 # {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} Implementation Checkpoint Report
 
+> **Document class:** Evidence Artifact  
+> **Self-containment:** MUST for own responsibility.
+
+
+> **Evidence self-containment**: このreportだけでstatus・実施内容・observed facts・判断理由を理解できるよう記載する。external path / SHA / logはevidenceとして参照してよいが、reportの結論を参照先へ委譲しない。
+
+
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
 - Gate: {{GATE_ID}}

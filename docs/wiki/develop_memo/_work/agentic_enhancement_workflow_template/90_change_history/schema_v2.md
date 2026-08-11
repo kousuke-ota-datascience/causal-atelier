@@ -1,4 +1,4 @@
-# v2 Change Log
+# Schema v2 Change History
 
 ## Major schema changes from complete/v1
 

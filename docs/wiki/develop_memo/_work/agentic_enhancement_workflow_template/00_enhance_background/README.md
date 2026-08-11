@@ -1,30 +1,52 @@
-# Enhancement Background — Specification
+# 00_enhance_background — 背景・要件・設計文書の作成ガイド
 
-## 0. Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけで00層の目的・作成順序・各artifactの完成条件が分かること。
 
-このディレクトリは、enhancementの背景、課題認識、要件改定、設計改定、承認、traceability、およびenhancement開始時点のsnapshotを保存する履歴層である。
+## Canonical filename rule
 
-## 1. Primary readers
+- canonical filename / directory nameはASCII charactersのみを使用する。
+- semantic filename suffixはtechnical Englishとする。
+- 日本語はdocument title / body textにのみ使用してよい。
 
-- Human owner / reviewer
-- 将来の設計レビュー担当
-- 将来のLLMによる背景復元・監査
 
-Coding Agent / Test Agentの通常executionでは、ここを自由探索させない。
-必要な差分契約はGate-local 06 / 07へ統合する。
+## 1. Purpose
 
-## 2. Standard documents
+このdirectoryには、enhancementを開始する理由、改定対象となる要件・設計、承認、traceability、および開始時点のapproved snapshotを保存する。
 
-1. `01_Enhance構想・要件改定計画.md`
-2. `02_Enhance構想承認記録.md`
-3. `03_要件定義書改定.md`
-4. `04_設計書改定.md`
-5. `05_要件・設計整合性およびトレーサビリティ確認.md`
+00層の各artifactは、**そのartifactの主題について、結論・変更内容・判断理由を本文内で理解できる状態**にする。原典pathはprovenanceとして参照してよいが、「詳細は原典参照」だけで変更内容を省略してはならない。
+
+## 2. 作成順序
+
+1. `01_enhancement_concept_and_requirement_revision_plan.md`
+   - problem / objective / scope / target outcome / expected requirement-design impact / initial Gate decompositionを記載する。
+2. `02_enhancement_concept_approval_record.md`
+   - Human ownerの決定、approved scope、conditions、明示的非承認事項を記録する。
+3. `03_requirements_revision.md`
+   - requirement deltaをBefore / Afterで記載し、new invariant / removed requirement / acceptance implicationを固定する。
+4. `04_design_revision.md`
+   - architecture / ownership / runtime / persistence / migration / compatibilityへのeffective design changeを記載する。
+5. `05_requirements_design_consistency_and_traceability_review.md`
+   - requirement -> design -> Gate -> Acceptance Criterionの対応と未解決事項を確認する。
 6. `Revised_requirements_definition_documents/`
+   - enhancement開始時点でapprovedとなった要件・設計のsnapshotを保存する。
 
-## 3. Architecture-review trigger
+## 3. External reference rule
 
-以下に該当する場合、`40_operator_workflows/architecture_review/`を`CONDITIONAL MUST`とする。
+外部文書は以下の目的で参照してよい。
+
+- source requirement / designのprovenance
+- issue / ADR / code / schema等のfact source
+- approval evidence
+
+ただし、現在artifactの結論や変更内容を外部文書へ委譲してはならない。
+
+**NG:** `要件変更は既存設計書を参照。`  
+**OK:** `REQ-012をAからBへ変更する。理由は...。Provenance: <path>.`
+
+## 4. Architecture reviewを先に行う条件 — CONDITIONAL MUST
+
+以下の場合は、実装契約を作る前にarchitecture discovery / target decision / Gate decompositionを実施する。
 
 - runtime entrypoint / lifecycle変更
 - authority / ownership変更
@@ -33,9 +55,13 @@ Coding Agent / Test Agentの通常executionでは、ここを自由探索させ�
 - migration strategy変更
 - 複数subsystemを跨ぐcanonical source-of-truth変更
 
-Architecture reviewの成果はこの背景層または正式設計へ反映し、そのうえでGate-local 06 / 07に必要事項を抽出する。
+architecture reviewの結論は00層の正式な背景・要件・設計へ反映する。Coding / Test Agentへ必要なnormative semanticsは、後続の06 / 07へeffective formで記載する。
 
-## 4. Boundary
+## 5. Completion checklist
 
-背景・要件・設計文書は上位contractであるが、Agentの実行入口ではない。
-Agentに参照例外を認める場合、06 / 07でpath・目的・authority・precedenceを限定する。
+- [ ] enhancementのproblem / target outcomeが本文だけで理解できる。
+- [ ] scope / out-of-scopeが明確である。
+- [ ] requirement / design deltaが具体的に書かれている。
+- [ ] external referenceはprovenanceであり、normative contentの代替になっていない。
+- [ ] Gate decompositionがsemantic acceptance boundaryとして説明できる。
+- [ ] unresolved issueとapproval conditionが明示されている。

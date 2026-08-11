@@ -1,46 +1,38 @@
-# 40_operator_workflows — Human-controlled Orchestration v3
+# 40_operator_workflows — Human-controlled orchestrationの作成・使用ガイド
 
-## 0. Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけで40層の用途・各workflowの責務・operator artifactのself-containment ruleが分かること。
 
-Agent起動、architecture discovery、preflight、destructive/controlled operation等の**orchestration**を保存する。
+## 1. Purpose
 
-ここにあるartifact自体はproduct acceptance evidenceではない。
+`40_operator_workflows/`は、product acceptance contractとは別に、HumanがAgentの起動・architecture discovery・preflight・destructive operation等をbounded executionとして制御する層である。
 
-## 1. Agent entry prompt policy
+40層のresultは、明示的に30層へ取り込まれない限りGate PASS authorityを持たない。
 
-v3ではparameterized operator promptを標準とする。
+## 2. Sub-workflows
 
-```text
-Human-supplied identity variables
-  ↓
-Derived naming/path variables
-  ↓
-Expansion validation
-  ↓
-Agent execution
-```
+### `agent_entry_prompts/`
+Coding / Work Package / FAIL rework / Test Agentを起動するparameterized prompt。各prompt自身にhuman-supplied variables、derived-variable rule、target path、required output、stop conditionを含める。
 
-### MUST
+### `architecture_review/`
+current architecture discovery、target architecture decision、Gate decompositionを行う。product codeを実装するworkflowではない。
 
-- HumanはGate / Trial / Package等のidentityを明示する。
-- path / filenameは可能な限りderived variableから生成する。
-- variableはUPPER_SNAKE_CASE。
-- unresolved `{{...}}`が残った状態で実行しない。
-- instruction globが複数一致したら任意選択しない。
-- Work Package Agentはassigned packageだけを実行する。
-- Audit AgentはFixed Trial Candidateを対象とする。
+### `preflight/`
+DB / migration / service / toolchain等のexecution prerequisiteを検証する。preflight FAILとproduct implementation FAILを区別する。
 
-## 2. Agent prompts
+### `controlled_runbook/`
+破壊的・不可逆・infrastructure-sensitive operationをstep単位で実行し、各step後にHuman decision boundaryを置く。
 
-- `coding_agent_prompt.md`: SINGLE_EXECUTION Gate
-- `work_package_coding_agent_prompt.md`: Pxx/Rxx execution
-- `fail_rework_coding_agent_prompt.md`: formal FAIL後のretry Trial
-- `test_agent_prompt.md`: Independent Test / Audit
+## 3. Operator Artifact self-containment
 
-## 3. Other workflows
+Agentへ直接渡すprompt / instructionは、そのexecutionのために必要な以下を本文内に持つ。
 
-- `architecture_review/`
-- `preflight/`
-- `controlled_runbook/`
+- required variables / expansion rule
+- exact target / allowed action
+- prohibited action
+- output schema / output path
+- completion / abort / stop condition
 
-Gate decompositionとWork Package decompositionは別責務である。
+共通ガイドを別ファイルに保持してよいが、**実行時に別のvariable conventionやresult templateを読まなければpromptを実行できない構造にしない。**
+
+external source / commit / DB / previous result等はexecution target / precondition evidenceとして参照してよい。

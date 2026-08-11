@@ -1,5 +1,9 @@
 # Architecture Discovery Prompt
 
+> **Document class:** Planning / Operator Artifact  
+> **Self-containment:** MUST for own responsibility — instruction / decision / decompositionの意味を本文内に持ち、source code / designはfact evidenceとして参照する。
+
+
 対象enhancement: `{{ENHANCE_ID}}`
 対象branch / commit: `{{BRANCH_OR_COMMIT}}`
 

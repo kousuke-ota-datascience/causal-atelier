@@ -1,5 +1,9 @@
 # {{RUNBOOK_ID}} Completion Summary / Decision Record
 
+> **Document class:** Evidence / Operator Decision Artifact  
+> **Self-containment:** MUST for own result/decision — observed facts / conclusion / authority effectを本文内に記載する。external step evidenceはpathで参照してよい。
+
+
 - Final status: COMPLETE / PARTIAL / ABORTED / BLOCKED
 - Timestamp: {{TIMESTAMP}}
 - Decision authority: {{AUTHORITY}}

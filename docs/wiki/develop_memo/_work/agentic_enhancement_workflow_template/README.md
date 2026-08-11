@@ -1,41 +1,212 @@
-# AI Agent分業型エンハンス開発テンプレート v3
+# AI Agent分業型エンハンス開発ワークフローテンプレート
 
-## 0. Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけでworkflow全体の作成・運用原則を理解できること。
 
-本テンプレートは、AI Agentを用いたエンハンス開発について、Repository上の文書だけから、**contract / execution / verification / verified state** を分離して追跡・再構成・監査できる状態を作るための標準構成である。
 
-最低限、後から以下へ回答できなければならない。
+## 0. このテンプレートの目的
+
+本テンプレートは、AI Agentを用いてエンハンス開発を計画・実装・独立検証するときに、**どの文書を、どの順序で、何を記載して作成すればよいか**を定義する標準テンプレートである。
+
+実際のエンハンスでは、このdirectoryを作業directoryへコピーし、`{{...}}` placeholderを具体値へ置換して使用する。
+
+
+### Canonical filename policy
+
+Canonical filename / directory nameは、LLM・shell・Git・自動生成処理で安定して扱えることを優先し、次をMUSTとする。
+
+- filename / directory nameは **ASCII charactersのみ**を使用する。
+- semantic suffixは **technical English**を使用する。
+- 日本語はcanonical filename / directory nameへ使用しない。
+- 日本語はdocument title / body textへ使用してよい。
+- `ENHANCE_ID` / `GATE_ID` / `TRIAL_NO` / `PACKAGE_ID`等のcanonical identifierは定義どおり保持する。
+- Humanはidentityを指定し、derived filename / pathはschemaから生成する。
+
+例:
+
+```text
+06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_implementation_instruction.md
+07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_test_instruction.md
+```
+
+
+## 0.1. Document design principles
+
+本テンプレートの各文書は、**その文書が担う責務について、読者またはLLMが当該文書から直接理解・作成・実行・監査できること**を原則とする。
+
+ただし、自己完結の対象は「すべての情報」ではない。文書内へ保持すべきものと、外部参照してよいものを区別する。
+
+### Document classes
+
+| Document class | 主な対象 | Self-containment rule |
+|---|---|---|
+| **Authoring Guide** | root / 各directory README、構造・命名ガイド | **MUST** — そのガイドだけで担当artifactの作り方が分かること |
+| **Primary Execution Contract** | 06, 07, Pxx, Rxx | **MUST** — Agentが担当責務を実行するためのnormative semanticsを本文内に持つこと |
+| **Derived Contract** | 08, 09 | **CONDITIONAL** — 派生理由を保持しつつ、用途に応じてdelta referenceまたはconsolidationを選ぶこと |
+| **Planning / Evidence / State / Operator Artifact** | 00, 20, 30, Current State Control Sheet, 40のprompt/result等 | **MUST for own responsibility** — その文書の結論・判断・実行規則は本文内に持ち、fact/evidence/targetは外部参照可 |
+
+### Local normative meaning
+
+以下は原則として**現在の文書内へ記載する**。
+
+- その文書の目的・責務
+- 用語または状態の意味
+- 必須条件・禁止事項
+- 判断基準・completion condition
+- authority / precedenceのうち、その文書を正しく使うために必要なもの
+- Agentへ直接与えるinstructionの場合、そのAgentが守るべきeffective contract
+
+### Evidence / fact by reference
+
+以下は複製せず外部参照してよい。
+
+- source code / migration / schema / runtime object
+- commit SHA / diff / command output
+- previous Gate Decision / Test Item evidence
+- requirement / designのprovenance
+- observation target / execution target
+- historical rationale
+
+**外部artifactを参照して事実を取得すること**と、**外部workflow文書を読まなければ現在文書の規則が分からないこと**を混同しない。
+
+### Remediation exception
+
+`08 Trial Remediation Contract`は、original 06 / 07をimmutableに保持するためにformal FAIL後に作成する派生contractである。この存在意義から、次の2 modeを許容する。
+
+- `DELTA` — 06 / 07のstill-valid contractを参照し、remediation固有の変更だけを記載する。
+- `CONSOLIDATED` — next Trialに必要なeffective implementation / verification contractを08内へ統合する。
+
+modeはFAIL evidence確定後、**next TrialのLLMへ与えるeffective contextが必要十分・明確・最小になる方**を選ぶ。
+
+Gate semantic claimまたはAcceptance Criteria自体が誤っていた場合は08で再定義せず、09 Gate Contract Amendmentを使用する。
+
+
+本テンプレートを使用して作成された文書だけから、後から最低限以下を再構成・監査できる状態を作ることを目的とする。
 
 1. なぜエンハンスを行うのか。
 2. どの要件・設計を改定したのか。
-3. 各Gateが「何が成立した」と主張する契約単位なのか。
-4. そのGateの成果は、どの条件を満たしたとき後続工程が依存可能になるのか。
-5. 各Trialで、どのFixed Trial Candidateを独立検証へ提出したのか。
-6. Work Packageを使った場合、どのexecution unitへ分解し、各packageが何を実行したのか。
-7. Package Checkpoint、Fixed Trial Candidate、Gate PASSを混同していないか。
-8. Test / Audit Agentが何を観測し、なぜPASS / FAIL / BLOCKEDとしたのか。
+3. 各Gateは何を成立させる契約なのか。
+4. Gate PASSにより、どの成果を後続工程が利用可能になるのか。
+5. Gateを成立させるために、どの実装作業を行ったのか。
+6. Work Packageを使用した場合、どのexecution unitへ分解したのか。
+7. どのimplementation candidateをIndependent Verificationへ提出したのか。
+8. Test / Audit Agentは何を観測し、なぜPASS / FAIL / BLOCKEDと判定したのか。
 9. 現在、何がverified current stateとして確立しているのか。
 10. どのpassed-Gate contractが保護対象なのか。
-11. どのTransition DebtがOPENで、どのGateで解消される予定なのか。
-12. prerequisite / preflightが満たされているか。
+11. OPENなTransition Debtと、その解消条件は何か。
+12. prerequisite / preflightが成立しているか。
 13. 人間または別Agentが同じ根拠を再監査・追試できるか。
-
-v3の中心原則は次の8つである。
-
-1. **Gate-local semantic contract**
-2. **Gate scope != Agent execution scope**
-3. **Trial = candidate-to-independent-verification transaction**
-4. **Work Package = bounded Coding Agent execution unit**
-5. **Package checkpoint != Fixed Trial Candidate != Gate PASS**
-6. **PASS-only verified-state promotion**
-7. **Passed-Gate immutability**
-8. **Explicit authority / precedence / evidence identity**
-
-v3はv2のverification architectureを維持し、その上へ**execution decomposition architecture**を追加する。
 
 ---
 
-## 1. Information layers
+## 1. 最初に理解すべきworkflow semantics
+
+このテンプレートでは、**契約単位・検証単位・実行単位を分離する**。
+
+### 1.1. Gate — Acceptance Contract
+
+Gateは作業量や実装難易度を表す単位ではない。
+
+Gateとは、次を判定する**契約上のacceptance boundary**である。
+
+> そのGateが主張する機能・状態・architecture semanticsが成立し、Gate内の作業から生じた変化・成果物を、後続工程が契約上依存可能な状態になったか。
+
+Gateの境界は原則として次で決める。
+
+- 何を成立したと主張するのか。
+- その主張が独立したsemantic contractとして表現できるか。
+- PASS後に後続Gate / subsystem / operatorがその成果へ依存できるか。
+- PASS後にprotected contractとしてregression protectionする意味があるか。
+
+次はGate分割理由にならない。
+
+- 実装が大変である。
+- ファイル数が多い。
+- Coding Agentが一度では処理しづらい。
+- commit数が多い。
+- 作業時間が長い。
+
+これらはWork Package分割の理由にはなり得る。
+
+### 1.2. Trial — Candidate Verification Attempt
+
+TrialはCoding Agentを何回起動したかを数える単位ではない。
+
+Trialとは、同一Gate contractに対してimplementation candidateを生成し、Fixed Trial Candidateとして固定し、Independent Verificationへ提出して正式判定を受ける一連のtransactionである。
+
+```text
+Trial
+  = Candidate Generation
+  + Candidate Assembly
+  + Independent Verification Attempt
+```
+
+原則としてTrial番号が増えるのは、Independent Verificationによる**formal FAIL**を受け、次candidateを作るときである。
+
+次だけではTrial番号を増やさない。
+
+- Coding Agent interruption
+- package implementation failure
+- focused self-check failure
+- package restart
+- same-package correction
+- report correction
+- package checkpointの作り直し
+
+`BLOCKED`は`FAIL`と同一ではない。
+
+### 1.3. Work Package — Coding Execution Unit
+
+Work Packageは、Gate Contractを成立させるための実装作業を、Coding Agentが安全かつ検証可能に実行できる境界へ分解した**operational / execution unit**である。
+
+```text
+Gate
+  = WHAT must become true
+  = semantic / contractual boundary
+
+Work Package
+  = HOW implementation work is safely executed
+  = operational / execution boundary
+```
+
+Work Package completionは以下を意味しない。
+
+- Gate contract established
+- Gate PASS
+- verified current state promotion
+- downstream Gate unlock
+- product / architecture acceptance
+
+### 1.4. Responsibility matrix
+
+| 観点 | Gate | Trial | Work Package |
+|---|---|---|---|
+| 主目的 | 成果の成立を契約・判定する | 1 candidateを独立検証へ提出する | 実装作業を安全に実行する |
+| 境界 | semantic claim / downstream dependency | candidate verification attempt | execution scope / dependency / failure localization |
+| Authority | 06/07 + 999 Gate Decision | Fixed Trial Candidate + Test evidence | package instruction + Coding self-check |
+| 完了の意味 | downstreamが依存可能 | PASS/FAIL/BLOCKED decisionが出た | 次のimplementation stepへ進める |
+| verified state更新 | PASS時のみ可能 | 直接はしない | しない |
+| downstream unlock | PASS時に可能 | 直接はしない | しない |
+| protected contract化 | PASS時 | しない | しない |
+| failure | formal Gate FAILになり得る | formal FAILで次Trialへ | package failure != Gate FAIL |
+| restart | Gate contractは維持 | formal FAILまで同Trial | 同Trial内で可能 |
+
+### 1.5. Workflow invariants
+
+すべてのエンハンス文書は、以下の不変条件を満たすように作成する。
+
+1. **Gate-local semantic contract** — Gateごとに06/07でsemantic contractを固定する。
+2. **Gate scope != Agent execution scope** — Gate境界をAgent実行量で決めない。
+3. **Trial = candidate-to-independent-verification transaction** — TrialはAgent起動回数ではない。
+4. **Work Package = bounded Coding Agent execution unit** — Work Packageはexecution boundaryである。
+5. **Package checkpoint != Fixed Trial Candidate != Gate PASS** — 各evidence identityを分離する。
+6. **PASS-only verified-state promotion** — verified stateはfinal PASS時だけ昇格させる。
+7. **Passed-Gate immutability** — PASS済みcontractは後続作業から保護する。
+8. **Explicit authority / precedence / evidence identity** — 文書authorityとevidence identityを明示する。
+
+---
+
+## 2. 作成するdocument layers
 
 ```text
 TEMPLATE_Current_State_Control_Sheet.md / generated Current State Control Sheet
@@ -63,7 +234,7 @@ TEMPLATE_Current_State_Control_Sheet.md / generated Current State Control Sheet
   = parameterized Agent entry prompt / architecture review / preflight / controlled runbook
 ```
 
-### 1.1. Authority separation
+### 2.1. Document authority
 
 ```text
 Gate Coding Contract (06)
@@ -104,143 +275,134 @@ Current State Control Sheet
 
 ---
 
-## 2. Requirement levels
+## 3. エンハンス文書を作成する順序
 
-- `MUST`: 常に必要。
-- `CONDITIONAL MUST`: 条件該当時に必要。
-- `SHOULD`: 再現性・監査性・保守性向上のため推奨。
+### Step 1 — Background / requirements / designを作成する
 
-空欄は避け、必要に応じて以下を使用する。
+`00_enhance_background/`を使用する。
+
+最低限、以下を明らかにする。
+
+- enhancement objective
+- current problem / motivation
+- affected requirements
+- affected architecture / design
+- constraints / invariants
+- approval record
+- traceability
+
+architecture / ownership / persistence等を変更する場合は、必要に応じて`40_operator_workflows/architecture_review/`を先に実行する。
+
+### Step 2 — Gate decompositionを決める
+
+各Gateについて次を一文で書けることを確認する。
+
+> このGateがPASSすると、何が成立し、後続工程は何へ依存できるようになるか。
+
+分割理由が単に実装量である場合はGateを増やさず、Work Packageを使用する。
+
+### Step 3 — Current State Control Sheetを初期化する
+
+`TEMPLATE_Current_State_Control_Sheet.md`をコピーし、開始時点で既にverifiedな状態だけを記載する。
+
+未検証の実装予定やpackage進捗をverified current stateへ書かない。
+
+### Step 4 — Gateごとの06 / 07を作成してfreezeする
+
+`10_enhance_instruction/{{GATE_ID}}/`へ以下を作成する。
+
+- `06_*` — Gate Coding Contract
+- `07_*` — Gate Verification Contract
+
+06には「何を実装上成立させるか」、07には「何を満たせばGate PASSか」を記載する。
+
+Gate実行開始後に、implementation都合やtest failureを理由として06/07の意味論を書き換えない。
+
+### Step 5 — Execution Modeを選択する
+
+06で以下のいずれかを指定する。
 
 ```text
-N/A       : 概念上非該当
-NONE      : 該当対象だが存在しない
-NOT_RUN   : 実行予定だが未実行
-UNKNOWN   : 取得を試みたが確定不能
+SINGLE_EXECUTION
+WORK_PACKAGE
+```
+
+`WORK_PACKAGE`を使用する条件の目安:
+
+- 一度のAgent executionにはscopeが大きすぎる。
+- 複数のimplementation boundaryがある。
+- dependency DAG / execution orderがある。
+- intermediate checkpointがないとfailure localizationが困難。
+- 複数subsystem / authority boundaryを跨ぐ。
+- packageごとのfocused verificationが必要。
+- Agent interruption / restart resilienceが必要。
+
+### Step 6 — Work Packageを使う場合はP00 / Pxxを作成する
+
+`WORK_PACKAGE` modeでは以下を作る。
+
+- `P00` — Work Package Plan / execution control
+- `P01-P99` — planned implementation package
+
+P00にはpackage list、dependency、entry / exit criteria、focused verification、checkpoint rule、Candidate Assembly方法を記載する。
+
+Pxxは1回のbounded Coding Agent executionとして実行可能なscopeにする。
+
+### Step 7 — Coding Agentを起動する
+
+`40_operator_workflows/agent_entry_prompts/`を使用する。
+
+HumanはGate / Trial / Package等のidentityだけを入力し、path / filenameはderived variablesで組み立てる。
+
+Coding Agentはassigned scopeを越えず、execution completion / interruption時にはstatus reportを残す。
+
+Work Packageごとにcheckpointを作成しても、それをGate PASSと表現してはならない。
+
+### Step 8 — Candidate Assemblyを行う
+
+すべての必要なimplementation scopeが完了したらTrial candidateを組み立てる。
+
+最低限確認する。
+
+- package chain completeness
+- unresolved blocker
+- integration / Gate-wide regression
+- protected passed-Gate regressionのCoding-side self-check
+- candidate-affecting uncommitted changeなし
+- Fixed Trial Candidate SHA
+- Implementation Completion Report
+
+完了状態は`READY_FOR_TEST`であり、Gate PASSではない。
+
+### Step 9 — Independent Test / Auditを実行する
+
+Test / Audit Agentは07をAcceptance Criteria authorityとして、Fixed Trial Candidateを独立検証する。
+
+`30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/`へTest Item reportを作成し、最後に`999_gate_decision`を作成する。
+
+### Step 10 — Gate Decisionに従って遷移する
+
+```text
+PASS
+  -> Gate Contract established
+  -> Current State Control Sheetへverified stateをpromotion
+  -> passed-Gate contractをprotected化
+  -> next Gateへ進行可能
+
+FAIL
+  -> Gate contract validityを確認
+  -> validなら08 Trial Remediation ContractをDELTA / CONSOLIDATEDで作成
+  -> invalidなら09 Gate Contract Amendmentへ移行
+  -> next Trial candidateを作る
+
+BLOCKED
+  -> prerequisite / environment / contract ambiguity等を解消
+  -> Trial identityの扱いを明示
 ```
 
 ---
 
-## 3. Core Workflow Semantics
-
-この節はv3の**normative definition**である。
-
-### 3.1. Gate — Acceptance Contract
-
-**Gateは作業量や実装難易度を表す単位ではない。**
-
-Gateとは、次を判定する**契約上のacceptance boundary**である。
-
-> そのGateが主張する機能・状態・architecture semanticsが成立し、Gate内の作業から生じた変化・成果物を、後続工程が契約上依存可能な状態になったか。
-
-Gateの境界は、原則として次で決める。
-
-- 何を成立したと主張するのか。
-- その主張が独立したsemantic contractとして表現できるか。
-- PASS後に後続Gate / subsystem / operatorがその成果へ依存できるか。
-- PASS後にprotected contractとしてregression protectionできるか。
-
-次はGate分割理由にならない。
-
-- 実装が大変である。
-- ファイル数が多い。
-- Coding Agentが一度では処理しづらい。
-- commit数が多い。
-- 作業時間が長い。
-
-それらは**Work Package分割の理由**にはなり得る。
-
-#### Gate PASSの効果
-
-Final PASSされたGateは、以下を成立させる。
-
-```text
-Gate Contract
-  ↓ implementation candidate
-  ↓ independent verification
-Final PASS
-  ↓
-Gate Contract Established
-  ↓
-Downstream may rely on the established semantics
-```
-
-PASS後は、原則として次が起きる。
-
-- Gateのsemantic contractがestablishedになる。
-- Current State Control Sheetへverified stateをpromotionできる。
-- downstream Gateが前提として依存できる。
-- protected passed-Gate contractになる。
-- 後続変更にはmandatory regression obligationが生じる。
-
-### 3.2. Trial — Candidate Verification Attempt
-
-Trialは**Coding Agentを何回起動したか**を数える単位ではない。
-
-Trialとは、同一Gate contractに対して、あるimplementation candidateを生成し、Fixed Trial Candidateとして固定し、Independent Verificationへ提出して正式判定を受ける一連のtransactionである。
-
-```text
-Trial
-  = Candidate Generation
-  + Candidate Assembly
-  + Independent Verification Attempt
-```
-
-原則としてTrial番号が増えるのは、Independent Verificationによる**formal FAIL**を受け、次candidateを作るときである。
-
-次だけではTrial番号を増やさない。
-
-- Coding Agent interruption
-- package implementation failure
-- focused self-check failure
-- package restart
-- same-package correction
-- report correction
-- package checkpointの作り直し
-
-`BLOCKED`は`FAIL`と同一ではない。Trial identityを変更するかはblocker解消方針で明示する。
-
-### 3.3. Work Package — Coding Execution Unit
-
-Work Packageは、Gate Contractを成立させるための実装作業を、Coding Agentが安全かつ検証可能に実行できる境界へ分解した**operational / execution unit**である。
-
-```text
-Gate
-  = WHAT must become true
-  = semantic / contractual boundary
-
-Work Package
-  = HOW implementation work is safely executed
-  = operational / execution boundary
-```
-
-Work Package completionは以下を意味しない。
-
-- Gate contract established
-- Gate PASS
-- verified current state promotion
-- downstream Gate unlock
-- product / architecture acceptance
-
-したがって、v3のMUST invariantは次である。
-
-> **Work Package completion does not establish any product or architecture contract.**
-
-### 3.4. Responsibility matrix
-
-| 観点 | Gate | Trial | Work Package |
-|---|---|---|---|
-| 主目的 | 成果の成立を契約・判定する | 1 candidateを独立検証へ提出する | 実装作業を安全に実行する |
-| 境界 | semantic claim / downstream dependency | candidate verification attempt | execution scope / dependency / failure localization |
-| Authority | 06/07 + 999 Gate Decision | Fixed Trial Candidate + Test evidence | package instruction + Coding self-check |
-| 完了の意味 | downstreamが依存可能 | PASS/FAIL/BLOCKED decisionが出た | 次のimplementation stepへ進める |
-| verified state更新 | PASS時のみ可能 | 直接はしない | しない |
-| downstream unlock | PASS時に可能 | 直接はしない | しない |
-| protected contract化 | PASS時 | しない | しない |
-| failure | formal Gate FAILになり得る | formal FAILで次Trialへ | package failure != Gate FAIL |
-| restart | Gate contractは維持 | formal FAILまで同Trial | 同Trial内で可能 |
-
-### 3.5. Gate vs Work Package decision rule
+## 4. Gate vs Work Packageの判定規則
 
 以下を満たす作業単位はGate候補である。
 
@@ -256,55 +418,26 @@ Work Package completionは以下を意味しない。
 
 **実装難易度だけを理由にGateを細分化してはならない。**
 
-### 3.6. Anti-patterns
-
 禁止例:
 
 ```text
-「G06は大変だから G06-A / G06-B / G06-C に分ける」
+「このGateは大きいので Gate-A / Gate-B / Gate-C に分ける」
 ```
 
 それぞれが独立したacceptance contractを持たないなら、GateではなくWork Packageへ分解する。
 
-```text
-P03 COMPLETE → G06 partially PASS
-```
-
-この状態は存在しない。正しくは:
+同様に、次の状態は存在しない。
 
 ```text
-P03 = PACKAGE_COMPLETE
-G06 = IN_PROGRESS
+P02 COMPLETE -> Gate partially PASS
 ```
 
----
-
-## 4. Execution Modes
-
-Gate Coding Contractは、Gate開始前にexecution modeを明示する。
+正しくは:
 
 ```text
-SINGLE_EXECUTION
-WORK_PACKAGE
+P02 = PACKAGE_COMPLETE
+Gate = IN_PROGRESS
 ```
-
-### 4.1. SINGLE_EXECUTION
-
-小規模Gateでは従来どおり、1 Trial candidateを1つのbounded Coding executionで生成してよい。
-
-### 4.2. WORK_PACKAGE — CONDITIONAL MUST
-
-以下のいずれかに該当する場合、Work Package Modeを使用する。
-
-- 一度のAgent executionにはscopeが大きすぎる。
-- 意味的に独立した複数implementation boundaryがある。
-- dependency DAG / execution orderがある。
-- intermediate checkpointがないとfailure localizationが困難。
-- 複数subsystem / authority boundaryを跨ぐ。
-- packageごとのfocused verificationが必要。
-- Agent interruption / restart resilienceが必要。
-
-Work Package Modeでは、P00 Work Package Planを作成し、各package scope / dependency / entry / exit / checkpoint ruleを固定する。
 
 ---
 
@@ -313,8 +446,8 @@ Work Package Modeでは、P00 Work Package Planを作成し、各package scope /
 project-wide invariantとして以下を使用する。
 
 ```text
-Enhancement ID       : project-defined identifier (e.g. ENH-E4)
-Enhancement Short ID : artifact naming用short form (e.g. E4)
+Enhancement ID       : project-defined canonical identifier
+Enhancement Short ID : artifact naming用short form
 Gate ID              : G + 2-digit zero-padded decimal (G00-G99)
 Trial No             : 2-digit zero-padded decimal (01-99)
 Package Plan ID      : P00 reserved
@@ -329,18 +462,18 @@ Transition Debt ID   : <ENHANCE_ID>-TD-<3 digits>
 
 `P00`はWork Package Plan / execution control用reserved IDであり、production implementation packageとして扱わない。
 
-標準例:
+標準pattern:
 
 ```text
-E4-G06_01_P03_implementation_checkpoint_report.md
-E4-G06_01_P03_in_progress.md
-ENH-E4_G06_01_implementation_completion_report.md
-ENH-E4_G06_01_001_contract_verification.md
-ENH-E4_G06_01_999_gate_decision.md
-ENH-E4_G06_02_Remediation_Instruction.md
+{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_implementation_checkpoint_report.md
+{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
+{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
+{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_{{TEST_ITEM_ID}}_test_item.md
+{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_999_gate_decision.md
+{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
 ```
 
-`G6`, `Gate6`, `trial1`, `P3`, `item01` 等の表記揺れは使用しない。
+表記揺れを避け、IDはtemplate内で一貫して使用する。
 
 ### 5.1. Human-supplied vs derived variables
 
@@ -407,17 +540,20 @@ IN_PROGRESS_REPORT_FILE
 - 07がAcceptance Criteria authorityである。
 - Test targetは原則**Fixed Trial Candidate**である。
 
-### 6.5. 08 = Trial Remediation Delta
+### 6.5. 08 = Trial Remediation Contract
 
-- formal FAIL evidenceに対する次Trialの差分修正契約。
-- 06/07を再定義しない。
-- Acceptance Criteriaを緩和しない。
-- Work Package Modeでは必要に応じR01-R99 remediation packageへ分解する。
-- original Pxxを「再実行」した体裁にせず、FAIL起因修正をRxxで区別する。
+- Independent Verificationのformal FAIL後にのみ作成する。
+- original 06 / 07をimmutable historical contractとして保持する。
+- FAIL evidence確定後に`DELTA / CONSOLIDATED`を選択する。
+- `DELTA`: still-valid 06 / 07の必要sectionだけを参照し、failure-specific correction / re-verification deltaを記載する。
+- `CONSOLIDATED`: next Trialに必要なeffective implementation / verification contextを08内へ統合する。
+- どちらのmodeでもGate semantic claim / Acceptance Criteriaをsilent changeしない。
+- Work Package remediationでは必要に応じR01-R99へ分解し、Rxx自体はself-contained Primary Execution Contractとする。
+- failed candidate / failed evidenceを上書きしない。
 
 ### 6.6. 09 = Gate Contract Amendment
 
-06/07自体が誤っていることが判明した場合、それはTrial remediationではない。Human / architecture ownerへ戻し、`A01...`のAmendment recordで再承認する。
+06/07自体が誤っていることが判明した場合、それはTrial remediationではない。Human / architecture ownerへ戻し、`A01...` Amendment recordで再承認する。
 
 AmendmentがP00 / package instructionをinvalidateする場合、それらもversioned re-baselineする。
 
@@ -427,16 +563,16 @@ AmendmentがP00 / package instructionをinvalidateする場合、それらもver
 
 ## 7. Candidate Assembly and evidence identity
 
-### 7.1. Candidate hierarchy
+### 7.1. Evidence hierarchy
 
-v3ではcommit / evidence identityを最低3階層に分ける。
+commit / evidence identityを最低3階層に分ける。
 
 ```text
 Package Checkpoint SHA
   = 1 Work Packageのimplementation checkpoint
 
 Fixed Trial Candidate SHA
-  = 全package統合後、Gate-wide self-verificationを終え
+  = 全implementation scope統合後、Gate-wide self-verificationを終え
     Independent Testへ渡す唯一のcandidate
 
 Tested Repository State
@@ -445,102 +581,15 @@ Tested Repository State
 
 Acceptance判定の主対象は**Fixed Trial Candidate**である。
 
-### 7.2. Package checkpoint != Fixed Trial Candidate
-
-package checkpointは途中evidenceであり、単独でGate test targetへ昇格しない。
-
-### 7.3. Documentation-only post-candidate changes
+### 7.2. Documentation-only post-candidate changes
 
 Fixed Trial Candidate固定後にreport-only commit等が生じる場合、production / test / migration / dependency semanticsが変わっていないことを明示する。
 
 Tested Repository StateがFixed Trial Candidate SHAと異なる場合、Test / Audit Agentは差分を監査し、candidate semanticsが不変であることをevidence化する。確認不能なら`BLOCKED`または`FAIL`とする。
 
-### 7.4. Candidate Assembly
-
-Work Package Modeでは、package完了後にCandidate Assemblyを行う。
-
-最低限:
-
-- package chain completeness audit
-- unresolved package blocker確認
-- integration / Gate-wide regression
-- protected passed-Gate regressionのCoding-side self-check
-- candidate-affecting uncommitted changeなし
-- Fixed Trial Candidate SHA固定
-- Implementation Completion Report作成
-
-Candidate AssemblyはGate PASSではない。完了状態は`READY_FOR_TEST`である。
-
 ---
 
-## 8. State transition invariants
-
-標準state:
-
-```text
-Gate
-  IN_PROGRESS
-
-Trial Candidate Generation
-  PACKAGE_IN_PROGRESS
-  PACKAGE_BLOCKED
-  PACKAGE_COMPLETE
-
-Candidate Assembly
-  CANDIDATE_ASSEMBLY_IN_PROGRESS
-  READY_FOR_TEST
-
-Independent Verification
-  PASS
-  FAIL
-  BLOCKED
-```
-
-標準flow:
-
-```text
-Human / workflow owner
-  ↓ freeze 06 + 07
-  ↓ select execution mode
-
-Trial 01 Candidate Generation
-  ├─ SINGLE_EXECUTION
-  │    └─ implementation
-  └─ WORK_PACKAGE
-       ├─ P01 ... checkpoint
-       ├─ P02 ... checkpoint
-       └─ PNN ... checkpoint
-
-Candidate Assembly
-  ↓ Fixed Trial Candidate SHA
-  ↓ Implementation Completion Report
-  ↓ READY_FOR_TEST
-
-Test / Audit Agent
-  ↓ Test Item Reports
-  ↓ 999 Gate Decision
-
-FAIL
-  ↓ 08 Trial 02 Remediation Delta
-  ↓ optional R01-RNN remediation packages
-  ↓ same Gate / next Trial
-
-BLOCKED
-  ↓ prerequisite / environment / contract ambiguity等を解消
-  ↓ Trial identityの扱いを明示
-
-PASS
-  ↓ Gate Contract established
-  ↓ Current State Control Sheetへverified state promotion
-  ↓ passed-Gate contract protected
-  ↓ next Gate may proceed
-```
-
-**Package failureだけでTrialをFAIL扱いしてはならない。**
-
----
-
-## 9. Passed-Gate immutability
+## 8. Passed-Gate immutability
 
 Final PASSしたGateの以下はprotected contractとなる。
 
@@ -561,7 +610,7 @@ Work Packageの都合でprevious Gate semantic contractを暗黙に変更して�
 
 ---
 
-## 10. Transition Debt
+## 9. Transition Debt
 
 Transition Debtは単なるTODOではなく、期限付きarchitectural / operational exceptionとして管理する。
 
@@ -582,39 +631,45 @@ Transition Debtは単なるTODOではなく、期限付きarchitectural / operat
 
 ---
 
-## 11. Document authority and precedence
+## 10. Document authority domains and conflict rule
 
-標準precedence:
+文書を単一のtotal precedenceだけで理解せず、**authority domain**を分離する。Primary Execution Contractは自分のdomainのnormative meaningを本文内に持つ。
 
 ```text
-1. Explicit Human-approved Gate Contract Amendment
-2. 07 Gate Verification Contract
-     -> Acceptance Criteria authority
-3. 06 Gate Coding Contract
-     -> Gate implementation semantics / allowed scope
-4. Applicable 08 Remediation Delta
-     -> current Trial correction delta only
-5. P00 Work Package Plan / package instruction
-     -> execution decomposition only; 06/07をoverrideしない
-6. Final PASS previous Gate Decision
-     -> established previous contract evidence
-7. Current State Control Sheet
-     -> verified-state index; upper contractをoverrideしない
-8. Implementation Completion Report
-     -> Fixed Trial Candidate identity / implementation facts
-9. Package Checkpoint Report
-     -> package-local implementation facts
-10. Current source/test/migration
-     -> observable implementation facts
+06 Gate Coding Contract
+  -> Gate implementation semantic authority
+
+07 Gate Verification Contract
+  -> Gate acceptance / AC authority
+
+Pxx / Rxx Primary Execution Contract
+  -> assigned bounded Coding execution authority
+  -> effective constraintsを自身に保持
+
+08 Trial Remediation Contract
+  -> specific next-Trial remediation authority
+  -> DELTA / CONSOLIDATED
+  -> Gate semantic claim / ACは変更不可
+
+09 Gate Contract Amendment
+  -> explicit Human-approved contract-change decision
+  -> approval後に06 / 07 / affected plansをre-baseline
+
+Implementation / Test / State artifacts
+  -> observed fact / evidence / decision / verified-state indexの各domainのみ
 ```
 
-矛盾を検出したAgentは勝手に統合解釈せず、`BLOCKED`またはhuman escalationとする。
+### Conflict rule
 
----
+- Primary contract同士にsemantic conflictを検出した場合、Agentは勝手にprecedence解釈で修復せず`BLOCKED_CONTRACT_AMBIGUITY`とする。
+- approved 09が存在する場合、どのprimary contractをre-baselineしたかを明示し、過去Trial contractを上書きしない。
+- 08 DELTAが参照するparent sectionsは08内で一意に列挙する。
+- 08 CONSOLIDATEDはnext Trialのremediation contextを統合するが、original Gate claim / ACをsilent overrideしない。
+- evidence / source / Control Sheetはnormative contractを暗黙変更するauthorityを持たない。
 
-## 12. Agent boundaries
+## 11. Agent boundaries
 
-### 12.1. Coding Agent
+### 11.1. Coding Agent
 
 MUST:
 
@@ -636,7 +691,7 @@ MUST NOT:
 - next Gateへ先行着手する。
 - assertion緩和 / test削除 / skip/xfail追加だけでFAILを回避する。
 
-### 12.2. Test / Audit Agent
+### 11.2. Test / Audit Agent
 
 MUST:
 
@@ -657,7 +712,7 @@ MUST NOT:
 
 ---
 
-## 13. Parameterized operator prompt rules
+## 12. Parameterized operator prompt rules
 
 Agent起動promptは、Humanが少数のidentity variablesを宣言し、derived variableを展開してpath / filenameを決定する形式を標準とする。
 
@@ -669,11 +724,11 @@ MUST:
 - execution開始前に未解決placeholderがないことを確認する。
 - globが複数instructionに一致する場合、任意選択せず停止する。
 
-Work Package Coding AgentおよびTest / Audit Agentの標準promptは`40_operator_workflows/agent_entry_prompts/`を参照する。
+標準promptは`40_operator_workflows/agent_entry_prompts/`に配置する。各prompt自身に、必要な変数規則・対象path導出・停止条件・記録方法を含めるため、実行時に別のvariable guideを必須参照させない。
 
 ---
 
-## 14. Preflight / prerequisite
+## 13. Preflight / prerequisite
 
 product Gate判定とexecution prerequisiteを混同しない。
 
@@ -685,7 +740,7 @@ product Gate判定とexecution prerequisiteを混同しない。
 
 ---
 
-## 15. Architecture discovery conditional workflow
+## 14. Architecture discovery — conditional workflow
 
 以下ではimplementation Gate開始前のarchitecture reviewを`CONDITIONAL MUST`とする。
 
@@ -716,7 +771,45 @@ Gate decompositionとWork Package decompositionを混同してはならない。
 
 ---
 
-## 16. Human auditability
+## 15. Requirement levels
+
+- `MUST`: 常に必要。
+- `CONDITIONAL MUST`: 条件該当時に必要。
+- `SHOULD`: 再現性・監査性・保守性向上のため推奨。
+
+空欄は避け、必要に応じて以下を使用する。
+
+```text
+N/A       : 概念上非該当
+NONE      : 該当対象だが存在しない
+NOT_RUN   : 実行予定だが未実行
+UNKNOWN   : 取得を試みたが確定不能
+```
+
+---
+
+## 16. Instantiation checklist
+
+このdirectoryを実enhancementへコピーした後、以下を順に行う。
+
+1. `{{...}}`を具体値へ置換する。
+2. 不要なconditional workflow skeletonを削除または`N/A`化する。
+3. enhancement background / requirements / designを作成する。
+4. Gate decompositionを確定する。
+5. Current State Control Sheetの初期verified baselineを作る。
+6. Gateごとに`{{GATE_ID}}` directoryを作る。
+7. Gate開始前に06/07をfreezeする。
+8. Execution Modeを選択する。
+9. Work Package ModeならP00を作成し、P01+ instructionを作る。
+10. Trial開始時に`20/30`のTrial directoryを作る。
+11. parameterized operator promptのidentity variablesを設定する。
+12. 未解決meta variableがないことを確認してAgentを起動する。
+13. Candidate Assembly後にFixed Trial Candidateを固定する。
+14. Independent Verification後、Gate Decisionに従ってControl Sheetを更新する。
+
+---
+
+## 17. Human audit checklist
 
 Repository上の文書だけから最低限以下に回答できること。
 
@@ -745,16 +838,28 @@ Repository上の文書だけから最低限以下に回答できること。
 
 ---
 
-## 17. Instantiation rule
+## 18. 更新履歴
 
-このdirectoryはテンプレートである。実enhancementへコピー後:
+この節はテンプレート利用方法ではなく、schemaの変更履歴を確認するための情報である。詳細は`90_change_history/`を参照する。
 
-1. `{{...}}`を具体値へ置換する。
-2. 不要なconditional workflow skeletonを削除または`N/A`化する。
-3. Gateごとに`{{GATE_ID}}` directoryを作成する。
-4. Gate開始前に06/07をfreezeする。
-5. Execution Modeを選択する。
-6. Work Package ModeではP00を作成してからP01+ instructionを作る。
-7. Trial開始時にTrial directoryを作る。
-8. Current State Control Sheetの初期verified baselineを作る。
-9. 未解決meta variableをAgentへ渡さない。
+### Schema v11
+
+- canonical filename / directory nameをASCII characters + technical Englishへ統一。
+- 06 / 07 primary contractおよび00 planning / requirement / design artifactから日本語filenameを除去。
+- TEMPLATE_STRUCTURE / MANIFEST / operator promptのderived naming ruleを同期。
+
+### Schema v3
+
+- GateとAgent execution scopeを明示的に分離。
+- Trialをcandidate-to-independent-verification transactionとして定義。
+- Work Package / Candidate Assembly / package checkpointをfirst-class artifact化。
+- Fixed Trial CandidateをIndependent Verificationの標準targetとして明文化。
+- parameterized operator promptとderived naming ruleを標準化。
+
+### Schema v2
+
+- Gate-local 06 / 07 contractを導入。
+- Trial remediation contract、PASS-only verified-state promotion、Passed-Gate immutabilityを導入。
+- Current State Control Sheet、Transition Debt、document authority / precedenceを整備。
+
+過去schemaとの差分は通常のエンハンス計画作成時に読む必要はない。workflowのmigration、template保守、historical audit時のみ参照する。

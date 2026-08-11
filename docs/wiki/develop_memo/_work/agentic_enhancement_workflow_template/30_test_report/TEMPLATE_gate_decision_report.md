@@ -1,5 +1,12 @@
 # {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_NO}} Gate Decision
 
+> **Document class:** Decision / Evidence Artifact  
+> **Self-containment:** MUST for own responsibility.
+
+
+> **Evidence self-containment**: このartifactだけでtest/decisionの対象・observed facts・criterion evaluation・rationaleを理解できるよう記載する。external Test Item / log / source / report pathはevidence参照として利用してよい。
+
+
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
 - Gate: {{GATE_ID}}
@@ -77,10 +84,14 @@ This section is the acceptance-contract consequence of Gate PASS.
 Complete only when Status=FAIL.
 
 - Failure facts: {{FAILURE_FACTS_OR_NA}}
-- Suggested 08 scope: {{REMEDIATION_SCOPE_OR_NA}}
-- Acceptance Criteria remain unchanged: YES
-- Next Trial required: YES
+- Verified failure facts summary: {{FAILURE_FACTS_OR_NA}}
+- Original Gate semantic claim appears valid: YES / NO / UNDECIDED
+- Original Acceptance Criteria appear valid: YES / NO / UNDECIDED
+- Remediation scope candidate: {{REMEDIATION_SCOPE_OR_NA}}
+- 08 mode recommendation: DELTA / CONSOLIDATED / UNDECIDED
 - Rxx decomposition candidate: {{YES_NO_NA}}
+
+The Gate Decision records failure evidence. Final 08 mode selection is performed after failure analysis; if the Gate contract itself is invalid, use an explicit amendment instead.
 
 ## 11. Blocker record
 

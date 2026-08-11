@@ -1,5 +1,12 @@
 # {{ENHANCE_ID}} {{GATE_ID}} Trial {{TRIAL_NO}} Test Item {{TEST_ITEM_ID}} — {{TEST_NAME}}
 
+> **Document class:** Evidence Artifact  
+> **Self-containment:** MUST for own responsibility.
+
+
+> **Evidence self-containment**: このartifactだけでtest/decisionの対象・observed facts・criterion evaluation・rationaleを理解できるよう記載する。external Test Item / log / source / report pathはevidence参照として利用してよい。
+
+
 - Project: {{PROJECT_NAME}}
 - Enhancement: {{ENHANCE_ID}}
 - Gate: {{GATE_ID}}

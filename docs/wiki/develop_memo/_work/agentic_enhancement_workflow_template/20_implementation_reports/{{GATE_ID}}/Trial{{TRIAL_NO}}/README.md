@@ -1,8 +1,11 @@
-# {{GATE_ID}} Trial {{TRIAL_NO}} Implementation Evidence
+# {{GATE_ID}} Trial {{TRIAL_NO}} Implementation Evidence — 使用ガイド
 
-このdirectoryは1 Trialのcandidate generation evidenceを保存する。
+**Document class:** Authoring Guide  
+**Self-containment:** MUST for one Trial evidence namespace.
 
-- `packages/`: Work Package execution evidence
-- `...implementation_completion_report.md`: Fixed Trial Candidate authority
+このdirectoryは1 Trialのcandidate-generation transactionを保存する。
 
-formal FAIL後もこのTrial evidenceを上書きせず、next Trial directoryを作る。
+- `packages/` — WORK_PACKAGE modeのexecution status / checkpoint evidence。
+- `*_implementation_completion_report.md` — Candidate AssemblyとFixed Trial Candidate identity。
+
+Trial evidenceは、formal PASS / FAIL / BLOCKED後もimmutable historical evidenceとして保持する。Fixed Candidateを作り直す場合はCompletion Report内でidentityを明確にし、failed Trial evidenceを上書きしない。

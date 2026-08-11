@@ -1,48 +1,39 @@
 {
-  "template_id": "agentic_enhancement_workflow_template_v3",
-  "canonical_directory_name": "agentic_enhancement_workflow_template",
-  "schema_version": 3,
+  "template": "agentic_enhancement_workflow_template",
+  "schema_version": "11",
   "status": "DRAFT_FOR_REVIEW",
-  "core_semantics": {
-    "gate": "acceptance contract; downstream reliance boundary",
-    "trial": "candidate-to-independent-verification attempt",
-    "work_package": "bounded Coding Agent execution unit",
-    "candidate": "Fixed Trial Candidate submitted to Independent Verification"
+  "document_design": {
+    "principle": "local normative meaning; facts/evidence by reference; 08 DELTA/CONSOLIDATED exception",
+    "primary_execution_contracts": [
+      "06",
+      "07",
+      "Pxx",
+      "Rxx"
+    ],
+    "derived_contracts": [
+      "08",
+      "09"
+    ]
   },
-  "execution_modes": [
-    "SINGLE_EXECUTION",
-    "WORK_PACKAGE"
-  ],
-  "identifiers": {
-    "gate_id": "G00-G99",
-    "trial_no": "01-99",
-    "package_plan_id": "P00 reserved",
-    "planned_package_id": "P01-P99",
-    "remediation_package_id": "R01-R99",
-    "test_item_id": "001-998",
-    "gate_decision_id": "999 reserved",
-    "amendment_id": "A01-A99"
-  },
-  "file_count_excluding_manifest": 64,
   "files": [
-    "00_enhance_background/01_Enhance構想・要件改定計画.md",
-    "00_enhance_background/02_Enhance構想承認記録.md",
-    "00_enhance_background/03_要件定義書改定.md",
-    "00_enhance_background/04_設計書改定.md",
-    "00_enhance_background/05_要件・設計整合性およびトレーサビリティ確認.md",
+    "00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md",
+    "00_enhance_background/02_enhancement_concept_approval_record.md",
+    "00_enhance_background/03_requirements_revision.md",
+    "00_enhance_background/04_design_revision.md",
+    "00_enhance_background/05_requirements_design_consistency_and_traceability_review.md",
     "00_enhance_background/README.md",
-    "00_enhance_background/Revised_requirements_definition_documents/00_プロダクトコンセプトメモ.md",
-    "00_enhance_background/Revised_requirements_definition_documents/10_要件定義.md",
-    "00_enhance_background/Revised_requirements_definition_documents/21_論理データ設計.md",
-    "00_enhance_background/Revised_requirements_definition_documents/22_プロダクト基本設計.md",
-    "00_enhance_background/Revised_requirements_definition_documents/23_API・インターフェース設計.md",
-    "00_enhance_background/Revised_requirements_definition_documents/30_詳細設計.md",
+    "00_enhance_background/Revised_requirements_definition_documents/00_product_concept_memo.md",
+    "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition.md",
+    "00_enhance_background/Revised_requirements_definition_documents/21_logical_data_design.md",
+    "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design.md",
+    "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design.md",
+    "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design.md",
     "00_enhance_background/Revised_requirements_definition_documents/README.md",
     "10_enhance_instruction/README.md",
     "10_enhance_instruction/{{GATE_ID}}/06_{{GATE_ID}}_P00_work_package_plan.md",
     "10_enhance_instruction/{{GATE_ID}}/06_{{GATE_ID}}_{{PACKAGE_ID}}_{{PACKAGE_SLUG}}.md",
-    "10_enhance_instruction/{{GATE_ID}}/06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_実装指示書.md",
-    "10_enhance_instruction/{{GATE_ID}}/07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_テスト指示書.md",
+    "10_enhance_instruction/{{GATE_ID}}/06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_implementation_instruction.md",
+    "10_enhance_instruction/{{GATE_ID}}/07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_test_instruction.md",
     "10_enhance_instruction/{{GATE_ID}}/08_{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md",
     "10_enhance_instruction/{{GATE_ID}}/08_{{GATE_ID}}_{{REMEDIATION_PACKAGE_ID}}_{{PACKAGE_SLUG}}.md",
     "10_enhance_instruction/{{GATE_ID}}/09_{{ENHANCE_ID}}_{{GATE_ID}}_{{AMENDMENT_ID}}_Gate_Contract_Amendment.md",
@@ -55,17 +46,11 @@
     "20_implementation_reports/{{GATE_ID}}/README.md",
     "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/README.md",
     "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/README.md",
-    "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_implementation_checkpoint_report.md",
-    "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md",
-    "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md",
-    "20_implementation_reports/{{GATE_ID}}/{{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md",
     "30_test_report/README.md",
     "30_test_report/TEMPLATE_gate_decision_report.md",
     "30_test_report/TEMPLATE_test_item_report.md",
     "30_test_report/{{GATE_ID}}/README.md",
     "30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/README.md",
-    "30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_999_gate_decision.md",
-    "30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_{{TEST_ITEM_ID}}_test_item.md",
     "40_operator_workflows/README.md",
     "40_operator_workflows/agent_entry_prompts/README.md",
     "40_operator_workflows/agent_entry_prompts/VARIABLE_CONVENTIONS.md",
@@ -84,10 +69,18 @@
     "40_operator_workflows/preflight/README.md",
     "40_operator_workflows/preflight/TEMPLATE_preflight_instruction.md",
     "40_operator_workflows/preflight/TEMPLATE_preflight_result.md",
-    "CHANGELOG_v2.md",
-    "CHANGELOG_v3.md",
+    "90_change_history/README.md",
+    "90_change_history/schema_v11.md",
+    "90_change_history/schema_v2.md",
+    "90_change_history/schema_v3.md",
+    "MANIFEST.json",
     "README.md",
     "TEMPLATE_Current_State_Control_Sheet.md",
     "TEMPLATE_STRUCTURE.md"
-  ]
+  ],
+  "filename_policy": {
+    "canonical_filenames": "ASCII technical English only",
+    "japanese_in_filenames": "prohibited",
+    "japanese_in_document_titles_and_body": "allowed"
+  }
 }

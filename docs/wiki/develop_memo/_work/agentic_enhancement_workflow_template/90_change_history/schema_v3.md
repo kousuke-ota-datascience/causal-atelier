@@ -1,8 +1,8 @@
-# CHANGELOG v3
+# Schema v3 Change History
 
 ## Summary
 
-v3はv2のGate-local verification architectureを維持し、ENH-E4 G06で実証された**execution decomposition architecture**を追加するbreaking schema updateである。
+v3はv2のGate-local verification architectureを維持し、**execution decomposition architecture**を追加するbreaking schema updateである。
 
 ## Breaking semantic changes
 
@@ -34,3 +34,12 @@ v3はv2のGate-local verification architectureを維持し、ENH-E4 G06で実証
 
 `SINGLE_EXECUTION` modeを保持するため、小規模GateはWork Packageを作成せずv2相当の運用を継続できる。
 Work Package artifactは条件付きである。
+
+## Document self-containment refinement
+
+- Authoring Guides are self-contained for artifact creation.
+- 06 / 07 / Pxx / Rxx are self-contained Primary Execution Contracts.
+- 08 supports DELTA / CONSOLIDATED remediation modes selected after formal FAIL evidence is available.
+- 09 records explicit contract amendment and requires re-baselining affected primary contracts.
+- Planning / Evidence / State / Operator artifacts contain their own conclusion / execution semantics while external facts and evidence remain referenceable.
+- One-line generated-artifact stubs were removed from the canonical template tree.

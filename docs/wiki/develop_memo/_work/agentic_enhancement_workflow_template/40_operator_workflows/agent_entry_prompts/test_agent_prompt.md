@@ -1,5 +1,8 @@
 # Test / Audit Agent 作業開始プロンプト
 
+**Document class:** Operator Artifact / Agent Entry Prompt  
+**Self-containment:** MUST for routing — variables / path derivation / candidate identification / output / stop ruleを本prompt内に持つ。Acceptance semanticsは特定された07 primary contractに含まれる。
+
 以下の変数を、この作業のexecution parametersとする。
 
 ```text
@@ -18,7 +21,7 @@ BRANCH_NAME={{BRANCH_NAME}}
 ```text
 WORK_ROOT=docs/wiki/develop_memo/_work/{{WORK_DIR_NAME}}
 TEST_INSTRUCTION_DIR={{WORK_ROOT}}/10_enhance_instruction/{{GATE_ID}}
-TEST_INSTRUCTION_ID=07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_テスト指示書
+TEST_INSTRUCTION_ID=07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_test_instruction
 TEST_INSTRUCTION_FILE={{TEST_INSTRUCTION_ID}}.md
 IMPLEMENTATION_REPORT_DIR={{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}
 COMPLETION_REPORT_PATTERN={{IMPLEMENTATION_REPORT_DIR}}/*_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md

@@ -1,38 +1,63 @@
-# 30_test_report — Independent Verification Specification v3
+# 30_test_report — Independent Verification証跡の作成ガイド
 
-## 0. Purpose
+**Document class:** Authoring Guide  
+**Self-containment:** MUST — このREADMEだけでTest Item / 999 Gate Decisionの役割・作成規則・authority boundaryが分かること。
 
-Fixed Trial Candidateに対する独立Test / Audit evidenceを、Gate / Trial単位で保存する。
+## 1. Purpose
 
-## 1. Directory
+`30_test_report/`には、Test / Audit AgentがFixed Trial Candidateを独立検証したevidenceと、final Gate Decisionを保存する。
+
+## 2. Evidence / decision self-containment
+
+各Test Itemは、そのitemだけでtest objective、criterion、method、observed fact、result、reproductionが分かるようにする。
+
+999 Gate Decisionは特に強いself-containmentを要求し、その1文書だけで以下が分かること。
+
+- tested candidate identity
+- Gate acceptance claim
+- ACごとの結果
+- protected regression / TD result
+- PASS / FAIL / BLOCKEDの理由
+- PASS時のdownstream reliance
+- FAIL時のverified failure facts
+
+外部Test Item / log / source / Completion Reportはevidenceとして参照してよいが、`詳細は001-008参照`だけでfinal rationaleを省略しない。
+
+## 3. Directory
 
 ```text
 30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/
-  ..._001_*.md
+  {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_001_*.md
   ...
-  ..._999_gate_decision.md
+  {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_999_gate_decision.md
 ```
 
-## 2. Acceptance target
+## 4. Test Item Report
 
-Gate acceptance対象は**Fixed Trial Candidate**である。
+最低限:
 
-- package checkpoint単独をGate acceptance対象にしない。
-- Coding self-checkをIndependent Verificationへ代用しない。
-- completion reportからFixed Trial Candidate SHAを取得する。
-- Tested Repository Stateとの差分を最初に監査する。
+- Fixed Trial Candidate SHA / Tested Repository State
+- AC mapping
+- exact command / method
+- exit code
+- raw relevant evidence
+- observed Facts / Interpretation
+- criterion evaluation
+- source mutation audit
+- reproduction procedure
+- result rationale
 
-## 3. Authority
+## 5. Gate Decision — 999
 
-- Test Item Report = item-level observed evidence
-- 999 Gate Decision = final PASS / FAIL / BLOCKED authority
+`999`だけがfinal PASS / FAIL / BLOCKED authorityを持つ。
 
-## 4. Trial transition
+PASS:
+- required AC / candidate identity / protected regression / blocking TD conditionsが成立。
 
-- formal FAIL -> next Trial remediation
-- BLOCKED != FAIL
-- package failureはここでformal FAILになるまでTrial FAILではない
+FAIL:
+- valid candidateをtestでき、MUST AC / protected contract不成立がverifiedされた。
 
-## 5. Immutability
+BLOCKED:
+- prerequisite / candidate identity / contract ambiguity等で妥当な判定ができない。
 
-判定済みTrial directoryを次Trialの結果で上書きしない。
+formal FAIL時、failure factsをnext 08 authoring inputとして本文内に要約する。08のmodeはGate Decisionでは決め打ちせず、FAIL analysis後に選択してよい。

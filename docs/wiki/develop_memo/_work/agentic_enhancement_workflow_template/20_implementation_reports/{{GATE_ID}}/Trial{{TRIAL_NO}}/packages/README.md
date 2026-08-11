@@ -1,8 +1,13 @@
-# Trial Package Evidence
+# Package Evidence — 使用ガイド
 
-各Pxx/Rxxについて、必要に応じて以下を保存する。
+**Document class:** Authoring Guide  
+**Self-containment:** MUST for package evidence creation.
 
-- `*_in_progress.md` — execution completion / interruption status
-- `*_implementation_checkpoint_report.md` — checkpoint evidence
+WORK_PACKAGE modeで、各Pxx/Rxxについて次を記録する。
 
-package reportはGate acceptance authorityを持たない。
+- `*_in_progress.md` — 1 Agent executionの完了 / 中断 / blocker status。
+- `*_implementation_checkpoint_report.md` — package-local checkpoint evidence。
+
+各reportはstatus / completed work / remaining work / verification / relevant SHA / next actionを本文に持つ。source / command output / diffは外部evidenceとして参照してよい。
+
+Package evidenceはGate acceptance authorityを持たない。

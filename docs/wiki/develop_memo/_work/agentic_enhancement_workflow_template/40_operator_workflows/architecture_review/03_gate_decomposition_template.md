@@ -1,5 +1,9 @@
 # {{ENHANCE_ID}} Gate Decomposition
 
+> **Document class:** Planning / Operator Artifact  
+> **Self-containment:** MUST for own responsibility — instruction / decision / decompositionの意味を本文内に持ち、source code / designはfact evidenceとして参照する。
+
+
 ## 1. Decomposition principle
 
 各Gateは独立に実装・検証可能で、PASS後にprotected contractとして固定できる境界を持つこと。

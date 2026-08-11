@@ -1,5 +1,9 @@
 # {{ENHANCE_ID}} Target Architecture Decision Record
 
+> **Document class:** Planning / Operator Artifact  
+> **Self-containment:** MUST for own responsibility — instruction / decision / decompositionの意味を本文内に持ち、source code / designはfact evidenceとして参照する。
+
+
 ## 1. Context
 {{CONTEXT}}
 
