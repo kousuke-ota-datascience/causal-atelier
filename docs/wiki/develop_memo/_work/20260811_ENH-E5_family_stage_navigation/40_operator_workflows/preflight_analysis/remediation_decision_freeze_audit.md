@@ -86,9 +86,9 @@ matrixに格納された94 Decision Itemのうち、以下4行を除くDecision�
 
 Decision mismatch: **0**
 
-### 3.2 Freeze blocker
+### 3.2 Former freeze blocker — RESOLVED
 
-以下4行は `log ↔ matrix` では一致し、内容も当時の推奨裁定と一致しているが、会話履歴上「このD3裁定で問題ない」という明示的なhuman approval文を確認できない。
+2026-08-12 (Asia/Tokyo)、Human ownerは以下4 Decision ItemをENH-E5では実装せず`D3 / FUTURE`へ送る裁定を明示承認した。
 
 | Decision Item | Decision | Substatement |
 |---|---|---|
@@ -97,9 +97,9 @@ Decision mismatch: **0**
 | D10-006a | D3 | General Audit contract |
 | D10-006b | D3 | Retention/deletion contract |
 
-このため、これらを「承認済み全裁定」としてfreezeするには、human approvalの明示化が必要。
+Decision mismatch: **0**
 
-Severity: **BLOCKING FOR FORMAL FREEZE**
+Severity: **RESOLVED**
 
 ## 4. Non-blocking Observations
 
@@ -128,7 +128,7 @@ Severity: **NONE**
 
 ## 5. Freeze Verdict
 
-**CONDITIONAL PASS**
+**PASS / FROZEN**
 
 PASS:
 - 元audit対象集合のcoverage
@@ -137,13 +137,12 @@ PASS:
 - log ↔ matrix一致
 - logical split preservation
 - status/delivery consistency
+- `FR-122 / FR-126 / D10-006a / D10-006b` explicit human approval
 
 Blocking:
-- `FR-122 / FR-126 / D10-006a / D10-006b` のD3について、human approvalを明示的にfreezeすること。
+- **none**
 
-上記4行の明示承認後:
-
-> `remediation_decision_log.md` / `remediation_decision_matrix.csv` を ENH-E5 remediation decision baseline として **FROZEN / PASS** に移行可能。
+Approval date: **2026-08-12 (Asia/Tokyo)**
 
 ## 6. Post-freeze Rule
 

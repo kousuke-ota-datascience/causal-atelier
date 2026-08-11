@@ -22,9 +22,7 @@
 
 ### 0.2 Decision-freeze note
 
-`remediation_decision_freeze_audit.md` の現在判定は `CONDITIONAL PASS` である。`FR-122 / FR-126 / D10-006a / D10-006b` のD3はlog/matrix間で一致しているが、明示的human approvalが未確認のため、本書では `PENDING_EXPLICIT_APPROVAL` として **provisional trace** する。
-
-これら4件のapprovalが確定した場合、本書のTD-001/TD-002は内容変更なしで`APPROVED`へ移行できる。
+`FR-122 / FR-126 / D10-006a / D10-006b` のD3は2026-08-12 (Asia/Tokyo)にHuman ownerが明示承認した。`remediation_decision_freeze_audit.md` は `PASS / FROZEN` へ移行し、本書のTD-001/TD-002も `APPROVED` として扱う。
 
 ---
 
@@ -70,16 +68,16 @@ Current D3 rows with `Implementation Status=NOT_IMPLEMENTED`: **15件**。
 | FR-062 | FR-062 | Automated hyperparameter selection | TD-008 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | FR-110b | FR-110 | Dataset/context/date filter expansion | TD-010 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | FR-118 | FR-118 | Product submit/poll CLI | TD-009 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
-| FR-122 | FR-122 | General operational audit trail | TD-001 | DEFERRED | NOT_IMPLEMENTED | FUTURE | PENDING_EXPLICIT_APPROVAL |
-| FR-126 | FR-126 | Configurable retention/deletion policy | TD-002 | DEFERRED | NOT_IMPLEMENTED | FUTURE | PENDING_EXPLICIT_APPROVAL |
+| FR-122 | FR-122 | General operational audit trail | TD-001 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
+| FR-126 | FR-126 | Configurable retention/deletion policy | TD-002 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | FR-127b | FR-127 | DB/Worker/Artifact Store component readiness | TD-011 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | FR-128b | FR-128 | Operational size/timeout configuration | TD-004 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | NFR-004 | NFR-004 | General p95 API SLO / performance regression gate | TD-012 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | NFR-017 | NFR-017 | Explicit upload/row/column/memory/timeout hard limits | TD-004 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | NFR-020b | NFR-020 | Object-storage adapter / switching | TD-005 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 | D10-005c | D10-005 | Distinct Operator / system-operate authorization | TD-003 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
-| D10-006a | D10-006 | General Audit contract | TD-001 | DEFERRED | NOT_IMPLEMENTED | FUTURE | PENDING_EXPLICIT_APPROVAL |
-| D10-006b | D10-006 | Retention/deletion contract | TD-002 | DEFERRED | NOT_IMPLEMENTED | FUTURE | PENDING_EXPLICIT_APPROVAL |
+| D10-006a | D10-006 | General Audit contract | TD-001 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
+| D10-006b | D10-006 | Retention/deletion contract | TD-002 | DEFERRED | NOT_IMPLEMENTED | FUTURE | APPROVED |
 
 ---
 
@@ -134,7 +132,7 @@ Current D3 rows with `Implementation Status=PARTIAL`: **13件**。
 
 - **Category:** `UNIMPLEMENTED_REQUIREMENT`
 - **Ledger Status:** `DEFERRED`
-- **Decision Approval:** `PENDING_EXPLICIT_APPROVAL`
+- **Decision Approval:** `APPROVED`
 - **Delivery:** `FUTURE`
 - **Source Decision Items:** `FR-122`, `D10-006a`
 - **Source IDs:** `FR-122`, `D10-006`
@@ -180,7 +178,7 @@ Family × Navigation Stage改修の直接依存ではなく、実装するとdom
 
 - **Category:** `UNIMPLEMENTED_REQUIREMENT`
 - **Ledger Status:** `DEFERRED`
-- **Decision Approval:** `PENDING_EXPLICIT_APPROVAL`
+- **Decision Approval:** `APPROVED`
 - **Delivery:** `FUTURE`
 - **Source Decision Items:** `FR-126`, `D10-006b`
 - **Source IDs:** `FR-126`, `D10-006`
