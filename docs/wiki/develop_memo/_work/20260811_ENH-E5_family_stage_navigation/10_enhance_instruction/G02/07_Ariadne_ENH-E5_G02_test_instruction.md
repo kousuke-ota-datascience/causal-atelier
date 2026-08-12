@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G02`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `Gate 07 verification contract`
@@ -65,7 +65,7 @@ Navigation taxonomyとruntime planを同一視しない。
 - 全recordへ`sample_count`必須。
 - uncertainty=`nonparametric percentile bootstrap`。
 - `confidence=0.95`, `requested_resamples=1000`。
-- bootstrap seedは`immutable split/spec seed + subgroup column + canonical group value + metric + namespace`からdeterministically derive。
+- bootstrap seedは`immutable split/spec seed + subgroup column + canonicalized `subgroup_value` + metric + namespace`からdeterministically derive。
 - `sample_count < 2`または`valid_resamples < 200` => `uncertainty=null` + warning。
 - metric non-computable => `value=null`, `uncertainty=null`, status/warning。numeric valueを捏造しない。
 - outputはgroup value keyed mapではなくrecord list。
@@ -74,7 +74,7 @@ Record shape:
 
 ```text
 subgroup_column
-subgroup_value / group_value
+subgroup_value
 is_null_group
 metric
 sample_count
@@ -89,6 +89,8 @@ uncertainty?:
 status
 warnings[]
 ```
+
+External serialized fieldは`subgroup_value`に固定する。`group_value`はinternal algorithm/model termとしてのみ使用可能で、alternative JSON field nameとしては使用しない。
 
 
 ## Gate Acceptance Criteria

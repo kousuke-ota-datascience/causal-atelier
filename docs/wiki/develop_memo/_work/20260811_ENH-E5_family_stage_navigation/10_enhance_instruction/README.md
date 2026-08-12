@@ -2,7 +2,7 @@
 
 - 状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - Canonical source: `NFR-019 PASS / FROZEN`
 
 ## Authority model

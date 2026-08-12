@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G01`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `Gate 06 integration contract`
@@ -103,13 +103,29 @@ resource_id
 route
 ```
 
-Responseはoperationごとに最低限:
+Canonical response envelope:
+
+```json
+{
+  "operations": {
+    "<operation>": {
+      "allowed": true,
+      "reason_code": "...",
+      "message": "..."
+    }
+  }
+}
+```
+
+各operation item:
 
 ```text
 allowed: bool
 reason_code?: string
 message?: string
 ```
+
+`reason_code`と`message`はoptional。top-level `operations` mapはrequired。
 
 Rules:
 
@@ -160,7 +176,7 @@ E5変更surface:
 - `AC-G01-004`: legacy routeを保持する場合は本文の一方向mappingのみ。
 - `AC-G01-005`: Family clickはtarget Family default Stageへ、Stage clickはFamilyを維持してselected Stageへ遷移。
 - `AC-G01-006`: frontend full catalog duplicate ownershipなし。renderer missing/catalog invariant failureをsilent fallbackしない。
-- `AC-G01-007`: operation availability interface/query/allowed-reason-message contractを利用し、Stage visibilityとaction availabilityを分離。
+- `AC-G01-007`: operation availability endpoint/queryとtop-level `operations` map + `{allowed, reason_code?, message?}` item contractを利用し、Stage visibilityとaction availabilityを分離。
 - `AC-G01-008`: async presentation state=`IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED`。
 - `AC-G01-009`: E5変更surfaceはkeyboard、deterministic focus、accessible name、error association、non-color semantics、required contrastを満たす。
 

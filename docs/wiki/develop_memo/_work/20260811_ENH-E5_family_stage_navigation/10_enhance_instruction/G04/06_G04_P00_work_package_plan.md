@@ -1,7 +1,7 @@
 # ENH-E5 G04 P00 — Work Package Plan
 - Gate: `G04`
 - 文書状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
-- Baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 用途: Operator / Planning only。Package Coding Agentへ渡さない。
 
 | Package | Responsibility |

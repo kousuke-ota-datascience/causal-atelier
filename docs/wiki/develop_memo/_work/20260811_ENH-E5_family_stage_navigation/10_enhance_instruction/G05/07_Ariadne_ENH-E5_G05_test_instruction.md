@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G05`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `Gate 07 verification contract`
@@ -32,9 +32,11 @@ Canonical response fields:
 ```text
 semantic_compatible
 direct_metric_comparable
-compatibility_reasons[] / reasons[]
+compatibility_reasons[]
 direct_comparison_blockers[]
 ```
+
+External serialized fieldは`compatibility_reasons`に固定する。`reasons`はinternal algorithm termとしてのみ使用可能で、alternative external response fieldとしては使用しない。
 
 Rules:
 
@@ -59,6 +61,14 @@ Rules:
 
 対象はHTTP methodではなくduplicate durable side effect riskで決める。
 
+Web/API transport:
+
+```text
+Idempotency-Key
+```
+
+Application-layer normalized value may be named `idempotency_key`.
+
 Scope:
 
 ```text
@@ -77,7 +87,8 @@ ENH-E5対象Commandには少なくとも:
 - DatasetVersion create
 - Execution batch create
 - GraphVersion / GraphEditDraft create
-- Result / Product export create
+- Result export create
+- Project Export create
 - AnalysisView create
 - Exploration execution submit
 - Exploratory Result -> AnalysisSpecification DRAFT create
@@ -238,7 +249,7 @@ G05 Coding Agentはそれらの仕様文書を読まない。candidate repositor
 
 - `AC-G05-001`: Comparison response/semantic/direct rulesが本文どおり。
 - `AC-G05-002`: same-data confirmatory warningとsource Result evidence propagationが本文どおり。
-- `AC-G05-003`: idempotency scope/hash/replay/conflict/concurrency/coverage/exclusionsが本文どおり。
+- `AC-G05-003`: Web/API `Idempotency-Key` transport、application `idempotency_key` normalization、scope/hash/replay/conflict/concurrency/coverage/exclusionsが本文どおり。
 - `AC-G05-004`: retry-safe Artifact identity/hash/reuse/conflict/transaction ruleが本文どおり。
 - `AC-G05-005`: Project role matrix、all-route coverage、legacy resource Project derivation、sensitive outputが本文どおり。
 - `AC-G05-006`: canonical lineage chain/input/MOTIVATED/no-guess/no-duplicate/Project boundaryが本文どおり。

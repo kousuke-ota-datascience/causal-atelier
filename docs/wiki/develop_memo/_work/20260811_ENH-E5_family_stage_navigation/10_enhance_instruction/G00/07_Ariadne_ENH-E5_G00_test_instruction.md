@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G00`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `Gate 07 verification contract`
@@ -53,6 +53,7 @@ Required invariants:
 - `stage_id == slug`をENH-E5 canonical valueとする。
 - runtime input/output/status/retry/attempt/leaseをNavigation metadataへ含めない。
 - Navigation descriptorをpersistent Domain Resource、Repository、UoWへ登録しない。
+- `analysis-navigation/1`をscientific generic `SchemaRegistry`へ登録しない。Navigation metadataはdedicated interface/application validationで検証する。
 - catalogからruntime `StageType / StageDefinition / StageExecution`を生成しない。
 
 
@@ -68,6 +69,7 @@ Required invariants:
 - `AC-G00-008`: Navigation metadataへruntime input/output/status/retry/attempt/leaseを混入しない。
 - `AC-G00-009`: Navigation descriptorをpersistent Domain Resource/Repository/UoWへ登録せず、Navigation導入のDB migrationを行わない。
 - `AC-G00-010`: runtime planner/runner/CLI/libraryはNavigation catalog/default/sidebar orderなしでcurrent executionを成立させる。
+- `AC-G00-011`: `analysis-navigation/1`をscientific generic `SchemaRegistry`へ登録しない。
 
 
 ## 3. Verification architecture

@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G04`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `assigned Pxx implementation contract`
@@ -37,10 +37,17 @@ sampling
 
 chart mark/encoding、panel layout、active widget等presentation-only stateはAnalysisViewへ保存しない。
 
-Exploratory Result -> downstream request semantics:
+Public operation:
+
+```http
+POST /projects/{project_id}/exploration/results/{source_result_id}/create-analysis-draft
+```
+
+`source_result_id`はpath resource identityであり、request bodyのrequired fieldとして重複させない。
+
+Request body:
 
 ```text
-source_result_id
 target_family: CAUSAL | PREDICTIVE
 analysis_mode: EXPLORATORY | CONFIRMATORY
 research_context_version_id?   # source lineageから一意に解決できない場合のみrequired
@@ -61,7 +68,7 @@ Rules:
 
 ## 2. API boundary
 
-Existing/public handoff operationはExploratory Result resourceからdownstream AnalysisSpecification DRAFTを作る。request bodyでsource dataset/view identityを上書きさせない。
+Public handoff operationは`POST /projects/{project_id}/exploration/results/{source_result_id}/create-analysis-draft`。`source_result_id`はpath identityでありbodyへ重複要求しない。request bodyでsource dataset/view identityを上書きさせない。
 
 ## 3. Scientific provenance
 
