@@ -1,134 +1,260 @@
-# Ariadne ENH-E5 G05 テスト指示書 — Gate Verification Contract（Gate検証契約）
-
-文書区分: Primary Execution Contract（主要実行契約）
-自己完結性: MUST（必須）
+# Ariadne ENH-E5 G05 — Cross-family Convergence and Cross-cutting Completion — Verification
 
 - プロジェクト: Ariadne
 - Enhancement: ENH-E5
-- Active Gate: G05
-- Planning baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- Gate title: Cross-family Convergence and Product Regression（Family横断収束・product regression）
-- 検証契約状態: **DRAFT_FOR_REVIEW**（レビュー前ドラフト）
+- Active Gate: `G05`
+- Branch: `feature/ariadne_mvp_e5`
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `Gate 07 verification contract`
+
+## 0. Authority / verification isolation
+
+- 本文書は、このGateを検証する**Test / Audit Agentに対する唯一のnormative verification contract**である。
+- Test / Audit Agentは期待挙動を補完するためにGate `06`、`Pxx`、`P00`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repository、candidate diff、test output、migration state、API responseはverification evidenceとして参照してよいが、仕様authorityではない。
+- 本文書だけでPASS / FAILを一意に判定できない場合は`BLOCKED_CONTRACT_AMBIGUITY`として報告し、仕様を発明しない。
 
 
-## 0. 検証時の参照ポリシー — 単一normative verification contract
+### Scientific Comparability / Reuse Guard
 
-本GateのAcceptance / verification semanticsについて、**本07文書を唯一のnormative authority**とする。
+Comparisonは二段階:
 
-Test / Audit Agentは、本07だけから「何を観測するか」「何をPASS/FAILとするか」「何を禁止するか」を判断する（MUST）。
+```text
+semantic_compatible
+    ↓
+direct_metric_comparable
+```
 
-### 0.1 規範的仕様として参照してはならないもの
-Acceptance Criteriaを補完・修正する目的で、06、Pxx、00〜30、ADR、Gate decomposition、他Gate文書、過去Enhancement、issue、commit message、外部Webを参照してはならない（MUST NOT）。
+Canonical response fields:
 
-### 0.2 Evidenceとして参照してよいもの
-- Implementation Completion Report: Fixed Trial Candidate identity取得
-- repository state/diff: 実際のtest target確認
-- source code / automated tests / runtime output: evidence取得
-- freeze済み本07内に具体的に列挙されたprotected contract identity/evidence
+```text
+semantic_compatible
+direct_metric_comparable
+compatibility_reasons[] / reasons[]
+direct_comparison_blockers[]
+```
 
-これらはAcceptance Criteriaを追加・変更するauthorityではない。
+Rules:
 
-### 0.3 Repositoryの扱い
-repositoryから観測方法・test command・implementation factを発見してよいが、期待仕様を発見してはならない。
+- same Family / same Result Typeをgeneric direct comparisonの前提とする。
+- semantic mismatchはHTTP/application request failureにせず、`semantic_compatible=false`, `direct_metric_comparable=false`, reasonsを返す。
+- incompatible caseでquantitative delta/rankを生成しない。
+- Predictive semantic key:
+  `task_type, prediction target/outcome, prediction unit, prediction time, horizon, deployment/evaluation population semantics`。
+- Predictive direct metric:
+  same `dataset_version_id` + same TEST-row identity/hash + same metric definition。
+- Causal semantic key:
+  `treatment/exposure, outcome, estimand, target population`。
+- Causal direct quantitative comparison:
+  semantic compatibility + same dataset/view/analysis population。
+- cross-Family metric/effectを単一scoreへflattenしない。
+- same immutable `dataset_version_id`はAnalysisViewが異なってもsame-data。
+- Exploratory -> confirmatory same-dataで`EXPLORATORY_REUSE_SAME_DATA` warning。non-blocking。
+- source Exploratory Result IDをevidenceとして保持しExecution snapshotへ伝播。
 
-### 0.4 Contract ambiguity
-本07だけではAcceptance Criteriaの意味を一意に決定できない場合、06や上流資料を読んで推測せず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
 
-### 0.5 Freeze condition
-Test Agentが本07以外の設計文書を読まなければPASS/FAILを判定できない場合、本07を`FROZEN`にしてはならない。
+### Command Idempotency
 
-## 1. Acceptance の権威情報
+対象はHTTP methodではなくduplicate durable side effect riskで決める。
 
-freeze後は、この07をAcceptance Criteriaの権威情報とする。Package完了、Coding self-check、`READY_FOR_TEST`はacceptance evidenceではない。
+Scope:
 
-## 2. Gate目的 / acceptance claim
+```text
+(project_id, command_scope, idempotency_key)
+```
 
-3 Familyのnavigation/Stage recomposition後に、project context・Results/Lineage・routing・existing analytical execution/persistenceがcross-familyで一貫することを確立する。
+- canonical semantic request hashへpath上のsemantic resource identityも含める。
+- missing required key -> `IDEMPOTENCY_KEY_REQUIRED`。
+- same scope/key + same request hash -> stored result/response replay、duplicate side effectなし。
+- same scope/key + different request hash -> HTTP 409 `IDEMPOTENCY_CONFLICT`。
+- concurrent duplicate requestsはsingle durable side effectへ収束。
+- 可能な限りidempotency recordとdomain mutationを同一transactionへ置く。
 
-PASS後にdownstreamが依存可能になるcontract:
-ENH-E5全体をproduct-level verified contractとして利用・release判断できる。
+ENH-E5対象Commandには少なくとも:
 
-## 3. 検証時に有効な前提
+- DatasetVersion create
+- Execution batch create
+- GraphVersion / GraphEditDraft create
+- Result / Product export create
+- AnalysisView create
+- Exploration execution submit
+- Exploratory Result -> AnalysisSpecification DRAFT create
+- ResearchContext create
+- AnalysisSpecification create / revise
+- durable Predictive split-validation
+- Predictive Execution submit / rerun / revise
+- Annotation / WorkspaceAnnotation create
 
-- test対象は、正確なFixed Trial Candidateである。
-- Navigation StageとExecution Stageは別概念である。
-- このGateが明示的に変更しない限り、既存analytical algorithm/persistenceはregression保護対象である。
-- deferred/out-of-scope featureを偶発的に実装してはならない。
-- environment/prerequisiteにより観測不能な場合は`BLOCKED`とし、preflight失敗を自動的にproduct `FAIL`へ変換しない。
+対象外:
 
-## 4. 検証入力
+- pure GET / query / compare / preview / validate
+- plan-hash natural idempotencyを持つExecutionPlan create
+- uniqueness-protected explicit lineage link
+- Project create
+- state-machine cancel / fix / update
 
-必須:
-- current Trialのimplementation completion report
-- Fixed Trial Candidate SHA
-- repository status/diff
-- 該当する場合はPackage checkpoint chain
-- 本07へfreeze時に列挙されたprotected regression identity/evidence
+exactly-once executionは保証しない。
 
-identityが欠落または曖昧な場合は`BLOCKED_CANDIDATE_IDENTITY`とする。
 
-### Existing / current semantics の比較基準
+### Retry-safe Artifact Materialization
 
-本07で「existing」「current」「既存」と記載する挙動・control・schema・operationは、原則として本書metadataの`Planning baseline SHA`で観測できるproduct factを比較基準とする。先行Gateが意図的に変更した範囲は、FROZEN時に本07へ具体的に転記されたprotected contract/evidenceを優先する。
+successful Stage outputのlogical identity/object keyは:
 
-Test Agentはbaseline checkout/source/testsを**evidence取得のため**に観測してよいが、そこから新しいAcceptance Criteriaを導出してはならない。baselineとcandidateの差が本07だけでは許容変更か判定できない場合は、06や設計書を読んで推測せず`BLOCKED_CONTRACT_AMBIGUITY`とする。
+```text
+Execution + Stage + output slot/ordinal + Artifact type
+```
 
-## 5. Candidate identity audit — 最初に必ず実行
+- same logical output + same content hash -> existing durable Artifact reuse。
+- same logical output + different content hash -> nondeterministic-output conflict。
+- retry/restartでduplicate durable Artifactを作らない。
+- Result/Artifact metadata bindingはtransactional commit。
+- metadata DBとArtifactStore間general compensationはD3/FUTURE。
+- exactly-once executionはclaimしない。
 
-1. 意図したcandidateをcheckout/観測する;
-2. `git rev-parse HEAD`を記録する;
-3. `git status --short`を記録する;
-4. test対象repository stateとFixed Trial Candidate SHAを比較する;
-5. 異なる場合はdiffをauditし、documentation-only/non-semanticであることを証明する。証明できなければ状況に応じてBLOCKED/FAILとする。
 
-## 6. Acceptance Criteria（受入基準）
+### Project Authorization / Sensitive Output
 
-| AC | 基準 | レベル | 必要evidence |
-|---|---|---|---|
-| AC-G05-001 | Family切替およびglobal workspace間でもResearch Context/Dataset/Analysis View project contextの整合性を維持する。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-002 | Global Results/Lineageは既存cross-family result/lineageのaggregate/navigation機能を維持する。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-003 | G02-G04変更後も、すべてのcanonical Family/Stage deep linkとlegacy mappingが併存して機能する。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-004 | PASS済みG00-G04のprotected contractを無断変更しない。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-005 | DB schema migration、新規analytical engine dependency、Result schema再設計、navigation persistenceを導入していない。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-006 | Fixed Trial Candidate上でfull `uv run pytest -q`がPASSする。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-007 | 利用可能なbrowser/e2e regression suiteがFamily tab、Stage navigation、direct route、back/forward、代表的Family operationについてPASSする。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G05-008 | requirements/design/traceability docs match the implemented/verified contract and contain no unresolved placeholders except explicitly permitted evidence identities before PASS. | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
+Persisted Project role:
 
-Gate PASSには、すべてのMandatory ACがPASSしなければならない。
+```text
+OWNER
+EDITOR
+VIEWER
+```
 
-## 7. Test Item 計画
+Matrix:
 
-- `001_candidate_identity` — candidate/repository-state audit
-- 各AC clusterをカバーする1つ以上のfocused item
-- protected regression item
-- transition-debt audit item
-- `999_gate_decision` — 最終Gate Decision専用
+- READ: OWNER / EDITOR / VIEWER
+- WRITE / MUTATE: OWNER / EDITOR
+- Execution submit/cancel/retry/rerun/revise: OWNER / EDITOR
+- Export create: OWNER / EDITOR
+- Membership administration: OWNER only
+- Explicit sensitive output: OWNER / EDITOR
+- independent persisted `EXECUTE` roleなし
 
-各test itemにcommand/input、observed output、evidence path、PASS/FAIL/BLOCKED結果を記録する。
+Coverage:
 
-## 8. 保護対象regression
+- 全project-scoped routeはservice action前にProjectMembershipをresolve。
+- Project IDをpathに持たないlegacy/generic resource routeもresourceからProjectをderiveして同じauthorization。
+- prediction row / local explanation row/detailはpotentially sensitive。
+- VIEWERにはaggregate/suppressed representationのみ。
+- configurable sensitive-column governanceとsystem/operator authorizationはD3/FUTURE。
 
-current diffが影響し得る、過去のfinal-PASS Gate contractをすべて検証する。影響があるのに明示的なregression itemがない場合、それ自体をverification defectとする。
 
-## 9. Transition Debt audit
+### Canonical Lineage
 
-このGateで想定するOPEN debtは`NONE`。文書化されていない一時的authority/exceptionが導入されていないことを確認する。
+Read chain:
 
-## 10. Test / Audit Agent の禁止作業
+```text
+ResearchContextVersion
+  -> AnalysisSpecification
+  -> ExecutionPlan
+  -> Execution
+  -> StageExecution
+  -> Result
+  -> Artifact
+```
 
-以下を変更してはならない（MUST NOT）:
-- production code
-- automated test code
-- migration/dependency定義
-- Package実装
-- Acceptance Criteria
+接続input:
 
-## 11. Evidence 要件
+```text
+DatasetVersion
+AnalysisView
+GraphVersion
+input Result
+base Execution
+```
 
-Evidenceは再現可能で、正確なcandidate identityに紐付いていなければならない。自動assertionが実用的な箇所では、screenshot/manual observationはautomationの補足には使えるが代替にはできない。
+Rules:
 
-## 12. PASS の意味
+- canonical FK/snapshot/ownershipからdeterministically導けるstructural relationはread modelで投影。
+- structural relationをgeneric `LineageEdge`へduplicate persistしない。
+- `MOTIVATED`等semantic relationはgeneric LineageEdgeへ保存可能。
+- `Result --MOTIVATED--> AnalysisSpecification(status=DRAFT)`を保持。
+- relationをguessしない。
+- Project boundaryを越えない。
+- Navigation Stageをpersistent lineage node/edgeへ追加しない。
 
-PASSとは、Fixed Trial CandidateについてこのGateのsemantic claimが成立し、すべてのmandatory ACとprotected regressionがPASSし、未承認scope/migration/debtが存在せず、evidence identityをaudit可能であることを意味する。
 
-FAILはproduct/contract挙動が有効なACに違反していることを意味する。BLOCKEDはprerequisite/candidate/contractの曖昧さが残り、acceptanceを判定できないことを意味する。
+### Reproducibility Metadata
+
+DB migration:
+
+```text
+StageAttempt.effective_random_seed: int | null
+```
+
+Migration/runtime rules:
+
+- existing StageAttempt rowsは`null` backfill可能。
+- application/runtime deploymentはcolumn存在後に切り替える。
+- stochastic Stageはactual effective seedを各attemptへ保存。
+- deterministic Stageは`null`。
+- same logical Stageのtechnical retryはsame effective seedを再利用し、各attempt rowへ同じseedを明示。
+- runner/application boundaryはprocessorがactual seedを永続化できる形で報告。
+- `Execution.runtime_version_json`既存JSON fieldを利用し、独立column追加は必須でない。
+
+Exact runtime manifest keys:
+
+```text
+ariadne_code_version
+python_version
+platform_system
+platform_release
+machine
+libraries
+```
+
+`libraries`にはactualに利用したregistered scientific/runner dependency versionを保存する。未使用future optional libraryをversion取得目的だけでimportしない。
+
+保証対象はenvironment reconstruction metadataでありbit-for-bit numerical identityではない。
+
+
+### Prior Gate preservation model
+
+G05はprior Gate specificationを再解釈しない。実行preconditionとしてOperatorが次を提供する:
+
+```text
+G00 Fixed Trial Candidate SHA + PASS report
+G01 Fixed Trial Candidate SHA + PASS report
+G02 Fixed Trial Candidate SHA + PASS report
+G03 Fixed Trial Candidate SHA + PASS report
+G04 Fixed Trial Candidate SHA + PASS report
+```
+
+G05 Coding Agentはそれらの仕様文書を読まない。candidate repositoryとPASS evidenceをpreconditionとして扱い、以下のembedded invariantsを破壊しない:
+
+- Navigation catalog endpoint/schema/default/catalog。
+- canonical/deep routeとURL-authoritative navigation。
+- Predictive existing spec/settings/runtime compatibility。
+- Causal runtime/navigation separation。
+- Exploratory typed filter/handoff/provenance。
+- Navigation Stage非永続化 / runtime independence。
+
+
+## Gate Acceptance Criteria
+
+- `AC-G05-001`: Comparison response/semantic/direct rulesが本文どおり。
+- `AC-G05-002`: same-data confirmatory warningとsource Result evidence propagationが本文どおり。
+- `AC-G05-003`: idempotency scope/hash/replay/conflict/concurrency/coverage/exclusionsが本文どおり。
+- `AC-G05-004`: retry-safe Artifact identity/hash/reuse/conflict/transaction ruleが本文どおり。
+- `AC-G05-005`: Project role matrix、all-route coverage、legacy resource Project derivation、sensitive outputが本文どおり。
+- `AC-G05-006`: canonical lineage chain/input/MOTIVATED/no-guess/no-duplicate/Project boundaryが本文どおり。
+- `AC-G05-007`: `StageAttempt.effective_random_seed` migration/backfill/deploy/actual seed/retry ruleが本文どおり。
+- `AC-G05-008`: `runtime_version_json` exact keysとactual library version。
+- `AC-G05-009`: prior Gate PASS evidenceがexecution preconditionとして揃い、embedded protected invariant regressionがgreen。
+- `AC-G05-010`: D3/FUTUREをmandatory implementation/testへ追加しない。
+
+
+## Verification architecture
+
+- comparison: semantic mismatch success response、no quantitative delta/rank、Predictive/Causal direct gates、cross-Family flatten禁止。
+- reuse: same dataset despite different AnalysisView、confirmatory warning、source Result evidence/snapshot propagation。
+- idempotency: exact command coverage/exclusions、path resource hash、missing/replay/conflict/concurrency。
+- Artifact: logical identity、same hash reuse、different hash conflict、retry/restart duplicate 0件。
+- authorization: all project-scoped routes、legacy generic resource routes、VIEWER sensitive detail deny。
+- lineage: full chain/input、MOTIVATED、no guess、no structural duplicate、Project boundary。
+- reproducibility: migration/backfill、deploy order evidence、actual seed、retry same seed、deterministic null、manifest exact keys。
+- prior Gate: Fixed Trial Candidate SHAs + PASS reports + protected regression。

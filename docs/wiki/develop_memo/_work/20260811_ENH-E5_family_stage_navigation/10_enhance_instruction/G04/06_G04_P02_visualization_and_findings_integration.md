@@ -1,113 +1,100 @@
-# ENH-E5 G04 P02 — Visualization / Findings Integration
+# Ariadne ENH-E5 G04 — P02 Exploratory Handoff and Provenance
 
-文書区分: Primary Execution Contract（Work Package実装契約）
-自己完結性: MUST（必須）
-
-- Gate: `G04`
-- Trial: `01`
-- Package: `P02`
+- プロジェクト: Ariadne
+- Enhancement: ENH-E5
+- Active Gate: `G04`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 依存Package: `P01`
-- 発行時状態: **DRAFT_FOR_REVIEW**
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `assigned Pxx implementation contract`
 
-## 0. Package Coding Agentの参照ポリシー — assigned Pxxのみ
+## 0. Authority / execution isolation
 
-本Pxxは、当該Package Coding Agentに対する**唯一のnormative implementation contract**である。
+- 本文書は、このPackage Coding Agentに対する**唯一のnormative implementation contract**である。
+- Package Coding Agentは仕様補完のためにGate `06`、他`Pxx`、`P00`、Gate `07`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / protected boundary / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本Pxxを期待挙動の補完に利用しない。
 
-Package Agentは、仕様・scope・architecture decision・Acceptance Criteriaの意味を補完する目的で、06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、**current implementation factを確認し実装方法を決めるため**に参照してよい。ただしrepositoryは仕様authorityではない。
+## 1. Outcome
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+Explore data-selection stateとExploratory Resultをcanonical downstream DRAFTへ安全にhandoffする。
 
-current codeが本Pxxと異なることを理由に、本Pxxの要求を追加・削除・緩和・変更してはならない。
+### Exploratory Handoff / Provenance Contract
 
-本Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、他資料へ探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+AnalysisView DRAFTへ移すdata-selection semanticsのみ:
 
-本Pxxを`FROZEN`にするPlanning担当は、Package Agentが外部の規範文書を読まずに実装・focused verificationを完結できることを事前確認する。
+```text
+row_filter
+selected_columns
+derived_columns
+missing_value_policy
+time_cutoff
+sampling
+```
 
-## 1. Package acceptance claim
+chart mark/encoding、panel layout、active widget等presentation-only stateはAnalysisViewへ保存しない。
 
-Visualizationを独立analytical Stageにせず、各Exploratory Stageの表現手段として統合し、Findingsを既存Result/Annotation/Lineageのprojectionとして成立させる。
+Exploratory Result -> downstream request semantics:
 
-## 2. Visualization placement rule
+```text
+source_result_id
+target_family: CAUSAL | PREDICTIVE
+analysis_mode: EXPLORATORY | CONFIRMATORY
+research_context_version_id?   # source lineageから一意に解決できない場合のみrequired
+family_spec_schema_version?
+family_spec?
+```
 
-- `Profile` / `Data Quality` / `Distribution` / `Relationships` / `Comparison`の各contextで必要なchart/table/controlを、そのanalytical context内に配置する。
-- `Visualization`というNavigation Stageを新設しない。
-- chart type選択やvisual encodingはpresentation concernであり、analysis Family/Stage taxonomyと同列に扱わない。
-- existing chart/render operationがbackend executionを伴う場合でも、そのruntime operationをNavigation Stageと同一視しない。
-- current result/operationがsupportしないvisualizationを、見た目だけのために新analysis methodとして追加しない。
+Rules:
 
-## 3. Findings responsibility
+1. `dataset_version_id / analysis_view_id`はsource Result lineageからderiveし、request overrideを受け付けない。
+2. ResearchContextVersionはsource lineageから一意ならderive。0件/複数件ならrequestで明示。
+3. canonical `AnalysisSpecification`を`status=DRAFT`としてpersist。
+4. DRAFTではtarget Family `family_spec`未完成を許容。
+5. `Result --MOTIVATED--> AnalysisSpecification` semantic lineageを保存。
+6. handoffだけでFIX / Executionを開始しない。
+7. `analysis_mode=CONFIRMATORY` + same immutable `dataset_version_id`なら`EXPLORATORY_REUSE_SAME_DATA` non-blocking warningとsource Result evidenceを保持可能にする。
 
-`Findings`はEDAで得た既存の保存済みResult/Annotation/Lineage等を閲覧・再利用するnavigation contextである。
 
-- new persistent `Finding` / `Evidence` aggregateを作らない。
-- existing Result type/semantic ownershipを平坦化しない。
-- exploratory findingをcausal effectやconfirmatory conclusionへ自動変換しない。
-- Findingsから元Dataset/View/Spec/Execution/Result等の既存lineageへ辿れる性質を壊さない。
+## 2. API boundary
 
-## 4. Non-causal interpretation
+Existing/public handoff operationはExploratory Result resourceからdownstream AnalysisSpecification DRAFTを作る。request bodyでsource dataset/view identityを上書きさせない。
 
-current UI/resultがexploratory associationに対してnon-causal interpretation warningを持つ箇所は維持する。Relationships/Comparison/Findingsへの再配置を理由にwarningを削除・弱体化しない。
+## 3. Scientific provenance
 
-## 5. In scope
+- same-data判定authorityはimmutable `dataset_version_id`。
+- `analysis_mode`をDRAFT/Execution snapshotへ伝播可能にする。
+- source Exploratory Result IDをwarning evidenceとして失わない。
+- DOM/CSS/panel layoutをscientific provenanceへ含めない。
 
-- existing chart/table controlsのStage内再配置
-- chart rendering stateのfrontend integration
-- Findings projection
-- existing Result/Annotation/Lineageへのnavigation/linkage
-- focused UI/result tests
+## Prohibited changes
 
-## 6. Out of scope / 禁止
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-- Visualization Stage
-- chart目的のnew statistical engine
-- new persistent Finding/Evidence model
-- causal claimへの意味変更
-- Result schemaの共通score化/平坦化
 
-## 7. Focused verification
+## 5. Package Acceptance Criteria
 
-- VisualizationというStage/tab/sidebar itemが存在しない。
-- Distribution/Relationships/Comparison等でexisting chart/controlを利用できる。
-- chart/control切替でunderlying analytical semanticsが変化しない。
-- Findingsがnew DB entityなしでexisting saved result系resourceを表示する。
-- existing lineage accessが維持される。
-- non-causal warningが該当surfaceで保持される。
+- exact request semantics。
+- context unique/ambiguous derivation。
+- DRAFT target family incomplete spec許容。
+- `MOTIVATED` edge。
+- no auto FIX/Execution。
+- confirmatory same-data warning判定に必要なdataが保持される。
 
-## 8. Package Acceptance Checklist
+## Completion evidence
 
-- [ ] Visualizationは表現手段としてStage内部にある
-- [ ] standalone Visualization Stageなし
-- [ ] Findingsはexisting resourcesのprojection
-- [ ] new Finding/Evidence persistenceなし
-- [ ] non-causal semantics保持
-- [ ] lineage保持
-- [ ] focused tests green
-
-## 10. Checkpoint / 報告
-
-Package完了時に以下を記録する。
-
-- `git rev-parse HEAD` のPackage Checkpoint SHA
-- `git status --short`
-- 変更したproduction/test file一覧
-- 実行したfocused verification commandと実測結果
-- 本PxxのPackage Acceptance Checklist各項目のPASS/FAIL
-- 未解決blocker。なければ`NONE`
-
-Package完了はGate PASSを意味しない。Package AgentはGate PASSを判定しない。
-
-## 11. 停止条件
-
-以下のいずれかを検出した場合は、推測・外部資料探索・scope拡張を行わず停止する。
-
-- 本Pxxだけではnormativeなrequired behaviorを一意に確定できない: `BLOCKED_CONTRACT_AMBIGUITY`
-- prerequisite Packageの変更がcurrent branchへ統合されていない: `BLOCKED_PREREQUISITE`
-- baseline / branch identityが想定と異なる: `BLOCKED_BASELINE_MISMATCH`
-- DB migration、新dependency、新analytical engine等の未承認変更が必要: `BLOCKED_SCOPE_AMENDMENT_REQUIRED`
-- protected execution / analysis semanticsとの衝突が発生: `BLOCKED_PROTECTED_CONTRACT_CONFLICT`
-
-停止時は、観測したrepository factと不足しているnormative decisionを分離して報告する。
+- changed production / test / schema / migration files
+- focused test commands and results
+- relevant regression commands and results
+- candidate SHA / checkpoint SHA
+- blocker status (`NONE` or explicit blocker)

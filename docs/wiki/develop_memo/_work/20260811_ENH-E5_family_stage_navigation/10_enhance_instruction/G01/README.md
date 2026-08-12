@@ -1,5 +1,8 @@
-# G01 — URL-driven Family / Stage Navigation Shell（URL駆動navigation shell）
+# G01 — URL-driven Family / Stage Navigation Shell
 
-- Semantic claim: canonical catalogを利用してtop Family tabs + Family-local Stage sidebarを成立させ、URL/deep link/history/legacy route compatibilityを確立する。
 - Execution Mode: `WORK_PACKAGE`
-- Contract状態: approvalとbaseline確認が完了するまでは`DRAFT_FOR_REVIEW`。
+- Contract状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- NFR-019 canonical source: `PASS / FROZEN`
+- Authority: assigned Pxx is Package Coding authority; Gate 06 is integration/operator contract
+- Test/Audit authority: Gate `07` only

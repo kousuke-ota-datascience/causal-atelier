@@ -1,116 +1,97 @@
-# ENH-E5 G02 P03 — Predictive Regression / Candidate
+# Ariadne ENH-E5 G02 — P03 Predictive Regression, Draft Preservation and Read Surfaces
 
-文書区分: Primary Execution Contract（Work Package実装契約）
-自己完結性: MUST（必須）
-
-- Gate: `G02`
-- Trial: `01`
-- Package: `P03`
+- プロジェクト: Ariadne
+- Enhancement: ENH-E5
+- Active Gate: `G02`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 依存Package: `P01,P02`
-- 発行時状態: **DRAFT_FOR_REVIEW**
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `assigned Pxx implementation contract`
 
-## 0. Package Coding Agentの参照ポリシー — assigned Pxxのみ
+## 0. Authority / execution isolation
 
-本Pxxは、当該Package Coding Agentに対する**唯一のnormative implementation contract**である。
+- 本文書は、このPackage Coding Agentに対する**唯一のnormative implementation contract**である。
+- Package Coding Agentは仕様補完のためにGate `06`、他`Pxx`、`P00`、Gate `07`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / protected boundary / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本Pxxを期待挙動の補完に利用しない。
 
-Package Agentは、仕様・scope・architecture decision・Acceptance Criteriaの意味を補完する目的で、06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、**current implementation factを確認し実装方法を決めるため**に参照してよい。ただしrepositoryは仕様authorityではない。
+## 1. Outcome
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+Predictive navigation後のcompatibility、draft preservation、Explainability/Model Management scientific boundaryをregressionで保護する。
 
-current codeが本Pxxと異なることを理由に、本Pxxの要求を追加・削除・緩和・変更してはならない。
+### Predictive Compatibility Contract
 
-本Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、他資料へ探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+`predictive-analysis-spec/1` top-level fieldを削除/rename/default semantic変更しない:
 
-本Pxxを`FROZEN`にするPlanning担当は、Package Agentが外部の規範文書を読まずに実装・focused verificationを完結できることを事前確認する。
+```text
+schema_version
+task_type
+prediction_question
+feature_spec
+split_spec
+preprocessing_spec
+model_spec
+tuning_spec
+evaluation_spec
+explanation_spec
+```
 
-## 1. Package acceptance claim
+Setup surfaceは少なくとも次を編集・検証できる:
 
-Predictive再配置後のsemantic compatibilityをGate-wideにself-verifyし、Test Agentへ渡せるFixed Trial Candidateの実装側evidenceを揃える。
+- task / prediction question
+- target
+- feature selection / availability / exclusion
+- split strategy / ratio / group / time boundaries / seed
+- preprocessing
+- model spec
+- tuning selection
+- evaluation metrics / subgroups
+- explanation method / sampling
 
-## 2. Regression dimensions
+Current runtime plan:
 
-以下を独立に確認する。
+```text
+split -> prepare -> train -> evaluate -> optional explain
+```
 
-1. **Configuration compatibility** — current visible controls、validation、default、generated spec。
-2. **Execution compatibility** — existing split/prepare/train/evaluate/(explain) path。
-3. **Result compatibility** — prediction-bearing output、metrics、explanation、model-card/artifact/lineage。
-4. **Navigation semantics** — 6 Stage到達、canonical route、non-sequential movement。
-5. **State preservation** — active session内の未保存form value。
-6. **Scope protection** — new engine/scoring/model registry/schema changeがない。
+Navigation taxonomyとruntime planを同一視しない。
 
-## 3. Required negative checks
 
-- `NavigationStage`をExecution `StageType`/runner selectionへ渡すcode pathが追加されていない。
-- Predict Stageのためだけのnew standalone scoring endpoint/runnerが追加されていない。
-- Model Managementにwrite/deploy/promotion operationが追加されていない。
-- snapshot/test期待値を更新することでspec semantic差分を隠していない。
-- Explainabilityからcausal claimへ意味を強めていない。
+## 2. Required behavior
 
-## 4. Focused / regression verification
+- Navigation Stage切替でunsaved Predictive DRAFT inputを失わない。state authorityはroute-independent parent/application form state等へ一意化する。
+- `Metrics` openだけで新Executionを作らない。
+- `Model Management`はread-orientedで`ModelRegistry` aggregateを新設しない。
+- Predictive explanationをcausal effect/identification resultとして表示/exportしない。
+- Predictでnew general-purpose scoring/online serving subsystemを作らない。
 
-current repositoryから影響範囲の既存Predictive testを特定して実行する。さらにP01/P02で追加したcompatibility/navigation testsを全て実行する。
+## Prohibited changes
 
-少なくとも以下のscenario evidenceを含める。
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-- representative Setup入力→generated spec→Train execution trigger
-- Train完了後のMetrics参照
-- prediction output有/無のPredict表示
-- Explainability表示とwarning
-- Model Management read-only projection
-- Setup入力変更→別Stage→Setupへ戻った際のvalue保持
-- 6 canonical routesのdirect load
 
-full suiteを実行可能なrepository baselineでは関連full suiteも実行し、実行不能ならcommand/阻害要因を正確に報告する。testをskip/xfail/弱体化してgreen化しない。
+## 4. Package Acceptance Criteria
 
-## 5. In scope
+- existing Predictive regression green。
+- route switch前後でDRAFT input parity。
+- saved Result/Artifact read surfacesで不要なExecution 0件。
+- no new ModelRegistry。
+- no causal interpretation leakage。
 
-- regression test追加/補強
-- compatibility evidence
-- candidate self-verification
-- regressionで発見した本Gate scope内bug修正
+## Completion evidence
 
-## 6. Out of scope / 禁止
-
-- regression結果を理由としたrequirement変更
-- baselineの既存仕様を推測で再定義すること
-- new analytical engine/dependency/schema migration
-- Gate PASS判定
-
-## 7. Package Acceptance Checklist
-
-- [ ] P01/P02の全focused testsがgreen
-- [ ] current Predictive regression testsがgreen
-- [ ] representative generated spec semantic equivalence確認
-- [ ] execution path regression確認
-- [ ] output / warning / read-only boundary確認
-- [ ] prohibited scopeのdiffがない
-- [ ] Fixed Trial Candidate SHAを記録可能な状態
-
-## 10. Checkpoint / 報告
-
-Package完了時に以下を記録する。
-
-- `git rev-parse HEAD` のPackage Checkpoint SHA
-- `git status --short`
-- 変更したproduction/test file一覧
-- 実行したfocused verification commandと実測結果
-- 本PxxのPackage Acceptance Checklist各項目のPASS/FAIL
-- 未解決blocker。なければ`NONE`
-
-Package完了はGate PASSを意味しない。Package AgentはGate PASSを判定しない。
-
-## 11. 停止条件
-
-以下のいずれかを検出した場合は、推測・外部資料探索・scope拡張を行わず停止する。
-
-- 本Pxxだけではnormativeなrequired behaviorを一意に確定できない: `BLOCKED_CONTRACT_AMBIGUITY`
-- prerequisite Packageの変更がcurrent branchへ統合されていない: `BLOCKED_PREREQUISITE`
-- baseline / branch identityが想定と異なる: `BLOCKED_BASELINE_MISMATCH`
-- DB migration、新dependency、新analytical engine等の未承認変更が必要: `BLOCKED_SCOPE_AMENDMENT_REQUIRED`
-- protected execution / analysis semanticsとの衝突が発生: `BLOCKED_PROTECTED_CONTRACT_CONFLICT`
-
-停止時は、観測したrepository factと不足しているnormative decisionを分離して報告する。
+- changed production / test / schema / migration files
+- focused test commands and results
+- relevant regression commands and results
+- candidate SHA / checkpoint SHA
+- blocker status (`NONE` or explicit blocker)

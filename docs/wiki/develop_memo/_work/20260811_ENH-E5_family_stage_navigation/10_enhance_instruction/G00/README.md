@@ -1,5 +1,8 @@
-# G00 — Family / Navigation Stage Domain Contract（Family / Navigation Stageドメイン契約）
+# G00 — Family / Navigation Stage Domain Contract
 
-- Semantic claim: FamilyとNavigation Stageのapplication contractをExecution Stageから独立して成立させ、capability-owned canonical stage catalogとread APIを提供する。
 - Execution Mode: `SINGLE_EXECUTION`
-- Contract状態: approvalとbaseline確認が完了するまでは`DRAFT_FOR_REVIEW`。
+- Contract状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- NFR-019 canonical source: `PASS / FROZEN`
+- Authority: Gate 06 is Coding authority
+- Test/Audit authority: Gate `07` only

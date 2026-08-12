@@ -1,158 +1,277 @@
-# Ariadne ENH-E5 G05 実装指示書 — Gate Coding Contract（Gate実装契約）
-
-文書区分: Primary Execution Contract（主要実行契約）
-自己完結性: MUST（必須）
+# Ariadne ENH-E5 G05 — Cross-family Convergence and Cross-cutting Completion — Implementation
 
 - プロジェクト: Ariadne
 - Enhancement: ENH-E5
-- Active Gate: G05
-- Gate title: Cross-family Convergence and Product Regression（Family横断収束・product regression）
+- Active Gate: `G05`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 契約状態: **DRAFT_FOR_REVIEW**（レビュー前ドラフト）
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `Gate 06 implementation contract`
 - Execution Mode: `SINGLE_EXECUTION`
 
+## 0. Authority / execution isolation
 
-## 0. 実装時の参照ポリシー — 本06のみをnormative sourceとする
+- 本文書は、このGateを実装する**Coding Agentに対する唯一のnormative implementation contract**である。
+- Coding Agentは仕様補完のために`00〜30`、ADR、他Gate、他Package、`07`、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / boundary / migration / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本`06`を期待挙動の補完に利用しない。
 
-本Gateは`SINGLE_EXECUTION`で実行する。Coding Agentに対する**唯一のnormative implementation contractは本06文書のみ**である。
 
-Coding Agentは`WHAT / WHY / scope / responsibility / prohibited change / required outcome`を本06だけから判断しなければならない（MUST）。仕様を補完する目的で、00〜30、ADR、Gate decomposition、07、他Gate文書、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
+## 1. Outcome
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、current implementation factを確認し実装方法を決めるために参照してよい。ただしrepositoryは仕様authorityではない。
+cross-cutting D2=`PF-D2-04 / 05 / 06 / 07 / 08 / 10`を完成し、prior Gate candidateを壊さずENH-E5全体を収束させる。
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+### Scientific Comparability / Reuse Guard
 
-current codeが本06と異なることを理由に、本06の要求を追加・削除・緩和・変更してはならない。
+Comparisonは二段階:
 
-本06だけではrequired behavior、ownership、scope、compatibility、migration、architecture choiceを一意に決定できない場合、他資料を探索して補完せず`BLOCKED_CONTRACT_AMBIGUITY`で停止する（MUST）。
+```text
+semantic_compatible
+    ↓
+direct_metric_comparable
+```
 
-本06の外部にnormative decisionが残っている場合、本06を`FROZEN`にしてはならない。
+Canonical response fields:
 
-## 1. Gate定義 / acceptance claim
+```text
+semantic_compatible
+direct_metric_comparable
+compatibility_reasons[] / reasons[]
+direct_comparison_blockers[]
+```
 
-### 目的
-3 Familyのnavigation/Stage recomposition後に、project context・Results/Lineage・routing・existing analytical execution/persistenceがcross-familyで一貫することを確立する。
+Rules:
 
-### PASS後に後続Gateが利用できる成果
-ENH-E5全体をproduct-level verified contractとして利用・release判断できる。
+- same Family / same Result Typeをgeneric direct comparisonの前提とする。
+- semantic mismatchはHTTP/application request failureにせず、`semantic_compatible=false`, `direct_metric_comparable=false`, reasonsを返す。
+- incompatible caseでquantitative delta/rankを生成しない。
+- Predictive semantic key:
+  `task_type, prediction target/outcome, prediction unit, prediction time, horizon, deployment/evaluation population semantics`。
+- Predictive direct metric:
+  same `dataset_version_id` + same TEST-row identity/hash + same metric definition。
+- Causal semantic key:
+  `treatment/exposure, outcome, estimand, target population`。
+- Causal direct quantitative comparison:
+  semantic compatibility + same dataset/view/analysis population。
+- cross-Family metric/effectを単一scoreへflattenしない。
+- same immutable `dataset_version_id`はAnalysisViewが異なってもsame-data。
+- Exploratory -> confirmatory same-dataで`EXPLORATORY_REUSE_SAME_DATA` warning。non-blocking。
+- source Exploratory Result IDをevidenceとして保持しExecution snapshotへ伝播。
 
-### この単位を1つのGateとする理由
-この境界は、独立してaccept/protectできる1つのsemantic claimである。実装量が大きい場合は、Execution Modeが`WORK_PACKAGE`のときにWork Packageで分割する。
 
-## 2. 実装時に有効な前提
+### Command Idempotency
 
-- Familyはanalytical capabilityのcontextである。
-- Navigation StageはUI/application上の作業・閲覧contextである。
-- `Navigation Stage != Execution Stage` を維持する。
-- Stageの名称・数はFamilyごとに異なってよい。
-- Stage navigationを必須のsequential workflowとはみなさない。
-- このGateで明示的に変更しない限り、既存のanalysis execution/persistence semanticsを保護する。
-- 外部analytical engineの追加はENH-E5のscope外である。
+対象はHTTP methodではなくduplicate durable side effect riskで決める。
 
-このGateに対応するAcceptance target:
-- AC-G05-001: Family切替およびglobal workspace間でもResearch Context/Dataset/Analysis View project contextの整合性を維持する。
-- AC-G05-002: Global Results/Lineageは既存cross-family result/lineageのaggregate/navigation機能を維持する。
-- AC-G05-003: G02-G04変更後も、すべてのcanonical Family/Stage deep linkとlegacy mappingが併存して機能する。
-- AC-G05-004: PASS済みG00-G04のprotected contractを無断変更しない。
-- AC-G05-005: DB schema migration、新規analytical engine dependency、Result schema再設計、navigation persistenceを導入していない。
-- AC-G05-006: Fixed Trial Candidate上でfull `uv run pytest -q`がPASSする。
-- AC-G05-007: 利用可能なbrowser/e2e regression suiteがFamily tab、Stage navigation、direct route、back/forward、代表的Family operationについてPASSする。
-- AC-G05-008: requirements/design/traceability docs match the implemented/verified contract and contain no unresolved placeholders except explicitly permitted evidence identities before PASS.
+Scope:
 
-## 3. Execution Mode の決定
+```text
+(project_id, command_scope, idempotency_key)
+```
 
-Mode: `SINGLE_EXECUTION`.
+- canonical semantic request hashへpath上のsemantic resource identityも含める。
+- missing required key -> `IDEMPOTENCY_KEY_REQUIRED`。
+- same scope/key + same request hash -> stored result/response replay、duplicate side effectなし。
+- same scope/key + different request hash -> HTTP 409 `IDEMPOTENCY_CONFLICT`。
+- concurrent duplicate requestsはsingle durable side effectへ収束。
+- 可能な限りidempotency recordとdomain mutationを同一transactionへ置く。
 
-1つのbounded candidateとして実装し、candidate freeze前にGate-wide self-checkを実施する。
+ENH-E5対象Commandには少なくとも:
 
-## 4. 必須の実装semantics
+- DatasetVersion create
+- Execution batch create
+- GraphVersion / GraphEditDraft create
+- Result / Product export create
+- AnalysisView create
+- Exploration execution submit
+- Exploratory Result -> AnalysisSpecification DRAFT create
+- ResearchContext create
+- AnalysisSpecification create / revise
+- durable Predictive split-validation
+- Predictive Execution submit / rerun / revise
+- Annotation / WorkspaceAnnotation create
 
-実装は、保護対象upstream contractの意味を変えずにGate目的を成立させなければならない（MUST）。このGateで明示的に必要としない限り、現在のanalysis spec、execution plan、result schema、algorithmを保持するadditive/refactoring変更を優先する。
+対象外:
 
-## 5. 許可されるscope
+- pure GET / query / compare / preview / validate
+- plan-hash natural idempotencyを持つExecutionPlan create
+- uniqueness-protected explicit lineage link
+- Project create
+- state-machine cancel / fix / update
 
-- cross-family context continuity
-- Results/Lineage global continuity
-- all canonical/legacy route regression
-- full automated regression
-- browser e2e
-- documentation synchronization
+exactly-once executionは保証しない。
 
-## 6. 明示的な禁止scope
 
-- E5 accepted scopeを超える新規product feature
-- schema migration
-- engine addition
-- prior Gate contractの無断緩和
+### Retry-safe Artifact Materialization
 
-全Gate共通の禁止事項:
-- testをgreenにすることだけを目的としたassertion弱体化、test削除、skip、xfailは禁止;
-- requirement/ACの無断変更は禁止;
-- 後続Gateの作業をこのGateへ混入させない;
-- 未承認のschema/dependency/engine拡張は禁止。
+successful Stage outputのlogical identity/object keyは:
 
-## 7. 保護対象となる既PASS Gate contract
+```text
+Execution + Stage + output slot/ordinal + Artifact type
+```
 
-先行ENH-E5 Gateのfinal-PASS contractすべて。**freeze前に具体的Gate ID / protected invariant / evidence identityを本06へ転記すること。未確定のままAgent executionへ渡してはならない。**
+- same logical output + same content hash -> existing durable Artifact reuse。
+- same logical output + different content hash -> nondeterministic-output conflict。
+- retry/restartでduplicate durable Artifactを作らない。
+- Result/Artifact metadata bindingはtransactional commit。
+- metadata DBとArtifactStore間general compensationはD3/FUTURE。
+- exactly-once executionはclaimしない。
 
-本06をfreezeする担当者が、必要なprotected Gate identity / evidenceをfreeze前に本節へ具体値として転記する。Coding AgentへCurrent State Control Sheetの再探索を要求しない。
 
-## 8. Transition Debt
+### Project Authorization / Sensitive Output
 
-計画上は`NONE`。後続へ延期したscopeはTransition Debtではない。
+Persisted Project role:
 
-一時的な例外挙動が不可避になった場合は停止し、architecture/Humanの明示的判断を求める。文書化されていないdebtを勝手に作らない。
+```text
+OWNER
+EDITOR
+VIEWER
+```
 
-## 9. Schema / migration / API / runtime ポリシー
+Matrix:
 
-- DB schema migration: 明示的なamendmentがない限り`PROHIBITED`。
-- AnalysisSpecification/Execution/Result schema変更: このGateで明示しない限り`PROHIBITED`。
-- Execution lifecycle: 既存semanticsを保持する。
-- API変更: このGateで明示的に必要とするadditive変更だけを許可する。
-- legacy analytical route: 保持または明示的にnormalizeし、無断削除しない。
+- READ: OWNER / EDITOR / VIEWER
+- WRITE / MUTATE: OWNER / EDITOR
+- Execution submit/cancel/retry/rerun/revise: OWNER / EDITOR
+- Export create: OWNER / EDITOR
+- Membership administration: OWNER only
+- Explicit sensitive output: OWNER / EDITOR
+- independent persisted `EXECUTE` roleなし
 
-## 10. 自動テスト義務
+Coverage:
 
-- AC-G05-001について自動テストevidenceを実装する: Family切替およびglobal workspace間でもResearch Context/Dataset/Analysis View project contextの整合性を維持する。
-- AC-G05-002について自動テストevidenceを実装する: Global Results/Lineageは既存cross-family result/lineageのaggregate/navigation機能を維持する。
-- AC-G05-003について自動テストevidenceを実装する: G02-G04変更後も、すべてのcanonical Family/Stage deep linkとlegacy mappingが併存して機能する。
-- AC-G05-004について自動テストevidenceを実装する: PASS済みG00-G04のprotected contractを無断変更しない。
-- AC-G05-005について自動テストevidenceを実装する: DB schema migration、新規analytical engine dependency、Result schema再設計、navigation persistenceを導入していない。
-- AC-G05-006について自動テストevidenceを実装する: Fixed Trial Candidate上でfull `uv run pytest -q`がPASSする。
-- AC-G05-007について自動テストevidenceを実装する: 利用可能なbrowser/e2e regression suiteがFamily tab、Stage navigation、direct route、back/forward、代表的Family operationについてPASSする。
-- AC-G05-008について自動テストevidenceを実装する: requirements/design/traceability docs match the implemented/verified contract and contain no unresolved placeholders except explicitly permitted evidence identities before PASS.
+- 全project-scoped routeはservice action前にProjectMembershipをresolve。
+- Project IDをpathに持たないlegacy/generic resource routeもresourceからProjectをderiveして同じauthorization。
+- prediction row / local explanation row/detailはpotentially sensitive。
+- VIEWERにはaggregate/suppressed representationのみ。
+- configurable sensitive-column governanceとsystem/operator authorizationはD3/FUTURE。
 
-変更moduleに対するfocused existing testと、diffの影響を受けるすべての保護対象upstream contractを対象としたregression testも実行する。
 
-## 11. Candidate Assembly（候補成果物の組み立て）
+### Canonical Lineage
 
-`READY_FOR_TEST`へ移行する前に:
-1. 必須の実装scopeがすべて完了していること;
-2. Packageがある場合、すべてに有効なcheckpoint reportがあること;
-3. 未解決blockerが`NONE`であること;
-4. focusedおよびGate-wide self-verificationが記録されていること;
-5. production/test/migration/dependency diffがレビュー済みであること;
-6. implementation completion reportにFixed Trial Candidate SHAが1つ記録されていること。
+Read chain:
 
-## 12. Coding Agent の禁止作業
+```text
+ResearchContextVersion
+  -> AnalysisSpecification
+  -> ExecutionPlan
+  -> Execution
+  -> StageExecution
+  -> Result
+  -> Artifact
+```
 
-Coding Agentは以下をしてはならない:
-- Gate PASSを判定する;
-- 07 Acceptance Criteriaを変更する;
-- Package完了をpartial PASSとして扱う;
-- amendmentなしに既PASS Gateのsemanticsを変更する;
-- 対象外の後続featureを実装する。
+接続input:
 
-## 13. 必須成果物
+```text
+DatasetVersion
+AnalysisView
+GraphVersion
+input Result
+base Execution
+```
 
-- Trial01（またはcurrent Trial）のimplementation completion report
-- 必要に応じたGate-local implementation ledger/detail
-- `WORK_PACKAGE`時のPackage checkpoint/status report
-- 正確なFixed Trial Candidate SHA
-- 実行commandとtest evidence
-- 明示的なblocker status
+Rules:
 
-## 14. 外部参照ポリシー
+- canonical FK/snapshot/ownershipからdeterministically導けるstructural relationはread modelで投影。
+- structural relationをgeneric `LineageEdge`へduplicate persistしない。
+- `MOTIVATED`等semantic relationはgeneric LineageEdgeへ保存可能。
+- `Result --MOTIVATED--> AnalysisSpecification(status=DRAFT)`を保持。
+- relationをguessしない。
+- Project boundaryを越えない。
+- Navigation Stageをpersistent lineage node/edgeへ追加しない。
 
-source code pathおよび観測したruntime/test outputはevidenceとして参照してよい。実行に必要な規範的ルールは本contract、およびWork Package modeでは割り当てられたPxx contractに記載する。
+
+### Reproducibility Metadata
+
+DB migration:
+
+```text
+StageAttempt.effective_random_seed: int | null
+```
+
+Migration/runtime rules:
+
+- existing StageAttempt rowsは`null` backfill可能。
+- application/runtime deploymentはcolumn存在後に切り替える。
+- stochastic Stageはactual effective seedを各attemptへ保存。
+- deterministic Stageは`null`。
+- same logical Stageのtechnical retryはsame effective seedを再利用し、各attempt rowへ同じseedを明示。
+- runner/application boundaryはprocessorがactual seedを永続化できる形で報告。
+- `Execution.runtime_version_json`既存JSON fieldを利用し、独立column追加は必須でない。
+
+Exact runtime manifest keys:
+
+```text
+ariadne_code_version
+python_version
+platform_system
+platform_release
+machine
+libraries
+```
+
+`libraries`にはactualに利用したregistered scientific/runner dependency versionを保存する。未使用future optional libraryをversion取得目的だけでimportしない。
+
+保証対象はenvironment reconstruction metadataでありbit-for-bit numerical identityではない。
+
+
+### Prior Gate preservation model
+
+G05はprior Gate specificationを再解釈しない。実行preconditionとしてOperatorが次を提供する:
+
+```text
+G00 Fixed Trial Candidate SHA + PASS report
+G01 Fixed Trial Candidate SHA + PASS report
+G02 Fixed Trial Candidate SHA + PASS report
+G03 Fixed Trial Candidate SHA + PASS report
+G04 Fixed Trial Candidate SHA + PASS report
+```
+
+G05 Coding Agentはそれらの仕様文書を読まない。candidate repositoryとPASS evidenceをpreconditionとして扱い、以下のembedded invariantsを破壊しない:
+
+- Navigation catalog endpoint/schema/default/catalog。
+- canonical/deep routeとURL-authoritative navigation。
+- Predictive existing spec/settings/runtime compatibility。
+- Causal runtime/navigation separation。
+- Exploratory typed filter/handoff/provenance。
+- Navigation Stage非永続化 / runtime independence。
+
+
+## Prohibited changes
+
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
+
+
+## Gate Acceptance Criteria
+
+- `AC-G05-001`: Comparison response/semantic/direct rulesが本文どおり。
+- `AC-G05-002`: same-data confirmatory warningとsource Result evidence propagationが本文どおり。
+- `AC-G05-003`: idempotency scope/hash/replay/conflict/concurrency/coverage/exclusionsが本文どおり。
+- `AC-G05-004`: retry-safe Artifact identity/hash/reuse/conflict/transaction ruleが本文どおり。
+- `AC-G05-005`: Project role matrix、all-route coverage、legacy resource Project derivation、sensitive outputが本文どおり。
+- `AC-G05-006`: canonical lineage chain/input/MOTIVATED/no-guess/no-duplicate/Project boundaryが本文どおり。
+- `AC-G05-007`: `StageAttempt.effective_random_seed` migration/backfill/deploy/actual seed/retry ruleが本文どおり。
+- `AC-G05-008`: `runtime_version_json` exact keysとactual library version。
+- `AC-G05-009`: prior Gate PASS evidenceがexecution preconditionとして揃い、embedded protected invariant regressionがgreen。
+- `AC-G05-010`: D3/FUTUREをmandatory implementation/testへ追加しない。
+
+
+## Coding self-verification
+
+- scientific comparison/reuse guard unit/integration。
+- idempotency missing/replay/conflict/concurrent duplicate。
+- Artifact retry/restart/concurrent materialization。
+- authorization matrix + legacy/generic route。
+- lineage projection/semantic edge/Project boundary。
+- migration/backfill/runtime manifest/seed retry。
+- prior Gate regression evidence。

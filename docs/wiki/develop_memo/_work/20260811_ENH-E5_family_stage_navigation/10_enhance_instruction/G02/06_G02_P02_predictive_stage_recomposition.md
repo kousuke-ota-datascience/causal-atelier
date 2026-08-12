@@ -1,154 +1,134 @@
-# ENH-E5 G02 P02 — Predictive Stage Recomposition
+# Ariadne ENH-E5 G02 — P02 Predictive Stage Recomposition and Subgroup Evaluation
 
-文書区分: Primary Execution Contract（Work Package実装契約）
-自己完結性: MUST（必須）
-
-- Gate: `G02`
-- Trial: `01`
-- Package: `P02`
+- プロジェクト: Ariadne
+- Enhancement: ENH-E5
+- Active Gate: `G02`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 依存Package: `P01`
-- 発行時状態: **DRAFT_FOR_REVIEW**
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `assigned Pxx implementation contract`
 
-## 0. Package Coding Agentの参照ポリシー — assigned Pxxのみ
+## 0. Authority / execution isolation
 
-本Pxxは、当該Package Coding Agentに対する**唯一のnormative implementation contract**である。
+- 本文書は、このPackage Coding Agentに対する**唯一のnormative implementation contract**である。
+- Package Coding Agentは仕様補完のためにGate `06`、他`Pxx`、`P00`、Gate `07`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / protected boundary / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本Pxxを期待挙動の補完に利用しない。
 
-Package Agentは、仕様・scope・architecture decision・Acceptance Criteriaの意味を補完する目的で、06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、**current implementation factを確認し実装方法を決めるため**に参照してよい。ただしrepositoryは仕様authorityではない。
+## 1. Outcome
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+Predictive 6 Navigation Stageとfrozen subgroup evaluation semanticsを実装する。
 
-current codeが本Pxxと異なることを理由に、本Pxxの要求を追加・削除・緩和・変更してはならない。
+### Predictive Compatibility Contract
 
-本Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、他資料へ探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+`predictive-analysis-spec/1` top-level fieldを削除/rename/default semantic変更しない:
 
-本Pxxを`FROZEN`にするPlanning担当は、Package Agentが外部の規範文書を読まずに実装・focused verificationを完結できることを事前確認する。
+```text
+schema_version
+task_type
+prediction_question
+feature_spec
+split_spec
+preprocessing_spec
+model_spec
+tuning_spec
+evaluation_spec
+explanation_spec
+```
 
-## 1. Package acceptance claim
+Setup surfaceは少なくとも次を編集・検証できる:
 
-既存Predictive capabilityを、分析意味論を変更せず次の6 Navigation Stageへ再配置する。
+- task / prediction question
+- target
+- feature selection / availability / exclusion
+- split strategy / ratio / group / time boundaries / seed
+- preprocessing
+- model spec
+- tuning selection
+- evaluation metrics / subgroups
+- explanation method / sampling
 
-1. `Setup`
-2. `Train`
-3. `Predict`
-4. `Metrics`
-5. `Explainability`
-6. `Model Management`
+Current runtime plan:
 
-Navigation Stageはpresentation/navigation contextであり、Execution Stageへ1:1 mappingしない。
+```text
+split -> prepare -> train -> evaluate -> optional explain
+```
 
-## 2. Stage responsibility
+Navigation taxonomyとruntime planを同一視しない。
 
-### 2.1 Setup
 
-- current Predictive configuration/input controlを**全て**保持する。
-- 目的変数、feature/input、split、training/evaluation/explain設定その他current UIに存在する設定を、意味/default/validationを変えず配置する。
-- P01で保護されたgenerated spec semanticsを維持する。
+### Predictive Subgroup Evaluation Contract
 
-### 2.2 Train
+- evaluation population=`untouched TEST`。
+- `evaluation_spec.subgroups`の各columnを独立sliceし、automatic intersection/discovery/fairness frameworkを追加しない。
+- subgroup columnはmodel featureである必要はない。TEST row ordinal/identityとともにevaluation bundleへ保持する。
+- nullはexplicit null group。
+- primary metricとrequested secondary metricsをgroupごとに評価。
+- 全recordへ`sample_count`必須。
+- uncertainty=`nonparametric percentile bootstrap`。
+- `confidence=0.95`, `requested_resamples=1000`。
+- bootstrap seedは`immutable split/spec seed + subgroup column + canonical group value + metric + namespace`からdeterministically derive。
+- `sample_count < 2`または`valid_resamples < 200` => `uncertainty=null` + warning。
+- metric non-computable => `value=null`, `uncertainty=null`, status/warning。numeric valueを捏造しない。
+- outputはgroup value keyed mapではなくrecord list。
 
-- current model-training actionを提供する。
-- actionは既存のsplit/prepare/train/evaluate/(explain) workflow semanticsをそのまま起動する。
-- `NavigationStage.TRAIN`等をruntime `StageType`へ変換してexecution planを作らない。
+Record shape:
 
-### 2.3 Predict
+```text
+subgroup_column
+subgroup_value / group_value
+is_null_group
+metric
+sample_count
+value?
+uncertainty?:
+  method = percentile_bootstrap
+  confidence = 0.95
+  lower
+  upper
+  requested_resamples = 1000
+  valid_resamples
+status
+warnings[]
+```
 
-- new standalone scoring engine/APIを導入しない。
-- current systemが既に生成・保持するprediction-bearing Result/Artifact/outputだけを表示対象とする。
-- 利用可能なprediction outputが存在しない場合、「実行可能な新規Predict」を暗黙に作らず、利用可能なprediction resultがないことをdeterministicに表示する。
 
-### 2.4 Metrics
+## 2. Surface rules
 
-- existing evaluation / error-analysis semanticsを表示する。
-- metric viewを新たなExecution Stageとして起動する前提を置かない。既存executionが生成したevaluation Result/Artifactを参照してよい。
+- Train Navigation Stageはruntime train identityではない。
+- Predictでnew standalone scoring/serving executionを追加しない。
+- Metricsはsaved evaluation readで成立可能。
+- ExplainabilityはPredictive semanticsのみ。
+- Model Managementはread-oriented。
 
-### 2.5 Explainability
+## Prohibited changes
 
-- current explainability output/operationを保持する。
-- predictive explanationをcausal effectとして表現しない既存warning/meaningを維持する。
-- 1 Navigation Stageから既存の複数explanation operation/use caseを利用してよい。
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-### 2.6 Model Management
 
-- scopeはread-onlyのfitted model / model card / artifact / lineage projectionに限定する。
-- model registry CRUD、deployment、promotion、serving lifecycleを追加しない。
+## 4. Package Acceptance Criteria
 
-## 3. Form state preservation
+- six Navigation Stageへcanonical routeで到達可能。
+- subgroup null group / non-feature column / TEST row identity / primary+secondary metrics。
+- deterministic seed derivation。
+- `n<2`と`valid_resamples<200`の両方をCI suppression。
+- record-list output shape。
+- non-computable metricでfabricated value 0件。
 
-active page session中にFamily/Stageを切り替えても、current Predictive画面で保護対象となる未保存form valueを不必要に破棄しない。実装方式はcurrent frontend state architectureに適合させてよいが、navigationするだけで入力値が初期defaultへ戻る挙動を導入しない。
+## Completion evidence
 
-browser reloadや別Project移動など、current systemで既にstate破棄される境界を本Packageだけで新たに永続化対象へ拡張しない。
-
-## 4. In scope
-
-- 6 Predictive Stage content/surfaceへの既存control/output再配置
-- existing train action wiring
-- existing prediction-bearing output display
-- metrics / explainability / model metadata display
-- session内form state preservation
-- focused UI/integration tests
-
-## 5. Out of scope / 禁止
-
-- visible Predictive controlの削除
-- input/default/validation semantics変更
-- `predictive-analysis-spec/1` schema変更
-- hidden preprocessing/model default変更
-- LightGBM/new model family追加
-- standalone scoring execution/API
-- model registry CRUD/deployment
-- Navigation StageとExecution Stageの1:1 mapping
-
-## 6. Focused verification
-
-最低限、以下を自動テストで証明する。
-
-- 6 Stageすべてにcanonical navigationから到達できる。
-- Setupにcurrent visible controlsが欠落なく存在し、representative inputでgenerated spec semanticsがP01 guardrailと一致する。
-- Train actionがexisting execution pathを利用し、Navigation Stageをruntime Stageとして渡さない。
-- Predictにnew scoring request/APIが増えていない。
-- prediction outputなしの状態がdeterministicに表示される。
-- Metricsがexisting evaluation dataを表示する。
-- Explainabilityのpredictive-not-causal semantics/warningが保持される。
-- Model Managementがread-onlyである。
-- Stage切替後も保護対象の未保存form valueが保持される。
-
-## 7. Package Acceptance Checklist
-
-- [ ] 6 Predictive Stageが成立している
-- [ ] visible controls 100%保持
-- [ ] generated spec semantics維持
-- [ ] existing train workflow維持
-- [ ] Predictでnew scoring engine/APIなし
-- [ ] Metrics/Explainability責務分離
-- [ ] Model Management read-only
-- [ ] session内form state保持
-- [ ] Navigation/Execution 1:1 mappingなし
-
-## 10. Checkpoint / 報告
-
-Package完了時に以下を記録する。
-
-- `git rev-parse HEAD` のPackage Checkpoint SHA
-- `git status --short`
-- 変更したproduction/test file一覧
-- 実行したfocused verification commandと実測結果
-- 本PxxのPackage Acceptance Checklist各項目のPASS/FAIL
-- 未解決blocker。なければ`NONE`
-
-Package完了はGate PASSを意味しない。Package AgentはGate PASSを判定しない。
-
-## 11. 停止条件
-
-以下のいずれかを検出した場合は、推測・外部資料探索・scope拡張を行わず停止する。
-
-- 本Pxxだけではnormativeなrequired behaviorを一意に確定できない: `BLOCKED_CONTRACT_AMBIGUITY`
-- prerequisite Packageの変更がcurrent branchへ統合されていない: `BLOCKED_PREREQUISITE`
-- baseline / branch identityが想定と異なる: `BLOCKED_BASELINE_MISMATCH`
-- DB migration、新dependency、新analytical engine等の未承認変更が必要: `BLOCKED_SCOPE_AMENDMENT_REQUIRED`
-- protected execution / analysis semanticsとの衝突が発生: `BLOCKED_PROTECTED_CONTRACT_CONFLICT`
-
-停止時は、観測したrepository factと不足しているnormative decisionを分離して報告する。
+- changed production / test / schema / migration files
+- focused test commands and results
+- relevant regression commands and results
+- candidate SHA / checkpoint SHA
+- blocker status (`NONE` or explicit blocker)

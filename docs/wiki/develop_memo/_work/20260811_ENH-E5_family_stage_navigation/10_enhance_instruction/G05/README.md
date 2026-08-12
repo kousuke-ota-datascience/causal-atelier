@@ -1,5 +1,8 @@
-# G05 — Cross-family Convergence / Product Regression（Family横断収束・回帰保護）
+# G05 — Cross-family Convergence
 
-- Semantic claim: 3 Familyのnavigation/Stage recomposition後に、project context・Results/Lineage・routing・existing analytical execution/persistenceがcross-familyで一貫することを確立する。
 - Execution Mode: `SINGLE_EXECUTION`
-- Contract状態: approvalとbaseline確認が完了するまでは`DRAFT_FOR_REVIEW`。
+- Contract状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- NFR-019 canonical source: `PASS / FROZEN`
+- Authority: Gate 06 is Coding authority
+- Test/Audit authority: Gate `07` only

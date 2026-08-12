@@ -1,162 +1,134 @@
-# Ariadne ENH-E5 G03 実装指示書 — Gate Coding Contract（Gate実装契約）
-
-文書区分: Primary Execution Contract（主要実行契約）
-自己完結性: MUST（必須）
+# Ariadne ENH-E5 G03 — Causal Family Recomposition — Gate Integration
 
 - プロジェクト: Ariadne
 - Enhancement: ENH-E5
-- Active Gate: G03
-- Gate title: Causal Family Recomposition
+- Active Gate: `G03`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 契約状態: **DRAFT_FOR_REVIEW**（レビュー前ドラフト）
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `Gate 06 integration contract`
 - Execution Mode: `WORK_PACKAGE`
 
+## 0. Authority / execution isolation
 
-## 0. 実装時の参照ポリシー — Gate contractとPackage contractの分離
+- 本文書は`WORK_PACKAGE` Gate全体の**Operator / Gate Orchestrator向けintegration contract**である。
+- Package Coding Agentへ本`06`をnormative sourceとして渡してはならない。Package Coding Agentの唯一のnormative implementation contractはassigned `Pxx` 1文書である。
+- Gate Orchestratorはpackage分割、統合candidate、Gate-level protected invariant、completion evidenceの管理に本書を使用する。
+- Package Coding Agentがassigned `Pxx`だけで実装を一意に決定できない場合は、他文書を読ませず`BLOCKED_CONTRACT_AMBIGUITY`として停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本`06`や`Pxx`を期待挙動の補完に利用しない。
 
-本Gateは`WORK_PACKAGE`で実行する。
 
-本06は、Operator / Planning担当がGate全体のacceptance claim、scope、禁止事項、Package分解、candidate assemblyを管理するための**Gate-level normative contract**である。一方、**Package Coding Agentのnormative implementation contractは、各Agentへ割り当てられたPxx 1文書のみ**とする。
+## 1. Gate outcome
 
-Package Coding Agentへ本06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を併読させ、仕様を再合成させてはならない（MUST NOT）。Gate-level constraintのうち各Packageに必要な内容は、Planning担当がPxxを`FROZEN`にする前に当該Pxx本文へ収束させる。
+Causal current semantics/runtimeを維持して7 Navigation Stageへ再配置し、Identification/Estimation責務を明確化する。Phase G trace=`PF-D2-04` Causal-side compatibility input。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、Package Agentがcurrent implementation factを確認し実装方法を決めるために参照してよい。ただしrepositoryは仕様authorityではない。
+### Causal Navigation and Runtime Boundary
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+Navigation Stages:
 
-Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、Package Agentは探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+```text
+setup
+discovery
+identification
+estimation
+effects
+diagnostics
+sensitivity
+```
 
-Pxxの外部にnormative decisionが残っている場合、そのPxxを`FROZEN`にしてはならない。Package完了はGate PASSを意味しない。
+Current runtime `ExecutionOperation` remains:
 
-## 1. Gate定義 / acceptance claim
+```text
+DISCOVERY
+IDENTIFICATION
+ESTIMATION
+REFUTATION
+SENSITIVITY
+```
 
-### 目的
-current Causal Discovery/Inference surfacesをSetup/Discovery/Identification/Estimation/Effects/Diagnostics/Sensitivityへ再配置し、IdentificationとEstimationの責務分離を明示する。
+Current compatibility planner generates one runtime Stage per canonical Execution:
 
-### PASS後に後続Gateが利用できる成果
-ユーザーとG05が、causal design/execution/resultsをdistinct Stage contextで利用しつつ既存causal semanticsへ依存できる。
+```text
+DISCOVERY      -> causal.discovery.v1
+IDENTIFICATION -> causal.identification.v1
+ESTIMATION     -> causal.estimation.v2
+REFUTATION     -> causal.refutation.v1
+SENSITIVITY    -> causal.sensitivity.v1
+```
 
-### この単位を1つのGateとする理由
-この境界は、独立してaccept/protectできる1つのsemantic claimである。実装量が大きい場合は、Execution Modeが`WORK_PACKAGE`のときにWork Packageで分割する。
+Input prerequisites:
 
-## 2. 実装時に有効な前提
+| operation | input_graph_version_id | input_result_id |
+|---|---:|---:|
+| DISCOVERY | no | no |
+| IDENTIFICATION | required | no |
+| ESTIMATION | required | required |
+| REFUTATION | required | required |
+| SENSITIVITY | required | required |
 
-- Familyはanalytical capabilityのcontextである。
-- Navigation StageはUI/application上の作業・閲覧contextである。
-- `Navigation Stage != Execution Stage` を維持する。
-- Stageの名称・数はFamilyごとに異なってよい。
-- Stage navigationを必須のsequential workflowとはみなさない。
-- このGateで明示的に変更しない限り、既存のanalysis execution/persistence semanticsを保護する。
-- 外部analytical engineの追加はENH-E5のscope外である。
+Sidebar orderをruntime prerequisiteへ変換しない。
 
-このGateに対応するAcceptance target:
-- AC-G03-001: Causalの7 Navigation Stageすべてへ到達でき、canonical routeを使用する。
-- AC-G03-002: Discoveryは現行graph discovery/candidate/direct-registration操作を保持する。
-- AC-G03-003: Identificationは独立route/surfaceを持ち、identification strategy/adjustment/eligibility result contextをEstimationから分離して保持する。
-- AC-G03-004: Estimationは新規estimatorを追加せず、現行estimator選択、warning/revision rule、execution semanticsを保持する。
-- AC-G03-005: Effectsはestimation configurationと混同せず、treatment-effect result/compare semanticsを提示する。
-- AC-G03-006: Diagnosticsは既存eligibility/estimation diagnosticsを保持する。
-- AC-G03-007: Sensitivityは現行Refutation/Sensitivity操作・methodを保持する。
-- AC-G03-008: Navigationはnon-sequentialとする。operation prerequisiteはactionをblockしてよいが、Stage navigation自体をblockしない。
-- AC-G03-009: 既存causal regression testがPASSする。
 
-## 3. Execution Mode の決定
+### Causal Surface Responsibilities
 
-Mode: `WORK_PACKAGE`。
+- `Setup`: question/design/graph/spec preparation。
+- `Discovery`: DAG、candidate confounder/mediator/collider、temporal ordering、domain assumptions。
+- `Identification`:
+  - causal estimand/question
+  - identification strategy
+  - adjustment set
+  - exchangeability
+  - positivity
+  - consistency
+  - IV / parallel trends等strategy-specific assumptions
+  - identified / not identified / partially identified status
+  - failure/warning reason
+  - estimator tuningを混在させない
+- `Estimation`:
+  - estimator selection
+  - nuisance model configuration
+  - bootstrap/uncertainty
+  - execution submission
+  - estimation result linkage
+  - Identification assumptionsをestimator parametersへ埋没させない
+- `Effects`: effect result、ATE/ATT/CATE等、uncertainty、heterogeneity projection。
+- `Diagnostics`: balance/overlap/effective sample size/weight等。
+- `Sensitivity`: alternate assumptions/specification依存性。
+- Effects/Diagnostics/Sensitivityはsaved Result readで成立し得る。Navigation Stageごとのnew runtime Stageは必須でない。
 
-Operator / Planning担当は`06_G03_P00_work_package_plan.md`と計画済みPxxを用いてPackage分解・依存関係・統合順序を管理する。ただしPackage Coding Agentへ渡すnormative inputは**assigned Pxxのみ**とし、06 / P00 / 他Pxxを併読させてscopeや仕様を再合成させてはならない。Package completionはGate PASSを意味しない。
 
-## 4. 必須の実装semantics
+## 2. Comparison input
 
-実装は、保護対象upstream contractの意味を変えずにGate目的を成立させなければならない（MUST）。このGateで明示的に必要としない限り、現在のanalysis spec、execution plan、result schema、algorithmを保持するadditive/refactoring変更を優先する。
+Causal semantic key:
 
-## 5. 許可されるscope
+```text
+treatment/exposure
+outcome
+estimand
+target population
+```
 
-- Causalの7つのStage surface
-- 現行discovery graph操作
-- 現行identification/data eligibility
-- 現行estimation method/execution
-- effect比較
-- diagnostics
-- refutation/sensitivity
+semantic compatibilityが成立しない場合、direct quantitative comparisonを行わない。
 
-## 6. 明示的な禁止scope
+## Prohibited changes
 
-- DoWhy/EconML
-- new estimator library
-- Analysis Management stage
-- automatic causal identification proof
-- strict stage wizard
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-全Gate共通の禁止事項:
-- testをgreenにすることだけを目的としたassertion弱体化、test削除、skip、xfailは禁止;
-- requirement/ACの無断変更は禁止;
-- 後続Gateの作業をこのGateへ混入させない;
-- 未承認のschema/dependency/engine拡張は禁止。
 
-## 7. 保護対象となる既PASS Gate contract
+## Gate Acceptance Criteria
 
-先行ENH-E5 Gateのfinal-PASS contractすべて。**freeze前に具体的Gate ID / protected invariant / evidence identityを本06へ転記すること。未確定のままAgent executionへ渡してはならない。**
-
-本06をfreezeする担当者が、必要なprotected Gate identity / evidenceをfreeze前に本節へ具体値として転記する。Coding AgentへCurrent State Control Sheetの再探索を要求しない。
-
-## 8. Transition Debt
-
-計画上は`NONE`。後続へ延期したscopeはTransition Debtではない。
-
-一時的な例外挙動が不可避になった場合は停止し、architecture/Humanの明示的判断を求める。文書化されていないdebtを勝手に作らない。
-
-## 9. Schema / migration / API / runtime ポリシー
-
-- DB schema migration: 明示的なamendmentがない限り`PROHIBITED`。
-- AnalysisSpecification/Execution/Result schema変更: このGateで明示しない限り`PROHIBITED`。
-- Execution lifecycle: 既存semanticsを保持する。
-- API変更: このGateで明示的に必要とするadditive変更だけを許可する。
-- legacy analytical route: 保持または明示的にnormalizeし、無断削除しない。
-
-## 10. 自動テスト義務
-
-- AC-G03-001について自動テストevidenceを実装する: Causalの7 Navigation Stageすべてへ到達でき、canonical routeを使用する。
-- AC-G03-002について自動テストevidenceを実装する: Discoveryは現行graph discovery/candidate/direct-registration操作を保持する。
-- AC-G03-003について自動テストevidenceを実装する: Identificationは独立route/surfaceを持ち、identification strategy/adjustment/eligibility result contextをEstimationから分離して保持する。
-- AC-G03-004について自動テストevidenceを実装する: Estimationは新規estimatorを追加せず、現行estimator選択、warning/revision rule、execution semanticsを保持する。
-- AC-G03-005について自動テストevidenceを実装する: Effectsはestimation configurationと混同せず、treatment-effect result/compare semanticsを提示する。
-- AC-G03-006について自動テストevidenceを実装する: Diagnosticsは既存eligibility/estimation diagnosticsを保持する。
-- AC-G03-007について自動テストevidenceを実装する: Sensitivityは現行Refutation/Sensitivity操作・methodを保持する。
-- AC-G03-008について自動テストevidenceを実装する: Navigationはnon-sequentialとする。operation prerequisiteはactionをblockしてよいが、Stage navigation自体をblockしない。
-- AC-G03-009について自動テストevidenceを実装する: 既存causal regression testがPASSする。
-
-変更moduleに対するfocused existing testと、diffの影響を受けるすべての保護対象upstream contractを対象としたregression testも実行する。
-
-## 11. Candidate Assembly（候補成果物の組み立て）
-
-`READY_FOR_TEST`へ移行する前に:
-1. 必須の実装scopeがすべて完了していること;
-2. Packageがある場合、すべてに有効なcheckpoint reportがあること;
-3. 未解決blockerが`NONE`であること;
-4. focusedおよびGate-wide self-verificationが記録されていること;
-5. production/test/migration/dependency diffがレビュー済みであること;
-6. implementation completion reportにFixed Trial Candidate SHAが1つ記録されていること。
-
-## 12. Coding Agent の禁止作業
-
-Coding Agentは以下をしてはならない:
-- Gate PASSを判定する;
-- 07 Acceptance Criteriaを変更する;
-- Package完了をpartial PASSとして扱う;
-- amendmentなしに既PASS Gateのsemanticsを変更する;
-- 対象外の後続featureを実装する。
-
-## 13. 必須成果物
-
-- Trial01（またはcurrent Trial）のimplementation completion report
-- 必要に応じたGate-local implementation ledger/detail
-- `WORK_PACKAGE`時のPackage checkpoint/status report
-- 正確なFixed Trial Candidate SHA
-- 実行commandとtest evidence
-- 明示的なblocker status
-
-## 14. 外部参照ポリシー
-
-source code pathおよび観測したruntime/test outputはevidenceとして参照してよい。実行に必要な規範的ルールは本contract、およびWork Package modeでは割り当てられたPxx contractに記載する。
+- `AC-G03-001`: 7 Navigation Stage exact。
+- `AC-G03-002`: current Causal runtime operation/StageType/input prerequisiteを変更しない。
+- `AC-G03-003`: Identification surfaceが本文のsemantic/assumption/statusを明示し、estimator tuningを混ぜない。
+- `AC-G03-004`: Estimationはgraph+upstream result prerequisiteを保持し、estimator/nuisance/uncertainty/submit/result linkageを扱う。
+- `AC-G03-005`: Effects/Diagnostics/Sensitivity read surfaceのために同名runtime Stageを新設しない。
+- `AC-G03-006`: Causal comparison semantic key=`treatment/exposure,outcome,estimand,target population`を保持。
+- `AC-G03-007`: semantic compatibilityが成立しないResultへdirect metric comparisonを許可しない。

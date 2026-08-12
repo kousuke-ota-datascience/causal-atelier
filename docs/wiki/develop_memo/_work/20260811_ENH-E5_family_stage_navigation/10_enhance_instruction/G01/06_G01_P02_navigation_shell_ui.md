@@ -1,141 +1,130 @@
-# ENH-E5 G01 P02 — Navigation Shell UI
+# Ariadne ENH-E5 G01 — P02 Navigation Shell UI and Action Availability
 
-文書区分: Primary Execution Contract（Work Package実装契約）
-自己完結性: MUST（必須）
-
-- Gate: `G01`
-- Trial: `01`
-- Package: `P02`
+- プロジェクト: Ariadne
+- Enhancement: ENH-E5
+- Active Gate: `G01`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 依存Package: `P01`
-- 発行時状態: **DRAFT_FOR_REVIEW**
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `assigned Pxx implementation contract`
 
-## 0. Package Coding Agentの参照ポリシー — assigned Pxxのみ
+## 0. Authority / execution isolation
 
-本Pxxは、当該Package Coding Agentに対する**唯一のnormative implementation contract**である。
+- 本文書は、このPackage Coding Agentに対する**唯一のnormative implementation contract**である。
+- Package Coding Agentは仕様補完のためにGate `06`、他`Pxx`、`P00`、Gate `07`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / protected boundary / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本Pxxを期待挙動の補完に利用しない。
 
-Package Agentは、仕様・scope・architecture decision・Acceptance Criteriaの意味を補完する目的で、06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、**current implementation factを確認し実装方法を決めるため**に参照してよい。ただしrepositoryは仕様authorityではない。
+## 1. Outcome
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+backend catalogをauthorityとするFamily tabs / Family-local sidebar / renderer binding / action availability presentationを実装する。
 
-current codeが本Pxxと異なることを理由に、本Pxxの要求を追加・削除・緩和・変更してはならない。
+### Canonical Navigation Catalog
 
-本Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、他資料へ探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+| family | slug | default_stage_id | stages in deterministic order |
+|---|---|---|---|
+| `EXPLORATORY` | `exploratory` | `profile` | `profile`, `data-quality`, `distribution`, `relationships`, `comparison`, `findings` |
+| `PREDICTIVE` | `predictive` | `setup` | `setup`, `train`, `predict`, `metrics`, `explainability`, `model-management` |
+| `CAUSAL` | `causal` | `setup` | `setup`, `discovery`, `identification`, `estimation`, `effects`, `diagnostics`, `sensitivity` |
 
-本Pxxを`FROZEN`にするPlanning担当は、Package Agentが外部の規範文書を読まずに実装・focused verificationを完結できることを事前確認する。
-
-## 1. Package acceptance claim
-
-Project workspace内に、Familyをglobal analytical context、Navigation StageをFamily-local contextとして視覚的に分離したnavigation shellを成立させる。
-
-## 2. Target layout / hierarchy
-
-実装上のDOM/component構造はcurrent frontendに適合させてよいが、外部挙動は次を満たす。
+Canonical metadata response fields:
 
 ```text
-Project header / global context
-
-[ Exploratory ] [ Predictive ] [ Causal ]
------------------------------------------------------------
-Stage sidebar             | Main content
-(selected Family only)    | selected Navigation Stage
------------------------------------------------------------
-Global project surfaces: Research Context / Data / Results-Lineage 等
+schema_version = "analysis-navigation/1"
+families[].family
+families[].slug
+families[].label
+families[].default_stage_id
+families[].stages[].stage_id
+families[].stages[].slug
+families[].stages[].label
+families[].stages[].order
 ```
 
-Family tabsとStage sidebarは異なるnavigation dimensionである。
+Required invariants:
 
-## 3. Family navigation requirements
+- Family descriptorは`EXPLORATORY / PREDICTIVE / CAUSAL`各1件。
+- Family slugはglobalに一意。
+- `stage_id / slug`はFamily内で一意。
+- `default_stage_id`は当該FamilyのStage内に存在。
+- Stage orderはdeterministic。
+- `stage_id == slug`をENH-E5 canonical valueとする。
+- runtime input/output/status/retry/attempt/leaseをNavigation metadataへ含めない。
+- Navigation descriptorをpersistent Domain Resource、Repository、UoWへ登録しない。
+- catalogからruntime `StageType / StageDefinition / StageExecution`を生成しない。
 
-- Family tabsにはcanonical catalogから得た`Exploratory / Predictive / Causal`の3 Familyだけを、catalog-defined orderで表示する。
-- Current Familyを視覚上・accessibility state上の両方で識別可能にする。
-- Family tab clickはP01で成立したroute transitionを使い、そのFamilyのcatalog-defined default Stageへ遷移する。
-- Family label/order/defaultをfrontendに別途hard-codeしない。
-- Project Management、Research Context、Data、Results/Lineage、Overviewをanalytical Family tabとして混在させない。
 
-## 4. Stage sidebar requirements
+### Operation Availability Contract
 
-- sidebarにはCurrent Familyのcatalogが所有するStageだけをcatalog-defined orderで表示する。
-- Current Stageを視覚上・accessibility state上の両方で識別可能にする。
-- Stage clickは同じFamilyを維持してcanonical routeへ遷移する。
-- Family間でStage数を揃えるdummy Stageを作らない。
-- Stage navigationにprevious/next completionやwizard進行条件を課さない。
-- Stage renderer/contentが未実装の時点でもnavigation shellはStage identityをExecution Stageへ変換してはならない。
+```text
+GET /projects/{project_id}/operation-availability
+```
 
-## 5. Error / loading behavior
+Query:
 
-- catalog取得中は、誤ったFamily/Stageを推測表示せずloading stateを表す。
-- catalog取得失敗は明示的errorとして扱い、静的な別catalogへsilent fallbackしない。
-- P01がunknown Family/Stageを返した場合、navigation errorとして表示し、有効候補を提示する。勝手に先頭Family/Stageへ遷移しない。
+```text
+resource_type
+resource_id
+route
+```
 
-## 6. In scope
+Responseはoperationごとに最低限:
 
-- Family tab component / rendering
-- Family-local Stage sidebar
-- current/active/accessibility state
-- catalog loading/error state
-- existing workspace shellへの組込み
-- global project surfaceとのvisual/navigation responsibility分離
-- frontend automated tests
+```text
+allowed: bool
+reason_code?: string
+message?: string
+```
 
-## 7. Out of scope / 禁止
+Rules:
 
-- Family固有のanalytical content再設計（G02-G04相当）
-- route semanticsの再定義
-- catalogのfrontend static複製
-- navigation state DB persistence
-- new Overview tab
-- Result/Lineage global surface削除
-- Execution Stage / runner / planner変更
+- Stage visibilityとaction availabilityは別contract。
+- `allowed=false`をStage自体の非表示で表現することを基本挙動にしない。
+- Authorizationとscientific prerequisiteは別判定。
+- Frontendはbackend resultを表示し、route stateだけから実行可否を再実装しない。
 
-## 8. Focused verification
 
-最低限、以下を自動テストで証明する。
+## 2. Shell behavior
 
-- catalogの3 Familyだけがtop analytical tabsへ表示される。
-- Current Familyのactive stateがFamily switchで更新される。
-- sidebarがCurrent FamilyのStageだけを表示し、Family変更で内容が置換される。
-- Current Stage active stateがrouteに追随する。
-- Stage orderがcatalog orderと一致する。
-- Management / Context / Data / Results-Lineage等がFamily tabsへ混入しない。
-- catalog loading/error/unknown routeの各状態がsilent fallbackしない。
-- keyboard/focus/ARIA等、current frontendが採用するaccessibility patternを壊さない。
-- Family/Stage clickがP01のcanonical route transitionを利用する。
+- catalog source=`GET /api/v1/navigation/analysis`。
+- frontend full catalog hard-code禁止。
+- Family tabは3 Familyをcatalog orderでrenderし、target Family default Stage routeへ遷移。
+- Sidebarはcurrent Family Stageのみ、`order`昇順。
+- Stage clickはFamilyを維持してselected Stage routeへ遷移。
+- Family last-stage memoryはrequired behaviorではない。
+- `(AnalysisFamily, navigation_stage_id)`はpresentation renderer/use-case adapter bindingだけに使用。
+- renderer missing / catalog invariant failureをsilent fallbackしない。
+- sidebar order/defaultをruntime dependencyへ利用しない。
+- async state=`IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED`。
+- `allowed=false`でもStageをscientific prerequisite表現として自動非表示にしない。
 
-## 9. Package Acceptance Checklist
+## Prohibited changes
 
-- [ ] FamilyとStageが別navigation dimensionとして表示される
-- [ ] Family/Stage label/order/defaultのfrontend重複定義がない
-- [ ] active stateがURL/current routeと一致する
-- [ ] global project surfacesがFamily tab外に残る
-- [ ] error/loading時にsilent fallbackしない
-- [ ] Execution Stageへのmappingがない
-- [ ] focused frontend testsがgreenである
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-## 10. Checkpoint / 報告
 
-Package完了時に以下を記録する。
+## 4. Package Acceptance Criteria
 
-- `git rev-parse HEAD` のPackage Checkpoint SHA
-- `git status --short`
-- 変更したproduction/test file一覧
-- 実行したfocused verification commandと実測結果
-- 本PxxのPackage Acceptance Checklist各項目のPASS/FAIL
-- 未解決blocker。なければ`NONE`
+- backend catalogだけでtabs/sidebar labels/order/defaultが決まる。
+- frontend duplicate full catalog 0件。
+- operation availability query/resultを表示へ反映し、routeからscientific ruleを推測しない。
+- missing renderer/catalog failureはexplicit error state。
+- async state exact vocabulary。
 
-Package完了はGate PASSを意味しない。Package AgentはGate PASSを判定しない。
+## Completion evidence
 
-## 11. 停止条件
-
-以下のいずれかを検出した場合は、推測・外部資料探索・scope拡張を行わず停止する。
-
-- 本Pxxだけではnormativeなrequired behaviorを一意に確定できない: `BLOCKED_CONTRACT_AMBIGUITY`
-- prerequisite Packageの変更がcurrent branchへ統合されていない: `BLOCKED_PREREQUISITE`
-- baseline / branch identityが想定と異なる: `BLOCKED_BASELINE_MISMATCH`
-- DB migration、新dependency、新analytical engine等の未承認変更が必要: `BLOCKED_SCOPE_AMENDMENT_REQUIRED`
-- protected execution / analysis semanticsとの衝突が発生: `BLOCKED_PROTECTED_CONTRACT_CONFLICT`
-
-停止時は、観測したrepository factと不足しているnormative decisionを分離して報告する。
+- changed production / test / schema / migration files
+- focused test commands and results
+- relevant regression commands and results
+- candidate SHA / checkpoint SHA
+- blocker status (`NONE` or explicit blocker)

@@ -1,5 +1,8 @@
-# G02 — Predictive Family Recomposition and Compatibility
+# G02 — Predictive Family Recomposition
 
-- Semantic claim: current Predictive workspaceをSetup/Train/Predict/Metrics/Explainability/Model Managementへ再配置し、既存設定項目とgenerated spec/execution semanticsの完全互換を成立させる。
 - Execution Mode: `WORK_PACKAGE`
-- Contract状態: approvalとbaseline確認が完了するまでは`DRAFT_FOR_REVIEW`。
+- Contract状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- NFR-019 canonical source: `PASS / FROZEN`
+- Authority: assigned Pxx is Package Coding authority; Gate 06 is integration/operator contract
+- Test/Audit authority: Gate `07` only

@@ -1,135 +1,125 @@
-# ENH-E5 G03 P01 — Causal Stage Mapping
+# Ariadne ENH-E5 G03 — P01 Causal Seven-stage Presentation Mapping
 
-文書区分: Primary Execution Contract（Work Package実装契約）
-自己完結性: MUST（必須）
-
-- Gate: `G03`
-- Trial: `01`
-- Package: `P01`
+- プロジェクト: Ariadne
+- Enhancement: ENH-E5
+- Active Gate: `G03`
 - Branch: `feature/ariadne_mvp_e5`
-- Baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- 依存Package: `NONE`
-- 発行時状態: **DRAFT_FOR_REVIEW**
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `assigned Pxx implementation contract`
 
-## 0. Package Coding Agentの参照ポリシー — assigned Pxxのみ
+## 0. Authority / execution isolation
 
-本Pxxは、当該Package Coding Agentに対する**唯一のnormative implementation contract**である。
+- 本文書は、このPackage Coding Agentに対する**唯一のnormative implementation contract**である。
+- Package Coding Agentは仕様補完のためにGate `06`、他`Pxx`、`P00`、Gate `07`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repositoryはcurrent implementation factと実装方法を調査するsubstrateとして参照してよいが、仕様authorityではない。
+- 本文書だけでrequired behavior / protected boundary / error semanticsを一意に決定できない場合は、探索を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+- Test / Audit Agentのnormative verification sourceはGate `07`のみであり、本Pxxを期待挙動の補完に利用しない。
 
-Package Agentは、仕様・scope・architecture decision・Acceptance Criteriaの意味を補完する目的で、06、07、P00、00〜30、ADR、他Pxx、過去Enhancement、issue、commit message、外部Webその他の資料を参照してはならない（MUST NOT）。
 
-current repositoryのproduction code、existing tests、schema/type/interface、configuration、route/API implementation、repository structureは、**current implementation factを確認し実装方法を決めるため**に参照してよい。ただしrepositoryは仕様authorityではない。
+## 1. Outcome
 
-> **Repositoryから実装方法を発見してよいが、仕様を発見してはならない。**
+current Causal resources/use casesを7 Navigation Stageへpresentation bindingする。
 
-current codeが本Pxxと異なることを理由に、本Pxxの要求を追加・削除・緩和・変更してはならない。
+### Causal Navigation and Runtime Boundary
 
-本Pxxだけではnormativeなrequired behaviorを一意に決定できない場合、他資料へ探索範囲を広げず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
+Navigation Stages:
 
-本Pxxを`FROZEN`にするPlanning担当は、Package Agentが外部の規範文書を読まずに実装・focused verificationを完結できることを事前確認する。
+```text
+setup
+discovery
+identification
+estimation
+effects
+diagnostics
+sensitivity
+```
 
-## 1. Package acceptance claim
+Current runtime `ExecutionOperation` remains:
 
-current Causal capabilityを、既存analytical semanticsを保持したまま次の7 Navigation Stageへ配置できるsurface/mappingを成立させる。
+```text
+DISCOVERY
+IDENTIFICATION
+ESTIMATION
+REFUTATION
+SENSITIVITY
+```
 
-1. `Setup`
-2. `Discovery`
-3. `Identification`
-4. `Estimation`
-5. `Effects`
-6. `Diagnostics`
-7. `Sensitivity`
+Current compatibility planner generates one runtime Stage per canonical Execution:
 
-Stage数を他Familyへ合わせない。Navigationはnon-sequentialである。
+```text
+DISCOVERY      -> causal.discovery.v1
+IDENTIFICATION -> causal.identification.v1
+ESTIMATION     -> causal.estimation.v2
+REFUTATION     -> causal.refutation.v1
+SENSITIVITY    -> causal.sensitivity.v1
+```
 
-## 2. Stage responsibility
+Input prerequisites:
 
-### Setup
-current dataset/treatment/outcome/covariate/estimand等、current causal analysis configurationを保持する。current repositoryに存在しない新規設定を推測追加しない。
+| operation | input_graph_version_id | input_result_id |
+|---|---:|---:|
+| DISCOVERY | no | no |
+| IDENTIFICATION | required | no |
+| ESTIMATION | required | required |
+| REFUTATION | required | required |
+| SENSITIVITY | required | required |
 
-### Discovery
-current graph discovery、candidate、direct-registration等の操作を保持する。Discovery完了を後続Stage navigationの必須条件にしない。
+Sidebar orderをruntime prerequisiteへ変換しない。
 
-### Identification
-identification strategy、adjustment、eligibility等、**「目的のcausal estimandを仮定とデータから識別できるか」**に関するcurrent contextを提示する。Estimation configurationと同一surfaceに潰さない。
 
-### Estimation
-current estimator selection、warning/revision rule、execution semanticsを保持する。DoWhy/EconML/new estimator libraryを追加しない。
+### Causal Surface Responsibilities
 
-### Effects
-既に推定されたtreatment-effect Result/compare semanticsを閲覧する。estimator configuration surfaceと混同しない。
+- `Setup`: question/design/graph/spec preparation。
+- `Discovery`: DAG、candidate confounder/mediator/collider、temporal ordering、domain assumptions。
+- `Identification`:
+  - causal estimand/question
+  - identification strategy
+  - adjustment set
+  - exchangeability
+  - positivity
+  - consistency
+  - IV / parallel trends等strategy-specific assumptions
+  - identified / not identified / partially identified status
+  - failure/warning reason
+  - estimator tuningを混在させない
+- `Estimation`:
+  - estimator selection
+  - nuisance model configuration
+  - bootstrap/uncertainty
+  - execution submission
+  - estimation result linkage
+  - Identification assumptionsをestimator parametersへ埋没させない
+- `Effects`: effect result、ATE/ATT/CATE等、uncertainty、heterogeneity projection。
+- `Diagnostics`: balance/overlap/effective sample size/weight等。
+- `Sensitivity`: alternate assumptions/specification依存性。
+- Effects/Diagnostics/Sensitivityはsaved Result readで成立し得る。Navigation Stageごとのnew runtime Stageは必須でない。
 
-### Diagnostics
-current eligibility/estimation diagnosticsを配置する。診断結果を見るためだけにNavigation Stage名と同名のExecution Stageを新設しない。
 
-### Sensitivity
-current Refutation / Sensitivity operation・methodを保持する。
+## Prohibited changes
 
-## 3. In scope
+- `Navigation Stage = Execution Stage`となるmapping、alias、inheritanceを導入しない。
+- Navigation Stageを`AnalysisSpecification / ExecutionPlan / Execution / StageExecution`へpersistしない。
+- CLI / Python library / backend execution use caseへCurrent Navigation Stageを必須inputとして追加しない。
+- `AnalysisSpecification.analysis_family`と重複するFamily discriminatorを追加しない。
+- Predictive existing fieldの削除、rename、default semantics変更を行わない。
+- LightGBM / DoWhy / EconMLを追加しない。
+- D3 / `DEFERRED / FUTURE` requirementをENH-E5 implementationまたはmandatory acceptanceへ混ぜない。
+- testをgreenにする目的のassertion弱体化、削除、skip、xfailを行わない。
 
-- 7 Causal Stage surface/route binding
-- current causal controls/operations/resultsのpresentation mapping
-- existing graph/discovery, identification/eligibility, estimation, effect, diagnostic, refutation/sensitivity surface
-- focused frontend/integration tests
 
-## 4. Out of scope / 禁止
+## 3. Package Acceptance Criteria
 
-- DoWhy/EconML/new estimator library
-- automatic causal identification proof system
-- Analysis Management Stage
-- strict wizard / stage completion progression
-- current causal spec/execution/result semanticsの変更
-- Navigation StageからExecution Stageへの1:1 mapping
+- seven stages exact。
+- Navigation Stageからruntime StageType/ExecutionOperationを生成しない。
+- Effects/Diagnostics/Sensitivity saved Result readで不要Executionを作らない。
+- runtime input prerequisite matrixをsidebar順序で代替しない。
 
-## 5. Non-sequential navigation
+## Completion evidence
 
-operation prerequisiteはaction availabilityをblockしてよい。ただしsidebar/routeでStageへ移動すること自体をblockしてはならない。
-
-例: estimator実行に必要なeligibility resultがない場合、Estimation画面へは移動できるが、実行actionは不足条件を明示してdisabled/blockしてよい。Navigation Stageをworkflow completion stateとして扱わない。
-
-## 6. Focused verification
-
-- 7 Stageすべてがcanonical routeから到達可能。
-- current Discovery operationsが保持される。
-- Identificationが独立surfaceとして存在する。
-- Estimationのcurrent estimator/warning/revision ruleが保持される。
-- Effectsがconfigurationではなくresult/compare contextとして表示される。
-- Diagnosticsがcurrent diagnostic semanticsを保持する。
-- Sensitivityがcurrent refutation/sensitivity operationsを保持する。
-- prerequisite不足でもStage navigationは可能で、actionのみが適切にblockされる。
-- execution plan/runnerへNavigation Stage identityを渡す新規dependencyがない。
-
-## 7. Package Acceptance Checklist
-
-- [ ] 7 Causal Stageが成立
-- [ ] current causal operations/resultsを保持
-- [ ] IdentificationとEstimationを分離
-- [ ] EffectsとEstimation configを分離
-- [ ] non-sequential navigation
-- [ ] new estimator/libraryなし
-- [ ] Navigation/Execution 1:1 mappingなし
-- [ ] focused tests green
-
-## 10. Checkpoint / 報告
-
-Package完了時に以下を記録する。
-
-- `git rev-parse HEAD` のPackage Checkpoint SHA
-- `git status --short`
-- 変更したproduction/test file一覧
-- 実行したfocused verification commandと実測結果
-- 本PxxのPackage Acceptance Checklist各項目のPASS/FAIL
-- 未解決blocker。なければ`NONE`
-
-Package完了はGate PASSを意味しない。Package AgentはGate PASSを判定しない。
-
-## 11. 停止条件
-
-以下のいずれかを検出した場合は、推測・外部資料探索・scope拡張を行わず停止する。
-
-- 本Pxxだけではnormativeなrequired behaviorを一意に確定できない: `BLOCKED_CONTRACT_AMBIGUITY`
-- prerequisite Packageの変更がcurrent branchへ統合されていない: `BLOCKED_PREREQUISITE`
-- baseline / branch identityが想定と異なる: `BLOCKED_BASELINE_MISMATCH`
-- DB migration、新dependency、新analytical engine等の未承認変更が必要: `BLOCKED_SCOPE_AMENDMENT_REQUIRED`
-- protected execution / analysis semanticsとの衝突が発生: `BLOCKED_PROTECTED_CONTRACT_CONFLICT`
-
-停止時は、観測したrepository factと不足しているnormative decisionを分離して報告する。
+- changed production / test / schema / migration files
+- focused test commands and results
+- relevant regression commands and results
+- candidate SHA / checkpoint SHA
+- blocker status (`NONE` or explicit blocker)

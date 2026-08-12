@@ -1,134 +1,136 @@
-# Ariadne ENH-E5 G01 テスト指示書 — Gate Verification Contract（Gate検証契約）
-
-文書区分: Primary Execution Contract（主要実行契約）
-自己完結性: MUST（必須）
+# Ariadne ENH-E5 G01 — URL-driven Family / Stage Navigation Shell — Verification
 
 - プロジェクト: Ariadne
 - Enhancement: ENH-E5
-- Active Gate: G01
-- Planning baseline SHA: `46122c68333df03680b97c253a7b5d32bf9393e7`
-- Gate title: URL-driven Family / Stage Navigation Shell（URL駆動Family/Stage navigation shell）
-- 検証契約状態: **DRAFT_FOR_REVIEW**（レビュー前ドラフト）
+- Active Gate: `G01`
+- Branch: `feature/ariadne_mvp_e5`
+- Remediation baseline SHA: `83d33f5c981fa1aa5740e91c30bb969dd6097c42`
+- 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- Document role: `Gate 07 verification contract`
+
+## 0. Authority / verification isolation
+
+- 本文書は、このGateを検証する**Test / Audit Agentに対する唯一のnormative verification contract**である。
+- Test / Audit Agentは期待挙動を補完するためにGate `06`、`Pxx`、`P00`、`00〜30`、ADR、issue、commit message、外部Webを参照してはならない。
+- repository、candidate diff、test output、migration state、API responseはverification evidenceとして参照してよいが、仕様authorityではない。
+- 本文書だけでPASS / FAILを一意に判定できない場合は`BLOCKED_CONTRACT_AMBIGUITY`として報告し、仕様を発明しない。
 
 
-## 0. 検証時の参照ポリシー — 単一normative verification contract
+### Canonical Navigation Catalog
 
-本GateのAcceptance / verification semanticsについて、**本07文書を唯一のnormative authority**とする。
-
-Test / Audit Agentは、本07だけから「何を観測するか」「何をPASS/FAILとするか」「何を禁止するか」を判断する（MUST）。
-
-### 0.1 規範的仕様として参照してはならないもの
-Acceptance Criteriaを補完・修正する目的で、06、Pxx、00〜30、ADR、Gate decomposition、他Gate文書、過去Enhancement、issue、commit message、外部Webを参照してはならない（MUST NOT）。
-
-### 0.2 Evidenceとして参照してよいもの
-- Implementation Completion Report: Fixed Trial Candidate identity取得
-- repository state/diff: 実際のtest target確認
-- source code / automated tests / runtime output: evidence取得
-- freeze済み本07内に具体的に列挙されたprotected contract identity/evidence
-
-これらはAcceptance Criteriaを追加・変更するauthorityではない。
-
-### 0.3 Repositoryの扱い
-repositoryから観測方法・test command・implementation factを発見してよいが、期待仕様を発見してはならない。
-
-### 0.4 Contract ambiguity
-本07だけではAcceptance Criteriaの意味を一意に決定できない場合、06や上流資料を読んで推測せず`BLOCKED_CONTRACT_AMBIGUITY`で停止する。
-
-### 0.5 Freeze condition
-Test Agentが本07以外の設計文書を読まなければPASS/FAILを判定できない場合、本07を`FROZEN`にしてはならない。
-
-## 1. Acceptance の権威情報
-
-freeze後は、この07をAcceptance Criteriaの権威情報とする。Package完了、Coding self-check、`READY_FOR_TEST`はacceptance evidenceではない。
-
-## 2. Gate目的 / acceptance claim
-
-canonical catalogを利用してtop Family tabs + Family-local Stage sidebarを成立させ、URL/deep link/history/legacy route compatibilityを確立する。
-
-PASS後にdownstreamが依存可能になるcontract:
-Family-specific G02-G04が同一navigation shell上へStage contentを安全に配置できる。
-
-## 3. 検証時に有効な前提
-
-- test対象は、正確なFixed Trial Candidateである。
-- Navigation StageとExecution Stageは別概念である。
-- このGateが明示的に変更しない限り、既存analytical algorithm/persistenceはregression保護対象である。
-- deferred/out-of-scope featureを偶発的に実装してはならない。
-- environment/prerequisiteにより観測不能な場合は`BLOCKED`とし、preflight失敗を自動的にproduct `FAIL`へ変換しない。
-
-## 4. 検証入力
-
-必須:
-- current Trialのimplementation completion report
-- Fixed Trial Candidate SHA
-- repository status/diff
-- 該当する場合はPackage checkpoint chain
-- 本07へfreeze時に列挙されたprotected regression identity/evidence
-
-identityが欠落または曖昧な場合は`BLOCKED_CANDIDATE_IDENTITY`とする。
-
-### Existing / current semantics の比較基準
-
-本07で「existing」「current」「既存」と記載する挙動・control・schema・operationは、原則として本書metadataの`Planning baseline SHA`で観測できるproduct factを比較基準とする。先行Gateが意図的に変更した範囲は、FROZEN時に本07へ具体的に転記されたprotected contract/evidenceを優先する。
-
-Test Agentはbaseline checkout/source/testsを**evidence取得のため**に観測してよいが、そこから新しいAcceptance Criteriaを導出してはならない。baselineとcandidateの差が本07だけでは許容変更か判定できない場合は、06や設計書を読んで推測せず`BLOCKED_CONTRACT_AMBIGUITY`とする。
-
-## 5. Candidate identity audit — 最初に必ず実行
-
-1. 意図したcandidateをcheckout/観測する;
-2. `git rev-parse HEAD`を記録する;
-3. `git status --short`を記録する;
-4. test対象repository stateとFixed Trial Candidate SHAを比較する;
-5. 異なる場合はdiffをauditし、documentation-only/non-semanticであることを証明する。証明できなければ状況に応じてBLOCKED/FAILとする。
-
-## 6. Acceptance Criteria（受入基準）
-
-| AC | 基準 | レベル | 必要evidence |
+| family | slug | default_stage_id | stages in deterministic order |
 |---|---|---|---|
-| AC-G01-001 | 上部tabにbackend catalog由来のExploratory/Predictive/Causalだけを表示し、current Familyを視覚的に識別できる。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-002 | 左sidebarにはcurrent Familyが所有するStageだけを表示し、current Stageを識別できる。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-003 | canonical URLを`/projects/{id}/analysis/{family}/{stage}`とし、direct loadとbrowser back/forwardでstateを復元できる。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-004 | Family切替時は対象Familyが宣言するdefault Stageへnavigateし、last-stage persistenceは使用しない。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-005 | legacy `/explore`、`/causal`、`/predictive` routeを文書化されたcanonical targetへnormalizeする。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-006 | Management、Context、Data、Results/LineageはFamily tab外のglobal project surfaceとして維持する。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-007 | unknown Family/Stageを黙って別contextへ解釈せず、明示的navigation errorと有効な代替先を提示する。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
-| AC-G01-008 | Stage navigation自体はnon-sequentialであり、wizard completionを強制しない。 | 必須（Mandatory） | Fixed Trial Candidateのbehavior/code/test evidence |
+| `EXPLORATORY` | `exploratory` | `profile` | `profile`, `data-quality`, `distribution`, `relationships`, `comparison`, `findings` |
+| `PREDICTIVE` | `predictive` | `setup` | `setup`, `train`, `predict`, `metrics`, `explainability`, `model-management` |
+| `CAUSAL` | `causal` | `setup` | `setup`, `discovery`, `identification`, `estimation`, `effects`, `diagnostics`, `sensitivity` |
 
-Gate PASSには、すべてのMandatory ACがPASSしなければならない。
+Canonical metadata response fields:
 
-## 7. Test Item 計画
+```text
+schema_version = "analysis-navigation/1"
+families[].family
+families[].slug
+families[].label
+families[].default_stage_id
+families[].stages[].stage_id
+families[].stages[].slug
+families[].stages[].label
+families[].stages[].order
+```
 
-- `001_candidate_identity` — candidate/repository-state audit
-- 各AC clusterをカバーする1つ以上のfocused item
-- protected regression item
-- transition-debt audit item
-- `999_gate_decision` — 最終Gate Decision専用
+Required invariants:
 
-各test itemにcommand/input、observed output、evidence path、PASS/FAIL/BLOCKED結果を記録する。
+- Family descriptorは`EXPLORATORY / PREDICTIVE / CAUSAL`各1件。
+- Family slugはglobalに一意。
+- `stage_id / slug`はFamily内で一意。
+- `default_stage_id`は当該FamilyのStage内に存在。
+- Stage orderはdeterministic。
+- `stage_id == slug`をENH-E5 canonical valueとする。
+- runtime input/output/status/retry/attempt/leaseをNavigation metadataへ含めない。
+- Navigation descriptorをpersistent Domain Resource、Repository、UoWへ登録しない。
+- catalogからruntime `StageType / StageDefinition / StageExecution`を生成しない。
 
-## 8. 保護対象regression
 
-current diffが影響し得る、過去のfinal-PASS Gate contractをすべて検証する。影響があるのに明示的なregression itemがない場合、それ自体をverification defectとする。
+### Canonical Route Contract
 
-## 9. Transition Debt audit
+```text
+/projects/{project_id}/analysis/{family_slug}/{stage_slug}
 
-このGateで想定するOPEN debtは`NONE`。文書化されていない一時的authority/exceptionが導入されていないことを確認する。
+/projects/{project_id}/analysis/{family_slug}/{stage_slug}/resource/{resource_type}/{resource_id}
+```
 
-## 10. Test / Audit Agent の禁止作業
+ENH-E5 `resource_type`:
 
-以下を変更してはならない（MUST NOT）:
-- production code
-- automated test code
-- migration/dependency定義
-- Package実装
-- Acceptance Criteria
+```text
+analysis-specification
+execution
+result
+graph-version
+```
 
-## 11. Evidence 要件
+Rules:
 
-Evidenceは再現可能で、正確なcandidate identityに紐付いていなければならない。自動assertionが実用的な箇所では、screenshot/manual observationはautomationの補足には使えるが代替にはできない。
+- explicit Family/Stage deep routeはrouteのStageを保持する。
+- generic direct resource linkからdeep routeを構築する場合はresourceからFamilyをderiveし、そのFamily default Stageへ遷移する。
+- resource actual Familyとexplicit route Familyが不一致ならexplicit mismatch error。silent normalizationは禁止。
+- unknown Family / Stage / resource typeはdeterministic not-found/unsupported error。
+- routeはpresentation stateでありResource/Executionへpersistしない。
+- direct open / reload / browser back-forwardはURLから同じNavigationContextを復元する。
+- legacy routeを残す場合は一方向normalize:
+  - `/explore -> /projects/{project_id}/analysis/exploratory/profile`
+  - `/predictive -> /projects/{project_id}/analysis/predictive/setup`
+  - `/causal -> /projects/{project_id}/analysis/causal/setup`
 
-## 12. PASS の意味
 
-PASSとは、Fixed Trial CandidateについてこのGateのsemantic claimが成立し、すべてのmandatory ACとprotected regressionがPASSし、未承認scope/migration/debtが存在せず、evidence identityをaudit可能であることを意味する。
+### Operation Availability Contract
 
-FAILはproduct/contract挙動が有効なACに違反していることを意味する。BLOCKEDはprerequisite/candidate/contractの曖昧さが残り、acceptanceを判定できないことを意味する。
+```text
+GET /projects/{project_id}/operation-availability
+```
+
+Query:
+
+```text
+resource_type
+resource_id
+route
+```
+
+Responseはoperationごとに最低限:
+
+```text
+allowed: bool
+reason_code?: string
+message?: string
+```
+
+Rules:
+
+- Stage visibilityとaction availabilityは別contract。
+- `allowed=false`をStage自体の非表示で表現することを基本挙動にしない。
+- Authorizationとscientific prerequisiteは別判定。
+- Frontendはbackend resultを表示し、route stateだけから実行可否を再実装しない。
+
+
+## Gate Acceptance Criteria
+
+- `AC-G01-001`: canonical Stage/resource routesとresource typesがexact。
+- `AC-G01-002`: URL/application stateがcurrent Family/Stage authorityでDB persistenceなし。
+- `AC-G01-003`: explicit deep route、generic resource link、Family mismatch、unknown Family/Stageのrulesが本文どおり。
+- `AC-G01-004`: legacy routeを保持する場合は本文の一方向mappingのみ。
+- `AC-G01-005`: Family clickはtarget Family default Stageへ、Stage clickはFamilyを維持してselected Stageへ遷移。
+- `AC-G01-006`: frontend full catalog duplicate ownershipなし。renderer missing/catalog invariant failureをsilent fallbackしない。
+- `AC-G01-007`: operation availability interface/query/allowed-reason-message contractを利用し、Stage visibilityとaction availabilityを分離。
+- `AC-G01-008`: async presentation state=`IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED`。
+- `AC-G01-009`: E5変更surfaceはkeyboard、deterministic focus、accessible name、error association、non-color semantics、required contrastを満たす。
+
+
+## Verification architecture
+
+- unit: route parse/serialize/normalize、mismatch/unknown。
+- API/integration: catalog consumption、operation availability endpoint/query/response。
+- browser: Family click default Stage、sidebar current Family/order、explicit deep route、generic resource deep link、reload/back-forward。
+- negative: renderer missing/catalog invalid、`allowed=false`でStage hiddenにしない、silent normalization禁止。
+- accessibility: keyboard/focus/accessible name/error/non-color/contrast。
+- static: frontend full catalog duplicate ownership、Navigation->runtime Stage生成依存が0件。
