@@ -130,6 +130,7 @@
         <div class="explain-grid"><article><h2>Identification</h2><p>Graphと仮定から、指定した因果効果が理論上識別できるかを確認する段階です。</p></article><article><h2>Data Eligibility</h2><p>実データの型、欠測、sample size、overlap等が推定条件を満たすか確認する段階です。</p></article></div>
         <form id="inference-form" class="card form-grid">
           <label data-tooltip="推定に使用する不変Dataset Versionです。Graphのnode名と列名が対応している必要があります。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label data-tooltip="InferenceにはOutcomeが指定されたFIXED Graph Versionだけを使用できます。">FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
+          <fieldset id="identification-inputs"><legend>Identification</legend>
           <label data-tooltip="EXPLORATORYは探索的分析、CONFIRMATORYは事前に定めた仮説の検証を表します。">Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
           <label>Population<input name="population" required></label><label>Comparator<input name="comparator" required></label>
           <label data-tooltip="介入あり／なしとして比較するTreatment列です。現在のEstimatorでは通常二値列を指定します。">Treatment<input name="treatment" required placeholder="coupon"></label><label data-tooltip="選択したFIXED Graph Versionからread-onlyで継承され、ここでは変更できません。">Outcome (Graphから継承)<output id="inference-outcome" class="readonly-field">Graphを選択してください</output></label>
@@ -137,12 +138,15 @@
           <label data-tooltip="ATEは母集団全体、ATTはTreatmentを受けた対象における平均処置効果です。">Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label data-tooltip="BACKDOORは交絡調整、RANDOMIZEDは無作為割付を仮定した識別戦略です。">Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label data-tooltip="交絡調整へ使用するpre-treatment列をカンマ区切りで指定します。colliderやpost-treatment列を含めないでください。">Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
           <label data-tooltip="識別と推定が成立するために置く科学的仮定を、カンマまたは改行区切りで記録します。">Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
           <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
+          </fieldset>
+          <fieldset id="estimation-inputs"><legend>Estimation</legend>
           <label data-tooltip="先に実行したIdentificationのうち、推定gateを通過できるResultを選択します。">Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
           <label data-tooltip="Data EligibilityがWARNでも推定を続ける場合に、判断理由を明示します。FAILはoverrideできません。">WARN override reason<input name="override_reason"></label>
           <label data-tooltip="既存Executionの再実行または条件変更としてLineageを残す場合に基準Executionを選択します。">Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
           <label data-tooltip="基準Executionから条件を変更する場合に、その理由を必ず記載します。">Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
           <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
+          </fieldset>
         </form>
         <div class="card"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
         <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
