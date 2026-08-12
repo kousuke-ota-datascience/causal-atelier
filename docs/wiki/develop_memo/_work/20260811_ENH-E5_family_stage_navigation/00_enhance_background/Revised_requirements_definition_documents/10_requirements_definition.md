@@ -111,11 +111,11 @@ Ariadneは、Project / Research Topicを境界として、Research Context、Dat
 
 ## 2. Actor
 
-| Actor | 責務 | 主要権限 |
-| --- | --- | --- |
-| Analyst | Context、Data、Analysis Specification、Execution、比較、Annotationを作成する | Project read/write/execute |
-| Reviewer / Viewer | Result、warning、diagnostics、Lineage、Annotationを確認する | Project read |
-| Operator | 実行基盤、保存領域、認証、監視、保持policyを運用する | system operate |
+| Actor | 責務 | 権限上の位置づけ |
+| --- | --- | :--- |
+| Analyst | Context、Data、Analysis Specification、Execution、比較、Annotationを作成・操作する | ProjectMembership roleに従う。WRITE / MUTATEおよびExecution mutationはOWNER / EDITOR |
+| Reviewer / Viewer | Result、warning、diagnostics、Lineage、Annotationを確認する | ProjectMembership roleに従う。VIEWERを含むOWNER / EDITOR / VIEWERがread可能 |
+| Infrastructure Operator | 実行基盤、保存領域、認証、監視等のinfrastructureを運用する | ProjectMembership roleではない運用persona。system-level authorization policyはDEFERRED / FUTURE |
 
 ## 3. 業務Capability
 
