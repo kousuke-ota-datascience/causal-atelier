@@ -166,12 +166,23 @@
           <label>Intended use<input name="intended_use" value="prioritize outreach" required></label>
           <label>Deployment population<input name="deployment_population" value="eligible customers" required></label>
           <label>Feature columns<input name="feature_columns" value="score" required><small>Prediction timeまでに利用可能な列だけをカンマ区切りで指定します。</small></label>
+          <label>Feature availability JSON<textarea name="feature_availability" class="code-input">{}</textarea><small>featureごとの available_at / allowed を指定します。</small></label>
           <label>Excluded columns<input name="excluded_columns" value="converted" required></label>
           <label>Split strategy<select name="split_strategy"><option>STRATIFIED</option><option>RANDOM</option><option>GROUP</option><option>TIME_BASED</option></select></label>
           <label>Seed<input name="seed" type="number" value="17" required></label>
           <label>Train ratio<input name="train_ratio" type="number" value="0.6" step="0.05" required></label>
           <label>Validation ratio<input name="validation_ratio" type="number" value="0.2" step="0.05" required></label>
           <label>Test ratio<input name="test_ratio" type="number" value="0.2" step="0.05" required></label>
+          <label>Group column<input name="group_column" placeholder="account_id"></label>
+          <label>Time column<input name="time_column" placeholder="event_time"></label>
+          <label>Train cutoff<input name="train_cutoff" placeholder="2025-01-01T00:00:00Z"></label>
+          <label>Validation cutoff<input name="validation_cutoff" placeholder="2025-06-01T00:00:00Z"></label>
+          <label><input name="scale_numeric" type="checkbox" checked> Scale numeric features</label>
+          <label>Model<select name="model_id"><option value="logistic_regression.v1">Logistic regression</option><option value="linear_regression.v1">Linear regression</option></select></label>
+          <label>Tuning selection<select name="tuning_selection"><option value="TRAIN,VALIDATION">TRAIN + VALIDATION</option></select></label>
+          <label>Primary metric<select name="primary_metric"><option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option></select></label>
+          <label>Secondary metrics (comma separated)<input name="secondary_metrics" placeholder="PR_AUC, F1"></label>
+          <label>Subgroup columns (comma separated)<input name="subgroups" placeholder="region, cohort"></label>
           <label>Explanation method<select name="explanation_method" id="predictive-explanation-method"><option value="LINEAR_COEFFICIENT_CONTRIBUTION">Linear coefficient contribution</option></select></label>
           <label>Explanation sample size<input name="explanation_sample_size" type="number" min="1" max="1000" value="20" required></label>
           <label><input name="local_explanations" type="checkbox" checked> Local explanationを生成</label>
