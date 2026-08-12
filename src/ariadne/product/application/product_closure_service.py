@@ -21,6 +21,7 @@ from ariadne.product.domain.errors import (
     ProjectBoundaryViolation,
     OperationAvailabilityError,
 )
+from ariadne.product.application.navigation_catalog import CATALOG
 from ariadne.product.domain.lineage import (
     LINEAGE_RELATION_TYPES,
     LineageAuthority,
@@ -79,11 +80,16 @@ class ProductClosureService:
         route_match = None
         if route:
             route_match = re.fullmatch(
-                r"/projects/([^/]+)/analysis/(exploratory|predictive|causal)/([^/]+)(?:/resource/([^/]+)/([^/]+))?",
+                r"/projects/([^/]+)/analysis/([^/]+)/([^/]+)(?:/resource/([^/]+)/([^/]+))?",
                 route,
             )
             if route_match is None or route_match.group(1) != project_id:
                 raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route must be a canonical route for this project")
+            family = next((item for item in CATALOG if item.slug == route_match.group(2)), None)
+            if family is None or not any(stage.slug == route_match.group(3) for stage in family.stages):
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route family or stage is not canonical")
+            if route_match.group(4) and route_match.group(4) not in supported_types:
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route resource type is not supported")
             if resource_type and route_match.group(4) and (
                 route_match.group(4) != resource_type or route_match.group(5) != resource_id
             ):
