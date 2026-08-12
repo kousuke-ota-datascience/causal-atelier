@@ -22,7 +22,7 @@ Candidate chain: `P01 checkpoint → P02 checkpoint → P03 checkpoint`.
 
 ## Candidate identity
 
-`27e87faecd2b5dac0da6a688201931456c1a6077` is the latest semantic implementation checkpoint in the required Package chain. Subsequent commits before this report are implementation evidence or independent-verification evidence only and do not alter production code, automated tests, schema, migrations, or dependencies.
+`27e87faecd2b5dac0da6a688201931456c1a6077` is the latest semantic implementation checkpoint in the required Package chain. Subsequent commits before this report are implementation evidence only and do not alter production code, automated tests, schema, migrations, or dependencies.
 
 ## Gate-wide implementation self-verification
 
@@ -34,6 +34,6 @@ git diff --check
 
 Result: compile success; `14 passed in 4.24s`; whitespace check success.
 
-## Repository-state note
+## Evidence-only commit note
 
-At assembly start and completion, the user-provided untracked Candidate Assembly entry prompt was present. It is an operator instruction document only, is excluded from the candidate, and does not alter semantic implementation identity. This completion report commit is evidence-only; therefore `HEAD != FIXED_TRIAL_CANDIDATE_SHA` after commit is expected.
+This report is the authoritative candidate-identity evidence at the canonical Trial-directory path. Its commit is evidence-only; therefore `HEAD != FIXED_TRIAL_CANDIDATE_SHA` is expected.
