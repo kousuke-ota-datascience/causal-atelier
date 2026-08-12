@@ -1,7 +1,7 @@
 # ENH-E5 G01 P00 — Work Package Plan
 
 - Gate: `G01`
-- 文書状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- 文書状態: `PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`
 - Baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - 用途: Operator / Planning only。Package Coding Agentへ渡さない。
 

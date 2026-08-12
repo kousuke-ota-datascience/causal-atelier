@@ -1,6 +1,6 @@
-# ENH-E5 Gate / Work Package Contracts — Phase K Remediated Candidate
+# ENH-E5 Gate / Work Package Contracts — Phase K Converged
 
-- 状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
+- 状態: `PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`
 - Branch: `feature/ariadne_mvp_e5`
 - Remediation baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - Canonical source: `NFR-019 PASS / FROZEN`
@@ -34,4 +34,4 @@ repositoryはimplementation/evidence substrateであり仕様authorityではな�
 
 ## Re-audit rule
 
-本changeset適用後は`PHASE_K_REMEDIATED / REAUDIT_PENDING`。35文書のauthority/self-containment/D2/D3/06-Pxx-07 symmetry再監査がall PASSした後にのみ`PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`へ変更する。
+35文書のauthority/self-containment/D2/D3/06-Pxx-07 symmetry再監査はall PASS。Phase Kは`PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`として確定する。
