@@ -595,3 +595,83 @@ Promotion decision
 ```
 
 Candidate Assembly Agent の目的は、この境界を越えずに **Package 実装群から検証可能な Fixed Trial Candidate を一意に形成し、Test Agent が要求する canonical path に candidate identity evidence を確実に配置すること**である。
+
+---
+
+## 16. Formal FAIL Remediation Trial Guard
+
+この節は formal FAIL 後の remediation Trial において、通常 Work Package assembly 規則より優先する。
+
+### 16.1 Remediation Trial Detection
+
+current Trial に以下の exact remediation contract が存在し:
+
+```text
+docs/wiki/develop_memo/_work/20260811_ENH-E5_family_stage_navigation/
+10_enhance_instruction/{{GATE_ID}}/
+08_Ariadne_ENH-E5_{{GATE_ID}}_Trial{{TRIAL_NO}}_remediation_instruction.md
+```
+
+その 08 が:
+
+```text
+Execution mode: SINGLE_EXECUTION
+```
+
+を宣言している場合、current Trial は `FORMAL_FAIL_REMEDIATION` mode とする。
+
+### 16.2 Normal Work Package Assembly Prohibition
+
+この mode では:
+
+- original P01/P02/P03 report を current Trial candidate authority として要求しない
+- old Package checkpoint SHA を candidate に再利用しない
+- Sections 6–9 の通常 Work Package candidate assembly を適用しない
+- previous failed candidate と同一 SHA を `READY_FOR_TEST` として提出しない
+
+FAIL Rework Coding Agent が current Trial canonical Completion Report を生成するのが正規経路である。
+
+### 16.3 Missing Rework Handoff
+
+canonical Completion Report が存在しない場合、old Package chain から Completion Report を合成してはならない。
+
+```text
+BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE
+```
+
+で停止し、FAIL Rework Coding Agent の実行を要求する。
+
+### 16.4 Candidate Identity Guard
+
+08 の `PREVIOUS_FAILED_CANDIDATE_SHA` と current Completion Report の `FIXED_TRIAL_CANDIDATE_SHA` を比較する。
+
+必須:
+
+```text
+FIXED_TRIAL_CANDIDATE_SHA != PREVIOUS_FAILED_CANDIDATE_SHA
+```
+
+さらに:
+
+```bash
+git diff --name-only   <PREVIOUS_FAILED_CANDIDATE_SHA>..<FIXED_TRIAL_CANDIDATE_SHA>   -- src frontend tests pyproject.toml uv.lock alembic
+```
+
+を確認し、08 が要求する semantic remediation が candidate に含まれることを確認する。
+
+同一 candidate または required remediation diff 不在なら:
+
+```text
+BLOCKED_REMEDIATION_NOT_APPLIED
+```
+
+### 16.5 Candidate Assembly Role
+
+この mode で Candidate Assembly Agent が呼ばれた場合は audit-only とする。
+
+禁止:
+
+- production/test の変更
+- old package checkpoints から candidate を再構成
+- old package checkpoints から Completion Report を生成
+- candidate SHA の差し替え
