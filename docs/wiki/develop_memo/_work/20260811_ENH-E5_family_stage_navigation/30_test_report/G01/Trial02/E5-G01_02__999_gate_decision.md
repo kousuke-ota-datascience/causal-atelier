@@ -2,11 +2,7 @@
 
 ## Gate Decision
 
-`BLOCKED`
-
-### Blocker code
-
-`BLOCKED_CANDIDATE_IDENTITY`
+`FAIL`
 
 ## Inputs and evidence
 
@@ -14,23 +10,17 @@
 |---|---|
 | Gate | `G01` |
 | Trial | `02` |
-| `TEST_START_SHA` | `837434d79426fa4489feb5d45f471d6e0beb3f4c` |
-| `FIXED_TRIAL_CANDIDATE_SHA` | unavailable |
-| Completed Test Items | `001_candidate_identity` (BLOCKED) |
-| Candidate audit evidence | `E5-G01_02__001_candidate_identity.md` |
+| `TEST_START_SHA` | `e4a33924cb4e7f93161d31329cc23b52f984b991` |
+| `FIXED_TRIAL_CANDIDATE_SHA` | `27e87faecd2b5dac0da6a688201931456c1a6077` |
+| Test target | `e4a33924cb4e7f93161d31329cc23b52f984b991` (candidate-equivalent semantic state) |
+| Completed Test Items | `001 PASS`, `002 PASS`, `003 FAIL`, `004 PASS` |
+| Independent suite | `14 passed in 4.05s` |
 
-## Decision rationale
+## Failed Acceptance Criteria
 
-The required current-Trial Implementation Completion Report is absent from:
+`AC-G01-003` and `AC-G01-007` fail. The Operation Availability implementation accepts `/projects/p1/analysis/causal/unknown-stage` and returns a normal HTTP-200-shaped operation projection with `RESOURCE_REQUIRED`. Gate 07 requires unknown Stage / malformed or unknown canonical route handling as `INVALID_NAVIGATION_ROUTE` (HTTP 422).
 
-```text
-docs/wiki/develop_memo/_work/20260811_ENH-E5_family_stage_navigation/20_implementation_reports/G01/Trial02/E5-G01_02__implementation_completion.md
-```
-
-Therefore the candidate identity required before verification cannot be
-established. Gate 07's candidate-identity requirements are not evaluable, and
-the remaining independent verification test items were not run. This is a
-workflow prerequisite blocker, not evidence of a product defect.
+See `E5-G01_02__003_operation_availability.md` for the raw reproducer output.
 
 ## Promotion eligibility
 
