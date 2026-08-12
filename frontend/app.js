@@ -71,6 +71,7 @@ async function activateWorkspace(workspace,{push=true,button=null}={}){
     if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
   }
   try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
+  const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
 $$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
 
@@ -106,14 +107,14 @@ async function restoreProjectRoute(){
 function renderAnalysisNavigation(){
   const catalog=state.navigationCatalog,context=state.navigationContext;if(!catalog||!context)return;
   const current=catalog.families.find(item=>item.slug===context.familySlug);if(!current)throw new Error('Navigation catalog invariant failure: current family missing');
-  $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
-  $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
+  $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" aria-label="Analysis family: '+escapeHtml(f.label)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
+  $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" aria-label="Analysis stage: '+escapeHtml(s.label)+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
   $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);state.navigationContext=AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
   $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>{state.navigationContext=AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
 }
 async function renderOperationAvailability(){
   const el=$('#operation-availability'),context=state.navigationContext;if(!state.project||!context){el.textContent='IDLE';return}el.textContent='LOADING';
-  try{const resource=context.resource,query=new URLSearchParams({route:AnalysisNavigation.serialize(context)});if(resource){query.set('resource_type',resource.resourceType);query.set('resource_id',resource.resourceId)}const data=await api('/projects/'+state.project.project_id+'/operation-availability?'+query);el.innerHTML=Object.entries(data.operations).map(([name,value])=>'<span class="status">'+escapeHtml(name)+': '+(value.allowed?'READY':escapeHtml(value.reason_code))+'</span>').join(' ')}catch(error){el.textContent='ERROR: '+error.message}
+  try{const resource=context.resource,query=new URLSearchParams({route:AnalysisNavigation.serialize(context)});if(resource){query.set('resource_type',resource.resourceType);query.set('resource_id',resource.resourceId)}const data=await api('/projects/'+state.project.project_id+'/operation-availability?'+query);el.innerHTML=Object.entries(data.operations).map(([name,value])=>'<span class="status" aria-label="'+escapeHtml(name)+' '+(value.allowed?'available':'unavailable: '+value.reason_code)+'">'+escapeHtml(name)+': '+(value.allowed?'READY':escapeHtml(value.reason_code))+'</span>').join(' ')}catch(error){el.textContent='ERROR: '+error.message}
 }
 window.addEventListener('popstate',()=>restoreProjectRoute().catch(error=>notice(error.message)));
 
