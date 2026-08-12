@@ -1,6 +1,6 @@
 # 22 プロダクト基本設計
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
+- 文書状態: `APPROVED`
 - 文書種別: 現行プロダクト基本設計のeffective snapshot
 - 上位文書: `00_product_concept_memo.md`, `10_requirements_definition.md`, `21_logical_data_design.md`
 - 下位文書: `23_api_interface_design.md`, `30_detailed_design.md`

@@ -1,6 +1,6 @@
 # ENH-E5 設計改定
 
-- 文書状態: `PHASE_H_UPDATED / CANONICAL_REVISION_PENDING`
+- 文書状態: `APPROVED`
 - Revised effective design targets:
   - `21_logical_data_design.md`
   - `22_product_basic_design.md`

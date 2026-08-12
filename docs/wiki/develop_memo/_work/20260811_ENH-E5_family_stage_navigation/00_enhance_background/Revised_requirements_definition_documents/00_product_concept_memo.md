@@ -1,6 +1,6 @@
 # 00 プロダクトコンセプトメモ
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
+- 文書状態: `APPROVED`
 - 文書種別: 現行プロダクト構想のeffective snapshot
 - 対象プロダクト: Ariadne
 - 対象分析Family: Exploratory / Predictive / Causal

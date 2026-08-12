@@ -1,6 +1,6 @@
 # ENH-E5 Gate / Work Package Contracts — Phase K Converged
 
-- 状態: `PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`
+- 状態: `APPROVED / FROZEN`
 - Branch: `feature/ariadne_mvp_e5`
 - Remediation baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - Canonical source: `NFR-019 PASS / FROZEN`

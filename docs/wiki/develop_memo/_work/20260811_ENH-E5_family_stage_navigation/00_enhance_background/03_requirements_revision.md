@@ -1,6 +1,6 @@
 # ENH-E5 要件改定
 
-- 状態: `PHASE_H_UPDATED / CANONICAL_REVISION_PENDING`
+- 状態: `APPROVED`
 - Revised effective requirement target: `Revised_requirements_definition_documents/10_requirements_definition.md`
 - Remediation baseline: D1=31 / D2=35 / D3=28
 - D2 planning freeze: 11 packages / unresolved=0

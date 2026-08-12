@@ -1,6 +1,6 @@
 # 10 要件定義
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
+- 文書状態: `APPROVED`
 - 文書種別: 現行requirementsのeffective snapshot
 - 上位文書: `00_product_concept_memo.md`
 - 下位文書: `21_logical_data_design.md` / `22_product_basic_design.md` / `23_api_interface_design.md` / `30_detailed_design.md`

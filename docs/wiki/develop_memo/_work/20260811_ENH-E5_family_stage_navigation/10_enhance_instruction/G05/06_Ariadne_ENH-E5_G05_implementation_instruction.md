@@ -5,8 +5,8 @@
 - Active Gate: `G05`
 - Branch: `feature/ariadne_mvp_e5`
 - Remediation baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
-- 契約状態: `PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`
-- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
+- 契約状態: `APPROVED / FROZEN`
+- Canonical convergence source: `10 / 21 / 22 / 23 / 30 = APPROVED`
 - Document role: `Gate 06 implementation contract`
 - Execution Mode: `SINGLE_EXECUTION`
 

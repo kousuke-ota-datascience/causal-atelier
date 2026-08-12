@@ -1,6 +1,6 @@
 # ENH-E5 要件・設計整合性およびトレーサビリティ確認
 
-- 状態: `PHASE_H_UPDATED / PHASE_I_TRACE_PLAN_FROZEN`
+- 状態: `APPROVED`
 - Remediation decision: D1=31 / D2=35 / D3=28
 - D2 planning freeze: 11 packages / unresolved=0
 - NFR-019 current verdict: `PARTIAL_MATCH / FAIL`

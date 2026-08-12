@@ -1,6 +1,6 @@
 # ENH-E5 Enhancement 構想・要件改定計画
 
-- 状態: `PHASE_H_UPDATED / READY_FOR_PHASE_I`
+- 状態: `APPROVED`
 - 対象branch: `feature/ariadne_mvp_e5`
 - Planning pin: `46122c68333df03680b97c253a7b5d32bf9393e7`
 - ENH-E4 alignment baseline: `a770cc4f38137063cd5f22d8035e91e3c63b7502`

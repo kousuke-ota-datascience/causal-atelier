@@ -1,6 +1,6 @@
 # 30 詳細設計
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
+- 文書状態: `APPROVED`
 - 文書種別: 現行詳細設計のeffective snapshot
 - 上位文書: `10_requirements_definition.md`, `21_logical_data_design.md`, `22_product_basic_design.md`, `23_api_interface_design.md`
 - 基準Runtime: Python 3.12
@@ -2057,22 +2057,203 @@ legacy analytical routeを残す場合は次へ**一方向**normalizeする。
 
 ### 18.9 Operation availability
 
-Stage visibilityとaction availabilityを別stateとする。Backendがaction permission/prerequisiteをauthorityとして返す。
+Operation availabilityはNavigation Stage visibilityとは独立したread-only application projectionである。Backendがauthorization、resource lifecycle、scientific/domain prerequisiteのauthorityを保持し、Frontendは結果を表示するだけとする。
 
-Response minimum:
+Canonical endpoint:
 
-```json
-{
-  "allowed": false,
-  "reason_code": "IDENTIFICATION_REQUIRED",
-  "message": "Identification must be completed before estimation."
-}
+```text
+GET /projects/{project_id}/operation-availability
+```
+
+#### 18.9.1 Canonical types
+
+```python
+OperationKey = Literal["RUN", "EDIT", "EXPORT"]
+ResourceType = Literal[
+    "analysis-specification",
+    "execution",
+    "result",
+    "graph-version",
+]
+```
+
+`OperationKey`はpresentation operation classであり、canonical `Execution.operation`、runtime `StageType`、Navigation Stage ID、HTTP endpoint verbとは別conceptである。
+
+Response invariant:
+
+```python
+operations.keys() == {"RUN", "EDIT", "EXPORT"}
+```
+
+```text
+allowed=true  -> reason_code absent
+allowed=false -> reason_code required
+message       -> optional; presentation only
+```
+
+#### 18.9.2 Structural support matrix
+
+| resource_type | RUN | EDIT | EXPORT |
+| --- | --- | --- | --- |
+| `analysis-specification` | supported | supported | unsupported |
+| `execution` | supported | unsupported | unsupported |
+| `result` | supported | unsupported | supported |
+| `graph-version` | supported | supported | unsupported |
+
+`unsupported`はexceptionではなく、HTTP 200 operation itemの`allowed=false / UNSUPPORTED_OPERATION`へ写像する。
+
+RUN family binding:
+
+- `analysis-specification`: fixed specificationから既存Execution submit pathへ接続する。
+- `execution`: existing retry/rerun/revise lifecycleのうち利用可能なcommandへ接続する。generic run mutationを新設しない。
+- `result`: route/use-caseが既存`input_result_id` commandを提供するときだけRUN候補とする。
+- `graph-version`: route/use-caseが既存`input_graph_version_id` causal commandを提供するときだけRUN候補とする。
+
+EDITはAnalysisSpecification / GraphVersionの既存mutable lifecycleだけへ接続する。EXPORTはResult/export policyだけへ接続する。
+
+#### 18.9.3 Query resolution
+
+```python
+@dataclass(frozen=True)
+class OperationAvailabilityQuery:
+    project_id: str
+    resource_type: ResourceType | None
+    resource_id: str | None
+    route: str | None
+```
+
+Validation:
+
+```text
+(resource_type is None) == (resource_id is None)
+resource pair absent -> route required
+resource pair present -> route optional
+```
+
+- pair片側のみ、または全parameter未指定: `422 INVALID_OPERATION_AVAILABILITY_QUERY`。
+- unknown resource_type: `422 UNSUPPORTED_RESOURCE_TYPE`。
+- known typeでProject内resourceを解決できない（別Project IDを含む）: `404 ENTITY_NOT_FOUND`。
+- malformed/unknown route: `422 INVALID_NAVIGATION_ROUTE`。
+- explicit route Familyとresource actual Family不一致: `422 ROUTE_RESOURCE_FAMILY_MISMATCH`。
+- routeにresource segmentがある場合、query pairとexact matchを要求する。
+
+resource pair未指定時:
+
+```text
+route is presentation context only
+Backend MUST NOT infer/select resource_id from route or project history
+resource-bound RUN/EDIT/EXPORT -> allowed=false / RESOURCE_REQUIRED
+no resource mutation or creation
+```
+
+resource pair指定・route未指定時、resourceだけではRUN use-caseを一意に決められない`result/RUN`および`graph-version/RUN`は`allowed=false / ROUTE_REQUIRED`とする。
+
+#### 18.9.4 Authorization policy
+
+endpoint request全体はProject `READ`を要求する。ProjectMembership read不可は`403 PROJECT_ACCESS_DENIED`。
+
+```text
+RUN    -> EXECUTION_MUTATION -> OWNER/EDITOR allow, VIEWER deny
+EDIT   -> WRITE_MUTATE       -> OWNER/EDITOR allow, VIEWER deny
+EXPORT -> EXPORT_CREATE      -> OWNER/EDITOR allow, VIEWER deny
+```
+
+Evaluation orderは固定する。
+
+```text
+1. query validation
+2. Project READ authorization
+3. resource resolution / Project boundary
+4. structural support
+5. operation authorization
+6. lifecycle state / mutability
+7. scientific/domain prerequisite
+8. allowed=true
+```
+
+structurally supported operationがrole不足の場合はrequest全体を403にせず、HTTP 200 itemとして`allowed=false / PROJECT_ACCESS_DENIED`を返す。ただしendpoint READ自体がdenyの場合はrequest全体を403とする。
+
+#### 18.9.5 Scientific/domain authority
+
+OperationAvailability evaluatorはscientific/domain ruleのownerにならない。実commandが利用するApplication/Domain policyを呼び出す、または同一policy objectを共有する。
+
+Authority mapping:
+
+| concern | authority |
+| --- | --- |
+| Project role | persisted `ProjectMembership` policy |
+| AnalysisSpecification lifecycle/validation | specification domain/application validator |
+| GraphVersion lifecycle/validation | graph domain/application validator |
+| Execution retry/rerun/revise | Execution lifecycle/application service |
+| causal graph/result/identification prerequisite | causal planner/use-case validator + persisted Result/Lineage |
+| Result exportability | Result/output ownership/export policy |
+
+Frontend route parser、Navigation catalog、Stage visibilityはscientific truthを所有しない。
+
+Availability projectionと実commandが不一致の場合、実commandのdenyを優先し、projection defectとして修正する。Availability responseを根拠にcommand側validationをskipしてはならない。
+
+#### 18.9.6 reason_code
+
+Operation itemのclosed vocabulary:
+
+```text
+PROJECT_ACCESS_DENIED
+UNSUPPORTED_OPERATION
+RESOURCE_REQUIRED
+ROUTE_REQUIRED
+RESOURCE_IMMUTABLE
+SPEC_NOT_FIXED
+GRAPH_NOT_FIXED
+IDENTIFICATION_REQUIRED
+INPUT_GRAPH_REQUIRED
+INPUT_RESULT_REQUIRED
+EXECUTION_STATE_NOT_RUNNABLE
+RESULT_NOT_EXPORTABLE
+DOMAIN_PREREQUISITE_NOT_SATISFIED
+```
+
+Request-level error code:
+
+```text
+INVALID_OPERATION_AVAILABILITY_QUERY
+UNSUPPORTED_RESOURCE_TYPE
+ENTITY_NOT_FOUND
+PROJECT_ACCESS_DENIED
+INVALID_NAVIGATION_ROUTE
+ROUTE_RESOURCE_FAMILY_MISMATCH
+```
+
+新しいreason/error codeをimplementation都合で追加しない。必要な場合はcanonical design amendmentを先行する。
+
+Reference evaluation pseudo-code:
+
+```python
+def evaluate_operation_availability(query, actor):
+    q = validate_query(query)
+    membership = require_project_read(q.project_id, actor)
+    resource = resolve_resource_in_project(q) if q.resource_type else None
+    context = validate_route_context(q.route, resource)
+
+    if resource is None:
+        return all_operations_denied("RESOURCE_REQUIRED")
+
+    result = {}
+    for operation in ("RUN", "EDIT", "EXPORT"):
+        if not structurally_supported(resource.type, operation, context):
+            result[operation] = denied("UNSUPPORTED_OPERATION")
+            continue
+        if operation_requires_route(resource.type, operation) and context is None:
+            result[operation] = denied("ROUTE_REQUIRED")
+            continue
+        if not authorized(membership.role, authorization_class(operation)):
+            result[operation] = denied("PROJECT_ACCESS_DENIED")
+            continue
+        reason = lifecycle_or_domain_blocker(resource, operation, context)
+        result[operation] = denied(reason) if reason else allowed()
+    return {"operations": result}
 ```
 
 `allowed=false`でもStage自体を非表示にしてscientific prerequisiteを表現することを基本挙動にしない。
-
-Authorizationとscientific prerequisiteは別判定である。Frontendはbackend resultを表示し、route状態だけから実行可能性を推測しない。
-
 ### 18.10 Error handling / async presentation state
 
 | Error | UI behavior | Runtime side effect |

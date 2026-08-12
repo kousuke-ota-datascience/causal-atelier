@@ -1,6 +1,6 @@
 # ENH-E5 G04 P00 — Work Package Plan
 - Gate: `G04`
-- 文書状態: `PHASE_K_CONVERGED / EXECUTION_FREEZE_READY`
+- 文書状態: `APPROVED / FROZEN`
 - Baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - 用途: Operator / Planning only。Package Coding Agentへ渡さない。
 

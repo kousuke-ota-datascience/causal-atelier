@@ -1,6 +1,6 @@
 # ENH-E5 Enhancement Concept Approval Record
 
-- 状態: `PLANNING_DECISIONS_FROZEN / CODING_BLOCKED_UNTIL_NFR019_PASS`
+- 状態: `APPROVED`
 - Planning pin: `46122c68333df03680b97c253a7b5d32bf9393e7`
 - Alignment baseline: `a770cc4f38137063cd5f22d8035e91e3c63b7502`
 - Phase H updated: `2026-08-12` (Asia/Tokyo)
