@@ -7,7 +7,7 @@ from ariadne.capabilities.exploratory.view_compiler import AnalysisViewCompiler
 from ariadne.product.domain.errors import InvalidSchema
 
 
-def view_spec(dataset_id: str = "dataset") -> dict:  # type: ignore[type-arg]
+def view_spec(dataset_id: str = "dataset", *, time_cutoff: dict | None = None) -> dict:  # type: ignore[type-arg]
     return {
         "schema_version": "analysis-view/1",
         "source_dataset_version_id": dataset_id,
@@ -25,7 +25,7 @@ def view_spec(dataset_id: str = "dataset") -> dict:  # type: ignore[type-arg]
             "default": "KEEP",
             "columns": {"sales": {"strategy": "FILL_MEAN"}},
         },
-        "time_cutoff": {"column": "date", "operator": "LTE", "value": "2026-01-03"},
+        "time_cutoff": time_cutoff,
         "sampling": None,
     }
 
@@ -39,9 +39,10 @@ def test_analysis_view_compilation_is_reproducible_and_manifested() -> None:
         "units": [2, 4, 5, 8],
     })
     compiler = AnalysisViewCompiler()
-    schema = {"group": "TEXT", "date": "TEXT", "sales": "REAL", "units": "INTEGER"}
-    first = compiler.compile(frame, schema, view_spec(), source_dataset_content_hash="source-hash")
-    second = compiler.compile(frame, schema, view_spec(), source_dataset_content_hash="source-hash")
+    schema = {"group": "TEXT", "date": "DATETIME", "sales": "REAL", "units": "INTEGER"}
+    spec = view_spec(time_cutoff={"column": "date", "operator": "LTE", "value": "2026-01-03"})
+    first = compiler.compile(frame, schema, spec, source_dataset_content_hash="source-hash")
+    second = compiler.compile(frame, schema, spec, source_dataset_content_hash="source-hash")
     assert first.materialized_hash == second.materialized_hash
     assert first.manifest == second.manifest
     records = first.frame.to_dict(orient="records")
@@ -52,7 +53,7 @@ def test_analysis_view_compilation_is_reproducible_and_manifested() -> None:
         "group": "B", "date": "2026-01-02", "sales": 10.0, "units": 4,
     }
     assert pd.isna(records[1]["unit_price"])
-    assert first.manifest["view_spec"] == view_spec()
+    assert first.manifest["view_spec"] == spec
     assert first.manifest["source_dataset_content_hash"] == "source-hash"
 
 
@@ -115,3 +116,17 @@ async def test_analysis_view_api_lifecycle_is_versioned_and_fixed_is_immutable(c
         "view_key": "eligible", "name": "Eligible rows v2", "spec": view_spec(dataset_id),
     })
     assert second.json()["version_number"] == 2
+
+
+@pytest.mark.anyio
+async def test_analysis_view_api_exposes_typed_filter_mismatch_code(client) -> None:  # type: ignore[no-untyped-def]
+    project, dataset = await _project_dataset(client)
+    response = await client.post(f"/api/v1/projects/{project['project_id']}/analysis-views", json={
+        "view_key": "invalid-filter", "name": "Invalid filter",
+        "spec": {
+            **view_spec(dataset["dataset_version_id"]),
+            "row_filter": [{"column": "units", "operator": "EQ", "value": True}],
+        },
+    })
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "FILTER_TYPE_MISMATCH"

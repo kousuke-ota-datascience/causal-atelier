@@ -3,16 +3,26 @@
 from __future__ import annotations
 
 import hashlib
+import math
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
 
 from ariadne.product.domain.analysis_view import validate_analysis_view_payload
-from ariadne.product.domain.errors import InvalidSchema
+from ariadne.product.domain.errors import FilterTypeMismatch, InvalidSchema
 from ariadne.product.domain.schemas import canonical_hash
 
 _FILTER_OPERATORS = {"EQ", "NE", "LT", "LTE", "GT", "GTE", "IN", "NOT_IN", "IS_NULL", "NOT_NULL"}
+_OPERATORS_BY_LOGICAL_TYPE = {
+    "BOOLEAN": {"EQ", "NE", "IN", "NOT_IN", "IS_NULL", "NOT_NULL"},
+    "INTEGER": _FILTER_OPERATORS,
+    "REAL": _FILTER_OPERATORS,
+    "DATETIME": _FILTER_OPERATORS,
+    "TEXT": {"EQ", "NE", "IN", "NOT_IN", "IS_NULL", "NOT_NULL"},
+    "OTHER": {"IS_NULL", "NOT_NULL"},
+}
 _EXPRESSION_OPERATORS = {"ADD", "SUBTRACT", "MULTIPLY", "DIVIDE"}
 _FUNCTIONS = {"ABS", "LOWER", "UPPER", "LOG", "YEAR", "MONTH", "DAY"}
 
@@ -43,12 +53,12 @@ class AnalysisViewCompiler:
         if selected and (missing := sorted(set(selected) - available)):
             raise InvalidSchema(f"Analysis View references unknown selected columns: {missing}")
         for index, condition in enumerate(view_spec["row_filter"]):
-            self._validate_filter(condition, available, f"row_filter[{index}]")
+            self._validate_filter(condition, available, dataset_schema, f"row_filter[{index}]")
         cutoff = view_spec["time_cutoff"]
         if cutoff is not None:
-            self._validate_filter(cutoff, available, "time_cutoff")
-            if cutoff["operator"] not in {"LT", "LTE"}:
-                raise InvalidSchema("time_cutoff operator must be LT or LTE")
+            self._validate_filter(cutoff, available, dataset_schema, "time_cutoff")
+            if dataset_schema.get(cutoff["column"]) != "DATETIME" or cutoff["operator"] not in {"LT", "LTE"}:
+                raise FilterTypeMismatch("FILTER_TYPE_MISMATCH: time_cutoff requires a DATETIME column and LT or LTE")
         policy = view_spec["missing_value_policy"]
         if set(policy) - {"default", "columns"}:
             raise InvalidSchema("Unknown missing_value_policy fields")
@@ -123,17 +133,53 @@ class AnalysisViewCompiler:
         }
         return CompiledAnalysisView(value, manifest, materialized_hash)
 
-    def _validate_filter(self, value: Any, available: set[str], path: str) -> None:
+    def _validate_filter(
+        self, value: Any, available: set[str], dataset_schema: dict[str, str], path: str,
+    ) -> None:
         if not isinstance(value, dict) or set(value) - {"column", "operator", "value"}:
             raise InvalidSchema(f"Invalid filter at {path}")
         if value.get("column") not in available:
             raise InvalidSchema(f"Unknown filter column at {path}")
         if value.get("operator") not in _FILTER_OPERATORS:
             raise InvalidSchema(f"Unknown filter operator at {path}")
-        if value["operator"] not in {"IS_NULL", "NOT_NULL"} and "value" not in value:
-            raise InvalidSchema(f"Filter value is required at {path}")
-        if value["operator"] in {"IN", "NOT_IN"} and not isinstance(value.get("value"), list):
-            raise InvalidSchema(f"IN filter requires an array at {path}")
+        operator = value["operator"]
+        expected_keys = {"column", "operator"} if operator in {"IS_NULL", "NOT_NULL"} else {"column", "operator", "value"}
+        if set(value) != expected_keys:
+            raise FilterTypeMismatch(f"FILTER_TYPE_MISMATCH: invalid value shape at {path}")
+        logical_type = dataset_schema.get(value["column"])
+        if logical_type not in _OPERATORS_BY_LOGICAL_TYPE or operator not in _OPERATORS_BY_LOGICAL_TYPE[logical_type]:
+            raise FilterTypeMismatch(f"FILTER_TYPE_MISMATCH: {operator} is not allowed for {value['column']} at {path}")
+        if operator in {"IS_NULL", "NOT_NULL"}:
+            return
+        raw_value = value["value"]
+        if operator in {"IN", "NOT_IN"}:
+            if not isinstance(raw_value, list) or not raw_value:
+                raise FilterTypeMismatch(f"FILTER_TYPE_MISMATCH: {operator} requires a non-empty list at {path}")
+            values = raw_value
+        else:
+            if isinstance(raw_value, list):
+                raise FilterTypeMismatch(f"FILTER_TYPE_MISMATCH: scalar value required at {path}")
+            values = [raw_value]
+        if not all(self._value_matches_logical_type(item, logical_type) for item in values):
+            raise FilterTypeMismatch(f"FILTER_TYPE_MISMATCH: invalid {logical_type} value at {path}")
+
+    @staticmethod
+    def _value_matches_logical_type(value: Any, logical_type: str) -> bool:
+        if logical_type == "BOOLEAN":
+            return isinstance(value, bool)
+        if logical_type == "INTEGER":
+            return type(value) is int
+        if logical_type == "REAL":
+            return type(value) in {int, float} and math.isfinite(value)
+        if logical_type == "TEXT":
+            return isinstance(value, str)
+        if logical_type == "DATETIME" and isinstance(value, str):
+            try:
+                datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                return False
+            return True
+        return False
 
     def _validate_expression(self, value: Any, available: set[str]) -> None:
         if not isinstance(value, dict):

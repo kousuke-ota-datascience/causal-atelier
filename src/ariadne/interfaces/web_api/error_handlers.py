@@ -24,6 +24,7 @@ from ariadne.product.domain.errors import (
     GraphParentNotFixed,
     InvalidDatasetFile,
     InvalidDatasetMetadata,
+    FilterTypeMismatch,
     InvalidGraphEditBase,
     InvalidExecutionPlan,
     ProjectArchived,
@@ -81,6 +82,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
             exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC",
             str(exc),
         )
+    if isinstance(exc, FilterTypeMismatch):
+        return _error(request, 422, exc.code, str(exc))
     if isinstance(exc, InvalidSchema):
         return _error(request, 422, "INVALID_SCHEMA", str(exc))
     if isinstance(exc, PredictiveValidationError):

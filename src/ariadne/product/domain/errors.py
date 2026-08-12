@@ -53,6 +53,12 @@ class InvalidSchema(DomainError):
     """A versioned payload does not satisfy its canonical schema."""
 
 
+class FilterTypeMismatch(InvalidSchema):
+    """An Analysis View filter is incompatible with its source logical type."""
+
+    code = "FILTER_TYPE_MISMATCH"
+
+
 class OperationAvailabilityError(DomainError):
     def __init__(self, code: str, message: str, *, status: int = 422) -> None:
         super().__init__(message)
