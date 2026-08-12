@@ -49,7 +49,8 @@ Web FrontendはProject-global surfaceとanalytical surfaceを提示する。Plan
 - Domain: Resource、state、invariant、value object
 - Application: use case、transaction、policy、planner、executor control、navigation coordination
 - Port: repositories、artifact_store、clock、scientific_core、unit_of_work
-- Adapter: SQL、Filesystem / Object Storage、Scientific library、ML library
+- Adapter: SQL、Filesystem（current `LocalArtifactStore`）、Scientific library、ML library
+- Object Storage adapterは`NFR-020b = DEFERRED / NOT_IMPLEMENTED / FUTURE`であり、current implementationには含めない。
 - Interface: Web API、Worker、CLI、Frontend
 
 DomainはWeb Framework、ORM、plot library、ML library、browser routeおよびlegacy moduleへ依存しない。
