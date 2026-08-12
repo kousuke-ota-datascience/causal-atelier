@@ -1,6 +1,6 @@
 # 30 詳細設計
 
-- 文書状態: `DRAFT_FOR_REVIEW`
+- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
 - 文書種別: 現行詳細設計のeffective snapshot
 - 上位文書: `10_requirements_definition.md`, `21_logical_data_design.md`, `22_product_basic_design.md`, `23_api_interface_design.md`
 - 基準Runtime: Python 3.12
@@ -136,7 +136,7 @@ src/ariadne/
     └── local_artifact_store.py
 ```
 
-この一覧は**current implementation fact**であり、ENH-E5のNavigation実装ファイル名を先取りして固定するものではない。新規Navigation codeの配置は、既存責務境界を壊さない最小変更としてG00/G01のfreeze済みcontractで確定する。
+この一覧は**current implementation fact**である。ENH-E5のNavigation codeは、Family Capability descriptor → application/interface catalog aggregator → frontend router/presentation binding の責務境界へ配置する。runtime planner/executor/worker側からNavigation descriptor/routerを参照する依存は追加しない。
 
 ### 2.1 Navigation関連module配置
 
@@ -276,7 +276,7 @@ Navigation Stageはpersistent Resourceではないため`ResourceRef(resource_ty
 
 ### 3.5 NavigationStageDescriptor
 
-Navigation Stageを実装する場合のimmutable metadata contract:
+Navigation Stageはimmutable application/navigation metadataとして定義する。
 
 ```python
 @dataclass(frozen=True)
@@ -301,9 +301,20 @@ Required invariants:
 - Family descriptorはFamilyごとに1件。
 - `stages`は1件以上。
 - `stage_id` / `slug`はFamily内で一意。
-- `default_stage_id`は`stages`内に存在。
-- `order`でdeterministic ordering可能。
+- `default_stage_id`は必ず当該Familyの`stages`内に存在。
+- `order`はFamily内でdeterministic orderingを形成する。
 - runtime input/output、status、retry、attempt、leaseを持たない。
+- Navigation descriptorはpersistent Domain ResourceではなくRepository/UoWへ登録しない。
+
+Frozen catalog:
+
+| Family | slug | default_stage_id | stages |
+| --- | --- | --- | --- |
+| EXPLORATORY | `exploratory` | `profile` | `profile`, `data-quality`, `distribution`, `relationships`, `comparison`, `findings` |
+| PREDICTIVE | `predictive` | `setup` | `setup`, `train`, `predict`, `metrics`, `explainability`, `model-management` |
+| CAUSAL | `causal` | `setup` | `setup`, `discovery`, `identification`, `estimation`, `effects`, `diagnostics`, `sensitivity` |
+
+Catalog authorityは各Family Capability descriptorであり、application/interface aggregatorがread-only metadataとして集約する。Frontendはlabel/order/default Stageを含むfull catalogをduplicate ownershipしない。
 
 ### 3.6 Navigation state
 
@@ -438,7 +449,7 @@ ENH-E5のStage再配置でschemaを簡略化しない。
 
 ### 4.5 Navigation metadata schema
 
-Backend read-model方式をArchitecture Reviewで採用した場合のみ、scientific schemaとは別に`analysis-navigation/1`を定義する。
+Navigation metadata response schemaは`analysis-navigation/1`として固定する。
 
 ```text
 schema_version
@@ -452,7 +463,15 @@ families[].stages[].label
 families[].stages[].order
 ```
 
-このschemaをcurrent `SchemaRegistry`へ登録するか、presentation専用validatorとして別ownershipにするかはfreeze前に確定する。Execution Plan / runtime Stage versionと連動させない。
+このschemaはpresentation/application metadata contractであり、scientific generic `SchemaRegistry`へ登録しない。専用のinterface/application validationで検証する。Execution Plan / runtime Stage versionとは独立する。
+
+External read interface:
+
+```text
+GET /api/v1/navigation/analysis
+```
+
+response `schema_version`は`analysis-navigation/1`である。
 
 ## 5. Canonicalization Algorithm
 
@@ -547,7 +566,24 @@ snapshot_hash
 snapshot_schema_version
 ```
 
-Research Context / Analysis Specification / Analysis View / Execution Planとのidentityを必要とするFamily workflowでは、current application layerが`analysis_spec_json`へそのmetadata/snapshotを格納する場合がある。ただしcanonical Executionにそれぞれの独立FK columnがあると仮定しない。
+Research Context / Analysis Specification / Analysis View / Execution Planとのidentityを必要とするFamily workflowでは、application layerが`analysis_spec_json`へ必要なmetadata/snapshotを格納できる。ただしcanonical Executionへ存在しない独立FK columnを捏造しない。
+
+`runtime_version_json`は少なくとも次を保持する。
+
+```text
+ariadne_code_version
+python_version
+platform_system
+platform_release
+machine
+libraries
+```
+
+`libraries`には実際に利用したscientific runner dependencyのversionを保存する。common runtimeとしてNumPy/Pandas、Predictiveでscikit-learnを使用した場合はそのactual versionを含める。未使用future optional libraryをversion取得目的だけでimportしない。
+
+stochastic Stageのactual seedは§19.4の`StageAttempt.effective_random_seed`をauthorityとする。同一logical Stageのtechnical retryでは同じeffective seedを再利用する。deterministic Stageは`null`でよい。
+
+ここで保証するのはenvironment再構築に必要なmetadataであり、異なるplatform/library build間のbit-for-bit numerical identityではない。
 
 browser Navigation Stageはreproducibility inputではない。
 
@@ -594,6 +630,30 @@ sampling
 Analysis View lifecycle serviceはcreate/list/get/update/validate/fixを提供する。Family tab切替だけでAnalysis Viewを複製しない。
 
 Exploratory / Predictive / Causal use caseはAnalysis Viewをoptional input/contextとして利用できるが、Analysis Viewへ`navigation_stage`を保存しない。
+
+`row_filter` validationはsource `DatasetVersion`のlogical column typeをresolveし、operator/valueとのcompatibilityを同一ruleでcreate/update/validate/fixへ適用する。
+
+| logical type | allowed operators | value contract |
+| --- | --- | --- |
+| BOOLEAN | EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL | bool |
+| INTEGER | EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL | boolを除くinteger |
+| REAL | EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL | finite int/float、bool除外 |
+| DATETIME | EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL | ISO-8601 string |
+| TEXT | EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL | string |
+| OTHER | IS_NULL, NOT_NULL | valueなし |
+
+追加invariant:
+
+- `IS_NULL / NOT_NULL`はvalueを受け取らない。
+- `IN / NOT_IN`はnon-empty list。
+- `TEXT`へlexical LT/LTE/GT/GTEを許可しない。
+- `time_cutoff`はDATETIME column + `LT / LTE`。
+- source logical typeを決定できない場合はvalidation successにしない。
+- type/operator/value incompatibilityはstable code `FILTER_TYPE_MISMATCH`。
+- current operator taxonomy自体は変更しない。
+- new expression language、derived-expression全体のstatic typing、Family-specific filter typingはENH-E5 scope外。
+
+この追加validationは`analysis-view/1` persistent schemaを変更しない。
 
 ## 8. Planner Protocol
 
@@ -699,54 +759,59 @@ Rules:
 
 ### 10.1 Capability-owned Navigation Catalog
 
-Navigation catalogはRunner Registryと別registry/providerとして扱う。
+Navigation catalogはRunner Registryとは別のimmutable descriptor/providerとして扱う。
 
 ```text
-exploratory capability -> exploratory navigation catalog
-causal capability      -> causal navigation catalog
-predictive capability  -> predictive navigation catalog
+exploratory capability -> EXPLORATORY descriptor
+causal capability      -> CAUSAL descriptor
+predictive capability  -> PREDICTIVE descriptor
            │
            ▼
-generic navigation catalog aggregator
+application/interface navigation catalog aggregator
+           │
+           ▼
+GET /api/v1/navigation/analysis
 ```
 
-Stage catalog target:
-
-Exploratory:
+Frozen descriptors:
 
 ```text
-profile
-data-quality
-distribution
-relationships
-comparison
-findings
+EXPLORATORY / exploratory / default=profile
+  profile
+  data-quality
+  distribution
+  relationships
+  comparison
+  findings
+
+PREDICTIVE / predictive / default=setup
+  setup
+  train
+  predict
+  metrics
+  explainability
+  model-management
+
+CAUSAL / causal / default=setup
+  setup
+  discovery
+  identification
+  estimation
+  effects
+  diagnostics
+  sensitivity
 ```
 
-Predictive:
+Aggregator validation:
 
-```text
-setup
-train
-predict
-metrics
-explainability
-model-management
-```
+1. 3 Familyが各1件存在する。
+2. Family slugはglobalに一意。
+3. Family内`stage_id / slug`は一意。
+4. default Stageが当該Family catalog内に存在する。
+5. orderがdeterministicである。
+6. runtime StageType/StageDefinitionをcatalogから生成しない。
 
-Causal:
-
-```text
-setup
-discovery
-identification
-estimation
-effects
-diagnostics
-sensitivity
-```
-
-Family descriptor default StageはHuman Architecture Reviewでfreezeする。Runtime planner/runner registryはこのdefault値を参照しない。
+Runtime planner/runner registryはdefault Stageおよびsidebar orderを参照しない。
 
 ## 11. Generic Executor / Worker Sequence
 
@@ -875,15 +940,17 @@ PENDING/READY/RUNNING -> CANCELLED
 ```
 
 Attempt:
-
 ```text
 attempt_number
 worker_id
 stage_attempt_id
+effective_random_seed
 started_at
 finished_at
 error
 ```
+
+`effective_random_seed`はstochastic Stageのactual seedをattempt単位で保持する。deterministic Stageは`null`。technical retryでは同一logical Stage seedを再利用し、各attempt rowへ同じeffective seedを記録する。Runner result/application boundaryは、processorがactual seedをStageAttemptへ保存できる形で報告する。
 
 ### 11.5 Execution completion
 
@@ -1071,6 +1138,42 @@ Chart Specificationは少なくとも次の情報を表現できる設計とす�
 - axis/legend metadata
 
 `Distribution -> histogram`、`Relationships -> scatter`、`Comparison -> box/grouped chart`のように各Navigation Stageから利用する。
+
+### 12.6 Exploratory handoff / provenance
+
+Explore stateからAnalysisView DRAFTへhandoffする対象は**data-selection semantics**だけである。
+
+```text
+row_filter
+selected_columns
+derived_columns
+missing_value_policy
+time_cutoff
+sampling
+```
+
+chart mark/encoding、panel layout、active widget等のpresentation-only stateはAnalysisViewへ保存しない。
+
+Exploratory Resultからdownstream analysisを開始する場合は、別のdraft resource typeを作らずcanonical `AnalysisSpecification`を`status=DRAFT`としてpersistする。
+
+Required request semantics:
+
+```text
+source_result_id
+target_family: CAUSAL | PREDICTIVE
+analysis_mode: EXPLORATORY | CONFIRMATORY
+research_context_version_id?   # source lineageから一意に導けない場合のみrequired
+```
+
+Rules:
+
+1. `dataset_version_id / analysis_view_id`はsource Result lineageからderiveし、request overrideを受け付けない。
+2. ResearchContextVersionはsource lineageから一意ならderiveする。0件/複数件ならrequestで明示させる。
+3. DRAFTではtarget Family `family_spec`が未完成でもよい。
+4. source ResultからDRAFT AnalysisSpecificationへsemantic lineage `MOTIVATED`を保存する。
+5. handoffだけでFIXまたはExecutionを開始しない。
+6. `analysis_mode=CONFIRMATORY`かつsource Exploratory Resultと同じimmutable `dataset_version_id`を利用する場合、`EXPLORATORY_REUSE_SAME_DATA` warningを付与する。
+7. Analysis-significant provenanceはAnalysisView identity/hash、family_spec、sampling、Execution code/runtime snapshot、Result/Artifact lineageから再構成できるようにし、DOM/CSS/panel layoutをscientific provenanceにしない。
 
 ## 13. Causal Capability
 
@@ -1403,14 +1506,44 @@ Navigation `Predict`は、Planning baselineに存在するmodel/result/predictio
 
 `Metrics`は`EVALUATION_RESULT`をread/compareして表示できる。
 
-Evaluation Resultの例:
+Evaluation Resultはclassification/regression metric、subgroup evaluation、diagnostics/warningsを保持できる。`Metrics` Navigation Stageを開くためだけに新Executionを要求しない。
 
-- classification metric
-- regression metric
-- subgroup evaluation
-- diagnostics / warnings
+#### 14.7.1 Predictive subgroup evaluation
 
-`Metrics` Navigation Stageを開くためだけに新Executionを要求しない。
+Evaluation populationは**untouched TEST partition**とする。
+
+Algorithm:
+
+1. `evaluation_spec.subgroups`に指定された各subgroup columnを**独立**にsliceする。
+2. automatic intersection subgroup、automatic discovery、general fairness frameworkは生成しない。
+3. subgroup columnはmodel featureである必要はない。TEST row ordinal/identityとともにevaluation bundleへ保持する。
+4. nullはexplicit null groupとして扱う。
+5. primary metricおよび指定secondary metricsをgroupごとに計算する。
+6. 全group recordへ`sample_count`を必須出力する。
+7. uncertaintyはnonparametric percentile bootstrapを用いる。
+8. `confidence=0.95`, `resamples=1000`。
+9. bootstrap seedはimmutable split/spec seed、subgroup column、canonical group value、metric、namespaceからdeterministically deriveする。
+10. `sample_count < 2`または`valid_resamples < 200`ではCIを出力せずwarningを返す。
+11. metric自体が計算不能なら`value=null`, `uncertainty=null`としstatus/warningを返す。数値を捏造しない。
+
+Output shapeはgroup valueをmap keyへ埋め込まずlist recordとする。
+
+```text
+subgroup_column
+group_value
+sample_count
+metric
+value?
+uncertainty?:
+  method = percentile_bootstrap
+  confidence = 0.95
+  lower
+  upper
+  requested_resamples = 1000
+  valid_resamples
+status
+warnings[]
+```
 
 ### 14.8 Explainability
 
@@ -1534,45 +1667,68 @@ NOT_APPLICABLE
 
 ### 16.1 Canonical ComparisonQueryService
 
-Current comparisonは2件以上のcanonical Result IDを入力し、次を検証する。
-
-1. 全Resultが存在する。
-2. 全Resultの親Executionが存在する。
-3. 全Executionが同一Projectに属する。
-4. requestでProject IDが指定された場合、そのProjectと一致する。
-5. 全Executionが同一`operation`である。
-6. 全Resultが同一`result_type`である。
-
-比較対象Execution snapshot field:
+Comparisonは二段階gateとする。
 
 ```text
-algorithm_or_estimator
-parameter_json
-random_seed
-analysis_spec_json
-dataset_version_id
-input_graph_version_id
+same Family / same Result Type
+        ↓
+semantic_compatible
+        ↓
+direct_metric_comparable
 ```
 
-各fieldについて全値が一致すれば`common_conditions`、異なれば`changed_conditions[{field, values}]`へ分類する。
+Request-level invalid:
 
-Result差分:
+- Resultが存在しない。
+- 親Executionが存在しない。
+- Project境界が一致しない。
+- 異なるFamilyまたは異なるResult Typeをgeneric direct comparisonへ投入する。
+
+同一Family/Result Typeでもsemantic keyが不一致の場合はHTTP/application request自体を失敗させず、
 
 ```text
-result_id
-scientific_status
-summary
-warnings
+semantic_compatible = false
+direct_metric_comparable = false
+reasons[]
 ```
 
-Lineage summary:
+を返し、quantitative delta/rankを生成しない。
+
+Predictive semantic key:
 
 ```text
-execution_ids
-result_ids
+task_type
+prediction target/outcome
+prediction unit
+prediction time
+horizon
+deployment/evaluation population semantics
 ```
 
-Causal question内`estimand / outcome / population`が不一致の場合、`INCOMPARABLE` warningを返す。
+model algorithm、feature set、hyperparameter、split methodは**comparison differences**でありsemantic keyそのものではない。
+
+Predictive direct metric comparisonはsemantic compatibilityに加え次をすべて要求する。
+
+```text
+same dataset_version_id
+same TEST-row identity/hash
+same metric definition
+```
+
+Causal semantic key:
+
+```text
+treatment/exposure
+outcome
+estimand
+target population
+```
+
+Causal direct quantitative comparisonはsemantic compatibilityに加えsame dataset/view/analysis populationを要求する。
+
+同じimmutable `dataset_version_id`を使用したExploratory → confirmatory reuseはAnalysisViewが異なってもsame-dataである。`EXPLORATORY_REUSE_SAME_DATA`はnon-blocking warningとし、先行Exploratory Result IDをevidenceとして保持してExecution snapshotへ伝播する。
+
+`common_conditions / changed_conditions`は上記compatibility gate通過後の差分説明として利用する。AUC、RMSE、ATE等をcross-family単一scoreへ変換しない。
 
 ### 16.2 Cross-family boundary
 
@@ -1616,7 +1772,6 @@ Result --SUMMARIZES--> Result
 Result --SUMMARIZES--> Artifact
 Result --MOTIVATED--> Execution
 Result --MOTIVATED--> AnalysisSpecification
-Result --MOTIVATED--> AnalysisSpecificationDraft
 ```
 
 `Result / Artifact --DOCUMENTS|SUPPORTED_BY|EVIDENCE_FOR--> target`のtarget許可集合:
@@ -1648,24 +1803,54 @@ GraphVersion
 
 Unknown tupleはclosed-by-defaultでrejectする。typed structural tupleをgeneric `LineageEdge`として二重writeしない。relation名だけを見てgeneric write可否を判断しない。
 
-### 17.2 Current Result lineage projection
+### 17.2 Canonical lineage read model
 
-`LineageQueryService`はcanonical Resultをrootとして、Project / Execution / DatasetVersion / source Artifact / GraphVersion / upstream Result / output Artifact / Annotationを最大深度32でtraverseする。
-
-Internal projection edgeはID pairとして作られ、Web API layerでsource/target node typeから次の表示relationへ変換する。
+Lineage read modelは最低限次のcanonical chainを再構成できる。
 
 ```text
-CONTEXT_FOR
-SOURCE_OF
-INPUT_TO
-GENERATED
-HAS_ARTIFACT
-HAS_ANNOTATION
-REVISED_FROM
-RELATED_TO
+ResearchContextVersion
+  ↓
+AnalysisSpecification
+  ↓
+ExecutionPlan
+  ↓
+Execution
+  ↓
+StageExecution
+  ↓
+Result
+  ↓
+Artifact
 ```
 
-この表示relationをgeneric lineage write allowlistとして使用しない。
+さらに分析入力として次を接続する。
+
+```text
+DatasetVersion
+AnalysisView
+GraphVersion
+input Result
+base Execution
+```
+
+Projection rule:
+
+1. canonical FK、persistent snapshot、Execution/Stage/Result/Artifact ownershipからdeterministically導ける**structural relation**はread modelで投影する。
+2. そのstructural relationをgeneric `LineageEdge`へ二重persistしない。
+3. `MOTIVATED`等、canonical FKだけでは表現できないsemantic relationをgeneric LineageEdgeへ保存する。
+4. relationを推測してedgeを生成しない。
+5. Result rootだけでなく、ResearchContextVersion/AnalysisSpecification/ExecutionPlanからdownstreamへ辿れるread pathを提供する。
+6. Project境界を越えない。
+
+Exploratory Resultからdownstream DRAFTを作る場合は、
+
+```text
+Result --MOTIVATED--> AnalysisSpecification(status=DRAFT)
+```
+
+をsemantic edgeとして保持する。別resource type `AnalysisSpecificationDraft`を正本として導入しない。
+
+Web API表示relationはprojection presentationであり、generic lineage write allowlistには利用しない。
 
 ### 17.3 Project boundary
 
@@ -1698,21 +1883,22 @@ ProjectShell
 
 ### 18.2 Navigation catalog loading
 
-Catalog input sourceはArchitecture Reviewで次のいずれかへfreezeする。
+Frontendのcatalog authorityはbackend read-only metadata endpointである。
 
-- backend read-only `analysis-navigation/1` endpoint
-- deploy-time Capability descriptor aggregate
+```text
+GET /api/v1/navigation/analysis
+response schema = analysis-navigation/1
+```
 
-Execution Agentが方式を選択しない。
+Backend側のsourceはFamily Capability descriptor aggregateである。Frontendはfull catalogをhard-codeしてduplicate ownershipしない。
 
-Catalog normalize後のin-memory model:
+Normalized in-memory model:
 
 ```typescript
 type AnalysisNavigationCatalog = {
-  schemaVersion: string;
+  schemaVersion: "analysis-navigation/1";
   families: FamilyNavigationDescriptor[];
 };
-
 type FamilyNavigationDescriptor = {
   family: "EXPLORATORY" | "CAUSAL" | "PREDICTIVE";
   slug: string;
@@ -1720,7 +1906,6 @@ type FamilyNavigationDescriptor = {
   defaultStageId: string;
   stages: NavigationStageDescriptor[];
 };
-
 type NavigationStageDescriptor = {
   stageId: string;
   slug: string;
@@ -1729,14 +1914,14 @@ type NavigationStageDescriptor = {
 };
 ```
 
-Load state:
+Catalog load state:
 
 ```text
-IDLE -> LOADING -> READY(catalog)
-                -> ERROR(error)
+IDLE -> LOADING -> READY
+                -> ERROR
 ```
 
-Catalog validation failureをsilent fallbackしない。
+schema/version/catalog invariant failureをsilent fallbackしない。runtime status/input/outputはNavigation metadataへ含めない。
 
 ### 18.3 FamilyTabs
 
@@ -1805,13 +1990,28 @@ Binding registryはsurface/component selectionだけを所有する。
 
 ### 18.6 Route contract
 
-Target canonical route:
+Canonical Stage route:
 
 ```text
 /projects/{project_id}/analysis/{family_slug}/{stage_slug}
 ```
 
-Required parser:
+Canonical resource deep route:
+
+```text
+/projects/{project_id}/analysis/{family_slug}/{stage_slug}/resource/{resource_type}/{resource_id}
+```
+
+ENH-E5 resource type:
+
+```text
+analysis-specification
+execution
+result
+graph-version
+```
+
+Required Stage parser:
 
 ```python
 def parse_analysis_route(project_id, family_slug, stage_slug, catalog):
@@ -1824,20 +2024,17 @@ def parse_analysis_route(project_id, family_slug, stage_slug, catalog):
     return NavigationContext(project_id, family.family, stage.stage_id)
 ```
 
-Required serializer:
+Explicit Family/Stage deep routeではrouteのStageを保持する。generic direct resource linkからdeep routeを構築する場合はresourceからFamilyをderiveし、そのFamilyのdefault Stageへ遷移する。
 
-```python
-def to_analysis_route(project_id, family, stage_id, catalog):
-    family_desc = catalog.require_family(family)
-    stage_desc = family_desc.require_stage(stage_id)
-    return f"/projects/{project_id}/analysis/{family_desc.slug}/{stage_desc.slug}"
-```
+resourceのactual Familyとexplicit route Familyが不一致の場合はexplicit mismatch errorとし、silent normalizationしない。
 
 Invariant:
 
 ```text
 parse(serialize(context)) == context
 ```
+
+routeはpresentation stateでありResource/Execution persistenceへ保存しない。
 
 ### 18.7 Deep link / reload / browser history
 
@@ -1848,43 +2045,60 @@ parse(serialize(context)) == context
 
 ### 18.8 Legacy route normalization
 
-Legacy `/explore`, `/causal`, `/predictive`等をサポートする場合、canonical analysis routeへ一方向normalizeする。
+legacy analytical routeを残す場合は次へ**一方向**normalizeする。
 
 ```text
-legacy route
-   ↓ resolve family
-canonical family default Stage route
+/explore     -> /projects/{project_id}/analysis/exploratory/profile
+/predictive  -> /projects/{project_id}/analysis/predictive/setup
+/causal      -> /projects/{project_id}/analysis/causal/setup
 ```
 
-Legacy routeと新routeを二つの独立navigation state authorityとして維持しない。
+既存routeがproject IDを別segment/contextから得る場合でも、最終authorityはcanonical routeとする。legacy/new routeを二つの独立navigation state authorityとして維持しない。
 
 ### 18.9 Operation availability
 
-Stage visibilityとaction availabilityを別stateとする。
+Stage visibilityとaction availabilityを別stateとする。Backendがaction permission/prerequisiteをauthorityとして返す。
 
-例:
+Response minimum:
 
-```text
-Causal / Estimation Stage = visible
-Identification prerequisite = unsatisfied
-Run action = disabled(reason_code="IDENTIFICATION_REQUIRED")
+```json
+{
+  "allowed": false,
+  "reason_code": "IDENTIFICATION_REQUIRED",
+  "message": "Identification must be completed before estimation."
+}
 ```
 
-Stageを非表示にしてscientific prerequisiteを表現することを基本挙動にしない。
+`allowed=false`でもStage自体を非表示にしてscientific prerequisiteを表現することを基本挙動にしない。
 
-### 18.10 Error handling
+Authorizationとscientific prerequisiteは別判定である。Frontendはbackend resultを表示し、route状態だけから実行可能性を推測しない。
+
+### 18.10 Error handling / async presentation state
 
 | Error | UI behavior | Runtime side effect |
 | --- | --- | --- |
 | unknown Family slug | explicit not-found/unsupported | なし |
 | known Family + unknown Stage | explicit stage error | なし |
+| route/resource Family mismatch | explicit mismatch error | なし |
 | duplicate Stage ID/slug | catalog configuration error / fail-fast | なし |
 | missing default Stage | catalog configuration error / fail-fast | なし |
 | renderer missing | configuration defect | なし |
 | catalog load failure | navigation error state | なし |
-| action prerequisite failure | operation disabled / backend error表示 | Executionは勝手に生成しない |
+| action prerequisite failure | operation disabled / backend reason表示 | Executionは勝手に生成しない |
 
-別Stageへsilent fallbackして入力ミスやconfiguration defectを隠さない。
+E5変更surfaceのasync presentation state vocabulary:
+
+```text
+IDLE
+LOADING
+READY
+EMPTY
+PARTIAL
+ERROR
+CANCELLED
+```
+
+別Stageへのsilent fallbackやfabricated success stateで入力ミス/configuration defect/partial resultを隠さない。
 
 ### 18.11 Terminology Guard
 
@@ -1892,6 +2106,47 @@ Stageを非表示にしてscientific prerequisiteを表現することを基本�
 - Feature importance / explanationをcausal effectとして表示しない。
 - Exploratory findingをcausal conclusionへ自動変換しない。
 - Runtime Stage statusをNavigation Stage completion indicatorとして転用しない。
+
+### 18.12 Accessibility
+
+ENH-E5で変更するFamily tab、Stage sidebar、Stage surface、deep-linked resource、async/error surfaceは次を満たす。
+
+- keyboardだけで主要navigation/actionを操作できる。
+- route transition/error後のfocus destinationをdeterministicにする。
+- icon-only/action controlへaccessible nameを付与する。
+- form validation errorを対象inputへprogrammatically associateする。
+- active/disabled/error/partial状態を色だけで表現しない。
+- normal text contrastは4.5:1以上。
+- large text、UI graphics、focus indicationは3:1以上。
+
+full legacy UIのretroactive conformanceはENH-E5 acceptanceに含めない。
+
+### 18.13 Project authorization / sensitive output
+
+Persisted Project roleは次の3値だけを使用する。
+
+```text
+OWNER
+EDITOR
+VIEWER
+```
+
+| Action | OWNER | EDITOR | VIEWER |
+| --- | --- | --- | --- |
+| Project-scoped READ | allow | allow | allow |
+| WRITE/MUTATE | allow | allow | deny |
+| Execution mutation | allow | allow | deny |
+| Export create | allow | allow | deny |
+| Membership admin | allow | deny | deny |
+| Explicit sensitive output | allow | allow | deny |
+
+独立`EXECUTE` roleを追加しない。
+
+全project-scoped routeはservice action前にProject membershipをresolveする。legacy generic routeも例外にしない。
+
+prediction row / local explanation row/detailはpotentially sensitive outputとして扱う。VIEWERにはaggregate/suppressed representationだけを返し、explicit sensitive detailはOWNER/EDITORに限定する。
+
+configurable sensitive-column metadata/policyはD3であり、本designで新規policy engineを作らない。
 
 ## 19. Persistence Mapping
 
@@ -1997,12 +2252,21 @@ stage_attempt_id
 stage_execution_id
 attempt_number
 worker_id
+effective_random_seed: int | null
 started_at
 finished_at
 error_json
 ```
 
 AttemptをJSON historyへ畳み込まず、canonical pathでは別append-only rowとして保持する。
+
+`effective_random_seed` rules:
+
+- stochastic Stage: actual effective seedを保存。
+- deterministic Stage: `null`。
+- 同一logical Stageのtechnical retry: 同じeffective seedを再利用。
+- retryでattempt rowが増えても各attemptがactual seedを明示する。
+- runner/application boundaryはprocessorがactual seedを永続化できるcontractを持つ。
 
 ### 19.5 Result / Artifact persistence
 
@@ -2059,161 +2323,250 @@ Current Family / Current Navigation StageはURL/application stateからresolve�
 
 ### 19.7 Migration判定
 
-Navigation catalogをnon-persistent metadataとして実装し、上記canonical tablesの既存contractを変更しない限り、Navigation導入自体を理由とするDB schema migrationは不要である。
+Navigation catalog/route state自体はnon-persistent metadataであり、Navigation導入を理由とするDB column/tableは追加しない。
 
-persistent field/tableが必要と判明した場合はCoding Agent判断で追加せず、architecture amendmentへ戻す。
+ENH-E5で必要なDB migration:
+
+```text
+StageAttempt.effective_random_seed: int | null
+```
+
+既存StageAttempt rowは`null`でbackfill可能とする。application/runtime deploymentはcolumn存在を前提に切り替える。
+
+`Execution.runtime_version_json`のmetadata completionは既存JSON fieldを利用するため、独立column追加を必須としない。
+
+これ以外のpersistent field/tableが必要と判明した場合はCoding Agent判断で追加せず、canonical `30`を先にamendし、10/21/22/23との整合とNFR-019を再評価する。
+
+### 19.8 Command idempotency / retry-safe Artifact materialization
+
+Idempotency header/keyを「全POST」に要求しない。duplicate durable side effectを作り得るCommandを対象とする。
+
+Logical scope:
+
+```text
+(project_id, command_scope, idempotency_key)
+```
+
+Serverはcanonical semantic request hashを保存する。pathに含まれるsemantic resource IDもhash inputへ含める。
+
+Behavior:
+
+```text
+missing required key
+  -> IDEMPOTENCY_KEY_REQUIRED
+
+same scope/key + same request hash
+  -> stored result/response replay
+  -> duplicate durable side effectなし
+
+same scope/key + different request hash
+  -> HTTP 409
+  -> IDEMPOTENCY_CONFLICT
+```
+
+concurrent duplicate requestはDB uniqueness/advisory lock等でsingle winnerにする。SQLite adapterではprocess lockによる同等semanticsを許容する。可能な限りidempotency recordとdomain side effectを同一transactionへ置く。
+
+対象Commandには少なくとも、DatasetVersion create、Execution batch create、GraphVersion/GraphEditDraft create、Result/Product export create、AnalysisView create、Exploration execution submit、Exploratory Result→AnalysisSpecification DRAFT create、ResearchContext create、AnalysisSpecification create/revise、durable Predictive split-validation、Predictive Execution submit/rerun/revise、Annotation/WorkspaceAnnotation createを含める。
+
+対象外:
+
+- pure GET/query/compare/preview/validate
+- current plan-hashでnatural idempotencyを持つExecutionPlan create
+- unique constraintで自然に一意なexplicit lineage link
+- Project create
+- state-machine transitionとして一意性を持つcancel/fix/update
+
+exactly-once executionは保証しない。
+
+successful Stage outputのArtifact logical identity/object keyはExecution + Stage + output slot/ordinal + Artifact typeからdeterministically deriveする。
+
+- same logical output + same content hash: existing durable Artifactをreuse。
+- same logical output + different content hash: nondeterministic-output conflictとしてfail。
+- Result/Artifact metadata bindingはtransactionalにcommitする。
+- metadata DBとArtifactStore間のgeneral compensationはNFR-007=D3。
+
+新しいuniqueness columnなしでこのinvariantを保証できないことが判明した場合、implementation contractで独自migrationを追加せず本sectionを先にamendする。
+
+### 19.9 Deferred design boundary
+
+次はRequirementとしては`DEFERRED / FUTURE`を維持するがENH-E5 implementation/acceptanceへ含めない。
+
+- general operational Audit contract / AuditLog
+- configurable retention/deletion policy
+- system/operator-level authorization
+- configurable sensitive-column governance
+- additional exploratory matrix/full visualization surfaces
+- automated hyperparameter selection
+- generic Product submit/poll CLI
+- DB/Worker/ArtifactStore component readiness framework
+- general hard-limit/resource-policy framework
+- general p95 API SLO/performance gate
+- object-storage adapter
+- metadata/artifact cross-store compensation
+- production-grade authentication/security hardening
+- explicit Worker restart/resume semantics
+- comprehensive structured logging/metrics overhaul
+- systematic schema-example synchronization
+
+D3のverification targetをENH-E5 acceptanceへ混ぜない。
 
 ## 20. Test Design
 
-詳細設計のtest seamは、Navigationとruntimeの責務分離を直接検証できる単位で設ける。
+D2 packageのverificationをdomain/API/integration/browser/architectureへtraceし、D3 targetをENH-E5 acceptanceへ含めない。
 
 ### 20.1 Domain / Schema tests
 
-`AnalysisFamily`:
+`AnalysisFamily / AnalysisSpecification / ExecutionPlan`:
 
-- value集合が`EXPLORATORY / CAUSAL / PREDICTIVE`と完全一致する。
-- `AnalysisSpecification.envelope()`が`analysis_family.value`を出力する。
-- unknown Family文字列をdomain conversionで拒否する。
+- Family集合が`EXPLORATORY / CAUSAL / PREDICTIVE`と完全一致。
+- duplicate Family discriminatorを追加しない。
+- AnalysisSpecificationは`navigation_stage / current_stage / current_family`を受理しない。
+- plan canonical payload/hashへNavigation metadataを混入させない。
 
-`AnalysisSpecification`:
+AnalysisView typed filter:
 
-- `analysis-specification/1`の許可field以外を拒否する。
-- `navigation_stage / current_stage / current_family`をunknown fieldとして受理しない。
-- FIXED後のupdateを拒否する。
+- BOOLEAN / INTEGER / REAL / DATETIME / TEXT / OTHERのoperator matrixを検証。
+- `IS_NULL / NOT_NULL` value禁止。
+- `IN / NOT_IN` non-empty list。
+- TEXT lexical ordering拒否。
+- time_cutoffはDATETIME + LT/LTE。
+- unknown typeおよびtype mismatchは`FILTER_TYPE_MISMATCH`。
+- create/update/validate/fixのrule parity。
 
-`ExecutionPlan` / `StageType`:
+### 20.2 Execution / Worker / reproducibility tests
 
-- plan canonical payloadにNavigation Stageが含まれない。
-- `StageType`のnamespace/name/version validationを検証する。
-- Plan hashがnavigation label/order変更で変化しない。
+- current lifecycle/claim/lease/CANCELLED transitionをprotected regressionとする。
+- retryごとにStageAttemptがappendされる。
+- stochastic Stageは`effective_random_seed`を保存する。
+- technical retryで同一logical Stage seedを再利用する。
+- deterministic Stageはseed nullを許可する。
+- `runtime_version_json`にcode/python/platform/machine/actual library versionが保存される。
+- Navigation Stageなしでplanner/executor/workerが動作する。
 
-`ResourceRef / LineageEdge`:
+### 20.3 Navigation catalog / architecture tests
 
-- Project境界越えを拒否する。
-- Navigation Stageをresource typeとして要求しない。
+- 3 Family descriptorが各1件。
+- exact default: exploratory/profile, predictive/setup, causal/setup。
+- exact Stage set/order。
+- `GET /api/v1/navigation/analysis`が`analysis-navigation/1`を返す。
+- runtime input/output/status/retry/leaseをresponseへ含めない。
+- `analysis-navigation/1`をscientific generic SchemaRegistryへ登録しない。
+- frontendにfull catalog duplicate ownershipがない。
+- runtime moduleからnavigation/routerへのprohibited importをstatic testで検出する。
 
-### 20.2 Execution / Worker tests
+### 20.4 Route / browser / accessibility tests
 
-Execution lifecycle:
-
-- `QUEUED -> RUNNING -> SUCCEEDED`を許可する。
-- `RUNNING -> FAILED -> QUEUED` retryを検証する。
-- invalid transitionを拒否する。
-
-Claim/lease:
-
-- QUEUED Executionを1 workerだけがclaimできる。
-- expired RUNNING leaseをreclaimできる。
-- unexpired RUNNING leaseはclaim対象外。
-- `lease_seconds <= 0`を拒否する。
-- lease owner mismatchでrenew/update/completeを拒否する。
-- `claim_token` public field/APIが追加されていない。
-
-StageExecution:
-
-- PENDING/READY/RUNNING/SUCCEEDED/FAILED/SKIPPED/CANCELLED transitionを§11.4どおり検証する。
-- retryごとにStageAttemptがappendされattempt_numberが増加する。
-- SUCCEEDED Execution complete時、全StageがSUCCEEDEDまたはSKIPPEDであることを要求する。
-
-Architecture:
-
-- runtime moduleからnavigation moduleへのprohibited importを検出する。
-- worker claim / executorをNavigation Stageなしで実行できる。
-
-### 20.3 Navigation catalog tests
-
-- Family descriptorが3 Familyを一意に持つ。
-- Family内Stage ID / slugが一意。
-- default Stageがcatalog内に存在。
-- orderがdeterministic。
-- empty Stage listを拒否。
-- renderer binding欠落をconfiguration errorとして検出。
-
-### 20.4 Route / browser state tests
-
-- route serialize -> parse round-trip。
-- direct deep linkでFamily/Stage復元。
-- reloadで同じroute contextを復元。
-- browser back/forward同期。
-- unknown Familyをexplicit error。
-- known Family + unknown Stageをexplicit error。
-- legacy routeを採用する場合、canonical routeへ一方向normalize。
-- Family switch時にtarget default Stageへ遷移。
-- Stage switch時にFamily保持。
+- Stage route serialize/parse round-trip。
+- resource deep routeの4 resource type。
+- explicit Family/Stage deep linkはStageを保持。
+- generic resource direct linkはresource Familyをderiveしてdefault Stageへ遷移。
+- explicit route Familyとresource Family mismatchはerror。
+- reload/back/forward。
+- legacy route一方向normalize。
+- Family switchはtarget default Stage。
 - navigation操作でExecution/StageExecution stateが変化しない。
+- async `IDLE/LOADING/READY/EMPTY/PARTIAL/ERROR/CANCELLED`。
+- keyboard、focus、accessible name、error association、non-color state、contrast threshold。
 
-### 20.5 Exploratory tests
+### 20.5 Exploratory / handoff tests
 
-- 6 Navigation Stageのbinding coverage。
-- `Distribution`がread-only pathで表示可能な場合、新Executionを要求しない。
-- `Findings`がResult / Annotation / Artifact / Lineageから構成できる。
-- `Finding` persistent aggregateをUI都合だけで追加しない。
-- Visualizationが独立Stageとしてcatalogへ混入しない。
-- finding textをcausal conclusionとして自動変換しない。
+- 6 Navigation Stage binding。
+- read-only surfaceが不要なExecutionを生成しない。
+- AnalysisView DRAFTへdata-selection semanticsだけをhandoff。
+- visualization-only stateをAnalysisViewへ保存しない。
+- Exploratory Resultからcanonical AnalysisSpecification DRAFTを生成。
+- target FamilyはCAUSAL/PREDICTIVEのみ。
+- auto FIX/Executionなし。
+- `Result --MOTIVATED--> AnalysisSpecification`。
+- same-data confirmatoryで`EXPLORATORY_REUSE_SAME_DATA`。
 
 ### 20.6 Causal tests
 
-- `CausalPlanner`がcanonical Execution 1件につき1 runtime Stage planを生成する。
-- operation -> StageType mappingが§13.1と一致する。
-- `ELIGIBILITY` runtime Stageを存在前提にしない。
-- §13.2 input matrixをoperationごとに検証する。
-- Identification surfaceとEstimation surfaceの入力責務が分離される。
-- Identification結果をEstimation use caseへ渡すcontractを検証する。
-- Effects / Diagnostics / Sensitivityがsaved Resultからreadできるケースで新runtime Stageを要求しない。
-- Navigation orderがExecution Plan dependencyへ流入しない。
+- existing Causal planner/operation mapping/input matrixをprotected regression。
+- IdentificationとEstimation responsibilityを分離。
+- Effects/Diagnostics/Sensitivityがsaved Result readで成立する場合にNavigation openingだけでExecutionを要求しない。
+- Navigation orderをExecution dependencyへ流入させない。
 
-### 20.7 Predictive compatibility tests
+### 20.7 Predictive compatibility / subgroup tests
 
-Inventory:
+Existing compatibility:
 
-- current UI controlを全量列挙し、各controlにgenerated spec fieldと新Stage配置先がある。
-- unmapped control count = 0。
-
-Schema parity:
-
-- UI再配置前後のcanonical `predictive-analysis-spec/1`が同一入力に対して等価。
-- default/hidden/generated semanticsが変化しない。
-
-Leakage/split:
-
-- target leakage拒否。
-- future feature拒否。
-- GROUP key leakage拒否。
-- partition overlap拒否。
-- group overlap拒否。
-- TEST selection利用拒否。
+- current UI control inventoryのunmapped count = 0。
+- Stage再配置前後で`predictive-analysis-spec/1` canonical payload parity。
+- field削除/rename/default semantic変更なし。
+- target/future/group/test leakage protection。
 - preprocessing TRAIN-only fit。
+- current runtime plan `split -> prepare -> train -> evaluate -> optional explain` regression。
 
-Runtime:
+Subgroup:
 
-- full planが`split -> prepare -> train -> evaluate -> optional explain`を生成する。
-- Navigation `Train`がruntime `train`単体実行を意味しない。
-- `Metrics`が`EVALUATION_RESULT` readだけで成立できる。
-- `Model Management`が`TRAINING_RESULT / EVALUATION_RESULT / MODEL_CARD_RESULT`および`FITTED_MODEL / MODEL_CARD`を利用する。
+- untouched TEST population。
+- subgroup columnごとのindependent slice。
+- no automatic intersections/discovery。
+- null group。
+- sample_count必須。
+- bootstrap confidence=0.95 / resamples=1000 / deterministic seed。
+- n<2およびvalid resamples<200でCI suppression + warning。
+- non-computable metricでfabricated numeric valueを返さない。
 
-DRAFT state:
+### 20.8 Comparison / lineage tests
 
-- Stage切替往復後も入力値が保持される。
-- browser route stateとform DRAFT stateのauthorityを混同しない。
+Comparison:
 
-### 20.8 API contract tests
+- semantic_compatibleとdirect_metric_comparableの二段階。
+- semantic mismatchはHTTP/application success + compatible=false/reasons。
+- incompatible caseでquantitative delta/rankを生成しない。
+- Predictive direct metric: same dataset version / TEST rows / metric definition。
+- Causal semantic key: treatment/outcome/estimand/target population。
+- same immutable dataset_version_id reuse warning。
 
-- Result API: `/executions/{execution_id}/results`, `/results/{result_id}`。
-- Comparison API: `/comparisons/query`。
-- Lineage API: `/results/{result_id}/lineage`。
-- Annotation API: POST project-scoped、GET/PATCH resource-scoped。
-- Artifact API: GET metadata / download、Digest hash一致。
-- public `claim_token` endpointが存在しない。
-- Navigation metadata APIを採用する場合、`analysis-navigation/1`にruntime status/input/output fieldがない。
+Lineage:
 
-### 20.9 E2E
+- ResearchContextVersion→AnalysisSpecification→ExecutionPlan→Execution→StageExecution→Result→Artifactを再構成。
+- DatasetVersion/AnalysisView/GraphVersion/input Result/base Executionを接続。
+- structural relationをgeneric LineageEdgeへduplicate persistしない。
+- semantic MOTIVATED relationを保持。
+- guessed edgeなし。
+- Project boundary。
 
-- Project -> analytical Family -> Navigation Stage -> use case -> Result/Artifact/Lineageの一連動作。
-- Family switch後もProject / Research Context / Dataset contextが保持される。
-- `ariadne-discover / estimate / identify / refute / sensitivity`等のheadless CLI/backend direct executionがbrowser route / Navigation Stageなしで成功する。
-- authorization boundary。
-- Worker + DB + Artifact Store integration。
+### 20.9 Authorization / idempotency / Artifact integration tests
+
+Authorization:
+
+- OWNER/EDITOR/VIEWER matrix。
+- VIEWER mutation/export/sensitive detail deny。
+- membership admin OWNER only。
+- no EXECUTE role。
+- legacy generic project-scoped routeもmembership check。
+- prediction/local explanation detailをsensitive outputとして扱う。
+
+Idempotency:
+
+- required key missing -> `IDEMPOTENCY_KEY_REQUIRED`。
+- same key/request -> replay、side effect 1件。
+- same key/different request -> HTTP 409 / `IDEMPOTENCY_CONFLICT`。
+- concurrent duplicate requestでもsingle durable side effect。
+- natural-idempotent/pure query endpointへ不要なkey requirementを強制しない。
+
+Artifact retry safety:
+
+- same logical output/hashはreuse。
+- different hashはconflict。
+- retry/restartでduplicate durable Artifactなし。
+
+### 20.10 API / E2E
+
+- Result / Comparison / Lineage / Artifact existing API protected regression。
+- AnalysisView validation error contract。
+- Exploration DRAFT handoff contract。
+- Navigation metadata endpoint/schema。
+- resource deep route。
+- project authorization。
+- direct scientific CLI/backend executionがNavigation Stageなしで成功。
+- Project→Family→Navigation→use case→Result/Artifact/Lineage end-to-end。
 - cross-family Result/Lineage continuity。
+
+D3 test targetは本sectionのmandatory acceptanceへ追加しない。
 
 ## 21. Definition of Done
 
@@ -2222,11 +2575,13 @@ DRAFT state:
 - AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stageを追加していない。
 - Navigation StageとExecution Stageの1:1 mappingを要求していない。
 - CLI / library / backend use caseがNavigation Stageなしで実行できる。
-- Predictiveの全UI設定項目がinventoryされ、generated `predictive-analysis-spec/1`、validation、default semanticsのparityが検証される。
-- Identification / Estimation等のFamily-specific semanticsが保持される。
-- route / deep-link / historyがFamily / Stageと整合する。
-- DB/runtime schema migrationが必要な場合は事前にarchitecture amendmentが承認されている。targetはmigrationなし。
-- mandatory testおよびprotected regressionが成功する。
+- Navigation catalog endpoint/schema/default Stage/catalogが本文だけで一意に決まる。
+- Predictive existing UI/spec field、validation、default semanticsのparityが検証される。
+- D2 typed filter / handoff / subgroup / comparability / idempotency / auth / lineage / reproducibility / deep navigation / accessibility contractがtest seamへtraceされる。
+- `StageAttempt.effective_random_seed` migrationが明記され、retry seed semanticsが一意である。
+- D3をENH-E5 implementation/mandatory testへ混ぜていない。
+- `10 / 21 / 22 / 23 / 30`間のcross-document consistency reviewを完了する。
+- NFR-019 `DOC-019-01〜08`を再監査しall PASSになるまで`06/Pxx/07`をfinal freezeしない。
 
 ## 30. CHANGE LOG
 
@@ -2237,3 +2592,7 @@ one canonical persistent Execution identity、generic workflow core、persistent
 ### 30.5 ENH-E5 Family × Navigation Stage Detailed Contract
 
 Capability-owned Navigation Stage catalog、Family/Stage route/history、presentation bindingを追加する。一方、canonical Family discriminatorは`AnalysisFamily(EXPLORATORY / CAUSAL / PREDICTIVE)`および`AnalysisSpecification.analysis_family`とし、Navigation Stageをpersistent analysis/runtime contractへ追加しない。runtime planner/executor/worker/CLI/libraryはNavigation Stageから独立させる。
+
+### 30.6 ENH-E5 Phase I Canonical Convergence
+
+D1 current-implementation correction、D2 Phase-G frozen contract、D3 deferred boundaryをcanonical detailed designへ統合した。Navigation catalog authorityを`GET /api/v1/navigation/analysis` / `analysis-navigation/1`へ固定し、default Stage/route/resource deep routeを確定した。AnalysisView typed validation、Exploratory handoff、Predictive subgroup、scientific comparability、command idempotency、Project authorization、canonical lineage、reproducibility metadata、frontend accessibilityを具体化し、`StageAttempt.effective_random_seed`をENH-E5 DB migration対象として追加した。
