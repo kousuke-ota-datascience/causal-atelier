@@ -507,69 +507,110 @@ Idempotencyはduplicate durable side effectを生成し得るCommandに適用し
 
 ## 8. 状態要件
 
+Ariadneのpersistent Resource、Execution lifecycleおよびNavigation stateは、それぞれ独立した状態体系として扱う。異なる状態体系を相互に読み替えない。
+
 ### 8.1. Project
 
+Projectは次の状態遷移に従う。
+
 ```text
-ACTIVE → ARCHIVED
+ACTIVE -> ARCHIVED
 ```
 
-ARCHIVEDからACTIVEへの復元は管理操作として別途定義するまで対象外とする。
+ARCHIVEDからACTIVEへの復元は、管理操作として別途定義するまで対象外とする。
 
 ### 8.2. Versioned Resource
 
+DRAFT / FIXED lifecycleを持つVersioned Resourceは、次の状態遷移に従う。
+
 ```text
-DRAFT → FIXED
+DRAFT -> FIXED
 ```
 
 FIXED Resourceは上書きしない。変更時は新Versionまたはchild DRAFTを作成する。
 
 ### 8.3. Execution
 
+Executionは次の状態遷移に従う。
+
 ```text
-QUEUED → RUNNING → SUCCEEDED
-                 ↘ FAILED → QUEUED（technical retry）
-QUEUED / RUNNING → CANCELLED
+QUEUED -> RUNNING -> SUCCEEDED
+                  -> FAILED -> QUEUED
+QUEUED / RUNNING -> CANCELLED
 ```
+
+`FAILED -> QUEUED`はtechnical retryによる再実行を表す。分析条件を変更する場合は同一Executionのretryではなく、新しいExecutionとして扱う。
 
 ### 8.4. Stage Execution
 
+StageExecutionは次の状態遷移に従う。
+
 ```text
-PENDING → READY → RUNNING → SUCCEEDED
-                       ↘ FAILED
-PENDING / READY → SKIPPED_DUE_TO_PREREQUISITE
+PENDING -> READY
+READY -> RUNNING
+RUNNING -> SUCCEEDED
+RUNNING -> FAILED
+FAILED -> PENDING
+FAILED -> RUNNING
+PENDING / READY -> SKIPPED_DUE_TO_PREREQUISITE
+PENDING / READY / RUNNING -> CANCELLED
 ```
+
+`FAILED -> PENDING`はretry準備、`FAILED -> RUNNING`はretry attempt開始時の遷移を表す。
+
+StageExecutionの状態はruntime Execution Stageの実行状態であり、Navigation Stageの状態または完了状態として扱わない。
 
 ### 8.5. Analytical Status
 
-Result Typeごとに許可statusを定義する。Execution Statusと混在させない。
+Resultのanalytical statusはResult Typeごとに許可値を定義する。
+
+ExecutionおよびStageExecutionのruntime statusと、Resultのanalytical statusを混在させない。technical failure、validation rejectionおよびanalytical negative resultは区別して扱う。
 
 ### 8.6. Navigation State
 
+現在の分析navigation contextは、次の組合せとして扱う。
+
 ```text
-Project + Current Family + Current Navigation Stage
+Project
++ Current Family
++ Current Navigation Stage
 ```
 
-- Current Family / Navigation StageはURL/application navigation stateとして扱う。
-- DBへworkspace preferenceとして永続化しない。
-- Family切替時のlast-stage memoryを必須化しない。
-- Navigation stateをAnalysisSpecification、ExecutionPlan、Execution、StageExecutionへ保存しない。
+* Current FamilyおよびCurrent Navigation StageはURL / application navigation stateをauthorityとする。
+* Navigation stateをDBへworkspace preferenceとして永続化しない。
+* Family切替時のlast-stage memoryを必須化しない。
+* Navigation stateをAnalysisSpecification、ExecutionPlan、ExecutionまたはStageExecutionへ保存しない。
+* Navigation Stageの状態をExecutionまたはStageExecutionのruntime statusへ読み替えない。
 
 ## 9. 権限要件
 
-- Resourceは必ずProjectへ所属する
-- Project read権限がない利用者へmetadata、preview、Artifact、Resultを返さない
-- write権限はContext、View、Specification、Annotationの作成・更新に必要
-- execute権限はPlan submit、cancel、retryに必要
-- Operator権限はsystem configuration、retention、health detailに必要
-- 認可失敗はResource存在を推測できない応答を選択できる
+Project-scoped Resourceおよび操作の認可は、§7.1で定義するpersisted Project role `OWNER / EDITOR / VIEWER`をauthorityとする。
 
-## 10. データ保持・監査要件
+* Project-scoped Resourceへアクセスするには、対象Projectに対するmembershipと必要なProject権限を持たなければならない。
+* `OWNER / EDITOR / VIEWER`はProjectをreadできる。
+* Context、Analysis View、Analysis Specification、Annotationその他のProject ResourceのWRITE / MUTATEは`OWNER / EDITOR`のみ許可する。
+* Executionのsubmit / cancel / retry / rerun / reviseは`OWNER / EDITOR`のみ許可する。
+* Exportの作成は`OWNER / EDITOR`のみ許可する。
+* Project membershipの管理は`OWNER`のみ許可する。
+* prediction row / local explanation等のexplicit sensitive outputは`OWNER / EDITOR`のみ取得可能とし、`VIEWER`には返さない。
+* 独立した`EXECUTE` Project roleは設けない。
+* 認可失敗時は、権限を持たない利用者がResourceの存在を推測できない応答を選択できる。
+* system-level Operator authorizationはENH-E5のProject authorization contractには含めず、`DEFERRED / FUTURE`として扱う。
 
-- Dataset Version、Result、Artifact metadata、Execution snapshotはappend-onlyを基本とする
-- Project archiveで物理削除しない
-- Artifact物理削除時もhash、descriptor、削除日時、理由を監査記録へ残す
-- Auditにはactor、action、resource、project、request id、timestamp、outcomeを含める
-- Annotation変更履歴を保持する
+## 10. データ保持要件とDeferred Audit / Retention Boundary
+
+ENH-E5で有効なcurrent data-retention contractは次のとおりとする。
+
+* Dataset Version、Result、Artifact metadataおよびExecution snapshotはappend-onlyを基本とする。
+* Projectをarchiveしても、Projectに属する既存の分析Resourceをarchive操作だけを理由として物理削除しない。
+* Annotationについて、current contractで保持されている変更履歴を維持する。
+
+以下はRequirementとして維持するが、ENH-E5のdelivery対象には含めない。
+
+* general operational audit trail (`FR-122`): `DEFERRED / FUTURE`
+* configurable retention/deletion policy (`FR-126`): `DEFERRED / FUTURE`
+
+したがってENH-E5では、general Audit recordの共通field contract、configurable retention期間、Artifactの一般的な物理削除policyおよび削除audit contractを必須acceptanceとして要求しない。
 
 ## 11. 対象外要件
 
@@ -591,16 +632,18 @@ Project + Current Family + Current Navigation Stage
 ## 12. 総合完了条件
 
 1. E2E-01〜E2E-10がWeb API、Worker、Persistence、FrontendおよびCLI/library境界を通して成立する。
-2. FR-001〜FR-162（logical splitされたa/b/c substatementを含む）にImplementation Status / Deliveryが付与されている。
-3. NFR-001〜NFR-027の検証証跡がある。
-4. AR-001〜AR-026を自動test、scientific benchmarkまたはreview checklistで検証する。
-5. `causal-analysis-spec/2`および`predictive-analysis-spec/1`の既存正規contractを読取り、既存scientific/regression testが通る。
-6. `AnalysisSpecification.analysis_family`を再利用し、duplicate Family discriminatorを追加していない。
-7. AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加していない。
-8. CLI / Python library / backend use case / runtime executorがCurrent Navigation Stageなしで既存analysisを実行できる。
-9. Product Domain / runtime execution layerからbrowser route / Navigation Stageへの新規逆依存がない。
-10. Predictive既存設定項目およびgenerated specification semanticsが保持される。
-11. 正本文書、OpenAPI、DB schema、Frontend文言およびtestが同じFamily / Stage / Execution用語とcontractを使用する。
+2. FR / NFR / ARの各Requirementについて、Requirement Status、Implementation StatusおよびDeliveryが正本文書上で一意に定義されている。
+3. `Requirement Status = ACTIVE`かつ`Delivery = BASELINE`のRequirementについて、ENH-E5変更によって既存contractが破壊されていないことを、必要なregression testまたはreview evidenceで確認する。
+4. `Requirement Status = ACTIVE`かつ`Delivery = ENH-E5`のRequirementについて、Requirement Levelおよび設計上のverification contractに応じたtest、benchmarkまたはreview evidenceが存在する。
+5. `Requirement Status = DEFERRED`または`Delivery = FUTURE`のRequirementは、ENH-E5のmandatory acceptanceおよび必須test targetへ含めない。
+6. ACTIVEなScientific Integrity Requirementについて、必要な自動test、scientific benchmarkまたはreview checklistによるverification evidenceが存在する。
+7. `causal-analysis-spec/2`および`predictive-analysis-spec/1`の既存正規contractを読取り、既存scientific/regression testが通る。
+8. `AnalysisSpecification.analysis_family`を再利用し、duplicate Family discriminatorを追加していない。
+9. AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加していない。
+10. CLI / Python library / backend use case / runtime executorがCurrent Navigation Stageなしで既存analysisを実行できる。
+11. Product Domain / runtime execution layerからbrowser route / Navigation Stageへの新規逆依存がない。
+12. Predictive既存設定項目およびgenerated specification semanticsが保持される。
+13. 正本文書、OpenAPI、DB schema、Frontend文言およびtestが同じFamily / Navigation Stage / Execution Stage用語とcontractを使用する。
 
 ## 13. CHANGE LOG
 
