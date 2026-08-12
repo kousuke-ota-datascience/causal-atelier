@@ -1,9 +1,10 @@
 const API="/api/v1";
-const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,pendingArchive:null};
+const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
 const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
 const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
+const ANALYSIS_WORKSPACES=Object.freeze({exploratory:'explore',predictive:'predictive',causal:'discovery'});
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
 
 async function api(path,options={}){
@@ -59,7 +60,13 @@ async function activateWorkspace(workspace,{push=true,button=null}={}){
   $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
   if(push&&state.project&&button.dataset.route){
-    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
+    const familySlug={explore:'exploratory',predictive:'predictive',causal:'causal'}[button.dataset.route];
+    if(familySlug&&state.navigationCatalog){
+      state.navigationContext=AnalysisNavigation.defaultContext(state.navigationCatalog,state.project.project_id,familySlug);
+    }
+    const path=state.navigationContext&&ANALYSIS_WORKSPACES[state.navigationContext.familySlug]===workspace
+      ?AnalysisNavigation.serialize(state.navigationContext)
+      :`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
     if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
   }
   try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
@@ -67,6 +74,25 @@ async function activateWorkspace(workspace,{push=true,button=null}={}){
 $$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
 
 async function restoreProjectRoute(){
+  if(state.navigationCatalog){
+    let parsed;
+    try{parsed=AnalysisNavigation.parse(location.pathname,state.navigationCatalog)}catch(error){
+      if(error instanceof AnalysisNavigation.NavigationRouteError&&error.code==='NAVIGATION_ROUTE_NOT_FOUND')parsed=null;else throw error;
+    }
+    if(parsed?.legacy){
+      const projectId=parsed.projectId||state.project?.project_id;
+      if(!projectId)return false;
+      parsed=AnalysisNavigation.legacyContext(state.navigationCatalog,projectId,parsed.legacy);
+      history.replaceState({project_id:projectId,navigation:parsed},'',AnalysisNavigation.serialize(parsed));
+    }
+    if(parsed&&parsed.projectId){
+      if(parsed.resource){parsed=await AnalysisNavigation.contextForResource(state.navigationCatalog,api,parsed.projectId,parsed.resource.resourceType,parsed.resource.resourceId,parsed)}
+      state.navigationContext=parsed;state.project=await api(`/projects/${parsed.projectId}`);
+      fillProject();await loadProjects();$('#project-select').value=parsed.projectId;
+      await activateWorkspace(ANALYSIS_WORKSPACES[parsed.familySlug],{push:false});
+      return true;
+    }
+  }
   const match=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
   if(!match)return false;
   const [,projectId,route]=match;
@@ -402,4 +428,4 @@ document.addEventListener('submit',()=>{if(!state.project)return;if(draftStateTi
 // target_graph_version_id:graph.graph_version_id
 // parent_graph_version_id:parent||null
 // origin=parent?$('#graph-transform').value:'DISCOVERED'
-(async()=>{try{await fetch('/health/ready').then(r=>{if(!r.ok)throw Error();return r.json()});$('#health').textContent='API READY';await loadProjects();await restoreProjectRoute()}catch(error){$('#health').textContent='API UNAVAILABLE';notice(error.message)}})();
+(async()=>{try{await fetch('/health/ready').then(r=>{if(!r.ok)throw Error();return r.json()});state.navigationCatalog=await api('/navigation/analysis');$('#health').textContent='API READY';await loadProjects();await restoreProjectRoute()}catch(error){$('#health').textContent='API UNAVAILABLE';notice(error.message)}})();
