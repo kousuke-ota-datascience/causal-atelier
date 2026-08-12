@@ -8,18 +8,28 @@
 
 > 本書は、過去Enhancementを知らない読者が、Ariadneをどのような分析プロダクトとして構成するかを理解できることを目的とする。変更履歴は後段へ分離し、本文は現在有効なプロダクト構想を記述する。
 
-## 1. Ariadneのプロダクト像
+## 1. INTRODUCTION of Ariadne
 
-Ariadneは、単一の分析手法を実行する画面ではなく、同一のResearch Topic / Decision Contextに対して、異なる分析観点を往来しながらエビデンスを形成するanalytical workspaceである。
+### 1.1. プロダクトの一文定義
 
-中心となる利用単位はProjectである。Projectは、問い、入力データ、分析仕様、実行、結果、artifact、判断根拠を同一の来歴境界の中で扱う。
+> **Ariadneは、Research Topicに紐づくResearch ContextとDataset Versionを共通の分析コンテキストとして、探索・可視化、因果分析および予測分析を実行し、その条件、結果、判断理由および相互関係を追跡可能にする分析ワークスペースである。**
+
+短く表現すると、次のとおりである。
+
+> **問い、データ、分析、結果、判断を切り離さずに残す。**
+
+### 1.2. Ariadneのプロダクト像
+
+Ariadneは、単一の分析手法を実行する画面ではなく、同一のResearch Topicとそれに紐づく意思決定上の文脈に対して、異なる分析観点を往来しながらエビデンスを形成するanalytical workspaceである。
+
+中心となる利用単位はProjectである。Projectは、問い、入力データ、分析仕様、実行、結果、Artifact、判断根拠を同一の来歴境界の中で扱う。
 
 ```text
 Project / Research Topic
         │
         ├─ Research Context
         ├─ Dataset / Analysis View
-        ├─ Analytical Families
+        ├─ Analysis Families
         │    ├─ Exploratory
         │    ├─ Predictive
         │    └─ Causal
@@ -27,6 +37,8 @@ Project / Research Topic
 ```
 
 Ariadneが目指すのは、Exploratory、Predictive、Causalを同一意味に平坦化することではない。それぞれが答える問いと成立条件を保持したまま、同一Projectの中で相互参照可能にすることである。
+
+Ariadneが統合するのは分析活動のコンテキストと来歴であり、各Analysis Familyの意味論や成立条件ではない。
 
 ## 2. 分析プロダクトとして解く問題
 
@@ -158,7 +170,7 @@ Stage navigationは主として「設定する」「実行する」「結果を�
 
 これらをExploratory / Predictive / Causalと同じanalytical Familyとして扱わない。
 
-## 6. Analytical Families
+## 6. Analysis Families
 
 ### 6.1 Exploratory Family
 

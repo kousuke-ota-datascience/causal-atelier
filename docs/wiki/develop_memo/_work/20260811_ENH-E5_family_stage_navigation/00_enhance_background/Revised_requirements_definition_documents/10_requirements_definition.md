@@ -7,13 +7,40 @@
 
 ## 0. INTRODUCTION
 
-### 0.1. 背景となる問題
+### 0.1. プロダクトコンセプトから導かれる要件上の課題
 
-現行workspaceではanalytical FamilyとFamily内のworkflow/view contextがnavigation上で混在し、ユーザーが「どのanalytical perspectiveにいるか」と「その中の何をしているか」を別dimensionとして認識しづらい。
+Ariadneのプロダクトコンセプトを、次のとおり定義する。
 
-またcurrent backendにはexecution lifecycleを表すgeneric Stage abstractionが存在するため、UI上のStageを既存Execution Stageへ流用すると、navigation taxonomyの変更がCLI / library / runtime contractへ波及する危険がある。
+> **Ariadneは、Research Topicに紐づくResearch ContextとDataset Versionを共通の分析コンテキストとして、探索・可視化、因果分析および予測分析を実行し、その条件、結果、判断理由および相互関係を追跡可能にする分析ワークスペースである。**
 
-既存のProject / Research Context / Dataset / Analysis Specification / Execution / Result / Lineage contractは分析の再現性・追跡可能性を支えるため、navigation再構成によって意味を失わせてはならない。
+このプロダクトコンセプトに基づき、Ariadneでは、探索的分析、予測分析、因果分析という、目的・判断基準・成果物の意味が異なる分析活動を、一つのProjectの中で継続的に扱う必要がある。
+
+これらの分析活動を適切に扱うため、ユーザーは少なくとも次の二つの情報を明確に把握できなければならない。
+
+* **どのAnalysis Familyで分析しているか**
+  探索、予測、因果のいずれの分析目的・分析観点に基づいて作業しているか。
+
+* **そのAnalysis Familyの中で、現在どの分析作業を行っているか**
+  データ確認、分析条件の定義、モデルまたは推定方法の構築、評価、診断、結果確認など、分析ワークフロー上の現在位置。
+
+この二つが明確に区別されない場合、ユーザーは現在の分析目的と作業位置を把握しづらくなり、異なるAnalysis Familyに属する操作、結果および判断を混同する可能性がある。
+
+特に、予測分析における予測性能や特徴量寄与と、因果分析における因果効果や識別結果は、意味および判断基準が異なる。したがって、異なるAnalysis FamilyのResultを同一の意味を持つ結果として扱ってはならない。
+
+また、探索から予測分析または因果分析へ進む場合、あるいは複数の分析結果を比較、再利用または改訂する場合には、少なくとも次の情報を追跡できなければならない。
+
+* Research TopicおよびResearch Context
+* DatasetおよびDataset Version
+* Analysis Viewその他の分析対象データの導出条件
+* Analysis Specification
+* ExecutionおよびExecution Plan
+* ResultおよびArtifact
+* 分析時の判断、AnnotationおよびWarning
+* これらの間のLineage
+
+これらの情報が失われた場合、分析結果の再現、比較、根拠確認、改訂、および後続分析への適切な引継ぎが困難になる。
+
+したがってAriadneは、異なるAnalysis Familyの意味論を明確に分離しながら、一つのProject内で分析ワークフローを継続的に扱うことができ、各分析の問い、入力データ、分析条件、実行、結果、判断およびLineageを一貫して追跡可能な分析環境を提供しなければならない。
 
 ### 0.2. Legends
 
@@ -26,15 +53,48 @@
 
 #### 0.2.2. Requirement lifecycle
 
-Requirement一覧は`Level`とdelivery状態を分離して管理する。
+各Requirementは、Requirementそのものの有効性、現在の実装状態、およびdelivery対象を独立した属性として管理する。
 
-- `Requirement Status`: `ACTIVE / DEFERRED / RETIRED`
-- `Implementation Status`: `IMPLEMENTED / PARTIAL / NOT_IMPLEMENTED / UNVERIFIED`
-- `Delivery`: `BASELINE / ENH-E5 / FUTURE`
-- D1 current correctionは原則`ACTIVE / IMPLEMENTED / BASELINE`。
-- D2 ENH-E5 targetは`ACTIVE / ENH-E5`とし、current coverageに応じて`PARTIAL / NOT_IMPLEMENTED`を付与する。
-- D3はRequirementを削除せず`DEFERRED / FUTURE`として保持する。
-- Requirement本文は現時点のcontractを記述し、「ENH-E4では」「今回は」等のtiming-dependent wordingを置かない。
+##### Requirement Status
+
+Requirementがproduct requirementとして現在どの状態にあるかを表す。
+
+| Value      | Meaning                                                          |
+| ---------- | ---------------------------------------------------------------- |
+| `ACTIVE`   | 現在有効なRequirement。現在実装済みか、将来実装予定かには依存しない。                         |
+| `DEFERRED` | Requirementとしての必要性は維持するが、現在のdelivery対象からは除外され、将来の実装対象として延期されている。 |
+| `RETIRED`  | Requirementとして廃止され、今後のproduct contractとして維持しない。                  |
+
+##### Implementation Status
+
+Requirementに対する現在の実装充足状態を表す。
+
+| Value             | Meaning                                                   |
+| ----------------- | --------------------------------------------------------- |
+| `IMPLEMENTED`     | Requirementを満たす実装が現在存在し、current implementationとして確認されている。 |
+| `PARTIAL`         | Requirementの一部は実装されているが、Requirement全体を満たしていない。            |
+| `NOT_IMPLEMENTED` | Requirementを満たす実装が現在存在しない。                                |
+| `UNVERIFIED`      | 実装有無またはRequirement充足状態を、利用可能なevidenceから確定できていない。          |
+
+##### Delivery
+
+Requirementをどのdelivery scopeで実現または維持するかを表す。
+
+| Value      | Meaning                                                               |
+| ---------- | --------------------------------------------------------------------- |
+| `BASELINE` | ENH-E5開始時点のcurrent implementationに既に含まれており、ENH-E5では既存contractとして維持する。 |
+| `ENH-E5`   | ENH-E5で実装または不足部分を完成させるdelivery対象。                                     |
+| `FUTURE`   | ENH-E5では実装せず、将来のenhancementで取り扱うdelivery対象。                           |
+
+これら三つの属性は独立した軸として扱う。
+
+例えば、
+
+* `ACTIVE / IMPLEMENTED / BASELINE` は、現在有効で既に実装済みのRequirementを表す。
+* `ACTIVE / NOT_IMPLEMENTED / ENH-E5` は、現在有効でありENH-E5で新たに実装するRequirementを表す。
+* `ACTIVE / PARTIAL / ENH-E5` は、現在一部のみ実装されておりENH-E5で不足部分を完成させるRequirementを表す。
+* `DEFERRED / NOT_IMPLEMENTED / FUTURE` は、Requirementとしては維持するがENH-E5では実装しないRequirementを表す。
+* `DEFERRED / PARTIAL / FUTURE` は、一部実装済みであるものの、残りの実装をENH-E5では行わず将来へ延期するRequirementを表す。
 
 #### 0.2.3. 用語
 
