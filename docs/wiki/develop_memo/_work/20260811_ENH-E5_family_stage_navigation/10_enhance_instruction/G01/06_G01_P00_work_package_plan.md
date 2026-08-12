@@ -2,7 +2,7 @@
 
 - Gate: `G01`
 - 文書状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
-- Baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
+- Baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - 用途: Operator / Planning only。Package Coding Agentへ渡さない。
 
 | Package | Responsibility | D2 trace |

@@ -4,7 +4,7 @@
 - Enhancement: ENH-E5
 - Active Gate: `G00`
 - Branch: `feature/ariadne_mvp_e5`
-- Remediation baseline SHA: `a4d96b33c81b5a263a2e82e6d64475de5085b616`
+- Remediation baseline SHA: `acc43f744360e25fc504f608716bed2023817a29`
 - 契約状態: `PHASE_K_REMEDIATED / REAUDIT_PENDING`
 - Canonical convergence source: `10 / 21 / 22 / 23 / 30 = NFR-019 PASS / FROZEN`
 - Document role: `Gate 07 verification contract`
