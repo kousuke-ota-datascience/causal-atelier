@@ -1,6 +1,6 @@
 # 30 詳細設計
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
+- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
 - 文書種別: 現行詳細設計のeffective snapshot
 - 上位文書: `10_requirements_definition.md`, `21_logical_data_design.md`, `22_product_basic_design.md`, `23_api_interface_design.md`
 - 基準Runtime: Python 3.12

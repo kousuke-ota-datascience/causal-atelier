@@ -1,6 +1,6 @@
 # 23 API・インターフェース設計
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
+- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
 - 文書種別: ENH-E5適用後のAPI / interface設計 effective snapshot
 - 上位文書: `10_requirements_definition.md`, `21_logical_data_design.md`, `22_product_basic_design.md`
 - API base: `/api/v1`

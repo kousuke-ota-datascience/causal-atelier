@@ -1,6 +1,6 @@
 # 10 要件定義
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
+- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
 - 文書種別: 現行requirementsのeffective snapshot
 - 上位文書: `00_product_concept_memo.md`
 - 下位文書: `21_logical_data_design.md` / `22_product_basic_design.md` / `23_api_interface_design.md` / `30_detailed_design.md`
@@ -393,7 +393,7 @@ E5 resource typeは`analysis-specification / execution / result / graph-version`
 | NFR-016 | Scientific transparency | 仮定、warning、negative result、limitationを省略せず表示する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | NFR-017 | Resource control | upload size、row/column count、memory、timeout等にexplicit operational hard limitを定義する | — | DEFERRED | NOT_IMPLEMENTED | FUTURE |
 | NFR-018 | Dependency direction | Product DomainからWeb Framework、ORMおよびlegacy packageへ依存しない | — | ACTIVE | IMPLEMENTED | BASELINE |
-| NFR-019 | Documentation | `10/21/22/23/30`だけでcurrent implementation contractとENH-E5 target contractを自己完結して理解できる | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
+| NFR-019 | Documentation | `10/21/22/23/30`だけでcurrent implementation contractとENH-E5 target contractを自己完結して理解できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-020a | 移植性 | Artifact storageを`ArtifactStore` Port abstraction越しに利用する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | NFR-020b | 移植性 | Local filesystemに加えobject storage adapterを提供し、Port越しに切替可能にする | — | DEFERRED | NOT_IMPLEMENTED | FUTURE |
 | NFR-021 | Navigation separation | Navigation concernの変更がruntime execution lifecycleへ不要に伝播しない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |

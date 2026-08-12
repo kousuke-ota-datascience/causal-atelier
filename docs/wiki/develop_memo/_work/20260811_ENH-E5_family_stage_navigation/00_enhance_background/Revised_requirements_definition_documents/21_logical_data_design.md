@@ -1,6 +1,6 @@
 # 21 論理データ設計
 
-- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
+- 文書状態: `PHASE_I_REVISED / NFR-019_PASS`
 - 文書種別: 現行論理データモデルのeffective snapshot
 - 上位文書: `10_requirements_definition.md`
 - current code照合対象: `src/ariadne/product/domain/`
