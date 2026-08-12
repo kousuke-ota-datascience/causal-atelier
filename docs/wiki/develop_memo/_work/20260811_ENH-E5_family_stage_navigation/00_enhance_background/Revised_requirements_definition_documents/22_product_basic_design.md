@@ -1,6 +1,6 @@
 # 22 プロダクト基本設計
 
-- 文書状態: `DRAFT_FOR_REVIEW`
+- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
 - 文書種別: 現行プロダクト基本設計のeffective snapshot
 - 上位文書: `00_product_concept_memo.md`, `10_requirements_definition.md`, `21_logical_data_design.md`
 - 下位文書: `23_api_interface_design.md`, `30_detailed_design.md`
@@ -29,7 +29,7 @@ Domain   Services  Application
    │        │        │
    └────────┼────────┘
             ▼
-Metadata DB / Outbox / Artifact Store
+Metadata DB / Artifact Store
             │
             ▼
            Worker
@@ -48,7 +48,7 @@ Web FrontendはProject-global surfaceとanalytical surfaceを提示する。Plan
 
 - Domain: Resource、state、invariant、value object
 - Application: use case、transaction、policy、planner、executor control、navigation coordination
-- Port: repository、artifact store、runner、clock、auth、event
+- Port: repositories、artifact_store、clock、scientific_core、unit_of_work
 - Adapter: SQL、Filesystem / Object Storage、Scientific library、ML library
 - Interface: Web API、Worker、CLI、Frontend
 
@@ -62,7 +62,7 @@ Shared Product Core
 ├── Data / Analysis View
 ├── Workflow Core
 ├── Result / Artifact / Lineage
-└── Security / Audit
+└── Security / Project Authorization
 
 Analysis Capabilities
 ├── Exploratory
@@ -137,7 +137,24 @@ Exploratory / Predictive / Causalをanalytical Familyとして常時認識可能
 
 Family切替はanalytical perspectiveの切替であり、Project / Research Context / Dataset等のglobal contextを不必要に失わせない。
 
-Family切替時は対象Familyのdefault Navigation Stageへ遷移することをtargetとする。Familyごとのlast-stage memoryは必須要件としない。
+Family切替時は対象Familyのdefault Navigation Stageへ遷移する。Familyごとのlast-stage memoryは必須要件としない。
+
+Navigation catalog authorityは各Family Capabilityが所有するimmutable descriptorであり、application/interface aggregatorが次のread-only metadata interfaceへ集約する。
+
+```text
+GET /api/v1/navigation/analysis
+schema = analysis-navigation/1
+```
+
+Frontendはfull catalog（label/order/default等）をduplicate ownershipしない。`analysis-navigation/1`をscientific generic `SchemaRegistry`へ登録しない。
+
+Default Stage:
+
+| Family | slug | default_stage_id |
+| --- | --- | --- |
+| EXPLORATORY | `exploratory` | `profile` |
+| PREDICTIVE | `predictive` | `setup` |
+| CAUSAL | `causal` | `setup` |
 
 #### 4.3.2 Family-local Navigation Stage
 
@@ -183,18 +200,24 @@ operation prerequisiteが未成立の場合、Stageそのものをruntime lifecy
 
 Current Family / Navigation Stageはrouteから復元可能にする。
 
-Target canonical route候補:
+Canonical analytical route:
 
 ```text
 /projects/{project_id}/analysis/{family_slug}/{stage_slug}
 ```
 
-exact routeはcurrent routerとの整合およびArchitecture Review承認後にfreezeする。
+Resource deep route:
+
+```text
+/projects/{project_id}/analysis/{family_slug}/{stage_slug}/resource/{resource_type}/{resource_id}
+```
+
+ENH-E5 resource typeは`analysis-specification / execution / result / graph-version`とする。Generic direct linkはresourceからFamilyをderiveし、そのFamilyのdefault Stageへ遷移する。明示routeのFamily/Stageとresource semanticが矛盾する場合はsilent normalizeせずerrorとする。
 
 - direct deep linkでFamily / Stageを復元する。
 - reloadで同一contextを復元する。
 - browser back / forwardでactive Family / Stageとmain contentを同期する。
-- legacy analytical routeはcompatibility mappingを定義し、必要に応じてcanonical routeへnormalizeする。
+- legacy `/explore` / `/causal` / `/predictive`は各Family default Stageのcanonical routeへ一方向normalizeする。
 
 ### 4.5 Family-specific screen responsibility
 
@@ -214,11 +237,14 @@ IdentificationとEstimationを別Navigation Stageとして提示し、「何が�
 
 ### 4.6 Loading / Error / Accessibility
 
+- presentation stateは`IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED`を区別する。
 - navigation metadata loadingを明示する。
 - unknown Family / Stageをsilent fallbackしない。
 - renderer binding欠落はunsupported stateとして検出する。
-- active Family / Stageは色だけでなくsemantic stateでも識別可能にする。
+- ENH-E5変更surfaceはkeyboard操作、deterministic focus、accessible name、error association、non-color semanticsを満たす。
+- normal text contrastは4.5:1以上、large text / UI graphics / focus indicatorは3:1以上をtargetとする。
 - small viewportでもFamily dimensionとStage dimensionを混同させない。
+- full legacy UI全体のretroactive accessibility conformanceはENH-E5 scope外。
 
 ## 5. Generic Workflow Core
 
@@ -377,6 +403,18 @@ Navigation側の`Setup / Train / Predict / Metrics / Explainability / Model Mana
 
 Predictiveの既存設定項目、default、validation、generated `predictive-analysis-spec/1` semanticsは全量保持する。
 
+#### 6.3.1 ENH-E5 subgroup evaluation
+
+- evaluation populationはuntouched TEST。
+- user-specified subgroup columnごとに独立sliceし、automatic intersection/discovery/fairness frameworkは追加しない。
+- subgroup columnはfeatureである必要はなく、partition row identity/ordinalによりTEST rowへ対応付ける。
+- nullはexplicit subgroupとして扱う。
+- primary/secondary metricそれぞれに`sample_count`を必須で返す。
+- uncertaintyはnonparametric percentile bootstrap、confidence=0.95、resamples=1000、deterministic seed。
+- `n < 2`またはvalid resamples < 200ではCIを返さずwarningを返す。
+- metricが計算不能なgroupではvalue/uncertaintyを`null`とし値を捏造しない。
+- outputはgroup valueをmap keyに埋め込まずrecord listとする。
+
 ## 7. Validation Architecture
 
 ### 7.1 Generic Validation
@@ -413,6 +451,19 @@ Validation責務は、Planning baselineの`PlanValidator`が直接行う検証�
 - Navigation catalogのFamily/Stage ID、slug、order、default Stage、renderer binding整合性
 
 Navigation catalog validationをruntime Plan dependency validationへ混入しない。
+
+#### 7.1.3 AnalysisView typed filter validation
+
+AnalysisView create/update/validate/fixは同じDataset logical-type compatibility validatorを利用する。
+
+| Logical Type | Operator |
+| --- | --- |
+| BOOLEAN | `EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL` |
+| INTEGER / REAL / DATETIME | `EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL` |
+| TEXT | `EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL` |
+| OTHER | `IS_NULL, NOT_NULL` |
+
+`IS_NULL/NOT_NULL`はvalueなし、`IN/NOT_IN`はnon-empty list。DATETIME valueはISO-8601、REALはfinite numeric、INTEGERはbooleanを許容しない。`time_cutoff`はDATETIME + `LT/LTE`。logical type unknownをsuccess扱いしない。Mismatch codeは`FILTER_TYPE_MISMATCH`。
 
 ### 7.2 Exploratory Validation
 
@@ -480,6 +531,10 @@ Lineageには2つの表現層がある。
 
 Navigation Stageをpersistent lineage resourceとして追加しない。
 
+ENH-E5 lineage read modelは`ResearchContextVersion -> AnalysisSpecification -> ExecutionPlan -> Execution -> StageExecution -> Result -> Artifact`を最低chainとし、DatasetVersion / AnalysisView / GraphVersion / input Result / base Executionを接続する。FK/snapshotからdeterministically導出できるstructural relationをgeneric LineageEdgeへ二重persistせず、`MOTIVATED`等のsemantic relationだけをgeneric edgeとして保持する。
+
+Exploratory ResultからAnalysisSpecification DRAFTへのhandoffは`Result --MOTIVATED--> AnalysisSpecification`を明示保存する。
+
 ## 9. Comparison Design
 
 ### 9.1 Canonical comparison query
@@ -501,6 +556,32 @@ Navigation Stageをpersistent lineage resourceとして追加しない。
 
 Execution snapshot差分として、少なくとも`algorithm_or_estimator / parameter_json / random_seed / analysis_spec_json / dataset_version_id / input_graph_version_id`を比較する。
 
+### 9.1.1 ENH-E5 scientific comparability gate
+
+Comparisonは二段階で評価する。
+
+1. `semantic_compatible`
+2. `direct_metric_comparable`
+
+Predictive semantic key:
+
+```text
+task_type
+prediction target/outcome
+prediction unit
+prediction time
+horizon
+deployment/evaluation population semantics
+```
+
+Model/feature/hyperparameter/split method差分は比較対象だがsemantic keyそのものではない。Direct metric comparisonではさらに`same dataset_version_id / same TEST-row identity(hash) / same metric definition`を要求する。
+
+Causal semantic keyは`treatment/exposure / outcome / estimand / target population`。Direct comparisonではsame data/view/analysis populationも要求する。
+
+同一immutable `dataset_version_id`をExploratoryとconfirmatory analysisで再利用した場合はAnalysisViewが異なってもsame-dataと判定し、`EXPLORATORY_REUSE_SAME_DATA`をnon-blocking warningとして先行Exploratory Result IDとともに保持する。
+
+semantic mismatchはHTTP-level failureにせず`compatible=false`とreasonを返し、quantitative delta/rankを生成しない。Different Family / incompatible Result Typeなどrequest shape自体が無効な場合はvalidation errorとする。
+
 ### 9.2 Project-scoped comparison
 
 Project Closure APIにも`POST /projects/{project_id}/comparisons`が存在する。これはProject membership境界を通った比較surfaceであり、canonical Result比較の意味を変えない。
@@ -517,12 +598,15 @@ Project Closure APIにも`POST /projects/{project_id}/comparisons`が存在す�
 - route state: Project / Family / Navigation Stage / selected IDs / filters
 - draft state: unsaved form
 - authoritative state: backend Resource status
+- async presentation state: `IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED`
 
 Current Family / Navigation StageはDB/workspace persistent stateではなくroute/application stateをtargetとする。
 
 Predictive等のdraft inputをStage切替で不必要に破棄しない。
 
 Button enablementはclient local stateだけで決定せず、backend validation / operation availabilityを利用する。
+
+Backend action availabilityは最低限`{allowed, reason_code?, message?}`を返し、action visibilityとaction allowedを別conceptとして扱う。
 
 ## 11. Security Design
 
@@ -544,13 +628,42 @@ Project Closure領域のProject roleは次の3値である。
 
 `ProductClosureService`ではreadを`OWNER / EDITOR / VIEWER`、writeを`OWNER / EDITOR`へ許可する。Project作成時にはrequestの`X-User-Id`をownerとしてmembership登録する。
 
-一方、全routerが同一membership serviceを通るわけではない。ENH-E5はこの現状を勝手に「全APIで統一認可済み」と読み替えず、Navigation metadataを新設する場合も既存Project境界を弱めない。
+Current baselineでは全routerが同一membership serviceを通るわけではない。ENH-E5 targetでは**全project-scoped route**がservice action前にProject membership authorizationを通るようcoverageを完成させる。
+
+Role/action matrix:
+
+| Action | OWNER | EDITOR | VIEWER |
+| --- | --- | --- | --- |
+| READ | allow | allow | allow |
+| WRITE / MUTATE | allow | allow | deny |
+| Execution mutation | allow | allow | deny |
+| Export create | allow | allow | deny |
+| Membership admin | allow | deny | deny |
+| Explicit sensitive output | allow | allow | deny |
+
+独立`EXECUTE` roleは追加しない。system-level Operator authorizationはD3/FUTURE。
 
 ### 11.3 Artifact / sensitive output
 
 Artifact downloadはcontent hashを検証して返す。Project-scoped closure downloadでは`Content-Disposition`、`Digest`、`X-Content-Type-Options: nosniff`、`Cache-Control: private, no-store`を付与する。
 
 Prediction / local explanation等のsensitive output policyをNavigation Stage名称で緩和しない。
+
+prediction row / local explanation row/detailはpotentially sensitive outputとして扱う。VIEWERにはaggregate/suppressed viewのみ許可し、explicit sensitive detailはOWNER/EDITORに限定する。configurable sensitive-column metadata/policyはD3/FUTUREであり、本E5 targetで発明しない。
+
+
+### 11.4 Command Idempotency / Retry-safe Artifact Commit
+
+Idempotency対象は「全POST/create」ではなく、retryでduplicate durable side effectを生成し得るCommandである。Scopeは`(project_id, command_scope, idempotency_key)`。
+
+- required key missing: `IDEMPOTENCY_KEY_REQUIRED`
+- same key + same canonical semantic request: stored response replay、duplicate side effectなし
+- same key + different request: HTTP 409 `IDEMPOTENCY_CONFLICT`
+- natural idempotency/uniquenessが成立するCommandへheaderを機械的に要求しない
+- exactly-once executionは保証しない
+
+Artifact materializationはlogical Execution/Stage/output slot/typeからdeterministic identity/object keyを導出し、same logical output + same content hashはreuse、different content hashはnondeterministic-output conflictとする。Result/Artifact bindingは可能な限りmetadata transaction内でcommitする。cross-store compensationはD3/FUTURE。
+
 
 ## 12. Deployment
 
@@ -577,23 +690,26 @@ Planning baselineではFastAPI Web API、polling Worker、Product persistence DB
 - Product Domainはbrowser route/navigation implementationへ依存しない。
 - Scientific / ML / visualization libraryはPort / Adapter背後へ隔離する。
 - Capability固有Adapterはcanonical runtime lifecycleを制御しない。
-- DB migrationは原則不要とするtarget design。
+- Navigation metadata/stateについてはDB migrationを行わない。
+- ENH-E5 reproducibility completionとして`StageAttempt.effective_random_seed: int | null`を追加するDB migrationを行う。
+- `Execution.runtime_version_json`へ`ariadne_code_version / python_version / platform_system / platform_release / machine / libraries`を保存する。
 
 ## 15. Test Architecture
 
-- Domain invariant unit test
-- Schema contract test
-- Planner golden / Plan DAG test
-- Runner contract / worker lifecycle regression
-- API authorization / idempotency test
-- Frontend route / state / deep-link test
-- Family / Navigation Stage descriptor contract test
-- Navigation-to-runtime dependency audit
-- CLI / library direct execution regression
-- Predictive existing setting/spec parity test
-- Causal scientific benchmark
-- Predictive leakage / split benchmark
+D2 packageを次のtest layerへtraceする。
+
+- domain invariant / typed filter / scientific guard → unit/domain test
+- persistence / StageAttempt seed / concurrency / idempotency / authorization / lineage → integration test
+- route/header/error/response/authorization → API contract test
+- Navigation/deep link/history/async state/accessibility → frontend/browser test
+- Navigation→runtime import prohibition / optional future dependency prohibition → architecture/static test
+- Planner golden / Plan DAG / Runner contract / worker lifecycle → workflow regression
+- CLI / library direct execution → headless regression
+- Predictive existing setting/spec parity → compatibility regression
+- Causal scientific benchmark / Predictive leakage/split/subgroup → scientific test
 - Family横断browser E2E
+
+D3（general AuditLog、retention、object storage、hard limits、production auth hardening、cross-store compensation等）のtest targetをENH-E5 acceptanceへ混ぜない。
 
 ## 20. CHANGE LOG
 
@@ -604,3 +720,10 @@ canonical Product runtime Execution authority、generic workflow core、persiste
 ### 20.5 ENH-E5 Family × Navigation Stage Application Architecture
 
 Project Workspaceのanalytical navigationをFamily / Family-local Navigation Stageへ再構成する。Navigation taxonomyはPresentation / Application / Capabilityの責務として追加し、Generic Workflow Coreおよびruntime Execution Stageへ依存を逆流させない。
+
+### 20.6 ENH-E5 Phase I Canonical Convergence
+
+- Outbox/nonexistent Port overstatementをD1 current contractへ訂正した。
+- Navigation metadata endpoint/schema/route/default Stageをfreezeした。
+- typed filter、subgroup、comparability、authorization、idempotency、lineage、reproducibility、frontend accessibilityをD2 targetとして具体化した。
+- `StageAttempt.effective_random_seed` migrationを明示し、D3 capabilityをE5 acceptanceから分離した。

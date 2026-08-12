@@ -1,6 +1,6 @@
 # 21 論理データ設計
 
-- 文書状態: `DRAFT_FOR_REVIEW`
+- 文書状態: `PHASE_I_REVISED / NFR-019_REAUDIT_PENDING`
 - 文書種別: 現行論理データモデルのeffective snapshot
 - 上位文書: `10_requirements_definition.md`
 - current code照合対象: `src/ariadne/product/domain/`
@@ -84,6 +84,29 @@ ExecutionPlan.navigation_stage
 Execution.current_navigation_stage
 StageExecution.navigation_stage
 ```
+
+#### 3.2.3 Navigation catalog authority
+
+Family-local Navigation catalogはpersistent Resourceではなく、各Family Capabilityが所有するimmutable `FamilyNavigationDescriptor`をapplication/interface aggregatorが集約する。
+
+Canonical metadata interface:
+
+```text
+GET /api/v1/navigation/analysis
+schema = analysis-navigation/1
+```
+
+`analysis-navigation/1`はpresentation/application metadata schemaであり、scientific generic `SchemaRegistry`へ登録しない。
+
+Frozen catalog:
+
+| Family | slug | default_stage_id | stage_id |
+| --- | --- | --- | --- |
+| EXPLORATORY | `exploratory` | `profile` | `profile`, `data-quality`, `distribution`, `relationships`, `comparison`, `findings` |
+| PREDICTIVE | `predictive` | `setup` | `setup`, `train`, `predict`, `metrics`, `explainability`, `model-management` |
+| CAUSAL | `causal` | `setup` | `setup`, `discovery`, `identification`, `estimation`, `effects`, `diagnostics`, `sensitivity` |
+
+Current Family / Navigation Stageはcanonical route `/projects/{project_id}/analysis/{family_slug}/{stage_slug}`からresolveする。Navigation catalogはruntime Stage生成authorityを持たない。
 
 ### 3.3 論理概念の分類原則
 
@@ -283,6 +306,31 @@ Unique constraint:
 - time cutoffは予測時点・因果time zeroと独立に保存し、Specification側で意味付けする
 - 固定時にcanonical JSONとhashを生成する
 
+#### 5.4.3 ENH-E5 typed filter compatibility
+
+current operator taxonomyは変更しない。source Dataset logical type × operator × valueのcompatibilityは次をcanonical validation ruleとする。
+
+| Logical Type | Allowed operators | Value contract |
+| --- | --- | --- |
+| BOOLEAN | `EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL` | boolean。`IN/NOT_IN`はboolean list |
+| INTEGER | `EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL` | integer。booleanはintegerとして受理しない |
+| REAL | `EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL` | finite int/float。booleanは禁止 |
+| DATETIME | `EQ, NE, LT, LTE, GT, GTE, IN, NOT_IN, IS_NULL, NOT_NULL` | ISO-8601 string |
+| TEXT | `EQ, NE, IN, NOT_IN, IS_NULL, NOT_NULL` | string。lexical orderingは提供しない |
+| OTHER | `IS_NULL, NOT_NULL` | valueなし |
+
+追加invariant:
+
+- `IS_NULL / NOT_NULL`はvalueを持たない。
+- `IN / NOT_IN`はnon-empty listを要求する。
+- `time_cutoff`はDATETIME columnと`LT / LTE` semanticsのみ。
+- source logical typeを解決できない場合はvalidation successにしない。
+- mismatchはstable code `FILTER_TYPE_MISMATCH`。
+- create/update/validate/fixで同じcompatibility validatorを利用する。
+- new expression language、derived expressionのfull static typing、Family-specific typingはENH-E5 scope外。
+
+AnalysisView persistent envelope/schema fieldはこのvalidation追加を理由に変更しない。
+
 ### 5.5 AnalysisSpecification
 
 #### 5.5.1 共通Envelope
@@ -303,6 +351,21 @@ Unique constraint:
 ```
 
 共通Envelopeの固定後、family_specを上書きしない。
+
+#### 5.5.1a Exploratory handoff DRAFT contract
+
+Exploratory ResultからCausal/Predictiveへhandoffする場合、canonical `AnalysisSpecification`を**DRAFTとしてpersist**する。
+
+- target `analysis_family`: `CAUSAL`または`PREDICTIVE`
+- `analysis_mode`: requestで`EXPLORATORY / CONFIRMATORY`を明示
+- `dataset_version_id / analysis_view_id`: source Result lineageからderiveし、arbitrary overrideしない
+- `research_context_version_id`: source lineageから一意にderiveできる場合は継承し、曖昧ならrequestで要求
+- DRAFTではfamily_specの未完成を許容する
+- source Resultからtarget AnalysisSpecificationへsemantic `MOTIVATED` edgeを保存する
+- auto FIX / auto Executionは行わない
+- same immutable `dataset_version_id`でconfirmatory analysisへhandoffする場合は`EXPLORATORY_REUSE_SAME_DATA` warningを付与する
+
+Explore stateからAnalysisView DRAFTへ持ち込むのは`row_filter / selected_columns / derived_columns / missing_value_policy / time_cutoff / sampling`のみである。chart mark/encoding/panel layout等のpresentation-only stateはAnalysisViewへ押し込まない。
 
 #### 5.5.2 Exploratory Schema
 
@@ -430,6 +493,19 @@ Canonical `Execution`のlogical/persistent fieldは次のとおりである。
 | change_reason | revision reason |
 | lease_owner / lease_expires_at | Worker lease authority |
 
+`runtime_version_json`はENH-E5 targetで最低限次の再構築metadataを保持する。
+
+```text
+ariadne_code_version
+python_version
+platform_system
+platform_release
+machine
+libraries
+```
+
+`libraries`は実際にregistered/used runner dependencyとして利用したscientific library versionを保存する。少なくとも共通依存（例: numpy/pandas）と、Predictive利用時のscikit-learn等の実利用dependencyをcaptureする。version取得だけを目的にfuture optional dependencyをimportしない。これはbit-for-bit numerical identityの保証ではない。
+
 Canonical `Execution`には`execution_plan_id` columnを持たない。Predictive/Exploratoryの一部current application pathでは、`analysis_spec_json`内のmetadataとして`analysis_specification_id` / `analysis_view_id` / `execution_plan_id`を保持し得るが、これはcanonical Executionの独立FK fieldではない。
 
 Planning baseline DB constraintにおけるoperation別input invariant:
@@ -477,10 +553,13 @@ Unique constraint: `(execution_id, stage_key)`。
 | stage_execution_id | 親StageExecution |
 | attempt_number | 1始まり。StageExecution内unique |
 | worker_id | 実行worker |
+| effective_random_seed | stochastic Stageが実際に用いたseed。deterministic Stageはnull |
 | started_at / finished_at | attempt time |
 | error_json | optional error |
 
 `attempt_count`をStageExecutionの独立fieldとして保存しない。回数はStageAttempt履歴から導出する。
+
+`effective_random_seed`はENH-E5のpersistent migration対象である。stochastic Stageではactual seedをattempt単位で保存し、同一logical Stageのtechnical retryでは同じeffective seedを再利用する。
 
 Navigation Stage / browser routeをStageExecutionまたはStageAttemptへ保持しない。
 
@@ -589,7 +668,6 @@ Result --SUMMARIZES--> Result
 Result --SUMMARIZES--> Artifact
 Result --MOTIVATED--> Execution
 Result --MOTIVATED--> AnalysisSpecification
-Result --MOTIVATED--> AnalysisSpecificationDraft
 ```
 
 加えて、`Result`または`Artifact`をsourceとする`DOCUMENTS / SUPPORTED_BY / EVIDENCE_FOR`は、target typeが次のいずれかである場合に`GENERIC_ONLY`となる。
@@ -799,6 +877,36 @@ Domain relation typeには`USED_INPUT / GENERATED / DERIVED_FROM / REVISED_FROM 
 
 Result lineage projection APIには、typed structural relationshipを表示用に`CONTEXT_FOR / SOURCE_OF / INPUT_TO / HAS_ARTIFACT / HAS_ANNOTATION / RELATED_TO`等へ変換する既存projectionがある。これらの表示relation名とgeneric authoritative `LineageEdge.relation_type`を同一contractとみなさない。
 
+#### 5.13.1 ENH-E5 canonical lineage completion
+
+Canonical read modelは最低限次のstructural chainを再構成できなければならない。
+
+```text
+ResearchContextVersion
+  ↓
+AnalysisSpecification
+  ↓
+ExecutionPlan
+  ↓
+Execution
+  ↓
+StageExecution
+  ↓
+Result
+  ↓
+Artifact
+```
+
+さらに`DatasetVersion / AnalysisView / GraphVersion / input Result / base Execution`を接続する。
+
+Authority rule:
+
+- FK、snapshot identity、Execution/Stage/Result/Artifact relationからdeterministically導出できるstructural relationはread modelでprojectionする。
+- 上記structural relationをgeneric `LineageEdge`へ二重persistしない。
+- `MOTIVATED / SUPPORTED_BY / SELECTED / REJECTED`等のsemantic relationのみgeneric LineageEdgeを用いる。
+- canonical usage/lineage queryはhistorical `Family*` compatibility read modelだけに依存しない。
+- source type/identityを推測できないedgeを生成しない。
+
 ## 6. Canonicalization
 
 現行generic canonicalizationは次の規則を持つ。
@@ -836,7 +944,7 @@ Navigation descriptorをAPI/cache向けにcanonicalizeする場合も、scientif
 - StageExecution:
   - unique `(execution_id, stage_key)`
   - unique `(stage_execution_id, execution_id)`
-- StageAttempt: unique `(stage_execution_id, attempt_number)`。
+- StageAttempt: unique `(stage_execution_id, attempt_number)`。 ENH-E5で`effective_random_seed: int | null`を追加するが、unique constraintは追加しない。
 - Result: unique `(result_id, execution_id)`。`execution_id / stage_execution_id` index。Result自身に`project_id / analysis_family`列はない。
 - LineageEdge: unique `(source_type, source_id, relation_type, target_type, target_id)`。
 - ProjectMembership: unique `(project_id, user_id)`、role CHECK `OWNER / EDITOR / VIEWER`。
@@ -865,7 +973,7 @@ hash(schema_version, payload)
 
 Schema versionを直接持つ主なversioned JSON resourceにはResearchContextVersion、AnalysisView、AnalysisSpecification、ExecutionPlan等がある。一方、canonical `Result`とcanonical `Artifact`には共通`schema_version` fieldを直接持たない。Runner境界の`ResultDraft / ArtifactDraft`や移行互換`FamilyResult / FamilyArtifact`にはschema versionが存在するため、runner draft / compatibility projectionとcanonical persistence entityを区別する。
 
-Navigation metadataに`analysis-navigation/1`を導入する場合は、既存scientific schema registryとのownership、registration timing、backward compatibilityをArchitecture Reviewで確定し、Execution Stage schemaと共用しない。
+Navigation metadataに`analysis-navigation/1`はbackend read-only Navigation metadata contractとして利用するが、scientific generic `SchemaRegistry`へ登録しない。Family Capability descriptor / application-interface aggregatorがownershipを持ち、Execution Stage schemaとは独立する。
 
 ## 20. CHANGE LOG
 
@@ -880,3 +988,10 @@ Navigation metadataに`analysis-navigation/1`を導入する場合は、既存sc
 - Navigation StageをAnalysisSpecification / ExecutionPlan / Execution / StageExecutionへ追加しない。
 - Navigation descriptor / navigation stateをDomain Resource外の論理概念として定義する。
 - runtime `StageType / StageDefinition`をExecutionPlan内value objectとして維持し、Navigation Stageと同一化しない。
+
+### 20.6. ENH-E5 Phase I Canonical Convergence
+
+- Navigation catalog authority/route/default StageをPhase G freezeへ収束した。
+- AnalysisView typed filter compatibility、Exploratory handoff/provenance、canonical lineage completionを追加した。
+- `StageAttempt.effective_random_seed` migrationと`runtime_version_json` environment metadataを追加した。
+- D1 current resource responsibilityを維持し、Navigation persistenceを禁止した。
