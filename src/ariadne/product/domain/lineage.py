@@ -49,6 +49,10 @@ _DOCUMENT_OR_EVIDENCE_TARGET_TYPES = frozenset({
 
 _GENERIC_ONLY_TUPLES = frozenset({
     ("Artifact", "DERIVED_FROM", "Artifact"),
+    # Predictive explanation documents the concrete artifacts consumed to
+    # generate the saved explanation result.  This is provenance metadata,
+    # not an execution-stage or navigation-state relation.
+    ("Artifact", "USED_INPUT", "Result"),
     ("Result", "SUMMARIZES", "Result"),
     ("Result", "SUMMARIZES", "Artifact"),
     ("Result", "MOTIVATED", "Execution"),

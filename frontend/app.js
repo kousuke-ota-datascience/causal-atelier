@@ -1,5 +1,5 @@
 const API="/api/v1";
-const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
+const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,predictiveDraft:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
 const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
@@ -266,6 +266,17 @@ function predictiveFamilySpec(){
   return {schema_version:'predictive-analysis-spec/1',task_type:task,prediction_question:{prediction_unit:String(form.get('prediction_unit')),target,prediction_time:String(form.get('prediction_time')),horizon:String(form.get('horizon')),intended_use:String(form.get('intended_use')),deployment_population:String(form.get('deployment_population'))},feature_spec:{feature_columns:features,availability_cutoff:availability,excluded_columns:excluded},split_spec:{strategy,train_ratio:Number(form.get('train_ratio')),validation_ratio:Number(form.get('validation_ratio')),test_ratio:Number(form.get('test_ratio')),group_column:String(form.get('group_column')||'')||null,time_column:String(form.get('time_column')||'')||null,train_cutoff:String(form.get('train_cutoff')||'')||null,validation_cutoff:String(form.get('validation_cutoff')||'')||null,stratify:strategy==='STRATIFIED',seed},preprocessing_spec:{fit_partition:'TRAIN',numeric_imputation:'MEAN',scale_numeric:form.get('scale_numeric')==='on',categorical_encoding:'ONE_HOT'},model_spec:{model_id:modelId,parameters:modelId==='logistic_regression.v1'?{iterations:800,learning_rate:0.1,l2:0.001}:{l2:0}},tuning_spec:{selection_partitions:list(String(form.get('tuning_selection')||'TRAIN,VALIDATION'))},evaluation_spec:{primary_metric:primaryMetric,secondary_metrics:list(String(form.get('secondary_metrics')||'')),subgroups:list(String(form.get('subgroups')||''))},explanation_spec:{method:String(form.get('explanation_method')),dataset:'TEST',sampling:{strategy:'FIRST_N',size:Number(form.get('explanation_sample_size')),seed},local_explanations:form.get('local_explanations')==='on'}};
 }
 
+function capturePredictiveDraft(){
+  const form=$('#predictive-form');if(!form)return;
+  state.predictiveDraft=Object.fromEntries([...form.elements].filter(element=>element.name).map(element=>[element.name,element.type==='checkbox'?element.checked:element.value]));
+}
+function restorePredictiveDraft(){
+  const form=$('#predictive-form'),draft=state.predictiveDraft;if(!form||!draft)return;
+  for(const [name,value] of Object.entries(draft)){const element=form.elements[name];if(!element)continue;if(element.type==='checkbox')element.checked=Boolean(value);else element.value=String(value)}
+}
+$('#predictive-form').addEventListener('input',capturePredictiveDraft);
+$('#predictive-form').addEventListener('change',capturePredictiveDraft);
+
 async function waitForPredictive(executionId){
   for(let attempt=0;attempt<480;attempt+=1){
     const execution=await api(`/projects/${state.project.project_id}/executions/${executionId}`);
@@ -307,6 +318,7 @@ async function loadPredictiveWorkspace(){
   state.predictiveCapabilities=capabilities;state.researchContexts=contexts.items;state.predictiveSpecifications=specifications.items.filter(specification=>specification.analysis_family==='PREDICTIVE');state.predictiveExecutions=executions.items.filter(execution=>execution.analysis_family==='PREDICTIVE'&&execution.analysis_specification_id);
   $('#predictive-capabilities').innerHTML=`<p><b>${escapeHtml(capabilities.gate)}</b> — Training ${capabilities.training_available?'available':'unavailable'} / Evaluation ${capabilities.evaluation_available?'available':'unavailable'} / Explanation ${capabilities.explanation_available?'available':'unavailable'} / Model Card ${capabilities.model_card_available?'available':'unavailable'}</p><p>Models: ${capabilities.model_registry.map(model=>escapeHtml(model.model_id)).join(', ')}</p>`;
   const method=$('#predictive-explanation-method'),selected=method.value;method.innerHTML=capabilities.explanation_methods.map(item=>`<option value="${escapeHtml(item.method)}">${escapeHtml(item.method)}</option>`).join('');if(capabilities.explanation_methods.some(item=>item.method===selected))method.value=selected;
+  restorePredictiveDraft();
   renderResearchContexts();renderPredictiveExecutions();updatePredictiveAvailability();
   if(state.predictiveExecutions.length)await loadPredictiveDetails(state.predictiveExecutions[0].execution_id);else{state.predictiveDetails=null;renderPredictiveDetails()}
 }

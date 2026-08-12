@@ -527,6 +527,17 @@ def _add_predictive_output_lineage(
     explanation = results.get(ResultType.PREDICTIVE_EXPLANATION_RESULT)
     model_card = results.get(ResultType.MODEL_CARD_RESULT)
     if explanation is not None:
+        for artifact_type in (
+            ArtifactType.FITTED_PREPROCESSOR,
+            ArtifactType.FITTED_MODEL,
+            ArtifactType.PREDICTION,
+        ):
+            artifact = artifacts.get(artifact_type)
+            if artifact is not None:
+                add(
+                    "Artifact", artifact.artifact_id, "USED_INPUT", "Result",
+                    explanation.result_id, {"purpose": "predictive_explanation"},
+                )
         explanation_artifact = artifacts.get(ArtifactType.PREDICTIVE_EXPLANATION)
         if explanation_artifact is not None:
             add("Artifact", explanation_artifact.artifact_id, "EVIDENCE_FOR", "Result",
