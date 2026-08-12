@@ -9,7 +9,7 @@ current Trial Implementation Completion Report before independent verification.
 
 | Field | Observed value |
 |---|---|
-| `TEST_START_SHA` | `7868ba3de484396000098d7898181e5e145a8dc0` |
+| `TEST_START_SHA` | `837434d79426fa4489feb5d45f471d6e0beb3f4c` |
 | Branch | `feature/ariadne_mvp_e5` |
 | Actual repository state | clean (`git status --porcelain` produced no output) |
 | `FIXED_TRIAL_CANDIDATE_SHA` | unavailable |
@@ -20,7 +20,7 @@ current Trial Implementation Completion Report before independent verification.
 git branch --show-current
 git status --porcelain
 git rev-parse HEAD
-sed -n '1,300p' \
+sed -n '1,360p' \
   docs/wiki/develop_memo/_work/20260811_ENH-E5_family_stage_navigation/20_implementation_reports/G01/Trial02/E5-G01_02__implementation_completion.md
 ```
 
@@ -28,7 +28,7 @@ sed -n '1,300p' \
 
 ```text
 feature/ariadne_mvp_e5
-7868ba3de484396000098d7898181e5e145a8dc0
+837434d79426fa4489feb5d45f471d6e0beb3f4c
 
 sed: can't read docs/wiki/develop_memo/_work/20260811_ENH-E5_family_stage_navigation/20_implementation_reports/G01/Trial02/E5-G01_02__implementation_completion.md: No such file or directory
 ```

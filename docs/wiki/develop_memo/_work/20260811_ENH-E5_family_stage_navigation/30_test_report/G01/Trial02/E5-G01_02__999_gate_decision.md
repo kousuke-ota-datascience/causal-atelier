@@ -14,7 +14,7 @@
 |---|---|
 | Gate | `G01` |
 | Trial | `02` |
-| `TEST_START_SHA` | `7868ba3de484396000098d7898181e5e145a8dc0` |
+| `TEST_START_SHA` | `837434d79426fa4489feb5d45f471d6e0beb3f4c` |
 | `FIXED_TRIAL_CANDIDATE_SHA` | unavailable |
 | Completed Test Items | `001_candidate_identity` (BLOCKED) |
 | Candidate audit evidence | `E5-G01_02__001_candidate_identity.md` |
