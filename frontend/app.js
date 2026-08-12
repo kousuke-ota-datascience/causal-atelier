@@ -111,6 +111,15 @@ function renderAnalysisNavigation(){
   $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" aria-label="Analysis stage: '+escapeHtml(s.label)+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
   $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);state.navigationContext=AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
   $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>{state.navigationContext=AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
+  renderCausalStagePresentation();
+}
+function renderCausalStagePresentation(){
+  const target=$('#causal-stage-presentation'),context=state.navigationContext;
+  if(!target)return;
+  if(!context||context.familySlug!=='causal'){target.hidden=true;target.replaceChildren();return}
+  const presentation=CausalStagePresentation.presentationFor(context.stageSlug);
+  target.hidden=false;
+  target.innerHTML='<h2>'+escapeHtml(presentation.title)+'</h2><p>'+escapeHtml(presentation.summary)+'</p><ul>'+presentation.resources.map(resource=>'<li>'+escapeHtml(resource)+'</li>').join('')+'</ul>';
 }
 async function renderOperationAvailability(){
   const el=$('#operation-availability'),context=state.navigationContext;if(!state.project||!context){el.textContent='IDLE';return}el.textContent='LOADING';
