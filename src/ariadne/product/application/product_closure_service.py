@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import tempfile
 import uuid
 from datetime import datetime, timezone
@@ -18,6 +19,7 @@ from ariadne.product.domain.errors import (
     InvalidSchema,
     ProjectAccessDenied,
     ProjectBoundaryViolation,
+    OperationAvailabilityError,
 )
 from ariadne.product.domain.lineage import (
     LINEAGE_RELATION_TYPES,
@@ -64,6 +66,66 @@ def _now() -> datetime:
 
 
 class ProductClosureService:
+    def operation_availability(
+        self, project_id: str, *, user_id: str, resource_type: str | None,
+        resource_id: str | None, route: str | None,
+    ) -> dict[str, Any]:
+        """Read-only UI projection; command validation remains authoritative."""
+        supported_types = {"analysis-specification", "execution", "result", "graph-version"}
+        if bool(resource_type) != bool(resource_id) or (not resource_type and not route):
+            raise OperationAvailabilityError("INVALID_OPERATION_AVAILABILITY_QUERY", "resource_type and resource_id must be paired; route is required without a resource")
+        if resource_type and resource_type not in supported_types:
+            raise OperationAvailabilityError("UNSUPPORTED_RESOURCE_TYPE", f"Unsupported resource type: {resource_type}")
+        route_match = None
+        if route:
+            route_match = re.fullmatch(
+                r"/projects/([^/]+)/analysis/(exploratory|predictive|causal)/([^/]+)(?:/resource/([^/]+)/([^/]+))?",
+                route,
+            )
+            if route_match is None or route_match.group(1) != project_id:
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route must be a canonical route for this project")
+            if resource_type and route_match.group(4) and (
+                route_match.group(4) != resource_type or route_match.group(5) != resource_id
+            ):
+                raise OperationAvailabilityError("INVALID_OPERATION_AVAILABILITY_QUERY", "route resource must match query resource")
+        with self._session_factory() as session:
+            role = self._require_role(session, project_id, user_id, READ_ROLES)
+            resource: Any | None = None
+            if resource_type == "analysis-specification":
+                resource = session.get(AnalysisSpecificationOrm, resource_id)
+            elif resource_type == "execution":
+                resource = session.get(ExecutionOrm, resource_id)
+            elif resource_type == "result":
+                row = session.get(ResultOrm, resource_id)
+                resource = (row, session.get(ExecutionOrm, row.execution_id)) if row else None
+            elif resource_type == "graph-version":
+                resource = session.get(GraphVersionOrm, resource_id)
+            if resource_type and resource is None:
+                raise EntityNotFound("Resource", resource_id or "")
+            resolved_project = resource[1].project_id if resource_type == "result" else getattr(resource, "project_id", None)
+            if resource_type and resolved_project != project_id:
+                raise EntityNotFound("Resource", resource_id or "")
+            resolved_family = resource[1].analysis_family.lower() if resource_type == "result" else getattr(resource, "analysis_family", "").lower()
+            if resource_type == "graph-version":
+                resolved_family = "causal"
+            if resource_type == "analysis-specification":
+                resolved_family = resource.analysis_family.lower()
+            if route_match and resource_type and route_match.group(2) != resolved_family:
+                raise OperationAvailabilityError("ROUTE_RESOURCE_FAMILY_MISMATCH", "route family does not match resource family")
+            def item(allowed: bool, code: str | None = None) -> dict[str, Any]:
+                return {"allowed": allowed} if allowed else {"allowed": False, "reason_code": code}
+            keys = ("RUN", "EDIT", "EXPORT")
+            if not resource_type:
+                return {"operations": {key: item(False, "RESOURCE_REQUIRED") for key in keys}}
+            if role not in WRITE_ROLES:
+                return {"operations": {key: item(False, "PROJECT_ACCESS_DENIED") for key in keys}}
+            if resource_type == "analysis-specification":
+                return {"operations": {"RUN": item(resource.status == "FIXED", "SPEC_NOT_FIXED"), "EDIT": item(resource.status != "FIXED", "RESOURCE_IMMUTABLE"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            if resource_type == "graph-version":
+                return {"operations": {"RUN": item(resource.status == "FIXED", "GRAPH_NOT_FIXED"), "EDIT": item(resource.status != "FIXED", "RESOURCE_IMMUTABLE"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            if resource_type == "execution":
+                return {"operations": {"RUN": item(resource.status in {"FAILED", "CANCELLED"}, "EXECUTION_STATE_NOT_RUNNABLE"), "EDIT": item(False, "UNSUPPORTED_OPERATION"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            return {"operations": {"RUN": item(False, "ROUTE_REQUIRED" if not route else "UNSUPPORTED_OPERATION"), "EDIT": item(False, "UNSUPPORTED_OPERATION"), "EXPORT": item(True)}}
     def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
         self._session_factory = session_factory
         self._artifact_store = artifact_store

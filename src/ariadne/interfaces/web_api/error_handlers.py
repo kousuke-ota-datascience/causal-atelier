@@ -28,6 +28,7 @@ from ariadne.product.domain.errors import (
     InvalidExecutionPlan,
     ProjectArchived,
     InvalidSchema,
+    OperationAvailabilityError,
     ResourceImmutable,
     PredictiveValidationError,
 )
@@ -42,6 +43,8 @@ def _error(request: Request, status: int, code: str, message: str, details: dict
 
 
 async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:
+    if isinstance(exc, OperationAvailabilityError):
+        return _error(request, exc.status, exc.code, str(exc))
     if isinstance(exc, EntityNotFound):
         return _error(request, 404, "ENTITY_NOT_FOUND", str(exc))
     if isinstance(exc, ProjectBoundaryViolation):

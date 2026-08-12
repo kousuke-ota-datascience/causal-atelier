@@ -5,6 +5,7 @@ const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
 const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
 const ANALYSIS_WORKSPACES=Object.freeze({exploratory:'explore',predictive:'predictive',causal:'discovery'});
+const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
 
 async function api(path,options={}){
@@ -88,6 +89,7 @@ async function restoreProjectRoute(){
     if(parsed&&parsed.projectId){
       if(parsed.resource){parsed=await AnalysisNavigation.contextForResource(state.navigationCatalog,api,parsed.projectId,parsed.resource.resourceType,parsed.resource.resourceId,parsed)}
       state.navigationContext=parsed;state.project=await api(`/projects/${parsed.projectId}`);
+      renderAnalysisNavigation();await renderOperationAvailability();
       fillProject();await loadProjects();$('#project-select').value=parsed.projectId;
       await activateWorkspace(ANALYSIS_WORKSPACES[parsed.familySlug],{push:false});
       return true;
@@ -100,6 +102,18 @@ async function restoreProjectRoute(){
   fillProject();await loadProjects();$('#project-select').value=projectId;
   await activateWorkspace(ROUTE_WORKSPACES[route],{push:false});
   return true;
+}
+function renderAnalysisNavigation(){
+  const catalog=state.navigationCatalog,context=state.navigationContext;if(!catalog||!context)return;
+  const current=catalog.families.find(item=>item.slug===context.familySlug);if(!current)throw new Error('Navigation catalog invariant failure: current family missing');
+  $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
+  $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
+  $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);state.navigationContext=AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
+  $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>{state.navigationContext=AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
+}
+async function renderOperationAvailability(){
+  const el=$('#operation-availability'),context=state.navigationContext;if(!state.project||!context){el.textContent='IDLE';return}el.textContent='LOADING';
+  try{const resource=context.resource,query=new URLSearchParams({route:AnalysisNavigation.serialize(context)});if(resource){query.set('resource_type',resource.resourceType);query.set('resource_id',resource.resourceId)}const data=await api('/projects/'+state.project.project_id+'/operation-availability?'+query);el.innerHTML=Object.entries(data.operations).map(([name,value])=>'<span class="status">'+escapeHtml(name)+': '+(value.allowed?'READY':escapeHtml(value.reason_code))+'</span>').join(' ')}catch(error){el.textContent='ERROR: '+error.message}
 }
 window.addEventListener('popstate',()=>restoreProjectRoute().catch(error=>notice(error.message)));
 

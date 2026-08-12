@@ -75,6 +75,18 @@ def _user(request: Request) -> str:
     return request.headers.get("X-User-Id", "anonymous")
 
 
+@router.get("/operation-availability")
+async def operation_availability(
+    project_id: str, request: Request, service: ProductClosureServiceDep,
+    resource_type: str | None = None, resource_id: str | None = None,
+    route: str | None = None,
+) -> dict[str, Any]:
+    return service.operation_availability(
+        project_id, user_id=_user(request), resource_type=resource_type,
+        resource_id=resource_id, route=route,
+    )
+
+
 @router.get("/workspace-state")
 async def workspace_state(
     project_id: str, request: Request, service: ProductClosureServiceDep

@@ -53,6 +53,13 @@ class InvalidSchema(DomainError):
     """A versioned payload does not satisfy its canonical schema."""
 
 
+class OperationAvailabilityError(DomainError):
+    def __init__(self, code: str, message: str, *, status: int = 422) -> None:
+        super().__init__(message)
+        self.code = code
+        self.status = status
+
+
 class UnsupportedSchemaVersion(InvalidSchema):
     def __init__(self, schema_version: str) -> None:
         super().__init__(f"Unsupported schema version: {schema_version}")
