@@ -256,6 +256,14 @@ def main() -> int:
             page.locator('#predictive-form input[name="explanation_sample_size"]').fill("5")
             run = page.locator("#run-predictive")
             _wait(lambda: run.is_enabled())
+            evidence["predictive_submit_diagnostic"] = page.locator("#predictive-form").evaluate("""form => ({
+                checkValidity: form.checkValidity(),
+                invalid: [...form.querySelectorAll(':invalid')].map(control => ({
+                    name: control.name, value: control.value,
+                    validationMessage: control.validationMessage,
+                })),
+                formData: [...new FormData(form).entries()],
+            })""")
             run.click()
             page.locator("#notice").filter(
                 has_text="Evaluation、Predictive Explanation、Model Cardを保存しました"
