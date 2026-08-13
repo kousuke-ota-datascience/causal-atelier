@@ -1,17 +1,17 @@
 # Ariadne ENH-E6 — Family / Stage Navigation Observable UI Bugfix
 
-**Document class:** Authoring Guide / Enhancement Root Index  
+**Document class:** Authoring Guide / Enhancement Root Index
 **Self-containment:** MUST — このREADMEだけでENH-E6のworkflow semantics、artifact authority、現在地、operator route、監査規則を理解できること。
 
-- Enhancement ID: `ENH-E6`
-- Target branch: `bugfix/ariadne_mvp_e6`
-- Production baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
-- Instruction freeze / template-compliance audit input SHA: `42df32decaa67b9de8c6cab518d441cf0a2f8fe4`
-- Source anomaly: `ENH-E5 / ANOM-E5-001 — Family Tab Observable UI Gap`
-- Active Gate: `G01`
-- Execution Mode: `WORK_PACKAGE`
-- Current workflow state: `G01 06/07 FROZEN; template-compliance remediation before P01 Trial01 execution`
-- Canonical requirements/design: `docs/wiki/requirement_definition/**` is READ ONLY for ENH-E6
+* Enhancement ID: `ENH-E6`
+* Target branch: `bugfix/ariadne_mvp_e6`
+* Production baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
+* Instruction freeze / template-compliance audit input SHA: `42df32decaa67b9de8c6cab518d441cf0a2f8fe4`
+* Source anomaly: `ENH-E5 / ANOM-E5-001 — Family Tab Observable UI Gap`
+* Active Gate: `G01`
+* Execution Mode: `WORK_PACKAGE`
+* Current workflow state: `G01 06/07 FROZEN; ENH-E6-specific agent entry prompts instantiated; P01 Trial01 ready for execution`
+* Canonical requirements/design: `docs/wiki/requirement_definition/**` is READ ONLY for ENH-E6
 
 ## 0. このテンプレートの目的
 
@@ -23,11 +23,11 @@ ENH-E6は、ENH-E5で契約された3つのAnalysis Family (`EXPLORATORY / PREDI
 
 ### Canonical filename policy
 
-- filename / directory nameはASCII charactersのみを使用する。
-- semantic suffixはtechnical Englishを使用する。
-- 日本語はdocument title / body textで使用してよい。
-- `ENH-E6`, `G01`, `Trial01`, `P01`等のidentifierはcanonical identityとして保持する。
-- Humanはidentityを指定し、derived path/nameはworkflow schemaに従う。
+* filename / directory nameはASCII charactersのみを使用する。
+* semantic suffixはtechnical Englishを使用する。
+* 日本語はdocument title / body textで使用してよい。
+* `ENH-E6`, `G01`, `Trial01`, `P01`等のidentifierはcanonical identityとして保持する。
+* Humanはidentityを指定し、derived path/nameはworkflow schemaに従う。
 
 ## 0.1. Document design principles
 
@@ -35,12 +35,12 @@ ENH-E6の各artifactは、自身の責務についてself-containedである。�
 
 ### Document classes
 
-| Document class | ENH-E6での主な対象 | Self-containment rule |
-|---|---|---|
-| Authoring Guide | root README, 各directory README | MUST |
-| Primary Execution Contract | Gate 06, Gate 07, P01-P03 | MUST |
-| Derived Contract | 08/09（必要時のみ） | CONDITIONAL |
-| Planning / Evidence / State / Operator Artifact | 00, 20, 30, Current State, 40 | MUST for own responsibility |
+| Document class                                  | ENH-E6での主な対象                   | Self-containment rule       |
+| ----------------------------------------------- | ------------------------------ | --------------------------- |
+| Authoring Guide                                 | root README, 各directory README | MUST                        |
+| Primary Execution Contract                      | Gate 06, Gate 07, P01-P03      | MUST                        |
+| Derived Contract                                | 08/09（必要時のみ）                   | CONDITIONAL                 |
+| Planning / Evidence / State / Operator Artifact | 00, 20, 30, Current State, 40  | MUST for own responsibility |
 
 ### Local normative meaning
 
@@ -74,13 +74,13 @@ G01はWork Package Modeを使用する。P01/P02/P03は実装のHOWを安全に�
 
 ### 1.4. Responsibility matrix
 
-| 観点 | G01 Gate | Trial01 | P01-P03 |
-|---|---|---|---|
-| 主目的 | semantic acceptance | candidate verification attempt | bounded coding execution |
-| authority | frozen 06/07 + 999 | Fixed Candidate + test evidence | assigned Pxx |
-| completeの意味 | downstream reliance可 | PASS/FAIL/BLOCKED | next implementation stepへ進める |
-| verified state更新 | PASS時のみ | 直接しない | しない |
-| restart | contract維持 | formal FAILまでTrial01 | 同Trial内で可能 |
+| 観点               | G01 Gate             | Trial01                         | P01-P03                      |
+| ---------------- | -------------------- | ------------------------------- | ---------------------------- |
+| 主目的              | semantic acceptance  | candidate verification attempt  | bounded coding execution     |
+| authority        | frozen 06/07 + 999   | Fixed Candidate + test evidence | assigned Pxx                 |
+| completeの意味      | downstream reliance可 | PASS/FAIL/BLOCKED               | next implementation stepへ進める |
+| verified state更新 | PASS時のみ              | 直接しない                           | しない                          |
+| restart          | contract維持           | formal FAILまでTrial01            | 同Trial内で可能                   |
 
 ### 1.5. Workflow invariants
 
@@ -109,15 +109,15 @@ Current_State_Control_Sheet.md
 
 ### 2.1. Document authority
 
-- `Current_State_Control_Sheet.md`: final PASS済みverified stateのindex。未検証candidateを昇格しない。
-- `00`: why / requirement-design delta / approval / traceability / architecture review provenance。
-- `G01/06`: Gate-wide implementation semantic authority。Coding Agentの直接entry sourceではない。
-- `G01/07`: Independent VerificationのAcceptance Criteria authority。Coding Agentへ見せない。
-- `G01/P00`: Human/operator向けexecution decomposition authority。Coding Agentへ見せない。
-- `G01/Pxx`: assigned Coding Agentが読む唯一のnormative implementation contract。
-- `20`: implementation evidence / package checkpoint / candidate assembly record。
-- `30`: independent test evidence / Gate Decision。
-- `40`: Human-controlled agent entry, architecture review, preflight。
+* `Current_State_Control_Sheet.md`: final PASS済みverified stateのindex。未検証candidateを昇格しない。
+* `00`: why / requirement-design delta / approval / traceability / architecture review provenance。
+* `G01/06`: Gate-wide implementation semantic authority。Coding Agentの直接entry sourceではない。
+* `G01/07`: Independent VerificationのAcceptance Criteria authority。Coding Agentへ見せない。
+* `G01/P00`: Human/operator向けexecution decomposition authority。Coding Agentへ見せない。
+* `G01/Pxx`: assigned Coding Agentが読む唯一のnormative implementation contract。
+* `20`: implementation evidence / package checkpoint / candidate assembly record。
+* `30`: independent test evidence / Gate Decision。
+* `40`: Human-controlled agent entry, architecture review, preflight。
 
 ---
 
@@ -151,6 +151,8 @@ P00、P01、P02、P03を作成済み。本template-compliance revisionでPxxをP
 
 次の実行単位は`G01 / P01 / Trial01`。Coding Agentへ直接Gate 06/07/P00を渡してはならない。
 
+ENH-E6では、template側のparameterized entry promptをそのまま実行せず、Enhancement固定値を展開済みのinstance-specific operator promptを `40_operator_workflows/agent_entry_prompts/` に保持する。
+
 #### Operator Quick HowToUse
 
 Human operatorがCoding Agentへ与えるentry instructionは次だけとする。
@@ -158,7 +160,7 @@ Human operatorがCoding Agentへ与えるentry instructionは次だけとする�
 ```text
 下記文書に記載の指示を実行すること。
 
-- docs/wiki/develop_memo/_work/agentic_enhancement_workflow_template/40_operator_workflows/agent_entry_prompts/
+- docs/wiki/develop_memo/_work/20260813_ENH-E6_family_stage_navigation_bugfix/40_operator_workflows/agent_entry_prompts/
     - 10_normal_execution_02_work_package_coding_agent_prompt.md
 
 今回の指示は
@@ -170,7 +172,23 @@ Human operatorがCoding Agentへ与えるentry instructionは次だけとする�
 である。
 ```
 
-Canonical operator promptがP01を一意に解決し、P01だけをnormative implementation contractとしてCoding Agentへ与える。Coding AgentはGate 06、Gate 07、P00、他Pxx、00-30、過去enhancement/ADR/issue/Webをspecification completion目的で読んではならない。
+参照先のENH-E6-specific operator promptには、少なくとも以下のEnhancement固定値が事前展開されていることを前提とする。
+
+```text
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E6
+ENHANCE_SHORT_ID=E6
+BRANCH_NAME=bugfix/ariadne_mvp_e6
+REMOTE_NAME=causal-atelier
+WORK_ROOT=docs/wiki/develop_memo/_work/20260813_ENH-E6_family_stage_navigation_bugfix
+WORK_DIR_NAME=20260813_ENH-E6_family_stage_navigation_bugfix
+```
+
+これによりHuman operatorは実行時変数のみを指定し、ENH-E6 / G01 / P01 / Trial01を一意に解決する。
+
+Coding AgentはP01だけをnormative implementation contractとして扱う。Gate 06、Gate 07、P00、他Pxx、00-30、過去enhancement/ADR/issue/Webをspecification completion目的で読んではならない。
+
+template directory配下の未展開operator promptを直接Agent executionへ使用してはならない。
 
 ### Step 8 — Candidate Assemblyを行う
 
@@ -182,9 +200,9 @@ Fixed Trial Candidateを固定後、Test/Audit Agentへ07をacceptance authority
 
 ### Step 10 — Gate Decisionに従って遷移する
 
-- PASS: Current Stateをpromotionし、ANOM-E5-001をresolution conditionに従ってclose可能。
-- FAIL: Trial02へ。original 06/07はimmutable、08を作成。
-- BLOCKED: prerequisite/verification blocking reasonを解消し、contractを勝手に変更しない。
+* PASS: Current Stateをpromotionし、ANOM-E5-001をresolution conditionに従ってclose可能。
+* FAIL: Trial02へ。original 06/07はimmutable、08を作成。
+* BLOCKED: prerequisite/verification blocking reasonを解消し、contractを勝手に変更しない。
 
 ---
 
@@ -194,16 +212,40 @@ G01 PASSが一つのdownstream-relyable semantic contractを成立させるた�
 
 ## 5. Canonical identifiers and naming
 
-- `ENHANCE_ID=ENH-E6`
-- `GATE_ID=G01`
-- `TRIAL_NO=01`（最初のformal verification attempt）
-- planned package: `P01`, `P02`, `P03`
-- remediation package: `Rxx`（formal FAIL後のみ）
-- canonical filenames/directoriesはASCII。
+* `ENHANCE_ID=ENH-E6`
+* `GATE_ID=G01`
+* `TRIAL_NO=01`（最初のformal verification attempt）
+* planned package: `P01`, `P02`, `P03`
+* remediation package: `Rxx`（formal FAIL後のみ）
+* canonical filenames/directoriesはASCII。
 
-### 5.1. Human-supplied vs derived variables
+### 5.1. Enhancement-fixed, runtime-supplied, and derived variables
 
-Human supplied: ENHANCE_ID、GATE_ID、PACKAGE_ID、TRIAL_NO、branch。Derived: package instruction path、20/30 evidence path、candidate/report filename。Agentが曖昧なpathを推測してはならない。
+ENH-E6のoperator promptをinstance化する時点で、以下はEnhancement固定値として展開済みでなければならない。
+
+```text
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E6
+ENHANCE_SHORT_ID=E6
+BRANCH_NAME=bugfix/ariadne_mvp_e6
+REMOTE_NAME=causal-atelier
+WORK_ROOT=docs/wiki/develop_memo/_work/20260813_ENH-E6_family_stage_navigation_bugfix
+WORK_DIR_NAME=20260813_ENH-E6_family_stage_navigation_bugfix
+```
+
+通常のWork Package Coding Agent起動時にHuman operatorが指定するruntime valuesは、当該promptが要求する実行単位識別子のみとする。本ENH-E6 P01 Trial01では次である。
+
+```text
+GATE_ID=G01
+PACKAGE_ID=P01
+TRIAL_NO=01
+```
+
+package instruction path、20/30 evidence path、candidate/report filename等は上記固定値とruntime valuesからworkflow schemaに従ってderiveする。
+
+Agentがrepository探索、branch名、会話文脈、近傍directory等から不足したEnhancement identityやpathを推測してはならない。
+
+未解決のEnhancement固定placeholderがoperator promptに残る場合はexecutionを開始せず、Human operatorへBLOCKEDとして返す。
 
 ## 6. Gate contract model
 
@@ -269,13 +311,43 @@ Pxxがfrozen Gate semantic boundaryと矛盾するとHuman/contract ownerへBLOC
 
 assigned Pxxのみをnormative implementation contractとして読む。source/test/config/migrationはimplementation substrateとして調査可。Gate06/07/P00/他Pxx/00-30/過去ENH/ADR/issue/Webでspecificationを補完しない。Package completionをGate PASSと表現しない。
 
+Coding AgentはENH-E6固有のinstantiated operator promptから起動される。template directory上の未展開promptを直接entry pointとして使用してはならない。
+
 ### 11.2. Test / Audit Agent
 
 Fixed Candidateと07を基準に独立検証する。production codeを修正しない。Coding Agentのself-checkをGate PASS evidenceへ昇格しない。
 
 ## 12. Parameterized operator prompt rules
 
-Human operatorはtemplateのparameterized entry promptを使い、`GATE_ID/PACKAGE_ID/TRIAL_NO`だけを指定する。Agentへ多数のworkflow文書を手動列挙してcontext isolationを破壊しない。
+Human operatorは、template directory上のparameterized promptを直接Agentへ渡さない。
+
+まずEnhancement作へ渡さない。
+
+まずEnhancement作業directory内の
+
+```text
+40_operator_workflows/agent_entry_prompts/
+```
+
+へoperator prompt一式をinstance化し、Enhancement固定値を具体値へ展開する。
+
+ENH-E6では少なくとも以下が固定済みでなければならない。
+
+```text
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E6
+ENHANCE_SHORT_ID=E6
+BRANCH_NAME=bugfix/ariadne_mvp_e6
+REMOTE_NAME=causal-atelier
+WORK_ROOT=docs/wiki/develop_memo/_work/20260813_ENH-E6_family_stage_navigation_bugfix
+WORK_DIR_NAME=20260813_ENH-E6_family_stage_navigation_bugfix
+```
+
+その後、Human operatorはENH-E6固有のentry promptを指定し、`GATE_ID/PACKAGE_ID/TRIAL_NO`等のprompt-required runtime variablesだけを渡す。
+
+Agentへ多数のworkflow文書を手動列挙してcontext isolationを破壊してはならない。
+
+未展開のEnhancement固定placeholder、曖昧な`WORK_ROOT`、未確定のbranch/remote identityを含むoperator promptではexecutionを開始してはならない。
 
 ## 13. Preflight / prerequisite
 
@@ -287,28 +359,32 @@ Human operatorはtemplateのparameterized entry promptを使い、`GATE_ID/PACKA
 
 ## 15. Requirement levels
 
-- Canonical product requirements/design: `docs/wiki/requirement_definition/**`。READ ONLY、ENH-E6では変更しない。
-- ENH-local realization requirements: E6-FR/E6-NFR。正本の変更ではなくbugfix realization/acceptance clarification。
-- Gate acceptance: AC-E6-G01-001..011。07 authority。
+* Canonical product requirements/design: `docs/wiki/requirement_definition/**`。READ ONLY、ENH-E6では変更しない。
+* ENH-local realization requirements: E6-FR/E6-NFR。正本の変更ではなくbugfix realization/acceptance clarification。
+* Gate acceptance: AC-E6-G01-001..011。07 authority。
 
 ## 16. Instantiation checklist
 
-- [x] root/background/instruction/state artifactsをinstance化
-- [x] canonical requirements/designは変更対象外と明示
-- [x] architecture review applicabilityを判定・記録
-- [x] G01 semantic boundaryを1文で定義
-- [x] Current Stateをverified factsだけで初期化
-- [x] G01 06/07をHuman review + preflight後にfreeze
-- [x] Work Package Mode理由とP00/P01-P03を作成
-- [x] PxxをCoding Agent self-contained contractへ修正
-- [x] Coding Agentから07/P00/06等を情報隔離
-- [x] Trial01用20/30 namespaceを初期化
-- [x] preflight/operator evidence namespaceを作成
-- [ ] P01 Coding Agent execution
-- [ ] P02/P03 checkpoint
-- [ ] Candidate Assembly
-- [ ] Independent Verification
-- [ ] 999 Gate Decision / Current State promotion
+* [x] root/background/instruction/state artifactsをinstance化
+* [x] canonical requirements/designは変更対象外と明示
+* [x] architecture review applicabilityを判定・記録
+* [x] G01 semantic boundaryを1文で定義
+* [x] Current Stateをverified factsだけで初期化
+* [x] G01 06/07をHuman review + preflight後にfreeze
+* [x] Work Package Mode理由とP00/P01-P03を作成
+* [x] PxxをCoding Agent self-contained contractへ修正
+* [x] Coding Agentから07/P00/06等を情報隔離
+* [x] Trial01用20/30 namespaceを初期化
+* [x] preflight/operator evidence namespaceを作成
+* [x] `40_operator_workflows/agent_entry_prompts/` をENH-E6固有値でinstance化
+* [x] Enhancement固定値 `PROJECT_NAME / ENHANCE_ID / ENHANCE_SHORT_ID / BRANCH_NAME / REMOTE_NAME / WORK_ROOT / WORK_DIR_NAME` を展開
+* [x] Coding Agent entryでtemplate directory上の未展開promptを直接使用しないことを明示
+* [x] Work Package Coding Agent起動時にHumanが指定すべきruntime valuesを `GATE_ID / PACKAGE_ID / TRIAL_NO` に限定
+* [ ] P01 Coding Agent execution
+* [ ] P02/P03 checkpoint
+* [ ] Candidate Assembly
+* [ ] Independent Verification
+* [ ] 999 Gate Decision / Current State promotion
 
 ## 17. Human audit checklist
 
@@ -340,8 +416,39 @@ Human operatorはtemplateのparameterized entry promptを使い、`GATE_ID/PACKA
 26. [x] Current StateはPASS-only promotionか。
 27. [x] artifact filename/directoryはASCIIか。
 28. [x] Humanが後からdecision/evidence/authorityを再追跡できるか。
+29. [x] Enhancement固有の`agent_entry_prompts/`をinstance化したか。
+30. [x] Enhancement固定値がoperator prompt内で具体値へ展開されているか。
+31. [x] 未展開template promptをAgent executionへ直接使用しないか。
+32. [x] `WORK_ROOT`から対象Enhancementを一意に解決できるか。
+33. [x] Humanのentry instructionがruntime variablesだけを指定する形になっているか。
 
 ## 18. 更新履歴
+
+### ENH-E6 local workflow correction — agent entry prompt instantiation
+
+Coding Agent起動時のEnhancement identityを一意にするため、template directory上のparameterized operator promptを直接参照する運用を廃止した。
+
+ENH-E6固有の
+
+```text
+40_operator_workflows/agent_entry_prompts/
+```
+
+をinstance化し、次のEnhancement固定値を展開した。
+
+```text
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E6
+ENHANCE_SHORT_ID=E6
+BRANCH_NAME=bugfix/ariadne_mvp_e6
+REMOTE_NAME=causal-atelier
+WORK_ROOT=docs/wiki/develop_memo/_work/20260813_ENH-E6_family_stage_navigation_bugfix
+WORK_DIR_NAME=20260813_ENH-E6_family_stage_navigation_bugfix
+```
+
+これによりWork Package Coding Agent起動時のHuman instructionは、ENH-E6固有operator promptをentry pointとし、`GATE_ID / PACKAGE_ID / TRIAL_NO`のみをruntime指定する。
+
+この修正はG01のsemantic implementation contractまたはAcceptance Criteriaを変更するものではない。
 
 ### Schema v13
 
