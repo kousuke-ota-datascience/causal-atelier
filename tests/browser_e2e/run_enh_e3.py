@@ -170,7 +170,6 @@ def main() -> int:
             page.locator('#analysis-view-form [name="view_key"]').fill("final_view")
             page.locator('#analysis-view-form [name="name"]').fill("Final population")
             page.locator('#analysis-view-form [name="spec"]').fill(json.dumps(view_spec))
-            _select(page, '#analysis-view-form select[name="dataset_version_id"]', dataset_id)
             submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
                 const invalid = [...form.querySelectorAll(':invalid')].map(control => ({
                     name: control.name,
