@@ -5,7 +5,7 @@
 - TRIAL_NO: `01`
 - FIXED_TRIAL_CANDIDATE_SHA: `575cdd139aea09d4f19b46ab6a6d38545f645c71`
 - TEST_START_SHA: `3cdae2b956c41524082379a3d716993ce9d870cf`
-- TEST_EVIDENCE_COMMIT_SHA: pending evidence commit (recorded in the follow-on evidence metadata commit)
+- TEST_EVIDENCE_COMMIT_SHA: `ce8c0b05050761d193366aaad97ef699814308cd`
 - Promotion eligibility: **PROMOTION_ALLOWED** (promotion itself is outside this instruction)
 
 ## Decision basis
