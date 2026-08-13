@@ -525,3 +525,18 @@ E5-G04_02__implementation_completion.md
 ```
 
 Trial01 package status reports, Completion Report, independent test reports, Gate Decision, and failure evidence remain immutable.
+
+# 13. re-entry 時の注意点
+
+## 13.1. Mandatory re-entry audit — canonical browser navigation
+
+Before running the canonical Chromium E2E, the Rework Coding Agent MUST
+mechanically verify that stale legacy analysis-family URL expectations do not
+remain in `tests/browser_e2e/run_enh_e3.py`.
+
+The following legacy expectations MUST NOT remain:
+
+```text
+/projects/{project_id}/explore
+/projects/{project_id}/predictive
+/projects/{project_id}/causal
