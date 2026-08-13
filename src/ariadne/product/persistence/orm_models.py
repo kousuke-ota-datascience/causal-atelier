@@ -241,6 +241,7 @@ class StageAttemptOrm(ProductBase):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     error_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    effective_random_seed: Mapped[int | None] = mapped_column(Integer)
 
     __table_args__ = (
         UniqueConstraint(

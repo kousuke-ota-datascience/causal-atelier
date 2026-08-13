@@ -151,7 +151,7 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
             "execution_plan_id": plan_id,
             "seed": family_spec["split_spec"]["seed"],
         },
-        headers={"X-User-Id": "g4-test"},
+        headers={"X-User-Id": "g4-test", "Idempotency-Key": "g4-execution-submit"},
     )
     assert submitted.status_code == 202
     assert submitted.json()["status"] == "QUEUED"
@@ -300,8 +300,8 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
         partition_artifact_id,
     ) in lineage_edges
     assert (
-        "Execution",
-        execution_id,
+        "Result",
+        training_result_id,
         "GENERATED",
         "Artifact",
         preprocessor_artifact_id,
@@ -386,6 +386,7 @@ async def test_failed_predictive_execution_retry_resets_and_can_succeed(
             "execution_plan_id": plan.json()["execution_plan_id"],
             "seed": family_spec["split_spec"]["seed"],
         },
+        headers={"Idempotency-Key": "g4-retry-submit"},
     )
     assert submitted.status_code == 202
     execution_id = submitted.json()["execution_id"]
@@ -463,6 +464,7 @@ async def test_execution_rejects_seed_different_from_fixed_specification(
             "execution_plan_id": plan.json()["execution_plan_id"],
             "seed": family_spec["split_spec"]["seed"] + 1,
         },
+        headers={"Idempotency-Key": "g4-invalid-seed-submit"},
     )
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "SEED_SPECIFICATION_MISMATCH"

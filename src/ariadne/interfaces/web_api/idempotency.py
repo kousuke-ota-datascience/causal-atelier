@@ -9,6 +9,7 @@ import threading
 from datetime import datetime, timezone
 from typing import Any, Callable
 
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, text
 
 from ariadne.product.domain.errors import DomainError, ProjectArchived
@@ -17,6 +18,12 @@ from ariadne.product.persistence.orm_models import IdempotencyRecordOrm, Project
 
 class IdempotencyConflict(DomainError):
     pass
+
+
+class IdempotencyKeyRequired(DomainError):
+    """A command which can create a durable side effect needs a replay key."""
+
+    code = "IDEMPOTENCY_KEY_REQUIRED"
 
 
 class IdempotencyService:
@@ -34,10 +41,17 @@ class IdempotencyService:
         payload: Any,
         command: Callable[[], dict[str, Any]],
     ) -> dict[str, Any]:
-        if not key:
-            return command()
+        if not key or not key.strip():
+            raise IdempotencyKeyRequired("Idempotency-Key header is required for this command")
+        key = key.strip()
         request_hash = hashlib.sha256(
-            json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+            # The path identity is semantic input.  Keeping it in the hash means
+            # that a key cannot accidentally replay a command for another
+            # project/scope when a caller reuses a client-side key.
+            json.dumps(
+                {"project_id": project_id, "command_scope": scope, "request": payload},
+                sort_keys=True, separators=(",", ":"), default=str,
+            ).encode("utf-8")
         ).hexdigest()
         # The in-process lock covers SQLite/component tests. PostgreSQL's
         # transaction-scoped advisory lock provides cross-process exclusion.
@@ -63,7 +77,9 @@ class IdempotencyService:
                 if existing.request_hash != request_hash:
                     raise IdempotencyConflict("Idempotency-Key was reused with a different request")
                 return dict(existing.response_json)
-            response = command()
+            # Replayed responses must be JSON just like their HTTP transport;
+            # service values can contain datetimes from persisted resources.
+            response = jsonable_encoder(command())
             session.add(IdempotencyRecordOrm(
                 idempotency_id=str(uuid.uuid4()), project_id=project_id, scope=scope,
                 idempotency_key=key, request_hash=request_hash, response_json=response,

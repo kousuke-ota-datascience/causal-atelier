@@ -262,8 +262,10 @@ async def test_unified_results_summary_and_compatible_comparison_do_not_rank_met
         f"/api/v1/projects/{project_id}/comparisons",
         json={"result_ids": [first, exploratory]},
     )
-    assert incompatible.status_code == 422
-    assert incompatible.json()["error"]["code"] == "INVALID_SCHEMA"
+    assert incompatible.status_code == 201
+    assert incompatible.json()["semantic_compatible"] is False
+    assert incompatible.json()["direct_metric_comparable"] is False
+    assert incompatible.json()["ranking"] is None
 
 
 @pytest.mark.anyio
@@ -296,6 +298,7 @@ async def test_annotation_target_matrix_history_and_export_manifest_contracts(
                 "limitations": ["No causal interpretation"],
                 "decision": "SELECTED", "next_actions": ["Monitor drift"],
             },
+            headers={"Idempotency-Key": f"annotation-{target_type}"},
         )
         assert created.status_code == 201
         body = created.json()
@@ -318,7 +321,8 @@ async def test_annotation_target_matrix_history_and_export_manifest_contracts(
     assert {item["target_type"] for item in listed} == set(targets)
 
     exported = await client.post(
-        f"/api/v1/projects/{project_id}/exports", json={"result_ids": [result_id]}
+        f"/api/v1/projects/{project_id}/exports", json={"result_ids": [result_id]},
+        headers={"Idempotency-Key": "annotation-export"},
     )
     assert exported.status_code == 201
     export_id = exported.json()["export_id"]
@@ -391,7 +395,8 @@ async def test_project_access_controlled_download_hash_and_sensitive_output_poli
     result_id = resources["result_id"]
     artifact_id = resources["artifact_id"]
     exported = await client.post(
-        f"/api/v1/projects/{project_id}/exports", json={"result_ids": [result_id]}
+        f"/api/v1/projects/{project_id}/exports", json={"result_ids": [result_id]},
+        headers={"Idempotency-Key": "access-export"},
     )
     assert exported.status_code == 201
     export_id = exported.json()["export_id"]
@@ -469,7 +474,7 @@ async def test_project_access_controlled_download_hash_and_sensitive_output_poli
             "target_type": "Result", "target_id": result_id,
             "statement": "Viewer must not write.",
         },
-        headers=viewer_headers,
+        headers={**viewer_headers, "Idempotency-Key": "viewer-forbidden-annotation"},
     )).status_code == 403
     assert (await client.put(
         f"/api/v1/projects/{project_id}/members/another-user",

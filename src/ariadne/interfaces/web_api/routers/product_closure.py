@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, Header, Query, Request
 from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict, Field
 
-from ariadne.interfaces.web_api.dependencies import ProductClosureServiceDep
+from ariadne.interfaces.web_api.dependencies import IdempotencyServiceDep, ProductClosureServiceDep
 
 router = APIRouter(prefix="/projects/{project_id}", tags=["product-closure"])
 
@@ -167,9 +167,8 @@ async def create_lineage_link(
     project_id: str, body: LineageLinkCreate, request: Request,
     service: ProductClosureServiceDep,
 ) -> dict[str, Any]:
-    return service.create_lineage_link(
-        project_id, body.model_dump(mode="json"), user_id=_user(request)
-    )
+    payload = body.model_dump(mode="json")
+    return service.create_lineage_link(project_id, payload, user_id=_user(request))
 
 
 @router.get("/workspace-annotations")
@@ -187,10 +186,13 @@ async def list_workspace_annotations(
 @router.post("/workspace-annotations", status_code=201)
 async def create_workspace_annotation(
     project_id: str, body: WorkspaceAnnotationCreate, request: Request,
-    service: ProductClosureServiceDep,
+    service: ProductClosureServiceDep, idempotency: IdempotencyServiceDep,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> dict[str, Any]:
-    return service.create_annotation(
-        project_id, body.model_dump(mode="json"), user_id=_user(request)
+    payload = body.model_dump(mode="json")
+    return idempotency.execute(
+        project_id=project_id, scope="workspace-annotation", key=idempotency_key, payload=payload,
+        command=lambda: service.create_annotation(project_id, payload, user_id=_user(request)),
     )
 
 
@@ -235,9 +237,14 @@ async def download_artifact(
 @router.post("/exports", status_code=201)
 async def create_export(
     project_id: str, body: ExportCreate, request: Request,
-    service: ProductClosureServiceDep,
+    service: ProductClosureServiceDep, idempotency: IdempotencyServiceDep,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> dict[str, Any]:
-    return service.create_export(project_id, body.result_ids, user_id=_user(request))
+    payload = body.model_dump(mode="json")
+    return idempotency.execute(
+        project_id=project_id, scope="project-export", key=idempotency_key, payload=payload,
+        command=lambda: service.create_export(project_id, body.result_ids, user_id=_user(request)),
+    )
 
 
 @router.get("/exports/{export_id}")

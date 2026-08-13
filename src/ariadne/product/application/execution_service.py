@@ -6,6 +6,8 @@ import hashlib
 import json
 import math
 import uuid
+import platform
+from importlib.metadata import PackageNotFoundError, version
 from decimal import Decimal
 from dataclasses import dataclass, field
 from typing import Any
@@ -91,6 +93,7 @@ class ExecutionService:
         return plan
 
     def create_execution_batch(self, command: CreateExecutionBatchCommand) -> ExecutionBatchResult:
+        command.runtime_version_json = _runtime_manifest(command.runtime_version_json, command.code_version)
         if not command.variants:
             raise InvalidAnalysisSpec("At least one variant is required")
         if not isinstance(command.analysis_family, AnalysisFamily):
@@ -521,3 +524,22 @@ def _canonicalize(value: Any) -> Any:
     if isinstance(value, (list, tuple)):
         return [_canonicalize(item) for item in value]
     raise InvalidAnalysisSpec(f"Snapshot contains unsupported value: {type(value).__name__}")
+
+
+def _runtime_manifest(existing: dict[str, Any], code_version: str) -> dict[str, Any]:
+    """Record the actual execution environment without importing optional deps."""
+    libraries: dict[str, str] = {}
+    for package in ("numpy", "pandas", "scikit-learn", "scipy", "networkx", "pyarrow"):
+        try:
+            libraries[package] = version(package)
+        except PackageNotFoundError:
+            continue
+    return {
+        **existing,
+        "ariadne_code_version": code_version,
+        "python_version": platform.python_version(),
+        "platform_system": platform.system(),
+        "platform_release": platform.release(),
+        "machine": platform.machine(),
+        "libraries": libraries,
+    }

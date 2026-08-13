@@ -707,7 +707,7 @@ class PredictiveWorkflowService:
                 ).order_by(StageAttemptOrm.stage_execution_id, StageAttemptOrm.attempt_number))) if rows else []
             by_stage: dict[str, list[dict[str, Any]]] = {row.stage_execution_id: [] for row in rows}
             for attempt in attempts:
-                by_stage[attempt.stage_execution_id].append({"stage_attempt_id": attempt.stage_attempt_id, "attempt_number": attempt.attempt_number, "worker_id": attempt.worker_id, "started_at": attempt.started_at, "finished_at": attempt.finished_at, "error": attempt.error_json})
+                by_stage[attempt.stage_execution_id].append({"stage_attempt_id": attempt.stage_attempt_id, "attempt_number": attempt.attempt_number, "worker_id": attempt.worker_id, "started_at": attempt.started_at, "finished_at": attempt.finished_at, "error": attempt.error_json, "effective_random_seed": attempt.effective_random_seed})
             return [self._canonical_stage_response(row, by_stage[row.stage_execution_id]) for row in rows]
         with self._session_factory() as session:
             self._execution(session, project_id, execution_id)
@@ -1301,6 +1301,16 @@ class PredictiveWorkflowService:
                 # execution-scoped artifact, not a persisted generic edge.
                 add("Execution", execution.execution_id, "GENERATED", "Artifact", artifact.artifact_id)
         add("DatasetVersion", execution.dataset_version_id, "USED_INPUT", "Execution", execution.execution_id)
+        family_snapshot = dict((execution.runtime_version_json or {}).get("family_snapshot", {}))
+        research_context = family_snapshot.get("research_context", {})
+        if isinstance(research_context, dict) and isinstance(research_context.get("id"), str):
+            add("ResearchContextVersion", research_context["id"], "USED_INPUT", "Execution", execution.execution_id)
+        specification_id = (execution.analysis_spec_json or {}).get("analysis_specification_id")
+        if isinstance(specification_id, str) and specification_id:
+            add("AnalysisSpecification", specification_id, "USED_INPUT", "Execution", execution.execution_id)
+        plan_id = (execution.analysis_spec_json or {}).get("execution_plan_id")
+        if isinstance(plan_id, str) and plan_id:
+            add("ExecutionPlan", plan_id, "USED_INPUT", "Execution", execution.execution_id)
         analysis_view_id = (execution.analysis_spec_json or {}).get("analysis_view_id")
         if isinstance(analysis_view_id, str) and analysis_view_id:
             add("AnalysisView", analysis_view_id, "USED_INPUT", "Execution", execution.execution_id)

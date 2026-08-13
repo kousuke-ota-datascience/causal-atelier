@@ -20,6 +20,7 @@ class StageAttempt:
     stage_attempt_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     finished_at: datetime | None = None
     error: dict[str, Any] | None = None
+    effective_random_seed: int | None = None
 
 
 @dataclass
@@ -41,12 +42,22 @@ class StageExecution:
     def mark_ready(self) -> None:
         self._transition({StageExecutionStatus.PENDING}, StageExecutionStatus.READY)
 
-    def start_attempt(self, worker_id: str, at: datetime) -> StageAttempt:
+    def start_attempt(
+        self, worker_id: str, at: datetime, *, effective_random_seed: int | None = None,
+    ) -> StageAttempt:
         self._transition({StageExecutionStatus.READY, StageExecutionStatus.FAILED}, StageExecutionStatus.RUNNING)
         attempt = StageAttempt(
             attempt_number=len(self.attempts) + 1,
             worker_id=worker_id,
             started_at=at,
+            # A technical retry of the same logical stage must preserve the
+            # actual seed selected for its first stochastic attempt.
+            effective_random_seed=(
+                effective_random_seed
+                if effective_random_seed is not None
+                else next((item.effective_random_seed for item in self.attempts
+                           if item.effective_random_seed is not None), None)
+            ),
         )
         self.attempts.append(attempt)
         self.started_at = at

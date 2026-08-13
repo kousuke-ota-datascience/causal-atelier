@@ -319,6 +319,7 @@ class ExecutionProcessor:
             cancelled=lambda: self._is_cancelled(execution.execution_id),
             worker_id=self._owner_token or execution.lease_owner or "worker",
             stage_executions=tuple(self._load_stages(execution.execution_id)),
+            effective_random_seed=execution.random_seed,
         )
         self._persist_stages(execution.execution_id, outcome.stages)
         if outcome.status == "CANCELLED":

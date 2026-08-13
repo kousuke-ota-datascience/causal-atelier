@@ -295,10 +295,45 @@ class ProductClosureService:
             values = [self._find_result(session, project_id, value) for value in result_ids]
         families = {item["analysis_family"] for item in values}
         types = {item["result_type"] for item in values}
-        if len(families) != 1 or len(types) != 1:
-            raise InvalidSchema(
-                "Quantitative comparison requires the same analysis family and compatible Result Type"
-            )
+        family = next(iter(families)) if len(families) == 1 else None
+        result_type = next(iter(types)) if len(types) == 1 else None
+        compatibility_reasons: list[str] = []
+        if family is None:
+            compatibility_reasons.append("ANALYSIS_FAMILY_MISMATCH")
+        if result_type is None:
+            compatibility_reasons.append("RESULT_TYPE_MISMATCH")
+        semantic_fields = (
+            ("task_type", "prediction_target", "prediction_unit", "prediction_time", "horizon", "population_semantics")
+            if family == "PREDICTIVE" else
+            ("treatment", "outcome", "estimand", "target_population") if family == "CAUSAL" else ()
+        )
+        for field in semantic_fields:
+            if len({_comparison_value(item, field) for item in values}) > 1:
+                compatibility_reasons.append(f"SEMANTIC_MISMATCH:{field}")
+        semantic_compatible = not compatibility_reasons
+        direct_comparison_blockers = list(compatibility_reasons)
+        direct_fields = (
+            ("dataset_version_id", "test_row_identity_hash", "metric_definition")
+            if family == "PREDICTIVE" else
+            ("dataset_version_id", "analysis_view_id", "analysis_population") if family == "CAUSAL" else ()
+        )
+        if semantic_compatible:
+            for field in direct_fields:
+                if len({_comparison_value(item, field) for item in values}) > 1:
+                    direct_comparison_blockers.append(f"DIRECT_METRIC_MISMATCH:{field}")
+        direct_metric_comparable = semantic_compatible and not direct_comparison_blockers
+        if not direct_metric_comparable:
+            return _redact({
+                "schema_version": "result-comparison/2", "project_id": project_id,
+                "analysis_family": family, "result_type": result_type,
+                "semantic_compatible": semantic_compatible,
+                "direct_metric_comparable": False,
+                "compatible": False,
+                "compatibility_reasons": compatibility_reasons,
+                "direct_comparison_blockers": direct_comparison_blockers,
+                "results": [{"result_id": item["result_id"], "analytical_status": item["analytical_status"]} for item in values],
+                "ranking": None,
+            })
         summaries = [_redact(item["summary"]) for item in values]
         keys = sorted(set().union(*(summary.keys() for summary in summaries)))
         common: dict[str, Any] = {}
@@ -322,11 +357,15 @@ class ProductClosureService:
             for item, warnings in zip(values, result_warnings, strict=True)
         ]
         return _redact({
-            "schema_version": "result-comparison/1",
+            "schema_version": "result-comparison/2",
             "project_id": project_id,
-            "analysis_family": values[0]["analysis_family"],
-            "result_type": values[0]["result_type"],
+            "analysis_family": family,
+            "result_type": result_type,
+            "semantic_compatible": True,
+            "direct_metric_comparable": True,
             "compatible": True,
+            "compatibility_reasons": [],
+            "direct_comparison_blockers": [],
             "common_summary": common,
             "differences": differences,
             "common_warnings": common_warnings,
@@ -949,3 +988,32 @@ def _suppress_sensitive_output(value: Any) -> Any:
     if isinstance(value, list):
         return [_suppress_sensitive_output(item) for item in value]
     return value
+
+
+def _comparison_value(result: dict[str, Any], field: str) -> Any:
+    """Resolve comparison keys without treating absent values as compatible.
+
+    Result schemas differ by family and historical generation.  The public
+    comparison contract nevertheless has one vocabulary, so this only reads
+    the canonical result/execution snapshots and never guesses a value.
+    """
+    aliases = {
+        "prediction_target": ("prediction_target", "target", "outcome"),
+        "target_population": ("target_population", "population"),
+        "test_row_identity_hash": ("test_row_identity_hash", "test_row_hash"),
+    }
+    keys = aliases.get(field, (field,))
+    candidates = (result, result.get("payload", {}), result.get("summary", {}), result.get("diagnostics", {}))
+    for source in candidates:
+        if not isinstance(source, dict):
+            continue
+        for key in keys:
+            if key in source:
+                return source[key]
+        for nested in ("family_spec", "semantic_key", "comparison_metadata", "source_snapshot"):
+            value = source.get(nested)
+            if isinstance(value, dict):
+                for key in keys:
+                    if key in value:
+                        return value[key]
+    return "__MISSING__"

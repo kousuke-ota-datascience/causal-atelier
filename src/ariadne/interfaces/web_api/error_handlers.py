@@ -33,7 +33,7 @@ from ariadne.product.domain.errors import (
     ResourceImmutable,
     PredictiveValidationError,
 )
-from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
+from ariadne.interfaces.web_api.idempotency import IdempotencyConflict, IdempotencyKeyRequired
 
 
 def _error(request: Request, status: int, code: str, message: str, details: dict | None = None) -> JSONResponse:
@@ -56,6 +56,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 409, "PROJECT_ARCHIVED", str(exc))
     if isinstance(exc, IdempotencyConflict):
         return _error(request, 409, "IDEMPOTENCY_CONFLICT", str(exc))
+    if isinstance(exc, IdempotencyKeyRequired):
+        return _error(request, 400, "IDEMPOTENCY_KEY_REQUIRED", str(exc))
     if isinstance(exc, GraphAlreadyFixed):
         return _error(request, 409, "GRAPH_FIXED_IMMUTABLE", str(exc))
     if isinstance(exc, GraphParentNotFixed):
