@@ -152,13 +152,17 @@ def main() -> int:
 
             page.locator('nav button[data-route="explore"]').click()
             page.wait_for_url(f"**/projects/{project_id}/explore")
+            evidence["analysis_view_submit_phase"] = "explore_route_ready"
             _wait(lambda: page.locator('nav button[data-route="explore"]').get_attribute(
                 "data-refresh-status"
             ) == "done")
+            evidence["analysis_view_submit_phase"] = "workspace_refresh_done"
             _wait(lambda: page.locator(
                 f'#analysis-view-form select[name="dataset_version_id"] option[value="{dataset_id}"]'
             ).count() == 1)
+            evidence["analysis_view_submit_phase"] = "dataset_option_present"
             _select(page, '#analysis-view-form select[name="dataset_version_id"]', dataset_id)
+            evidence["analysis_view_submit_phase"] = "dataset_selected"
             view_spec = {
                 "schema_version": "analysis-view/1",
                 "source_dataset_version_id": dataset_id,
@@ -168,9 +172,13 @@ def main() -> int:
                 "time_cutoff": None, "sampling": None,
             }
             page.locator('#analysis-view-form [name="view_key"]').fill("final_view")
+            evidence["analysis_view_submit_phase"] = "view_key_filled"
             page.locator('#analysis-view-form [name="name"]').fill("Final population")
+            evidence["analysis_view_submit_phase"] = "name_filled"
             page.locator('#analysis-view-form [name="spec"]').fill(json.dumps(view_spec))
+            evidence["analysis_view_submit_phase"] = "spec_filled"
             try:
+                evidence["analysis_view_submit_phase"] = "diagnostic_started"
                 submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
                     const describe = control => ({
                         name: control.name,
@@ -201,6 +209,7 @@ def main() -> int:
             except Exception as error:
                 evidence["analysis_view_submit_diagnostic_error"] = repr(error)
                 raise
+            evidence["analysis_view_submit_phase"] = "diagnostic_completed"
             evidence["analysis_view_submit_diagnostic"] = submit_diagnostic
             assert submit_diagnostic["checkValidity"], submit_diagnostic
             assert submit_diagnostic["dataset_version_id"] == dataset_id, submit_diagnostic
