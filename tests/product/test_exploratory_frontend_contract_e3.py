@@ -41,8 +41,9 @@ def test_saved_exploration_waits_for_the_worker_terminal_state() -> None:
 def test_dataset_refresh_preserves_a_selected_analysis_view_dataset() -> None:
     javascript = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
 
-    assert "const selected=select.value" in javascript
-    assert "if(state.datasets.some(d=>d.dataset_version_id===selected))select.value=selected" in javascript
+    assert "const selected=select.dataset.selectedDatasetVersionId||select.value" in javascript
+    assert "if(state.datasets.some(d=>d.dataset_version_id===selected)){select.value=selected" in javascript
+    assert "select.dataset.selectedDatasetVersionId=select.value" in javascript
 
 
 def test_exploration_result_draft_transitions_submit_exploratory_mode() -> None:

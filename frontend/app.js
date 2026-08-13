@@ -182,10 +182,11 @@ async function loadDatasets(){
   if(!state.project){state.datasets=[];return}
   state.datasets=(await api(`/projects/${state.project.project_id}/dataset-versions`)).items;
   $('#datasets').innerHTML=state.datasets.length?`<table><thead><tr><th>Name</th><th>Version</th><th>Schema</th><th>Rows × Columns</th><th>Hash</th><th></th></tr></thead><tbody>${state.datasets.map(d=>`<tr><td>${escapeHtml(d.name)}</td><td>${escapeHtml(d.version_label)}</td><td>${escapeHtml(Object.entries(d.schema).map(([name,type])=>`${name}:${type}`).join(', '))}</td><td>${d.row_count} × ${d.column_count}</td><td>${d.content_hash.slice(0,12)}</td><td><button onclick="preview('${d.dataset_version_id}')">Preview</button></td></tr>`).join('')}</tbody></table>`:'Datasetはありません';
-  $$('.datasets-select').forEach(select=>{const selected=select.value;select.innerHTML='<option value="">選択</option>'+state.datasets.map(d=>`<option value="${d.dataset_version_id}">${escapeHtml(d.name)} / ${escapeHtml(d.version_label)}</option>`).join('');if(state.datasets.some(d=>d.dataset_version_id===selected))select.value=selected});
+  $$('.datasets-select').forEach(select=>{const selected=select.dataset.selectedDatasetVersionId||select.value;select.innerHTML='<option value="">選択</option>'+state.datasets.map(d=>`<option value="${d.dataset_version_id}">${escapeHtml(d.name)} / ${escapeHtml(d.version_label)}</option>`).join('');if(state.datasets.some(d=>d.dataset_version_id===selected)){select.value=selected;select.dataset.selectedDatasetVersionId=selected}});
   updatePredictiveAvailability();
 }
 window.preview=async id=>{try{const p=await api(`/dataset-versions/${id}/preview?limit=10`);$('#preview').innerHTML=`<h3>Preview</h3><table><thead><tr>${p.columns.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>${p.rows.map(row=>`<tr>${p.columns.map(c=>`<td>${escapeHtml(row[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}catch(error){notice(error.message)}};
+document.addEventListener('change',event=>{const select=event.target;if(select instanceof HTMLSelectElement&&select.classList.contains('datasets-select'))select.dataset.selectedDatasetVersionId=select.value});
 
 async function loadAnalysisViews(){
   if(!state.project){state.analysisViews=[];renderAnalysisViews();return}
