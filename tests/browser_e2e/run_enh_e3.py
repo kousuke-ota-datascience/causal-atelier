@@ -170,21 +170,37 @@ def main() -> int:
             page.locator('#analysis-view-form [name="view_key"]').fill("final_view")
             page.locator('#analysis-view-form [name="name"]').fill("Final population")
             page.locator('#analysis-view-form [name="spec"]').fill(json.dumps(view_spec))
-            submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
-                const invalid = [...form.querySelectorAll(':invalid')].map(control => ({
-                    name: control.name,
-                    value: control.value,
-                    validationMessage: control.validationMessage,
-                    validity: Object.fromEntries(Object.entries(control.validity)
-                        .filter(([, value]) => value === true)),
-                }));
-                return {
-                    checkValidity: form.checkValidity(),
-                    invalid,
-                    dataset_version_id: form.elements.dataset_version_id.value,
-                    formData: Object.fromEntries(new FormData(form).entries()),
-                };
-            }""")
+            try:
+                submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
+                    const describe = control => ({
+                        name: control.name,
+                        value: control.value,
+                        validationMessage: control.validationMessage,
+                        validity: {
+                            valid: control.validity.valid,
+                            valueMissing: control.validity.valueMissing,
+                            typeMismatch: control.validity.typeMismatch,
+                            patternMismatch: control.validity.patternMismatch,
+                            tooLong: control.validity.tooLong,
+                            tooShort: control.validity.tooShort,
+                            rangeUnderflow: control.validity.rangeUnderflow,
+                            rangeOverflow: control.validity.rangeOverflow,
+                            stepMismatch: control.validity.stepMismatch,
+                            badInput: control.validity.badInput,
+                            customError: control.validity.customError,
+                        },
+                    });
+                    return {
+                        checkValidity: form.checkValidity(),
+                        invalid: [...form.querySelectorAll(':invalid')].map(describe),
+                        controls: [...form.elements].map(describe),
+                        dataset_version_id: form.elements.namedItem('dataset_version_id').value,
+                        formData: [...new FormData(form).entries()],
+                    };
+                }""")
+            except Exception as error:
+                evidence["analysis_view_submit_diagnostic_error"] = repr(error)
+                raise
             evidence["analysis_view_submit_diagnostic"] = submit_diagnostic
             assert submit_diagnostic["checkValidity"], submit_diagnostic
             assert submit_diagnostic["dataset_version_id"] == dataset_id, submit_diagnostic
