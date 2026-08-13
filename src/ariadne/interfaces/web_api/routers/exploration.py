@@ -115,6 +115,10 @@ class FamilyResultListResponse(StrictModel):
 
 class CreateDraftRequest(StrictModel):
     target_family: Literal["CAUSAL", "PREDICTIVE"]
+    analysis_mode: Literal["EXPLORATORY", "CONFIRMATORY"]
+    research_context_version_id: str | None = None
+    family_spec_schema_version: str | None = None
+    family_spec: dict[str, Any] | None = None
 
 
 def _view(row: AnalysisViewOrm) -> AnalysisViewResponse:
@@ -264,7 +268,15 @@ async def create_analysis_draft(
     project_id: str, result_id: str, body: CreateDraftRequest,
     svc: ExploratoryWorkspaceServiceDep,
 ) -> dict[str, Any]:
-    return svc.create_analysis_draft(project_id, result_id, body.target_family)
+    return svc.create_analysis_draft(
+        project_id,
+        result_id,
+        target_family=body.target_family,
+        analysis_mode=body.analysis_mode,
+        research_context_version_id=body.research_context_version_id,
+        family_spec_schema_version=body.family_spec_schema_version,
+        family_spec=body.family_spec,
+    )
 
 
 @router.get("/projects/{project_id}/exploration/capabilities")

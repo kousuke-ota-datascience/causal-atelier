@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 
 from ariadne.capabilities.exploratory import (
     AnalysisViewCompiler,
@@ -39,6 +39,7 @@ from ariadne.product.domain.enums import AnalysisFamily
 from ariadne.product.domain.execution import Execution
 from ariadne.product.persistence.orm_models import (
     AnalysisViewOrm,
+    AnalysisSpecificationOrm,
     ArtifactOrm,
     DatasetVersionOrm,
     ExecutionPlanOrm,
@@ -49,6 +50,7 @@ from ariadne.product.persistence.orm_models import (
     FamilyStageExecutionOrm,
     LineageEdgeOrm,
     ProjectOrm,
+    ResearchContextVersionOrm,
     ResultOrm,
 )
 from ariadne.product.ports.artifact_store import ArtifactStorePort
@@ -555,11 +557,22 @@ class ExploratoryWorkspaceService:
             return row
 
     def create_analysis_draft(
-        self, project_id: str, result_id: str, target_family: str
+        self,
+        project_id: str,
+        result_id: str,
+        target_family: str,
+        analysis_mode: str = "EXPLORATORY",
+        research_context_version_id: str | None = None,
+        family_spec_schema_version: str | None = None,
+        family_spec: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         self._require_execution_service()
         if target_family not in {"CAUSAL", "PREDICTIVE"}:
             raise InvalidSchema("target_family must be CAUSAL or PREDICTIVE")
+        if analysis_mode not in {"EXPLORATORY", "CONFIRMATORY"}:
+            raise InvalidSchema("analysis_mode must be EXPLORATORY or CONFIRMATORY")
+        if family_spec is not None and not isinstance(family_spec, dict):
+            raise InvalidSchema("family_spec must be an object")
         if self._execution_service is not None:
             with self._session_factory() as session:
                 row = session.execute(
@@ -574,44 +587,165 @@ class ExploratoryWorkspaceService:
                 if row is None:
                     raise EntityNotFound("Result", result_id)
                 _, execution = row
-                draft_id = str(uuid.uuid4())
+                context_id = self._handoff_context_id(
+                    session, project_id, result_id, research_context_version_id,
+                )
+                analysis_view_id = self._handoff_analysis_view(
+                    session, project_id, result_id, execution.dataset_version_id,
+                    (execution.analysis_spec_json or {}).get("analysis_view_id"),
+                )
+                session.flush()
+                specification_id = str(uuid.uuid4())
+                expected_schema = (
+                    "causal-analysis-spec/2"
+                    if target_family == "CAUSAL"
+                    else "predictive-analysis-spec/1"
+                )
+                if family_spec_schema_version not in {None, expected_schema}:
+                    raise InvalidSchema(
+                        f"{target_family} requires family schema {expected_schema}"
+                    )
+                specification_key = f"exploratory-handoff-{result_id}-{target_family.lower()}"
+                specification_version = (session.scalar(select(func.max(
+                    AnalysisSpecificationOrm.version_number
+                )).where(
+                    AnalysisSpecificationOrm.project_id == project_id,
+                    AnalysisSpecificationOrm.specification_key == specification_key,
+                )) or 0) + 1
+                warning_evidence = {
+                    "code": "EXPLORATORY_REUSE_SAME_DATA",
+                    "source_result_id": result_id,
+                    "dataset_version_id": execution.dataset_version_id,
+                }
+                warnings = [warning_evidence] if analysis_mode == "CONFIRMATORY" else []
+                specification = AnalysisSpecificationOrm(
+                    analysis_specification_id=specification_id,
+                    project_id=project_id,
+                    specification_key=specification_key,
+                    version_number=specification_version,
+                    status="DRAFT",
+                    schema_version="analysis-specification/1",
+                    analysis_family=target_family,
+                    research_context_version_id=context_id,
+                    dataset_version_id=execution.dataset_version_id,
+                    analysis_view_id=analysis_view_id,
+                    analysis_mode=analysis_mode,
+                    family_spec_schema_version=family_spec_schema_version or expected_schema,
+                    family_spec_json=family_spec or {},
+                    revision_context_json=None,
+                    warnings_json=warnings,
+                    created_by="system",
+                    created_at=_now(),
+                )
+                session.add(specification)
                 relation = {
                     "relation_type": "MOTIVATED",
                     "source_result_id": result_id,
-                    "analysis_mode": "EXPLORATORY",
-                    "warning": "This draft was motivated by exploratory analysis on the same data.",
+                    "analysis_mode": analysis_mode,
+                    "dataset_version_id": execution.dataset_version_id,
                 }
-                self._add_lineage(session, project_id, "Result", result_id, "MOTIVATED",
-                                  "AnalysisSpecificationDraft", draft_id, relation)
+                self._add_lineage(
+                    session, project_id, "Result", result_id, "MOTIVATED",
+                    "AnalysisSpecification", specification_id, relation,
+                )
                 session.commit()
                 return {
-                    "analysis_specification_draft_id": draft_id,
+                    "analysis_specification_id": specification_id,
                     "analysis_family": target_family,
                     "dataset_version_id": execution.dataset_version_id,
-                    "analysis_view_id": (execution.analysis_spec_json or {}).get("analysis_view_id"),
+                    "analysis_view_id": analysis_view_id,
+                    "research_context_version_id": context_id,
+                    "analysis_mode": analysis_mode,
+                    "status": "DRAFT",
+                    "warnings": warnings,
                     "source_relation": relation,
                 }
-        with self._session_factory() as session:
-            result = session.get(FamilyResultOrm, result_id)
-            if result is None or result.project_id != project_id: raise EntityNotFound("Result", result_id)
-            execution = session.get(FamilyExecutionOrm, result.execution_id); assert execution is not None
-            draft_id = str(uuid.uuid4())
-            relation = {
-                "relation_type": "MOTIVATED",
-                "source_result_id": result_id,
-                "analysis_mode": "EXPLORATORY",
-                "warning": "This draft was motivated by exploratory analysis on the same data.",
-            }
-            self._add_lineage(session, project_id, "Result", result_id, "MOTIVATED",
-                              "AnalysisSpecificationDraft", draft_id, relation)
-            session.commit()
-            return {
-                "analysis_specification_draft_id": draft_id,
-                "analysis_family": target_family,
-                "dataset_version_id": execution.dataset_version_id,
-                "analysis_view_id": execution.analysis_view_id,
-                "source_relation": relation,
-            }
+        raise LegacyProductAuthorityDisabled("ExploratoryWorkspaceService.create_analysis_draft")
+
+    @staticmethod
+    def _handoff_context_id(
+        session: Any,
+        project_id: str,
+        result_id: str,
+        requested_context_id: str | None,
+    ) -> str:
+        edges = session.scalars(select(LineageEdgeOrm).where(
+            LineageEdgeOrm.project_id == project_id,
+            or_(
+                (LineageEdgeOrm.source_type == "Result")
+                & (LineageEdgeOrm.source_id == result_id)
+                & (LineageEdgeOrm.target_type == "ResearchContextVersion"),
+                (LineageEdgeOrm.target_type == "Result")
+                & (LineageEdgeOrm.target_id == result_id)
+                & (LineageEdgeOrm.source_type == "ResearchContextVersion"),
+            ),
+        ))
+        context_ids = {
+            edge.target_id if edge.target_type == "ResearchContextVersion" else edge.source_id
+            for edge in edges
+        }
+        if len(context_ids) == 1:
+            context_id = next(iter(context_ids))
+            if requested_context_id not in {None, context_id}:
+                raise InvalidSchema("research_context_version_id conflicts with source Result lineage")
+        else:
+            if not requested_context_id:
+                raise InvalidSchema(
+                    "research_context_version_id is required when source Result lineage is not unique"
+                )
+            context_id = requested_context_id
+        context = session.get(ResearchContextVersionOrm, context_id)
+        if context is None or context.project_id != project_id:
+            raise EntityNotFound("ResearchContextVersion", context_id)
+        return context_id
+
+    @staticmethod
+    def _handoff_analysis_view(
+        session: Any,
+        project_id: str,
+        result_id: str,
+        dataset_version_id: str,
+        source_analysis_view_id: str | None,
+    ) -> str | None:
+        if source_analysis_view_id is None:
+            return None
+        source = session.get(AnalysisViewOrm, source_analysis_view_id)
+        if source is None or source.project_id != project_id:
+            raise EntityNotFound("AnalysisView", source_analysis_view_id)
+        if source.source_dataset_version_id != dataset_version_id:
+            raise InvalidSchema("Analysis View and Dataset Version do not match")
+        selection = {
+            "schema_version": "analysis-view/1",
+            "source_dataset_version_id": dataset_version_id,
+            **{
+                name: source.spec_json[name]
+                for name in (
+                    "row_filter", "selected_columns", "derived_columns",
+                    "missing_value_policy", "time_cutoff", "sampling",
+                )
+            },
+        }
+        draft_id = str(uuid.uuid4())
+        view_key = f"exploratory-handoff-{result_id}"
+        version = (session.scalar(select(func.max(AnalysisViewOrm.version_number)).where(
+            AnalysisViewOrm.project_id == project_id,
+            AnalysisViewOrm.view_key == view_key,
+        )) or 0) + 1
+        session.add(AnalysisViewOrm(
+            analysis_view_id=draft_id,
+            project_id=project_id,
+            source_dataset_version_id=dataset_version_id,
+            view_key=view_key,
+            version_number=version,
+            name="Exploratory handoff selection",
+            status="DRAFT",
+            schema_version="analysis-view/1",
+            spec_json=selection,
+            manifest_json={},
+            created_by="system",
+            created_at=_now(),
+        ))
+        return draft_id
 
     @staticmethod
     def _canonical_result_projection(
