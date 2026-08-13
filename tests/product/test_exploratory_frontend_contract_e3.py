@@ -36,3 +36,16 @@ def test_saved_exploration_waits_for_the_worker_terminal_state() -> None:
     assert "execution.status==='SUCCEEDED'" in javascript
     assert "execution.status==='FAILED'" in javascript
     assert "await waitForExploration(response.execution_id)" in javascript
+
+
+def test_exploration_result_draft_transitions_submit_exploratory_mode() -> None:
+    javascript = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
+
+    assert "createExplorationDraft('${result.result_id}','CAUSAL')" in javascript
+    assert "createExplorationDraft('${result.result_id}','PREDICTIVE')" in javascript
+    assert "const researchContextVersionId=$('#common-context').value" in javascript
+    assert (
+        "body:JSON.stringify({target_family:family,analysis_mode:'EXPLORATORY',"
+        "research_context_version_id:researchContextVersionId||undefined})"
+        in javascript
+    )

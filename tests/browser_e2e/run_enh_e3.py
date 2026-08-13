@@ -19,7 +19,7 @@ from run_enh_e3_predictive import (
     _select,
     _wait,
 )
-from run_enh_e1a import main as run_causal_acceptance
+import run_enh_e1a
 
 
 def _prepare() -> str:
@@ -79,7 +79,6 @@ def _causal_executions(project_id: str) -> list[dict]:
 
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    assert run_causal_acceptance() == 0
     project_id = _prepare()
     dataset_id = ""
     evidence = {
@@ -135,6 +134,9 @@ def main() -> int:
             page.locator("#fix-context").click()
             page.locator("#notice").filter(has_text="Research ContextをFIXED化しました").wait_for()
             _wait(lambda: page.locator("#common-context option").count() > 1)
+            context_id = page.locator("#common-context option").nth(1).get_attribute("value")
+            assert context_id
+            _select(page, "#common-context", context_id)
             assert page.locator("#research-context-summary").get_by_text("final_context").count() == 1
             evidence["scenarios"]["research-context-versioning"] = {"status": "PASS"}
 
@@ -358,6 +360,11 @@ def main() -> int:
             (OUTPUT / "enh-e3-evidence.json").write_text(
                 json.dumps(evidence, indent=2, sort_keys=True), encoding="utf-8"
             )
+    if outcome == "PASS":
+        # Keep the causal browser acceptance in the canonical runner, while
+        # preventing its fixture/evidence from contaminating the G04 scenario.
+        run_enh_e1a.OUTPUT = OUTPUT / "causal"
+        assert run_enh_e1a.main() == 0
     print(json.dumps({"status": outcome, "evidence": str(OUTPUT / "enh-e3-evidence.json")}, sort_keys=True))
     return 0 if outcome == "PASS" else 1
 
