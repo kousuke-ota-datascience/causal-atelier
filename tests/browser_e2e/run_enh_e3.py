@@ -152,6 +152,9 @@ def main() -> int:
 
             page.locator('nav button[data-route="explore"]').click()
             page.wait_for_url(f"**/projects/{project_id}/explore")
+            _wait(lambda: page.locator('nav button[data-route="explore"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
             _wait(lambda: page.locator(
                 f'#analysis-view-form select[name="dataset_version_id"] option[value="{dataset_id}"]'
             ).count() == 1)
