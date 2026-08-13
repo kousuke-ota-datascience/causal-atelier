@@ -30,6 +30,9 @@
    - requirement -> design -> Gate -> Acceptance Criterionの対応と未解決事項を確認する。
 6. `Revised_requirements_definition_documents/`
    - enhancement開始時点でapprovedとなった要件・設計のsnapshotを保存する。
+7. `80_contract_amendment_log.md`
+   - freeze / approval後に発生したcontract amendmentをappend-onlyで記録する。
+   - 既存のBLOCKED / FAIL evidenceを上書きせず、amendment trigger、affected normative documents、semantic impact、approval、re-baseline、Git traceabilityを追跡する。
 
 ## 3. External reference rule
 
