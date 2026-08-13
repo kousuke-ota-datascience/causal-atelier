@@ -4,7 +4,6 @@ const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
 const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
-const ANALYSIS_WORKSPACES=Object.freeze({exploratory:'explore',predictive:'predictive',causal:'discovery'});
 const ANALYSIS_HISTORY_MODES=Object.freeze({PUSH:'PUSH',REPLACE:'REPLACE',NONE:'NONE'});
 const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
@@ -58,20 +57,19 @@ enhanceTooltips();
 async function activateWorkspace(workspace,{push=true,button=null}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
   if(!button)return;
-  const familySlug=button.dataset.route&&{explore:'exploratory',predictive:'predictive',causal:'causal'}[button.dataset.route];
-  if(push&&familySlug&&state.navigationCatalog&&state.project){
-    return applyAnalysisNavigation(AnalysisNavigation.defaultContext(state.navigationCatalog,state.project.project_id,familySlug),{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'workspace-family-click'});
+  const shortcutFamily=button.dataset.navigationFamily,shortcutStage=button.dataset.navigationStage;
+  if(push&&shortcutFamily&&shortcutStage&&state.navigationCatalog&&state.project){
+    const context=AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,shortcutFamily,shortcutStage);
+    return applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'legacy-analytical-shortcut'});
   }
   button.dataset.refreshStatus='pending';
   $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
   if(push&&state.project&&button.dataset.route){
-    const path=state.navigationContext&&ANALYSIS_WORKSPACES[state.navigationContext.familySlug]===workspace
-      ?AnalysisNavigation.serialize(state.navigationContext)
-      :`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
+    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
     if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
   }
-  if(!familySlug)clearAnalysisNavigationShell();
+  if(!shortcutFamily)clearAnalysisNavigationShell();
   try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
   const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
@@ -90,6 +88,7 @@ function synchronizeAnalysisHistory(context,historyMode){
 }
 async function applyAnalysisNavigation(context,{historyMode=ANALYSIS_HISTORY_MODES.NONE,source='unknown'}={}){
   const next=normalizeAnalysisNavigationContext(context);
+  const presentation=AnalysisPresentation.resolve(next);
   state.project=await api(`/projects/${next.projectId}`);
   state.navigationContext=next;
   synchronizeAnalysisHistory(next,historyMode);
@@ -97,7 +96,7 @@ async function applyAnalysisNavigation(context,{historyMode=ANALYSIS_HISTORY_MOD
   activateAnalysisPresentation(next);
   await renderOperationAvailability();
   fillProject();await loadProjects();$('#project-select').value=next.projectId;
-  await activateWorkspace(ANALYSIS_WORKSPACES[next.familySlug],{push:false});
+  await activateWorkspace(presentation.workspace,{push:false});
   return {context:next,source};
 }
 async function restoreProjectRoute(){
