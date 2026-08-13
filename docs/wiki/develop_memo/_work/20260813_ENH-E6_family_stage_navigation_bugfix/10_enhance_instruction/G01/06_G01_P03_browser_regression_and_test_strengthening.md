@@ -1,6 +1,6 @@
 # ENH-E6 G01 P03 — Browser Regression and Test Strengthening
 
-- Status: `DRAFT`
+- Status: `APPROVED / WAITING_FOR_P01_P02_CHECKPOINTS`
 
 ## Outcome
 
@@ -26,3 +26,30 @@ ANOM-E5-001を再発させないobservable acceptance evidenceを実装する。
 - test中にrendererを直接呼んでnormal entry defectを回避
 - forced reload before first assertion
 - hidden elementのtext existenceだけをvisible扱い
+
+## Canonical runner / harness integration
+
+Create:
+
+- `tests/browser_e2e/run_enh_e6_family_stage_navigation.py`
+
+Ensure executable inside the existing `browser-e2e` image. Review and update as required:
+
+- `Dockerfile.browser-e2e`
+- `.dockerignore`
+
+Canonical execution command:
+
+```bash
+docker compose \
+  -f compose.yaml \
+  -f compose.e1a.yaml \
+  -p ariadne-e1a \
+  --profile e2e \
+  run --build --rm \
+  --entrypoint python \
+  browser-e2e \
+  tests/browser_e2e/run_enh_e6_family_stage_navigation.py
+```
+
+The runner MUST wait for `#health` = `API READY`, establish a deterministic Project context, and exercise actual Family / Stage elements.

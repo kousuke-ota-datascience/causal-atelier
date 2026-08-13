@@ -1,6 +1,6 @@
 # ENH-E6 Enhancement 構想・要件改定計画
 
-- 状態: `READY_FOR_OWNER_REVIEW`
+- 状態: `APPROVED / G01 CONTRACT FROZEN`
 - 対象branch: `bugfix/ariadne_mvp_e6`
 - Planning baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
 - Source anomaly: `ANOM-E5-001`

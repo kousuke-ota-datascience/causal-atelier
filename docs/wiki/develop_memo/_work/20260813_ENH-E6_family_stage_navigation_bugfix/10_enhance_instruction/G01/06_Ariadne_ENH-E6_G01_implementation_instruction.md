@@ -5,12 +5,12 @@
 - Active Gate: `G01`
 - Branch: `bugfix/ariadne_mvp_e6`
 - Baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
-- Contract state: `DRAFT / NOT FROZEN`
+- Contract state: `APPROVED / FROZEN`
 - Execution Mode: `WORK_PACKAGE`
 
 ## 0. Authority
 
-freeze後、本06はGate integration semantic contractである。Package Coding Agentへはassigned Pxxのみをnormative sourceとして与える。Test/Audit Agentのnormative sourceは07のみ。
+本06は frozen Gate integration semantic contract である。Package Coding Agentへはassigned Pxxを直接 normative source として与え、本06はGate全体のintegration semantic boundaryとして拘束する。Test/Audit Agentのnormative sourceは07のみ。
 
 ## 1. Gate outcome
 
@@ -133,6 +133,20 @@ Backend production codeは、current catalog/route contractの欠陥がpreflight
 - Family/Stageをscientific execution stateとして扱うmapping
 - left nav全体の大規模IA redesign
 - test assertion weakening / skip / xfailによるgreen化
+
+## 5.1 Frozen preflight facts
+
+2026-08-13 の Human owner 実行による clean browser probe で以下を確認した。
+
+- existing `browser-e2e` Playwright / Chromium harness が build / start 可能
+- `#health` = `API READY`
+- UIから新規Projectを作成・選択し、Project route contextを確立
+- normal Explore entry 後の URL = `/projects/{project_id}/analysis/exploratory/profile`
+- `#analysis-family-tabs` container count = 1
+- Family button count = 0
+- Stage button count = 0
+
+したがって `ANOM-E5-001` は backend unavailable や Project context未確立だけでは説明できず、API READY / canonical route成立下でも observable shell が未描画となる integration defect として再現済みである。
 
 ## 6. Work Packages
 

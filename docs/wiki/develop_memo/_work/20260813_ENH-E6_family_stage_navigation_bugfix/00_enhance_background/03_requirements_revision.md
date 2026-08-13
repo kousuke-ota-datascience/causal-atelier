@@ -1,6 +1,6 @@
 # ENH-E6 Requirements Revision
 
-- Status: `READY_FOR_OWNER_REVIEW`
+- Status: `APPROVED / FROZEN FOR ENH-E6 G01`
 - Scope: ENH-E5 Family/Stage navigation contract の observable integration bugfix
 
 ## Requirement delta
@@ -16,7 +16,7 @@ ENH-E6 は E5 canonical Family/Stage catalog自体を変更しない。E5要件�
 | E6-FR-005 | Navigation Contextの変更は単一のtransition authorityを通り、各entry handlerがstate/history/renderを独立に再実装してはならない | MUST | ENH-E6 |
 | E6-FR-006 | presentation binding は最低限 `(AnalysisFamily, navigation_stage_id)` を入力として決定でき、Family単位だけでCausal presentationを固定してはならない | MUST | ENH-E6 |
 | E6-FR-007 | legacy analytical left navigationを残す場合、それはcanonical Family/Stage routeへのcompatibility entryであり、parallel navigation authorityになってはならない | MUST | ENH-E6 |
-| E6-FR-008 | Causal Discovery legacy entryは `causal/discovery`、Causal Inference legacy entryは `causal/identification` をcompatibility entry pointとする | SHOULD / proposed | ENH-E6 |
+| E6-FR-008 | Causal Discovery legacy entryは `causal/discovery`、Causal Inference legacy entryは `causal/identification` をcompatibility entry pointとする | MUST | ENH-E6 |
 | E6-FR-009 | renderer missing / invalid catalog / unsupported presentation binding は明示errorとし、別Family/Stageへのsilent fallbackを禁止する | MUST | ENH-E6 |
 | E6-NFR-001 | Gate blocking verification はFamily tabをreal browserで実際にclickし、DOM text existenceだけではPASSできない | MUST | ENH-E6 |
 | E6-NFR-002 | E5 protected route/history/catalog semanticsをregressionさせない | MUST | ENH-E6 |

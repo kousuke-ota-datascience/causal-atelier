@@ -1,6 +1,6 @@
 # ENH-E6 G01 P02 — Stage-aware Presentation and Legacy Compatibility
 
-- Status: `DRAFT`
+- Status: `APPROVED / WAITING_FOR_P01_CHECKPOINT`
 
 ## Outcome
 

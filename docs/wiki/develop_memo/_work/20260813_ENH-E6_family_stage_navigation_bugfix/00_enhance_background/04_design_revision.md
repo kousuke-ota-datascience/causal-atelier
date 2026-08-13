@@ -1,6 +1,6 @@
 # ENH-E6 Design Revision
 
-- Status: `READY_FOR_OWNER_REVIEW`
+- Status: `APPROVED / FROZEN FOR ENH-E6 G01`
 
 ## 1. Design claim
 

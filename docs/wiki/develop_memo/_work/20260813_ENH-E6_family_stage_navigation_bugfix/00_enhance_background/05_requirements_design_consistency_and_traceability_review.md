@@ -1,6 +1,6 @@
 # ENH-E6 Requirements / Design Consistency and Traceability Review
 
-- Status: `PASS_FOR_DRAFT_CONTRACT`
+- Status: `PASS / APPROVED_FOR_FROZEN_G01_CONTRACT`
 
 ## Traceability matrix
 
@@ -36,6 +36,6 @@ MATCH WITH CLARIFICATION。E5は `/explore`, `/predictive`, `/causal` の一方�
 
 MATCH。workflow templateのBrowser E2E invariantに従い、detailed correctnessの主証明ではなく、今回のanomalyそのものに対応するcritical cross-layer journeyへ限定する。
 
-## Open approval item
+## Approval resolution
 
-`Causal Inference -> causal/identification` のcompatibility targetは owner approval待ち。これ以外のcontractは当該targetをparameterized mappingとして保持可能だが、06/07 freeze前に値を確定する。
+Human owner review により `Causal Inference -> causal/identification` を含む proposed compatibility / presentation mapping は承認済み。G01 06/07 では当該値を frozen semantic contract として扱う。

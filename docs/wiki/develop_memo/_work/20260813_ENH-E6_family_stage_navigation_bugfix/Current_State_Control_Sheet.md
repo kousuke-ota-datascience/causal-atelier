@@ -3,7 +3,7 @@
 - Enhancement: `ENH-E6`
 - Baseline branch: `bugfix/ariadne_mvp_e6`
 - Baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
-- State: `INITIALIZED`
+- State: `G01_CONTRACT_FROZEN / READY_FOR_P01`
 - Rule: final PASS 済み evidence のみ verified current state へ promotion する。
 
 ## Verified inherited state
@@ -17,14 +17,21 @@
 | E6-CS-005 | baseline source の normal `activateWorkspace()` path は Navigation Context / history を変更し得るが `renderAnalysisNavigation()` を呼ばない | `frontend/app.js` | E6 direct defect target |
 | E6-CS-006 | baseline source は `ANALYSIS_WORKSPACES.causal = discovery` の Family 単位 mapping を持つ | `frontend/app.js` | E6 design defect target |
 
-> 注: `E6-CS-005/006` は source inspection により確認した implementation fact。fresh runtime/browser reproduction は ENH-E6 ではまだ verified ではない。
+> `E6-CS-005/006` は source inspection により確認した implementation fact。
+
+## ENH-E6 preflight verified state
+
+| ID | State | Authority / evidence | ENH-E6 handling |
+|---|---|---|---|
+| E6-CS-007 | Existing real-browser harness is Playwright Python / Chromium via `browser-e2e` compose service | `Dockerfile.browser-e2e`, `compose.e1a.yaml`, `tests/browser_e2e/run_enh_e1a.py`, prior E3 browser reports | P03で再利用する |
+| E6-CS-008 | API READY clean Project context で normal Explore entry は canonical `.../analysis/exploratory/profile` へ到達する | 2026-08-13 ENH-E6 preflight probe | route establishment baselineとして保護 |
+| E6-CS-009 | 同じ clean baseline で `#analysis-family-tabs` container は存在するが Family button=0、Stage button=0 | 2026-08-13 ENH-E6 preflight probe | `ANOM-E5-001` runtime reproductionとして固定 |
 
 ## Not yet verified / prohibited promotion
 
-- fresh environment の observable UI reproduction
-- Browser DOM / computed visibility / selected state
-- user click 後の URL / history / active presentation の同期
 - ENH-E6 implementation candidate
-- ENH-E6 tests
+- implementation後の Family / Stage observable behavior
+- user click 後の URL / history / active presentation の修正後同期
+- ENH-E6 blocking browser journeys の PASS
 
-これらを Gate PASS 前に verified current state へ記載してはならない。
+これらを Gate PASS 前に verified current state へ promotion してはならない。

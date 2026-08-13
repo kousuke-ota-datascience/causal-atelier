@@ -4,8 +4,8 @@
 - Enhancement: `ENH-E6`
 - Active Gate: `G01`
 - Baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
-- Contract state: `DRAFT / NOT FROZEN`
-- Authority: after freeze, this document alone defines Gate PASS semantics for Test/Audit Agent
+- Contract state: `APPROVED / FROZEN`
+- Authority: this frozen document alone defines Gate PASS semantics for Test/Audit Agent
 
 ## 0. Gate decision semantics
 
@@ -160,7 +160,36 @@ Gate execution前に baseline reproduction evidenceを保存する。
 - clean browser context
 - deterministic Project fixture or creation procedure
 
-Canonical browser commandは、repository内既存browser harnessをlocal checkoutで確認した後、06/07 freeze前に具体コマンドへ置換する。コマンド未確定のままfreezeしてはならない。
+Existing canonical browser execution pattern is frozen as:
+
+```bash
+docker compose \
+  -f compose.yaml \
+  -f compose.e1a.yaml \
+  -p ariadne-e1a \
+  --profile e2e \
+  run --build --rm \
+  --entrypoint python \
+  browser-e2e \
+  tests/browser_e2e/run_enh_e6_family_stage_navigation.py
+```
+
+P03は上記runnerを image 内で実行可能にするため、必要に応じて `Dockerfile.browser-e2e` と `.dockerignore` を更新する。既存E3で発生した「runner host fileは存在するが `.dockerignore` によりbuild contextから除外される」failure modeを再発させてはならない。
+
+## 4.1 Frozen baseline reproduction evidence
+
+2026-08-13 preflight で production fix 前の baseline に対して以下を観測した。
+
+```text
+HEALTH: API READY
+AFTER_PROJECT_SELECT_URL: http://frontend/projects/<project_id>/data
+AFTER_EXPLORE_URL: http://frontend/projects/<project_id>/analysis/exploratory/profile
+FAMILY_TAB_CONTAINER_COUNT: 1
+FAMILY_BUTTON_COUNT: 0
+STAGE_BUTTON_COUNT: 0
+```
+
+この結果は AC-001 / AC-010 の pre-fix negative control として扱う。修正後のGate candidateは、同一normal-entry classのjourneyで actual Family button が3件visible/operableになることを証明しなければならない。
 
 ## 5. Failure evidence
 

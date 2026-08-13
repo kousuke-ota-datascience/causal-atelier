@@ -75,3 +75,10 @@ Gate coding開始前にHuman/local execution environmentで次をpreflightする
 6. canonical URL direct open時との比較を記録
 
 preflight結果がsource-derived hypothesisと異なる場合は、06/07 freeze前に本reviewをamendする。
+
+
+## Runtime preflight confirmation — 2026-08-13
+
+Human owner executed the existing Playwright / Chromium browser harness against the ENH-E6 baseline. The probe established `API READY`, created and selected a Project through the UI, reached canonical `.../analysis/exploratory/profile`, and observed `FAMILY_BUTTON_COUNT=0` / `STAGE_BUTTON_COUNT=0` while the Family tab container existed.
+
+This promotes the source-level integration mismatch to a reproduced runtime anomaly. It does not yet prove the ENH-E6 fix; post-fix behavior remains subject to frozen G01 07 Acceptance Criteria.

@@ -1,7 +1,7 @@
 ENH-E6 local planning bundle
 Baseline SHA: 5a5ced9bd6a0e62027c4058eb66ec487719bde23
-Status: READY_FOR_OWNER_REVIEW / NOT FROZEN
+Status: G01 APPROVED / FROZEN / P01 READY_TO_START
 Gate: G01 Observable Family / Stage Navigation Integration
-Proposed execution mode: WORK_PACKAGE (P01-P03)
+Execution mode: WORK_PACKAGE (P01-P03)
 Code changes: none
-Runtime browser reproduction: not executed in this environment; mandatory preflight before freeze/execution
+Runtime browser reproduction: VERIFIED by Human owner on 2026-08-13 with existing Playwright/Chromium harness; API READY + canonical exploratory/profile route + Family buttons=0 + Stage buttons=0

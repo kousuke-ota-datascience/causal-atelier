@@ -1,6 +1,6 @@
 # ENH-E6 G01 — P00 Work Package Plan
 
-- Status: `DRAFT / ACTIVATION_PROHIBITED_UNTIL_06_07_FREEZE`
+- Status: `APPROVED / P01 READY_TO_START`
 
 ## Package DAG
 

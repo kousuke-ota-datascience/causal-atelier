@@ -5,9 +5,9 @@
 - Planning baseline SHA: `5a5ced9bd6a0e62027c4058eb66ec487719bde23`
 - Planning date: `2026-08-13`
 - Source anomaly: `ENH-E5 / ANOM-E5-001 — Family Tab Observable UI Gap`
-- Current state: `PLANNING / READY_FOR_OWNER_REVIEW`
+- Current state: `G01 CONTRACT FROZEN / READY_FOR_P01`
 - Production code changes: `NOT STARTED`
-- Gate contract status: `DRAFT / NOT FROZEN`
+- Gate contract status: `APPROVED / FROZEN`
 
 ## Objective
 
@@ -23,7 +23,7 @@ ENH-E5 で成立させる契約だった `EXPLORATORY / PREDICTIVE / CAUSAL` の
 4. Gate 06 / 07 の draft 作成
 5. Work Package mode と package decomposition の draft 作成
 
-06 / 07 は Human owner review 後にのみ `APPROVED / FROZEN` へ昇格させる。現時点では Coding Agent を起動してはならない。
+Human owner review、API READY clean baseline reproduction、既存 Playwright harness / canonical invocation pattern の確認を完了し、G01 06 / 07 は `APPROVED / FROZEN` とする。次の実行単位は P01 Coding Agent である。
 
 ## Directory
 
