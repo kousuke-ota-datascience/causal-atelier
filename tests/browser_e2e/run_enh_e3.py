@@ -402,9 +402,15 @@ def main() -> int:
                 "reviewed": ["Result", "Lineage", "Annotation", "Export"],
             }
 
+            workspace_for_route = {
+                "context": "context", "data": "data", "explore": "explore",
+                "causal": "discovery", "predictive": "predictive", "results": "results",
+            }
             for route in ("context", "data", "explore", "causal", "predictive", "results"):
                 page.locator(f'nav button[data-route="{route}"]').first.click()
-                page.wait_for_url(f"**/projects/{project_id}/{route}")
+                _wait(lambda route=route: page.locator(
+                    f"#{workspace_for_route[route]}.workspace.active"
+                ).count() == 1)
                 assert page.locator("#common-project-name").inner_text().startswith("ENH-E3 Final")
             page.reload(wait_until="networkidle")
             page.locator("#results.workspace.active").wait_for()
