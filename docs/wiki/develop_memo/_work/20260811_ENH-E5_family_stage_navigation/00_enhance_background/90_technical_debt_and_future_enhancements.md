@@ -109,18 +109,200 @@ Current D3 rows with `Implementation Status=PARTIAL`: **13件**。
 
 ---
 
-## 5. IMPLEMENTATION / DESIGN ANOMALIES
+## 5. IMPLEMENTATION / DESIGN ANOMALIES AND CLOSEOUT FOLLOW-UP
 
-現時点のD3 projectionでは、Requirement/Design decisionから独立した`IMPLEMENTATION_ANOMALY`を新規登録していない。
+ENH-E5 closeout時に、preflight D3 Decision Itemとは別系統の実装観測・test maintenance・workflow/test-infrastructure改善事項を認識した。
 
-今後、source reviewでRequirementに直接紐づかない改善候補を発見した場合は、以下を最低限記録する。
+これらは以下の境界で管理する。
 
-- anomaly ID / title
-- source evidence
-- impact
-- why not in current Enhancement
-- proposed revisit trigger
-- related Requirement/Design（存在する場合）
+- D3 source rows 28件のdecisionを変更しない。
+- Root Technical Debt 17件のID体系を変更しない。
+- 未使用の`TD-016`を推測で割り当てない。
+- ENH-E5の既PASS Gateを遡及変更しない。
+- ENH-E5をreopenしない。
+- 後続bugfix / maintenance / workflow enhancementで新しいbaselineとcontractを作成して扱う。
+
+### ANOM-E5-001 — Family Tab Observable UI Gap
+
+- **Category:** `IMPLEMENTATION_ANOMALY`
+- **Status:** `OPEN_FOLLOW_UP`
+- **Delivery:** `FUTURE / BUGFIX_ENHANCEMENT`
+- **Related Gate:** `G01`
+- **Related concern:** Family / Navigation shell
+
+**Observed state**
+
+ENH-E5 closeout時の実画面観測では、Exploratory / Predictive / Causalの3 Familyを切り替える上部Family tabが期待どおり表示されていない可能性がある。
+
+一方、G01はFamily / Stage navigation contractをfinal `PASS / PROMOTION_ALLOWED`として完了している。
+
+したがって、本項目はG01 evidenceを書き換えるのではなく、別bugfix enhancementで再現条件、observable behavior、production implementation、test coverageを改めて確定する。
+
+**Impact**
+
+- intended Family navigation affordanceがユーザーから直接利用できない可能性がある。
+- route/state contractが成立していても、observable UI acceptanceにcoverage gapが残っている可能性がある。
+
+**Why not fixed in ENH-E5 closeout**
+
+ENH-E5はG00-G05の全Gateがfinal `PASS / PROMOTION_ALLOWED`となっており、closeout時にproduction code、test code、freeze済み06/Pxx/07を変更するとcandidate/evidence chainを遡及的に不安定化させる。
+
+Human owner decisionとして、ENH-E5は現行evidenceのままcloseし、本件は別bugfix enhancementへ分離する。
+
+**Proposed revisit trigger**
+
+- ENH-E5直後のbugfix enhancementを開始するとき。
+- 3 Family tabの再現手順をfresh environmentで固定できるとき。
+
+**Required future evidence**
+
+- fresh environmentでのreproduction
+- expected/actual DOMおよびobservable UI
+- Family tab clickによるFamily default Stage navigation
+- Family-local Stage sidebar
+- regression testが実際のFamily tabを操作していること
+- legacy left navigationとの責務境界
+
+---
+
+### ANOM-E5-002 — Repository-wide Pytest Residual Failures after G05
+
+- **Category:** `IMPLEMENTATION_ANOMALY`
+- **Status:** `OPEN_FOLLOW_UP`
+- **Delivery:** `FUTURE / TEST_MAINTENANCE`
+- **Related Gate:** `G05`
+- **Source evidence:** `30_test_report/G05/Trial01/E5-G05_01__004_full_suite_observation.md`
+
+**Observed state**
+
+G05 Independent Testのrepository-wide pytest diagnosticでは次を観測した。
+
+```text
+5 failed, 314 passed, 33 skipped
+```
+
+G05 Gate Decisionでの分類:
+
+- 4件: G05で必須化された`Idempotency-Key`を送らない旧test/caller
+- 1件: frozen G05 scope外の`ScientificStatus` contract
+
+G05 focused verificationとG00-G04 protected regressionはPASSしており、これら5件はfrozen G05 mandatory AC / protected regression違反とは判定されていない。
+
+**Impact**
+
+- repository-wide default pytestがgreenではないため、将来の変更で新規regressionと既知failureを区別しにくい。
+- stale test callerがcurrent transport contractと不整合なまま残る。
+- ScientificStatus failureのowner/scopeが未整理のまま残る。
+
+**Why not fixed in ENH-E5 closeout**
+
+G05 Gate contractのPASS条件ではなく、Independent Testがnon-blocking full-suite observationとして分離した事項である。
+
+closeout時にtest implementationを変更するとG05 evidence後のsemantic test-state変更になるため、ENH-E5では修正しない。
+
+**Proposed revisit trigger**
+
+- 次のmaintenance / bugfix enhancement開始時。
+- repository-wide pytestを再びdefault green baselineへ戻すとき。
+
+**Required future work**
+
+1. 4件のstale callerへcurrent Idempotency-Key contractを正しく反映する。
+2. assertion削除、skip、xfailによる見かけ上のgreen化を行わない。
+3. ScientificStatus failureのcurrent normative ownerを特定する。
+4. repository-wide pytestをfresh baselineで再実行し、既知failure 0を確認する。
+
+---
+
+### FOLLOWUP-E5-WF-001 — Agentic Workflow Template v3_1 Effectiveness Validation
+
+- **Category:** `FUTURE_ENHANCEMENT`
+- **Status:** `CONTROLLED_FOLLOW_UP`
+- **Delivery:** `FUTURE / WORKFLOW`
+- **Origin:** G01 execution experience
+
+**Observed problem in ENH-E5**
+
+G01では、実装内容だけでなくAgentic Workflow側に以下の未成熟が露出した。
+
+- Package checkpointとGate Fixed Trial Candidateの責務分離
+- Candidate Assembly
+- Completion Report生成主体
+- Fixed Trial Candidateとevidence commitのidentity分離
+- formal FAIL後のrework route
+- previous failed candidateの別Trialへの再提出防止
+- Operatorが誤ったentry promptを選択した場合のfail-closed guard
+
+**Current disposition**
+
+`11_Agentic_Workflow_修正`で作成されたv3_1では、上記事項をgeneric workflow ruleとして反映済みである。
+
+closeout時点の評価は、template designとしては対策済み。ただし、次回enhancementへinstantiateした際のeffectivenessはまだ実運用で再検証する必要がある。
+
+**Revisit trigger**
+
+次回Agentic Enhancement Workflowを使うenhancementの最初のexecution。
+
+**Effectiveness validation**
+
+- WORK_PACKAGE Gateで`PACKAGE_READY -> Candidate Assembly -> READY_FOR_TEST`が正しく流れる。
+- Package checkpoint / Fixed Trial Candidate / Evidence commitが混同されない。
+- formal FAIL時にnormal Pxx routeへ戻らず、remediation routeへfail closedする。
+- `NEW_FIXED_CANDIDATE_SHA == PREVIOUS_FAILED_CANDIDATE_SHA`またはsemantic remediation diff不在を拒否する。
+- Operator entry mistakeが下流Agentで検出される。
+
+---
+
+### FOLLOWUP-E5-BE2E-001 — Browser E2E Harness Effectiveness Validation
+
+- **Category:** `FUTURE_ENHANCEMENT`
+- **Status:** `CONTROLLED_FOLLOW_UP`
+- **Delivery:** `FUTURE / TEST_INFRASTRUCTURE`
+- **Origin:** G04 execution experience
+
+**Observed problem in ENH-E5**
+
+G04ではBrowser E2Eの未整備が長期化の主要因となった。
+
+代表的な問題:
+
+- worker停止状態への依存
+- stale worker image
+- manual pre-existing environment dependency
+- canonical navigation移行後も残ったlegacy URL wait
+- URL / fixed timeout中心のsynchronization
+- failure localizationとevidence不足
+- product defect / test implementation defect / orchestration defect / environment defectの分類難
+
+G04には実際のproduction implementation defectも存在したが、長期化の主要因はBrowser E2E harness / orchestrationの未成熟だった。
+
+**Current disposition**
+
+Agentic Workflow Template v3_1のBrowser E2E policyでは、以下を一般化して対策済み。
+
+- Gate-blocking Browser E2Eを原則3〜5本のcritical journeyへ限定
+- detailed correctnessはlower-level testへ移管
+- clean namespace / current-source build / workerを含むhermetic startup
+- manual prerequisite / stale image / previous DB state依存の禁止
+- semantic readiness / observable synchronization
+- legacy URL exact expectation / fixed sleep中心設計の禁止
+- trace / screenshot / video / console / network / API / worker / service-state evidence
+- product / test implementation / orchestration / environment / unknownのfailure classification
+
+ただし、policyが具体的runnerへ正しくinstantiateされることは次回enhancementで実証する必要がある。
+
+**Revisit trigger**
+
+次にBrowser E2EをGate-blocking acceptanceとして導入するenhancement。
+
+**Effectiveness validation**
+
+- fresh repository/service stateからcanonical command 1本で完走する。
+- current sourceからAPI/worker/frontendをbuild/recreateする。
+- semantic readiness成立後にjourneyを開始する。
+- intentional negative responseをfailure root causeと誤認しない。
+- harness/orchestration/environment failureをproduct FAILへ自動変換しない。
+- failure時にroot-cause分類に必要なevidenceが自動保存される。
 
 ---
 
@@ -901,6 +1083,7 @@ production troubleshooting、capacity analysis、SLO monitoringの自動化が�
 
 | Date | Revision | Change |
 |---|---|---|
+| 2026-08-13 | Closeout | ENH-E5 final closeoutで認識したFamily tab observable UI gap、repository-wide pytest残件、Agentic Workflow v3_1 effectiveness validation、Browser E2E harness effectiveness validationをD3 decisionとは分離したfollow-upとしてSection 5へ追加。G00-G05の既PASS evidenceを遡及変更せず、ENH-E5をreopenしない境界を明記。 |
 | 2026-08-12 | Initial | `remediation_decision_matrix.csv`のD3 28件を17 root TDへ収束。derived test-scope 2件を別管理。Freeze auditのconditional approval stateを反映。 |
 
 ---
