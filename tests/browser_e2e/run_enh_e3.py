@@ -174,6 +174,24 @@ def main() -> int:
             assert page.locator(
                 '#analysis-view-form select[name="dataset_version_id"]'
             ).input_value() == dataset_id
+            submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
+                const invalid = [...form.querySelectorAll(':invalid')].map(control => ({
+                    name: control.name,
+                    value: control.value,
+                    validationMessage: control.validationMessage,
+                    validity: Object.fromEntries(Object.entries(control.validity)
+                        .filter(([, value]) => value === true)),
+                }));
+                return {
+                    checkValidity: form.checkValidity(),
+                    invalid,
+                    dataset_version_id: form.elements.dataset_version_id.value,
+                    formData: Object.fromEntries(new FormData(form).entries()),
+                };
+            }""")
+            evidence["analysis_view_submit_diagnostic"] = submit_diagnostic
+            assert submit_diagnostic["checkValidity"], submit_diagnostic
+            assert submit_diagnostic["dataset_version_id"] == dataset_id, submit_diagnostic
             page.locator("#analysis-view-form button").click()
             page.locator("#notice").filter(has_text="Analysis View DRAFTを作成しました").wait_for()
             page.locator("#analysis-view-list tbody tr button").first.click()
