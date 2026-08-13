@@ -4,7 +4,7 @@ const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
 const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
-const ANALYSIS_WORKSPACES=Object.freeze({exploratory:'explore',predictive:'predictive',causal:'discovery'});
+const ANALYSIS_HISTORY_MODES=Object.freeze({PUSH:'PUSH',REPLACE:'REPLACE',NONE:'NONE'});
 const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
 
@@ -57,24 +57,48 @@ enhanceTooltips();
 async function activateWorkspace(workspace,{push=true,button=null}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
   if(!button)return;
+  const shortcutFamily=button.dataset.navigationFamily,shortcutStage=button.dataset.navigationStage;
+  if(push&&shortcutFamily&&shortcutStage&&state.navigationCatalog&&state.project){
+    const context=AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,shortcutFamily,shortcutStage);
+    return applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'legacy-analytical-shortcut'});
+  }
   button.dataset.refreshStatus='pending';
   $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
   if(push&&state.project&&button.dataset.route){
-    const familySlug={explore:'exploratory',predictive:'predictive',causal:'causal'}[button.dataset.route];
-    if(familySlug&&state.navigationCatalog){
-      state.navigationContext=AnalysisNavigation.defaultContext(state.navigationCatalog,state.project.project_id,familySlug);
-    }
-    const path=state.navigationContext&&ANALYSIS_WORKSPACES[state.navigationContext.familySlug]===workspace
-      ?AnalysisNavigation.serialize(state.navigationContext)
-      :`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
+    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
     if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
   }
+  if(!shortcutFamily)clearAnalysisNavigationShell();
   try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
   const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
 $$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
 
+function normalizeAnalysisNavigationContext(context){
+  if(!state.navigationCatalog)throw new Error('Navigation catalog is unavailable');
+  return AnalysisNavigation.navigationContext(state.navigationCatalog,context.projectId,context.familySlug,context.stageSlug,context.resource);
+}
+function synchronizeAnalysisHistory(context,historyMode){
+  const path=AnalysisNavigation.serialize(context);
+  if(historyMode===ANALYSIS_HISTORY_MODES.NONE||location.pathname===path)return;
+  if(historyMode===ANALYSIS_HISTORY_MODES.PUSH)history.pushState({project_id:context.projectId,navigation:context},'',path);
+  else if(historyMode===ANALYSIS_HISTORY_MODES.REPLACE)history.replaceState({project_id:context.projectId,navigation:context},'',path);
+  else throw new Error(`Unknown analysis history mode: ${historyMode}`);
+}
+async function applyAnalysisNavigation(context,{historyMode=ANALYSIS_HISTORY_MODES.NONE,source='unknown'}={}){
+  const next=normalizeAnalysisNavigationContext(context);
+  const presentation=AnalysisPresentation.resolve(next);
+  state.project=await api(`/projects/${next.projectId}`);
+  state.navigationContext=next;
+  synchronizeAnalysisHistory(next,historyMode);
+  renderAnalysisNavigation();
+  activateAnalysisPresentation(next);
+  await renderOperationAvailability();
+  fillProject();await loadProjects();$('#project-select').value=next.projectId;
+  await activateWorkspace(presentation.workspace,{push:false});
+  return {context:next,source};
+}
 async function restoreProjectRoute(){
   if(state.navigationCatalog){
     let parsed;
@@ -85,14 +109,11 @@ async function restoreProjectRoute(){
       const projectId=parsed.projectId||state.project?.project_id;
       if(!projectId)return false;
       parsed=AnalysisNavigation.legacyContext(state.navigationCatalog,projectId,parsed.legacy);
-      history.replaceState({project_id:projectId,navigation:parsed},'',AnalysisNavigation.serialize(parsed));
+      return applyAnalysisNavigation(parsed,{historyMode:ANALYSIS_HISTORY_MODES.REPLACE,source:'legacy-route-normalization'}).then(()=>true);
     }
     if(parsed&&parsed.projectId){
       if(parsed.resource){parsed=await AnalysisNavigation.contextForResource(state.navigationCatalog,api,parsed.projectId,parsed.resource.resourceType,parsed.resource.resourceId,parsed)}
-      state.navigationContext=parsed;state.project=await api(`/projects/${parsed.projectId}`);
-      renderAnalysisNavigation();await renderOperationAvailability();
-      fillProject();await loadProjects();$('#project-select').value=parsed.projectId;
-      await activateWorkspace(ANALYSIS_WORKSPACES[parsed.familySlug],{push:false});
+      await applyAnalysisNavigation(parsed,{historyMode:ANALYSIS_HISTORY_MODES.NONE,source:'route-restore'});
       return true;
     }
   }
@@ -104,17 +125,20 @@ async function restoreProjectRoute(){
   await activateWorkspace(ROUTE_WORKSPACES[route],{push:false});
   return true;
 }
+function clearAnalysisNavigationShell(){
+  $('#analysis-family-tabs').replaceChildren();$('#analysis-stage-sidebar').replaceChildren();
+  const presentation=$('#causal-stage-presentation');if(presentation){presentation.hidden=true;presentation.replaceChildren()}
+}
 function renderAnalysisNavigation(){
   const catalog=state.navigationCatalog,context=state.navigationContext;if(!catalog||!context)return;
   const current=catalog.families.find(item=>item.slug===context.familySlug);if(!current)throw new Error('Navigation catalog invariant failure: current family missing');
   $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" aria-label="Analysis family: '+escapeHtml(f.label)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
   $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" aria-label="Analysis stage: '+escapeHtml(s.label)+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
-  $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);state.navigationContext=AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
-  $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>{state.navigationContext=AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
-  renderCausalStagePresentation();
+  $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);applyAnalysisNavigation(AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug),{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'family-tab-click'}).catch(error=>notice(error.message))});
+  $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>applyAnalysisNavigation(AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage),{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'stage-sidebar-click'}).catch(error=>notice(error.message)));
 }
-function renderCausalStagePresentation(){
-  const target=$('#causal-stage-presentation'),context=state.navigationContext;
+function activateAnalysisPresentation(context){
+  const target=$('#causal-stage-presentation');
   if(!target)return;
   if(!context||context.familySlug!=='causal'){target.hidden=true;target.replaceChildren();return}
   const presentation=CausalStagePresentation.presentationFor(context.stageSlug);

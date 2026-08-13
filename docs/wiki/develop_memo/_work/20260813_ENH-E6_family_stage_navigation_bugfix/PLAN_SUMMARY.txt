@@ -1,0 +1,20 @@
+ENH-E6 PLAN SUMMARY — NON-AUTHORITATIVE HUMAN INDEX
+
+Enhancement: ENH-E6
+Gate: G01
+Execution Mode: WORK_PACKAGE
+Source anomaly: ENH-E5 / ANOM-E5-001
+Canonical requirement/design changes: NONE; docs/wiki/requirement_definition/** is READ ONLY.
+
+G01 claim:
+Supported Analysis navigation entries converge on one canonical Family/Stage transition authority and observable Family/Stage shell/presentation/history remain synchronized.
+
+Packages:
+P01 navigation transition authority
+P02 stage-aware presentation + legacy compatibility
+P03 browser regression + test strengthening
+
+Coding Agent entry:
+Use template operator prompt 10_normal_execution_02_work_package_coding_agent_prompt.md with GATE_ID/PACKAGE_ID/TRIAL_NO. Assigned Pxx is the only normative implementation contract. Do not provide Gate 07, Gate 06, P00, other Pxx, or planning/test workflow documents to the Coding Agent.
+
+This summary is convenience-only. It is not an execution or acceptance authority.
