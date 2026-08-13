@@ -47,6 +47,7 @@ class GenericExecutor:
         worker_id: str = "local-worker",
         cancelled: Callable[[], bool] | None = None,
         stage_executions: tuple[StageExecution, ...] | None = None,
+        effective_random_seed: int | None = None,
     ) -> ExecutionOutcome:
         order = self.validator.validate(plan)
         definitions = {item.stage_key: item for item in plan.stages}
@@ -81,7 +82,14 @@ class GenericExecutor:
                 stage.skip(self.clock())
                 continue
             stage.mark_ready()
-            stage.start_attempt(worker_id, self.clock())
+            stochastic = (
+                definition.stage_type.namespace == "predictive"
+                and definition.stage_type.name in {"split", "train"}
+            )
+            stage.start_attempt(
+                worker_id, self.clock(),
+                effective_random_seed=effective_random_seed if stochastic else None,
+            )
             try:
                 inputs = self.bindings.resolve(
                     plan, definition, outputs, (external_inputs or {}).get(key)

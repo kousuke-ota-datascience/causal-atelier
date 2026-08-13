@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import random
 from dataclasses import dataclass
 from typing import Any
 
@@ -100,6 +101,13 @@ class PredictivePrepareRunner:
                 "row_ordinals": partitions["TEST"],
                 "features": test_features,
                 "target": _json_values(test_frame[target].tolist()),
+                # These raw TEST columns are deliberately retained separately
+                # from model features: subgroup evaluation must not require a
+                # subgroup to be a model input.
+                "subgroups": {
+                    column: _json_values(test_frame[column].tolist())
+                    for column in spec["evaluation_spec"].get("subgroups", [])
+                },
             },
             "selection_allowed": False,
             "final_evaluation_only": True,
@@ -344,6 +352,17 @@ class PredictiveEvaluateRunner:
                 )
             ]
             errors = [abs(fitted - y) for y, fitted in zip(actual, prediction, strict=True)]
+        subgroup_metrics = _subgroup_metrics(
+            task_type=model["task_type"],
+            actual=actual,
+            prediction=prediction,
+            subgroups=test.get("subgroups", {}),
+            metrics=[
+                spec["evaluation_spec"]["primary_metric"],
+                *spec["evaluation_spec"].get("secondary_metrics", []),
+            ],
+            split_seed=int(spec["split_spec"]["seed"]),
+        )
         status = "INSUFFICIENT_TEST_SAMPLE" if insufficient else "EVALUATED"
         if insufficient:
             warnings = ({
@@ -379,6 +398,7 @@ class PredictiveEvaluateRunner:
                     "parameters": model["parameters"],
                     "seed": model["seed"],
                 },
+                "subgroup_metrics": subgroup_metrics,
             },
             diagnostics={
                 "selection_allowed": False,
@@ -413,6 +433,7 @@ class PredictiveEvaluateRunner:
                     "sample_count": len(actual),
                     "evaluation_population": "TEST",
                     "primary_metric": spec["evaluation_spec"]["primary_metric"],
+                    "subgroup_metrics": subgroup_metrics,
                     "warnings": list(warnings),
                 }
             },
@@ -456,6 +477,71 @@ def _validate_tuning_spec(value: dict[str, Any]) -> dict[str, Any]:
         "candidates": [],
         "objective_metric": value.get("objective_metric"),
     }
+
+
+def _subgroup_metrics(*, task_type: str, actual: list[Any], prediction: list[float], subgroups: dict[str, list[Any]], metrics: list[str], split_seed: int) -> list[dict[str, Any]]:
+    """Evaluate independent TEST-only subgroup slices in a stable record form."""
+    records: list[dict[str, Any]] = []
+    for column, values in subgroups.items():
+        if len(values) != len(actual):
+            raise InvalidSchema("evaluation subgroup values must align with TEST rows")
+        groups: list[tuple[Any, list[int]]] = []
+        for index, value in enumerate(values):
+            normalized = _json_values([value])[0]
+            for group_value, indices in groups:
+                if group_value == normalized:
+                    indices.append(index)
+                    break
+            else:
+                groups.append((normalized, [index]))
+        for subgroup_value, indices in groups:
+            for metric in dict.fromkeys(metrics):
+                sliced_actual = [actual[index] for index in indices]
+                sliced_prediction = [prediction[index] for index in indices]
+                value, warning = _metric_for_slice(task_type, sliced_actual, sliced_prediction, metric)
+                warnings: list[dict[str, str]] = [warning] if warning else []
+                uncertainty = None
+                if len(indices) < 2:
+                    warnings.append({"code": "SUBGROUP_SAMPLE_TOO_SMALL", "message": "At least two TEST records are required for bootstrap uncertainty"})
+                elif value is not None:
+                    uncertainty, bootstrap_warning = _bootstrap_uncertainty(task_type=task_type, actual=sliced_actual, prediction=sliced_prediction, metric=metric, split_seed=split_seed, subgroup_column=column, subgroup_value=subgroup_value)
+                    if bootstrap_warning:
+                        warnings.append(bootstrap_warning)
+                records.append({"subgroup_column": column, "subgroup_value": subgroup_value, "is_null_group": subgroup_value is None, "metric": metric, "sample_count": len(indices), "value": value, "uncertainty": uncertainty, "status": "EVALUATED" if value is not None else "NON_COMPUTABLE", "warnings": warnings})
+    return records
+
+
+def _metric_for_slice(task_type: str, actual: list[Any], prediction: list[float], metric: str) -> tuple[float | None, dict[str, str] | None]:
+    try:
+        values = classification_metrics(actual, prediction) if task_type == "BINARY_CLASSIFICATION" else regression_metrics(actual, prediction)
+        value = metric_value(values, metric)
+    except (PredictiveValidationError, ValueError, TypeError):
+        value = None
+    if value is None:
+        return None, {"code": "SUBGROUP_METRIC_NON_COMPUTABLE", "message": f"{metric} is not computable for this TEST subgroup"}
+    return value, None
+
+
+def _bootstrap_uncertainty(*, task_type: str, actual: list[Any], prediction: list[float], metric: str, split_seed: int, subgroup_column: str, subgroup_value: Any) -> tuple[dict[str, Any] | None, dict[str, str] | None]:
+    seed = int(canonical_hash({"namespace": "predictive-subgroup-bootstrap/1", "split_seed": split_seed, "subgroup_column": subgroup_column, "subgroup_value": subgroup_value, "metric": metric})[:16], 16)
+    generator = random.Random(seed)
+    values: list[float] = []
+    for _ in range(1000):
+        sample = [generator.randrange(len(actual)) for _ in actual]
+        estimate, _ = _metric_for_slice(task_type, [actual[index] for index in sample], [prediction[index] for index in sample], metric)
+        if estimate is not None:
+            values.append(estimate)
+    if len(values) < 200:
+        return None, {"code": "SUBGROUP_BOOTSTRAP_INSUFFICIENT_VALID_RESAMPLES", "message": "Fewer than 200 valid bootstrap resamples were available"}
+    values.sort()
+    return {"method": "percentile_bootstrap", "confidence": 0.95, "lower": _percentile(values, 0.025), "upper": _percentile(values, 0.975), "requested_resamples": 1000, "valid_resamples": len(values)}, None
+
+
+def _percentile(values: list[float], probability: float) -> float:
+    position = (len(values) - 1) * probability
+    lower = int(position)
+    upper = min(lower + 1, len(values) - 1)
+    return values[lower] + (values[upper] - values[lower]) * (position - lower)
 
 
 def _json_values(values: list[Any]) -> list[Any]:

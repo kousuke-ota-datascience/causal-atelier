@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import tempfile
 import uuid
 from datetime import datetime, timezone
@@ -18,7 +19,9 @@ from ariadne.product.domain.errors import (
     InvalidSchema,
     ProjectAccessDenied,
     ProjectBoundaryViolation,
+    OperationAvailabilityError,
 )
+from ariadne.product.application.navigation_catalog import CATALOG
 from ariadne.product.domain.lineage import (
     LINEAGE_RELATION_TYPES,
     LineageAuthority,
@@ -64,6 +67,71 @@ def _now() -> datetime:
 
 
 class ProductClosureService:
+    def operation_availability(
+        self, project_id: str, *, user_id: str, resource_type: str | None,
+        resource_id: str | None, route: str | None,
+    ) -> dict[str, Any]:
+        """Read-only UI projection; command validation remains authoritative."""
+        supported_types = {"analysis-specification", "execution", "result", "graph-version"}
+        if bool(resource_type) != bool(resource_id) or (not resource_type and not route):
+            raise OperationAvailabilityError("INVALID_OPERATION_AVAILABILITY_QUERY", "resource_type and resource_id must be paired; route is required without a resource")
+        if resource_type and resource_type not in supported_types:
+            raise OperationAvailabilityError("UNSUPPORTED_RESOURCE_TYPE", f"Unsupported resource type: {resource_type}")
+        route_match = None
+        if route:
+            route_match = re.fullmatch(
+                r"/projects/([^/]+)/analysis/([^/]+)/([^/]+)(?:/resource/([^/]+)/([^/]+))?",
+                route,
+            )
+            if route_match is None or route_match.group(1) != project_id:
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route must be a canonical route for this project")
+            family = next((item for item in CATALOG if item.slug == route_match.group(2)), None)
+            if family is None or not any(stage.slug == route_match.group(3) for stage in family.stages):
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route family or stage is not canonical")
+            if route_match.group(4) and route_match.group(4) not in supported_types:
+                raise OperationAvailabilityError("INVALID_NAVIGATION_ROUTE", "route resource type is not supported")
+            if resource_type and route_match.group(4) and (
+                route_match.group(4) != resource_type or route_match.group(5) != resource_id
+            ):
+                raise OperationAvailabilityError("INVALID_OPERATION_AVAILABILITY_QUERY", "route resource must match query resource")
+        with self._session_factory() as session:
+            role = self._require_role(session, project_id, user_id, READ_ROLES)
+            resource: Any | None = None
+            if resource_type == "analysis-specification":
+                resource = session.get(AnalysisSpecificationOrm, resource_id)
+            elif resource_type == "execution":
+                resource = session.get(ExecutionOrm, resource_id)
+            elif resource_type == "result":
+                row = session.get(ResultOrm, resource_id)
+                resource = (row, session.get(ExecutionOrm, row.execution_id)) if row else None
+            elif resource_type == "graph-version":
+                resource = session.get(GraphVersionOrm, resource_id)
+            if resource_type and resource is None:
+                raise EntityNotFound("Resource", resource_id or "")
+            resolved_project = resource[1].project_id if resource_type == "result" else getattr(resource, "project_id", None)
+            if resource_type and resolved_project != project_id:
+                raise EntityNotFound("Resource", resource_id or "")
+            resolved_family = resource[1].analysis_family.lower() if resource_type == "result" else getattr(resource, "analysis_family", "").lower()
+            if resource_type == "graph-version":
+                resolved_family = "causal"
+            if resource_type == "analysis-specification":
+                resolved_family = resource.analysis_family.lower()
+            if route_match and resource_type and route_match.group(2) != resolved_family:
+                raise OperationAvailabilityError("ROUTE_RESOURCE_FAMILY_MISMATCH", "route family does not match resource family")
+            def item(allowed: bool, code: str | None = None) -> dict[str, Any]:
+                return {"allowed": allowed} if allowed else {"allowed": False, "reason_code": code}
+            keys = ("RUN", "EDIT", "EXPORT")
+            if not resource_type:
+                return {"operations": {key: item(False, "RESOURCE_REQUIRED") for key in keys}}
+            if role not in WRITE_ROLES:
+                return {"operations": {key: item(False, "PROJECT_ACCESS_DENIED") for key in keys}}
+            if resource_type == "analysis-specification":
+                return {"operations": {"RUN": item(resource.status == "FIXED", "SPEC_NOT_FIXED"), "EDIT": item(resource.status != "FIXED", "RESOURCE_IMMUTABLE"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            if resource_type == "graph-version":
+                return {"operations": {"RUN": item(resource.status == "FIXED", "GRAPH_NOT_FIXED"), "EDIT": item(resource.status != "FIXED", "RESOURCE_IMMUTABLE"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            if resource_type == "execution":
+                return {"operations": {"RUN": item(resource.status in {"FAILED", "CANCELLED"}, "EXECUTION_STATE_NOT_RUNNABLE"), "EDIT": item(False, "UNSUPPORTED_OPERATION"), "EXPORT": item(False, "UNSUPPORTED_OPERATION")}}
+            return {"operations": {"RUN": item(False, "ROUTE_REQUIRED" if not route else "UNSUPPORTED_OPERATION"), "EDIT": item(False, "UNSUPPORTED_OPERATION"), "EXPORT": item(True)}}
     def __init__(self, session_factory: Any, artifact_store: ArtifactStorePort) -> None:
         self._session_factory = session_factory
         self._artifact_store = artifact_store
@@ -227,10 +295,45 @@ class ProductClosureService:
             values = [self._find_result(session, project_id, value) for value in result_ids]
         families = {item["analysis_family"] for item in values}
         types = {item["result_type"] for item in values}
-        if len(families) != 1 or len(types) != 1:
-            raise InvalidSchema(
-                "Quantitative comparison requires the same analysis family and compatible Result Type"
-            )
+        family = next(iter(families)) if len(families) == 1 else None
+        result_type = next(iter(types)) if len(types) == 1 else None
+        compatibility_reasons: list[str] = []
+        if family is None:
+            compatibility_reasons.append("ANALYSIS_FAMILY_MISMATCH")
+        if result_type is None:
+            compatibility_reasons.append("RESULT_TYPE_MISMATCH")
+        semantic_fields = (
+            ("task_type", "prediction_target", "prediction_unit", "prediction_time", "horizon", "population_semantics")
+            if family == "PREDICTIVE" else
+            ("treatment", "outcome", "estimand", "target_population") if family == "CAUSAL" else ()
+        )
+        for field in semantic_fields:
+            if len({_comparison_value(item, field) for item in values}) > 1:
+                compatibility_reasons.append(f"SEMANTIC_MISMATCH:{field}")
+        semantic_compatible = not compatibility_reasons
+        direct_comparison_blockers = list(compatibility_reasons)
+        direct_fields = (
+            ("dataset_version_id", "test_row_identity_hash", "metric_definition")
+            if family == "PREDICTIVE" else
+            ("dataset_version_id", "analysis_view_id", "analysis_population") if family == "CAUSAL" else ()
+        )
+        if semantic_compatible:
+            for field in direct_fields:
+                if len({_comparison_value(item, field) for item in values}) > 1:
+                    direct_comparison_blockers.append(f"DIRECT_METRIC_MISMATCH:{field}")
+        direct_metric_comparable = semantic_compatible and not direct_comparison_blockers
+        if not direct_metric_comparable:
+            return _redact({
+                "schema_version": "result-comparison/2", "project_id": project_id,
+                "analysis_family": family, "result_type": result_type,
+                "semantic_compatible": semantic_compatible,
+                "direct_metric_comparable": False,
+                "compatible": False,
+                "compatibility_reasons": compatibility_reasons,
+                "direct_comparison_blockers": direct_comparison_blockers,
+                "results": [{"result_id": item["result_id"], "analytical_status": item["analytical_status"]} for item in values],
+                "ranking": None,
+            })
         summaries = [_redact(item["summary"]) for item in values]
         keys = sorted(set().union(*(summary.keys() for summary in summaries)))
         common: dict[str, Any] = {}
@@ -254,11 +357,15 @@ class ProductClosureService:
             for item, warnings in zip(values, result_warnings, strict=True)
         ]
         return _redact({
-            "schema_version": "result-comparison/1",
+            "schema_version": "result-comparison/2",
             "project_id": project_id,
-            "analysis_family": values[0]["analysis_family"],
-            "result_type": values[0]["result_type"],
+            "analysis_family": family,
+            "result_type": result_type,
+            "semantic_compatible": True,
+            "direct_metric_comparable": True,
             "compatible": True,
+            "compatibility_reasons": [],
+            "direct_comparison_blockers": [],
             "common_summary": common,
             "differences": differences,
             "common_warnings": common_warnings,
@@ -881,3 +988,32 @@ def _suppress_sensitive_output(value: Any) -> Any:
     if isinstance(value, list):
         return [_suppress_sensitive_output(item) for item in value]
     return value
+
+
+def _comparison_value(result: dict[str, Any], field: str) -> Any:
+    """Resolve comparison keys without treating absent values as compatible.
+
+    Result schemas differ by family and historical generation.  The public
+    comparison contract nevertheless has one vocabulary, so this only reads
+    the canonical result/execution snapshots and never guesses a value.
+    """
+    aliases = {
+        "prediction_target": ("prediction_target", "target", "outcome"),
+        "target_population": ("target_population", "population"),
+        "test_row_identity_hash": ("test_row_identity_hash", "test_row_hash"),
+    }
+    keys = aliases.get(field, (field,))
+    candidates = (result, result.get("payload", {}), result.get("summary", {}), result.get("diagnostics", {}))
+    for source in candidates:
+        if not isinstance(source, dict):
+            continue
+        for key in keys:
+            if key in source:
+                return source[key]
+        for nested in ("family_spec", "semantic_key", "comparison_metadata", "source_snapshot"):
+            value = source.get(nested)
+            if isinstance(value, dict):
+                for key in keys:
+                    if key in value:
+                        return value[key]
+    return "__MISSING__"

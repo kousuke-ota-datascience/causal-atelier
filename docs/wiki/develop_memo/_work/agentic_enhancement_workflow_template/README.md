@@ -203,6 +203,7 @@ Work Package completionは以下を意味しない。
 6. **PASS-only verified-state promotion** — verified stateはfinal PASS時だけ昇格させる。
 7. **Passed-Gate immutability** — PASS済みcontractは後続作業から保護する。
 8. **Explicit authority / precedence / evidence identity** — 文書authorityとevidence identityを明示する。
+9. **Browser E2E = critical journey proof** — Browser E2Eをdetailed correctnessの一次証明にせず、少数のcritical user journeyのreal cross-layer connectivity確認へ限定する。
 
 ---
 
@@ -314,7 +315,9 @@ architecture / ownership / persistence等を変更する場合は、必要に応
 - `06_*` — Gate Coding Contract
 - `07_*` — Gate Verification Contract
 
-06には「何を実装上成立させるか」、07には「何を満たせばGate PASSか」を記載する。
+06には「何を実装上成立させるか」、07には「何を満たせばGate PASSか」を記載する。07のTest Item planではrequirement / ACごとにprimary test layerを割り当て、Browser E2EはapplicableなGateのcritical user journeyへ限定する。
+
+Browser E2E共通authoring / operational policyは`40_operator_workflows/BROWSER_E2E_GATE_POLICY.md`を参照する。Gate固有のblocking journey、canonical command、environment、synchronization、assertion、failure evidence、decision semanticsは07本文へ具体化してfreezeする。
 
 Gate実行開始後に、implementation都合やtest failureを理由として06/07の意味論を書き換えない。
 
@@ -358,6 +361,41 @@ Coding Agentはassigned scopeを越えず、execution completion / interruption�
 
 Work Packageごとにcheckpointを作成しても、それをGate PASSと表現してはならない。
 
+Operator entryは`40_operator_workflows/agent_entry_prompts/README.md`のrouting tableに従う。normal SINGLE_EXECUTION / normal Pxx / Candidate Assembly / Independent Test / formal FAIL remediationを同一promptへ混在させない。
+
+
+#### Operator Quick HowToUse
+
+通常は長いprompt本文をHumanが転記せず、対象entry promptをAgentへ読み込ませ、execution identityだけを指定する。
+
+`SINGLE_EXECUTION`:
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+`WORK_PACKAGE`をGate単位で自動制御する場合:
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+1 Packageだけを手動起動する場合は`10_normal_execution_02_work_package_coding_agent_prompt.md`へ`GATE_ID / PACKAGE_ID / TRIAL_NO`を与える。all required Pxx完了後は`20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md`、独立検証は`30_independent_verification_01_test_agent_prompt.md`、formal FAIL後の`CONSOLIDATED + SINGLE_EXECUTION` remediationは`40_fail_remediation_01_fail_rework_coding_agent_prompt.md`を使用する。
+
 ### Step 8 — Candidate Assemblyを行う
 
 すべての必要なimplementation scopeが完了したらTrial candidateを組み立てる。
@@ -367,18 +405,21 @@ Work Packageごとにcheckpointを作成しても、それをGate PASSと表現�
 - package chain completeness
 - unresolved blocker
 - integration / Gate-wide regression
+- Browser E2Eを含む場合はcritical journey / hermetic environment / evidence-first原則に従ったGate-wide self-check
 - protected passed-Gate regressionのCoding-side self-check
 - candidate-affecting uncommitted changeなし
 - Fixed Trial Candidate SHA
 - Implementation Completion Report
 
-完了状態は`READY_FOR_TEST`であり、Gate PASSではない。
+完了状態は`READY_FOR_TEST`であり、Gate PASSではない。WORK_PACKAGEではall required Pxx=`PACKAGE_READY`だけでは不十分であり、Candidate Assembly Agentによるpackage chain audit、Gate-wide self-verification、Fixed Trial Candidate freeze、canonical Implementation Completion Reportが必要である。
 
 ### Step 9 — Independent Test / Auditを実行する
 
 Test / Audit Agentは07をAcceptance Criteria authorityとして、Fixed Trial Candidateを独立検証する。
 
 `30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/`へTest Item reportを作成し、最後に`999_gate_decision`を作成する。
+
+Browser E2E Test Itemは07でfreezeされたcritical journeyだけをGate blockingとして実行する。failure時はtrace / screenshot / video / browser console / page errors / relevant network / API・worker logs / service state等を可能な範囲で収集し、`PRODUCT_INTEGRATION_DEFECT / TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN`へ分類する。product correctnessを判定できないharness / orchestration / environment failureをGate FAILへ読み替えない。
 
 ### Step 10 — Gate Decisionに従って遷移する
 
@@ -391,9 +432,11 @@ PASS
 
 FAIL
   -> Gate contract validityを確認
-  -> validなら08 Trial Remediation ContractをDELTA / CONSOLIDATEDで作成
-  -> invalidなら09 Gate Contract Amendmentへ移行
-  -> next Trial candidateを作る
+  -> validならcurrent Trial 08をcanonical pathへexactly one作成・freeze
+  -> direct FAIL Rework Agent executionでは08をCONSOLIDATED + SINGLE_EXECUTIONにする
+  -> normal Pxx executionへ直接戻らない
+  -> invalidなら09 Gate Contract Amendmentへ移行し80 amendment ledgerへ追記
+  -> previous failed candidateとは異なるnext Trial candidateを作る
 
 BLOCKED
   -> prerequisite / environment / contract ambiguity等を解消
@@ -466,8 +509,9 @@ Transition Debt ID   : <ENHANCE_ID>-TD-<3 digits>
 
 ```text
 {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_implementation_checkpoint_report.md
+{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
 {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
-{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
+{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_{{TEST_ITEM_ID}}_test_item.md
 {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_999_gate_decision.md
 {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
@@ -560,6 +604,16 @@ AmendmentがP00 / package instructionをinvalidateする場合、それらもver
 「テストに落ちたためACを変更してPASS」する運用は禁止する。
 
 ---
+
+### 6.7. Browser E2E responsibility policy
+
+Browser E2Eは、少数のcritical user journeyがreal browserからfrontend / API / DB・worker等のsystem boundaryを跨いで成立することの最終確認に使う。詳細validation、boundary matrix、error/warning taxonomy、schema全分岐等は原則としてunit / integration / contract testへ配置する。
+
+Gate blocking Browser E2Eのcanonical suite全体は原則3〜5本程度のcritical journeyに限定し、各Gateはrelevant subsetだけを選択する。stale service / image / DB fixtureへ依存しないhermetic environment、semantic / observable synchronization、observable behavior assertion、failure evidence / classificationを07へ具体化する。
+
+共通policyは`40_operator_workflows/BROWSER_E2E_GATE_POLICY.md`。この共通policy自体は個別GateのAcceptance Criteria authorityではない。
+
+本policyは、適用時点ですでにfreeze済み、execution開始済み、または完了済みのcontract / Trial / enhancementへ遡及適用しない。既に成立しているrequirementを途中または事後に削除・緩和してPASS条件を変更してはならない。既存frozen contract自体にdefectがある場合は、通常のexplicit amendment / re-baseline ruleで処理する。
 
 ## 7. Candidate Assembly and evidence identity
 
@@ -724,7 +778,7 @@ MUST:
 - execution開始前に未解決placeholderがないことを確認する。
 - globが複数instructionに一致する場合、任意選択せず停止する。
 
-標準promptは`40_operator_workflows/agent_entry_prompts/`に配置する。各prompt自身に、必要な変数規則・対象path導出・停止条件・記録方法を含めるため、実行時に別のvariable guideを必須参照させない。
+標準promptは`40_operator_workflows/agent_entry_prompts/`に配置する。numeric prefixはworkflow responsibility categoryであり、無条件な線形実行順を意味しない。各prompt自身に、必要な変数規則・対象path導出・停止条件・記録方法を含めるため、実行時に別のvariable guideを必須参照させない。
 
 ---
 
@@ -804,8 +858,10 @@ UNKNOWN   : 取得を試みたが確定不能
 10. Trial開始時に`20/30`のTrial directoryを作る。
 11. parameterized operator promptのidentity variablesを設定する。
 12. 未解決meta variableがないことを確認してAgentを起動する。
-13. Candidate Assembly後にFixed Trial Candidateを固定する。
-14. Independent Verification後、Gate Decisionに従ってControl Sheetを更新する。
+13. Work Packageの場合はall required Pxx完了後にCandidate Assembly Agentを実行し、Fixed Trial Candidateを固定する。
+14. Independent Verification後、formal FAILならnormal Pxxへ戻らずcurrent Trial 08を作成してremediation routeへ進む。
+15. contract amendmentが発生した場合は09と`00_enhance_background/80_contract_amendment_log.md`を同期する。
+16. Independent Verification後、Gate Decisionに従ってControl Sheetを更新する。
 
 ---
 
@@ -835,12 +891,34 @@ Repository上の文書だけから最低限以下に回答できること。
 20. prerequisite / preflightは成立しているか。
 21. 次に進んでよいGateは何か。
 22. 人間が同じtestを再実行できるか。
+23. formal FAIL後にprevious failed candidateがnext Trialとして再提出されていないか。
+24. contract amendmentが発生した場合、09・80 ledger・re-baseline artifactが相互trace可能か。
+25. requirement / ACごとに最適なtest layerが割り当てられ、Browser E2Eへdetailed correctnessを過剰集中させていないか。
+26. canonical Gate blocking Browser E2E suite全体はcritical journey 3〜5本程度に限定され、各Gateがrelevant subsetだけを選択しているか。
+27. Browser E2E canonical commandはstale service / image / DB fixtureへ依存せず、semantic synchronization / observable assertionを持つか。
+28. Browser E2E failure evidence / classificationからproduct FAILとtest harness / orchestration / environment BLOCKEDを区別できるか。
 
 ---
 
 ## 18. 更新履歴
 
 この節はテンプレート利用方法ではなく、schemaの変更履歴を確認するための情報である。詳細は`90_change_history/`を参照する。
+
+### Schema v13
+
+- Browser E2Eをdetailed correctnessの一次証明からcritical user journeyのcross-layer proofへ責務縮小。
+- canonical Gate blocking Browser E2E suite全体を原則3〜5本程度のcritical journeyに限定し、各Gateがrelevant subsetを選択するtest layer allocationを07 authoring ruleへ追加。
+- hermetic environment、semantic synchronization、observable assertion、failure evidence / classificationを共通policy化。
+- Test Agent / Coding Agent / Candidate Assembly / FAIL ReworkのBrowser E2E failure handlingをevidence-first / fail-closedへ同期。
+- policy適用開始前に成立済みのfrozen contractへの非遡及適用を明文化。
+
+### Schema v12
+
+- operational entry promptをresponsibility category prefix付きcanonical filenameへ整理。
+- Work Package Candidate Assembly / formal FAIL remediation / Gate Orchestratorの責務境界を明示。
+- canonical Implementation Completion Report、candidate identity fail-closed、previous failed candidate再提出禁止を追加。
+- freeze後contract amendment用`80_contract_amendment_log.md`を追加し09 / re-baselineとのtraceabilityを定義。
+- `TEMPLATE_STRUCTURE.md` / report templates / MANIFEST regenerationを同期。
 
 ### Schema v11
 

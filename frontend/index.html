@@ -22,8 +22,14 @@
       </nav>
       <p>科学的負結果は技術障害ではありません。Resultのstatusとdiagnosticsを確認してください。</p>
     </aside>
-    <main>
+    <main id="main-content" tabindex="-1">
       <div id="notice"></div>
+      <section id="analysis-navigation-shell" class="card" aria-label="Analysis navigation">
+        <div id="analysis-family-tabs" role="tablist" aria-label="Analysis family"></div>
+        <nav id="analysis-stage-sidebar" aria-label="Analysis stage"></nav>
+        <section id="causal-stage-presentation" hidden aria-live="polite"></section>
+        <div id="operation-availability" role="status"></div>
+      </section>
       <section id="common-workspace-header" class="card common-workspace-header" aria-label="共通Workspace selection">
         <div><b id="common-project-name">Project未選択</b><span id="common-project-status" class="status">—</span></div>
         <label>Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
@@ -124,6 +130,7 @@
         <div class="explain-grid"><article><h2>Identification</h2><p>Graphと仮定から、指定した因果効果が理論上識別できるかを確認する段階です。</p></article><article><h2>Data Eligibility</h2><p>実データの型、欠測、sample size、overlap等が推定条件を満たすか確認する段階です。</p></article></div>
         <form id="inference-form" class="card form-grid">
           <label data-tooltip="推定に使用する不変Dataset Versionです。Graphのnode名と列名が対応している必要があります。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label data-tooltip="InferenceにはOutcomeが指定されたFIXED Graph Versionだけを使用できます。">FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
+          <fieldset id="identification-inputs"><legend>Identification</legend>
           <label data-tooltip="EXPLORATORYは探索的分析、CONFIRMATORYは事前に定めた仮説の検証を表します。">Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
           <label>Population<input name="population" required></label><label>Comparator<input name="comparator" required></label>
           <label data-tooltip="介入あり／なしとして比較するTreatment列です。現在のEstimatorでは通常二値列を指定します。">Treatment<input name="treatment" required placeholder="coupon"></label><label data-tooltip="選択したFIXED Graph Versionからread-onlyで継承され、ここでは変更できません。">Outcome (Graphから継承)<output id="inference-outcome" class="readonly-field">Graphを選択してください</output></label>
@@ -131,12 +138,15 @@
           <label data-tooltip="ATEは母集団全体、ATTはTreatmentを受けた対象における平均処置効果です。">Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label data-tooltip="BACKDOORは交絡調整、RANDOMIZEDは無作為割付を仮定した識別戦略です。">Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label data-tooltip="交絡調整へ使用するpre-treatment列をカンマ区切りで指定します。colliderやpost-treatment列を含めないでください。">Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
           <label data-tooltip="識別と推定が成立するために置く科学的仮定を、カンマまたは改行区切りで記録します。">Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
           <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
+          </fieldset>
+          <fieldset id="estimation-inputs"><legend>Estimation</legend>
           <label data-tooltip="先に実行したIdentificationのうち、推定gateを通過できるResultを選択します。">Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
           <label data-tooltip="Data EligibilityがWARNでも推定を続ける場合に、判断理由を明示します。FAILはoverrideできません。">WARN override reason<input name="override_reason"></label>
           <label data-tooltip="既存Executionの再実行または条件変更としてLineageを残す場合に基準Executionを選択します。">Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
           <label data-tooltip="基準Executionから条件を変更する場合に、その理由を必ず記載します。">Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
           <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
+          </fieldset>
         </form>
         <div class="card"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
         <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
@@ -161,12 +171,23 @@
           <label>Intended use<input name="intended_use" value="prioritize outreach" required></label>
           <label>Deployment population<input name="deployment_population" value="eligible customers" required></label>
           <label>Feature columns<input name="feature_columns" value="score" required><small>Prediction timeまでに利用可能な列だけをカンマ区切りで指定します。</small></label>
+          <label>Feature availability JSON<textarea name="feature_availability" class="code-input">{}</textarea><small>featureごとの available_at / allowed を指定します。</small></label>
           <label>Excluded columns<input name="excluded_columns" value="converted" required></label>
           <label>Split strategy<select name="split_strategy"><option>STRATIFIED</option><option>RANDOM</option><option>GROUP</option><option>TIME_BASED</option></select></label>
           <label>Seed<input name="seed" type="number" value="17" required></label>
           <label>Train ratio<input name="train_ratio" type="number" value="0.6" step="0.05" required></label>
           <label>Validation ratio<input name="validation_ratio" type="number" value="0.2" step="0.05" required></label>
           <label>Test ratio<input name="test_ratio" type="number" value="0.2" step="0.05" required></label>
+          <label>Group column<input name="group_column" placeholder="account_id"></label>
+          <label>Time column<input name="time_column" placeholder="event_time"></label>
+          <label>Train cutoff<input name="train_cutoff" placeholder="2025-01-01T00:00:00Z"></label>
+          <label>Validation cutoff<input name="validation_cutoff" placeholder="2025-06-01T00:00:00Z"></label>
+          <label><input name="scale_numeric" type="checkbox" checked> Scale numeric features</label>
+          <label>Model<select name="model_id"><option value="logistic_regression.v1">Logistic regression</option><option value="linear_regression.v1">Linear regression</option></select></label>
+          <label>Tuning selection<select name="tuning_selection"><option value="TRAIN,VALIDATION">TRAIN + VALIDATION</option></select></label>
+          <label>Primary metric<select name="primary_metric"><option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option></select></label>
+          <label>Secondary metrics (comma separated)<input name="secondary_metrics" placeholder="PR_AUC, F1"></label>
+          <label>Subgroup columns (comma separated)<input name="subgroups" placeholder="region, cohort"></label>
           <label>Explanation method<select name="explanation_method" id="predictive-explanation-method"><option value="LINEAR_COEFFICIENT_CONTRIBUTION">Linear coefficient contribution</option></select></label>
           <label>Explanation sample size<input name="explanation_sample_size" type="number" min="1" max="1000" value="20" required></label>
           <label><input name="local_explanations" type="checkbox" checked> Local explanationを生成</label>
@@ -191,5 +212,7 @@
   <dialog id="feature-modal"><form method="dialog" class="modal-card"><h2>Feature columns selector</h2><p>選択Datasetのschema列からDiscovery対象を選択します。不明なtext tokenは確定時に除去されます。</p><div id="feature-options"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button id="confirm-features" value="confirm" type="button">選択を反映</button></div></form></dialog>
   <dialog id="graph-modal"><div class="modal-card wide"><div class="heading"><h2>Graphを確認/編集する</h2><button id="close-graph-modal" type="button" class="secondary">閉じる</button></div><div id="graph-meta"></div><div id="graph-visual"></div><label data-tooltip="Algorithm Outputの元となるread-only Discovery Resultです。">Discovery Source Result<select id="graph-source"></select></label><label data-tooltip="FIXED Graphを編集する場合に、変更前のVersionとして保持される親Graphです。">Parent Graph<select id="graph-parent"></select></label><label data-tooltip="専門家による編集か、post-hoc constraint適用かを来歴として区別します。">変更種別<select id="graph-transform"><option>USER_EDITED</option><option>CONSTRAINT_ADJUSTED</option></select></label><label data-tooltip="Inferenceへ継承するOutcome nodeです。変更には編集理由が必要です。">Designated Outcome<input id="graph-outcome"></label><div id="graph-editor"></div><div class="inline"><input id="edge-source" placeholder="source"><input id="edge-target" placeholder="target"><button id="add-edge" type="button">edge追加</button></div><label data-tooltip="Graphの採用・変更を正当化する科学的または業務上の理由です。">選定・編集理由<textarea id="graph-rationale" placeholder="変更の科学的・業務的理由"></textarea></label><div id="graph-modal-actions" class="modal-actions"><button id="adopt-graph" type="button">Algorithm Outputを採用</button><button id="save-graph" type="button">Graphを保存</button><button id="fix-graph" type="button">DRAFTをFIXEDにする</button></div></div></dialog>
   <dialog id="graph-comparison-modal"><div class="modal-card wide"><div class="heading"><h2>Graph Comparison</h2><button id="close-comparison-modal" type="button" class="secondary">閉じる</button></div><div id="comparison-tabs"></div><div id="comparison-graph"></div><div id="comparison-summary"></div></div></dialog>
+  <script src="/navigation_state.js"></script>
+  <script src="/causal_stage_presentation.js"></script>
   <script src="/app.js"></script>
 </body></html>

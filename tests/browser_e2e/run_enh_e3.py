@@ -19,7 +19,7 @@ from run_enh_e3_predictive import (
     _select,
     _wait,
 )
-from run_enh_e1a import main as run_causal_acceptance
+import run_enh_e1a
 
 
 def _prepare() -> str:
@@ -79,7 +79,6 @@ def _causal_executions(project_id: str) -> list[dict]:
 
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    assert run_causal_acceptance() == 0
     project_id = _prepare()
     dataset_id = ""
     evidence = {
@@ -135,6 +134,9 @@ def main() -> int:
             page.locator("#fix-context").click()
             page.locator("#notice").filter(has_text="Research ContextをFIXED化しました").wait_for()
             _wait(lambda: page.locator("#common-context option").count() > 1)
+            context_id = page.locator("#common-context option").nth(1).get_attribute("value")
+            assert context_id
+            _select(page, "#common-context", context_id)
             assert page.locator("#research-context-summary").get_by_text("final_context").count() == 1
             evidence["scenarios"]["research-context-versioning"] = {"status": "PASS"}
 
@@ -149,8 +151,18 @@ def main() -> int:
             }
 
             page.locator('nav button[data-route="explore"]').click()
-            page.wait_for_url(f"**/projects/{project_id}/explore")
+            _wait(lambda: page.locator("#explore.workspace.active").count() == 1)
+            evidence["analysis_view_submit_phase"] = "explore_route_ready"
+            _wait(lambda: page.locator('nav button[data-route="explore"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
+            evidence["analysis_view_submit_phase"] = "workspace_refresh_done"
+            _wait(lambda: page.locator(
+                f'#analysis-view-form select[name="dataset_version_id"] option[value="{dataset_id}"]'
+            ).count() == 1)
+            evidence["analysis_view_submit_phase"] = "dataset_option_present"
             _select(page, '#analysis-view-form select[name="dataset_version_id"]', dataset_id)
+            evidence["analysis_view_submit_phase"] = "dataset_selected"
             view_spec = {
                 "schema_version": "analysis-view/1",
                 "source_dataset_version_id": dataset_id,
@@ -160,8 +172,47 @@ def main() -> int:
                 "time_cutoff": None, "sampling": None,
             }
             page.locator('#analysis-view-form [name="view_key"]').fill("final_view")
+            evidence["analysis_view_submit_phase"] = "view_key_filled"
             page.locator('#analysis-view-form [name="name"]').fill("Final population")
+            evidence["analysis_view_submit_phase"] = "name_filled"
             page.locator('#analysis-view-form [name="spec"]').fill(json.dumps(view_spec))
+            evidence["analysis_view_submit_phase"] = "spec_filled"
+            try:
+                evidence["analysis_view_submit_phase"] = "diagnostic_started"
+                submit_diagnostic = page.locator("#analysis-view-form").evaluate("""form => {
+                    const describe = control => ({
+                        name: control.name,
+                        value: control.value,
+                        validationMessage: control.validationMessage,
+                        validity: {
+                            valid: control.validity.valid,
+                            valueMissing: control.validity.valueMissing,
+                            typeMismatch: control.validity.typeMismatch,
+                            patternMismatch: control.validity.patternMismatch,
+                            tooLong: control.validity.tooLong,
+                            tooShort: control.validity.tooShort,
+                            rangeUnderflow: control.validity.rangeUnderflow,
+                            rangeOverflow: control.validity.rangeOverflow,
+                            stepMismatch: control.validity.stepMismatch,
+                            badInput: control.validity.badInput,
+                            customError: control.validity.customError,
+                        },
+                    });
+                    return {
+                        checkValidity: form.checkValidity(),
+                        invalid: [...form.querySelectorAll(':invalid')].map(describe),
+                        controls: [...form.elements].map(describe),
+                        dataset_version_id: form.elements.namedItem('dataset_version_id').value,
+                        formData: [...new FormData(form).entries()],
+                    };
+                }""")
+            except Exception as error:
+                evidence["analysis_view_submit_diagnostic_error"] = repr(error)
+                raise
+            evidence["analysis_view_submit_phase"] = "diagnostic_completed"
+            evidence["analysis_view_submit_diagnostic"] = submit_diagnostic
+            assert submit_diagnostic["checkValidity"], submit_diagnostic
+            assert submit_diagnostic["dataset_version_id"] == dataset_id, submit_diagnostic
             page.locator("#analysis-view-form button").click()
             page.locator("#notice").filter(has_text="Analysis View DRAFTを作成しました").wait_for()
             page.locator("#analysis-view-list tbody tr button").first.click()
@@ -193,7 +244,10 @@ def main() -> int:
             }
 
             page.locator('nav button[data-route="predictive"]').click()
-            page.wait_for_url(f"**/projects/{project_id}/predictive")
+            _wait(lambda: page.locator("#predictive.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="predictive"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
             context_id = page.locator("#predictive-context option").nth(1).get_attribute("value")
             assert context_id
             _select(page, "#predictive-context", context_id)
@@ -202,6 +256,14 @@ def main() -> int:
             page.locator('#predictive-form input[name="explanation_sample_size"]').fill("5")
             run = page.locator("#run-predictive")
             _wait(lambda: run.is_enabled())
+            evidence["predictive_submit_diagnostic"] = page.locator("#predictive-form").evaluate("""form => ({
+                checkValidity: form.checkValidity(),
+                invalid: [...form.querySelectorAll(':invalid')].map(control => ({
+                    name: control.name, value: control.value,
+                    validationMessage: control.validationMessage,
+                })),
+                formData: [...new FormData(form).entries()],
+            })""")
             run.click()
             page.locator("#notice").filter(
                 has_text="Evaluation、Predictive Explanation、Model Cardを保存しました"
@@ -254,7 +316,10 @@ def main() -> int:
             }
 
             page.locator('nav button[data-route="causal"]').first.click()
-            page.wait_for_url(f"**/projects/{project_id}/causal")
+            _wait(lambda: page.locator("#discovery.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="causal"]').first.get_attribute(
+                "data-refresh-status"
+            ) == "done")
             page.locator("#discovery.workspace.active").wait_for()
             discovery = page.locator("#discovery-form")
             _select(page, '#discovery-form select[name="dataset_version_id"]', dataset_id)
@@ -296,7 +361,10 @@ def main() -> int:
             }
 
             page.locator('nav button[data-route="results"]').click()
-            page.wait_for_url(f"**/projects/{project_id}/results")
+            _wait(lambda: page.locator("#results.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="results"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
             page.locator("#result-summary").get_by_text("Cross-family metrics", exact=False).wait_for()
             assert page.locator("#unified-result-list .family-label").filter(has_text="EXPLORATORY").count() >= 1
             assert page.locator("#unified-result-list .family-label").filter(has_text="PREDICTIVE").count() >= 1
@@ -334,9 +402,15 @@ def main() -> int:
                 "reviewed": ["Result", "Lineage", "Annotation", "Export"],
             }
 
+            workspace_for_route = {
+                "context": "context", "data": "data", "explore": "explore",
+                "causal": "discovery", "predictive": "predictive", "results": "results",
+            }
             for route in ("context", "data", "explore", "causal", "predictive", "results"):
                 page.locator(f'nav button[data-route="{route}"]').first.click()
-                page.wait_for_url(f"**/projects/{project_id}/{route}")
+                _wait(lambda route=route: page.locator(
+                    f"#{workspace_for_route[route]}.workspace.active"
+                ).count() == 1)
                 assert page.locator("#common-project-name").inner_text().startswith("ENH-E3 Final")
             page.reload(wait_until="networkidle")
             page.locator("#results.workspace.active").wait_for()
@@ -358,6 +432,11 @@ def main() -> int:
             (OUTPUT / "enh-e3-evidence.json").write_text(
                 json.dumps(evidence, indent=2, sort_keys=True), encoding="utf-8"
             )
+    if outcome == "PASS":
+        # Keep the causal browser acceptance in the canonical runner, while
+        # preventing its fixture/evidence from contaminating the G04 scenario.
+        run_enh_e1a.OUTPUT = OUTPUT / "causal"
+        assert run_enh_e1a.main() == 0
     print(json.dumps({"status": outcome, "evidence": str(OUTPUT / "enh-e3-evidence.json")}, sort_keys=True))
     return 0 if outcome == "PASS" else 1
 

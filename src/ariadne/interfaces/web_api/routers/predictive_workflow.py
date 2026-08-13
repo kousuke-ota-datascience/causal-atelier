@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Header, Request
 from pydantic import BaseModel, ConfigDict
 
-from ariadne.interfaces.web_api.dependencies import PredictiveWorkflowServiceDep
+from ariadne.interfaces.web_api.dependencies import IdempotencyServiceDep, PredictiveWorkflowServiceDep
 
 router = APIRouter(tags=["predictive-workflow"])
 
@@ -61,13 +61,17 @@ async def submit_predictive_execution(
     body: PredictiveExecutionSubmit,
     request: Request,
     svc: PredictiveWorkflowServiceDep,
+    idempotency: IdempotencyServiceDep,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> dict[str, Any]:
-    return svc.submit_execution(
-        project_id,
-        specification_id=body.analysis_specification_id,
-        plan_id=body.execution_plan_id,
-        seed=body.seed,
-        requested_by=request.headers.get("X-User-Id", "anonymous"),
+    payload = body.model_dump(mode="json")
+    return idempotency.execute(
+        project_id=project_id, scope="predictive-execution-submit", key=idempotency_key, payload=payload,
+        command=lambda: svc.submit_execution(
+            project_id, specification_id=body.analysis_specification_id,
+            plan_id=body.execution_plan_id, seed=body.seed,
+            requested_by=request.headers.get("X-User-Id", "anonymous"),
+        ),
     )
 
 

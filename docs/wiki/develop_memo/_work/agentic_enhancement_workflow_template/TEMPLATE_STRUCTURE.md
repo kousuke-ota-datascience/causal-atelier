@@ -17,6 +17,7 @@ agentic_enhancement_workflow_template/
 │   ├── 03_requirements_revision.md
 │   ├── 04_design_revision.md
 │   ├── 05_requirements_design_consistency_and_traceability_review.md
+│   ├── 80_contract_amendment_log.md
 │   └── Revised_requirements_definition_documents/
 │       └── ...
 │
@@ -56,7 +57,16 @@ agentic_enhancement_workflow_template/
 │
 ├── 40_operator_workflows/
 │   ├── README.md
+│   ├── BROWSER_E2E_GATE_POLICY.md
 │   ├── agent_entry_prompts/
+│   │   ├── README.md
+│   │   ├── 00_variable_conventions.md
+│   │   ├── 10_normal_execution_01_single_execution_coding_agent_prompt.md
+│   │   ├── 10_normal_execution_02_work_package_coding_agent_prompt.md
+│   │   ├── 20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md
+│   │   ├── 30_independent_verification_01_test_agent_prompt.md
+│   │   ├── 40_fail_remediation_01_fail_rework_coding_agent_prompt.md
+│   │   └── 50_orchestration_01_gate_orchestrator_prompt.md
 │   ├── architecture_review/
 │   ├── preflight/
 │   └── controlled_runbook/
@@ -75,8 +85,9 @@ Template instantiation時に、以下を必要に応じて生成する。canonic
 20_implementation_reports/{{GATE_ID}}/
   {{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
   Trial{{TRIAL_NO}}/
-    {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
+    {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
     packages/
+      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
       {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_in_progress.md
       {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}_implementation_checkpoint_report.md
 
@@ -94,6 +105,9 @@ Template instantiation時に、以下を必要に応じて生成する。canonic
 - 06 / 07 / Pxx / RxxはPrimary Execution Contractとしてnormative self-containmentを満たす。
 - 08はDELTA / CONSOLIDATED modeを持つDerived Contract。
 - 09はcontract defectを記録し、承認後にprimary contractsをre-baselineするDerived Contract。
+- freeze / approval後のcontract amendmentは`00_enhance_background/80_contract_amendment_log.md`へappend-onlyで記録する。
 - Package checkpoint != Fixed Trial Candidate != Gate PASS。
 - `999_gate_decision`だけがfinal Gate decision authorityを持つ。
 - `40_operator_workflows`はorchestrationでありproduct acceptance evidenceではない。
+- Browser E2E共通policyはauthoring / operational policyであり、個別GateのAcceptance authorityはfreeze済み07に保持する。Gate blocking Browser E2Eはcritical user journeyへ限定し、詳細correctnessは適切なlower-level testへ割り当てる。
+- Agent entry promptのnumeric prefixはresponsibility categoryを表し、無条件な線形実行順ではない。

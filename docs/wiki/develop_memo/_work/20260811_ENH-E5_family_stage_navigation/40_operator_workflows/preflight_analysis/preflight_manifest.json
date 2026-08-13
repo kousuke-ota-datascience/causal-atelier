@@ -1,0 +1,63 @@
+{
+  "created_for": "Ariadne ENH-E5 preflight analysis",
+  "audit_baseline": "a770cc4f38137063cd5f22d8035e91e3c63b7502",
+  "non_normative": true,
+  "summary": {
+    "rows": 94,
+    "by_decision": {
+      "D2": 35,
+      "D1": 31,
+      "D3": 28
+    },
+    "source_ids": 67,
+    "d3_td_refs": [
+      "TD-001",
+      "TD-002",
+      "TD-003",
+      "TD-004",
+      "TD-005",
+      "TD-006",
+      "TD-007",
+      "TD-008",
+      "TD-009",
+      "TD-010",
+      "TD-011",
+      "TD-012",
+      "TD-013",
+      "TD-014",
+      "TD-015",
+      "TD-017",
+      "TD-018"
+    ]
+  },
+  "files": [
+    "ENH-E5_nonchange_alignment_audit_report.md",
+    "ENH-E5_nonchange_design_alignment_matrix.csv",
+    "ENH-E5_nonchange_requirement_alignment_matrix.csv",
+    "README.md",
+    "findings/analysis_view_validation.md",
+    "findings/architecture_overstatement.md",
+    "findings/audit_retention.md",
+    "findings/authorization.md",
+    "findings/canonical_result_artifact.md",
+    "findings/command_idempotency.md",
+    "findings/domain_ownership_and_lifecycle.md",
+    "findings/exploratory_workflow.md",
+    "findings/frontend_navigation_and_state.md",
+    "findings/lineage_traceability.md",
+    "findings/operability.md",
+    "findings/predictive_scientific.md",
+    "findings/reproducibility.md",
+    "findings/resource_control.md",
+    "findings/scientific_comparability.md",
+    "findings/security_privacy.md",
+    "findings/storage_portability.md",
+    "findings/subgroup_evaluation.md",
+    "findings/test_architecture.md",
+    "findings/worker_reliability.md",
+    "nfr_019_documentation_self_containment_audit.md",
+    "preflight_manifest.json",
+    "remediation_decision_log.md",
+    "remediation_decision_matrix.csv"
+  ]
+}

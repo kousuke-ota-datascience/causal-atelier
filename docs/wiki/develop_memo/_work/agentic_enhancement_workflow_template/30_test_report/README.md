@@ -47,6 +47,18 @@
 - reproduction procedure
 - result rationale
 
+Browser E2E Test Itemでは追加して、environment/service state、trace/screenshot/video、browser console/page errors、relevant network request/response、API/worker logs、semantic synchronization point、failure classificationを可能な範囲で記録する。secretはredactする。
+
+Failure classificationは以下を使用する。
+
+```text
+PRODUCT_INTEGRATION_DEFECT
+TEST_IMPLEMENTATION_DEFECT
+TEST_ORCHESTRATION_DEFECT
+TEST_ENVIRONMENT_DEFECT
+UNKNOWN
+```
+
 ## 5. Gate Decision — 999
 
 `999`だけがfinal PASS / FAIL / BLOCKED authorityを持つ。
@@ -59,5 +71,12 @@ FAIL:
 
 BLOCKED:
 - prerequisite / candidate identity / contract ambiguity等で妥当な判定ができない。
+- Browser E2Eのtest implementation / orchestration / environment defectまたはUNKNOWNによりproduct correctnessを判定できない場合も原則BLOCKEDとし、product FAILへ読み替えない。
 
 formal FAIL時、failure factsをnext 08 authoring inputとして本文内に要約する。08のmodeはGate Decisionでは決め打ちせず、FAIL analysis後に選択してよい。
+
+## 6. Candidate identity fail-closed rule
+
+Test / Audit Agentはcanonical Implementation Completion Reportから`FIXED_TRIAL_CANDIDATE_SHA`を取得する。current HEAD、最新commit、Package checkpoint、類似Completion Reportを暗黙にcandidateとして採用しない。candidate identityが成立しない場合はproduct verification開始前に`BLOCKED_CANDIDATE_IDENTITY`で停止する。
+
+formal FAIL後はnormal Pxx executionへ直接戻らず、next Trialのcurrent 08 Remediation Contractを作成・freezeしてformal FAIL remediation routeへ遷移する。

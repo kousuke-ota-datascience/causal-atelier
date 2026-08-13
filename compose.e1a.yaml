@@ -28,3 +28,7 @@ services:
     depends_on:
       frontend:
         condition: service_started
+      # `docker compose run --build browser-e2e` must also start a freshly
+      # built worker; Explore scenarios otherwise leave executions QUEUED.
+      worker:
+        condition: service_started

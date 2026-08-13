@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from ariadne.product.domain.errors import EntityNotFound, InvalidAnalysisSpec
+from ariadne.product.domain.enums import AnalysisFamily, ResultType
+from ariadne.product.domain.errors import EntityNotFound, InvalidAnalysisSpec, ScientificContractViolation
 
 
 @dataclass(frozen=True)
@@ -106,6 +107,26 @@ def _build_comparison(results: list[Any], executions: list[Any]) -> ComparisonVi
         field for field in compatibility_fields
         if len({json_value(question.get(field)) for question in questions}) > 1
     ]
+    if (
+        all(execution.analysis_family is AnalysisFamily.CAUSAL for execution in executions)
+        and all(result.result_type is ResultType.TREATMENT_EFFECT_RESULT for result in results)
+    ):
+        causal_semantic_key = {
+            "treatment/exposure": "treatment",
+            "outcome": "outcome",
+            "estimand": "estimand",
+            "target population": "population",
+        }
+        incompatible_key_fields = [
+            label for label, question_field in causal_semantic_key.items()
+            if len({json_value(question.get(question_field)) for question in questions}) > 1
+        ]
+        if incompatible_key_fields:
+            raise ScientificContractViolation(
+                "CAUSAL_COMPARISON_INCOMPATIBLE",
+                "Direct quantitative comparison requires the same causal semantic key: "
+                + ", ".join(incompatible_key_fields),
+            )
     warnings = (
         [f"INCOMPARABLE: causal question differs in {', '.join(mismatches)}"]
         if mismatches else []

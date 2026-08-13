@@ -10,6 +10,7 @@
 - Affected 06: {{PATH_06}}
 - Affected 07: {{PATH_07}}
 - Affected P00 / package instructions: {{PATHS_OR_NONE}}
+- Contract Amendment Ledger: 00_enhance_background/80_contract_amendment_log.md
 
 ## 1. Contract defect
 {{CONTRACT_DEFECT}}
@@ -54,6 +55,10 @@
 ## 9. Re-approval evidence
 {{APPROVAL_EVIDENCE}}
 
-## 10. Guardrail
+## 10. Amendment ledger / Git traceability
+
+APPROVED / APPLIED時は`00_enhance_background/80_contract_amendment_log.md`へ同じ`AMENDMENT_ID`でappend-only entryを追加する。過去TrialのBLOCKED / FAIL evidenceは変更しない。application commit SHAはruntime-derivedであり、同一commit内へ架空値を事前記載しない。
+
+## 11. Guardrail
 
 An amendment must never be used merely to weaken Acceptance Criteria after a failed implementation. Contract changeには独立した設計・要求上の根拠とHuman approvalが必要である。

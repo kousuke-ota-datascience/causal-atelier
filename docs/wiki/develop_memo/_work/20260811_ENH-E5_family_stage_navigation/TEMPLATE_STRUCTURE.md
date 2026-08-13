@@ -1,0 +1,92 @@
+# ENH-E5 Bundle Structure
+
+```text
+ariadne_ENH-E5_family_stage_navigation_instruction_bundle/
++ 00_enhance_background/
+  - 01_enhancement_concept_and_requirement_revision_plan.md
+  - 02_enhancement_concept_approval_record.md
+  - 03_requirements_revision.md
+  - 04_design_revision.md
+  - 05_requirements_design_consistency_and_traceability_review.md
+  - README.md
+  + Revised_requirements_definition_documents/
+    - 00_product_concept_memo.md
+    - 10_requirements_definition.md
+    - 21_logical_data_design.md
+    - 22_product_basic_design.md
+    - 23_api_interface_design.md
+    - 30_detailed_design.md
+    - README.md
++ 10_enhance_instruction/
+  + G00/
+    - 06_Ariadne_ENH-E5_G00_implementation_instruction.md
+    - 07_Ariadne_ENH-E5_G00_test_instruction.md
+    - README.md
+  + G01/
+    - 06_Ariadne_ENH-E5_G01_implementation_instruction.md
+    - 06_G01_P00_work_package_plan.md
+    - 06_G01_P01_route_and_navigation_state.md
+    - 06_G01_P02_navigation_shell_ui.md
+    - 06_G01_P03_history_and_global_regression.md
+    - 07_Ariadne_ENH-E5_G01_test_instruction.md
+    - README.md
+  + G02/
+    - 06_Ariadne_ENH-E5_G02_implementation_instruction.md
+    - 06_G02_P00_work_package_plan.md
+    - 06_G02_P01_predictive_compatibility_inventory.md
+    - 06_G02_P02_predictive_stage_recomposition.md
+    - 06_G02_P03_predictive_regression_and_candidate.md
+    - 07_Ariadne_ENH-E5_G02_test_instruction.md
+    - README.md
+  + G03/
+    - 06_Ariadne_ENH-E5_G03_implementation_instruction.md
+    - 06_G03_P00_work_package_plan.md
+    - 06_G03_P01_causal_stage_mapping.md
+    - 06_G03_P02_identification_estimation_separation.md
+    - 06_G03_P03_causal_regression_and_candidate.md
+    - 07_Ariadne_ENH-E5_G03_test_instruction.md
+    - README.md
+  + G04/
+    - 06_Ariadne_ENH-E5_G04_implementation_instruction.md
+    - 06_G04_P00_work_package_plan.md
+    - 06_G04_P01_exploratory_stage_mapping.md
+    - 06_G04_P02_visualization_and_findings_integration.md
+    - 06_G04_P03_exploratory_regression_and_candidate.md
+    - 07_Ariadne_ENH-E5_G04_test_instruction.md
+    - README.md
+  + G05/
+    - 06_Ariadne_ENH-E5_G05_implementation_instruction.md
+    - 07_Ariadne_ENH-E5_G05_test_instruction.md
+    - README.md
+  - README.md
++ 20_implementation_reports/
+  - README.md
++ 30_test_report/
+  - README.md
++ 40_operator_workflows/
+  - README.md
+  + agent_entry_prompts/
+    - README.md
+    - VARIABLE_CONVENTIONS.md
+    - coding_agent_prompt.md
+    - fail_rework_coding_agent_prompt.md
+    - test_agent_prompt.md
+    - work_package_coding_agent_prompt.md
+  + architecture_review/
+    - 01_architecture_discovery_prompt.md
+    - 02_target_architecture_decision_record_template.md
+    - 03_gate_decomposition_template.md
+    - README.md
+  + controlled_runbook/
+    - README.md
+  + preflight/
+    - ENH-E5_preflight_instruction.md
+    - README.md
++ 90_change_history/
+  - README.md
+- ENH-E5_Current_State_Control_Sheet.md
+- ENH-E5_instruction_bundle_overview.md
+- README.md
+- TEMPLATE_STRUCTURE.md
+- MANIFEST.json
+```

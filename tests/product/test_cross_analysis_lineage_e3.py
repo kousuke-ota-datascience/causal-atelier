@@ -236,6 +236,7 @@ async def test_project_lineage_combines_families_and_explicit_relations(client) 
             "limitations": ["Not causal"], "decision": "SELECTED",
             "next_actions": ["Review predictive and causal drafts"],
         },
+        headers={"Idempotency-Key": "cross-analysis-annotation"},
     )
     assert annotation.status_code == 201
     annotation_id = annotation.json()["annotation_id"]

@@ -13,6 +13,7 @@ from ariadne.interfaces.web_api.routers import (
     dataset_versions,
     executions,
     graph_versions,
+    navigation,
     projects,
     results,
     artifacts,
@@ -46,7 +47,7 @@ def create_app() -> FastAPI:
     for router in (projects.router, dataset_versions.router, executions.router, results.router,
                    graph_versions.router, annotations.router, artifacts.router,
                    exploration.router, predictive.router, workspace_lifecycle.router,
-                   predictive_workflow.router, product_closure.router):
+                   predictive_workflow.router, product_closure.router, navigation.router):
         app.include_router(router, prefix="/api/v1")
 
     @app.get("/health/ready")

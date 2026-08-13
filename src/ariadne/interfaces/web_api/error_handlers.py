@@ -24,14 +24,16 @@ from ariadne.product.domain.errors import (
     GraphParentNotFixed,
     InvalidDatasetFile,
     InvalidDatasetMetadata,
+    FilterTypeMismatch,
     InvalidGraphEditBase,
     InvalidExecutionPlan,
     ProjectArchived,
     InvalidSchema,
+    OperationAvailabilityError,
     ResourceImmutable,
     PredictiveValidationError,
 )
-from ariadne.interfaces.web_api.idempotency import IdempotencyConflict
+from ariadne.interfaces.web_api.idempotency import IdempotencyConflict, IdempotencyKeyRequired
 
 
 def _error(request: Request, status: int, code: str, message: str, details: dict | None = None) -> JSONResponse:
@@ -42,6 +44,8 @@ def _error(request: Request, status: int, code: str, message: str, details: dict
 
 
 async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:
+    if isinstance(exc, OperationAvailabilityError):
+        return _error(request, exc.status, exc.code, str(exc))
     if isinstance(exc, EntityNotFound):
         return _error(request, 404, "ENTITY_NOT_FOUND", str(exc))
     if isinstance(exc, ProjectBoundaryViolation):
@@ -52,6 +56,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
         return _error(request, 409, "PROJECT_ARCHIVED", str(exc))
     if isinstance(exc, IdempotencyConflict):
         return _error(request, 409, "IDEMPOTENCY_CONFLICT", str(exc))
+    if isinstance(exc, IdempotencyKeyRequired):
+        return _error(request, 400, "IDEMPOTENCY_KEY_REQUIRED", str(exc))
     if isinstance(exc, GraphAlreadyFixed):
         return _error(request, 409, "GRAPH_FIXED_IMMUTABLE", str(exc))
     if isinstance(exc, GraphParentNotFixed):
@@ -78,6 +84,8 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
             exc.code if isinstance(exc, ScientificContractViolation) else "INVALID_ANALYSIS_SPEC",
             str(exc),
         )
+    if isinstance(exc, FilterTypeMismatch):
+        return _error(request, 422, exc.code, str(exc))
     if isinstance(exc, InvalidSchema):
         return _error(request, 422, "INVALID_SCHEMA", str(exc))
     if isinstance(exc, PredictiveValidationError):

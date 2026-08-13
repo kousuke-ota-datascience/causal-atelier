@@ -1,9 +1,11 @@
 const API="/api/v1";
-const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,pendingArchive:null};
+const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,predictiveDraft:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
 const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
 const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
 const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
+const ANALYSIS_WORKSPACES=Object.freeze({exploratory:'explore',predictive:'predictive',causal:'discovery'});
+const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
 
 async function api(path,options={}){
@@ -59,14 +61,41 @@ async function activateWorkspace(workspace,{push=true,button=null}={}){
   $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
   if(push&&state.project&&button.dataset.route){
-    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
+    const familySlug={explore:'exploratory',predictive:'predictive',causal:'causal'}[button.dataset.route];
+    if(familySlug&&state.navigationCatalog){
+      state.navigationContext=AnalysisNavigation.defaultContext(state.navigationCatalog,state.project.project_id,familySlug);
+    }
+    const path=state.navigationContext&&ANALYSIS_WORKSPACES[state.navigationContext.familySlug]===workspace
+      ?AnalysisNavigation.serialize(state.navigationContext)
+      :`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
     if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
   }
   try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
+  const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
 $$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
 
 async function restoreProjectRoute(){
+  if(state.navigationCatalog){
+    let parsed;
+    try{parsed=AnalysisNavigation.parse(location.pathname,state.navigationCatalog)}catch(error){
+      if(error instanceof AnalysisNavigation.NavigationRouteError&&error.code==='NAVIGATION_ROUTE_NOT_FOUND')parsed=null;else throw error;
+    }
+    if(parsed?.legacy){
+      const projectId=parsed.projectId||state.project?.project_id;
+      if(!projectId)return false;
+      parsed=AnalysisNavigation.legacyContext(state.navigationCatalog,projectId,parsed.legacy);
+      history.replaceState({project_id:projectId,navigation:parsed},'',AnalysisNavigation.serialize(parsed));
+    }
+    if(parsed&&parsed.projectId){
+      if(parsed.resource){parsed=await AnalysisNavigation.contextForResource(state.navigationCatalog,api,parsed.projectId,parsed.resource.resourceType,parsed.resource.resourceId,parsed)}
+      state.navigationContext=parsed;state.project=await api(`/projects/${parsed.projectId}`);
+      renderAnalysisNavigation();await renderOperationAvailability();
+      fillProject();await loadProjects();$('#project-select').value=parsed.projectId;
+      await activateWorkspace(ANALYSIS_WORKSPACES[parsed.familySlug],{push:false});
+      return true;
+    }
+  }
   const match=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
   if(!match)return false;
   const [,projectId,route]=match;
@@ -74,6 +103,27 @@ async function restoreProjectRoute(){
   fillProject();await loadProjects();$('#project-select').value=projectId;
   await activateWorkspace(ROUTE_WORKSPACES[route],{push:false});
   return true;
+}
+function renderAnalysisNavigation(){
+  const catalog=state.navigationCatalog,context=state.navigationContext;if(!catalog||!context)return;
+  const current=catalog.families.find(item=>item.slug===context.familySlug);if(!current)throw new Error('Navigation catalog invariant failure: current family missing');
+  $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" aria-label="Analysis family: '+escapeHtml(f.label)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
+  $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" aria-label="Analysis stage: '+escapeHtml(s.label)+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
+  $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);state.navigationContext=AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
+  $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>{state.navigationContext=AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage);history.pushState({},'',AnalysisNavigation.serialize(state.navigationContext));restoreProjectRoute().catch(error=>notice(error.message))});
+  renderCausalStagePresentation();
+}
+function renderCausalStagePresentation(){
+  const target=$('#causal-stage-presentation'),context=state.navigationContext;
+  if(!target)return;
+  if(!context||context.familySlug!=='causal'){target.hidden=true;target.replaceChildren();return}
+  const presentation=CausalStagePresentation.presentationFor(context.stageSlug);
+  target.hidden=false;
+  target.innerHTML='<h2>'+escapeHtml(presentation.title)+'</h2><p>'+escapeHtml(presentation.summary)+'</p><ul>'+presentation.resources.map(resource=>'<li>'+escapeHtml(resource)+'</li>').join('')+'</ul>';
+}
+async function renderOperationAvailability(){
+  const el=$('#operation-availability'),context=state.navigationContext;if(!state.project||!context){el.textContent='IDLE';return}el.textContent='LOADING';
+  try{const resource=context.resource,query=new URLSearchParams({route:AnalysisNavigation.serialize(context)});if(resource){query.set('resource_type',resource.resourceType);query.set('resource_id',resource.resourceId)}const data=await api('/projects/'+state.project.project_id+'/operation-availability?'+query);el.innerHTML=Object.entries(data.operations).map(([name,value])=>'<span class="status" aria-label="'+escapeHtml(name)+' '+(value.allowed?'available':'unavailable: '+value.reason_code)+'">'+escapeHtml(name)+': '+(value.allowed?'READY':escapeHtml(value.reason_code))+'</span>').join(' ')}catch(error){el.textContent='ERROR: '+error.message}
 }
 window.addEventListener('popstate',()=>restoreProjectRoute().catch(error=>notice(error.message)));
 
@@ -132,10 +182,11 @@ async function loadDatasets(){
   if(!state.project){state.datasets=[];return}
   state.datasets=(await api(`/projects/${state.project.project_id}/dataset-versions`)).items;
   $('#datasets').innerHTML=state.datasets.length?`<table><thead><tr><th>Name</th><th>Version</th><th>Schema</th><th>Rows × Columns</th><th>Hash</th><th></th></tr></thead><tbody>${state.datasets.map(d=>`<tr><td>${escapeHtml(d.name)}</td><td>${escapeHtml(d.version_label)}</td><td>${escapeHtml(Object.entries(d.schema).map(([name,type])=>`${name}:${type}`).join(', '))}</td><td>${d.row_count} × ${d.column_count}</td><td>${d.content_hash.slice(0,12)}</td><td><button onclick="preview('${d.dataset_version_id}')">Preview</button></td></tr>`).join('')}</tbody></table>`:'Datasetはありません';
-  $$('.datasets-select').forEach(select=>select.innerHTML='<option value="">選択</option>'+state.datasets.map(d=>`<option value="${d.dataset_version_id}">${escapeHtml(d.name)} / ${escapeHtml(d.version_label)}</option>`).join(''));
+  $$('.datasets-select').forEach(select=>{const selected=select.dataset.selectedDatasetVersionId||select.value;select.innerHTML='<option value="">選択</option>'+state.datasets.map(d=>`<option value="${d.dataset_version_id}">${escapeHtml(d.name)} / ${escapeHtml(d.version_label)}</option>`).join('');if(state.datasets.some(d=>d.dataset_version_id===selected)){select.value=selected;select.dataset.selectedDatasetVersionId=selected}});
   updatePredictiveAvailability();
 }
 window.preview=async id=>{try{const p=await api(`/dataset-versions/${id}/preview?limit=10`);$('#preview').innerHTML=`<h3>Preview</h3><table><thead><tr>${p.columns.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>${p.rows.map(row=>`<tr>${p.columns.map(c=>`<td>${escapeHtml(row[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`}catch(error){notice(error.message)}};
+document.addEventListener('change',event=>{const select=event.target;if(select instanceof HTMLSelectElement&&select.classList.contains('datasets-select'))select.dataset.selectedDatasetVersionId=select.value});
 
 async function loadAnalysisViews(){
   if(!state.project){state.analysisViews=[];renderAnalysisViews();return}
@@ -167,7 +218,7 @@ $('#exploration-form').onsubmit=async event=>{event.preventDefault();if(!state.p
 async function loadExplorationResults(){if(!state.project){state.exploratoryResults=[];renderExplorationResults();return}state.exploratoryResults=(await api(`/projects/${state.project.project_id}/exploration/results`)).items;renderExplorationResults()}
 function renderExplorationResults(){const target=$('#exploration-results');if(!target)return;target.innerHTML=state.exploratoryResults.length?`<table><thead><tr><th>Family</th><th>Result</th><th>Status</th><th>Summary</th><th>Explicit transition</th></tr></thead><tbody>${state.exploratoryResults.map(result=>`<tr><td><span class="family-label">EXPLORATORY</span></td><td>${escapeHtml(result.result_type)}</td><td>${escapeHtml(result.analytical_status)}</td><td>${escapeHtml(JSON.stringify(result.summary))}</td><td><div class="explore-actions"><button type="button" onclick="showExploration('${result.result_id}')">表示</button><button type="button" onclick="createExplorationDraft('${result.result_id}','CAUSAL')">Causal draft</button><button type="button" onclick="createExplorationDraft('${result.result_id}','PREDICTIVE')">Predictive draft</button></div></td></tr>`).join('')}</tbody></table>`:'保存済み探索Resultはありません'}
 window.showExploration=id=>{const result=state.exploratoryResults.find(value=>value.result_id===id);if(result)renderExplorationResult(result)};
-window.createExplorationDraft=async(id,family)=>{try{const draft=await api(`/projects/${state.project.project_id}/exploration/results/${id}/create-analysis-draft`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_family:family})});notice(`${family} draftを作成しました: ${draft.source_relation.warning}`)}catch(error){notice(error.message)}};
+window.createExplorationDraft=async(id,family)=>{try{const researchContextVersionId=$('#common-context').value;const draft=await api(`/projects/${state.project.project_id}/exploration/results/${id}/create-analysis-draft`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_family:family,analysis_mode:'EXPLORATORY',research_context_version_id:researchContextVersionId||undefined})});notice(`${family} draftを作成しました: ${draft.source_relation.warning}`)}catch(error){notice(error.message)}};
 $('#refresh-exploration').onclick=async event=>{event.currentTarget.dataset.refreshStatus='pending';try{await loadExplorationResults();event.currentTarget.dataset.refreshStatus='done'}catch(error){event.currentTarget.dataset.refreshStatus='failed';notice(error.message)}};
 
 function updatePredictiveAvailability(){
@@ -216,10 +267,25 @@ $('#fix-context').onclick=async()=>{const id=$('#research-context-form').element
 function predictiveFamilySpec(){
   const form=new FormData($('#predictive-form')),task=String(form.get('task_type')),target=String(form.get('target')).trim(),features=list(String(form.get('feature_columns')||'')),excluded=[...new Set([...list(String(form.get('excluded_columns')||'')),target])],strategy=String(form.get('split_strategy')),seed=Number(form.get('seed'));
   if(task==='REGRESSION'&&strategy==='STRATIFIED')throw new Error('RegressionではSTRATIFIED splitを使用できません');
-  const availability=Object.fromEntries(features.map(column=>[column,{column,available_at:'PREDICTION_TIME',allowed:true}]));
+  let configuredAvailability={};try{configuredAvailability=JSON.parse(String(form.get('feature_availability')||'{}'))}catch{throw new Error('Feature availability JSONが不正です')}
+  if(!configuredAvailability||Array.isArray(configuredAvailability)||typeof configuredAvailability!=='object')throw new Error('Feature availability JSONはobjectで指定してください');
+  const availability=Object.fromEntries(features.map(column=>[column,configuredAvailability[column]||{column,available_at:'PREDICTION_TIME',allowed:true}]));
   const classification=task==='BINARY_CLASSIFICATION';
-  return {schema_version:'predictive-analysis-spec/1',task_type:task,prediction_question:{prediction_unit:String(form.get('prediction_unit')),target,prediction_time:String(form.get('prediction_time')),horizon:String(form.get('horizon')),intended_use:String(form.get('intended_use')),deployment_population:String(form.get('deployment_population'))},feature_spec:{feature_columns:features,availability_cutoff:availability,excluded_columns:excluded},split_spec:{strategy,train_ratio:Number(form.get('train_ratio')),validation_ratio:Number(form.get('validation_ratio')),test_ratio:Number(form.get('test_ratio')),group_column:null,time_column:null,train_cutoff:null,validation_cutoff:null,stratify:strategy==='STRATIFIED',seed},preprocessing_spec:{fit_partition:'TRAIN',numeric_imputation:'MEAN',scale_numeric:true,categorical_encoding:'ONE_HOT'},model_spec:{model_id:classification?'logistic_regression.v1':'linear_regression.v1',parameters:classification?{iterations:800,learning_rate:0.1,l2:0.001}:{l2:0}},tuning_spec:{selection_partitions:['TRAIN','VALIDATION']},evaluation_spec:{primary_metric:classification?'ROC_AUC':'RMSE',secondary_metrics:[],subgroups:[]},explanation_spec:{method:String(form.get('explanation_method')),dataset:'TEST',sampling:{strategy:'FIRST_N',size:Number(form.get('explanation_sample_size')),seed},local_explanations:form.get('local_explanations')==='on'}};
+  const modelId=String(form.get('model_id'))||(classification?'logistic_regression.v1':'linear_regression.v1');
+  const primaryMetric=String(form.get('primary_metric'))||(classification?'ROC_AUC':'RMSE');
+  return {schema_version:'predictive-analysis-spec/1',task_type:task,prediction_question:{prediction_unit:String(form.get('prediction_unit')),target,prediction_time:String(form.get('prediction_time')),horizon:String(form.get('horizon')),intended_use:String(form.get('intended_use')),deployment_population:String(form.get('deployment_population'))},feature_spec:{feature_columns:features,availability_cutoff:availability,excluded_columns:excluded},split_spec:{strategy,train_ratio:Number(form.get('train_ratio')),validation_ratio:Number(form.get('validation_ratio')),test_ratio:Number(form.get('test_ratio')),group_column:String(form.get('group_column')||'')||null,time_column:String(form.get('time_column')||'')||null,train_cutoff:String(form.get('train_cutoff')||'')||null,validation_cutoff:String(form.get('validation_cutoff')||'')||null,stratify:strategy==='STRATIFIED',seed},preprocessing_spec:{fit_partition:'TRAIN',numeric_imputation:'MEAN',scale_numeric:form.get('scale_numeric')==='on',categorical_encoding:'ONE_HOT'},model_spec:{model_id:modelId,parameters:modelId==='logistic_regression.v1'?{iterations:800,learning_rate:0.1,l2:0.001}:{l2:0}},tuning_spec:{selection_partitions:list(String(form.get('tuning_selection')||'TRAIN,VALIDATION'))},evaluation_spec:{primary_metric:primaryMetric,secondary_metrics:list(String(form.get('secondary_metrics')||'')),subgroups:list(String(form.get('subgroups')||''))},explanation_spec:{method:String(form.get('explanation_method')),dataset:'TEST',sampling:{strategy:'FIRST_N',size:Number(form.get('explanation_sample_size')),seed},local_explanations:form.get('local_explanations')==='on'}};
 }
+
+function capturePredictiveDraft(){
+  const form=$('#predictive-form');if(!form)return;
+  state.predictiveDraft=Object.fromEntries([...form.elements].filter(element=>element.name).map(element=>[element.name,element.type==='checkbox'?element.checked:element.value]));
+}
+function restorePredictiveDraft(){
+  const form=$('#predictive-form'),draft=state.predictiveDraft;if(!form||!draft)return;
+  for(const [name,value] of Object.entries(draft)){const element=form.elements[name];if(!element)continue;if(element.type==='checkbox')element.checked=Boolean(value);else element.value=String(value)}
+}
+$('#predictive-form').addEventListener('input',capturePredictiveDraft);
+$('#predictive-form').addEventListener('change',capturePredictiveDraft);
 
 async function waitForPredictive(executionId){
   for(let attempt=0;attempt<480;attempt+=1){
@@ -262,23 +328,23 @@ async function loadPredictiveWorkspace(){
   state.predictiveCapabilities=capabilities;state.researchContexts=contexts.items;state.predictiveSpecifications=specifications.items.filter(specification=>specification.analysis_family==='PREDICTIVE');state.predictiveExecutions=executions.items.filter(execution=>execution.analysis_family==='PREDICTIVE'&&execution.analysis_specification_id);
   $('#predictive-capabilities').innerHTML=`<p><b>${escapeHtml(capabilities.gate)}</b> — Training ${capabilities.training_available?'available':'unavailable'} / Evaluation ${capabilities.evaluation_available?'available':'unavailable'} / Explanation ${capabilities.explanation_available?'available':'unavailable'} / Model Card ${capabilities.model_card_available?'available':'unavailable'}</p><p>Models: ${capabilities.model_registry.map(model=>escapeHtml(model.model_id)).join(', ')}</p>`;
   const method=$('#predictive-explanation-method'),selected=method.value;method.innerHTML=capabilities.explanation_methods.map(item=>`<option value="${escapeHtml(item.method)}">${escapeHtml(item.method)}</option>`).join('');if(capabilities.explanation_methods.some(item=>item.method===selected))method.value=selected;
+  restorePredictiveDraft();
   renderResearchContexts();renderPredictiveExecutions();updatePredictiveAvailability();
   if(state.predictiveExecutions.length)await loadPredictiveDetails(state.predictiveExecutions[0].execution_id);else{state.predictiveDetails=null;renderPredictiveDetails()}
 }
 
-$('#predictive-form').elements.task_type.onchange=event=>{if(event.target.value==='REGRESSION'&&$('#predictive-form').elements.split_strategy.value==='STRATIFIED')$('#predictive-form').elements.split_strategy.value='RANDOM'};
+$('#predictive-form').elements.task_type.onchange=event=>{const form=$('#predictive-form');if(event.target.value==='REGRESSION'){if(form.elements.split_strategy.value==='STRATIFIED')form.elements.split_strategy.value='RANDOM';form.elements.model_id.value='linear_regression.v1';form.elements.primary_metric.innerHTML='<option>RMSE</option><option>MAE</option><option>R2</option>';form.elements.primary_metric.value='RMSE'}else{form.elements.model_id.value='logistic_regression.v1';form.elements.primary_metric.innerHTML='<option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option>';form.elements.primary_metric.value='ROC_AUC'}};
 $('#predictive-form').onsubmit=async event=>{
   event.preventDefault();if(!state.project)return notice('Projectを選択してください');
   const button=$('#run-predictive'),form=new FormData(event.target),projectId=state.project.project_id;button.disabled=true;
   try{
     const familySpec=predictiveFamilySpec(),datasetId=String(form.get('dataset_version_id')),viewId=String(form.get('analysis_view_id')||'')||null;
-    const split=await api(`/projects/${projectId}/predictive/split-validations`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dataset_version_id:datasetId,analysis_view_id:viewId,family_spec:familySpec})});
-    $('#predictive-split-validation').innerHTML=`<p><span class="status VALID">${escapeHtml(split.status)}</span> ${escapeHtml(split.strategy)}</p><pre>${escapeHtml(JSON.stringify({partition_counts:split.partition_counts,source_snapshot:split.source_snapshot,artifact:split.partition_artifact},null,2))}</pre>`;
     const specification=await api(`/projects/${projectId}/analysis-specifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({schema_version:'analysis-specification/1',specification_key:`predictive-${Date.now()}`,analysis_family:'PREDICTIVE',research_context_version_id:String(form.get('research_context_version_id')),dataset_version_id:datasetId,analysis_view_id:viewId,analysis_mode:'CONFIRMATORY',family_spec_schema_version:'predictive-analysis-spec/1',family_spec:familySpec,revision_context:null,warnings:[]})});
     await api(`/projects/${projectId}/analysis-specifications/${specification.analysis_specification_id}/validate`,{method:'POST'});
     await api(`/projects/${projectId}/analysis-specifications/${specification.analysis_specification_id}/fix`,{method:'POST'});
     const plan=await api(`/projects/${projectId}/execution-plans`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id})});
     await api(`/projects/${projectId}/execution-plans/${plan.execution_plan_id}/validate`,{method:'POST'});
+    $('#predictive-split-validation').innerHTML=`<p><span class="status VALID">VALID</span> Execution Plan validated</p><pre>${escapeHtml(JSON.stringify({execution_plan_id:plan.execution_plan_id,analysis_specification_id:specification.analysis_specification_id},null,2))}</pre>`;
     const execution=await api(`/projects/${projectId}/executions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id,execution_plan_id:plan.execution_plan_id,seed:familySpec.split_spec.seed})});
     notice('Predictive Executionをキューへ登録しました');await waitForPredictive(execution.execution_id);await loadPredictiveWorkspace();await loadPredictiveDetails(execution.execution_id);notice('Evaluation、Predictive Explanation、Model Cardを保存しました');
   }catch(error){notice(error.message)}finally{updatePredictiveAvailability()}
@@ -402,4 +468,4 @@ document.addEventListener('submit',()=>{if(!state.project)return;if(draftStateTi
 // target_graph_version_id:graph.graph_version_id
 // parent_graph_version_id:parent||null
 // origin=parent?$('#graph-transform').value:'DISCOVERED'
-(async()=>{try{await fetch('/health/ready').then(r=>{if(!r.ok)throw Error();return r.json()});$('#health').textContent='API READY';await loadProjects();await restoreProjectRoute()}catch(error){$('#health').textContent='API UNAVAILABLE';notice(error.message)}})();
+(async()=>{try{await fetch('/health/ready').then(r=>{if(!r.ok)throw Error();return r.json()});state.navigationCatalog=await api('/navigation/analysis');$('#health').textContent='API READY';await loadProjects();await restoreProjectRoute()}catch(error){$('#health').textContent='API UNAVAILABLE';notice(error.message)}})();

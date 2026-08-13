@@ -29,7 +29,11 @@
 - Tested state equals candidate: YES / NO
 - If NO, post-candidate diff classification: DOCUMENTATION_ONLY / CANDIDATE_AFFECTING / UNKNOWN
 - Candidate identity valid for acceptance: YES / NO
+- Previous Failed Candidate SHA (remediation Trial only): {{PREVIOUS_FAILED_CANDIDATE_SHA_OR_NA}}
+- New candidate differs from previous failed candidate: YES / NO / N/A
 - Evidence: {{PATHS}}
+
+Remediation Trialでnew candidateがprevious failed candidateと同一、またはrequired semantic remediation diffを確認できない場合は、Acceptance Criteria実行前に`BLOCKED_CANDIDATE_IDENTITY`または`BLOCKED_REMEDIATION_NOT_APPLIED`として停止する。
 
 ## 3. Package-chain provenance audit
 
@@ -45,6 +49,14 @@ Package provenance is supporting evidence; package completion alone does not dec
 | Item | Name | Status | AC | Evidence path |
 |---|---|---|---|---|
 | {{ITEM_ID}} | {{NAME}} | PASS / FAIL / BLOCKED | {{AC}} | {{PATH}} |
+
+### Browser E2E diagnostic summary — conditional
+
+| Test Item | Failure classification | Product judgment possible | Key evidence |
+|---|---|---|---|
+| {{ITEM_ID_OR_NA}} | PRODUCT_INTEGRATION_DEFECT / TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN / N/A | YES / NO / N/A | {{PATHS_OR_NA}} |
+
+Test implementation / orchestration / environment defectまたはUNKNOWNによりproduct correctnessを判定できない場合、そのBrowser E2E failureだけを根拠にGate FAILとしない。
 
 ## 5. Acceptance Criteria evaluation
 | AC | Result | Evidence |
@@ -84,6 +96,7 @@ This section is the acceptance-contract consequence of Gate PASS.
 Complete only when Status=FAIL.
 
 - Failure facts: {{FAILURE_FACTS_OR_NA}}
+- Browser E2E failure classification (if applicable): {{CLASSIFICATION_OR_NA}}
 - Verified failure facts summary: {{FAILURE_FACTS_OR_NA}}
 - Original Gate semantic claim appears valid: YES / NO / UNDECIDED
 - Original Acceptance Criteria appear valid: YES / NO / UNDECIDED
@@ -97,7 +110,8 @@ The Gate Decision records failure evidence. Final 08 mode selection is performed
 
 Complete only when Status=BLOCKED.
 
-- Blocker class: prerequisite / environment / candidate identity / contract ambiguity / unsafe operation / other
+- Blocker class: prerequisite / environment / test implementation / test orchestration / candidate identity / contract ambiguity / unsafe operation / other
+- Browser E2E failure classification (if applicable): {{CLASSIFICATION_OR_NA}}
 - Facts: {{BLOCKER_FACTS_OR_NA}}
 - Required owner/action: {{OWNER_ACTION_OR_NA}}
 - Trial identity handling: SAME_TRIAL / NEW_TRIAL_BY_EXPLICIT_DECISION / UNDECIDED

@@ -509,6 +509,7 @@ def _orm_to_stage(orm: StageExecutionOrm, attempts: list[StageAttemptOrm]) -> St
             stage_attempt_id=item.stage_attempt_id,
             finished_at=item.finished_at,
             error=item.error_json,
+            effective_random_seed=item.effective_random_seed,
         ) for item in attempts],
         last_error=orm.last_error_json,
         started_at=orm.started_at,
@@ -607,12 +608,14 @@ class SqlStageExecutionRepository:
                     started_at=attempt.started_at,
                     finished_at=attempt.finished_at,
                     error_json=_json_safe(attempt.error),
+                    effective_random_seed=attempt.effective_random_seed,
                 ))
             else:
                 if row.stage_attempt_id != attempt.stage_attempt_id:
                     raise ValueError("stage attempt identity cannot be rewritten")
                 row.finished_at = attempt.finished_at
                 row.error_json = _json_safe(attempt.error)
+                row.effective_random_seed = attempt.effective_random_seed
 
     def start_attempt(self, stage: StageExecution, *, owner: str, worker_id: str, at: datetime) -> StageAttempt:
         self._owner_check(stage.execution_id, owner)
