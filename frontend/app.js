@@ -339,13 +339,12 @@ $('#predictive-form').onsubmit=async event=>{
   const button=$('#run-predictive'),form=new FormData(event.target),projectId=state.project.project_id;button.disabled=true;
   try{
     const familySpec=predictiveFamilySpec(),datasetId=String(form.get('dataset_version_id')),viewId=String(form.get('analysis_view_id')||'')||null;
-    const split=await api(`/projects/${projectId}/predictive/split-validations`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dataset_version_id:datasetId,analysis_view_id:viewId,family_spec:familySpec})});
-    $('#predictive-split-validation').innerHTML=`<p><span class="status VALID">${escapeHtml(split.status)}</span> ${escapeHtml(split.strategy)}</p><pre>${escapeHtml(JSON.stringify({partition_counts:split.partition_counts,source_snapshot:split.source_snapshot,artifact:split.partition_artifact},null,2))}</pre>`;
     const specification=await api(`/projects/${projectId}/analysis-specifications`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({schema_version:'analysis-specification/1',specification_key:`predictive-${Date.now()}`,analysis_family:'PREDICTIVE',research_context_version_id:String(form.get('research_context_version_id')),dataset_version_id:datasetId,analysis_view_id:viewId,analysis_mode:'CONFIRMATORY',family_spec_schema_version:'predictive-analysis-spec/1',family_spec:familySpec,revision_context:null,warnings:[]})});
     await api(`/projects/${projectId}/analysis-specifications/${specification.analysis_specification_id}/validate`,{method:'POST'});
     await api(`/projects/${projectId}/analysis-specifications/${specification.analysis_specification_id}/fix`,{method:'POST'});
     const plan=await api(`/projects/${projectId}/execution-plans`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id})});
     await api(`/projects/${projectId}/execution-plans/${plan.execution_plan_id}/validate`,{method:'POST'});
+    $('#predictive-split-validation').innerHTML=`<p><span class="status VALID">VALID</span> Execution Plan validated</p><pre>${escapeHtml(JSON.stringify({execution_plan_id:plan.execution_plan_id,analysis_specification_id:specification.analysis_specification_id},null,2))}</pre>`;
     const execution=await api(`/projects/${projectId}/executions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id,execution_plan_id:plan.execution_plan_id,seed:familySpec.split_spec.seed})});
     notice('Predictive Executionをキューへ登録しました');await waitForPredictive(execution.execution_id);await loadPredictiveWorkspace();await loadPredictiveDetails(execution.execution_id);notice('Evaluation、Predictive Explanation、Model Cardを保存しました');
   }catch(error){notice(error.message)}finally{updatePredictiveAvailability()}

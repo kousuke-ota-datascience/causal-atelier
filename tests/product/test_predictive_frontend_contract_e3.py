@@ -34,7 +34,6 @@ def test_predictive_workspace_exposes_complete_g5_backend_vertical_slice() -> No
     ))
     assert all(value in javascript for value in (
         "/predictive/capabilities",
-        "/predictive/split-validations",
         "/research-contexts",
         "/analysis-specifications",
         "/execution-plans",
@@ -46,6 +45,8 @@ def test_predictive_workspace_exposes_complete_g5_backend_vertical_slice() -> No
         "PREDICTIVE_EXPLANATION_RESULT",
         "MODEL_CARD_RESULT",
     ))
+    assert "/predictive/split-validations" not in javascript
+    assert "Execution Plan validated" in javascript
     assert "backendAvailable=state.predictiveCapabilities?.training_available===true" in javascript
     assert "state.predictiveCapabilities?.explanation_available===true" in javascript
     assert "state.predictiveCapabilities?.model_card_available===true" in javascript
