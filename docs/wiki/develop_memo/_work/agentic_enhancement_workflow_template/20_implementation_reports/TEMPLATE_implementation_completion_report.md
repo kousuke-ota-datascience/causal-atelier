@@ -15,10 +15,11 @@
 - Status: READY_FOR_TEST / BLOCKED
 - Starting commit: {{STARTING_COMMIT_FULL_SHA}}
 - Fixed Trial Candidate SHA: {{FIXED_TRIAL_CANDIDATE_FULL_SHA_OR_NONE}}
-- Report commit SHA: {{REPORT_COMMIT_FULL_SHA_OR_PENDING}}
 - 06 Contract: {{PATH_06}}
 - P00 Plan: {{PATH_P00_OR_NA}}
 - Applicable 08 Remediation: {{PATH_OR_NONE}}
+- Previous Failed Candidate SHA: {{PREVIOUS_FAILED_CANDIDATE_SHA_OR_NA}}
+- Completion responsibility: SINGLE_EXECUTION_CODING / WORK_PACKAGE_CANDIDATE_ASSEMBLY / FAIL_REWORK_CODING
 - Timestamp: {{TIMESTAMP_ISO8601_TZ}}
 
 ## 1. Candidate summary
@@ -48,7 +49,7 @@ For SINGLE_EXECUTION use one row with Package=`N/A`.
 {{FIXED_TRIAL_CANDIDATE_FULL_SHA}}
 ```
 
-This is the candidate submitted to Independent Verification.
+This is the candidate submitted to Independent Verification. Evidence-only commits created after this report must not replace this identity.
 Package checkpoint SHA must not substitute for this field.
 
 ## 5. Changed files / candidate semantics
@@ -92,3 +93,7 @@ If candidate-affecting change exists, READY_FOR_TEST must not be claimed until c
 
 ### Interpretation
 {{INTERPRETATION}}
+
+## 12. Evidence commit identity
+
+`EVIDENCE_COMMIT_SHA`はこのreportをcommitした後に得られるruntime-derived valueであるため、本report本文の事前必須値としない。Agent terminal handoffで報告し、必要なら後続traceability artifactへ記録する。架空SHAを予約しない。

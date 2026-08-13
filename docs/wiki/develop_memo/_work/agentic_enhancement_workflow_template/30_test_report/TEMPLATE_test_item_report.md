@@ -13,6 +13,7 @@
 - Trial: {{TRIAL_NO}}
 - Test Item: {{TEST_ITEM_ID}}
 - Status: PASS / FAIL / BLOCKED / NOT_RUN
+- Primary test layer: META / UNIT_DOMAIN / API_INTEGRATION / FRONTEND_CONTRACT / BROWSER_E2E / OTHER
 - Fixed Trial Candidate SHA: {{FIXED_TRIAL_CANDIDATE_FULL_SHA}}
 - Tested Repository State: {{TESTED_REPOSITORY_FULL_SHA}}
 - Completion report: {{COMPLETION_REPORT_PATH}}
@@ -51,6 +52,27 @@
 ```text
 {{RAW_RELEVANT_OUTPUT}}
 ```
+
+## 6A. Browser E2E diagnostic evidence — conditional
+
+Complete when Primary test layer = `BROWSER_E2E`.
+
+- Canonical Browser E2E command: {{COMMAND_OR_NA}}
+- Environment bootstrap / teardown authority: {{DETAIL_OR_NA}}
+- Compose / service state: {{EVIDENCE_OR_NA}}
+- Current-source image / build identity: {{EVIDENCE_OR_NA}}
+- Semantic synchronization point: {{DETAIL_OR_NA}}
+- Failed assertion / observable state: {{DETAIL_OR_NA}}
+- Playwright trace: {{PATH_OR_NA}}
+- Screenshot: {{PATH_OR_NA}}
+- Video: {{PATH_OR_NA}}
+- Browser console / page errors: {{PATH_OR_SUMMARY_OR_NA}}
+- Relevant network evidence: {{PATH_OR_SUMMARY_OR_NA}}
+- API logs: {{PATH_OR_NA}}
+- Worker logs: {{PATH_OR_NA}}
+- Failure classification: PRODUCT_INTEGRATION_DEFECT / TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN / N/A
+
+Network evidenceにcredential / token / secret等を保存しない。HTTP status単体ではなくactual failing assertionとの関係を記録する。
 
 ## 7. Observed Facts
 {{FACTS}}

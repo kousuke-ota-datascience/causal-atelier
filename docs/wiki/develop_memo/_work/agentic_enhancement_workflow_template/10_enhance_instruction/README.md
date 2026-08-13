@@ -82,7 +82,9 @@ Control Sheet、requirements、design、previous Gate Decision等へのpathはpr
 
 - Gate acceptance claim
 - Acceptance Criteria
-- Test Item plan
+- Test Item plan / primary test layer allocation
+- Browser E2E critical journey plan（applicableな場合。canonical Gate blocking suite全体は原則3〜5本程度、各Gateはrelevant subsetのみ）
+- Browser E2E canonical command / hermetic environment / synchronization / failure evidence requirements（applicableな場合）
 - Fixed Trial Candidate identity rule
 - protected passed-Gate regression requirement
 - Transition Debt acceptance expectation
@@ -92,6 +94,8 @@ Control Sheet、requirements、design、previous Gate Decision等へのpathはpr
 - required outputs
 
 06を読まなければACが分からない構造にしない。Completion Report、source、runtime、previous test evidence等はobservation / evidenceとして参照してよい。
+
+Test planningでは各requirement / ACへ最適なtest layerを割り当てる。Browser E2Eはdetailed correctnessの一次証明ではなく、少数のcritical user journeyがreal system boundaryを跨いで成立することの最終確認に使う。共通authoring policyは`40_operator_workflows/BROWSER_E2E_GATE_POLICY.md`を参照してよいが、Gate固有のblocking E2E item、command、environment、synchronization、assertion、evidence、decision semanticsは07本文へ具体化する。
 
 ## 6. Work Package Mode
 
@@ -159,6 +163,20 @@ DELTAでは、参照必須となる06 / 07 / failed decisionを明示し、failu
 
 CONSOLIDATEDでは、next Trialに必要なeffective implementation semantics、verification requirements、scope、prohibitions、protected constraints、completion conditionを08内へ統合する。
 
+
+### Operational resolution rule — current Trial 08
+
+formal FAIL後にAgent executionへ入る場合、`GATE_ID + TRIAL_NO`からcurrent Trialの08を**exactly one**へ解決できなければならない。canonical pathは次とする。
+
+```text
+10_enhance_instruction/{{GATE_ID}}/
+  08_{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
+```
+
+0件または複数候補の場合は推測・fallbackせず`BLOCKED_REMEDIATION_CONTRACT_MISSING`または`BLOCKED_CONTRACT_AMBIGUITY`とする。旧Trialの08を代用しない。
+
+`40_fail_remediation_01_fail_rework_coding_agent_prompt.md`へ直接渡す08は、normative-source isolationを成立させるため`CONSOLIDATED`かつ`SINGLE_EXECUTION`とし、current 08だけでrework implementation / verification / completion conditionを一意に判断できる状態にする。`DELTA`またはRxx decompositionを選択する場合は、当該direct entry promptをそのまま使用しない。
+
 ## 9. Rxx Remediation Work Package — primary execution contract
 
 Work Package remediation時はoriginal Pxx identityを再利用せず`R01-R99`を使う。RxxはAgentへ直接渡すため**self-contained MUST**とし、Parent 08のmodeにかかわらず、担当Rxxを実行するためのeffective constraintsを本文内に記載する。
@@ -180,6 +198,8 @@ Work Package remediation時はoriginal Pxx identityを再利用せず`R01-R99`�
 - required re-baseline artifacts
 
 09自体を「失敗したのでACを緩める」手段にしてはならない。承認後はaffected primary contractsを明示的にre-baselineする。
+
+APPROVED / APPLIED amendmentは`00_enhance_background/80_contract_amendment_log.md`にもappend-onlyで記録し、09・re-baseline artifacts・Git traceabilityを相互参照可能にする。80 ledgerはnormative execution authorityではない。
 
 ## 11. Authority summary
 

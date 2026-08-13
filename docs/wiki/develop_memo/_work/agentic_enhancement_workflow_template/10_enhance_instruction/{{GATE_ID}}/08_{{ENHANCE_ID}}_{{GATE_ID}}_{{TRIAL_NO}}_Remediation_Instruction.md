@@ -7,6 +7,8 @@
 - New Trial: {{TRIAL_NO}}
 - Failed Trial: {{FAILED_TRIAL_ID}}
 - Failed Gate Decision: {{FAILED_GATE_DECISION_PATH}}
+- Previous Failed Candidate SHA: {{PREVIOUS_FAILED_CANDIDATE_SHA}}
+- Execution State: FORMAL_FAIL_REMEDIATION
 - Original 06: {{PATH_06}}
 - Original 07: {{PATH_07}}
 - Remediation Mode: DELTA / CONSOLIDATED
@@ -20,6 +22,8 @@
 
 ## 2. Mode selection rationale
 
+> Operational guard: `40_fail_remediation_01_fail_rework_coding_agent_prompt.md`へ直接渡す場合は`Remediation Mode: CONSOLIDATED`かつ`Execution Mode: SINGLE_EXECUTION`をMUSTとする。Agentがoriginal 06/Pxx/07から仕様を補完するDELTA direct executionは禁止する。
+
 - Selected mode: DELTA / CONSOLIDATED
 - Why this mode minimizes sufficient effective context: {{MODE_RATIONALE}}
 - Required external contract context if DELTA: {{REQUIRED_PARENT_SECTIONS_OR_NA}}
@@ -28,6 +32,18 @@
 {{FAILURE_FACTS}}
 
 Factsとinterpretationを混同せず、failed 999 / Test Item evidenceへのpathを併記する。
+
+Browser E2Eがfailure triggerの場合、evidenceに基づくclassificationを明記する。
+
+```text
+PRODUCT_INTEGRATION_DEFECT
+TEST_IMPLEMENTATION_DEFECT
+TEST_ORCHESTRATION_DEFECT
+TEST_ENVIRONMENT_DEFECT
+UNKNOWN
+```
+
+formal FAIL remediationはproduct / contract violationがverifiedされている場合だけ継続する。test implementation / orchestration / environment defectまたはUNKNOWNだけでproduct correctnessを判定できない場合は、production remediationを開始せずprior Gate Decision / blocker handlingを見直す。
 
 ## 4A. DELTA mode — fill only when selected
 
@@ -84,3 +100,11 @@ CONSOLIDATED modeでは、next Trialを実行するためのnormative remediatio
 ## 8. Next Trial candidate rule
 
 A new Fixed Trial Candidate SHA must be generated and independently verified. Failed candidate / failed Test evidence must remain immutable historical evidence.
+
+必須invariant:
+
+```text
+NEW_FIXED_TRIAL_CANDIDATE_SHA != PREVIOUS_FAILED_CANDIDATE_SHA
+```
+
+本08がproduction / automated-test等のsemantic remediationを要求する場合、previous failed candidateからnew candidateまでのrequired semantic surfacesに対応diffが存在しなければ`BLOCKED_REMEDIATION_NOT_APPLIED`とする。

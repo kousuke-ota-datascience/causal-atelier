@@ -35,7 +35,8 @@
   {{ENHANCE_ID}}_{{GATE_ID}}_implementation_report_detail.md
   Trial{{TRIAL_NO}}/
     packages/                       # WORK_PACKAGE only
-    {{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion_report.md
+      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
+    {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
 ## 4. Artifact responsibilities
@@ -77,3 +78,27 @@ Completion report:
 
 Detail ledger:
 - Trial history / package history / current unverified implementation state / candidate assembly state / open observations / final Gate Decision link after completion
+
+## 7. Canonical Completion Report responsibility
+
+```text
+SINGLE_EXECUTION
+  -> Single Execution Coding Agent
+
+WORK_PACKAGE
+  -> Work Package Candidate Assembly Agent
+
+FORMAL_FAIL_REMEDIATION / SINGLE_EXECUTION
+  -> FAIL Rework Coding Agent
+```
+
+Canonical path:
+
+```text
+20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/
+  {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+```
+
+Completion ReportはTrial directory直下に置き、`packages/`配下へ置かない。`PACKAGE_READY`だけではGate implementation completionまたは`READY_FOR_TEST`を意味しない。
+
+`FIXED_TRIAL_CANDIDATE_SHA`はsemantic implementation state、report / evidence commitはevidence stateであり、両者を混同しない。evidence-only commit後に`HEAD != FIXED_TRIAL_CANDIDATE_SHA`となることは許容する。

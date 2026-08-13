@@ -70,6 +70,10 @@ Work Package ModeであってもGate semantic contractは分割されない。
 ## 10. Automated test obligations
 {{TEST_OBLIGATIONS}}
 
+Test obligationを設計する際は、requirementごとに最もdeterministicでfailure localizationしやすいtest layerを割り当てる。Browser E2Eをdetailed correctnessの一次証明にしない。Browser E2Eが必要な場合は、real browserからsystem boundaryを跨ぐcritical user journeyに限定し、詳細validation / boundary / taxonomy / schema分岐等は原則lower-level testへ配置する。
+
+Coding-side Browser E2Eを要求する場合、canonical command、hermetic environment prerequisite、semantic synchronization point、observable assertionを本書またはassigned Pxxへ具体化する。Browser E2E failureを観測した場合は、未検証仮説をroot causeとして即修正せず、failure point / actual observable state / expected state / supporting evidenceを確定してからscope内修正の可否を判断する。
+
 ## 11. Candidate Assembly requirement
 
 Before READY_FOR_TEST:
