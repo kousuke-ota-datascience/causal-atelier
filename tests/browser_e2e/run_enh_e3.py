@@ -151,7 +151,7 @@ def main() -> int:
             }
 
             page.locator('nav button[data-route="explore"]').click()
-            page.wait_for_url(f"**/projects/{project_id}/explore")
+            _wait(lambda: page.url.endswith(f"/projects/{project_id}/explore"))
             evidence["analysis_view_submit_phase"] = "explore_route_ready"
             _wait(lambda: page.locator('nav button[data-route="explore"]').get_attribute(
                 "data-refresh-status"
