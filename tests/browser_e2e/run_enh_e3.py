@@ -170,6 +170,10 @@ def main() -> int:
             page.locator('#analysis-view-form [name="view_key"]').fill("final_view")
             page.locator('#analysis-view-form [name="name"]').fill("Final population")
             page.locator('#analysis-view-form [name="spec"]').fill(json.dumps(view_spec))
+            _select(page, '#analysis-view-form select[name="dataset_version_id"]', dataset_id)
+            assert page.locator(
+                '#analysis-view-form select[name="dataset_version_id"]'
+            ).input_value() == dataset_id
             page.locator("#analysis-view-form button").click()
             page.locator("#notice").filter(has_text="Analysis View DRAFTを作成しました").wait_for()
             page.locator("#analysis-view-list tbody tr button").first.click()
