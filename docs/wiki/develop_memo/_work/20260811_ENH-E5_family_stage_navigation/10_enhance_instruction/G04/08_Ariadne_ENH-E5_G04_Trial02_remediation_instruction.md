@@ -252,6 +252,37 @@ MUST NOT be the sole condition required for the canonical browser command to pas
 
 Do not introduce a new serving subsystem or unrelated runtime orchestration framework.
 
+## 6.x. Required correction C — canonical browser navigation expectation
+
+Current Chromium regression contains legacy URL expectations for analysis-family
+navigation such as:
+
+- `/projects/{project_id}/explore`
+- `/projects/{project_id}/causal`
+- `/projects/{project_id}/predictive`
+
+Trial02 investigation confirmed that the current frontend correctly navigates
+analysis-family routes through the ENH-E5 canonical navigation serializer.
+
+Observed valid Explore navigation:
+
+`/projects/{project_id}/analysis/exploratory/profile`
+
+Therefore browser E2E expectations MUST be aligned with the current canonical
+analysis-family navigation contract.
+
+The remediation MUST:
+
+1. remove stale legacy URL expectations for analysis-family navigation;
+2. validate the canonical route produced by the current navigation catalog /
+   serializer rather than assuming the legacy alias;
+3. audit equivalent expectations for `explore`, `causal`, and `predictive`;
+4. preserve legacy project routes that are not analysis-family routes;
+5. not change production navigation merely to satisfy stale browser assertions.
+
+Do not hard-code a guessed default Stage where the canonical navigation
+catalog/serializer is the authority.
+
 ## 7. Required regression coverage
 
 Add automated regression coverage for the actual Trial01 gap.
