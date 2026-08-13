@@ -245,6 +245,9 @@ def main() -> int:
 
             page.locator('nav button[data-route="predictive"]').click()
             _wait(lambda: page.locator("#predictive.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="predictive"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
             context_id = page.locator("#predictive-context option").nth(1).get_attribute("value")
             assert context_id
             _select(page, "#predictive-context", context_id)
@@ -306,6 +309,9 @@ def main() -> int:
 
             page.locator('nav button[data-route="causal"]').first.click()
             _wait(lambda: page.locator("#discovery.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="causal"]').first.get_attribute(
+                "data-refresh-status"
+            ) == "done")
             page.locator("#discovery.workspace.active").wait_for()
             discovery = page.locator("#discovery-form")
             _select(page, '#discovery-form select[name="dataset_version_id"]', dataset_id)
@@ -348,6 +354,9 @@ def main() -> int:
 
             page.locator('nav button[data-route="results"]').click()
             _wait(lambda: page.locator("#results.workspace.active").count() == 1)
+            _wait(lambda: page.locator('nav button[data-route="results"]').get_attribute(
+                "data-refresh-status"
+            ) == "done")
             page.locator("#result-summary").get_by_text("Cross-family metrics", exact=False).wait_for()
             assert page.locator("#unified-result-list .family-label").filter(has_text="EXPLORATORY").count() >= 1
             assert page.locator("#unified-result-list .family-label").filter(has_text="PREDICTIVE").count() >= 1
