@@ -1,6 +1,6 @@
-# Implementation Completion Report — ENH-E7 G01 Trial01
+# ENH-E7 G01 Trial01 Implementation Completion Report
 
-- Enhancement: ENH-E7 project analysis workspace separation
+- Enhancement: ENH-E7
 - Gate: G01
 - Trial: 01
 - Candidate state: READY_FOR_TEST
@@ -9,44 +9,46 @@
 
 ## Required package set
 
-| Package | Assembly audit result |
-| --- | --- |
-| P01 | `PACKAGE_COMPLETE`; navigation ownership and route contract verified |
-| P02 | `PACKAGE_COMPLETE`; Project List / Project New surface verified |
-| P03 | `PACKAGE_COMPLETE`; Overview lifecycle and metadata ownership verified |
-| P04 | `PACKAGE_COMPLETE`; Research Context surface verified |
-| P05 | `PACKAGE_COMPLETE`; Data analysis-view lifecycle ownership verified |
-| P06 | `PACKAGE_COMPLETE`; Results lineage/export surface verified |
-| P07 | `PACKAGE_COMPLETE`; cross-surface regression and browser journey verified |
+| Package | Package state | Package status report path |
+| --- | --- | --- |
+| P01 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P01_Trial01_package_execution_status.md` |
+| P02 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P02_Trial01_package_execution_status.md` |
+| P03 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P03_Trial01_package_execution_status.md` |
+| P04 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P04_Trial01_package_execution_status.md` |
+| P05 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P05_Trial01_package_execution_status.md` |
+| P06 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P06_Trial01_package_execution_status.md` |
+| P07 | `PACKAGE_COMPLETE` | `packages/ENH-E7_G01_P07_Trial01_package_execution_status.md` |
 
 ## Candidate Assembly audit
 
-- 全 package status report は `G01` / `Trial01` / 対象 package の一致、`PACKAGE_COMPLETE`、focused verification、および blocker なしを確認した。
-- Candidate-affecting な実装・product test・browser E2E runner を implementation commit に解決した。
-- freeze 直前の `git status --short` は出力なし（clean）だった。
+- 全required package reportについて、Gate / Trial / Package identity、`PACKAGE_COMPLETE`、focused verification、unresolved blockerなし、protected contract violation報告なしを確認した。
+- candidate-affecting working treeはfreeze前および再検証後ともcleanである。
+- Gate-wide integration self-check: PASS（39 passed in 16.27s）。
+- protected regression: PASS。ENH-E6 G01 navigation transition contractを同selectionに含めた。
+- Browser E2E self-check: PASS。ChromiumでProject作成→Overview、Project routeのreload / Back / Forward、legacy Analysis shortcutを確認した。
 
 ## Effective implementation summary
 
-- Project 管理のルーティングを `ProjectNavigation` に分離し、`/projects`、`/projects/new`、`/projects/<id>/{overview,context,data,results}` を管理した。
-- Project List / New、Overview、Research Context、Data、Results の責務を分離し、Project の作成後は Overview へ遷移する。
-- Analysis View のライフサイクル UI を Data へ移し、分析用の legacy shortcut と既存の Analysis Navigation との互換性を維持した。
-- Chromium E2E により作成→Overview、legacy analysis shortcut、直接 URL / reload / history を確認した。
+- `ProjectNavigation`が`/projects`、`/projects/new`、`/projects/<id>/{overview,context,data,results}`のparse / serialize / normalizationを所有する。
+- Project List / New、Overview、Research Context、Data、Results / Lineageの責務をProject-local surfaceへ分離し、Project作成後の遷移先をOverviewとする。
+- Analysis View lifecycleはDataが所有し、Explore / PredictiveでのFIXED Analysis View inputとlegacy Analysis route shortcutを維持する。
 
 ## Known evidence-only / report-only changes after Fixed Candidate
 
-- 本 completion report と detail report は fixed SHA 後に作成する evidence-only 文書であり、Candidate のソース、テスト、設定、依存関係は変更しない。
+- Fixed Candidate後の差分は本completion reportとdetail reportのみである。ソース、product test、Browser E2E runner、設定、依存関係にcandidate-affecting変更はない。
 
 ## Residual risk / blocker
 
 - Blocker: なし。
-- Residual risk: 実ブラウザ確認は Chromium の E2E である。他ブラウザ固有の表示差はこの Candidate Assembly では未検証。
+- Residual risk: Chromium以外のブラウザ固有表示は未検証。これは本Gateのrepository Browser E2E要件外である。
+- Test-environment observation: 既存browser-e2e imageはP07 runnerを含まないstale imageだったため、現行`Dockerfile.browser-e2e`から明示再ビルド後に実行した。再ビルドimageでPASSしたため、product defectの証拠ではない。
 
 ## Facts
 
-- Gate-wide pytest selection は 39 passed（19.28s）。
-- Chromium E2E runner は 3 scenario とも `PASS`。
-- fixed SHA は `7936151d98de7fe467c176039add47da6af987c4`。
+- Fixed Trial Candidate SHAは`7936151d98de7fe467c176039add47da6af987c4`であり、現在HEADのancestorである。
+- Gate-wide pytest selectionは39 passed in 16.27s。
+- `enh-e7-project-integration-evidence.json`は2026-08-14 UTCに3 scenarioすべて`PASS`と記録した。
 
 ## Interpretation
 
-- 必須 package の handoff と Gate-local integration evidence が揃ったため、Trial Candidate は Gate test に渡せる状態（`READY_FOR_TEST`）である。これは Gate PASS の宣言ではない。
+- package handoff、Gate-local integration、protected regression、適用対象のBrowser E2E evidenceが揃っているため、Trial Candidateは`READY_FOR_TEST`である。これはGate PASSの宣言ではない。
