@@ -14,10 +14,6 @@
         <button data-workspace="management" data-route="overview">Project Management</button>
         <button data-workspace="context" data-route="context">1 Research Context</button>
         <button data-workspace="data" data-route="data" class="active">2 Project / Data</button>
-        <button data-workspace="explore" data-route="explore" data-navigation-family="exploratory" data-navigation-stage="profile">3 Explore &amp; Visualize</button>
-        <button data-workspace="discovery" data-route="causal" data-navigation-family="causal" data-navigation-stage="discovery">4 Causal Discovery</button>
-        <button data-workspace="inference" data-route="causal" data-navigation-family="causal" data-navigation-stage="identification">5 Causal Inference</button>
-        <button data-workspace="predictive" data-route="predictive" data-navigation-family="predictive" data-navigation-stage="setup">6 Predictive</button>
         <button data-workspace="results" data-route="results">7 Results / Lineage</button>
       </nav>
       <p>科学的負結果は技術障害ではありません。Resultのstatusとdiagnosticsを確認してください。</p>
@@ -27,16 +23,19 @@
       <section id="analysis-navigation-shell" class="card" aria-label="Analysis navigation">
         <div id="analysis-family-tabs" role="tablist" aria-label="Analysis family"></div>
         <nav id="analysis-stage-sidebar" aria-label="Analysis stage"></nav>
+        <section id="analysis-stage-contents" hidden aria-live="polite"></section>
         <section id="causal-stage-presentation" hidden aria-live="polite"></section>
         <div id="operation-availability" role="status"></div>
+        <div id="analysis-routing-actions" class="inline"></div>
       </section>
       <section id="common-workspace-header" class="card common-workspace-header" aria-label="共通Workspace selection">
-        <div><b id="common-project-name">Project未選択</b><span id="common-project-status" class="status">—</span></div>
+        <div><span class="field-label">Current Project (read-only)</span><output id="common-project-name">Project未選択</output><span id="common-project-status" class="status">—</span></div>
         <label>Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
         <label>Dataset Version<select id="common-dataset"><option value="">未選択</option></select></label>
         <label>Analysis View<select id="common-view"><option value="">未選択</option></select></label>
         <div>Role <span id="common-role" class="status">—</span></div>
         <div id="unsaved-draft-indicator" role="status">保存済み</div>
+        <div id="common-selection-status" role="status"></div>
       </section>
       <section id="management" class="workspace">
         <h1>Project Overview</h1>
@@ -44,6 +43,7 @@
           <form id="project-form" class="card"><h2>Project metadata</h2><p class="section-help">選択中ACTIVE Projectのidentityとmetadataを編集します。</p><label data-tooltip="Project selectorと一覧に表示する名称です。">Name<input name="name" required maxlength="200"></label><label data-tooltip="検証対象の研究課題または業務課題です。">Topic<input name="topic"></label><label data-tooltip="分析によって明らかにする内容や意思決定目的です。">Objective<textarea name="objective"></textarea></label><label data-tooltip="対象範囲や留意事項などの補足情報です。">Memo<textarea name="memo"></textarea></label><button>変更を保存</button></form>
           <div class="card"><h2 id="overview-project-name">Projectを選択してください</h2><p>Status: <span id="overview-project-status" class="status">—</span></p><p>Projectのlifecycle操作は、このoverviewで行います。</p><button id="archive-project" type="button" class="danger" disabled>ProjectをARCHIVEDにする</button></div>
         </div>
+        <section class="card" aria-label="Open Analysis Workspace"><h2>Open Analysis Workspace</h2><p>Familyを選択すると、catalogで定義されたdefault Stageを開きます。</p><div id="analysis-workspace-launcher" class="inline"></div></section>
       </section>
       <section id="projects" class="workspace">
         <h1>Project List</h1>
@@ -114,11 +114,12 @@
           <label>Chart Y<input name="chart_y" placeholder="sales"></label>
           <div class="inline"><button id="preview-exploration" type="button" class="secondary">Preview（未保存）</button><button>探索Resultを保存</button></div>
         </form>
-        <div class="card"><div class="heading"><h2>Saved Exploratory Results</h2><button id="refresh-exploration" type="button">更新</button></div><div id="exploration-output"></div><div id="exploration-results"></div></div>
+        <section id="exploratory-data-quality" class="card" hidden aria-live="polite"></section>
+        <div id="exploratory-results-surface" class="card"><div class="heading"><h2>Saved Exploratory Results</h2><button id="refresh-exploration" type="button">更新</button></div><div id="exploration-output"></div><div id="exploration-results"></div></div>
       </section>
       <section id="discovery" class="workspace">
         <h1>Discovery</h1><p>PC・GESとPC parameter sensitivityを別Executionとして比較します。</p>
-        <form id="discovery-form" class="card form-grid">
+        <form id="discovery-form" class="card form-grid" data-causal-stage-surface="discovery">
           <label data-tooltip="Discoveryへ入力する不変Dataset Versionを選択します。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label>
           <label data-tooltip="因果探索に含める列をDataset schemaから複数選択します。指定順はschema順へ正規化されます。">Feature columns<span class="input-action"><input name="features" placeholder="coupon, visits, sales" required readonly><button id="open-feature-selector" type="button">列を選択</button></span><small>Dataset schemaから1件以上選択します。</small></label>
           <label data-tooltip="因果効果の結果変数として扱う列をFeature columnsから1件選択します。GraphとInferenceへ継承されます。">Outcome<select name="designated_outcome_node" id="discovery-outcome" required><option value="">Featureを先に選択</option></select><small>Feature columnsに含まれる列を1件指定し、Inferenceまで継承します。</small></label>
@@ -128,16 +129,16 @@
           <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
           <button>複数Executionを受付</button>
         </form>
-        <div class="card"><div class="heading"><div><h2>Discovery Executions</h2><p class="section-help">技術状態とDiscovery Resultを確認します。</p></div><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div></div>
-        <div class="card"><div class="heading"><div><h2>Graph Candidates</h2><p class="section-help">Algorithm Outputと派生Graph Versionを同じ一覧で確認・編集・比較します。</p></div><button id="compare-discovery" type="button" disabled>選択した2件以上を比較</button></div><div id="graph-candidates"></div><div id="discovery-comparison"></div></div>
-        <div class="card"><h2>Direct Graph Registration</h2><p class="section-help">Discoveryを経由しないGraph Versionを登録します。</p><label data-tooltip="USER_DEFINEDは専門知識から作成、IMPORTEDは外部Graphの取込みを表します。">Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label data-tooltip="Graph Versionを一覧で識別する名称です。">Name<input id="direct-graph-name" value="Domain DAG"></label><label data-tooltip="Graph nodeのうちInferenceのOutcomeとして継承するnode名です。">Designated Outcome<input id="direct-graph-outcome" placeholder="sales"></label><label data-tooltip="graph_type、nodes、endpoint semanticsを含むedgesを指定します。登録直後はDRAFTです。">Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label data-tooltip="Graphの根拠、作成者、import元など、来歴を再確認できる情報を記載します。">Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">DRAFTとして登録</button></div>
+        <div class="card" data-causal-stage-surface="discovery"><div class="heading"><div><h2>Discovery Executions</h2><p class="section-help">技術状態とDiscovery Resultを確認します。</p></div><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div></div>
+        <div class="card" data-causal-stage-surface="discovery"><div class="heading"><div><h2>Graph Candidates</h2><p class="section-help">Algorithm Outputと派生Graph Versionを同じ一覧で確認・編集・比較します。</p></div><button id="compare-discovery" type="button" disabled>選択した2件以上を比較</button></div><div id="graph-candidates"></div><div id="discovery-comparison"></div></div>
+        <div class="card" data-causal-stage-surface="setup"><h2>Direct Graph Registration</h2><p class="section-help">Discoveryを経由しないGraph Versionを登録します。</p><label data-tooltip="USER_DEFINEDは専門知識から作成、IMPORTEDは外部Graphの取込みを表します。">Origin<select id="direct-graph-origin"><option>USER_DEFINED</option><option>IMPORTED</option></select></label><label data-tooltip="Graph Versionを一覧で識別する名称です。">Name<input id="direct-graph-name" value="Domain DAG"></label><label data-tooltip="Graph nodeのうちInferenceのOutcomeとして継承するnode名です。">Designated Outcome<input id="direct-graph-outcome" placeholder="sales"></label><label data-tooltip="graph_type、nodes、endpoint semanticsを含むedgesを指定します。登録直後はDRAFTです。">Graph JSON<textarea id="direct-graph-json" placeholder='{"graph_type":"DAG","nodes":[],"edges":[]}'></textarea></label><label data-tooltip="Graphの根拠、作成者、import元など、来歴を再確認できる情報を記載します。">Source / import note<textarea id="direct-graph-note"></textarea></label><button id="save-direct-graph" type="button">DRAFTとして登録</button></div>
       </section>
       <section id="inference" class="workspace">
         <h1>Inference</h1><p>FIXED Graph VersionからOutcomeを継承し、IdentificationとData Eligibilityを確認してから推定します。</p>
         <div class="explain-grid"><article><h2>Identification</h2><p>Graphと仮定から、指定した因果効果が理論上識別できるかを確認する段階です。</p></article><article><h2>Data Eligibility</h2><p>実データの型、欠測、sample size、overlap等が推定条件を満たすか確認する段階です。</p></article></div>
         <form id="inference-form" class="card form-grid">
           <label data-tooltip="推定に使用する不変Dataset Versionです。Graphのnode名と列名が対応している必要があります。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label><label data-tooltip="InferenceにはOutcomeが指定されたFIXED Graph Versionだけを使用できます。">FIXED Graph<select name="graph_version_id" id="fixed-graphs" required></select></label>
-          <fieldset id="identification-inputs"><legend>Identification</legend>
+          <div data-causal-stage-surface="identification"><fieldset id="identification-inputs"><legend>Identification</legend>
           <label data-tooltip="EXPLORATORYは探索的分析、CONFIRMATORYは事前に定めた仮説の検証を表します。">Analysis mode<select name="analysis_mode"><option>EXPLORATORY</option><option>CONFIRMATORY</option></select></label>
           <label>Population<input name="population" required></label><label>Comparator<input name="comparator" required></label>
           <label data-tooltip="介入あり／なしとして比較するTreatment列です。現在のEstimatorでは通常二値列を指定します。">Treatment<input name="treatment" required placeholder="coupon"></label><label data-tooltip="選択したFIXED Graph Versionからread-onlyで継承され、ここでは変更できません。">Outcome (Graphから継承)<output id="inference-outcome" class="readonly-field">Graphを選択してください</output></label>
@@ -145,20 +146,21 @@
           <label data-tooltip="ATEは母集団全体、ATTはTreatmentを受けた対象における平均処置効果です。">Estimand<select name="estimand"><option>ATE</option><option>ATT</option></select></label><label data-tooltip="BACKDOORは交絡調整、RANDOMIZEDは無作為割付を仮定した識別戦略です。">Identification strategy<select name="strategy"><option>BACKDOOR</option><option>RANDOMIZED</option></select></label><label data-tooltip="交絡調整へ使用するpre-treatment列をカンマ区切りで指定します。colliderやpost-treatment列を含めないでください。">Adjustment set<input name="adjustment" placeholder="past_sales,member_rank"></label>
           <label data-tooltip="識別と推定が成立するために置く科学的仮定を、カンマまたは改行区切りで記録します。">Assumptions<textarea name="assumptions" placeholder="No unmeasured confounding"></textarea></label>
           <button id="run-identification" type="button">1. Identification / Eligibilityを実行</button>
-          </fieldset>
-          <fieldset id="estimation-inputs"><legend>Estimation</legend>
+          </fieldset></div>
+          <div data-causal-stage-surface="estimation"><fieldset id="estimation-inputs"><legend>Estimation</legend>
           <label data-tooltip="先に実行したIdentificationのうち、推定gateを通過できるResultを選択します。">Identification Result<select name="identification_result_id" id="identification-results" required></select></label>
           <label data-tooltip="Data EligibilityがWARNでも推定を続ける場合に、判断理由を明示します。FAILはoverrideできません。">WARN override reason<input name="override_reason"></label>
           <label data-tooltip="既存Executionの再実行または条件変更としてLineageを残す場合に基準Executionを選択します。">Base Execution (re-run / revision)<select name="base_execution_id" id="base-executions"><option value="">新規分析</option></select></label>
           <label data-tooltip="基準Executionから条件を変更する場合に、その理由を必ず記載します。">Change reason<input name="change_reason" placeholder="条件変更時は必須"></label>
           <fieldset><legend>Estimators</legend><label><input type="checkbox" name="estimators" value="difference_in_means" checked> Difference in means</label><label><input type="checkbox" name="estimators" value="ols" checked> OLS</label><label><input type="checkbox" name="estimators" value="ipw" checked> IPW</label><label><input type="checkbox" name="estimators" value="aipw"> AIPW</label></fieldset>
-          <div id="preflight"></div><div id="scientific-warnings" role="alert"></div><button>2. 許可済みResultからEstimationを実行</button>
-          </fieldset>
+          <button>2. 許可済みResultからEstimationを実行</button>
+          </fieldset></div>
         </form>
-        <div class="card"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
-        <div class="card"><div class="heading"><h2>Estimation / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
-        <form id="refutation-form" class="card form-grid"><h2>Refutation</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Method<select name="method"><option>PLACEBO_TREATMENT</option><option>DATA_SUBSET</option></select></label><label>Repetitions<input name="repetitions" type="number" value="20" min="2"></label><label>Subset fraction<input name="subset_fraction" type="number" value="0.8" step="0.05"></label><button>実行</button></form>
-        <form id="sensitivity-form" class="card form-grid"><h2>Sensitivity</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Dimension<select name="dimension"><option>PROPENSITY_CLIPPING</option><option>ADJUSTMENT_SET</option></select></label><label>Clipping values<input name="values" value="0.01,0.025,0.05"></label><label>Adjustment sets (;区切り)<input name="adjustment_sets" placeholder="x1;x1,x2"></label><button>実行</button></form>
+        <div class="card" data-causal-stage-surface="identification"><h2>Identification / Eligibility / Gate</h2><div id="identification-panel"></div></div>
+        <div class="card" data-causal-stage-surface="effects diagnostics"><div class="heading"><h2>Effects / Diagnostics</h2><button id="refresh-inference" type="button">更新</button></div><div id="inference-results"></div><button id="compare-inference" type="button">選択Resultを比較</button><pre id="inference-comparison"></pre></div>
+        <div class="card" data-causal-stage-surface="diagnostics"><h2>Diagnostics / Warnings</h2><div id="preflight"></div><div id="scientific-warnings" role="alert"></div></div>
+        <form id="refutation-form" class="card form-grid" data-causal-stage-surface="sensitivity"><h2>Refutation</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Method<select name="method"><option>PLACEBO_TREATMENT</option><option>DATA_SUBSET</option></select></label><label>Repetitions<input name="repetitions" type="number" value="20" min="2"></label><label>Subset fraction<input name="subset_fraction" type="number" value="0.8" step="0.05"></label><button>実行</button></form>
+        <form id="sensitivity-form" class="card form-grid" data-causal-stage-surface="sensitivity"><h2>Sensitivity</h2><label>Treatment Effect Result<select name="result_id" class="effect-results" required></select></label><label>Dimension<select name="dimension"><option>PROPENSITY_CLIPPING</option><option>ADJUSTMENT_SET</option></select></label><label>Clipping values<input name="values" value="0.01,0.025,0.05"></label><label>Adjustment sets (;区切り)<input name="adjustment_sets" placeholder="x1;x1,x2"></label><button>実行</button></form>
       </section>
       <section id="predictive" class="workspace">
         <h1>Predictive Workspace</h1>
@@ -167,6 +169,7 @@
         <div class="card"><h2>Backend Capabilities</h2><div id="predictive-capabilities">Backend availabilityを確認中です。</div></div>
         <form id="predictive-form" class="card form-grid">
           <h2>Prediction Task / Specification</h2>
+          <fieldset data-predictive-stage-surface="setup"><legend>Setup</legend>
           <label>Active Research Context<select name="research_context_version_id" id="predictive-context" required><option value="">FIXED Contextを選択</option></select></label>
           <label>Dataset Version<select name="dataset_version_id" class="datasets-select" required></select></label>
           <label>Analysis View<select name="analysis_view_id" id="predictive-view"><option value="">Dataset Version全体</option></select></label>
@@ -189,22 +192,29 @@
           <label>Time column<input name="time_column" placeholder="event_time"></label>
           <label>Train cutoff<input name="train_cutoff" placeholder="2025-01-01T00:00:00Z"></label>
           <label>Validation cutoff<input name="validation_cutoff" placeholder="2025-06-01T00:00:00Z"></label>
+          </fieldset>
+          <fieldset data-predictive-stage-surface="train"><legend>Train</legend>
           <label><input name="scale_numeric" type="checkbox" checked> Scale numeric features</label>
           <label>Model<select name="model_id"><option value="logistic_regression.v1">Logistic regression</option><option value="linear_regression.v1">Linear regression</option></select></label>
           <label>Tuning selection<select name="tuning_selection"><option value="TRAIN,VALIDATION">TRAIN + VALIDATION</option></select></label>
+          <button id="run-predictive" disabled>Splitを検証しTraining / Evaluation / Explanationを実行</button>
+          </fieldset>
+          <fieldset data-predictive-stage-surface="metrics"><legend>Metrics</legend>
           <label>Primary metric<select name="primary_metric"><option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option></select></label>
           <label>Secondary metrics (comma separated)<input name="secondary_metrics" placeholder="PR_AUC, F1"></label>
           <label>Subgroup columns (comma separated)<input name="subgroups" placeholder="region, cohort"></label>
+          </fieldset>
+          <fieldset data-predictive-stage-surface="explainability"><legend>Explainability</legend>
           <label>Explanation method<select name="explanation_method" id="predictive-explanation-method"><option value="LINEAR_COEFFICIENT_CONTRIBUTION">Linear coefficient contribution</option></select></label>
           <label>Explanation sample size<input name="explanation_sample_size" type="number" min="1" max="1000" value="20" required></label>
           <label><input name="local_explanations" type="checkbox" checked> Local explanationを生成</label>
-          <button id="run-predictive" disabled>Splitを検証しTraining / Evaluation / Explanationを実行</button>
+          </fieldset>
         </form>
-        <div class="card"><h2>Split Validation</h2><div id="predictive-split-validation">未実行</div></div>
-        <div class="card"><div class="heading"><h2>Execution Status</h2><button id="refresh-predictive" type="button">更新</button></div><div id="predictive-executions">Executionはありません。</div></div>
+        <div class="card" data-predictive-stage-surface="setup"><h2>Split Validation</h2><div id="predictive-split-validation">未実行</div></div>
+        <div class="card" data-predictive-stage-surface="train"><div class="heading"><h2>Execution Status</h2><button id="refresh-predictive" type="button">更新</button></div><div id="predictive-executions">Executionはありません。</div></div>
         <div class="grid">
-          <div class="card"><h2>Evaluation / Error Analysis / Explanation / Model Card</h2><div id="predictive-results">Resultはありません。</div></div>
-          <div class="card"><h2>Result / Artifact References</h2><div id="predictive-artifacts">Artifactはありません。</div></div>
+          <div class="card" data-predictive-stage-surface="train metrics explainability model-management"><h2>Predictive Result</h2><div id="predictive-results">Resultはありません。</div></div>
+          <div class="card" data-predictive-stage-surface="predict model-management"><h2>Result / Artifact References</h2><div id="predictive-artifacts">Artifactはありません。</div></div>
         </div>
       </section>
       <section id="results" class="workspace">

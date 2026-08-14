@@ -77,13 +77,15 @@ def main() -> int:
             _route(page, project_id, "results", "results")
             evidence["scenarios"]["project-routes-reload-history"] = {"status": "PASS"}
 
-            page.locator('nav button[data-workspace="explore"]').click()
+            page.locator('nav button[data-route="overview"]').click()
+            _route(page, project_id, "overview", "management")
+            page.locator('[data-open-analysis-family="exploratory"]').click()
             page.wait_for_function(
                 "expected => window.location.pathname === expected",
                 arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
             )
             _active(page, "explore")
-            evidence["scenarios"]["legacy-analysis-shortcut"] = {"status": "PASS"}
+            evidence["scenarios"]["project-analysis-launcher"] = {"status": "PASS"}
             outcome = "PASS"
         except Exception as error:
             evidence["failure"] = repr(error)
