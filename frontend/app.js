@@ -2,8 +2,9 @@ const API="/api/v1";
 const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,predictiveDraft:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
 const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
-const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
-const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
+const PROJECT_WORKSPACES=Object.freeze({overview:'management',context:'context',data:'data',results:'results'});
+const LEGACY_PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
+const LEGACY_PROJECT_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
 const ANALYSIS_HISTORY_MODES=Object.freeze({PUSH:'PUSH',REPLACE:'REPLACE',NONE:'NONE'});
 const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
@@ -56,24 +57,38 @@ enhanceTooltips();
 
 async function activateWorkspace(workspace,{push=true,button=null}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
-  if(!button)return;
-  const shortcutFamily=button.dataset.navigationFamily,shortcutStage=button.dataset.navigationStage;
+  const shortcutFamily=button?.dataset.navigationFamily,shortcutStage=button?.dataset.navigationStage;
   if(push&&shortcutFamily&&shortcutStage&&state.navigationCatalog&&state.project){
     const context=AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,shortcutFamily,shortcutStage);
     return applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'legacy-analytical-shortcut'});
   }
-  button.dataset.refreshStatus='pending';
-  $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
+  if(button)button.dataset.refreshStatus='pending';
+  $$('nav button').forEach(x=>x.classList.remove('active'));if(button)button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
-  if(push&&state.project&&button.dataset.route){
-    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
-    if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
+  if(push&&button?.dataset.route){
+    const route=state.project
+      ? ProjectNavigation.projectRoute(state.project.project_id,button.dataset.route)
+      : {kind:'collection'};
+    synchronizeProjectHistory(route,'PUSH');
   }
   if(!shortcutFamily)clearAnalysisNavigationShell();
-  try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
+  try{await refreshAll();if(button)button.dataset.refreshStatus='done'}catch(error){if(button)button.dataset.refreshStatus='failed';notice(error.message);throw error}
   const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
-$$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
+function synchronizeProjectHistory(route,historyMode){
+  const path=ProjectNavigation.serialize(route);
+  if(location.pathname===path)return;
+  if(historyMode==='PUSH')history.pushState({projectRoute:route},'',path);
+  else if(historyMode==='REPLACE')history.replaceState({projectRoute:route},'',path);
+  else if(historyMode!=='NONE')throw new Error(`Unknown project history mode: ${historyMode}`);
+}
+$$('nav [data-workspace]').forEach(button=>button.onclick=()=>{
+  if(button.dataset.workspace==='management'&&!state.project){
+    synchronizeProjectHistory({kind:'collection'},'PUSH');
+    return activateWorkspace('projects',{push:false});
+  }
+  return activateWorkspace(button.dataset.workspace,{button});
+});
 
 function normalizeAnalysisNavigationContext(context){
   if(!state.navigationCatalog)throw new Error('Navigation catalog is unavailable');
@@ -117,12 +132,27 @@ async function restoreProjectRoute(){
       return true;
     }
   }
-  const match=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
-  if(!match)return false;
-  const [,projectId,route]=match;
-  state.project=await api(`/projects/${projectId}`);
-  fillProject();await loadProjects();$('#project-select').value=projectId;
-  await activateWorkspace(ROUTE_WORKSPACES[route],{push:false});
+  let route;
+  try{route=ProjectNavigation.parse(location.pathname)}catch(error){
+    if(!(error instanceof ProjectNavigation.ProjectRouteError)||error.code!=='PROJECT_ROUTE_NOT_FOUND')throw error;
+    const legacy=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
+    if(!legacy)return false;
+    const [,projectId,legacyRoute]=legacy;
+    const workspace=LEGACY_PROJECT_ROUTES[legacyRoute];
+    state.project=await api(`/projects/${projectId}`);
+    fillProject();await loadProjects();$('#project-select').value=projectId;
+    await activateWorkspace(LEGACY_PROJECT_WORKSPACES[workspace],{push:false});
+    return true;
+  }
+  if(route.kind==='collection'||route.kind==='new'){
+    state.project=null;fillProject();await loadProjects();
+    await activateWorkspace(route.kind==='collection'?'projects':'project-new',{push:false});
+    return true;
+  }
+  state.project=await api(`/projects/${route.projectId}`);
+  fillProject();await loadProjects();$('#project-select').value=route.projectId;
+  synchronizeProjectHistory(route,'REPLACE');
+  await activateWorkspace(PROJECT_WORKSPACES[route.section],{push:false});
   return true;
 }
 function clearAnalysisNavigationShell(){
@@ -155,12 +185,13 @@ async function loadProjects(){
   const data=await api('/projects');state.projects=data.items;const select=$('#project-select');
   select.innerHTML='<option value="">Projectを選択</option>'+data.items.map(p=>`<option value="${p.project_id}">${escapeHtml(p.name)}</option>`).join('');
   if(state.project){select.value=state.project.project_id}
-  $('#project-list').innerHTML=data.items.length?`<table><thead><tr><th>Name</th><th>Topic</th><th>Objective</th><th>Status</th><th></th></tr></thead><tbody>${data.items.map(p=>`<tr><td><button type="button" class="link-button" onclick="selectProject('${p.project_id}')">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.topic||'—')}</td><td>${escapeHtml(p.objective||'—')}</td><td><span class="status">${p.status}</span></td><td><button type="button" class="danger" onclick="requestArchive('${p.project_id}')">削除</button></td></tr>`).join('')}</tbody></table>`:'ACTIVE Projectはありません';
+  $('#project-list').innerHTML=data.items.length?`<table><thead><tr><th>Name</th><th>Topic</th><th>Objective</th><th>Status</th></tr></thead><tbody>${data.items.map(p=>`<tr><td><button type="button" class="link-button" onclick="selectProject('${p.project_id}')">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.topic||'—')}</td><td>${escapeHtml(p.objective||'—')}</td><td><span class="status">${p.status}</span></td></tr>`).join('')}</tbody></table>`:'ACTIVE Projectはありません';
 }
-$('#new-project').onclick=()=>activateWorkspace('management');
-$('#project-select').onchange=async event=>{state.project=event.target.value?await api(`/projects/${event.target.value}`):null;fillProject();if(state.project)await activateWorkspace('data');else await refreshAll()};
-window.selectProject=async id=>{state.project=await api(`/projects/${id}`);fillProject();await loadProjects();await activateWorkspace('data')};
-function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';renderCommonWorkspaceHeader()}
+$('#new-project').onclick=async()=>{state.project=null;fillProject();synchronizeProjectHistory({kind:'new'},'PUSH');await activateWorkspace('project-new',{push:false})};
+$('#cancel-project-register').onclick=async()=>{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})};
+$('#project-select').onchange=async event=>{state.project=event.target.value?await api(`/projects/${event.target.value}`):null;fillProject();if(state.project){synchronizeProjectHistory(ProjectNavigation.overview(state.project.project_id),'PUSH');await activateWorkspace('management',{push:false})}else{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})}};
+window.selectProject=async id=>{state.project=await api(`/projects/${id}`);fillProject();await loadProjects();synchronizeProjectHistory(ProjectNavigation.overview(id),'PUSH');await activateWorkspace('management',{push:false})};
+function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';$('#overview-project-name').textContent=state.project?.name||'Projectを選択してください';$('#overview-project-status').textContent=state.project?.status||'—';$('#archive-project').disabled=!state.project;renderCommonWorkspaceHeader()}
 
 function renderCommonWorkspaceHeader(){
   const workspace=state.workspaceState;
@@ -196,10 +227,11 @@ async function saveWorkspaceState(changes){
 $('#common-context').onchange=event=>saveWorkspaceState({research_context_version_id:event.target.value||null}).catch(error=>notice(error.message));
 $('#common-dataset').onchange=event=>saveWorkspaceState({dataset_version_id:event.target.value||null,analysis_view_id:null}).catch(error=>notice(error.message));
 $('#common-view').onchange=event=>saveWorkspaceState({analysis_view_id:event.target.value||null}).catch(error=>notice(error.message));
-$('#project-register-form').onsubmit=async event=>{event.preventDefault();try{state.project=await api('/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});event.target.reset();await loadProjects();$('#project-select').value=state.project.project_id;fillProject();notice('Projectを登録しました')}catch(error){notice(error.message)}};
+$('#project-register-form').onsubmit=async event=>{event.preventDefault();try{state.project=await api('/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});event.target.reset();await loadProjects();$('#project-select').value=state.project.project_id;fillProject();synchronizeProjectHistory(ProjectNavigation.overview(state.project.project_id),'REPLACE');await activateWorkspace('management',{push:false});notice('Projectを登録しました')}catch(error){notice(error.message)}};
 $('#project-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('ACTIVE Projectを選択してください');try{const body=Object.fromEntries(new FormData(event.target));state.project=await api(`/projects/${state.project.project_id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});await loadProjects();$('#project-select').value=state.project.project_id;notice('Project metadataを更新しました')}catch(error){notice(error.message)}};
 window.requestArchive=id=>{state.pendingArchive=id;$('#archive-modal').showModal()};
-$('#confirm-archive').onclick=async()=>{if(!state.pendingArchive)return;try{await api(`/projects/${state.pendingArchive}`,{method:'DELETE'});if(state.project?.project_id===state.pendingArchive){state.project=null;state.workspaceState=null;state.unifiedResults=[];fillProject();state.datasets=[];state.executions=[];state.results=[];state.graphs=[];state.graphCandidates=[];state.researchContexts=[];state.predictiveExecutions=[]}state.pendingArchive=null;$('#archive-modal').close();await loadProjects();$('#project-select').value='';history.pushState({},'', '/');await activateWorkspace('management',{push:false});notice('ProjectをARCHIVEDへ変更しました。既存Lineageは保持されます')}catch(error){notice(error.message)}};
+$('#archive-project').onclick=()=>{if(state.project)requestArchive(state.project.project_id)};
+$('#confirm-archive').onclick=async()=>{if(!state.pendingArchive)return;try{await api(`/projects/${state.pendingArchive}`,{method:'DELETE'});if(state.project?.project_id===state.pendingArchive){state.project=null;state.workspaceState=null;state.unifiedResults=[];fillProject();state.datasets=[];state.executions=[];state.results=[];state.graphs=[];state.graphCandidates=[];state.researchContexts=[];state.predictiveExecutions=[]}state.pendingArchive=null;$('#archive-modal').close();await loadProjects();$('#project-select').value='';synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false});notice('ProjectをARCHIVEDへ変更しました。既存Lineageは保持されます')}catch(error){notice(error.message)}};
 
 $('#dataset-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('Projectを選択してください');try{const form=new FormData(event.target);await api(`/projects/${state.project.project_id}/dataset-versions`,{method:'POST',headers:{'Idempotency-Key':idempotencyKey()},body:form});event.target.reset();await loadDatasets();notice('Dataset Versionを登録しました')}catch(error){notice(error.message)}};
 async function loadDatasets(){
