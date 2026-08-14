@@ -2,7 +2,7 @@
 
 **文書種別:** Primary Execution Contract  
 **Self-containment:** MUST  
-**Verification contract status:** DRAFT_NOT_FROZEN
+**Verification contract status:** FROZEN
 
 ## 1. Acceptance authority
 
@@ -44,7 +44,7 @@ Analysis WorkspaceがProject Managementとは別analysis surfaceとして成立�
 | AC-G02-06 | Family navigationがAnalysis Workspace内だけに存在する。 | independent source/test/runtime evidence | MUST |
 | AC-G02-07 | Stage navigationがactive Family配下の縦navigationでselected stateを持つ。 | independent source/test/runtime evidence | MUST |
 | AC-G02-08 | existing Causal surfaceをmapped Stageから操作できる。 | independent source/test/runtime evidence | MUST |
-| AC-G02-09 | existing Exploratory surfaceをmapped Stageから操作できる。 | independent source/test/runtime evidence | MUST |
+| AC-G02-09 | Exploratory mappingが固定どおりである。`PROFILE` / `DISTRIBUTION` / `ASSOCIATION` / `GROUP_SUMMARY` / `TIME_TREND` / `CHART`をmapped Stageから既存semanticsで操作でき、Data Qualityは`DATA_QUALITY` executionを作らないread-only availability stageである。 | independent source/test/runtime evidence | MUST |
 | AC-G02-10 | existing Predictive surfaceをmapped Stageから操作できる。 | independent source/test/runtime evidence | MUST |
 | AC-G02-11 | Predictive Execution semanticsが変更されていない。 | independent source/test/runtime evidence | MUST |
 | AC-G02-12 | canonical Analysis URL semanticsが変更されていない。 | independent source/test/runtime evidence | MUST |
@@ -64,7 +64,7 @@ Analysis WorkspaceがProject Managementとは別analysis surfaceとして成立�
 | 002 | analysis_context_contract | AC-G02-01,02,03,04,05,06,07 | FRONTEND_CONTRACT | YES | shell/contextとduplicate navigation absenceを検証。 |
 | 003 | analysis_navigation_contract | AC-G02-12,13,14,17,18,19 | FRONTEND_CONTRACT | YES | AnalysisNavigation / legacy / resource / history regression。 |
 | 004 | causal_stage_operability | AC-G02-08,19 | FRONTEND_CONTRACT/API_INTEGRATION | YES | Causal mapped-surface operability / regression。 |
-| 005 | exploratory_stage_operability | AC-G02-09,19 | FRONTEND_CONTRACT/API_INTEGRATION | YES | Exploratory mapped-surface operability / regression。 |
+| 005 | exploratory_stage_operability | AC-G02-09,19 | FRONTEND_CONTRACT/API_INTEGRATION | YES | fixed mapping（Profile / Data Quality / Distribution / Relationships / Comparison / Findings）、Data Quality no-execution、TIME_TREND aggregate semantics、CHART persisted operationを検証する。 |
 | 006 | predictive_stage_semantics | AC-G02-10,11,19 | FRONTEND_CONTRACT/API_INTEGRATION | YES | Predictive mapped presentation / execution-model regression。 |
 | 007 | legacy_and_cross_surface_routing | AC-G02-14,15,16,17,18 | FRONTEND_CONTRACT | YES | legacy normalization / Project-Analysis-Results routing。 |
 | 008 | analysis_main_browser_journey | AC-G02-01,02,06,07,08,09,10,15,16 | BROWSER_E2E | YES | Project → Analysis → Family/Stage/surface → Results → Project Management。 |
@@ -189,4 +189,3 @@ report自身のcommit SHAを同report本文へ自己記録することは要求�
 
 Test Item reportをすべて作成した後、最後に`999_gate_decision`を作成する。
 Gate Decision作成後にProduct/test implementationを修復してはならない。
-

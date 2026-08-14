@@ -1,7 +1,7 @@
 # ENH-E7 Design改定
 
 **文書種別:** Planning / Decision Artifact  
-**Status:** PROPOSED_PENDING_ARCHITECTURE_REVIEW
+**Status:** APPROVED_FOR_G01_AND_FROZEN_FOR_G02
 
 ## 1. Navigation authority
 
@@ -47,10 +47,16 @@ Project変更はProjects / Project Management経由で行う。
 Setup / Discovery / Identification / Estimation / Effects / Diagnostics / Sensitivityへexisting surfaceを移設する。
 
 ### Exploratory
-PROFILE → Profile、DISTRIBUTION → Distribution、ASSOCIATION → Relationships、
-GROUP_SUMMARY → Comparison、Saved Exploratory Results → Findings。
+| Stage | Existing operation / availability | Final placement behavior |
+| --- | --- | --- |
+| Profile | `PROFILE` | operation controlとProfile resultを配置する。 |
+| Data Quality | operationなし | read-only availability stage。existing `PROFILE` resultを表示し、存在しない場合は`NO_PROFILE_RESULT`とProfileへの導線だけを表示する。execution、resource、backend stateを作らない。 |
+| Distribution | `DISTRIBUTION` | operation controlとresultを配置する。 |
+| Relationships | `ASSOCIATION` | operation controlとresultを配置する。 |
+| Comparison | `GROUP_SUMMARY`, `TIME_TREND` | 両operationのcontrolとresultを配置する。`TIME_TREND`は既存grouping/aggregationであり、時系列モデルや時刻型validationを追加しない。 |
+| Findings | `CHART`およびsaved Exploratory Results | `CHART` control、Chart artifact/result、既存saved resultを配置する。`CHART`は既存の永続operationであり、表示専用mechanismへ置換しない。 |
 
-`Data Quality / TIME_TREND / CHART`はG02 freeze前にsource factで確定する。
+`DATA_QUALITY` operationは作らない。Stage placementはpresentation/navigation decisionであり、Exploratory planner、runner、Result type、artifact type、API/persistenceを変更しない。
 
 ### Predictive
 existing `Prediction Task → Split → Training → Evaluation → Explanation → Model Card` semanticsを保護する。

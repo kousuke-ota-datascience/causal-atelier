@@ -1,6 +1,6 @@
 # ENH-E7 G02 — Analysis Workspace Contract
 
-**Status:** DRAFT_NOT_FROZEN  
+**Status:** FROZEN
 **Execution Mode:** WORK_PACKAGE
 
 ## Gate claim
@@ -18,7 +18,8 @@ Analysis WorkspaceがProject Managementとは別analysis surfaceとして成立�
 
 ## Active contract rule
 
-- Architecture Review完了後、Human/operatorが06/07をFROZENに変更した時点でGate contractがexecution authorityになる。
+- Architecture Discoveryのsource confirmationとtraceability reviewを完了し、06/07をFROZENとした。06/07がGate execution authorityである。
+- P04のExploratory mappingはself-containedに固定した。Data Qualityはread-only availability、TIME_TRENDはexisting aggregate operation、CHARTはexisting persisted operationである。
 - PxxはdependencyとpreflightがPASSした場合だけexecution eligibleになる。
 - 08はformal FAILまでinactive。
 - 09はsemantic Gate contract amendmentが明示的に承認された場合だけactiveになる。

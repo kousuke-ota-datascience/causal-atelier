@@ -8,7 +8,7 @@
 **初回発行Trial:** 01  
 **Package:** P04  
 **Depends on:** P01,P02  
-**Status at issuance:** DRAFT_NOT_FROZEN
+**Status at issuance:** FROZEN
 
 ## 1. 目的
 
@@ -27,17 +27,23 @@ existing Exploratory operation/resultをStage hierarchyへ移設する。
 
 ## 3. In scope
 
-- PROFILE → Profile
-- DISTRIBUTION → Distribution
-- ASSOCIATION → Relationships
-- GROUP_SUMMARY → Comparison
-- Saved Exploratory Results → Findings
-- Data Quality / TIME_TREND / CHARTはfrozen source-based decisionに従う
+このpackageのfinal mappingは以下のみである。Stageはpresentation/navigation boundaryであり、operation名、planner、runner、Result/Artifact type、API/persistenceを変更しない。
+
+| Stage | Existing operation / availability | Required Stage Contents |
+| --- | --- | --- |
+| Profile | `PROFILE` | existing `PROFILE` operation controlとProfile result。 |
+| Data Quality | operationなし | read-only availability surface。existing `PROFILE` resultを表示する。Profile resultがなければ`NO_PROFILE_RESULT`とProfileへ戻る導線のみを表示する。execution submit、resource作成、`DATA_QUALITY` operation追加をしてはならない。 |
+| Distribution | `DISTRIBUTION` | existing operation controlとresult。 |
+| Relationships | `ASSOCIATION` | existing operation controlとresult。 |
+| Comparison | `GROUP_SUMMARY`、`TIME_TREND` | existing operation controlsとresults。`TIME_TREND`はvalid grouping / aggregationを使う既存aggregationであり、時刻型validation、順序推論、trend modelを追加してはならない。既存`GROUP_SUMMARY_RESULT`を維持する。 |
+| Findings | `CHART`およびsaved Exploratory Results | existing `CHART` operation control、saved Chart artifact/result、saved Exploratory Results。`CHART`は`CHART_RESULT`とVega-Lite chart artifactを生成する既存operationであり、presentation-only stateへ置換してはならない。 |
 
 ## 4. Explicitly out of scope
 
 - taxonomyを埋めるためbackend operationを作らない。
 - CHART presentationを新execution modelにしない。
+- `DATA_QUALITY` execution、result、artifact、API、persistenceを作らない。
+- TIME_TRENDに既存sourceにないtime-series semanticを追加しない。
 
 加えてAcceptance Criteria変更、unrelated cleanup、next package実装はout of scope。
 
@@ -59,12 +65,13 @@ existing Exploratory operation/resultをStage hierarchyへ移設する。
 3. focused testをrepository conventionに従って追加・更新する。
 4. UI taxonomyを埋めるためのsubstitute backend semanticsを作らない。
 5. source factとcontractが矛盾すれば停止して報告する。
+6. existing exploration preview / execution / saved-result APIをそのまま利用し、Data Qualityを含む全Stage Contentsを既存operation/resultへ接続する。
 
 ## 7. Focused verification
 
 | Check | Command / method | Required result |
 |---|---|---|
-| focused product test | `uv run pytest -q tests/product/test_enh_e7_g02_p04_exploratory_stage_surface_migration.py` | PASS |
+| focused product test | `uv run pytest -q tests/product/test_enh_e7_g02_p04_exploratory_stage_surface_migration.py` | PASS。上表の全mapping、Data Qualityのno-execution、TIME_TREND / CHARTの既存semanticsを確認する。 |
 | nearby regression | touched responsibilityのrepository test | PASS |
 | source/diff audit | ownership/navigation/semantics確認 | out-of-scope semantic changeなし |
 
@@ -125,7 +132,7 @@ Gate-level candidate identityは全required package完了後のCandidate Assembl
 
 ## 10. Package completion criteria
 
-existing Exploratory operationをmapped Stage Contentsから操作できる。
+上表のexisting Exploratory operationをmapped Stage Contentsから操作できる。Data Qualityはexisting Profile resultのread-only availabilityを示し、operationを実行しない。
 
 加えてfocused verification完了、unresolved blockerなし、package execution status report作成済み。
 

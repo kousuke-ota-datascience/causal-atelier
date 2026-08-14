@@ -7,7 +7,7 @@
 **Active Gate:** G02  
 **Branch:** `feature/ariadne_mvp_e7`  
 **Baseline:** `REQUIRES_LOCAL_VERIFICATION`  
-**Contract status:** DRAFT_NOT_FROZEN  
+**Contract status:** FROZEN
 **Execution Mode:** WORK_PACKAGE  
 **Current State:** `docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation/Current_State_Control_Sheet.md`
 
@@ -66,6 +66,13 @@ P00はHuman/operator用orchestration traceabilityであり、Coding Agentは仕�
 - AC-G02-18: existing resource-route semanticsが維持される。
 - AC-G02-19: ENH-E6 protected Analysis navigation semanticsがregressionしない。
 
+### Frozen Exploratory placement decision
+
+- `PROFILE` → Profile、`DISTRIBUTION` → Distribution、`ASSOCIATION` → Relationships、`GROUP_SUMMARY` / `TIME_TREND` → Comparison、`CHART`およびsaved Exploratory Results → Findings。
+- Data Qualityはoperationではないread-only availability stageである。existing Profile resultを表示し、存在しない場合は`NO_PROFILE_RESULT`とProfileへの導線を表示する。`DATA_QUALITY` operation、execution、resource、API/persistenceを作らない。
+- `TIME_TREND`は既存grouping / aggregation operationであり、時刻型validation、順序推論、trend modelを追加しない。既存`GROUP_SUMMARY_RESULT`を維持する。
+- `CHART`は`CHART_RESULT`とVega-Lite chart artifactを保存する既存operationである。presentation-only mechanismへの置換や新execution modelの作成をしない。
+
 ## 5. Allowed scope
 
 - Analysis shell / context / routing / Stage Contentsへのexisting surface migration。
@@ -80,6 +87,7 @@ P00はHuman/operator用orchestration traceabilityであり、Coding Agentは仕�
 - Causal domain semantics変更。
 - Family / Stage taxonomyの大幅変更。
 - persistence/schema redesign。
+- `DATA_QUALITY` operationの新設、またはTIME_TRENDへの未承認time-series semantics追加。
 - implementationに合わせたAC変更。
 
 ## 7. Protected passed-Gate contract
