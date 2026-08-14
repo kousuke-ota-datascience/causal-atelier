@@ -7,9 +7,11 @@ They can record unverified implementation facts, but they do not establish Gate 
 Evidence identities:
 
 ```text
-package checkpoint
+package execution evidence
   != Fixed Trial Candidate
   != Gate PASS
 ```
 
-A Fixed Trial Candidate is created only by Candidate Assembly after all required Pxx are complete.
+Work Packageではfocused implementation / verificationのhandoffを目的とし、package単位のFixed Candidate SHA lockは要求しない。
+
+A Fixed Trial Candidate is created only by Candidate Assembly after all required Pxx are complete and Gate-wide integration checks are performed.

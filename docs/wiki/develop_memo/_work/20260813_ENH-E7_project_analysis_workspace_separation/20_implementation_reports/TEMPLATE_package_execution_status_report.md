@@ -1,20 +1,21 @@
-# Package Execution Status Report
+# Package Execution Status Report — Human/Audit convenience template
 
+> Work Package Coding Agentのauthorityはassigned Pxx / Coding Agent prompt。矛盾する場合はinstance-side execution contractを優先する。
+
+- Enhancement:
 - Gate:
 - Trial:
 - Package:
-- State: IN_PROGRESS / PACKAGE_COMPLETE / PACKAGE_BLOCKED
-- Current implementation checkpoint SHA:
-- Last verified command:
+- State: PACKAGE_COMPLETE / PACKAGE_BLOCKED
+- Branch:
+- Implementation HEAD full SHA: NOT_RECORDED
 
-## Completed
+## 実施したscope
+## Changed files / responsibility
+## Focused verification
+## Remaining / blocker
+## Scope guard確認
+## Facts
+## Interpretation
 
-## Remaining within assigned scope
-
-## Blocker, if any
-
-## Scope guard confirmation
-
-- no next-package work:
-- no Gate acceptance decision:
-- no prohibited workflow-document dependency:
+`Implementation HEAD full SHA` はtraceability用のoptional evidenceであり、package completionのSHA lockではない。

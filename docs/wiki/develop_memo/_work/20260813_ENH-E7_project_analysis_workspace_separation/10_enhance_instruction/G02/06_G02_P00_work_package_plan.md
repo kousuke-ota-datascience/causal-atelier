@@ -34,3 +34,15 @@ bounded executionとfailure localizationが必要である。
 Required package set: P01, P02, P03, P04, P05, P06。
 
 すべてcompleteした後だけCandidate Assemblyを行い、Fixed Trial Candidateを`READY_FOR_TEST`へ進める。
+
+
+## Package report authority
+
+各Work Packageのhandoff report保存先・filename・必須内容は**assigned Pxx本文**がauthorityである。package単位のcheckpoint SHA固定は要求しない。
+Coding Agentは20-layer templateを読んで仕様補完しない。
+
+Canonical package report directory:
+
+```text
+20_implementation_reports/G02/Trial<TRIAL_NO>/packages/
+```

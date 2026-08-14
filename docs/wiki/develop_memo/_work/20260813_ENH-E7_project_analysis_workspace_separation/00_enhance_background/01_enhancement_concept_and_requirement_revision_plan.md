@@ -1,16 +1,16 @@
 # ENH-E7 Enhance構想・要件改定計画
 
-> 文書種別: Planning / Decision Artifact  
-> Self-containment: MUST（当該文書の主題について本文内で完結） — 当該artifactの結論・effective contentを本文内に持つ。  
-> Status: PLAN READY FOR 00-layer instantiation / IMPLEMENTATION NOT YET AUTHORIZED（実装未承認）  
+> Document class: Planning / Decision Artifact  
+> Self-containment: MUST for own subject — 当該artifactの結論・effective contentを本文内に持つ。  
+> Status: PLAN READY FOR 00-layer instantiation / IMPLEMENTATION NOT YET AUTHORIZED  
 > Enhancement: ENH-E7  
 > Project: Ariadne  
 > Branch: `feature/ariadne_mvp_e7`  
-> 想定work root: `docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation/`
+> Proposed work root: `docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation/`
 
 ---
 
-## 1. 問題定義
+## 1. Problem statement
 
 ENH-E7 は、現行 Ariadne UI において Project resource 管理と Analysis execution の navigation hierarchy が混在し、同一概念が複数の navigation surface に重複して現れている問題を、Top-level Information Architecture の再編として解消する Enhancement である。
 
@@ -61,7 +61,7 @@ Operation
 
 異なる抽象レベルの概念を同一 navigation hierarchy に戻してはならない。
 
-### 根拠・由来
+### Provenance
 
 - `ENH-E7 Handoff — Project Management / Analysis Workspace IA Redesign`
 - ENH-E6 Family / Stage navigation implementation and PASS evidence
@@ -70,7 +70,7 @@ Operation
 
 ---
 
-## 2. 今このEnhancementを行う理由
+## 2. Why now
 
 ENH-E6 により Analysis Family / Stage navigation 自体は導入済みであり、canonical analysis route も成立している。
 
@@ -94,7 +94,7 @@ ENH-E6 により Analysis Family / Stage navigation 自体は導入済みであ�
 
 ---
 
-## 3. 現状の問題
+## 3. Current-state problem
 
 ### 3.1 Navigation scope の混在
 
@@ -163,7 +163,7 @@ ENH-E7 の計画では、これらを execution protocol に組み込み、Codin
 
 ---
 
-## 4. 目標状態
+## 4. Target outcome
 
 ### 4.1 Canonical Top-level IA
 
@@ -247,7 +247,7 @@ resource route が既存 contract として存在する場合も維持する。
 
 Family 切替時は、existing analysis navigation catalog の `default_stage_id` を authority とする。Frontend 内に別の hard-coded default mapping を増やさない。
 
-### 4.4 Project Managementの機能ownership
+### 4.4 Project Management functional ownership
 
 #### `/projects`
 
@@ -394,7 +394,7 @@ Dataset Version を変更しても Family / Stage route は維持する。
 
 Analysis Workspace では Analysis View の input selection を行い、create/edit/version-management authority は Project Management / Data に置く。
 
-#### 復元方針
+#### Restore policy
 
 Project は URL から復元する。
 
@@ -404,7 +404,7 @@ Research Context / Dataset Version / Analysis View は existing persisted/worksp
 
 context selection 不足だけを理由に Family / Stage route を書き換えない。
 
-### 4.6 Analysis Workspaceのlayout
+### 4.6 Analysis Workspace layout
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
@@ -425,7 +425,7 @@ context selection 不足だけを理由に Family / Stage route を書き換え�
 - pixel-level styling は ENH-E7 Gate contract の主目的としない
 - 実装後の実機操作で見つかる UI 違和感は、semantic contract を変えない範囲で follow-up 調整可能とする
 
-### 4.7 既存Analysis surfaceの移設
+### 4.7 Existing Analysis surface migration
 
 G02 は Analysis shell が表示されるだけでは PASS としない。
 
@@ -562,7 +562,7 @@ Model Management
 
 ## 5. Scope
 
-### 対象範囲
+### In scope
 
 #### Product / IA
 
@@ -603,7 +603,7 @@ Model Management
 - Artifact completeness / Content completeness / Execution resolvability / Information isolation の独立 validation
 - candidate / READY_FOR_TEST / PASS の evidence identity 分離
 
-### 対象外
+### Out of scope
 
 - 全 Analysis 画面の全面的 UI redesign
 - Causal backend execution semantics の変更
@@ -621,7 +621,7 @@ scope expansion が必要になった場合は silent expansion を禁止し、R
 
 ---
 
-## 6. 想定するRequirement変更
+## 6. Requirement changes expected
 
 以下の ENH-E7 local requirement を新設・改定候補とする。
 
@@ -649,7 +649,7 @@ scope expansion が必要になった場合は silent expansion を禁止し、R
 | E7-REQ-020 | Results / Lineage は persisted cross-analysis aggregation responsibility を持つ |
 | E7-REQ-021 | ENH-E7 の UI 再編だけを理由に backend domain semantics を変更しない |
 
-### Workflow要件
+### Workflow requirements
 
 | ID | Requirement |
 |---|---|
@@ -668,7 +668,7 @@ scope expansion が必要になった場合は silent expansion を禁止し、R
 
 ---
 
-## 7. 想定するDesign変更
+## 7. Design changes expected
 
 ### 7.1 Navigation authority
 
@@ -690,7 +690,7 @@ Project route authority を Analysis-specific navigation state へ混在させ�
 
 Existing `AnalysisNavigation` と Analysis transition authority は protected semantics とし、ENH-E7 の application IA 再編を理由に不要な一般化・再実装を行わない。
 
-### 7.2 UI shellのownership
+### 7.2 UI shell ownership
 
 ```text
 Projects Surface
@@ -710,13 +710,13 @@ Analysis Workspace Shell
 
 旧 global sidebar に Project Management item と Analysis Family shortcut を並置する構造を廃止する。
 
-### 7.3 Data / Analysis Viewのownership
+### 7.3 Data / Analysis View ownership
 
 Analysis View の lifecycle management は Data に置く。
 
 Analysis Workspace は input selection を行うだけとする。
 
-### 7.4 Resultsのownership
+### 7.4 Results ownership
 
 Results / Lineage は cross-analysis persisted result aggregation とする。
 
@@ -744,7 +744,7 @@ source / tests / config / migrations
 
 Coding Agent operator prompt は workflow 全体の説明書にせず、resolver + guardrail とする。
 
-### 7.6 Coding Agentのinformation isolation
+### 7.6 Coding Agent information isolation
 
 Invariant:
 
@@ -776,7 +776,7 @@ implementation substrate として source / tests / config / migrations は調�
 
 Human/auditor traceability と Coding Agent read dependency は別概念とする。
 
-### 7.7 Pxxのself-containment
+### 7.7 Pxx self-containment
 
 各 Pxx は最低限以下を本文内に持つ。
 
@@ -796,9 +796,9 @@ Human/auditor traceability と Coding Agent read dependency は別概念とす�
 
 ## 8. Risk / migration / compatibility
 
-### 8.1 Product risk
+### 8.1 Product risks
 
-#### R-E7-01 — navigation authorityの重複
+#### R-E7-01 — navigation authority duplication
 
 Project route と Analysis route を複数箇所で解決すると URL と screen state が乖離する。
 
@@ -808,7 +808,7 @@ Mitigation:
 - direct link / reload / Back / Forward contract test
 - canonical normalization を一箇所へ集約
 
-#### R-E7-02 — Analysis execution semanticsの意図しない変更
+#### R-E7-02 — Analysis execution semantics accidental change
 
 Stage UI へ surface を移す過程で execution model まで変更する危険がある。
 
@@ -818,7 +818,7 @@ Mitigation:
 - Predictive Stage を presentation/navigation view と明示
 - backend operation 不在時に架空 operation を作らない
 
-#### R-E7-03 — Analysis Contextのstale selection
+#### R-E7-03 — Analysis Context stale selection
 
 Dataset Version変更時に互換性のない Analysis View が残る可能性。
 
@@ -827,7 +827,7 @@ Mitigation:
 - Dataset Version変更時に incompatible Analysis View selection を解除
 - Project整合性のない persisted context を restore しない
 
-#### R-E7-04 — Results ownershipの曖昧化
+#### R-E7-04 — Results ownership ambiguity
 
 Stage-local result と persisted Results / Lineage の責務が再混在する可能性。
 
@@ -836,7 +836,7 @@ Mitigation:
 - Results / Lineage responsibility を design revision で freeze
 - Stage-local result presentation と cross-analysis aggregation を分離
 
-### 8.2 Migration順序
+### 8.2 Migration order
 
 ```text
 00 Background / Architecture Review / Requirement & Design freeze
@@ -887,7 +887,7 @@ Backend domain semantic change: NONE
 
 Architecture Review / source inspection により不足が具体的に立証された場合のみ別途 requirement/design amendment を行う。
 
-### 8.5 Rollback方針
+### 8.5 Rollback strategy
 
 Gate は semantic boundary 単位で rollback 可能にする。
 
@@ -904,9 +904,9 @@ Gate は semantic boundary 単位で rollback 可能にする。
 
 rollback 時も persistence/backend domain semantics を変えないことを原則とする。
 
-### 8.6 Workflow execution risk
+### 8.6 Workflow execution risks
 
-#### R-WF-01 — Enhancement identityの曖昧性
+#### R-WF-01 — Enhancement identity ambiguity
 
 Mitigation:
 
@@ -914,7 +914,7 @@ Mitigation:
 - fixed/runtime variables 分離
 - exactly-one resolution preflight
 
-#### R-WF-02 — Coding Agentへの過剰context
+#### R-WF-02 — Coding Agent over-context
 
 Mitigation:
 
@@ -922,7 +922,7 @@ Mitigation:
 - prompt direct-read rule の mechanical check
 - Pxx self-containment check
 
-#### R-WF-03 — Document complianceとexecution readinessの混同
+#### R-WF-03 — Document compliance と execution readiness の混同
 
 Mitigation:
 
@@ -933,7 +933,7 @@ Mitigation:
 3. Execution resolvability
 4. Information isolation
 
-### 8.7 必須Agent Execution Readiness preflight
+### 8.7 Mandatory Agent Execution Readiness preflight
 
 各 Coding Agent execution 前に少なくとも以下を検査する。
 
@@ -964,11 +964,11 @@ Coding Agent MUST NOT START
 
 ---
 
-## 9. Architecture Review適用判定
+## 9. Architecture-review applicability
 
 - Required: **YES**
 
-### 理由
+### Reason
 
 ENH-E7 は少なくとも以下を変更・整理する。
 
@@ -983,7 +983,7 @@ ENH-E7 は少なくとも以下を変更・整理する。
 
 authority / ownership 変更および legacy path の統合を含むため、Gate implementation contract 作成前に Architecture Review が必要である。
 
-### Architecture Reviewで必ず決定する事項
+### Architecture Review mandatory decisions
 
 最低限以下を決定・記録する。
 
@@ -1021,7 +1021,7 @@ Architecture Review 結果は `03_requirements_revision.md` / `04_design_revisio
 
 ---
 
-## 10. Gate分割案
+## 10. Proposed Gate decomposition
 
 ENH-E7 は **2 Gate / WORK_PACKAGE mode** とする。
 
@@ -1045,7 +1045,7 @@ Gate は implementation phase やファイル数ではなく、PASS 後に downs
 - G01 Pxx self-contained
 - Agent Execution Readiness preflight PASS
 
-#### Work Package
+#### Work Packages
 
 ```text
 G01
@@ -1118,7 +1118,7 @@ G01
 - Results / Lineage regression
 - protected Analysis regression
 
-#### G01 Acceptance Criteria骨子
+#### G01 acceptance skeleton
 
 ```text
 AC-G01-01 /projects is canonical Project List surface
@@ -1154,7 +1154,7 @@ Analysis shell の表示だけでは G02 PASS としない。
 - G02 Pxx self-contained
 - Agent Execution Readiness preflight PASS
 
-#### Work Package
+#### Work Packages
 
 ```text
 G02
@@ -1231,7 +1231,7 @@ G02
 - existing operation availability
 - ENH-E6 protected regression
 
-#### G02 Acceptance Criteria骨子
+#### G02 acceptance skeleton
 
 ```text
 AC-G02-01 Analysis Workspace is a separate surface
@@ -1257,7 +1257,7 @@ AC-G02-19 ENH-E6 protected Analysis navigation semantics do not regress
 
 ---
 
-### Trial / Independent Verificationの意味論
+### Trial / Independent Verification semantics
 
 Work Package completion does not mean Gate PASS.
 
@@ -1291,13 +1291,13 @@ formal FAIL 後にのみ next Trial candidate transaction へ進む。
 
 ---
 
-## 11. 実装開始前に必要な承認
+## 11. Approval required before implementation
 
 この Planning Artifact の作成だけでは Coding implementation を開始してはならない。
 
 以下を implementation prerequisite とする。
 
-### 11.1 Human / Architecture承認
+### 11.1 Human / architecture approval
 
 - [ ] ENH-E7 scope / out-of-scope approved
 - [ ] 2 Gate decomposition approved
@@ -1309,7 +1309,7 @@ formal FAIL 後にのみ next Trial candidate transaction へ進む。
 - [ ] Causal / Exploratory / Predictive Stage mapping approved or explicitly deferred where allowed
 - [ ] legacy URL compatibility policy approved
 
-### 11.2 00-layer完了条件
+### 11.2 00-layer completion
 
 - [ ] `02_enhancement_concept_approval_record.md`
 - [ ] `03_requirements_revision.md`
@@ -1318,7 +1318,7 @@ formal FAIL 後にのみ next Trial candidate transaction へ進む。
 - [ ] Revised requirements/design snapshot where applicable
 - [ ] `80_contract_amendment_log.md` initialized
 
-### 11.3 Workflow instance化
+### 11.3 Workflow instantiation
 
 - [ ] Enhancement-specific `40_operator_workflows/agent_entry_prompts/` exists
 - [ ] Enhancement-fixed variables resolved
@@ -1328,7 +1328,7 @@ formal FAIL 後にのみ next Trial candidate transaction へ進む。
 - [ ] assigned Pxx only normative-context invariant present
 - [ ] Test Agent information isolation present
 
-### 11.4 Agent execution前に固定するEnhancement identity
+### 11.4 Enhancement-fixed identity before Agent execution
 
 The following must be concretely resolved before execution:
 
@@ -1344,7 +1344,7 @@ REMOTE_NAME=<must be verified from repository>
 
 `REMOTE_NAME` must not be guessed.
 
-### 11.5 Runtime identifier
+### 11.5 Runtime identifiers
 
 Human operator supplies only execution-scoped values.
 
@@ -1381,7 +1381,7 @@ No Coding Agent implementation begins.
 
 ---
 
-## 12. 初期traceability骨子
+## 12. Initial traceability skeleton
 
 | Requirement group | Design responsibility | Gate / Package |
 |---|---|---|
@@ -1424,7 +1424,7 @@ Evidence
 
 ---
 
-## 13. Planning完了状態
+## 13. Planning completion state
 
 This document establishes the ENH-E7 enhancement concept and revision plan.
 

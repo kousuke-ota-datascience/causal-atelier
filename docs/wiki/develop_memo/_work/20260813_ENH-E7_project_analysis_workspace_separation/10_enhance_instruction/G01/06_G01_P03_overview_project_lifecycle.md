@@ -1,12 +1,13 @@
 # ENH-E7 G01 P03 — Overview / Project Lifecycle
 
 **文書種別:** Primary Execution Contract  
-**Self-containment:** MUST  
+**Self-containment:** MUST
+**Information isolation:** MUST
+**Reporting contract:** SELF_CONTAINED  
 **Gate:** G01  
 **初回発行Trial:** 01  
 **Package:** P03  
 **Depends on:** P01,P02  
-**Status at issuance:** DRAFT_NOT_FROZEN
 
 ## 1. 目的
 
@@ -43,7 +44,7 @@ selected Projectのmetadata / lifecycle responsibilityをOverviewへ移設する
 - current checkoutが`feature/ariadne_mvp_e7`。
 - `G01/P03/Trial01`のAgent Execution ReadinessがPASS。
 - dependency `P01,P02` が満たされている。
-- Architecture Review / Gate contractがexecution前にFROZEN。
+- preflightがArchitecture / Gate contract readinessをPASSしている。
 - in-scope behaviorを曖昧にする未解決source factがない。
 
 確認不能なら`PACKAGE_BLOCKED`として停止する。
@@ -70,16 +71,65 @@ selected Projectのmetadata / lifecycle responsibilityをOverviewへ移設する
 - intentional open Transition Debtは導入しない。
 - legacy URL compatibilityを削除しない。
 
-## 9. Reporting
+## 9. Package handoff artifact contract
 
-package完了時にimplementation checkpoint full SHAを固定し、
-implementation checkpoint reportとpackage execution status reportを作成する。
+本packageのCoding Agentは、**他のworkflow artifactを読まずに**以下1ファイルを作成する。
+
+`<TRIAL_NO>` はoperator promptから渡されたruntime値である。
+
+### 9.1 Canonical保存先 / filename
+
+```text
+20_implementation_reports/G01/Trial<TRIAL_NO>/packages/
+ENH-E7_G01_P03_Trial<TRIAL_NO>_package_execution_status.md
+```
+
+directoryが存在しない場合は作成してよい。
+
+### 9.2 必須内容
+
+最低限、以下を本文内に持つ。
+
+```text
+# ENH-E7 G01 P03 Package Execution Status
+
+- Enhancement: ENH-E7
+- Gate: G01
+- Trial: <TRIAL_NO>
+- Package: P03
+- State: PACKAGE_COMPLETE | PACKAGE_BLOCKED
+- Branch: feature/ariadne_mvp_e7
+- Implementation HEAD full SHA: <40-hex SHA or NOT_RECORDED>
+
+## 実施したscope
+## Changed files / responsibility
+## Focused verification
+  - exact command / method
+  - exit code / result
+## Remaining / blocker
+## Scope guard確認
+  - next package workなし
+  - Gate acceptance decisionなし
+  - prohibited workflow-document dependencyなし
+## Facts
+## Interpretation
+```
+
+`Implementation HEAD full SHA` はtraceability用であり、package completionを成立させるSHA lockではない。
+
+### 9.3 Package handoff semantics
+
+`PACKAGE_COMPLETE` は、assigned scope実装、required focused verification PASS、unresolved blockerなし、本status report作成済みを意味する。
+
+Work PackageはGate-level quality boundaryではないため、package単位のFixed Candidate SHA、implementation checkpoint report、Gate級acceptanceは要求しない。
+
+Gate-level candidate identityは全required package完了後のCandidate Assemblyで固定する。
 
 ## 10. Package completion criteria
 
 Overview ownership/lifecycle regressionがPASSする。
 
-加えてfocused verification完了、unresolved blockerなし、checkpoint full SHA固定、required report作成済みであること。
+加えてfocused verification完了、unresolved blockerなし、package execution status report作成済みであること。
 
 ## 11. External reference policy
 

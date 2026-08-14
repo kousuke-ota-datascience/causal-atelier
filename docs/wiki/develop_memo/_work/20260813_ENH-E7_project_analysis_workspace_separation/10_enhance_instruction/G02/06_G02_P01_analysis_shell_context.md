@@ -1,7 +1,9 @@
 # ENH-E7 G02 P01 — Analysis Shell / Analysis Context
 
 **文書種別:** Primary Execution Contract  
-**Self-containment:** MUST  
+**Self-containment:** MUST
+**Information isolation:** MUST
+**Reporting contract:** SELF_CONTAINED  
 **Gate:** G02  
 **初回発行Trial:** 01  
 **Package:** P01  
@@ -49,7 +51,7 @@ Analysis Workspace shellと明示的current analysis-input contextを作成す�
 - G01 final PASS済み。
 - `G02/P01/Trial01` Agent Execution Readiness PASS。
 - dependency `G01 PASS` が満たされている。
-- Architecture Review / Gate contractがFROZEN。
+- preflightがArchitecture / Gate contract readinessをPASSしている。
 - implementationを曖昧にするsource unresolved itemがない。
 
 確認不能なら`PACKAGE_BLOCKED`。
@@ -74,15 +76,62 @@ Analysis Workspace shellと明示的current analysis-input contextを作成す�
 
 G01 final PASS contract、およびENH-E6 canonical Analysis route / Family / Stage navigation semantics。
 
-## 9. Reporting
+## 9. Package handoff artifact contract
 
-implementation checkpoint full SHAを固定し、checkpoint report / package execution status reportを作成する。
+本packageのCoding Agentは、**他のworkflow artifactを読まずに**以下1ファイルを作成する。
+
+`<TRIAL_NO>` はoperator promptから渡されたruntime値である。
+
+### 9.1 Canonical保存先 / filename
+
+```text
+20_implementation_reports/G02/Trial<TRIAL_NO>/packages/
+ENH-E7_G02_P01_Trial<TRIAL_NO>_package_execution_status.md
+```
+
+directoryが存在しない場合は作成してよい。
+
+### 9.2 必須内容
+
+最低限、以下を本文内に持つ。
+
+```text
+# ENH-E7 G02 P01 Package Execution Status
+
+- Enhancement: ENH-E7
+- Gate: G02
+- Trial: <TRIAL_NO>
+- Package: P01
+- State: PACKAGE_COMPLETE | PACKAGE_BLOCKED
+- Branch: feature/ariadne_mvp_e7
+- Implementation HEAD full SHA: <40-hex SHA or NOT_RECORDED>
+
+## 実施したscope
+## Changed files / responsibility
+## Focused verification
+  - exact command / method
+  - exit code / result
+## Remaining / blocker
+## Scope guard確認
+## Facts
+## Interpretation
+```
+
+`Implementation HEAD full SHA` はtraceability用であり、package completionを成立させるSHA lockではない。
+
+### 9.3 Package handoff semantics
+
+`PACKAGE_COMPLETE` は、assigned scope実装、required focused verification PASS、unresolved blockerなし、本status report作成済みを意味する。
+
+Work PackageはGate-level quality boundaryではないため、package単位のFixed Candidate SHA、implementation checkpoint report、Gate級acceptanceは要求しない。
+
+Gate-level candidate identityは全required package完了後のCandidate Assemblyで固定する。
 
 ## 10. Package completion criteria
 
 Analysis Context / shell contract testがPASSする。
 
-加えてfocused verification完了、unresolved blockerなし、checkpoint full SHA固定、required report作成済み。
+加えてfocused verification完了、unresolved blockerなし、package execution status report作成済み。
 
 ## 11. External reference policy
 

@@ -9,11 +9,11 @@ ENHANCE_SHORT_ID=E7
 BRANCH_NAME=feature/ariadne_mvp_e7
 WORK_ROOT=docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation
 WORK_DIR_NAME=20260813_ENH-E7_project_analysis_workspace_separation
-REMOTE_NAME=REQUIRES_LOCAL_VERIFICATION
-BASELINE_FULL_SHA=REQUIRES_LOCAL_VERIFICATION
+REMOTE_NAME=causal-atelier
+BASELINE_FULL_SHA=1beea1c9eb3ffa5d01f7c266b826e52136d01e8f
 ```
 
-`REMOTE_NAME` and `BASELINE_FULL_SHA` are deliberately unresolved sentinels because they require local repository observation. They must be replaced with verified concrete values before execution.
+`REMOTE_NAME=causal-atelier` と `BASELINE_FULL_SHA=1beea1c9eb3ffa5d01f7c266b826e52136d01e8f` はHumanから提示されたlocal repository observationを基準値として固定済み。
 
 No enhancement-fixed `{...}` placeholders are permitted in this instance.
 

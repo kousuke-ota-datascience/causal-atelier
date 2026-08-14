@@ -29,6 +29,8 @@
 
 - IA baseline: 採用済み。
 - Enhancement plan: 作成済み。
-- Architecture Review: `PROPOSED_PENDING_LOCAL_SOURCE_CONFIRMATION`。
-- Gate contract: `DRAFT_NOT_FROZEN`。
-- Coding authorization: **NO**。
+- Architecture Review: `APPROVED`。
+- G01 Gate contract: implementation / verification contract確認済み。
+- G01 coding authorization: package-by-package preflight PASSを条件に **YES**。
+- G02 Gate contract: `DRAFT_NOT_FROZEN`。G01 final PASSおよびG02 freeze前は実行不可。
+- package eligibilityは`READY_TO_EXECUTE`等のdeclared statusではなくdependency evidenceから導出する。

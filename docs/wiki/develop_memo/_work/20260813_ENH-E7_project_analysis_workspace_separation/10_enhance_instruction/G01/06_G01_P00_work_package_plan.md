@@ -38,7 +38,7 @@ dependencyは上表をauthorityとする。
 
 ## 5. Package completion semantics
 
-`PACKAGE_COMPLETE`はassigned scope実装、focused verification PASS、checkpoint full SHA固定、report作成を意味する。
+`PACKAGE_COMPLETE`はassigned scope実装、focused verification PASS、unresolved blockerなし、package execution status report作成を意味する。
 
 `READY_FOR_TEST`、Gate PASS、verified-state promotion、downstream unlockを意味しない。
 
@@ -47,8 +47,20 @@ dependencyは上表をauthorityとする。
 Required package set: P01, P02, P03, P04, P05, P06, P07。
 
 package-chain audit、integration self-check、protected regression、candidate-affecting working-tree audit、
-Fixed Trial Candidate freeze、Completion Report作成を行う。
+Gate-level Fixed Trial Candidate freeze、Completion Report作成を行う。package単位のcheckpoint SHAは前提にしない。
 
 ## 7. Remediation
 
 formal FAIL後はdistinct remediation identityを使用し、元Pxxを同一Trialのように再利用しない。
+
+
+## Package report authority
+
+各Work Packageのhandoff report保存先・filename・必須内容は**assigned Pxx本文**がauthorityである。package単位のcheckpoint SHA固定は要求しない。
+Coding Agentは20-layer templateを読んで仕様補完しない。
+
+Canonical package report directory:
+
+```text
+20_implementation_reports/G01/Trial<TRIAL_NO>/packages/
+```

@@ -1,9 +1,14 @@
 # ENH-E7 Architecture Review
 
-**Applicability:** REQUIRED.
+**Applicability:** REQUIRED / APPROVED FOR G01 EXECUTION
 
 ENH-E7 changes navigation authority, ownership and legacy UI/path behavior.
 
-The decision record is generated as PROPOSED because local source and Git identity cannot be observed from this artifact-generation environment.
+Human approval recorded.
 
-Before Gate freeze, confirm every OPEN_LOCAL_CONFIRMATION item.
+G01 executionに必要なrepository identity:
+- remote: `causal-atelier`
+- branch: `feature/ariadne_mvp_e7`
+- baseline: `1beea1c9eb3ffa5d01f7c266b826e52136d01e8f`
+
+G02-specific detailed surface mapping remains a G02-freeze prerequisite.

@@ -1,27 +1,22 @@
-# Implementation Checkpoint Report
+# Implementation Checkpoint Report — Human/Audit convenience template
 
+> ENH-E7 G01のWork Package実行では必須ではない。Gate-level Fixed Trial CandidateはCandidate Assemblyで固定する。
+
+> Work Package Coding Agentのauthorityはassigned Pxx本文。Pxxと矛盾する場合はPxxを優先する。
+
+- Enhancement:
 - Gate:
 - Trial:
 - Package:
-- Status: PACKAGE_COMPLETE / PACKAGE_BLOCKED
 - Implementation checkpoint full SHA:
-- Report-only commit SHA, if separate:
+- Branch:
 
-## Implemented scope
-
-## Files / responsibilities changed
-
+## 実装したbehavior
+## Changed files / responsibility
 ## Focused verification
-
-| Command / method | Result | Evidence |
-|---|---|---|
-
-## Protected-contract check
-
-## Blockers / residual risk
-
-## Facts vs interpretation
-
-### Facts
-
-### Interpretation
+## Nearby regression
+## Protected contract確認
+## Checkpoint時点のcandidate-affecting working tree
+## Residual risk / blocker
+## Facts
+## Interpretation

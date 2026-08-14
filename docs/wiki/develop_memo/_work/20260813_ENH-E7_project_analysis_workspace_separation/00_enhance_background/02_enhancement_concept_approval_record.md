@@ -2,7 +2,7 @@
 
 **文書種別:** Planning / Decision Artifact  
 **Status:** APPROVED_FOR_PLANNING_ONLY  
-**実装承認:** NOT GRANTED
+**実装承認:** G01 PACKAGE EXECUTION GRANTED SUBJECT TO DERIVED PREFLIGHT READINESS
 
 ## 1. Planning baselineとして承認済みの事項
 
@@ -19,17 +19,20 @@ HumanはENH-E7 Enhancement Planおよびworkflow artifact一式の作成を指�
 
 ```text
 Concept / planning continuation: APPROVED
-Coding implementation: NOT YET AUTHORIZED
-Gate 06 / 07 freeze: NOT YET AUTHORIZED
+Coding implementation: G01 AUTHORIZED PACKAGE-BY-PACKAGE SUBJECT TO PREFLIGHT PASS
+Gate G01 06 / 07 freeze: APPROVED / FROZEN
 ```
 
-## 3. 実装承認前の条件
+## 3. G01実装承認条件の状態
 
-- Architecture Reviewをlocal source factで確認する。
-- Requirement / Design revisionをreviewする。
-- G01 06/07/Pxxをreviewし、execution用Statusへ明示的に変更する。
-- local Git remote aliasとE7 baseline full SHAを解決する。
-- Agent Execution Readiness preflightをPASSさせる。
+- Architecture Review: APPROVED
+- G01 06/07: FROZEN
+- Work Package eligibility: dependency evidenceからpreflightが導出（declared status literalはcontrolに使用しない）
+- local remote: `causal-atelier`
+- baseline: `1beea1c9eb3ffa5d01f7c266b826e52136d01e8f`
+- **各packageの実行直前条件:** actual local repositoryでAgent Execution Readiness preflightがPASSすること
+
+preflightがFAIL/BLOCKEDの場合、この承認を使ってexecutionを強行してはならない。
 
 ## 4. 根拠
 

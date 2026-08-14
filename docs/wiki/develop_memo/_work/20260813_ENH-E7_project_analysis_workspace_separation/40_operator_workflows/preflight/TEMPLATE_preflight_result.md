@@ -8,14 +8,13 @@
 - Branch:
 - Remote alias:
 
-| Check | Result | Evidence |
+| Check | Result (PASS / FAIL / WARN / INFO) | Evidence |
 |---|---|---|
 
-## Four-axis result
-
-- Artifact completeness:
-- Content completeness:
-- Execution resolvability:
-- Information isolation:
-
 ## Blocking reasons
+
+Only `FAIL` items belong here.
+
+## Diagnostics
+
+Record WARN / INFO when useful for follow-up, but do not treat them as execution blockers by themselves.

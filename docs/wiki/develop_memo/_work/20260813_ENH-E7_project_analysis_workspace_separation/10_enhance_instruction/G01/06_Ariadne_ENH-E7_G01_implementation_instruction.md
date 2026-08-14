@@ -6,8 +6,8 @@
 **Enhancement:** ENH-E7  
 **Active Gate:** G01  
 **Branch:** `feature/ariadne_mvp_e7`  
-**Baseline:** `REQUIRES_LOCAL_VERIFICATION`  
-**Contract status:** DRAFT_NOT_FROZEN  
+**Baseline:** `1beea1c9eb3ffa5d01f7c266b826e52136d01e8f`  
+**Contract status:** FROZEN  
 **Execution Mode:** WORK_PACKAGE  
 **Current State:** `docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation/Current_State_Control_Sheet.md`
 
@@ -127,13 +127,20 @@ Browser E2Eは07のcritical cross-layer journeyに限定する。
 
 各package:
 - package execution status report
-- implementation checkpoint report
-- checkpoint full SHA
+- focused verification evidence
+- unresolved blockerなし
+
+package単位のFixed Candidate SHA / implementation checkpoint reportは必須にしない。
 
 Candidate Assembly:
 - Fixed Trial Candidate full SHA
 - implementation completion report
 - Gate-local implementation detail report
+
+## 13.1 Package report contract
+
+各Pxxのpackage handoff report contract（保存先・filename・必須内容）はassigned Pxxにself-containedで定義する。
+Coding Agentは20-layer templateを参照せず、assigned PxxとCoding Agent promptだけでhandoff reportを作成できなければならない。package単位のSHA lockは要求しない。
 
 ## 14. External reference policy
 

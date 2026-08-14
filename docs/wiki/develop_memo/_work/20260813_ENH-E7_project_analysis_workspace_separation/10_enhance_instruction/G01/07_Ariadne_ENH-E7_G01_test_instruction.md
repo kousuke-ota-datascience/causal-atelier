@@ -2,7 +2,7 @@
 
 **文書種別:** Primary Execution Contract  
 **Self-containment:** MUST  
-**Verification contract status:** DRAFT_NOT_FROZEN
+**Verification contract status:** FROZEN
 
 ## 1. Acceptance authority
 
@@ -82,7 +82,7 @@ Harness/environment defectでProduct判定不能ならFAILではなくBLOCKED。
 - production/test/migration/dependency code変更
 - Acceptance Criteria変更
 - implementation修復
-- Fixed Trial Candidateをpackage checkpointへ置換
+- Fixed Trial Candidateをpackage-level handoff evidenceへ置換
 - Coding Agent PxxをAcceptance authorityとして使用
 
 ## 10. Decision semantics
@@ -96,6 +96,90 @@ candidateがtestableで、verified evidenceがMUST AC/protected semantic violati
 ### BLOCKED
 candidate identity / environment / harness / prerequisite / contract ambiguityにより妥当なProduct判定ができない。
 
-## 11. Required output
+## 11. Required output artifact contract
 
-各Test Item reportと`999_gate_decision` reportを作成し、decision後に停止する。
+`<TRIAL_NO>` はHuman/operatorから指定された2桁runtime値（例: `01`）。
+
+### 11.1 Test Item report canonical path
+
+| Test Item | Name | Canonical path |
+|---|---|---|
+| 001 | `candidate_identity` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_001_candidate_identity.md` |
+| 002 | `project_route_contract` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_002_project_route_contract.md` |
+| 003 | `project_surface_ownership` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_003_project_surface_ownership.md` |
+| 004 | `project_domain_regression` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_004_project_domain_regression.md` |
+| 005 | `project_browser_journey` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_005_project_browser_journey.md` |
+| 006 | `protected_analysis_regression` | `30_test_report/G01/Trial<TRIAL_NO>/ENH-E7_G01_Trial<TRIAL_NO>_006_protected_analysis_regression.md` |
+
+各Test Item reportは最低限以下を本文内に持つ。
+
+```text
+# ENH-E7 G01 Trial<TRIAL_NO> Test Item <TEST_ITEM_ID> — <TEST_ITEM_NAME>
+
+- Result: PASS | FAIL | BLOCKED
+- Fixed Trial Candidate full SHA: <40-hex SHA>
+- Tested Repository State full SHA: <40-hex SHA>
+- Exact command / method:
+- Exit code:
+
+## AC mapping
+## Raw relevant evidence
+## Facts
+## Interpretation
+## Protected contract / Transition Debt relation
+## Reproduction procedure
+## Browser evidence（Browser Test Itemの場合）
+  - screenshot / trace / video
+  - console / page error
+  - network
+  - service log
+  - failed synchronization/assertion
+  - failure classification
+```
+
+### 11.2 Gate Decision report
+
+Canonical path:
+
+```text
+30_test_report/G01/Trial<TRIAL_NO>/
+ENH-E7_G01_Trial<TRIAL_NO>_999_gate_decision.md
+```
+
+必須内容:
+
+```text
+# ENH-E7 G01 Trial<TRIAL_NO> Test Item 999 — Gate Decision
+
+- Gate decision: PASS | FAIL | BLOCKED
+- Enhancement: ENH-E7
+- Gate: G01
+- Trial: <TRIAL_NO>
+- Fixed Trial Candidate full SHA: <40-hex SHA>
+- Tested Repository State full SHA: <40-hex SHA>
+
+## Test Item result summary
+| Test Item | Result | Evidence path |
+
+## Acceptance Criteria conclusion
+| AC | Supporting Test Items | Result |
+
+## Candidate identity conclusion
+## Protected contract conclusion
+## Transition Debt conclusion
+## Promotion eligibility
+## Facts
+## Interpretation
+```
+
+### 11.3 Evidence commit rule
+
+Test execution対象のProduct candidate identityはFixed Trial Candidate SHAである。
+Test report作成・commitによってSHAを自己参照させない。
+
+Test reportはverification後にevidence-only commitとしてcommitしてよい。
+report自身のcommit SHAを同report本文へ自己記録することは要求しない。
+
+Test Item reportをすべて作成した後、最後に`999_gate_decision`を作成する。
+Gate Decision作成後にProduct/test implementationを修復してはならない。
+

@@ -1,6 +1,6 @@
 # ENH-E7 G01 — Project Management Surface Contract
 
-**Status:** DRAFT_NOT_FROZEN  
+**Status:** GATE_CONTRACT_FROZEN / PACKAGE_ELIGIBILITY_DERIVED_BY_PREFLIGHT  
 **Execution Mode:** WORK_PACKAGE
 
 ## Gate claim
@@ -19,7 +19,14 @@ Projectの作成・選択・管理が独立したURL-authoritative Project Manag
 
 ## Active contract rule
 
-- Architecture Review完了後、Human/operatorが06/07をFROZENに変更した時点でGate contractがexecution authorityになる。
-- PxxはdependencyとpreflightがPASSした場合だけexecution eligibleになる。
+- Architecture ReviewはHuman承認済みであり、G01 Gate contractに明示的blocking stateはない。
+- Pxxの実行可否は、declared status literalではなくpreflightが次から導出する。
+  - assigned Pxxが一意に解決できる
+  - runtime identityが有効
+  - current branchが対象branch
+  - Gate contractに明示的blocking stateがない
+  - `Depends on` の必須dependency completion evidenceが存在する
+- `READY_TO_EXECUTE` 等のpackage status literalをworkflow cursorとして使用しない。
+- package完了後に次Pxx文書を手動編集してunlockしない。
 - 08はformal FAILまでinactive。
 - 09はsemantic Gate contract amendmentが明示的に承認された場合だけactiveになる。

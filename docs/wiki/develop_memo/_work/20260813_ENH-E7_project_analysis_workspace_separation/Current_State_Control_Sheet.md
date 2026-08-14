@@ -10,8 +10,8 @@
 - Enhancement: ENH-E7
 - Branch target: `feature/ariadne_mvp_e7`
 - Work root: `docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation`
-- Local Git remote alias: `REQUIRES_LOCAL_VERIFICATION`
-- E7 baseline full SHA: `REQUIRES_LOCAL_VERIFICATION`
+- Local Git remote alias: `causal-atelier`
+- E7 baseline full SHA: `1beea1c9eb3ffa5d01f7c266b826e52136d01e8f`
 
 ## 2. Verified upstream passed-Gate evidence
 
@@ -39,11 +39,17 @@ No ENH-E7 target behavior is promoted to verified current state in this sheet.
 
 ## 4. Open execution prerequisites
 
-- local `REMOTE_NAME` must be verified.
-- E7 branch baseline full SHA must be verified.
-- Architecture Review must be confirmed.
-- G01 06/07 must be frozen.
-- G01 Pxx contracts must pass Agent Execution Readiness preflight.
+G01/P01開始前baselineでは、ENH-E7 package execution reportは未作成である。
+
+G01 package executionは各Pxxについて以下を満たす場合に開始できる。
+
+- actual current branchが`feature/ariadne_mvp_e7`
+- assigned Pxxが一意
+- Architecture / G01 Gate contractに明示的blocking stateがない
+- assigned Pxxのrequired dependency completion evidenceが揃っている
+
+P01はdependency `NONE` のため、上記preflightがPASSすれば開始できる。
+package status literalやpackage checkpoint SHAはexecution unlock条件にしない。
 
 ## 5. Promotion rule
 

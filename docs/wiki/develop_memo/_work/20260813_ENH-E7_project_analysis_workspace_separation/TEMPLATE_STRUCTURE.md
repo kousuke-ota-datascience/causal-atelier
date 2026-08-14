@@ -38,6 +38,11 @@ This instance follows the repository `agentic_enhancement_workflow_template` doc
 
 08 remediation and 09 Gate Contract Amendment files are supplied as `TEMPLATE_ONLY` skeletons. They do not become active contracts until their workflow trigger occurs.
 
-## Freeze state
+## Execution control state
 
-G01/G02 06/07 and Pxx files are generated as `DRAFT_NOT_FROZEN`. Human approval plus Architecture Review and local preflight are required before changing execution status.
+G01はArchitecture Review承認済み、Gate 06/07確認済みのpre-P01 execution baselineである。
+
+Pxx execution eligibilityはdeclared status literalではなく、preflightが実際のdependency evidence等から導出する。
+package文書をP01→P02→...のworkflow cursorとして手動更新しない。
+
+G02はGate 06/07に明示的draft stateが残るため、freeze前は実行対象外である。

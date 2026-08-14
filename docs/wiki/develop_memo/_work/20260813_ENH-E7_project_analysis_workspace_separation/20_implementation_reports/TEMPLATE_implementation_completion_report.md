@@ -1,27 +1,18 @@
-# Implementation Completion Report — Fixed Trial Candidate Authority
+# Implementation Completion Report — Human/Audit convenience template
+
+> Candidate Assembly AgentのauthorityはEnhancement-specific Candidate Assembly prompt。
 
 - Enhancement:
 - Gate:
 - Trial:
 - Candidate state: READY_FOR_TEST / BLOCKED
 - Fixed Trial Candidate full SHA:
-- Candidate assembly commit:
-- Required package set:
-- Package checkpoint SHAs:
+- Branch:
 
-## Candidate assembly audit
-
-- all required packages complete:
-- unresolved blockers:
-- candidate-affecting uncommitted change:
-- integration self-check:
-- protected passed-Gate regression:
-- browser critical-journey self-check, if applicable:
-
+## Required package set
+## Candidate Assembly audit
 ## Effective implementation summary
-
-## Known non-candidate / report-only changes
-
-## Test handoff
-
-This report identifies the candidate; it does not claim Gate PASS.
+## Known evidence-only / report-only changes after Fixed Candidate
+## Residual risk / blocker
+## Facts
+## Interpretation

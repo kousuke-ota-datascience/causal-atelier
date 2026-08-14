@@ -134,7 +134,12 @@ Backend domain semantic change: NOT AUTHORIZED
 
 ## 13. 必須output
 
-各packageのstatus/checkpoint report、Candidate Assembly時のFixed Trial Candidate / Completion Report。
+各packageのpackage execution status report、Candidate Assembly時のGate-level Fixed Trial Candidate / Completion Report。package単位のcheckpoint report / SHA lockは必須にしない。
+
+## 13.1 Package report contract
+
+各Pxxのpackage handoff report contract（保存先・filename・必須内容）はassigned Pxxにself-containedで定義する。
+Coding Agentは20-layer templateを参照せず、assigned PxxとCoding Agent promptだけでhandoff reportを作成できなければならない。
 
 ## 14. External reference policy
 
