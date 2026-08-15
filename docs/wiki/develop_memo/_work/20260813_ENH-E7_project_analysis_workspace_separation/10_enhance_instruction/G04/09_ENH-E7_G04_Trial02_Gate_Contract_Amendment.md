@@ -148,7 +148,8 @@ For Trial02 and later, use frozen Gate 07 as amended by this document:
 
 ## 9. Scope guard
 
-- No Product, migration, dependency, or test code is modified by this amendment.
+- This amendment does not authorize Product, migration, or dependency changes.
+  Trial02 preparation may add or revise verification assets only.
 - No Trial01 report or Trial01 `999` decision is modified.
 - No old global shell, independent Explore/Predictive workspace, old six-route token,
   or FR-114 relaxation is authorized.

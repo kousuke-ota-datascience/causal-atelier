@@ -11,27 +11,17 @@ def _sources() -> tuple[str, str]:
     )
 
 
-def test_predictive_workspace_exposes_complete_g5_backend_vertical_slice() -> None:
-    html, javascript = _sources()
-    predictive = html.split('<section id="predictive"', 1)[1].split(
-        '<section id="results"', 1
-    )[0]
+def _navigation_source() -> str:
+    return (REPOSITORY / "frontend" / "navigation_state.js").read_text(encoding="utf-8")
 
-    assert 'data-workspace="predictive" data-route="predictive"' in html
-    assert all(value in predictive for value in (
-        'id="predictive-form"',
-        'id="predictive-context"',
-        'id="predictive-view"',
-        'name="task_type"',
-        'name="target"',
-        'name="feature_columns"',
-        'name="split_strategy"',
-        'id="run-predictive" disabled',
-        'id="predictive-split-validation"',
-        'id="predictive-executions"',
-        'id="predictive-results"',
-        'id="predictive-artifacts"',
-    ))
+
+def test_predictive_family_exposes_complete_g5_backend_vertical_slice_in_analysis_workspace() -> None:
+    html, javascript = _sources()
+    predictive = html.split('<section id="predictive"', 1)[1]
+
+    assert 'data-top-level-surface-root="analysis"' in html
+    assert 'data-workspace="predictive"' not in html
+    assert 'data-route="predictive"' not in html
     assert all(value in javascript for value in (
         "/predictive/capabilities",
         "/research-contexts",
@@ -45,6 +35,10 @@ def test_predictive_workspace_exposes_complete_g5_backend_vertical_slice() -> No
         "PREDICTIVE_EXPLANATION_RESULT",
         "MODEL_CARD_RESULT",
     ))
+    assert all(value in predictive for value in (
+        'id="predictive-form"', 'id="predictive-context"', 'id="predictive-view"',
+        'id="predictive-executions"', 'id="predictive-results"', 'id="predictive-artifacts"',
+    ))
     assert "/predictive/split-validations" not in javascript
     assert "Execution Plan validated" in javascript
     assert "backendAvailable=state.predictiveCapabilities?.training_available===true" in javascript
@@ -54,9 +48,7 @@ def test_predictive_workspace_exposes_complete_g5_backend_vertical_slice() -> No
 
 def test_predictive_terminology_is_explicitly_non_causal() -> None:
     html, javascript = _sources()
-    predictive = html.split('<section id="predictive"', 1)[1].split(
-        '<section id="results"', 1
-    )[0]
+    predictive = html.split('<section id="predictive"', 1)[1]
 
     assert "Predictive Explanation ≠ Causal Explanation ≠ Treatment Effect" in predictive
     assert "特徴量の寄与や重要度は予測modelの挙動を説明" in predictive
@@ -66,14 +58,19 @@ def test_predictive_terminology_is_explicitly_non_causal() -> None:
     assert "rank against causal" not in predictive.lower()
 
 
-def test_project_shell_recognizes_six_routes_and_restores_predictive_deep_links() -> None:
+def test_project_shell_normalizes_legacy_routes_and_restores_predictive_canonical_deep_links() -> None:
     html, javascript = _sources()
-    routes = ("context", "data", "explore", "causal", "predictive", "results")
+    navigation = _navigation_source()
 
-    assert all(f'data-route="{route}"' in html for route in routes)
-    assert all(f"{route}:'{route}'" in javascript for route in routes)
+    assert 'data-route="explore"' not in html
+    assert 'data-route="predictive"' not in html
+    assert 'data-workspace="explore"' not in html
+    assert 'data-workspace="predictive"' not in html
     assert "history.pushState" in javascript
     assert "window.addEventListener('popstate'" in javascript
     assert "async function restoreProjectRoute()" in javascript
-    assert "(context|data|explore|causal|predictive|results)" in javascript
+    assert "source:'legacy-route-normalization'" in javascript
+    assert "AnalysisNavigation.legacyContext" in javascript
+    assert 'predictive: ["predictive", "setup"]' in navigation
+    assert "function serialize(context)" in navigation
     assert "await loadProjects();await restoreProjectRoute()" in javascript

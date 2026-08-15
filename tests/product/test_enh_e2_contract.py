@@ -191,6 +191,7 @@ async def test_project_delete_is_idempotent_archive_and_all_new_writes_are_guard
             "code_version": "test-enh-e2",
             "runtime_versions": {},
         },
+        headers={"Idempotency-Key": "archive-discovery"},
     )
     assert execution_response.status_code == 202
     execution_id = execution_response.json()["executions"][0]["execution_id"]
@@ -320,6 +321,7 @@ async def test_inference_rejects_missing_or_tampered_graph_outcome(client) -> No
     mismatch = await client.post(
         f"/api/v1/projects/{project_id}/execution-batches",
         json=_identification_body(dataset["dataset_version_id"], fixed["graph_version_id"], "x"),
+        headers={"Idempotency-Key": "outcome-mismatch"},
     )
     assert mismatch.status_code == 409
     assert mismatch.json()["error"]["code"] == "GRAPH_OUTCOME_MISMATCH"
@@ -332,6 +334,7 @@ async def test_inference_rejects_missing_or_tampered_graph_outcome(client) -> No
     required = await client.post(
         f"/api/v1/projects/{project_id}/execution-batches",
         json=_identification_body(dataset["dataset_version_id"], missing["graph_version_id"], "outcome"),
+        headers={"Idempotency-Key": "outcome-required"},
     )
     assert required.status_code == 422
     assert required.json()["error"]["code"] == "GRAPH_OUTCOME_REQUIRED"
@@ -341,5 +344,6 @@ async def test_inference_rejects_missing_or_tampered_graph_outcome(client) -> No
         json=_identification_body(
             dataset["dataset_version_id"], fixed["graph_version_id"], "outcome"
         ),
+        headers={"Idempotency-Key": "outcome-accepted"},
     )
     assert accepted.status_code == 202
