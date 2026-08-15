@@ -23,5 +23,6 @@
 | E7-REQ-019 | direct-link / reload / Back / ForwardをProject/Analysis双方で成立させる。 | G01/G02 |
 | E7-REQ-020 | Results / Lineageがpersisted cross-analysis aggregation等を所有する。 | G01 |
 | E7-REQ-021 | UI再編だけを理由にbackend analysis/domain semanticsを変更しない。 | G01/G02 |
+| E7-REQ-022 | FR-104/105の6つの機能的destination（Research Context / Data / Explore / Causal / Predictive / Results）はroute-addressableであることを維持する。Project ManagementのResearch Context / Data / Results、およびcanonical Analysis route `/projects/<project_id>/analysis/<family>/<stage>` のEXPLORATORY / CAUSAL / PREDICTIVE Familyがそれぞれを所有する。これは6個のpeer tab、old global shell、または旧route tokenの存続を要求しない。direct-link / reload / Back / ForwardはE7-REQ-019に従う。 | G02/G04 |
 
 Workflow execution-control Requirementは `../03_requirements_revision.md` に定義する。
