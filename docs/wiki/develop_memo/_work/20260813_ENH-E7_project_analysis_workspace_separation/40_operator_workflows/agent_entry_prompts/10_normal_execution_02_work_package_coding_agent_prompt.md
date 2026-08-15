@@ -8,7 +8,7 @@
 Human provides exactly:
 
 ```text
-GATE_ID=<G01|G02>
+GATE_ID=<Gxx>
 PACKAGE_ID=<Pxx>
 TRIAL_NO=<NN>
 ```
