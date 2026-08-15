@@ -8,7 +8,7 @@
 **初回発行Trial:** 01
 **Package:** P05
 **Depends on:** P04
-**Status at issuance:** DRAFT_NOT_FROZEN
+**Status at issuance:** FROZEN
 
 ## 1. 目的
 
@@ -42,8 +42,8 @@ legacy analytical URL、resource route、existing Causal/Exploratory/Predictive 
 - existing resource route semanticsを削除しない。
 - Causal execution semanticsを変更しない。
 - Exploratory Data Qualityはread-only availabilityであり`DATA_QUALITY` executionを作らない。
-- `TIME_TREND`はexisting aggregate/group summary semanticsを維持する。
-- `CHART`はexisting persisted operation/artifact semanticsを維持する。
+- `TIME_TREND`はvalid groupingと互換なaggregationを要求するexisting operationであり、`GROUP_SUMMARY_RESULT`を返す。時刻型、時間順序、トレンドモデルを追加しない。
+- `CHART`は`CHART_RESULT`と永続`CHART_SPECIFICATION`（Vega-Lite JSON）artifactを生成するexisting operationであり、表示専用stateへ置換しない。
 - Predictive Stageはpresentation/navigation viewであり新execution stepを作らない。
 
 ## 5. Explicitly out of scope
@@ -69,6 +69,7 @@ legacy analytical URL、resource route、existing Causal/Exploratory/Predictive 
 1. existing operation mapping testsをG03/G04 DOMに合わせて更新する。
 2. legacy/resource route behaviorを直接検証する。
 3. UI移設を理由にoperation semanticsをsubstituteしない。
+4. Data Qualityがexecution/previewを発行せず既存Profile resultだけをread-only表示すること、TIME_TRENDとCHARTが上記の既存result/artifact semanticsを保つことを確認する。
 
 ## 8. Required verification predicates
 
@@ -77,6 +78,7 @@ focused testは単なるelement ID / label文字列の存在確認だけで完�
 - legacy URL fixtureがcanonical routeへ正規化。
 - resource route fixtureが既存resource semanticsを維持。
 - Causal/Exploratory/Predictive protected tests PASS。
+- Data Qualityに`DATA_QUALITY` operation/API executionがなく、TIME_TRENDは`GROUP_SUMMARY_RESULT`、CHARTは`CHART_RESULT`と`CHART_SPECIFICATION` artifactを維持。
 - 新backend/API/persistence diffなし。
 
 ## 9. Focused verification

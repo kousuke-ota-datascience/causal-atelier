@@ -12,8 +12,8 @@
 | AR-E7-06 Results boundary | persisted cross-analysis aggregation in Results/Lineage; stage-local presentation in Analysis | PROPOSED |
 | AR-E7-07 Legacy policy | remove duplicate legacy UI shortcuts; retain/normalize legacy URLs | PROPOSED |
 | AR-E7-08 Causal mapping | Setup/Discovery/Identification/Estimation/Effects/Diagnostics/Sensitivity mapping in plan | PROPOSED |
-| AR-E7-09 Exploratory source confirmation | `data-quality`はread-only availability stageであり`DATA_QUALITY` operationを持たない。`TIME_TREND`は既存のgrouping/aggregation operation（`GROUP_SUMMARY_RESULT`）としてComparisonへ、`CHART`は`CHART_RESULT`とVega-Lite artifactを保存する既存operationとしてFindingsへ配置する。 | CONFIRMED_FOR_G02_FREEZE |
-| AR-E7-10 API/persistence | G01/P01開始時点では変更不要をapproved baselineとする。反証時はaffected packageをBLOCKEDしamendmentへ移行 | APPROVED |
+| AR-E7-09 Exploratory source confirmation | `data-quality`はread-only availability stageであり`DATA_QUALITY` operationを持たない。`TIME_TREND`は既存のgrouping/aggregation operation（`GROUP_SUMMARY_RESULT`）としてComparisonへ、`CHART`は`CHART_RESULT`とVega-Lite artifactを保存する既存operationとしてFindingsへ配置する。 | CONFIRMED_FOR_G02_AND_G04_FREEZE |
+| AR-E7-10 API/persistence | existing API / persistence / schemaはG04のroute/state/presentation再結合に十分であり、変更不要。反証時はaffected packageをBLOCKEDしamendmentへ移行 | CONFIRMED_FOR_G04_FREEZE |
 | AR-E7-11 local Git identity | remote=`causal-atelier` / branch=`feature/ariadne_mvp_e7` / baseline=`1beea1c9eb3ffa5d01f7c266b826e52136d01e8f` | APPROVED |
 
 ## Approval condition
@@ -30,3 +30,9 @@ deferred itemを理由にG01 contractを拡張・推測してはならない。
 - `TIME_TREND`は既存planner/runnerのoperationである。valid groupingとaggregationを要求し、`GROUP_SUMMARY_RESULT`を返す。時系列順序・時刻型・トレンドモデルを新たに検証するsemanticsはない。
 - `CHART`は既存planner/runnerのoperationであり、`CHART_RESULT`と`CHART_SPECIFICATION` artifactを保存する。単なるclient-side presentation stateではない。
 - 上記のplacementはG02のpresentation/navigation decisionであり、backend API、persistence schema、domain execution modelの追加を認可しない。
+
+## G04 source confirmation closure
+
+- `04_G04_source_confirmation.md`でcurrent checkoutを再確認した。Data Quality、TIME_TREND、CHARTの現行 semantics は上記 decision と一致し、G04はそれらをrouting/presentation bindingのprotected behaviorとして維持する。
+- baseline `1beea1c9eb3ffa5d01f7c266b826e52136d01e8f` からcurrent HEADまで、`product_migrations`、`alembic_product.ini`、web API router、product domain/persistenceには差分がない。G04にAPI、schema、persistence、backend operationの追加は不要かつ未認可である。
+- deferred item由来のunresolved semantic blockerは0件である。

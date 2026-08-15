@@ -3,6 +3,8 @@
 Status: FROZEN  
 **Execution Mode:** WORK_PACKAGE
 
+Freeze basis: `40_operator_workflows/architecture_review/04_G04_source_confirmation.md` confirmed AR-E7-09/10 with zero unresolved semantic blockers. `06` and `07` are the execution authority; this README is an index, not a source of acceptance-criteria supplementation.
+
 ## Gate claim
 
 G03で成立したtop-level surface architectureを維持したまま、
@@ -26,3 +28,4 @@ ENH-E7をcorrected Product-complete状態にする。
 - G04 final PASSをpost-escape ENH-E7 Product completionとする。
 - 08はformal FAILまでinactive。
 - 09はsemantic Gate contract amendment時のみactive。
+- G04は既存 API / persistence / domain semanticsを変更せず、frontend route/state/presentation bindingを再結合する。

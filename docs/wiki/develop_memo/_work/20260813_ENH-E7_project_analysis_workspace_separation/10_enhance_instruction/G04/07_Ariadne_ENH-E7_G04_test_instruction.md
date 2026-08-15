@@ -48,7 +48,7 @@ cross-surface history、resource/operation behaviorを一体としてcorrected P
 | AC-G04-09 | deep-link/reload/Back/ForwardでURL/surface/state同期 | browser history | MUST |
 | AC-G04-10 | legacy analytical URL normalize | frontend/browser | MUST |
 | AC-G04-11 | resource route semantics維持 | frontend/integration | MUST |
-| AC-G04-12 | Causal/Exploratory/Predictive existing semantics維持 | protected operation tests | MUST |
+| AC-G04-12 | Causal/Exploratory/Predictive existing semantics維持。Data Qualityはread-onlyで実行なし、TIME_TRENDは既存aggregation、CHARTはpersisted result/artifact | protected operation tests | MUST |
 | AC-G04-13 | 全journeyでG03 surface architecture維持 | G03 regression + browser | MUST |
 | AC-G04-14 | console/page error、duplicate history、stale shellなし | browser runtime + source audit | MUST |
 | AC-G04-15 | Project/domain/backend/API/persistence protected semantics regressionなし | full regression | MUST |
@@ -63,7 +63,7 @@ cross-surface history、resource/operation behaviorを一体としてcorrected P
 | 004 | analysis_context_family_stage_state | 04,05,13 | FRONTEND/BROWSER | YES | context/catalog/selected state |
 | 005 | cross_surface_history | 06,07,08,09,13,14 | BROWSER_E2E | YES | PM↔Analysis↔Results + history |
 | 006 | legacy_resource_routing | 10,11 | FRONTEND/BROWSER | YES | legacy/resource routes |
-| 007 | analysis_operation_regression | 12,15 | API_INTEGRATION/FRONTEND | YES | Causal/Exploratory/Predictive |
+| 007 | analysis_operation_regression | 12,15 | API_INTEGRATION/FRONTEND | YES | Causal/Exploratory/Predictive; Data Quality/TIME_TREND/CHART direct semantics |
 | 008 | full_product_browser_journey | 01-09,12-14 | BROWSER_E2E | YES | end-to-end success journey |
 | 009 | history_reload_console_browser | 01,09,14 | BROWSER_E2E | YES | deep/reload/back/forward/console |
 | 010 | protected_full_regression | 13,15 | REGRESSION | YES | G03 + G01/G02/ENH-E6 protected suite |

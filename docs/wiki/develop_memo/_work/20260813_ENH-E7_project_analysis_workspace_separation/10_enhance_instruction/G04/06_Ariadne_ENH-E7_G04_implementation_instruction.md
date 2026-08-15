@@ -6,7 +6,7 @@
 **Enhancement:** ENH-E7  
 **Active Gate:** G04  
 **Branch:** `feature/ariadne_mvp_e7`  
-**Baseline:** `REQUIRES_LOCAL_VERIFICATION`  
+**Baseline:** `cc4fb35b66545af50ed96fd2f80aff7f9a619a5e`（G04 freeze source confirmation時のHEAD）
 **Contract status:** FROZEN  
 **Execution Mode:** WORK_PACKAGE
 
@@ -32,7 +32,7 @@ Project Management ↔ Analysis Workspaceを往復しながら既存operationを
 - `/`で旧Project/Data workspaceが初期表示される状態を許容しない。
 - current ProjectはAnalysis URLのproject_id authorityを維持する。
 - Family default Stageはexisting navigation catalog authorityを維持する。
-- backend/API/persistence semantic changeは不要であることを前提とする。
+- backend/API/persistence semantic changeは不要であり、追加は未認可である。
 - package completionはGate PASSではない。
 
 ## 3. Execution Mode
@@ -53,7 +53,7 @@ P00はHuman/operator用でありCoding Agentは仕様補完目的で読まない
 - AC-G04-09: canonical deep-link / reload / Back / Forwardでrouteとvisible surface/stateが一致する。
 - AC-G04-10: legacy analytical URLがcanonical Analysis routeへnormalizeする。
 - AC-G04-11: existing resource-route semanticsが維持される。
-- AC-G04-12: existing Causal / Exploratory / Predictive mapped operation semanticsが維持される。
+- AC-G04-12: existing Causal / Exploratory / Predictive mapped operation semanticsが維持される。ExploratoryではData Qualityを既存Profile resultのread-only availabilityとして維持し、`DATA_QUALITY` executionを作らない。`TIME_TREND`は既存grouping/aggregationによる`GROUP_SUMMARY_RESULT`のままとし、時刻型/時間順序/トレンドモデルを追加しない。`CHART`は`CHART_RESULT`と永続`CHART_SPECIFICATION` artifactのままとする。
 - AC-G04-13: G03 surface architecture invariantが全navigation journeyで維持される。
 - AC-G04-14: browser console/page error、duplicate handlerによる二重history、stale visible shellがない。
 - AC-G04-15: existing Project/domain/backend/API/persistence semanticsとENH-E6/G01/G02 protected semanticsがregressionしない。
@@ -108,6 +108,8 @@ Persistence migration: NONE
 API contract change: NONE
 Backend domain semantic change: NOT AUTHORIZED
 ```
+
+これはAR-E7-10のcurrent-source confirmationに基づくfrozen decisionである。既存APIはProject-scoped resource、workspace state、Exploration execution/resultを提供しており、G04はfrontend route/state/presentation bindingだけを再結合する。
 
 ## 10. Automated test obligation
 

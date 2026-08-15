@@ -1,7 +1,7 @@
 # ENH-E7 Design改定
 
 **文書種別:** Planning / Decision Artifact  
-**Status:** APPROVED_FOR_G01_AND_FROZEN_FOR_G02
+**Status:** APPROVED_FOR_G01_AND_FROZEN_FOR_G02_G04
 
 ## 1. Navigation authority
 
@@ -90,3 +90,10 @@ Coding AgentはGate 06 / 07 / P00 / other Pxx / 00 / 20 / 30を仕様補完目�
 
 - G01 rollbackでENH-E6 protected Analysis semanticsを変更しない。
 - G02 rollbackでG01 PASS contractを保護する。
+
+## 10. G04 source-confirmed reintegration decision
+
+- G04はroute restore、history、selected state、および既存API bindingを再結合するGateである。AR-E7-09/10は新しいProduct capabilityを認可しない。
+- Exploratory mappingは固定する。Data Qualityは既存Profile resultのread-only availability、TIME_TRENDは既存grouping/aggregationによる`GROUP_SUMMARY_RESULT`、CHARTは`CHART_RESULT`と`CHART_SPECIFICATION` artifactである。TIME_TRENDへ時刻型/時間順序/トレンドモデルを追加しない。
+- existing API、persistence、schema、domain execution modelを使用し、migration/API/backend operationを追加しない。
+- これらはE7-REQ-015およびE7-REQ-021の既存Design決定を具体化するものであり、Requirement追加・変更は不要である。
