@@ -245,7 +245,11 @@ if len(matches) == 1:
 else:
     add_diagnostic("PRE-07 Pxx contract metadata", False, "Pxx unresolved")
 
-add_blocking("PRE-08 GATE_ID", gate in ("G01", "G02"), gate)
+add_blocking(
+    "PRE-08 GATE_ID",
+    bool(re.fullmatch(r"G\d{2}", gate)),
+    gate,
+) ## add_blocking("PRE-08 GATE_ID", gate in ("G01", "G02"), gate) からの変更
 add_blocking("PRE-09 PACKAGE_ID", bool(re.fullmatch(r"P\d{2}", package)), package)
 add_blocking(
     "PRE-10 TRIAL_NO",
