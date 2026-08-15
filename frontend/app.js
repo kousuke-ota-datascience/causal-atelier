@@ -60,7 +60,11 @@ TopLevelSurfaceActivation.activateForWorkspace($('.workspace.active')?.id||'proj
 async function activateWorkspace(workspace,{push=true,button=null,retainAnalysisShell=false}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
   if(button)button.dataset.refreshStatus='pending';
-  $$('nav button').forEach(x=>x.classList.remove('active'));if(button)button.classList.add('active');
+  $$('#project-management-navigation [data-workspace]').forEach(item=>{
+    const current=item.dataset.workspace===workspace;
+    item.classList.toggle('active',current);
+    item.setAttribute('aria-current',current?'page':'false');
+  });
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
   TopLevelSurfaceActivation.activateForWorkspace(workspace);
   if(push&&button?.dataset.route){
@@ -113,6 +117,12 @@ async function applyAnalysisNavigation(context,{historyMode=ANALYSIS_HISTORY_MOD
   return {context:next,source};
 }
 async function restoreProjectRoute(){
+  if(location.pathname==='/'||location.pathname===''){
+    synchronizeProjectHistory({kind:'collection'},'REPLACE');
+    state.project=null;fillProject();await loadProjects();
+    await activateWorkspace('projects',{push:false});
+    return true;
+  }
   if(state.navigationCatalog){
     let parsed;
     try{parsed=AnalysisNavigation.parse(location.pathname,state.navigationCatalog)}catch(error){

@@ -19,10 +19,27 @@ COMMAND = (
     "--profile e2e run --build --rm --entrypoint python browser-e2e "
     "tests/browser_e2e/run_enh_e7_project_integration.py"
 )
+SURFACE_BY_WORKSPACE = {
+    "projects": "projects", "project-new": "projects",
+    "management": "project-management", "context": "project-management",
+    "data": "project-management", "results": "project-management",
+    "explore": "analysis", "discovery": "analysis", "inference": "analysis", "predictive": "analysis",
+}
 
 
 def _active(page: Page, workspace: str) -> None:
     page.locator(f"#{workspace}.workspace.active").wait_for(timeout=30_000)
+    expected_surface = SURFACE_BY_WORKSPACE[workspace]
+    page.wait_for_function(
+        """expected => {
+          const visible = [...document.querySelectorAll('[data-top-level-surface-root]')]
+            .filter(root => !root.hidden)
+            .map(root => root.dataset.topLevelSurfaceRoot);
+          return visible.length === 1 && visible[0] === expected;
+        }""",
+        arg=expected_surface,
+        timeout=30_000,
+    )
 
 
 def _route(page: Page, project_id: str, section: str, workspace: str) -> None:
@@ -45,9 +62,13 @@ def main() -> int:
         browser = playwright.chromium.launch(headless=True, args=["--no-sandbox"])
         context = browser.new_context()
         page = context.new_page()
+        page_errors: list[str] = []
+        page.on("pageerror", lambda error: page_errors.append(f"pageerror: {error}"))
+        page.on("console", lambda message: page_errors.append(f"console: {message.text}") if message.type == "error" else None)
         try:
-            page.goto(f"{WEB}/projects", wait_until="networkidle")
+            page.goto(f"{WEB}/", wait_until="networkidle")
             page.locator("#health").filter(has_text="API READY").wait_for(timeout=30_000)
+            page.wait_for_function("() => window.location.pathname === '/projects'", timeout=30_000)
             _active(page, "projects")
             page.screenshot(path=OUTPUT / "enh-e7-g03-p06-projects.png", full_page=True)
             page.locator("#new-project").click()
@@ -89,6 +110,62 @@ def main() -> int:
             _active(page, "explore")
             page.screenshot(path=OUTPUT / "enh-e7-g03-p06-analysis.png", full_page=True)
             evidence["scenarios"]["project-analysis-launcher"] = {"status": "PASS"}
+
+            page.reload(wait_until="networkidle")
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
+            )
+            _active(page, "explore")
+            assert page.locator("#project-select").input_value() == project_id
+
+            page.locator("#return-to-project-management").click()
+            _route(page, project_id, "overview", "management")
+
+            page.locator('[data-open-analysis-family="exploratory"]').click()
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
+            )
+            _active(page, "explore")
+            page.locator("#open-results-lineage").click()
+            _route(page, project_id, "results", "results")
+            page.go_back(wait_until="networkidle")
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
+            )
+            _active(page, "explore")
+            page.go_forward(wait_until="networkidle")
+            _route(page, project_id, "results", "results")
+            evidence["scenarios"]["cross-surface-reload-history"] = {"status": "PASS"}
+
+            page.locator('nav button[data-route="overview"]').click()
+            _route(page, project_id, "overview", "management")
+            page.locator('[data-open-analysis-family="exploratory"]').click()
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
+            )
+            _active(page, "explore")
+            page.locator('#analysis-family-tabs button[data-family="causal"]').click()
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/causal/setup", timeout=30_000,
+            )
+            _active(page, "discovery")
+            page.locator('#analysis-stage-sidebar button[data-stage="discovery"]').click()
+            page.wait_for_function(
+                "expected => window.location.pathname === expected",
+                arg=f"/projects/{project_id}/analysis/causal/discovery", timeout=30_000,
+            )
+            _active(page, "discovery")
+            page.locator("#open-results-lineage").click()
+            _route(page, project_id, "results", "results")
+            page.locator('nav button[data-route="overview"]').click()
+            _route(page, project_id, "overview", "management")
+            assert not page_errors, page_errors
+            evidence["scenarios"]["full-g04-root-pm-analysis-results-pm"] = {"status": "PASS"}
             outcome = "PASS"
         except Exception as error:
             evidence["failure"] = repr(error)
