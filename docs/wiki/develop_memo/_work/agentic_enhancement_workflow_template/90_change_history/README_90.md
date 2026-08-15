@@ -20,4 +20,4 @@
 - `schema_v3.md` — v3で導入されたschema changes
 - `schema_v11.md` — canonical filenameをASCII / technical Englishへ統一したschema changes
 
-現行workflowの使い方はroot `README.md`をauthorityとする。Change Historyは現行contractをoverrideしない。
+現行workflowの使い方はroot `README_90.md`をauthorityとする。Change Historyは現行contractをoverrideしない。

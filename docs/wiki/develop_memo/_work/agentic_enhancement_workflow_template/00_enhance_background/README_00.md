@@ -68,3 +68,11 @@ architecture reviewの結論は00層の正式な背景・要件・設計へ反�
 - [ ] external referenceはprovenanceであり、normative contentの代替になっていない。
 - [ ] Gate decompositionがsemantic acceptance boundaryとして説明できる。
 - [ ] unresolved issueとapproval conditionが明示されている。
+
+<!-- BEGIN MANAGED: V005_LOCAL_AUTHORITY -->
+## v0.05 runtime boundary
+
+`00_enhance_background/` はPlanning / Requirements / Design / provenanceのauthoring・audit layerである。Normal runtime preflightのauthorityにはしない。
+
+Gate 06が `FROZEN` になった後、Coding Agentへ仕様補完目的でこのdirectoryを探索させない。必要なimplementation semanticsはGate 06 / assigned Pxxへself-containedに固定する。
+<!-- END MANAGED: V005_LOCAL_AUTHORITY -->

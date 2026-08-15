@@ -29,3 +29,11 @@ Gate decompositionをimplementation sizeで決めない。Execution sizeだけ�
 各outputは自身の結論・事実・decisionを本文内に記載する。code / design / schemaはevidence sourceとして参照してよい。
 
 Architecture reviewのapproved decisionは00層の正式背景・要件・設計へ反映し、Agentへ直接必要なimplementation / acceptance semanticsは06 / 07へeffective formで記載する。
+
+<!-- BEGIN MANAGED: V005_LOCAL_AUTHORITY -->
+## v0.05 runtime boundary
+
+Architecture ReviewはGate 06 freeze前に必要なsource confirmation / design decisionを行うconditional authoring workflowである。
+
+Normal runtime preflightはArchitecture Review artifactをread dependencyにしない。Gate 06が `FROZEN` であることをruntime contractとして扱う。
+<!-- END MANAGED: V005_LOCAL_AUTHORITY -->

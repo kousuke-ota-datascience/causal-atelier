@@ -37,7 +37,7 @@ Trialは、同一Gate contractに対してcandidateを作り、Fixed Trial Candi
 
 ### Work Package — Coding Execution Unit
 
-Work Packageは、Gateを成立させる実装をbounded execution unitへ分割したものである。Package COMPLETEはGate PASS、verified-state promotion、downstream unlockを意味しない。
+Work Packageは、Gateを成立させる実装をbounded execution unitへ分割したものである。Package COMPLETEはGate PASS、verified-state derivation、downstream unlockを意味しない。
 
 ## 3. Document self-containment rule
 
@@ -212,3 +212,21 @@ Pxx / Rxx = bounded execution authority; 06/07 semantic contractをsilent overri
 09 = explicit contract-change decision authority
 999 Gate Decision = final independent PASS / FAIL / BLOCKED authority
 ```
+
+<!-- BEGIN MANAGED: V005_LOCAL_AUTHORITY -->
+## v0.05 runtime authority
+
+Gate local READMEはHuman navigation / canonical artifact index専用であり、execution eligibilityを変更しない。
+
+Normal-path routing authority:
+
+```text
+Gate dependency declaration = Gate 06 `Depends on`
+Execution mode              = Gate 06 `Execution mode`
+Required package set        = Gate 06 `Required packages`
+Verification authority      = Gate 07
+Package dependency          = each assigned Pxx `Depends on`
+```
+
+P00は存在してもoptional authoring / audit artifactであり、preflight / Candidate Assembly / Orchestratorのruntime authorityにはしない。
+<!-- END MANAGED: V005_LOCAL_AUTHORITY -->

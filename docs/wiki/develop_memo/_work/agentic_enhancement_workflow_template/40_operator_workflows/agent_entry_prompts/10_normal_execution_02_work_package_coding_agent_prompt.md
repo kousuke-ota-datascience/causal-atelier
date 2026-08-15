@@ -355,3 +355,46 @@ report path（作成できた場合）
 ```
 
 本 Agent は Package complete を Gate PASS と表現してはならない。
+
+<!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
+## Execution identity control
+
+This template-side prompt is an authoring source and MUST NOT be executed directly. Before execution it MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/`.
+
+Enhancement-fixed values:
+
+```text
+PROJECT_NAME={{PROJECT_NAME}}
+ENHANCE_ID={{ENHANCE_ID}}
+ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
+BRANCH_NAME={{BRANCH_NAME}}
+REMOTE_NAME={{REMOTE_NAME}}
+WORK_ROOT={{WORK_ROOT}}
+WORK_DIR_NAME={{WORK_DIR_NAME}}
+```
+
+Runtime values for this execution:
+
+```text
+GATE_ID={{GATE_ID}}
+PACKAGE_ID={{PACKAGE_ID}}
+TRIAL_NO={{TRIAL_NO}}
+```
+
+If any Enhancement-fixed value remains unresolved in the Enhancement-side prompt, stop with `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED`. If any required Runtime value is missing or ambiguous, stop with `BLOCKED_EXECUTION_UNRESOLVABLE`.
+<!-- END MANAGED: EXECUTION_IDENTITY_CONTROL -->
+
+<!-- BEGIN MANAGED: PACKAGE_REPORT_CANONICAL_STATE -->
+### Canonical package completion metadata
+
+`PACKAGE_READY` is the Coding Agent terminal outcome label. Canonical dependency/candidate semantics use the package report fields instead of the literal outcome label.
+
+```text
+Gate: {{GATE_ID}}
+Package: {{PACKAGE_ID}}
+Trial: {{TRIAL_NO}}
+State: PACKAGE_COMPLETE
+```
+
+Markdown decoration is non-semantic. The dependency resolver / Candidate Assembly / preflight MUST use these semantic fields and MUST NOT use `PACKAGE_READY` as a workflow cursor.
+<!-- END MANAGED: PACKAGE_REPORT_CANONICAL_STATE -->

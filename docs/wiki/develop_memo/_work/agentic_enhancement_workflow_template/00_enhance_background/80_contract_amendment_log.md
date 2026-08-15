@@ -49,7 +49,7 @@
 - Invalidated candidate(s): {{SHA_OR_NONE}}
 - Required new Trial: YES / NO / N/A
 - Required operator route: {{ROUTE}}
-- Current State Control Sheet impact: {{IMPACT_OR_NONE}}
+- Canonical evidence / downstream dependency impact: {{IMPACT_OR_NONE}}
 
 #### Evidence preservation
 

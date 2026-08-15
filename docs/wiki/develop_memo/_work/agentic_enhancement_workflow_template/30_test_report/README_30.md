@@ -80,3 +80,11 @@ formal FAIL時、failure factsをnext 08 authoring inputとして本文内に要
 Test / Audit Agentはcanonical Implementation Completion Reportから`FIXED_TRIAL_CANDIDATE_SHA`を取得する。current HEAD、最新commit、Package checkpoint、類似Completion Reportを暗黙にcandidateとして採用しない。candidate identityが成立しない場合はproduct verification開始前に`BLOCKED_CANDIDATE_IDENTITY`で停止する。
 
 formal FAIL後はnormal Pxx executionへ直接戻らず、next Trialのcurrent 08 Remediation Contractを作成・freezeしてformal FAIL remediation routeへ遷移する。
+
+<!-- BEGIN MANAGED: V005_LOCAL_AUTHORITY -->
+## v0.05 Gate decision authority
+
+Gateのfinal authorityはcanonical `999_gate_decision` である。
+
+Phase Fはcurrent Gateのcanonical 999だけを読み、PASS / FAIL / BLOCKEDをroutingする。Phase FはNext Gate readinessを判定せず、新しいstate / transition / promotion artifactを書かない。
+<!-- END MANAGED: V005_LOCAL_AUTHORITY -->

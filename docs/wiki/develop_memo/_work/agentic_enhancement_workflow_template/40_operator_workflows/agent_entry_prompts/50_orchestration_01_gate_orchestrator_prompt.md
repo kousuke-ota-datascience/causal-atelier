@@ -91,3 +91,50 @@ required Human action
 ```
 
 Gate Orchestrator は `PASS` / `FAIL` を出してはならない。
+
+<!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
+## 3. Execution identity control
+
+This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+
+Enhancement-fixed values:
+
+```text
+PROJECT_NAME={{PROJECT_NAME}}
+ENHANCE_ID={{ENHANCE_ID}}
+ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
+BRANCH_NAME={{BRANCH_NAME}}
+REMOTE_NAME={{REMOTE_NAME}}
+WORK_ROOT={{WORK_ROOT}}
+WORK_DIR_NAME={{WORK_DIR_NAME}}
+```
+
+Runtime values for this execution:
+
+```text
+GATE_ID={{GATE_ID}}
+TRIAL_NO={{TRIAL_NO}}
+```
+
+If any Enhancement-fixed value remains unresolved in the Enhancement-side prompt, stop with `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED`. If required Runtime values are missing or ambiguous, stop with `BLOCKED_EXECUTION_UNRESOLVABLE`.
+<!-- END MANAGED: EXECUTION_IDENTITY_CONTROL -->
+
+<!-- BEGIN MANAGED: V004_CONTRACT_SIMPLIFICATION -->
+## 4. v0.04 Gate routing authority
+
+Normal-path routing authorityを次に固定する。
+
+```text
+Gate dependency declaration -> Gate 06 `Depends on`
+Gate dependency evidence    -> upstream canonical 999
+Execution mode              -> Gate 06 `Execution mode`
+Required package set        -> Gate 06 `Required packages`
+Package dependency          -> each Pxx `Depends on` + canonical package reports / 999
+Verification authority      -> Gate 07
+Final Gate route            -> current canonical 999
+```
+
+Gate local README / P00 / planning / Architecture Review artifactをexecution eligibilityのauthorityにしない。これらはHuman traceability / optional authoring inputとして扱う。
+
+Phase Fではcurrent Gateのcanonical `999_gate_decision`だけを読み、PASSならcurrent Gateをcompleteとして終了する。next Gateの06/07/freeze/preflightは読まず、downstream Gateを開始する場合はそのGateのPhase Aへ遷移する。Phase Fでstate / transition / promotion artifactを書かない。
+<!-- END MANAGED: V004_CONTRACT_SIMPLIFICATION -->

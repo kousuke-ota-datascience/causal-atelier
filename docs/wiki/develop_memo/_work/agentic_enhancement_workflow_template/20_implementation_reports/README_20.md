@@ -102,3 +102,16 @@ Canonical path:
 Completion ReportはTrial directory直下に置き、`packages/`配下へ置かない。`PACKAGE_READY`だけではGate implementation completionまたは`READY_FOR_TEST`を意味しない。
 
 `FIXED_TRIAL_CANDIDATE_SHA`はsemantic implementation state、report / evidence commitはevidence stateであり、両者を混同しない。evidence-only commit後に`HEAD != FIXED_TRIAL_CANDIDATE_SHA`となることは許容する。
+
+<!-- BEGIN MANAGED: V005_LOCAL_AUTHORITY -->
+## v0.05 evidence authority
+
+```text
+Package completion evidence = canonical package execution status report (`State: PACKAGE_COMPLETE`)
+Candidate identity          = Implementation Completion Report
+Checkpoint report           = optional implementation evidence
+Implementation detail       = optional audit ledger
+```
+
+Package report / candidate evidenceをGate PASS authorityとして扱わない。
+<!-- END MANAGED: V005_LOCAL_AUTHORITY -->
