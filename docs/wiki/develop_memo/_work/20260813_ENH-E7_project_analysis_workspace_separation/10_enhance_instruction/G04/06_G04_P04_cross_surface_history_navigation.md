@@ -1,14 +1,14 @@
 # ENH-E7 G04 P04 — Cross-surface Routing / Browser History
 
-文書種別: Primary Execution Contract
-Self-containment: MUST  
-Information isolation: MUST  
-Reporting contract: SELF_CONTAINED
-Gate: G04
-初回発行Trial: 01
-Package: P04
-Depends on: P02,P03
-Status at issuance: DRAFT_NOT_FROZEN
+**文書種別:** Primary Execution Contract
+**Self-containment:** MUST  
+**Information isolation:** MUST  
+**Reporting contract:** SELF_CONTAINED
+**Gate:** G04
+**初回発行Trial:** 01
+**Package:** P04
+**Depends on:** P02,P03
+**Status at issuance:** DRAFT_NOT_FROZEN
 
 ## 1. 目的
 

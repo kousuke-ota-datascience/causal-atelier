@@ -1,14 +1,14 @@
 # ENH-E7 G03 P03 — Project Management Shell
 
-文書種別: Primary Execution Contract
-Self-containment: MUST  
-Information isolation: MUST  
-Reporting contract: SELF_CONTAINED
-Gate: G03
-初回発行Trial: 01
-Package: P03
-Depends on: P02
-Status at issuance: DRAFT_NOT_FROZEN
+**文書種別:** Primary Execution Contract
+**Self-containment:** MUST  
+**Information isolation:** MUST  
+**Reporting contract:** SELF_CONTAINED
+**Gate:** G03
+**初回発行Trial:** 01
+**Package:** P03
+**Depends on:** P02
+**Status at issuance:** DRAFT_NOT_FROZEN
 
 ## 1. 目的
 

@@ -54,12 +54,15 @@ function enhanceTooltips(){
   });
 }
 enhanceTooltips();
+TopLevelSurfaceActivation.initialize();
+TopLevelSurfaceActivation.activateForWorkspace($('.workspace.active')?.id||'projects');
 
 async function activateWorkspace(workspace,{push=true,button=null,retainAnalysisShell=false}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
   if(button)button.dataset.refreshStatus='pending';
   $$('nav button').forEach(x=>x.classList.remove('active'));if(button)button.classList.add('active');
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
+  TopLevelSurfaceActivation.activateForWorkspace(workspace);
   if(push&&button?.dataset.route){
     const route=state.project
       ? ProjectNavigation.projectRoute(state.project.project_id,button.dataset.route)
@@ -267,12 +270,12 @@ $('#new-project').onclick=async()=>{state.project=null;fillProject();synchronize
 $('#cancel-project-register').onclick=async()=>{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})};
 $('#project-select').onchange=async event=>{state.project=event.target.value?await api(`/projects/${event.target.value}`):null;fillProject();if(state.project){synchronizeProjectHistory(ProjectNavigation.overview(state.project.project_id),'PUSH');await activateWorkspace('management',{push:false})}else{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})}};
 window.selectProject=async id=>{state.project=await api(`/projects/${id}`);fillProject();await loadProjects();synchronizeProjectHistory(ProjectNavigation.overview(id),'PUSH');await activateWorkspace('management',{push:false})};
-function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';$('#overview-project-name').textContent=state.project?.name||'Projectを選択してください';$('#overview-project-status').textContent=state.project?.status||'—';$('#archive-project').disabled=!state.project;renderCommonWorkspaceHeader();renderAnalysisWorkspaceLauncher()}
+function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';$('#overview-project-name').textContent=state.project?.name||'Projectを選択してください';$('#overview-project-status').textContent=state.project?.status||'—';$('#project-management-project-name').textContent=state.project?.name||'Project未選択';$('#archive-project').disabled=!state.project;renderAnalysisContext();renderAnalysisWorkspaceLauncher()}
 
-function renderCommonWorkspaceHeader(){
+function renderAnalysisContext(){
   const workspace=state.workspaceState;
-  $('#common-project-name').textContent=state.project?.name||'Project未選択';
-  $('#common-project-status').textContent=state.project?.status||'—';
+  $('#analysis-context-project-name').textContent=state.project?.name||'Project未選択';
+  $('#analysis-context-project-status').textContent=state.project?.status||'—';
   $('#common-role').textContent=workspace?.current_role||'—';
   $('#unsaved-draft-indicator').textContent=workspace?.unsaved_draft?'UNSAVED DRAFT':'保存済み';
   $('#unsaved-draft-indicator').classList.toggle('unsaved',Boolean(workspace?.unsaved_draft));
@@ -295,15 +298,15 @@ function renderCommonWorkspaceHeader(){
 }
 
 async function loadWorkspaceState(){
-  if(!state.project){state.workspaceState=null;renderCommonWorkspaceHeader();return}
+  if(!state.project){state.workspaceState=null;renderAnalysisContext();return}
   state.workspaceState=await api(`/projects/${state.project.project_id}/workspace-state`);
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
 }
 
 async function saveWorkspaceState(changes){
   if(!state.project)return;
   state.workspaceState=await api(`/projects/${state.project.project_id}/workspace-state`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(changes)});
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
 }
 
 function saveCommonWorkspaceSelection(changes){
@@ -386,7 +389,7 @@ function renderResearchContexts(){
   const selected=select.value;
   select.innerHTML='<option value="">FIXED Contextを選択</option>'+fixed.map(context=>`<option value="${context.research_context_version_id}">${escapeHtml(context.context_key)} / v${context.version_number}</option>`).join('');
   if(fixed.some(context=>context.research_context_version_id===selected))select.value=selected;
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
   updatePredictiveAvailability();
 }
 
@@ -608,9 +611,9 @@ $('#show-project-lineage').onclick=async()=>{try{$('#lineage').textContent=JSON.
 
 $('#annotation-form').onsubmit=async event=>{event.preventDefault();const result=$('#result-select').value;if(!result)return notice('Resultを選択してください');const f=new FormData(event.target);try{await api(`/projects/${state.project.project_id}/workspace-annotations`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_type:'Result',target_id:result,statement:f.get('statement'),rationale:f.get('rationale')||null,assumptions:list(String(f.get('assumptions')||'')),limitations:list(String(f.get('limitations')||'')),decision:f.get('decision')||null,next_actions:list(String(f.get('next_actions')||''))})});event.target.reset();await renderAnnotations(result);notice('Annotationを記録しました')}catch(error){notice(error.message)}};
 
-async function refreshAll(){if(!state.project){state.workspaceState=null;state.unifiedResults=[];renderCommonWorkspaceHeader();renderResultOptions();updatePredictiveAvailability();return}await Promise.all([loadDatasets(),loadGraphs(),loadExecutions(),loadAnalysisViews(),loadExplorationResults(),loadPredictiveWorkspace()]);await Promise.all([loadWorkspaceState(),loadUnifiedResults()])}
+async function refreshAll(){if(!state.project){state.workspaceState=null;state.unifiedResults=[];renderAnalysisContext();renderResultOptions();updatePredictiveAvailability();return}await Promise.all([loadDatasets(),loadGraphs(),loadExecutions(),loadAnalysisViews(),loadExplorationResults(),loadPredictiveWorkspace()]);await Promise.all([loadWorkspaceState(),loadUnifiedResults()])}
 let draftStateTimer=null;
-document.addEventListener('input',event=>{if(!state.project||!event.target.closest('form'))return;state.workspaceState={...(state.workspaceState||{}),unsaved_draft:true};renderCommonWorkspaceHeader();if(draftStateTimer)clearTimeout(draftStateTimer);draftStateTimer=setTimeout(()=>saveWorkspaceState({unsaved_draft:true}).catch(error=>notice(error.message)),250)});
+document.addEventListener('input',event=>{if(!state.project||!event.target.closest('form'))return;state.workspaceState={...(state.workspaceState||{}),unsaved_draft:true};renderAnalysisContext();if(draftStateTimer)clearTimeout(draftStateTimer);draftStateTimer=setTimeout(()=>saveWorkspaceState({unsaved_draft:true}).catch(error=>notice(error.message)),250)});
 document.addEventListener('submit',()=>{if(!state.project)return;if(draftStateTimer)clearTimeout(draftStateTimer);saveWorkspaceState({unsaved_draft:false}).catch(error=>notice(error.message))});
 // ENH-E1 contract references retained for traceability after the modal migration:
 // target_graph_version_id:graph.graph_version_id

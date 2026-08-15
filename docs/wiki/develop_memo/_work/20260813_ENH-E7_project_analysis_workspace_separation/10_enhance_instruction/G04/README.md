@@ -1,7 +1,7 @@
 # ENH-E7 G04 — Navigation / State Reintegration & Full Regression Contract
 
 Status: FROZEN  
-Execution Mode: WORK_PACKAGE
+**Execution Mode:** WORK_PACKAGE
 
 ## Gate claim
 

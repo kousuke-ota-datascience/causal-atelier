@@ -5,7 +5,7 @@ Use only after Independent Verification has issued a formal FAIL.
 Human provides:
 
 ```text
-GATE_ID=<G01|G02>
+GATE_ID=<Gxx>
 TRIAL_NO=<next Trial>
 REMEDIATION_PACKAGE_ID=<Rxx or N/A according to approved 08>
 ```

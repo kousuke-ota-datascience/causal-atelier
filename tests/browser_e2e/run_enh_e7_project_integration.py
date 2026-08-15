@@ -49,6 +49,7 @@ def main() -> int:
             page.goto(f"{WEB}/projects", wait_until="networkidle")
             page.locator("#health").filter(has_text="API READY").wait_for(timeout=30_000)
             _active(page, "projects")
+            page.screenshot(path=OUTPUT / "enh-e7-g03-p06-projects.png", full_page=True)
             page.locator("#new-project").click()
             page.wait_for_function("() => window.location.pathname === '/projects/new'", timeout=30_000)
             _active(page, "project-new")
@@ -62,6 +63,7 @@ def main() -> int:
                 "() => /^\\/projects\\/[^/]+\\/overview$/.test(window.location.pathname)", timeout=30_000
             )
             _active(page, "management")
+            page.screenshot(path=OUTPUT / "enh-e7-g03-p06-project-management.png", full_page=True)
             project_id = page.locator("#project-select").input_value()
             assert project_id
             evidence["scenarios"] = {"create-to-overview": {"status": "PASS", "project_id": project_id}}
@@ -85,6 +87,7 @@ def main() -> int:
                 arg=f"/projects/{project_id}/analysis/exploratory/profile", timeout=30_000,
             )
             _active(page, "explore")
+            page.screenshot(path=OUTPUT / "enh-e7-g03-p06-analysis.png", full_page=True)
             evidence["scenarios"]["project-analysis-launcher"] = {"status": "PASS"}
             outcome = "PASS"
         except Exception as error:

@@ -20,7 +20,7 @@ No enhancement-fixed `{...}` placeholders are permitted in this instance.
 ## Runtime values supplied by Human
 
 ```text
-GATE_ID=<G01|G02>
+GATE_ID=<Gxx>
 PACKAGE_ID=<P01..>
 TRIAL_NO=<01..>
 

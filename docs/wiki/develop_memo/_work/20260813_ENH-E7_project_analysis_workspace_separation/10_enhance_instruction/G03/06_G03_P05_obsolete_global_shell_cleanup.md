@@ -1,14 +1,14 @@
 # ENH-E7 G03 P05 — Obsolete Global Shell Cleanup
 
-文書種別: Primary Execution Contract
-Self-containment: MUST  
-Information isolation: MUST  
-Reporting contract: SELF_CONTAINED
-Gate: G03
-初回発行Trial: 01
-Package: P05
-Depends on: P04
-Status at issuance: DRAFT_NOT_FROZEN
+**文書種別:** Primary Execution Contract
+**Self-containment:** MUST  
+**Information isolation:** MUST  
+**Reporting contract:** SELF_CONTAINED
+**Gate:** G03
+**初回発行Trial:** 01
+**Package:** P05
+**Depends on:** P04
+**Status at issuance:** DRAFT_NOT_FROZEN
 
 ## 1. 目的
 

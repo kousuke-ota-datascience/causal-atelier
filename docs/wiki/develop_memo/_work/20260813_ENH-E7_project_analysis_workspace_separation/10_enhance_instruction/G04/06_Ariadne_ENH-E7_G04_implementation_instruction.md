@@ -1,14 +1,14 @@
 # Ariadne ENH-E7 G04 Implementation Instruction — Gate Coding Contract
 
-文書種別: Primary Execution Contract  
-Self-containment: MUST  
-Project: Ariadne  
-Enhancement: ENH-E7  
-Active Gate: G04  
-Branch: `feature/ariadne_mvp_e7`  
-Baseline: `REQUIRES_LOCAL_VERIFICATION`  
-Contract status: FROZEN  
-Execution Mode: WORK_PACKAGE
+**文書種別:** Primary Execution Contract  
+**Self-containment:** MUST  
+**Project:** Ariadne  
+**Enhancement:** ENH-E7  
+**Active Gate:** G04  
+**Branch:** `feature/ariadne_mvp_e7`  
+**Baseline:** `REQUIRES_LOCAL_VERIFICATION`  
+**Contract status:** FROZEN  
+**Execution Mode:** WORK_PACKAGE
 
 ## 1. Gate定義 / Acceptance claim
 

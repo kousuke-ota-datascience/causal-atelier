@@ -24,7 +24,7 @@ def test_context_header_has_read_only_project_and_restores_only_saved_selection(
     app = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
 
     assert "Current Project (read-only)" in html
-    assert '<output id="common-project-name">' in html
+    assert '<output id="analysis-context-project-name">' in html
     assert 'id="common-context"' in html
     assert 'id="common-dataset"' in html
     assert 'id="common-view"' in html

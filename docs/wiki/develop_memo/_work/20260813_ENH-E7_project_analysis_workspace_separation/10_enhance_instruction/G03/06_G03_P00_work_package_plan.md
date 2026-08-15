@@ -1,6 +1,6 @@
 # ENH-E7 G03 P00 Work Package Plan
 
-文書種別: Planning / Operator Artifact  
+**文書種別:** Planning / Operator Artifact  
 Status: DRAFT_NOT_FROZEN  
 P00はimplementation Work Packageではない。
 

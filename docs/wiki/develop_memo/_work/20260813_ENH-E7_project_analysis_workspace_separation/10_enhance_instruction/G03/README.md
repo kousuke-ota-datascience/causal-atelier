@@ -1,7 +1,7 @@
 # ENH-E7 G03 — UI Surface Architecture Correction Contract
 
 Status: FROZEN  
-Execution Mode: WORK_PACKAGE
+**Execution Mode:** WORK_PACKAGE
 
 ## Gate claim
 

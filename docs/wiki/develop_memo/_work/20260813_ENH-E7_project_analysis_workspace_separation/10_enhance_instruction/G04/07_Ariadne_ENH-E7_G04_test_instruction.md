@@ -1,8 +1,8 @@
 # Ariadne ENH-E7 G04 Test Instruction — Gate Verification Contract
 
-文書種別: Primary Execution Contract  
-Self-containment: MUST  
-Verification contract status: FROZEN
+**文書種別:** Primary Execution Contract  
+**Self-containment:** MUST  
+**Verification contract status:** FROZEN
 
 ## 1. Acceptance authority
 

@@ -3,7 +3,7 @@
 Human provides:
 
 ```text
-GATE_ID=<G01|G02>
+GATE_ID=<Gxx>
 TRIAL_NO=<NN>
 ```
 

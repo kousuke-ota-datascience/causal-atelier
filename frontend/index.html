@@ -7,29 +7,45 @@
 <body>
   <header><div><strong>ARIADNE</strong><span>causal analysis workspace</span></div><span id="health">API確認中</span></header>
   <div class="shell">
-    <aside>
-      <label>Project<select id="project-select"></select></label>
-      <button id="new-project">New Project</button>
-      <nav>
-        <button data-workspace="management" data-route="overview">Project Management</button>
-        <button data-workspace="context" data-route="context">1 Research Context</button>
-        <button data-workspace="data" data-route="data" class="active">2 Project / Data</button>
-        <button data-workspace="results" data-route="results">7 Results / Lineage</button>
-      </nav>
-      <p>科学的負結果は技術障害ではありません。Resultのstatusとdiagnosticsを確認してください。</p>
-    </aside>
     <main id="main-content" tabindex="-1">
       <div id="notice"></div>
-      <section id="analysis-navigation-shell" class="card" aria-label="Analysis navigation">
-        <div id="analysis-family-tabs" role="tablist" aria-label="Analysis family"></div>
-        <nav id="analysis-stage-sidebar" aria-label="Analysis stage"></nav>
-        <section id="analysis-stage-contents" hidden aria-live="polite"></section>
-        <section id="causal-stage-presentation" hidden aria-live="polite"></section>
-        <div id="operation-availability" role="status"></div>
-        <div id="analysis-routing-actions" class="inline"></div>
+      <section id="projects-surface" data-top-level-surface-root="projects" aria-label="Projects" hidden>
+        <div id="projects-surface-chrome" class="projects-surface-chrome">
+          <label>Project<select id="project-select"></select></label>
+          <button id="new-project">New Project</button>
+        </div>
       </section>
-      <section id="common-workspace-header" class="card common-workspace-header" aria-label="共通Workspace selection">
-        <div><span class="field-label">Current Project (read-only)</span><output id="common-project-name">Project未選択</output><span id="common-project-status" class="status">—</span></div>
+      <section id="project-management-surface" data-top-level-surface-root="project-management" aria-label="Project Management" hidden>
+        <div id="project-management-shell-chrome" class="project-management-shell-chrome">
+          <header class="project-management-identity"><span class="field-label">Selected Project</span><output id="project-management-project-name">Project未選択</output></header>
+          <nav id="project-management-navigation" aria-label="Project Management navigation">
+            <button data-workspace="management" data-route="overview">Overview</button>
+            <button data-workspace="context" data-route="context">Research Context</button>
+            <button data-workspace="data" data-route="data" class="active">Project Data</button>
+            <button data-workspace="results" data-route="results">Results / Lineage</button>
+          </nav>
+        </div>
+        <div id="project-management-section-content"></div>
+      </section>
+      <section id="analysis-surface" data-top-level-surface-root="analysis" aria-label="Analysis" hidden>
+        <div id="analysis-workspace-top-region" class="analysis-workspace-top-region">
+          <div id="analysis-context-region"></div>
+          <div id="analysis-routing-actions" class="inline"></div>
+        </div>
+        <section id="analysis-navigation-shell" class="card" aria-label="Analysis navigation">
+          <div id="analysis-family-tabs" role="tablist" aria-label="Analysis family"></div>
+          <div id="analysis-stage-layout">
+            <nav id="analysis-stage-sidebar" aria-label="Analysis stage"></nav>
+            <main id="analysis-stage-main-area">
+              <section id="analysis-stage-contents" hidden aria-live="polite"></section>
+              <section id="causal-stage-presentation" hidden aria-live="polite"></section>
+              <div id="operation-availability" role="status"></div>
+            </main>
+          </div>
+        </section>
+      </section>
+      <section id="analysis-context-header" class="card analysis-context-header" aria-label="Analysis Context">
+        <div><span class="field-label">Current Project (read-only)</span><output id="analysis-context-project-name">Project未選択</output><span id="analysis-context-project-status" class="status">—</span></div>
         <label>Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
         <label>Dataset Version<select id="common-dataset"><option value="">未選択</option></select></label>
         <label>Analysis View<select id="common-view"><option value="">未選択</option></select></label>
@@ -233,5 +249,6 @@
   <script src="/project_navigation.js"></script>
   <script src="/analysis_presentation.js"></script>
   <script src="/causal_stage_presentation.js"></script>
+  <script src="/top_level_surface_activation.js"></script>
   <script src="/app.js"></script>
 </body></html>
