@@ -1,0 +1,573 @@
+{
+  "schema_version": 2,
+  "instance": {
+    "project": "Ariadne",
+    "enhancement": "ENH-E7",
+    "branch": "feature/ariadne_mvp_e7",
+    "work_dir_name": "20260813_ENH-E7_project_analysis_workspace_separation",
+    "work_root": "docs/wiki/develop_memo/_work/20260813_ENH-E7_project_analysis_workspace_separation",
+    "execution_mode": "WORK_PACKAGE",
+    "gates": [
+      "G01",
+      "G02"
+    ],
+    "generation_status": "G01_P01_PRE_EXECUTION_CLEAN_BASELINE"
+  },
+  "manifest_policy": "MANIFEST.json is excluded from its own hash set to avoid self-reference.",
+  "file_count": 92,
+  "files": [
+    {
+      "path": "00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md",
+      "sha256": "dbc763322cd58d17471c44b2b2bbf59402d9d7b38492989726d64b232ba8cfb9",
+      "bytes": 42269,
+      "lines": 1451
+    },
+    {
+      "path": "00_enhance_background/02_enhancement_concept_approval_record.md",
+      "sha256": "da38e375e9416ca2c8a81d26f97489ce559a5a14263b436e1394331d15429dd8",
+      "bytes": 1847,
+      "lines": 41
+    },
+    {
+      "path": "00_enhance_background/03_requirements_revision.md",
+      "sha256": "7ce1735d319ffd77c83e0590d149e7340f57373308f6e506373522fd31120ef5",
+      "bytes": 3875,
+      "lines": 60
+    },
+    {
+      "path": "00_enhance_background/04_design_revision.md",
+      "sha256": "6ee4b2738ba3c4a2e478d01fdb047ee11ab93bb4375604ef61a46759d8bf1f44",
+      "bytes": 2936,
+      "lines": 86
+    },
+    {
+      "path": "00_enhance_background/05_requirements_design_consistency_and_traceability_review.md",
+      "sha256": "815ccf8233963d2f29c9c5ff604233acb6c036beeb70105c3a2f5d11bfb5519e",
+      "bytes": 1169,
+      "lines": 37
+    },
+    {
+      "path": "00_enhance_background/80_contract_amendment_log.md",
+      "sha256": "19b6b5b56dc7940b11622fc6183530205a92664532ecd8d50a4bc57fdf367784",
+      "bytes": 624,
+      "lines": 17
+    },
+    {
+      "path": "00_enhance_background/README.md",
+      "sha256": "3205b7a2c0ac40fcb851e1b194be24f04885b14dcc85b06507d48f3daa8570a0",
+      "bytes": 1529,
+      "lines": 36
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/00_product_concept_memo.md",
+      "sha256": "2f4aeacdb6ab2efc0f0213a2ece7e485df67283b1e58565966854d12aa29cf7c",
+      "bytes": 418,
+      "lines": 9
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition.md",
+      "sha256": "8813dd693159d5f5b56c69796a9e8c00c5248e53a0773ce0fb2d4f89eb2a8ab6",
+      "bytes": 2362,
+      "lines": 27
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/21_logical_data_design.md",
+      "sha256": "e76e0db5624ce881626923d5d72c1f8e3f9ca2e19f50bd7d8ea66a8a8930a523",
+      "bytes": 571,
+      "lines": 9
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design.md",
+      "sha256": "8318e35a312906c3edbdd7e684521ee71d2daf8abca9aaa4b061d8743aac1e11",
+      "bytes": 487,
+      "lines": 21
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design.md",
+      "sha256": "9d322eb4779f3b54d8f5a72850a58913d77452e26f1c82b97ad0c17a33d8a0a4",
+      "bytes": 420,
+      "lines": 7
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design.md",
+      "sha256": "820fe48ce50cdce37561a5d94a7a997bba0e35724b45c18b6073ba942a2c0d44",
+      "bytes": 803,
+      "lines": 27
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/README.md",
+      "sha256": "b260435286f06a10b05c3b1ef24830c840438a83983967b59f5a33db6d49977a",
+      "bytes": 648,
+      "lines": 13
+    },
+    {
+      "path": "00_enhance_background/provenance/01_ENH-E7_IA_handoff.md",
+      "sha256": "c7aae40040c7720383e21ebd737224b09bbbb9fc9b21d88276d5bdfe8e635c58",
+      "bytes": 13268,
+      "lines": 632
+    },
+    {
+      "path": "00_enhance_background/provenance/02_ENH-E6_workflow_revision_findings.md",
+      "sha256": "3636f8f6fec8af4625eaed64a385d2a749df920870886e2395db558a56094e27",
+      "bytes": 13900,
+      "lines": 428
+    },
+    {
+      "path": "00_enhance_background/provenance/03_workflow_template_design_principles_handoff.md",
+      "sha256": "9882227d2ea80547025ab8fd0ab95a411f5b15ee4233634dfe53a79901d65aba",
+      "bytes": 25228,
+      "lines": 1146
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_Ariadne_ENH-E7_G01_implementation_instruction.md",
+      "sha256": "4459df44abc15db54c53c0e7ae41b7c64d91d16fa7065959e040087a10400b1f",
+      "bytes": 6714,
+      "lines": 153
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P00_work_package_plan.md",
+      "sha256": "73657acf9b8899696d1fdfa5100886f37e136a7bc3ce783d8944e76ede3c6c8b",
+      "bytes": 4488,
+      "lines": 66
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P01_project_navigation_authority.md",
+      "sha256": "67b54e83b794e429011cae9fad6346b98934c0a527dac0e0e27f3405924f27ed",
+      "bytes": 5501,
+      "lines": 148
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P02_projects_new_project_surface.md",
+      "sha256": "386bfbb766f38860c3d50f01fde2a5e416af651bb3e2133ea66dcbb46ef6b731",
+      "bytes": 5414,
+      "lines": 149
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P03_overview_project_lifecycle.md",
+      "sha256": "0233cc865992710d6e8b6e012a772ba9e761c16b42f70c40d6b164b76cdc3ffb",
+      "bytes": 5343,
+      "lines": 147
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P04_research_context_surface.md",
+      "sha256": "ca1b5ad7df1545d4dbc67dde75d600b70f2e5ffd11d87d6a5b8895a71d0fdba4",
+      "bytes": 5339,
+      "lines": 149
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P05_data_analysis_view_surface.md",
+      "sha256": "e5ab9f28cc2042f3a3fc9d947567a68dc9df995abfc7a3c0791a08f787168623",
+      "bytes": 5411,
+      "lines": 149
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P06_results_lineage_surface.md",
+      "sha256": "abf4fd6ab75c3baf0506e581dac0930a6696793a77fa2320c20601cd87aa974b",
+      "bytes": 5334,
+      "lines": 150
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P07_project_integration_regression.md",
+      "sha256": "b9c773719107f0a26a4f482333c4c3b8187e4858aef21a6b8afbe168854efe80",
+      "bytes": 5498,
+      "lines": 149
+    },
+    {
+      "path": "10_enhance_instruction/G01/07_Ariadne_ENH-E7_G01_test_instruction.md",
+      "sha256": "b989e19efff99679ed774f0abed877048e0dd36287a152642901a7bb78ae53f4",
+      "bytes": 8389,
+      "lines": 185
+    },
+    {
+      "path": "10_enhance_instruction/G01/08_ENH-E7_G01_TEMPLATE_Remediation_Instruction.md",
+      "sha256": "d89e99fe1b33e95e2f0ddd248495edafa37a1640ffd447188796abc028c1e44c",
+      "bytes": 444,
+      "lines": 10
+    },
+    {
+      "path": "10_enhance_instruction/G01/09_ENH-E7_G01_TEMPLATE_Gate_Contract_Amendment.md",
+      "sha256": "272617ba1f630f0560dd049e102b9ef584dc5d15e4a782ea16652765e95a5d71",
+      "bytes": 416,
+      "lines": 8
+    },
+    {
+      "path": "10_enhance_instruction/G01/README.md",
+      "sha256": "88f409328eb6bd7dc9ccfc980152d89f0fbb3ace7b1c9ca9ae09fab20d21f5c0",
+      "bytes": 1647,
+      "lines": 32
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_Ariadne_ENH-E7_G02_implementation_instruction.md",
+      "sha256": "01ff616d8e456136f94cf9ca5b8a6ba331071c34e990a2d82b8cfafc238d921f",
+      "bytes": 7005,
+      "lines": 151
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P00_work_package_plan.md",
+      "sha256": "4ff7a1e38c146cabf1af7285e6e93e436686894886b6724643fc25fe6870b59f",
+      "bytes": 3811,
+      "lines": 48
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P01_analysis_shell_context.md",
+      "sha256": "2015e87e78b7a8441ef73cfaf958ef334f181bd7946a9a94b817eb1ecf613219",
+      "bytes": 5215,
+      "lines": 149
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P02_project_analysis_routing.md",
+      "sha256": "b752eee44865afbf073470d37a9fbfbee29468c2d7adadf28b49815c0979a8e1",
+      "bytes": 5094,
+      "lines": 144
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P03_causal_stage_surface_migration.md",
+      "sha256": "7811e51867a48927bbb791599296b3a27ac7bb3e38659b9e4ef9c4c53ef22fa8",
+      "bytes": 5263,
+      "lines": 146
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P04_exploratory_stage_surface_migration.md",
+      "sha256": "37fc0da7a53110fb5cbc00d35d840c2f9a9c8a6edfae3a9d6bce35004f0a8b8d",
+      "bytes": 5186,
+      "lines": 145
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P05_predictive_stage_surface_migration.md",
+      "sha256": "02a2cc55398e2cba335fa035e9c73b416b690e0122cc1fa81bbf483d30e322e8",
+      "bytes": 5338,
+      "lines": 145
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P06_legacy_cutover_integration.md",
+      "sha256": "2ed4621697620a06d645541f864e85805dc465cc8ebf7e4157b28570d68565b7",
+      "bytes": 5312,
+      "lines": 147
+    },
+    {
+      "path": "10_enhance_instruction/G02/07_Ariadne_ENH-E7_G02_test_instruction.md",
+      "sha256": "3a433141b6617b59cb1cb4f458aaafcb7d1b46cb126e1df919adbea0db7bbba3",
+      "bytes": 10026,
+      "lines": 192
+    },
+    {
+      "path": "10_enhance_instruction/G02/08_ENH-E7_G02_TEMPLATE_Remediation_Instruction.md",
+      "sha256": "879dc7f0134c8eb242a0179fbf5e91d2fcb3d1de810a597c6c6cd3295f3b9791",
+      "bytes": 379,
+      "lines": 7
+    },
+    {
+      "path": "10_enhance_instruction/G02/09_ENH-E7_G02_TEMPLATE_Gate_Contract_Amendment.md",
+      "sha256": "62203ddf762951d4d45001b73069435ee088a1cb9c4e1e80937da877549b5748",
+      "bytes": 311,
+      "lines": 7
+    },
+    {
+      "path": "10_enhance_instruction/G02/README.md",
+      "sha256": "1c88a968a7f0ed5736999e4c8ab9a1977ab7ae90c5705a7361ccb429a3197c47",
+      "bytes": 1257,
+      "lines": 24
+    },
+    {
+      "path": "10_enhance_instruction/README.md",
+      "sha256": "a277f3ec0bfcf925ad35226efea33b2cc6ef0a2ae5f26ef0dc0a1028a5967f45",
+      "bytes": 1967,
+      "lines": 62
+    },
+    {
+      "path": "20_implementation_reports/G01/README.md",
+      "sha256": "7512397347ef9fa39ecc73522be46afaeab51c3133f939e53bf97cea1498907a",
+      "bytes": 262,
+      "lines": 5
+    },
+    {
+      "path": "20_implementation_reports/G01/Trial01/README.md",
+      "sha256": "4754b8642d7907aa1160a1aaf5626e365b00a15b60257e943fa0b8853aa7100f",
+      "bytes": 261,
+      "lines": 7
+    },
+    {
+      "path": "20_implementation_reports/G01/Trial01/packages/README.md",
+      "sha256": "5b86fdcea0a0f21184448bf5e3ef499b915681fdd5179eb636bda19b6ee94b5a",
+      "bytes": 551,
+      "lines": 15
+    },
+    {
+      "path": "20_implementation_reports/G02/README.md",
+      "sha256": "deb640664045c301ff2cc8ea0e0aab9e57ebd4692cd69e4eb0e61116c460167d",
+      "bytes": 262,
+      "lines": 5
+    },
+    {
+      "path": "20_implementation_reports/G02/Trial01/README.md",
+      "sha256": "94b41a541d040e2a7a0e8075d8f7c064b930c44d9ab6ddfc91653fbc4bd3f2bc",
+      "bytes": 261,
+      "lines": 7
+    },
+    {
+      "path": "20_implementation_reports/G02/Trial01/packages/README.md",
+      "sha256": "f864acac082a92813cb7b148a50d3318d876ef09c3a7444d9e6e44db0e75c8d7",
+      "bytes": 525,
+      "lines": 14
+    },
+    {
+      "path": "20_implementation_reports/README.md",
+      "sha256": "1568c29ec40417421a57615c432e07196e530daa1193982be9384f0d642be5a4",
+      "bytes": 559,
+      "lines": 17
+    },
+    {
+      "path": "20_implementation_reports/TEMPLATE_implementation_checkpoint_report.md",
+      "sha256": "80e0da7ed1a68b30990851a6c9e89ee93d9f118175cc3505cf4d2da0b032ee61",
+      "bytes": 651,
+      "lines": 22
+    },
+    {
+      "path": "20_implementation_reports/TEMPLATE_implementation_completion_report.md",
+      "sha256": "17deae83873074e18833ed13ff412508204f036b2d18382fa99e50ca89a0d078",
+      "bytes": 495,
+      "lines": 18
+    },
+    {
+      "path": "20_implementation_reports/TEMPLATE_implementation_report_detail.md",
+      "sha256": "be3a8cdea5cfe846abb41a05ac372bc4148c86c60557b4b6fdaa0680a5b8b0e7",
+      "bytes": 452,
+      "lines": 12
+    },
+    {
+      "path": "20_implementation_reports/TEMPLATE_package_execution_status_report.md",
+      "sha256": "60888635424acbf2b3c3c12480b25ee704fbca48ab9eae94b35a02ec27cb527e",
+      "bytes": 644,
+      "lines": 21
+    },
+    {
+      "path": "30_test_report/G01/README.md",
+      "sha256": "6f1845a06c99445ec5f7a7eafb04be5b6e0b00b0c928b85bff2897303032aa16",
+      "bytes": 221,
+      "lines": 5
+    },
+    {
+      "path": "30_test_report/G01/Trial01/README.md",
+      "sha256": "008d0f3bbb21cc9de3f5c024c81a1c536b991cd2f07de6d6e6b486febf5aaeb4",
+      "bytes": 409,
+      "lines": 14
+    },
+    {
+      "path": "30_test_report/G02/README.md",
+      "sha256": "44c0335e6fff4eb116a7c5947e323acfcad99834a45a1e9f29f5bb7c498a195a",
+      "bytes": 221,
+      "lines": 5
+    },
+    {
+      "path": "30_test_report/G02/Trial01/README.md",
+      "sha256": "aab830b1a2f56e6f6d785317798c966fdf3060c163f834dc8e51202476a18c52",
+      "bytes": 542,
+      "lines": 17
+    },
+    {
+      "path": "30_test_report/README.md",
+      "sha256": "3486c84c865dd2f51a205ad3b04c873e9875147a5f766410a3546f3723239a68",
+      "bytes": 336,
+      "lines": 8
+    },
+    {
+      "path": "30_test_report/TEMPLATE_gate_decision_report.md",
+      "sha256": "9aa511a66622ba015fc21ded3e3e9da7730b1305335aaa3e8adb02176de21e6b",
+      "bytes": 470,
+      "lines": 19
+    },
+    {
+      "path": "30_test_report/TEMPLATE_test_item_report.md",
+      "sha256": "03ee5abae17d0e3199a6e4b72c834308e7d9a897d4f0a2c83a577aaea31571e8",
+      "bytes": 451,
+      "lines": 21
+    },
+    {
+      "path": "40_operator_workflows/BROWSER_E2E_GATE_POLICY.md",
+      "sha256": "2e949e1f72dbbcd922b496b2ccbc1f32d001fcf1b254f7a9d19cb58870903b4d",
+      "bytes": 1323,
+      "lines": 40
+    },
+    {
+      "path": "40_operator_workflows/README.md",
+      "sha256": "62019951a4731597a2bea00eab5f11aff657bc24ad7b5c5d07cf0116699317e0",
+      "bytes": 2015,
+      "lines": 54
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/00_variable_conventions.md",
+      "sha256": "f0fb679d7f8a6370cb07e318d1f74e4abd9e45b02ec8346bde5ffc40d233e0eb",
+      "bytes": 942,
+      "lines": 32
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md",
+      "sha256": "9f0c8b294fa9dd9b5fddb0027fb2054274b475c422dce22df5865dce64bcf903",
+      "bytes": 371,
+      "lines": 7
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md",
+      "sha256": "91270485ac925a36fc62bcd8f44b99c1b4a9a7c6d85824b0087df32d00f7fe06",
+      "bytes": 3638,
+      "lines": 108
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md",
+      "sha256": "861d86b47ec10b604ba701ff4263371836ababe984cfff47437b73e063ee8ac5",
+      "bytes": 5240,
+      "lines": 158
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/30_independent_verification_01_test_agent_prompt.md",
+      "sha256": "e97763867f6bbfb85a408cf7aaba52a3155612550746c6b074009fe90e198f90",
+      "bytes": 1769,
+      "lines": 55
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/40_fail_remediation_01_fail_rework_coding_agent_prompt.md",
+      "sha256": "fb23ed9e40a630b8e95b6b0c981130ca8ec270ad3142785be57ddbda3f2d8379",
+      "bytes": 620,
+      "lines": 24
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md",
+      "sha256": "cae99db966a327f3c99deec5000a6699d6382e595a03403cbf0934b352f73ec8",
+      "bytes": 743,
+      "lines": 21
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/README.md",
+      "sha256": "670058557459a567431fd016a2918e33cfbdf4fabcbbb7e1ba3586e497f66627",
+      "bytes": 1166,
+      "lines": 28
+    },
+    {
+      "path": "40_operator_workflows/architecture_review/01_architecture_discovery_prompt.md",
+      "sha256": "088be1c93f57cf67d93652d5d6ba9823e5b103beb86459871c1b4853bfdda366",
+      "bytes": 908,
+      "lines": 20
+    },
+    {
+      "path": "40_operator_workflows/architecture_review/02_target_architecture_decision_record.md",
+      "sha256": "71d44434eebc083dcc7aaae266392dc16abc8a816c696c1946a6d49d1167065d",
+      "bytes": 1954,
+      "lines": 25
+    },
+    {
+      "path": "40_operator_workflows/architecture_review/03_gate_decomposition.md",
+      "sha256": "04b206ea0fe80d52bc7ec70117772212173d2d45b302fd080a2d6737fae7af03",
+      "bytes": 880,
+      "lines": 27
+    },
+    {
+      "path": "40_operator_workflows/architecture_review/README.md",
+      "sha256": "1097edc1a2541e2e5b4dbd89b0f6c62e32eb7b96516c67ce416e205a6af9c15a",
+      "bytes": 428,
+      "lines": 14
+    },
+    {
+      "path": "40_operator_workflows/controlled_runbook/README.md",
+      "sha256": "3da1b972f7584449bc6c62d379d157c0b030ad6bffb8a6852e800753df9222c1",
+      "bytes": 423,
+      "lines": 15
+    },
+    {
+      "path": "40_operator_workflows/controlled_runbook/TEMPLATE_completion_summary_decision_record.md",
+      "sha256": "fba7d015ae7978c8f2e26c62dbacc77b5232dc5aa8ba9209cf2eedf1e16e1737",
+      "bytes": 304,
+      "lines": 18
+    },
+    {
+      "path": "40_operator_workflows/controlled_runbook/TEMPLATE_step_prompt.md",
+      "sha256": "4f18d04a43580fd8f63c2702ddcef9a8c9917eaa4437c98b0445b5e71a13244e",
+      "bytes": 211,
+      "lines": 18
+    },
+    {
+      "path": "40_operator_workflows/controlled_runbook/TEMPLATE_step_result.md",
+      "sha256": "8fead93efc54c2126dcdbe4bb27edc2d771b06d8638b7ff5a6a7ecb452a128ad",
+      "bytes": 198,
+      "lines": 15
+    },
+    {
+      "path": "40_operator_workflows/preflight/README.md",
+      "sha256": "4405f8aac059e7de836df0ab624a0855dc76bec3b1660e17410791d5c008bebe",
+      "bytes": 3274,
+      "lines": 113
+    },
+    {
+      "path": "40_operator_workflows/preflight/TEMPLATE_preflight_instruction.md",
+      "sha256": "4e0f0a006ff7a0a8bba3e9992ca59e9a318e6792e99334db8c51d8b1e794f26d",
+      "bytes": 1114,
+      "lines": 31
+    },
+    {
+      "path": "40_operator_workflows/preflight/TEMPLATE_preflight_result.md",
+      "sha256": "0e977a1eb27899e202abe23088dbb02e2b6af45a75bf438b91d09231be922637",
+      "bytes": 387,
+      "lines": 20
+    },
+    {
+      "path": "40_operator_workflows/preflight/check_agent_execution_readiness.py",
+      "sha256": "977fdaa26d2a40f968d9bcbe55f2f39a76257b619d1daa733409e26501950371",
+      "bytes": 12151,
+      "lines": 366
+    },
+    {
+      "path": "40_operator_workflows/preflight/selftest_check_agent_execution_readiness.py",
+      "sha256": "c89ac30f4287280c2eb5a3cc195cf0678cd344e485d68290a3f4a3518c9d3d71",
+      "bytes": 12538,
+      "lines": 343
+    },
+    {
+      "path": "90_change_history/README.md",
+      "sha256": "d47ff6028f38ae54fbe580398cfa37bf3eaa61aa04a59741edeae3ee9bc21c4a",
+      "bytes": 918,
+      "lines": 20
+    },
+    {
+      "path": "90_change_history/schema_v11.md",
+      "sha256": "c9dbcd44f52ae5c293c327a795d92502bed5ca8a4f5b68f3d3af8e3f56072b0f",
+      "bytes": 215,
+      "lines": 5
+    },
+    {
+      "path": "90_change_history/schema_v2.md",
+      "sha256": "c01c1fea53c12636be02af9ab155cbbd842fae8cfa8e9ffcbbf04b87acbdfcd6",
+      "bytes": 814,
+      "lines": 15
+    },
+    {
+      "path": "90_change_history/schema_v3.md",
+      "sha256": "c38828d68ad546d835a28af9a82659c6d8dd21391155cc861076e8b2913e92a4",
+      "bytes": 789,
+      "lines": 13
+    },
+    {
+      "path": "Current_State_Control_Sheet.md",
+      "sha256": "9dedff152fce4a2429d5f03ea6d5745edf3c755256442e946822eaba464869e1",
+      "bytes": 2290,
+      "lines": 61
+    },
+    {
+      "path": "INSTANCE_VALIDATION_REPORT.md",
+      "sha256": "1f9f06c4a41f69614b15d336ac1e657e43f77470385334ab2ec2dc3ea5b65405",
+      "bytes": 4610,
+      "lines": 151
+    },
+    {
+      "path": "README.md",
+      "sha256": "139e78e1df04bf05a2726068b73b1c0b8ef25bbc9b1a16dc3f7c48f675f5a8c3",
+      "bytes": 2883,
+      "lines": 87
+    },
+    {
+      "path": "TEMPLATE_STRUCTURE.md",
+      "sha256": "438635cebcd1b2c55f9639edd7cf8db73752e5ca6da6bc243d630bad73e51ac8",
+      "bytes": 1876,
+      "lines": 48
+    }
+  ],
+  "distribution_version": "v0.07"
+}

@@ -8,7 +8,7 @@ agentic_enhancement_workflow_template/
 ├── README.md
 ├── TEMPLATE_STRUCTURE.md
 ├── MANIFEST.json
-├── TEMPLATE_Current_State_Control_Sheet.md
+├── canonical evidence sources
 │
 ├── 00_enhance_background/
 │   ├── README.md
@@ -111,3 +111,24 @@ Template instantiation時に、以下を必要に応じて生成する。canonic
 - `40_operator_workflows`はorchestrationでありproduct acceptance evidenceではない。
 - Browser E2E共通policyはauthoring / operational policyであり、個別GateのAcceptance authorityはfreeze済み07に保持する。Gate blocking Browser E2Eはcritical user journeyへ限定し、詳細correctnessは適切なlower-level testへ割り当てる。
 - Agent entry promptのnumeric prefixはresponsibility categoryを表し、無条件な線形実行順ではない。
+
+<!-- BEGIN MANAGED: V005_CONTROL_PLANE_STRUCTURE -->
+## v0.05 control-plane authority
+
+Actual repository semantic body is retained. The following rules supersede conflicting older runtime-routing prose in this document.
+
+```text
+Gate dependency declaration = Gate 06 `Depends on`
+Gate dependency evidence    = upstream canonical 999_gate_decision
+Execution mode              = Gate 06 `Execution mode`
+Required package set        = Gate 06 `Required packages`
+Package dependency          = assigned Pxx `Depends on` + canonical package report
+Gate readiness              = Gate 06 + Gate 07 + 06-declared prerequisite evidence + blocking preflightなし
+Candidate identity          = Implementation Completion Report
+Final Gate authority        = canonical 999_gate_decision
+Gate local README           = Human index only
+P00                         = optional authoring/audit only
+```
+
+Phase F reads only the current Gate canonical 999 and writes no state/promotion artifact. Mutable canonical evidence-derived state model is not part of the template.
+<!-- END MANAGED: V005_CONTROL_PLANE_STRUCTURE -->

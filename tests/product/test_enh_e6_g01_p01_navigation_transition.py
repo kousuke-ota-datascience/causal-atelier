@@ -33,5 +33,6 @@ def test_shell_is_cleared_when_a_non_analysis_workspace_becomes_active() -> None
     source = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
 
     assert "function clearAnalysisNavigationShell()" in source
-    assert "if(!shortcutFamily)clearAnalysisNavigationShell();" in source
+    assert "if(!retainAnalysisShell)clearAnalysisNavigationShell();" in source
+    assert "await activateWorkspace(presentation.workspace,{push:false,retainAnalysisShell:true});" in source
     assert "$('#analysis-family-tabs').replaceChildren();$('#analysis-stage-sidebar').replaceChildren();" in source

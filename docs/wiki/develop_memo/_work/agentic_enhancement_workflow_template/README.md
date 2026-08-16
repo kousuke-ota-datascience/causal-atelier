@@ -43,7 +43,7 @@ Canonical filename / directory nameは、LLM・shell・Git・自動生成処理�
 | **Authoring Guide** | root / 各directory README、構造・命名ガイド | **MUST** — そのガイドだけで担当artifactの作り方が分かること |
 | **Primary Execution Contract** | 06, 07, Pxx, Rxx | **MUST** — Agentが担当責務を実行するためのnormative semanticsを本文内に持つこと |
 | **Derived Contract** | 08, 09 | **CONDITIONAL** — 派生理由を保持しつつ、用途に応じてdelta referenceまたはconsolidationを選ぶこと |
-| **Planning / Evidence / State / Operator Artifact** | 00, 20, 30, Current State Control Sheet, 40のprompt/result等 | **MUST for own responsibility** — その文書の結論・判断・実行規則は本文内に持ち、fact/evidence/targetは外部参照可 |
+| **Planning / Evidence / State / Operator Artifact** | 00, 20, 30, canonical evidence-derived state model, 40のprompt/result等 | **MUST for own responsibility** — その文書の結論・判断・実行規則は本文内に持ち、fact/evidence/targetは外部参照可 |
 
 ### Local normative meaning
 
@@ -173,7 +173,7 @@ Work Package completionは以下を意味しない。
 
 - Gate contract established
 - Gate PASS
-- verified current state promotion
+- canonical evidence-derived state transition
 - downstream Gate unlock
 - product / architecture acceptance
 
@@ -200,7 +200,7 @@ Work Package completionは以下を意味しない。
 3. **Trial = candidate-to-independent-verification transaction** — TrialはAgent起動回数ではない。
 4. **Work Package = bounded Coding Agent execution unit** — Work Packageはexecution boundaryである。
 5. **Package checkpoint != Fixed Trial Candidate != Gate PASS** — 各evidence identityを分離する。
-6. **PASS-only verified-state promotion** — verified stateはfinal PASS時だけ昇格させる。
+6. **PASS-derived canonical state** — verified stateはfinal PASS時だけ昇格させる。
 7. **Passed-Gate immutability** — PASS済みcontractは後続作業から保護する。
 8. **Explicit authority / precedence / evidence identity** — 文書authorityとevidence identityを明示する。
 9. **Browser E2E = critical journey proof** — Browser E2Eをdetailed correctnessの一次証明にせず、少数のcritical user journeyのreal cross-layer connectivity確認へ限定する。
@@ -210,9 +210,9 @@ Work Package completionは以下を意味しない。
 ## 2. 作成するdocument layers
 
 ```text
-TEMPLATE_Current_State_Control_Sheet.md / generated Current State Control Sheet
-  = Verified current state control plane
-  = final PASS済みevidenceのみから構成する、現在の正へのindex
+Canonical evidence-derived state
+  = mutable state sheetを持たない
+  = package state / Gate state / candidate stateはcanonical evidenceから導出する
 
 00_enhance_background
   = Why / design history
@@ -267,7 +267,7 @@ Gate Decision
   = independent verification decision
   = Test / Audit Agent authority
 
-Current State Control Sheet
+canonical evidence-derived state model
   = verified state index
   = final PASS済みevidenceのみをpromotion
 ```
@@ -302,11 +302,9 @@ architecture / ownership / persistence等を変更する場合は、必要に応
 
 分割理由が単に実装量である場合はGateを増やさず、Work Packageを使用する。
 
-### Step 3 — Current State Control Sheetを初期化する
+### Step 3 — canonical evidence authorityを確認する
 
-`TEMPLATE_Current_State_Control_Sheet.md`をコピーし、開始時点で既にverifiedな状態だけを記載する。
-
-未検証の実装予定やpackage進捗をverified current stateへ書かない。
+mutable state sheetは作成しない。Package dependencyはpackage execution report、Gate dependencyはcanonical 999 Gate Decision、Gate readinessはGate 06 + Gate 07 + 06-declared prerequisite evidence + blocking preflight、candidate readinessはImplementation Completion Reportから導出する。
 
 ### Step 4 — Gateごとの06 / 07を作成してfreezeする
 
@@ -361,7 +359,7 @@ Coding Agentはassigned scopeを越えず、execution completion / interruption�
 
 Work Packageごとにcheckpointを作成しても、それをGate PASSと表現してはならない。
 
-Operator entryは`40_operator_workflows/agent_entry_prompts/README.md`のrouting tableに従う。normal SINGLE_EXECUTION / normal Pxx / Candidate Assembly / Independent Test / formal FAIL remediationを同一promptへ混在させない。
+Operator entryは`40_operator_workflows/agent_entry_prompts/README_40_agent_entry_prompts.md`のrouting tableに従う。normal SINGLE_EXECUTION / normal Pxx / Candidate Assembly / Independent Test / formal FAIL remediationを同一promptへ混在させない。
 
 
 #### Operator Quick HowToUse
@@ -426,7 +424,7 @@ Browser E2E Test Itemは07でfreezeされたcritical journeyだけをGate blocki
 ```text
 PASS
   -> Gate Contract established
-  -> Current State Control Sheetへverified stateをpromotion
+  -> canonical 999 Gate DecisionをGate state authorityとして確定
   -> passed-Gate contractをprotected化
   -> next Gateへ進行可能
 
@@ -681,7 +679,7 @@ Transition Debtは単なるTODOではなく、期限付きarchitectural / operat
 - scope guard
 - status: `OPEN / CLOSED / CANCELLED`
 
-06 / 07 / Work Package Plan / relevant package report / Implementation Completion Report / Test Item / Gate Decision / Current State Control Sheetからtraceableであること。
+06 / 07 / Work Package Plan / relevant package report / Implementation Completion Report / Test Item / Gate Decisionからtraceableであること。
 
 ---
 
@@ -850,7 +848,7 @@ UNKNOWN   : 取得を試みたが確定不能
 2. 不要なconditional workflow skeletonを削除または`N/A`化する。
 3. enhancement background / requirements / designを作成する。
 4. Gate decompositionを確定する。
-5. Current State Control Sheetの初期verified baselineを作る。
+5. canonical evidence authorityとdependencyを確認する。
 6. Gateごとに`{{GATE_ID}}` directoryを作る。
 7. Gate開始前に06/07をfreezeする。
 8. Execution Modeを選択する。
@@ -861,7 +859,7 @@ UNKNOWN   : 取得を試みたが確定不能
 13. Work Packageの場合はall required Pxx完了後にCandidate Assembly Agentを実行し、Fixed Trial Candidateを固定する。
 14. Independent Verification後、formal FAILならnormal Pxxへ戻らずcurrent Trial 08を作成してremediation routeへ進む。
 15. contract amendmentが発生した場合は09と`00_enhance_background/80_contract_amendment_log.md`を同期する。
-16. Independent Verification後、Gate Decisionに従ってControl Sheetを更新する。
+16. Independent Verification後、Gate Decisionに従ってcanonical evidenceからstateを再導出する。
 
 ---
 
@@ -937,7 +935,291 @@ Repository上の文書だけから最低限以下に回答できること。
 ### Schema v2
 
 - Gate-local 06 / 07 contractを導入。
-- Trial remediation contract、PASS-only verified-state promotion、Passed-Gate immutabilityを導入。
-- Current State Control Sheet、Transition Debt、document authority / precedenceを整備。
+- Trial remediation contract、PASS-derived canonical state、Passed-Gate immutabilityを導入。
+- canonical evidence、Transition Debt、document authority / precedenceを整備。
 
 過去schemaとの差分は通常のエンハンス計画作成時に読む必要はない。workflowのmigration、template保守、historical audit時のみ参照する。
+
+<!-- BEGIN MANAGED: WORKFLOW_EXECUTION_CONTROL -->
+## 3. Workflow Execution Control
+
+### 3.1. Template-side prompt direct execution prohibition
+
+`agentic_enhancement_workflow_template/40_operator_workflows/agent_entry_prompts/` はauthoring sourceであり、Agent executionへ直接指定してはならない。
+
+Enhancement開始時にEnhancement-specific prompt instanceを以下へ生成する。
+
+```text
+{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+```
+
+### 3.2. Variable lifecycle
+
+Enhancement-fixed variablesはinstance化時に確定する。
+
+```text
+PROJECT_NAME
+ENHANCE_ID
+ENHANCE_SHORT_ID
+BRANCH_NAME
+REMOTE_NAME
+WORK_ROOT
+WORK_DIR_NAME
+```
+
+Runtime variablesだけをexecution時にHuman operator / Orchestratorが与える。
+
+```text
+GATE_ID
+PACKAGE_ID
+TRIAL_NO
+REMEDIATION_PACKAGE_ID
+AMENDMENT_ID
+```
+
+### 3.3. Coding Agent context isolation
+
+Work Package Coding Agentのnormative contextはassigned Pxxだけとする。
+
+Human/auditor traceabilityとAgent-visible normative contextを分離する。
+
+```text
+Human traceability != Agent-visible normative context
+```
+
+### 3.4. Execution readiness
+
+Document complianceとAgent Execution Readinessを独立判定する。readinessがFAILならAgentを起動しない。
+
+最低4軸:
+
+1. Artifact completeness
+2. Content completeness
+3. Execution resolvability
+4. Information isolation
+
+Metadata parsingはMarkdown decorationに依存させない。`**Field:** value` / `Field: value` / `- Field: value` のような意味的に同一の表記差は許容し、field欠落・空値・解釈不能なdependency・evidence欠落のみをblocking対象とする。共通実装は `40_operator_workflows/tools/workflow_metadata.py` を使用する。
+
+### 3.5. Minimal runtime contract model
+
+通常経路のexecution-time authorityを次に固定する。
+
+```text
+Gate implementation / routing authority = Gate 06
+Gate verification authority             = Gate 07
+Work Package coding authority           = assigned Pxx only
+Gate dependency evidence                = upstream canonical 999 Gate Decision
+Package dependency evidence             = canonical package execution status report
+Candidate identity                      = Implementation Completion Report
+Final Gate authority                    = canonical 999 Gate Decision
+```
+
+Gate local READMEはHuman navigation/index専用とし、execution eligibilityを変えない。P00は存在してもauthoring rationale / audit用途に限定し、preflight / Candidate Assembly / Orchestratorのruntime authorityにしない。
+
+Phase Fはcurrent Gateのcanonical `999_gate_decision`だけを読み、next Gate readinessはNext Gate Phase Aで判定する。Phase Fは新しいstate / transition / promotion artifactを書かない。
+<!-- END MANAGED: WORKFLOW_EXECUTION_CONTROL -->
+
+<!-- BEGIN MANAGED: OPERATOR_QUICK_HOWTOUSE -->
+## 4. Operator Quick HowToUse
+
+### 4.1. Prerequisite
+
+以下のentry instructionは、**Enhancement-specificにinstance化済みの** `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` を参照する。
+
+template directory上の `agentic_enhancement_workflow_template/40_operator_workflows/agent_entry_prompts/` をAgentへ直接指定してはならない。
+
+End-to-endのoperator procedureは [`README_Appendix_HowToUse.md`](./README_Appendix_HowToUse.md) を参照する。
+
+### 4.2. SINGLE EXECUTION
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 10_normal_execution_01_single_execution_coding_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+### 4.3. WORK PACKAGE EXECUTION — STEP by STEP
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 10_normal_execution_02_work_package_coding_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- PACKAGE_ID=<PACKAGE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+### 4.4. CANDIDATE ASSEMBLY
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+### 4.5. INDEPENDENT VERIFICATION
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 30_independent_verification_01_test_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+### 4.6. FORMAL FAIL REMEDIATION
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 40_fail_remediation_01_fail_rework_coding_agent_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- REMEDIATION_PACKAGE_ID=<REMEDIATION_PACKAGE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+### 4.7. GATE WIDE AUTONOMOUS EXECUTION
+
+```text
+下記文書に記載の指示を実行すること。
+
+- {{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/
+    - 50_orchestration_01_gate_orchestrator_prompt.md
+
+今回の指示は
+- GATE_ID=<GATE_ID>
+- TRIAL_NO=<TRIAL_NO>
+である。
+```
+
+
+### 4.8. SUPPORTING DOCUMENTS — NOT DIRECT EXECUTION ENTRY POINTS
+
+以下もEnhancement-specific `agent_entry_prompts/` instanceへ含めるが、Human operatorがAgentへ直接指定するexecution promptではない。
+
+- `README_40_agent_entry_prompts.md`
+- `00_variable_conventions.md`
+
+Agent起動前にtemplate-side readiness validatorを実行し、`OVERALL: READY_FOR_AGENT_EXECUTION` の場合のみ上記entry instructionを使用する。
+<!-- END MANAGED: OPERATOR_QUICK_HOWTOUSE -->
+
+<!-- BEGIN MANAGED: README_NAMING_CONVENTION -->
+## 5. README Naming Convention
+
+### 5.1. Rule
+
+Enhancement work root / workflow template rootのtop-level READMEだけを無印 `README.md` とする。
+
+nested directoryのlocal READMEは、directory pathから機械的に導出した `PATH_ID` をpostfixとして付与する。
+
+```text
+README filename = deterministic function(directory path)
+```
+
+```text
+root/
+  README.md
+
+root/00_enhance_background/
+  README_00.md
+
+root/20_implementation_reports/G01/Trial01/
+  README_20_G01_Trial01.md
+
+root/40_operator_workflows/agent_entry_prompts/
+  README_40_agent_entry_prompts.md
+```
+
+### 5.2. PATH_ID generation
+
+Enhancement/template rootからREADME配置directoryまでのrelative pathを左から処理する。
+
+1. `NN_<semantic_name>` 形式のworkflow namespace directoryは `NN` に短縮する。
+2. `G01`, `P01`, `Trial01` 等のruntime identity directoryはそのまま保持する。
+3. `agent_entry_prompts`, `preflight` 等の非numbered semantic directoryは名前を保持する。
+4. tokenを `_` で連結する。
+5. `README_<PATH_ID>.md` とする。
+
+例:
+
+```text
+00_enhance_background
+  -> 00
+  -> README_00.md
+
+20_implementation_reports/G01/Trial01
+  -> 20_G01_Trial01
+  -> README_20_G01_Trial01.md
+
+40_operator_workflows/agent_entry_prompts
+  -> 40_agent_entry_prompts
+  -> README_40_agent_entry_prompts.md
+```
+
+### 5.3. Invariants
+
+- root以外に無印 `README.md` を置いてはならない。
+- 同一directoryに複数のlocal READMEを置いてはならない。
+- 手作業でpostfixを決めてはならない。必ずpath-derived naming functionを使用する。
+- rename時はMarkdown links、plain path references、operator prompts、structure/manifest、validator/instantiation toolingを同時更新する。
+- target filename collisionが発生した場合は自動上書きせず `BLOCKED_README_NAMING_COLLISION` とする。
+
+### 5.4. Canonical implementation
+
+canonical naming functionは以下とする。
+
+```text
+40_operator_workflows/tools/readme_naming.py
+```
+
+Template migration/apply tooling、instantiation tooling、validatorは同一規則を使用し、別々の命名ロジックを持たない。
+<!-- END MANAGED: README_NAMING_CONVENTION -->
+
+<!-- BEGIN MANAGED: DERIVED_STATE_AUTHORITY -->
+## Derived state and terminal routing authority
+
+Mutable state sheetは作成しない。State / readiness / dependencyはcanonical evidenceとfrozen contractから直接導出する。
+
+```text
+Pxx dependency
+  -> canonical package execution status report (`State: PACKAGE_COMPLETE`)
+
+Gate dependency
+  -> Gate 06 `Depends on` + upstream canonical 999_gate_decision
+
+Gate readiness
+  -> Gate 06 + Gate 07 + 06-declared prerequisite evidence + blocking preflightなし
+
+Candidate identity
+  -> Implementation Completion Report
+
+Final Gate authority
+  -> canonical 999_gate_decision
+```
+
+Gate local READMEはHuman index専用、P00はoptional authoring/audit専用とする。Phase Fはcurrent Gateのcanonical 999だけを読み、Next Gate readinessはNext Gate Phase Aで判定する。Phase Fは新しいstate / transition / promotion artifactを書かない。
+<!-- END MANAGED: DERIVED_STATE_AUTHORITY -->

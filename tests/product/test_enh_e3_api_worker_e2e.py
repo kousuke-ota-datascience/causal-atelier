@@ -177,6 +177,7 @@ async def test_research_context_to_cross_family_results_lineage_annotation_and_e
             "analysis_specification_id": specification_id,
             "execution_plan_id": plan.json()["execution_plan_id"], "seed": 17,
         },
+        headers={"Idempotency-Key": "g6-predictive"},
     )
     predictive_execution_id = predictive_execution.json()["execution_id"]
     _process_canonical(predictive_execution_id, "g6-predictive", ScientificCoreAdapter())
@@ -252,11 +253,13 @@ async def test_research_context_to_cross_family_results_lineage_annotation_and_e
             "limitations": ["Predictive Explanation is not a Causal Explanation."],
             "decision": "SELECTED", "next_actions": ["Review causal hypothesis"],
         },
+        headers={"Idempotency-Key": "g6-workspace-annotation"},
     )
     assert annotation.status_code == 201
     exported = await client.post(
         f"/api/v1/projects/{project_id}/exports",
         json={"result_ids": [explore_result["result_id"], evaluation_result_id, causal_result_id]},
+        headers={"Idempotency-Key": "g6-export"},
     )
     assert exported.status_code == 201
     assert exported.json()["manifest_summary"]["result_count"] == 3
@@ -270,15 +273,22 @@ async def test_research_context_to_cross_family_results_lineage_annotation_and_e
     assert len(explicit_motivations) == 2
 
 
-def test_g6_frontend_closes_context_common_selectors_results_and_six_routes() -> None:
+def test_g6_frontend_closes_context_common_selectors_results_and_canonical_analysis_routes() -> None:
     root = Path(__file__).parents[2]
     html = (root / "frontend" / "index.html").read_text(encoding="utf-8")
     javascript = (root / "frontend" / "app.js").read_text(encoding="utf-8")
-    for route in ("context", "data", "explore", "causal", "predictive", "results"):
-        assert f'data-route="{route}"' in html
+    navigation = (root / "frontend" / "navigation_state.js").read_text(encoding="utf-8")
+    assert 'data-top-level-surface-root="analysis"' in html
+    assert 'id="analysis-family-tabs"' in html
+    assert 'id="analysis-stage-sidebar"' in html
+    for route in ("explore", "causal", "predictive"):
+        assert f'data-route="{route}"' not in html
+    for legacy, family in (("explore", "exploratory"), ("causal", "causal"), ("predictive", "predictive")):
+        assert f'{legacy}: ["{family}",' in navigation
+    assert "function serialize(context)" in navigation
     for field in (
-        'id="common-project-name"', 'id="common-context"', 'id="common-dataset"',
-        'id="common-view"', 'id="common-role"', 'id="unsaved-draft-indicator"',
+        'id="analysis-context-project-name"', 'id="common-context"', 'id="common-dataset"',
+        'id="common-view"', 'id="common-role"', 'id="common-selection-status"',
         'id="research-context-form"', 'id="research-context-history"',
         'id="result-family-filter"', 'id="compare-results"',
         'id="show-project-lineage"', 'id="annotation-form"',

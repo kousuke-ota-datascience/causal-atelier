@@ -4,6 +4,8 @@ __pycache__/
 .pytest_cache/
 *.log
 
+_tmp_work/
+
 data/00_raw/**
 data/10_interim/**
 data/20_processed/**

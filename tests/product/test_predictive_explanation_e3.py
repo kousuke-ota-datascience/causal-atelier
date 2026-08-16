@@ -397,6 +397,7 @@ async def test_api_worker_persists_explanation_model_card_artifacts_and_lineage(
             "execution_plan_id": plan.json()["execution_plan_id"],
             "seed": family_spec["split_spec"]["seed"],
         },
+        headers={"Idempotency-Key": "g5-explain-execution"},
     )
     execution_id = execution.json()["execution_id"]
     _process_canonical_predictive(execution_id)

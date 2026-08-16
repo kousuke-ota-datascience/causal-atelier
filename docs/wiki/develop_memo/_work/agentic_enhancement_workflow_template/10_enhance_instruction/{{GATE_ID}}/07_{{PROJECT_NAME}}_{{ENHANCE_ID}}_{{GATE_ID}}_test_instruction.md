@@ -7,7 +7,7 @@
 - Enhancement: {{ENHANCE_ID}}
 - Active Gate: {{GATE_ID}}
 - Verification contract status: FROZEN
-- Current State Control Sheet (verified-fact reference): {{CONTROL_SHEET_PATH}}
+- canonical evidence-derived state model (verified-fact reference): {{CONTROL_SHEET_PATH}}
 
 ## 1. Acceptance authority
 

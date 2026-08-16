@@ -2,8 +2,9 @@ const API="/api/v1";
 const state={projects:[],project:null,datasets:[],analysisViews:[],researchContexts:[],exploratoryResults:[],executions:[],results:[],unifiedResults:[],resultSummary:null,workspaceState:null,graphs:[],graphCandidates:[],graphCandidate:null,editingGraph:null,sourceGraph:null,predictiveCapabilities:null,predictiveSpecifications:[],predictiveExecutions:[],predictiveDetails:null,predictiveDraft:null,pendingArchive:null,navigationCatalog:null,navigationContext:null};
 const $=(selector)=>document.querySelector(selector);
 const $$=(selector)=>[...document.querySelectorAll(selector)];
-const PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
-const ROUTE_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
+const PROJECT_WORKSPACES=Object.freeze({overview:'management',context:'context',data:'data',results:'results'});
+const LEGACY_PROJECT_ROUTES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'causal',predictive:'predictive',results:'results'});
+const LEGACY_PROJECT_WORKSPACES=Object.freeze({context:'context',data:'data',explore:'explore',causal:'discovery',predictive:'predictive',results:'results'});
 const ANALYSIS_HISTORY_MODES=Object.freeze({PUSH:'PUSH',REPLACE:'REPLACE',NONE:'NONE'});
 const NAVIGATION_ASYNC_STATES=Object.freeze(['IDLE','LOADING','READY','EMPTY','PARTIAL','ERROR','CANCELLED']);
 const PREDICTIVE_RESULT_ORDER=Object.freeze(['SPLIT_RESULT','TRAINING_RESULT','EVALUATION_RESULT','ERROR_ANALYSIS_RESULT','PREDICTIVE_EXPLANATION_RESULT','MODEL_CARD_RESULT']);
@@ -53,27 +54,43 @@ function enhanceTooltips(){
   });
 }
 enhanceTooltips();
+TopLevelSurfaceActivation.initialize();
+TopLevelSurfaceActivation.activateForWorkspace($('.workspace.active')?.id||'projects');
 
-async function activateWorkspace(workspace,{push=true,button=null}={}){
+async function activateWorkspace(workspace,{push=true,button=null,retainAnalysisShell=false}={}){
   button=button||$$('nav [data-workspace]').find(item=>item.dataset.workspace===workspace);
-  if(!button)return;
-  const shortcutFamily=button.dataset.navigationFamily,shortcutStage=button.dataset.navigationStage;
-  if(push&&shortcutFamily&&shortcutStage&&state.navigationCatalog&&state.project){
-    const context=AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,shortcutFamily,shortcutStage);
-    return applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'legacy-analytical-shortcut'});
-  }
-  button.dataset.refreshStatus='pending';
-  $$('nav button').forEach(x=>x.classList.remove('active'));button.classList.add('active');
+  if(button)button.dataset.refreshStatus='pending';
+  $$('#project-management-navigation [data-workspace]').forEach(item=>{
+    const current=item.dataset.workspace===workspace;
+    item.classList.toggle('active',current);
+    item.setAttribute('aria-current',current?'page':'false');
+  });
   $$('.workspace').forEach(x=>x.classList.remove('active'));$('#'+workspace).classList.add('active');
-  if(push&&state.project&&button.dataset.route){
-    const path=`/projects/${state.project.project_id}/${PROJECT_ROUTES[button.dataset.route]}`;
-    if(location.pathname!==path)history.pushState({project_id:state.project.project_id,workspace},'',path);
+  TopLevelSurfaceActivation.activateForWorkspace(workspace);
+  if(push&&button?.dataset.route){
+    const route=state.project
+      ? ProjectNavigation.projectRoute(state.project.project_id,button.dataset.route)
+      : {kind:'collection'};
+    synchronizeProjectHistory(route,'PUSH');
   }
-  if(!shortcutFamily)clearAnalysisNavigationShell();
-  try{await refreshAll();button.dataset.refreshStatus='done'}catch(error){button.dataset.refreshStatus='failed';notice(error.message);throw error}
+  if(!retainAnalysisShell)clearAnalysisNavigationShell();
+  try{await refreshAll();if(button)button.dataset.refreshStatus='done'}catch(error){if(button)button.dataset.refreshStatus='failed';notice(error.message);throw error}
   const heading=$('.workspace.active h1');if(heading){heading.tabIndex=-1;heading.focus()}
 }
-$$('nav [data-workspace]').forEach(button=>button.onclick=()=>activateWorkspace(button.dataset.workspace,{button}));
+function synchronizeProjectHistory(route,historyMode){
+  const path=ProjectNavigation.serialize(route);
+  if(location.pathname===path)return;
+  if(historyMode==='PUSH')history.pushState({projectRoute:route},'',path);
+  else if(historyMode==='REPLACE')history.replaceState({projectRoute:route},'',path);
+  else if(historyMode!=='NONE')throw new Error(`Unknown project history mode: ${historyMode}`);
+}
+$$('nav [data-workspace]').forEach(button=>button.onclick=()=>{
+  if(button.dataset.workspace==='management'&&!state.project){
+    synchronizeProjectHistory({kind:'collection'},'PUSH');
+    return activateWorkspace('projects',{push:false});
+  }
+  return activateWorkspace(button.dataset.workspace,{button});
+});
 
 function normalizeAnalysisNavigationContext(context){
   if(!state.navigationCatalog)throw new Error('Navigation catalog is unavailable');
@@ -96,10 +113,16 @@ async function applyAnalysisNavigation(context,{historyMode=ANALYSIS_HISTORY_MOD
   activateAnalysisPresentation(next);
   await renderOperationAvailability();
   fillProject();await loadProjects();$('#project-select').value=next.projectId;
-  await activateWorkspace(presentation.workspace,{push:false});
+  await activateWorkspace(presentation.workspace,{push:false,retainAnalysisShell:true});
   return {context:next,source};
 }
 async function restoreProjectRoute(){
+  if(location.pathname==='/'||location.pathname===''){
+    synchronizeProjectHistory({kind:'collection'},'REPLACE');
+    state.project=null;fillProject();await loadProjects();
+    await activateWorkspace('projects',{push:false});
+    return true;
+  }
   if(state.navigationCatalog){
     let parsed;
     try{parsed=AnalysisNavigation.parse(location.pathname,state.navigationCatalog)}catch(error){
@@ -117,33 +140,129 @@ async function restoreProjectRoute(){
       return true;
     }
   }
-  const match=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
-  if(!match)return false;
-  const [,projectId,route]=match;
-  state.project=await api(`/projects/${projectId}`);
-  fillProject();await loadProjects();$('#project-select').value=projectId;
-  await activateWorkspace(ROUTE_WORKSPACES[route],{push:false});
+  let route;
+  try{route=ProjectNavigation.parse(location.pathname)}catch(error){
+    if(!(error instanceof ProjectNavigation.ProjectRouteError)||error.code!=='PROJECT_ROUTE_NOT_FOUND')throw error;
+    const legacy=location.pathname.match(/^\/projects\/([^/]+)\/(context|data|explore|causal|predictive|results)\/?$/);
+    if(!legacy)return false;
+    const [,projectId,legacyRoute]=legacy;
+    const workspace=LEGACY_PROJECT_ROUTES[legacyRoute];
+    state.project=await api(`/projects/${projectId}`);
+    fillProject();await loadProjects();$('#project-select').value=projectId;
+    await activateWorkspace(LEGACY_PROJECT_WORKSPACES[workspace],{push:false});
+    return true;
+  }
+  if(route.kind==='collection'||route.kind==='new'){
+    state.project=null;fillProject();await loadProjects();
+    await activateWorkspace(route.kind==='collection'?'projects':'project-new',{push:false});
+    return true;
+  }
+  state.project=await api(`/projects/${route.projectId}`);
+  fillProject();await loadProjects();$('#project-select').value=route.projectId;
+  synchronizeProjectHistory(route,'REPLACE');
+  await activateWorkspace(PROJECT_WORKSPACES[route.section],{push:false});
   return true;
 }
 function clearAnalysisNavigationShell(){
   $('#analysis-family-tabs').replaceChildren();$('#analysis-stage-sidebar').replaceChildren();
+  const contents=$('#analysis-stage-contents');if(contents){contents.hidden=true;contents.replaceChildren()}
   const presentation=$('#causal-stage-presentation');if(presentation){presentation.hidden=true;presentation.replaceChildren()}
+  $('#analysis-routing-actions').replaceChildren();
+  renderCausalStageSurface(null);
+}
+function renderAnalysisWorkspaceLauncher(){
+  const target=$('#analysis-workspace-launcher');
+  if(!target)return;
+  const catalog=state.navigationCatalog,project=state.project;
+  if(!catalog||!project){target.innerHTML='<button type="button" disabled>Projectを選択してください</button>';return}
+  target.innerHTML=catalog.families.map(family=>'<button type="button" data-open-analysis-family="'+escapeHtml(family.slug)+'">'+escapeHtml(family.label)+' を開く</button>').join('');
+  $$('[data-open-analysis-family]').forEach(button=>button.onclick=()=>{
+    const context=AnalysisNavigation.defaultContext(catalog,project.project_id,button.dataset.openAnalysisFamily);
+    applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'project-analysis-launch'}).catch(error=>notice(error.message));
+  });
 }
 function renderAnalysisNavigation(){
   const catalog=state.navigationCatalog,context=state.navigationContext;if(!catalog||!context)return;
   const current=catalog.families.find(item=>item.slug===context.familySlug);if(!current)throw new Error('Navigation catalog invariant failure: current family missing');
+  const currentStage=current.stages.find(item=>item.slug===context.stageSlug);if(!currentStage)throw new Error('Navigation catalog invariant failure: current stage missing');
   $('#analysis-family-tabs').innerHTML=catalog.families.map(f=>'<button type="button" role="tab" aria-selected="'+(f.slug===current.slug)+'" aria-label="Analysis family: '+escapeHtml(f.label)+'" data-family="'+escapeHtml(f.slug)+'">'+escapeHtml(f.label)+'</button>').join('');
   $('#analysis-stage-sidebar').innerHTML=current.stages.slice().sort((a,b)=>a.order-b.order).map(s=>'<button type="button" aria-current="'+(s.slug===context.stageSlug?'page':'false')+'" aria-label="Analysis stage: '+escapeHtml(s.label)+'" data-stage="'+escapeHtml(s.slug)+'">'+escapeHtml(s.label)+'</button>').join('');
+  const contents=$('#analysis-stage-contents');
+  if(contents){contents.hidden=false;contents.innerHTML='<h2>Stage Contents</h2><p><b>'+escapeHtml(current.label)+'</b> / '+escapeHtml(currentStage.label)+'</p><p>選択中のAnalysis familyとstageを示します。入力resourceの作成・変更は行いません。</p>'}
+  const routing=$('#analysis-routing-actions');
+  routing.innerHTML='<button id="return-to-project-management" type="button">Project Managementへ戻る</button><button id="open-results-lineage" type="button">Results / Lineageを開く</button>';
+  $('#return-to-project-management').onclick=()=>activateWorkspace('management').catch(error=>notice(error.message));
+  $('#open-results-lineage').onclick=()=>activateWorkspace('results').catch(error=>notice(error.message));
   $$('#analysis-family-tabs button').forEach(button=>button.onclick=()=>{const family=catalog.families.find(f=>f.slug===button.dataset.family);applyAnalysisNavigation(AnalysisNavigation.defaultContext(catalog,state.project.project_id,family.slug),{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'family-tab-click'}).catch(error=>notice(error.message))});
   $$('#analysis-stage-sidebar button').forEach(button=>button.onclick=()=>applyAnalysisNavigation(AnalysisNavigation.navigationContext(catalog,state.project.project_id,current.slug,button.dataset.stage),{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'stage-sidebar-click'}).catch(error=>notice(error.message)));
 }
 function activateAnalysisPresentation(context){
   const target=$('#causal-stage-presentation');
   if(!target)return;
-  if(!context||context.familySlug!=='causal'){target.hidden=true;target.replaceChildren();return}
+  if(!context||context.familySlug!=='causal'){target.hidden=true;target.replaceChildren();renderCausalStageSurface(null);renderExploratoryStageSurface(context?.familySlug==='exploratory'?context.stageSlug:null);renderPredictiveStageSurface(context?.familySlug==='predictive'?context.stageSlug:null);return}
   const presentation=CausalStagePresentation.presentationFor(context.stageSlug);
   target.hidden=false;
   target.innerHTML='<h2>'+escapeHtml(presentation.title)+'</h2><p>'+escapeHtml(presentation.summary)+'</p><ul>'+presentation.resources.map(resource=>'<li>'+escapeHtml(resource)+'</li>').join('')+'</ul>';
+  renderCausalStageSurface(context.stageSlug);
+  renderExploratoryStageSurface(null);
+  renderPredictiveStageSurface(null);
+}
+function renderCausalStageSurface(stageSlug){
+  $$('[data-causal-stage-surface]').forEach(surface=>{
+    const stages=surface.dataset.causalStageSurface.split(/\s+/);
+    surface.hidden=Boolean(stageSlug)&&!stages.includes(stageSlug);
+  });
+}
+const EXPLORATORY_STAGE_OPERATIONS=Object.freeze({
+  profile:['PROFILE'], distribution:['DISTRIBUTION'], relationships:['ASSOCIATION'],
+  comparison:['GROUP_SUMMARY','TIME_TREND'], findings:['CHART'],
+});
+const EXPLORATORY_STAGE_RESULT_TYPES=Object.freeze({
+  profile:['DATA_PROFILE_RESULT'], distribution:['DISTRIBUTION_RESULT'], relationships:['ASSOCIATION_RESULT'],
+  comparison:['GROUP_SUMMARY_RESULT'], findings:null,
+});
+function renderExploratoryStageSurface(stageSlug){
+  const form=$('#exploration-form'),operation=form?.elements.operation,dataQuality=$('#exploratory-data-quality'),results=$('#exploratory-results-surface');
+  if(!form||!operation||!dataQuality||!results)return;
+  const isDataQuality=stageSlug==='data-quality',allowed=EXPLORATORY_STAGE_OPERATIONS[stageSlug]||null;
+  form.hidden=isDataQuality;
+  results.hidden=isDataQuality;
+  dataQuality.hidden=!isDataQuality;
+  if(allowed){
+    const selected=allowed.includes(operation.value)?operation.value:allowed[0];
+    operation.innerHTML=allowed.map(value=>`<option value="${value}">${value}</option>`).join('');
+    operation.value=selected;
+  }
+  if(isDataQuality)renderExploratoryDataQuality();
+  renderExplorationResults();
+}
+function renderExploratoryDataQuality(){
+  const target=$('#exploratory-data-quality');if(!target)return;
+  const profile=state.exploratoryResults.find(result=>result.result_type==='DATA_PROFILE_RESULT');
+  if(!profile){
+    target.innerHTML='<h2>Data Quality availability</h2><p class="status">NO_PROFILE_RESULT</p><p>Data Qualityは既存Profile resultをread-onlyで表示します。Profileを先に実行してください。</p><button id="open-profile-from-data-quality" type="button">Profileへ戻る</button>';
+    $('#open-profile-from-data-quality').onclick=()=>{
+      if(!state.project||!state.navigationCatalog)return;
+      const context=AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,'exploratory','profile');
+      applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'data-quality-profile-return'}).catch(error=>notice(error.message));
+    };
+    return;
+  }
+  target.innerHTML='<h2>Data Quality availability</h2><p>既存Profile resultをread-onlyで表示します。</p><pre>'+escapeHtml(JSON.stringify({summary:profile.summary,payload:profile.payload,warnings:profile.warnings},null,2))+'</pre>';
+}
+const PREDICTIVE_STAGE_RESULT_TYPES=Object.freeze({
+  train:['TRAINING_RESULT'], metrics:['EVALUATION_RESULT','ERROR_ANALYSIS_RESULT'],
+  explainability:['PREDICTIVE_EXPLANATION_RESULT'], 'model-management':['MODEL_CARD_RESULT'],
+});
+const PREDICTIVE_STAGE_ARTIFACT_TYPES=Object.freeze({
+  predict:['PREDICTION'], 'model-management':['FITTED_MODEL','MODEL_CARD'],
+});
+function renderPredictiveStageSurface(stageSlug){
+  $$('[data-predictive-stage-surface]').forEach(surface=>{
+    const stages=surface.dataset.predictiveStageSurface.split(/\s+/);
+    surface.hidden=Boolean(stageSlug)&&!stages.includes(stageSlug);
+  });
+  renderPredictiveDetails();
 }
 async function renderOperationAvailability(){
   const el=$('#operation-availability'),context=state.navigationContext;if(!state.project||!context){el.textContent='IDLE';return}el.textContent='LOADING';
@@ -155,51 +274,65 @@ async function loadProjects(){
   const data=await api('/projects');state.projects=data.items;const select=$('#project-select');
   select.innerHTML='<option value="">Projectを選択</option>'+data.items.map(p=>`<option value="${p.project_id}">${escapeHtml(p.name)}</option>`).join('');
   if(state.project){select.value=state.project.project_id}
-  $('#project-list').innerHTML=data.items.length?`<table><thead><tr><th>Name</th><th>Topic</th><th>Objective</th><th>Status</th><th></th></tr></thead><tbody>${data.items.map(p=>`<tr><td><button type="button" class="link-button" onclick="selectProject('${p.project_id}')">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.topic||'—')}</td><td>${escapeHtml(p.objective||'—')}</td><td><span class="status">${p.status}</span></td><td><button type="button" class="danger" onclick="requestArchive('${p.project_id}')">削除</button></td></tr>`).join('')}</tbody></table>`:'ACTIVE Projectはありません';
+  $('#project-list').innerHTML=data.items.length?`<table><thead><tr><th>Name</th><th>Topic</th><th>Objective</th><th>Status</th></tr></thead><tbody>${data.items.map(p=>`<tr><td><button type="button" class="link-button" onclick="selectProject('${p.project_id}')">${escapeHtml(p.name)}</button></td><td>${escapeHtml(p.topic||'—')}</td><td>${escapeHtml(p.objective||'—')}</td><td><span class="status">${p.status}</span></td></tr>`).join('')}</tbody></table>`:'ACTIVE Projectはありません';
 }
-$('#new-project').onclick=()=>activateWorkspace('management');
-$('#project-select').onchange=async event=>{state.project=event.target.value?await api(`/projects/${event.target.value}`):null;fillProject();if(state.project)await activateWorkspace('data');else await refreshAll()};
-window.selectProject=async id=>{state.project=await api(`/projects/${id}`);fillProject();await loadProjects();await activateWorkspace('data')};
-function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';renderCommonWorkspaceHeader()}
+$('#new-project').onclick=async()=>{state.project=null;fillProject();synchronizeProjectHistory({kind:'new'},'PUSH');await activateWorkspace('project-new',{push:false})};
+$('#cancel-project-register').onclick=async()=>{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})};
+$('#project-select').onchange=async event=>{state.project=event.target.value?await api(`/projects/${event.target.value}`):null;fillProject();if(state.project){synchronizeProjectHistory(ProjectNavigation.overview(state.project.project_id),'PUSH');await activateWorkspace('management',{push:false})}else{synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false})}};
+window.selectProject=async id=>{state.project=await api(`/projects/${id}`);fillProject();await loadProjects();synchronizeProjectHistory(ProjectNavigation.overview(id),'PUSH');await activateWorkspace('management',{push:false})};
+function fillProject(){const form=$('#project-form');for(const name of ['name','topic','objective','memo'])form.elements[name].value=state.project?.[name]||'';$('#overview-project-name').textContent=state.project?.name||'Projectを選択してください';$('#overview-project-status').textContent=state.project?.status||'—';$('#project-management-project-name').textContent=state.project?.name||'Project未選択';$('#archive-project').disabled=!state.project;renderAnalysisContext();renderAnalysisWorkspaceLauncher()}
 
-function renderCommonWorkspaceHeader(){
+function renderAnalysisContext(){
   const workspace=state.workspaceState;
-  $('#common-project-name').textContent=state.project?.name||'Project未選択';
-  $('#common-project-status').textContent=state.project?.status||'—';
+  $('#analysis-context-project-name').textContent=state.project?.name||'Project未選択';
+  $('#analysis-context-project-status').textContent=state.project?.status||'—';
   $('#common-role').textContent=workspace?.current_role||'—';
   $('#unsaved-draft-indicator').textContent=workspace?.unsaved_draft?'UNSAVED DRAFT':'保存済み';
   $('#unsaved-draft-indicator').classList.toggle('unsaved',Boolean(workspace?.unsaved_draft));
   const context=$('#common-context'),dataset=$('#common-dataset'),view=$('#common-view');
-  const contextValue=workspace?.research_context_version_id||context.value;
-  const datasetValue=workspace?.dataset_version_id||dataset.value;
-  const viewValue=workspace?.analysis_view_id||view.value;
+  const contextValue=workspace?.research_context_version_id||'';
+  const datasetValue=workspace?.dataset_version_id||'';
+  const viewValue=workspace?.analysis_view_id||'';
   context.innerHTML='<option value="">未選択</option>'+state.researchContexts.filter(item=>item.status==='FIXED').map(item=>`<option value="${item.research_context_version_id}">${escapeHtml(item.context_key)} / v${item.version_number}</option>`).join('');
   dataset.innerHTML='<option value="">未選択</option>'+state.datasets.map(item=>`<option value="${item.dataset_version_id}">${escapeHtml(item.name)} / ${escapeHtml(item.version_label)}</option>`).join('');
   view.innerHTML='<option value="">未選択</option>'+state.analysisViews.filter(item=>item.status==='FIXED'&&(!datasetValue||item.source_dataset_version_id===datasetValue)).map(item=>`<option value="${item.analysis_view_id}">${escapeHtml(item.name)} / v${item.version_number}</option>`).join('');
-  if([...context.options].some(item=>item.value===contextValue))context.value=contextValue;
-  if([...dataset.options].some(item=>item.value===datasetValue))dataset.value=datasetValue;
-  if([...view.options].some(item=>item.value===viewValue))view.value=viewValue;
+  const invalid=[];
+  for(const [select,value,label] of [[context,contextValue,'Research Context'],[dataset,datasetValue,'Dataset Version'],[view,viewValue,'Analysis View']]){
+    const available=[...select.options].some(item=>item.value===value);
+    select.value=available?value:'';
+    select.disabled=!state.project;
+    if(value&&!available)invalid.push(label);
+  }
+  const selectionStatus=$('#common-selection-status');
+  selectionStatus.textContent=invalid.length?`保存済み選択を復元できません: ${invalid.join(', ')}`:'';
 }
 
 async function loadWorkspaceState(){
-  if(!state.project){state.workspaceState=null;renderCommonWorkspaceHeader();return}
+  if(!state.project){state.workspaceState=null;renderAnalysisContext();return}
   state.workspaceState=await api(`/projects/${state.project.project_id}/workspace-state`);
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
 }
 
 async function saveWorkspaceState(changes){
   if(!state.project)return;
   state.workspaceState=await api(`/projects/${state.project.project_id}/workspace-state`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(changes)});
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
 }
 
-$('#common-context').onchange=event=>saveWorkspaceState({research_context_version_id:event.target.value||null}).catch(error=>notice(error.message));
-$('#common-dataset').onchange=event=>saveWorkspaceState({dataset_version_id:event.target.value||null,analysis_view_id:null}).catch(error=>notice(error.message));
-$('#common-view').onchange=event=>saveWorkspaceState({analysis_view_id:event.target.value||null}).catch(error=>notice(error.message));
-$('#project-register-form').onsubmit=async event=>{event.preventDefault();try{state.project=await api('/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});event.target.reset();await loadProjects();$('#project-select').value=state.project.project_id;fillProject();notice('Projectを登録しました')}catch(error){notice(error.message)}};
+function saveCommonWorkspaceSelection(changes){
+  saveWorkspaceState(changes).catch(async error=>{
+    notice(error.message);
+    await loadWorkspaceState().catch(restoreError=>notice(restoreError.message));
+  });
+}
+$('#common-context').onchange=event=>saveCommonWorkspaceSelection({research_context_version_id:event.target.value||null});
+$('#common-dataset').onchange=event=>saveCommonWorkspaceSelection({dataset_version_id:event.target.value||null,analysis_view_id:null});
+$('#common-view').onchange=event=>saveCommonWorkspaceSelection({analysis_view_id:event.target.value||null});
+$('#project-register-form').onsubmit=async event=>{event.preventDefault();try{state.project=await api('/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});event.target.reset();await loadProjects();$('#project-select').value=state.project.project_id;fillProject();synchronizeProjectHistory(ProjectNavigation.overview(state.project.project_id),'REPLACE');await activateWorkspace('management',{push:false});notice('Projectを登録しました')}catch(error){notice(error.message)}};
 $('#project-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('ACTIVE Projectを選択してください');try{const body=Object.fromEntries(new FormData(event.target));state.project=await api(`/projects/${state.project.project_id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});await loadProjects();$('#project-select').value=state.project.project_id;notice('Project metadataを更新しました')}catch(error){notice(error.message)}};
 window.requestArchive=id=>{state.pendingArchive=id;$('#archive-modal').showModal()};
-$('#confirm-archive').onclick=async()=>{if(!state.pendingArchive)return;try{await api(`/projects/${state.pendingArchive}`,{method:'DELETE'});if(state.project?.project_id===state.pendingArchive){state.project=null;state.workspaceState=null;state.unifiedResults=[];fillProject();state.datasets=[];state.executions=[];state.results=[];state.graphs=[];state.graphCandidates=[];state.researchContexts=[];state.predictiveExecutions=[]}state.pendingArchive=null;$('#archive-modal').close();await loadProjects();$('#project-select').value='';history.pushState({},'', '/');await activateWorkspace('management',{push:false});notice('ProjectをARCHIVEDへ変更しました。既存Lineageは保持されます')}catch(error){notice(error.message)}};
+$('#archive-project').onclick=()=>{if(state.project)requestArchive(state.project.project_id)};
+$('#confirm-archive').onclick=async()=>{if(!state.pendingArchive)return;try{await api(`/projects/${state.pendingArchive}`,{method:'DELETE'});if(state.project?.project_id===state.pendingArchive){state.project=null;state.workspaceState=null;state.unifiedResults=[];fillProject();state.datasets=[];state.executions=[];state.results=[];state.graphs=[];state.graphCandidates=[];state.researchContexts=[];state.predictiveExecutions=[]}state.pendingArchive=null;$('#archive-modal').close();await loadProjects();$('#project-select').value='';synchronizeProjectHistory({kind:'collection'},'PUSH');await activateWorkspace('projects',{push:false});notice('ProjectをARCHIVEDへ変更しました。既存Lineageは保持されます')}catch(error){notice(error.message)}};
 
 $('#dataset-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('Projectを選択してください');try{const form=new FormData(event.target);await api(`/projects/${state.project.project_id}/dataset-versions`,{method:'POST',headers:{'Idempotency-Key':idempotencyKey()},body:form});event.target.reset();await loadDatasets();notice('Dataset Versionを登録しました')}catch(error){notice(error.message)}};
 async function loadDatasets(){
@@ -240,7 +373,8 @@ $('#preview-exploration').onclick=async()=>{if(!state.project)return notice('Pro
 async function waitForExploration(executionId){for(let attempt=0;attempt<60;attempt+=1){const execution=await api(`/projects/${state.project.project_id}/exploration/executions/${executionId}`);if(execution.status==='SUCCEEDED')return execution;if(execution.status==='FAILED')throw new Error(execution.last_error?.message||'Exploration execution failed');if(execution.status==='CANCELLED')throw new Error('Exploration execution was cancelled');await new Promise(resolve=>setTimeout(resolve,250))}throw new Error('Exploration execution is still running. 更新ボタンで再確認してください')}
 $('#exploration-form').onsubmit=async event=>{event.preventDefault();if(!state.project)return notice('Projectを選択してください');try{const response=await api(`/projects/${state.project.project_id}/exploration/executions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(explorationRequest())});if(response.status==='QUEUED')notice('探索Executionをキューへ登録しました');await waitForExploration(response.execution_id);await loadExplorationResults();notice('EXPLORATORY Resultを保存しました')}catch(error){notice(error.message)}};
 async function loadExplorationResults(){if(!state.project){state.exploratoryResults=[];renderExplorationResults();return}state.exploratoryResults=(await api(`/projects/${state.project.project_id}/exploration/results`)).items;renderExplorationResults()}
-function renderExplorationResults(){const target=$('#exploration-results');if(!target)return;target.innerHTML=state.exploratoryResults.length?`<table><thead><tr><th>Family</th><th>Result</th><th>Status</th><th>Summary</th><th>Explicit transition</th></tr></thead><tbody>${state.exploratoryResults.map(result=>`<tr><td><span class="family-label">EXPLORATORY</span></td><td>${escapeHtml(result.result_type)}</td><td>${escapeHtml(result.analytical_status)}</td><td>${escapeHtml(JSON.stringify(result.summary))}</td><td><div class="explore-actions"><button type="button" onclick="showExploration('${result.result_id}')">表示</button><button type="button" onclick="createExplorationDraft('${result.result_id}','CAUSAL')">Causal draft</button><button type="button" onclick="createExplorationDraft('${result.result_id}','PREDICTIVE')">Predictive draft</button></div></td></tr>`).join('')}</tbody></table>`:'保存済み探索Resultはありません'}
+function visibleExploratoryResults(){const stage=state.navigationContext?.familySlug==='exploratory'?state.navigationContext.stageSlug:null,types=EXPLORATORY_STAGE_RESULT_TYPES[stage];return types?state.exploratoryResults.filter(result=>types.includes(result.result_type)):state.exploratoryResults}
+function renderExplorationResults(){const target=$('#exploration-results');if(!target)return;const results=visibleExploratoryResults();target.innerHTML=results.length?`<table><thead><tr><th>Family</th><th>Result</th><th>Status</th><th>Summary</th><th>Explicit transition</th></tr></thead><tbody>${results.map(result=>`<tr><td><span class="family-label">EXPLORATORY</span></td><td>${escapeHtml(result.result_type)}</td><td>${escapeHtml(result.analytical_status)}</td><td>${escapeHtml(JSON.stringify(result.summary))}</td><td><div class="explore-actions"><button type="button" onclick="showExploration('${result.result_id}')">表示</button><button type="button" onclick="createExplorationDraft('${result.result_id}','CAUSAL')">Causal draft</button><button type="button" onclick="createExplorationDraft('${result.result_id}','PREDICTIVE')">Predictive draft</button></div></td></tr>`).join('')}</tbody></table>`:'保存済み探索Resultはありません'}
 window.showExploration=id=>{const result=state.exploratoryResults.find(value=>value.result_id===id);if(result)renderExplorationResult(result)};
 window.createExplorationDraft=async(id,family)=>{try{const researchContextVersionId=$('#common-context').value;const draft=await api(`/projects/${state.project.project_id}/exploration/results/${id}/create-analysis-draft`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_family:family,analysis_mode:'EXPLORATORY',research_context_version_id:researchContextVersionId||undefined})});notice(`${family} draftを作成しました: ${draft.source_relation.warning}`)}catch(error){notice(error.message)}};
 $('#refresh-exploration').onclick=async event=>{event.currentTarget.dataset.refreshStatus='pending';try{await loadExplorationResults();event.currentTarget.dataset.refreshStatus='done'}catch(error){event.currentTarget.dataset.refreshStatus='failed';notice(error.message)}};
@@ -265,7 +399,7 @@ function renderResearchContexts(){
   const selected=select.value;
   select.innerHTML='<option value="">FIXED Contextを選択</option>'+fixed.map(context=>`<option value="${context.research_context_version_id}">${escapeHtml(context.context_key)} / v${context.version_number}</option>`).join('');
   if(fixed.some(context=>context.research_context_version_id===selected))select.value=selected;
-  renderCommonWorkspaceHeader();
+  renderAnalysisContext();
   updatePredictiveAvailability();
 }
 
@@ -339,9 +473,12 @@ function renderPredictiveDetails(){
   if(!details){resultTarget.textContent='Resultはありません。';artifactTarget.textContent='Artifactはありません。';return}
   const familySpec=details.specification?.family_spec||{},question=familySpec.prediction_question||{},features=familySpec.feature_spec||{},split=familySpec.split_spec||{};
   const specificationSummary=`<article class="predictive-result" data-predictive-specification><h3>Execution inputs</h3><p>Research Context: ${escapeHtml(details.execution.research_context_version_id||'—')} / Dataset Version: ${escapeHtml(details.execution.dataset_version_id||'—')} / Analysis View: ${escapeHtml(details.execution.analysis_view_id||'Dataset Version全体')}</p><p>Task: ${escapeHtml(familySpec.task_type||'—')} / Target: ${escapeHtml(question.target||'—')} / Features: ${escapeHtml((features.feature_columns||[]).join(', ')||'—')} / Split: ${escapeHtml(split.strategy||'—')}</p></article>`;
-  const orderedResults=[...details.results].sort((left,right)=>PREDICTIVE_RESULT_ORDER.indexOf(left.result_type)-PREDICTIVE_RESULT_ORDER.indexOf(right.result_type));
-  resultTarget.innerHTML=`<p><b>Execution ${details.execution.execution_id.slice(0,8)}</b> <span class="status ${details.execution.status}">${details.execution.status}</span></p><p>Stages: ${details.stages.map(stage=>`${escapeHtml(stage.stage_key)}=${escapeHtml(stage.status)}`).join(' → ')}</p>${specificationSummary}`+orderedResults.map(result=>`<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><div class="badge-row"><span class="family-label">PREDICTIVE</span><span class="status">${escapeHtml(result.analytical_status)}</span></div><h3>${escapeHtml(result.result_type)}</h3><pre>${escapeHtml(JSON.stringify({summary:result.summary,payload:result.payload,diagnostics:result.diagnostics,warnings:result.warnings},null,2))}</pre></article>`).join('');
-  artifactTarget.innerHTML=details.artifacts.length?details.artifacts.map(artifact=>`<article><b>${escapeHtml(artifact.artifact_type)}</b><p>Artifact ${artifact.artifact_id}</p><p>Result ${escapeHtml(artifact.result_id||'—')}</p><small>${escapeHtml(artifact.schema_version)} / ${escapeHtml(artifact.media_type)} / ${artifact.size_bytes} bytes / ${artifact.content_hash}</small></article>`).join(''):'Artifactはありません。';
+  const stage=state.navigationContext?.familySlug==='predictive'?state.navigationContext.stageSlug:null;
+  const resultTypes=PREDICTIVE_STAGE_RESULT_TYPES[stage],artifactTypes=PREDICTIVE_STAGE_ARTIFACT_TYPES[stage];
+  const orderedResults=[...details.results].filter(result=>!resultTypes||resultTypes.includes(result.result_type)).sort((left,right)=>PREDICTIVE_RESULT_ORDER.indexOf(left.result_type)-PREDICTIVE_RESULT_ORDER.indexOf(right.result_type));
+  resultTarget.innerHTML=`<p><b>Execution ${details.execution.execution_id.slice(0,8)}</b> <span class="status ${details.execution.status}">${details.execution.status}</span></p><p>Stages: ${details.stages.map(stage=>`${escapeHtml(stage.stage_key)}=${escapeHtml(stage.status)}`).join(' → ')}</p>${specificationSummary}`+(orderedResults.length?orderedResults.map(result=>`<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><div class="badge-row"><span class="family-label">PREDICTIVE</span><span class="status">${escapeHtml(result.analytical_status)}</span></div><h3>${escapeHtml(result.result_type)}</h3><pre>${escapeHtml(JSON.stringify({summary:result.summary,payload:result.payload,diagnostics:result.diagnostics,warnings:result.warnings},null,2))}</pre></article>`).join(''):'このStageに対応する既存Resultはありません。');
+  const artifacts=details.artifacts.filter(artifact=>!artifactTypes||artifactTypes.includes(artifact.artifact_type));
+  artifactTarget.innerHTML=artifacts.length?artifacts.map(artifact=>`<article><b>${escapeHtml(artifact.artifact_type)}</b><p>Artifact ${artifact.artifact_id}</p><p>Result ${escapeHtml(artifact.result_id||'—')}</p><small>${escapeHtml(artifact.schema_version)} / ${escapeHtml(artifact.media_type)} / ${artifact.size_bytes} bytes / ${artifact.content_hash}</small></article>`).join(''):stage==='predict'?'Prediction outputはありません。':'Artifactはありません。';
 }
 window.showPredictiveExecution=async id=>{try{await loadPredictiveDetails(id)}catch(error){notice(error.message)}};
 
@@ -484,9 +621,9 @@ $('#show-project-lineage').onclick=async()=>{try{$('#lineage').textContent=JSON.
 
 $('#annotation-form').onsubmit=async event=>{event.preventDefault();const result=$('#result-select').value;if(!result)return notice('Resultを選択してください');const f=new FormData(event.target);try{await api(`/projects/${state.project.project_id}/workspace-annotations`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_type:'Result',target_id:result,statement:f.get('statement'),rationale:f.get('rationale')||null,assumptions:list(String(f.get('assumptions')||'')),limitations:list(String(f.get('limitations')||'')),decision:f.get('decision')||null,next_actions:list(String(f.get('next_actions')||''))})});event.target.reset();await renderAnnotations(result);notice('Annotationを記録しました')}catch(error){notice(error.message)}};
 
-async function refreshAll(){if(!state.project){state.workspaceState=null;state.unifiedResults=[];renderCommonWorkspaceHeader();renderResultOptions();updatePredictiveAvailability();return}await Promise.all([loadDatasets(),loadGraphs(),loadExecutions(),loadAnalysisViews(),loadExplorationResults(),loadPredictiveWorkspace()]);await Promise.all([loadWorkspaceState(),loadUnifiedResults()])}
+async function refreshAll(){if(!state.project){state.workspaceState=null;state.unifiedResults=[];renderAnalysisContext();renderResultOptions();updatePredictiveAvailability();return}await Promise.all([loadDatasets(),loadGraphs(),loadExecutions(),loadAnalysisViews(),loadExplorationResults(),loadPredictiveWorkspace()]);await Promise.all([loadWorkspaceState(),loadUnifiedResults()])}
 let draftStateTimer=null;
-document.addEventListener('input',event=>{if(!state.project||!event.target.closest('form'))return;state.workspaceState={...(state.workspaceState||{}),unsaved_draft:true};renderCommonWorkspaceHeader();if(draftStateTimer)clearTimeout(draftStateTimer);draftStateTimer=setTimeout(()=>saveWorkspaceState({unsaved_draft:true}).catch(error=>notice(error.message)),250)});
+document.addEventListener('input',event=>{if(!state.project||!event.target.closest('form'))return;state.workspaceState={...(state.workspaceState||{}),unsaved_draft:true};renderAnalysisContext();if(draftStateTimer)clearTimeout(draftStateTimer);draftStateTimer=setTimeout(()=>saveWorkspaceState({unsaved_draft:true}).catch(error=>notice(error.message)),250)});
 document.addEventListener('submit',()=>{if(!state.project)return;if(draftStateTimer)clearTimeout(draftStateTimer);saveWorkspaceState({unsaved_draft:false}).catch(error=>notice(error.message))});
 // ENH-E1 contract references retained for traceability after the modal migration:
 // target_graph_version_id:graph.graph_version_id

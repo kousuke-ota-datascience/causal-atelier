@@ -85,11 +85,14 @@ Complete only when Status=PASS.
 
 This section is the acceptance-contract consequence of Gate PASS.
 
-## 9. Current State Control Sheet promotion
+## 9. Canonical Gate state consequence after PASS
 
-- Eligible: YES only if final Status=PASS
-- Sections to update: {{SECTIONS_OR_NONE}}
-- Promotion basis: this Gate Decision + referenced Test Item evidence
+Complete only when Status=PASS.
+
+- Gate state authority: this canonical 999 Gate Decision
+- Mutable state / promotion artifact update: NONE
+- Downstream Gate dependency evidence: this Gate Decision
+- Phase F write-set: NONE
 
 ## 10. Failure remediation input
 

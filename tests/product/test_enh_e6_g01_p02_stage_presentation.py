@@ -32,20 +32,19 @@ catch (error) {{ if (!String(error.message).includes('Missing analysis presentat
     assert result.returncode == 0, result.stderr or result.stdout
 
 
-def test_legacy_shortcuts_submit_exact_canonical_contexts_to_p01_seam() -> None:
+def test_sidebar_has_no_parallel_analytical_shortcuts() -> None:
     html = (REPOSITORY / "frontend" / "index.html").read_text(encoding="utf-8")
     app = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
 
-    for family, stage in (("exploratory", "profile"), ("predictive", "setup"), ("causal", "discovery"), ("causal", "identification")):
-        assert f'data-navigation-family="{family}" data-navigation-stage="{stage}"' in html
-    assert "source:'legacy-analytical-shortcut'" in app
-    assert "AnalysisNavigation.navigationContext(state.navigationCatalog,state.project.project_id,shortcutFamily,shortcutStage)" in app
-    assert "return applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH" in app
+    assert "data-navigation-family=" not in html
+    assert "data-navigation-stage=" not in html
+    assert "legacy-analytical-shortcut" not in app
+    assert "applyAnalysisNavigation(context,{historyMode:ANALYSIS_HISTORY_MODES.PUSH,source:'project-analysis-launch'" in app
 
 
 def test_shared_transition_uses_stage_aware_presentation_not_family_only_causal_mapping() -> None:
     app = (REPOSITORY / "frontend" / "app.js").read_text(encoding="utf-8")
 
     assert "const presentation=AnalysisPresentation.resolve(next);" in app
-    assert "await activateWorkspace(presentation.workspace,{push:false});" in app
+    assert "await activateWorkspace(presentation.workspace,{push:false,retainAnalysisShell:true});" in app
     assert "ANALYSIS_WORKSPACES" not in app

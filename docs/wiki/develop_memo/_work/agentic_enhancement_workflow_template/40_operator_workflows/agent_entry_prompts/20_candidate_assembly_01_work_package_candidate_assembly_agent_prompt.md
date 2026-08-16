@@ -679,3 +679,51 @@ BLOCKED_REMEDIATION_NOT_APPLIED
 - old package checkpoints から candidate を再構成
 - old package checkpoints から Completion Report を生成
 - candidate SHA の差し替え
+
+<!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
+## 3. Execution identity control
+
+This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+
+Enhancement-fixed values:
+
+```text
+PROJECT_NAME={{PROJECT_NAME}}
+ENHANCE_ID={{ENHANCE_ID}}
+ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
+BRANCH_NAME={{BRANCH_NAME}}
+REMOTE_NAME={{REMOTE_NAME}}
+WORK_ROOT={{WORK_ROOT}}
+WORK_DIR_NAME={{WORK_DIR_NAME}}
+```
+
+Runtime values for this execution:
+
+```text
+GATE_ID={{GATE_ID}}
+TRIAL_NO={{TRIAL_NO}}
+```
+
+If any Enhancement-fixed value remains unresolved in the Enhancement-side prompt, stop with `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED`. If required Runtime values are missing or ambiguous, stop with `BLOCKED_EXECUTION_UNRESOLVABLE`.
+<!-- END MANAGED: EXECUTION_IDENTITY_CONTROL -->
+
+<!-- BEGIN MANAGED: V004_CONTRACT_SIMPLIFICATION -->
+## 4. v0.04 Candidate Assembly authority
+
+Candidate AssemblyはGate local README / P00をruntime authorityとして読まない。
+
+required package集合はcanonical Gate 06の `Required packages` から解決する。Gate 06はexactly one、`Contract status: FROZEN`、`Execution mode: WORK_PACKAGE`でなければならない。
+
+各required Pxxのcompletion evidenceはcanonical package execution status reportから解決し、次を満たすものだけをcompleteとする。
+
+```text
+Gate: {{GATE_ID}}
+Package: <Pxx>
+Trial: {{TRIAL_NO}}
+State: PACKAGE_COMPLETE
+```
+
+required packageがすべてcompleteになるまでCandidate Assemblyを開始しない。P00のpackage map / dependency DAG / mutable statusからcompletionを推測しない。
+
+Assembly完了後はGate-level Implementation Completion Reportを作成し、Fixed Trial Candidate identity / candidate SHA / `Candidate state: READY_FOR_TEST` を記録する。Gate PASS/FAILは判定しない。
+<!-- END MANAGED: V004_CONTRACT_SIMPLIFICATION -->

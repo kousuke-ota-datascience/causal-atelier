@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "manifest_policy": "MANIFEST.json is excluded from its own hash set to avoid self-reference. Regenerate after all template changes are final.",
-  "file_count": 64,
+  "file_count": 71,
   "files": [
     {
       "path": "00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md",
@@ -35,15 +35,15 @@
     },
     {
       "path": "00_enhance_background/80_contract_amendment_log.md",
-      "sha256": "72f8ddb62dfaf65a0b7d9a6b7892f34a061d2aacef48a1426f1f410c8bc4ee87",
-      "bytes": 2617,
+      "sha256": "bed4e5eb967a0b1f20cb21843afaa84ba946fa59f4ab4f9124753a7766757d0a",
+      "bytes": 2632,
       "lines": 67
     },
     {
-      "path": "00_enhance_background/README.md",
-      "sha256": "3a62c3d631929b1878ed0e585c109859437ef3d629fc98f079463502c8df60ab",
-      "bytes": 3826,
-      "lines": 70
+      "path": "00_enhance_background/README_00.md",
+      "sha256": "9b2b91521110f9cc1b22a6173153269b6c3fb6fb3591db5e1892eb12565d48fa",
+      "bytes": 4316,
+      "lines": 78
     },
     {
       "path": "00_enhance_background/Revised_requirements_definition_documents/00_product_concept_memo.md",
@@ -82,16 +82,16 @@
       "lines": 23
     },
     {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/README.md",
+      "path": "00_enhance_background/Revised_requirements_definition_documents/README_00_Revised_requirements_definition_documents.md",
       "sha256": "b9ea803aa45494f8727f0b7b259e05cf78a19c6bd95b287b27e4a9d2fa2d3932",
       "bytes": 1349,
       "lines": 28
     },
     {
-      "path": "10_enhance_instruction/README.md",
-      "sha256": "6d2ba654c40a68e999c3842a00e2cc6c9a01a4c1fc1eccd8b823e9cac19c223f",
-      "bytes": 10595,
-      "lines": 214
+      "path": "10_enhance_instruction/README_10.md",
+      "sha256": "a8aa15eacded4de2a4758bd9ad337925b3bea918805414ae743798cd3034b476",
+      "bytes": 11298,
+      "lines": 232
     },
     {
       "path": "10_enhance_instruction/{{GATE_ID}}/06_{{GATE_ID}}_P00_work_package_plan.md",
@@ -107,14 +107,14 @@
     },
     {
       "path": "10_enhance_instruction/{{GATE_ID}}/06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_implementation_instruction.md",
-      "sha256": "4c111c66455e8bee2c29d26eb7129ac2ddf04b11af848880333fa97f7d11b772",
-      "bytes": 4787,
+      "sha256": "708646a85bdfc23f9df82c6ee0710ed54e4f11267cfeedd5fd320409a9bd3322",
+      "bytes": 4809,
       "lines": 130
     },
     {
       "path": "10_enhance_instruction/{{GATE_ID}}/07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_test_instruction.md",
-      "sha256": "1b96981278b11b3e3a7328d97a5bace9b69fd38d7d6d166b1152de38d6d9e033",
-      "bytes": 7823,
+      "sha256": "44e00b84471bf50d79ee41124311bfd495de1ccdc2382bb85db17e29a779b4a7",
+      "bytes": 7834,
       "lines": 170
     },
     {
@@ -136,16 +136,16 @@
       "lines": 64
     },
     {
-      "path": "10_enhance_instruction/{{GATE_ID}}/README.md",
+      "path": "10_enhance_instruction/{{GATE_ID}}/README_10_GATE_ID.md",
       "sha256": "a3b0443a41fbc0f5446a8d742c15e449e5b4048beee67839c33cab47473241e5",
       "bytes": 2722,
       "lines": 36
     },
     {
-      "path": "20_implementation_reports/README.md",
-      "sha256": "6fdce8041e58431948b4721ca83eb634c8352d983f5003b0ffc66100f065eb37",
-      "bytes": 3985,
-      "lines": 104
+      "path": "20_implementation_reports/README_20.md",
+      "sha256": "2e2254f6a7532704e258a6bbc05df1f4d701c9de6343a744270dcdd54bfafbf0",
+      "bytes": 4476,
+      "lines": 117
     },
     {
       "path": "20_implementation_reports/TEMPLATE_implementation_checkpoint_report.md",
@@ -161,8 +161,8 @@
     },
     {
       "path": "20_implementation_reports/TEMPLATE_implementation_report_detail.md",
-      "sha256": "bff7a4cd6755a2cbdbe6e25496247183ff205d1dafde26d81c7d18a5e13cd464",
-      "bytes": 2409,
+      "sha256": "e08cff80d27ea7ba40302c170578ddf4b802b419da9b5ef23b8c630b19a733ef",
+      "bytes": 2574,
       "lines": 61
     },
     {
@@ -172,34 +172,34 @@
       "lines": 39
     },
     {
-      "path": "20_implementation_reports/{{GATE_ID}}/README.md",
+      "path": "20_implementation_reports/{{GATE_ID}}/README_20_GATE_ID.md",
       "sha256": "ecbaff693644c632fe0da66b2088a01e44289a4051f5582dfaab67a26070fd9b",
       "bytes": 758,
       "lines": 16
     },
     {
-      "path": "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/README.md",
+      "path": "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/README_20_GATE_ID_Trial_TRIAL_NO.md",
       "sha256": "76c40c1e4962cec854cf349e9516985e6706efd431138a2a0338663be7ebbe6a",
       "bytes": 681,
       "lines": 11
     },
     {
-      "path": "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/README.md",
+      "path": "20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/README_20_GATE_ID_Trial_TRIAL_NO_packages.md",
       "sha256": "d102a413aeeebc2ac12d9b28dd29c30f57234f19c895dcd80570aedf5c82b82f",
       "bytes": 629,
       "lines": 13
     },
     {
-      "path": "30_test_report/README.md",
-      "sha256": "846ce379062f91e1756b03c4a9a5a2f6503bd2a684dfd8ee6c6e89d0eb33c5d7",
-      "bytes": 3420,
-      "lines": 82
+      "path": "30_test_report/README_30.md",
+      "sha256": "07419eee9b7d1708f8a6399790a0ab2d6fbcbfc3a51b936546591a1c83b60d07",
+      "bytes": 3822,
+      "lines": 90
     },
     {
       "path": "30_test_report/TEMPLATE_gate_decision_report.md",
-      "sha256": "304aa40c14f55a46692f29e3f942e1c88b019b2eec15aae1efe011edc0793da9",
-      "bytes": 4951,
-      "lines": 120
+      "sha256": "d8d7a922d63cbc8b6a4c4c6bacfe86f94c3117732b25f8a7a5e479d551d10c48",
+      "bytes": 5026,
+      "lines": 123
     },
     {
       "path": "30_test_report/TEMPLATE_test_item_report.md",
@@ -208,13 +208,13 @@
       "lines": 101
     },
     {
-      "path": "30_test_report/{{GATE_ID}}/README.md",
+      "path": "30_test_report/{{GATE_ID}}/README_30_GATE_ID.md",
       "sha256": "286add06b1de086abad94a1f7d83b2ecb586bb4a8f756d6cd6eedd5bc4eb2dee",
       "bytes": 487,
       "lines": 8
     },
     {
-      "path": "30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/README.md",
+      "path": "30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/README_30_GATE_ID_Trial_TRIAL_NO.md",
       "sha256": "c1b08e9a295adda2aca4b2cadc71f332790ccb2cff8b9aba686f2943600888ee",
       "bytes": 629,
       "lines": 11
@@ -226,58 +226,58 @@
       "lines": 267
     },
     {
-      "path": "40_operator_workflows/README.md",
-      "sha256": "5d0ca5b5f5bd084e144578226a58ee27b1ca34f7f7807ccb581f11a043e03ba8",
-      "bytes": 2593,
-      "lines": 41
+      "path": "40_operator_workflows/README_40.md",
+      "sha256": "9805d8418588f2676dcc3f0f4f572b8d5b6286d92096d677181897b7641296a9",
+      "bytes": 9887,
+      "lines": 292
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/00_variable_conventions.md",
-      "sha256": "136459d724669f8da1f3ad3563fe0cd4821f323987c7c93cf14a1345160ac26e",
-      "bytes": 1270,
-      "lines": 31
+      "sha256": "db0548657e7ad5fa441d572b3962b6f440c508fd40d705aeaf2111d780330326",
+      "bytes": 3586,
+      "lines": 107
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md",
-      "sha256": "afceb9271fa5991fe7a985e8da3ca5ce8993982bf91f9019d50c836d9fd285db",
-      "bytes": 9146,
-      "lines": 317
+      "sha256": "a269f835a280d87288cae71aca6c2bf00b4e98c311e74950f9d935fa656263de",
+      "bytes": 10029,
+      "lines": 344
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md",
-      "sha256": "dee8f6e337aea9a026c53dbb1ceed7738af2182c2f2b53d1e264d3a3aadc0b97",
-      "bytes": 10411,
-      "lines": 357
+      "sha256": "dd44b60f27d41af3e845e86161e38e0e6c2a422d7836f4e4ccbd6a806c785c00",
+      "bytes": 11933,
+      "lines": 400
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md",
-      "sha256": "f7e14053cbaaa3e2c743c3dd5ec7e52c0ed15e303ae45c5b9f70091a81ecd7f0",
-      "bytes": 18892,
-      "lines": 681
+      "sha256": "bc31c8fea9d5168dac3f2fd7972d947124f89255381cc7df952c7967bee875c1",
+      "bytes": 20849,
+      "lines": 729
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/30_independent_verification_01_test_agent_prompt.md",
-      "sha256": "e2925b877cd4c2e0ae8f5111854d7fe1203c313a0fc970ccb32585105fdf01b7",
-      "bytes": 12954,
-      "lines": 443
+      "sha256": "25a79625ec6ac753312087bd92b9f7ddeecfc0044df1b9dec09439a66658bbf6",
+      "bytes": 13807,
+      "lines": 470
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/40_fail_remediation_01_fail_rework_coding_agent_prompt.md",
-      "sha256": "4699aa56c2ad914984af7fc8026611ea4cda4df069f45c1847241fb0f5d7ff39",
-      "bytes": 5499,
-      "lines": 189
+      "sha256": "ac6fbed2bc811fcaeb1d0b4e25a2941388b4a23cd8cac3af7625fb17f2897eb5",
+      "bytes": 6432,
+      "lines": 217
     },
     {
       "path": "40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md",
-      "sha256": "b93f888fc58997cf36cdc3589ce1c744eab1fc8bc1aa76c000ede209e02e3306",
-      "bytes": 2527,
-      "lines": 93
+      "sha256": "991fa044e003c54da92e5f81939414c9a06edbeab3cb06fa64dc6e1252d2a149",
+      "bytes": 4538,
+      "lines": 140
     },
     {
-      "path": "40_operator_workflows/agent_entry_prompts/README.md",
-      "sha256": "0d5d5798d0f3deb726633abb026f78f12fdb68c4d0f85e9846e904b2e3a5e3d1",
-      "bytes": 3154,
-      "lines": 71
+      "path": "40_operator_workflows/agent_entry_prompts/README_40_agent_entry_prompts.md",
+      "sha256": "33fbc03ac504a828baec82e62eaf79a8ad618791114b1ee585c3be0926287b76",
+      "bytes": 6532,
+      "lines": 136
     },
     {
       "path": "40_operator_workflows/architecture_review/01_architecture_discovery_prompt.md",
@@ -298,13 +298,13 @@
       "lines": 29
     },
     {
-      "path": "40_operator_workflows/architecture_review/README.md",
-      "sha256": "b2d112965d22776c6fbeca966fa559075618171881446a50a917bad68196da65",
-      "bytes": 1520,
-      "lines": 31
+      "path": "40_operator_workflows/architecture_review/README_40_architecture_review.md",
+      "sha256": "db5d3ce77d2e8921cc90b51c6dc338167b43484ae30c75337c36a385af9b852e",
+      "bytes": 1938,
+      "lines": 39
     },
     {
-      "path": "40_operator_workflows/controlled_runbook/README.md",
+      "path": "40_operator_workflows/controlled_runbook/README_40_controlled_runbook.md",
       "sha256": "094a18cccdc559a0e4c64d4ba37865301366b35b9bb84e7c950cd0fa3d9f510d",
       "bytes": 1554,
       "lines": 38
@@ -328,7 +328,13 @@
       "lines": 35
     },
     {
-      "path": "40_operator_workflows/preflight/README.md",
+      "path": "40_operator_workflows/preflight/AGENT_EXECUTION_READINESS.md",
+      "sha256": "522e11cd9796c4e31341474d76e65940947a732e2fe561df33294a77792b2512",
+      "bytes": 4662,
+      "lines": 143
+    },
+    {
+      "path": "40_operator_workflows/preflight/README_40_preflight.md",
       "sha256": "67ead33b33d91d5e05b30a2aefdd02a91dac2a0787854706f65baa89812e7d2e",
       "bytes": 2245,
       "lines": 48
@@ -346,9 +352,39 @@
       "lines": 23
     },
     {
-      "path": "90_change_history/README.md",
-      "sha256": "35bfdb78b0cb72f68ea04ca80c3fdd337e3f99eec9d5d2d7c6659ea3bc7bb84c",
-      "bytes": 1016,
+      "path": "40_operator_workflows/tools/instantiate_agent_entry_prompts.py",
+      "sha256": "d2bd25b5781c7a9eca2de421bc9427e92fc6808d8f536328c5a086a2bfac451f",
+      "bytes": 3112,
+      "lines": 84
+    },
+    {
+      "path": "40_operator_workflows/tools/readme_naming.py",
+      "sha256": "cff6e79e1cde4b90ce9fc5c09cfbed25e0089540af7e22950fa9b979f22be2b5",
+      "bytes": 3895,
+      "lines": 104
+    },
+    {
+      "path": "40_operator_workflows/tools/test_workflow_metadata.py",
+      "sha256": "0858b2b75d0b24d9f560feedb2b666148e414632af8c36215f80e4ad5c580c03",
+      "bytes": 5189,
+      "lines": 136
+    },
+    {
+      "path": "40_operator_workflows/tools/validate_agent_execution_readiness.py",
+      "sha256": "538af571172986cf24c72cdba18a584c0a98547921b77f31c9eb0cb48e3c3384",
+      "bytes": 17187,
+      "lines": 347
+    },
+    {
+      "path": "40_operator_workflows/tools/workflow_metadata.py",
+      "sha256": "c4f65a9fa1530d781ab7e252ec75e4e06a9eacfa4b30c33f20d5ee622852d5a7",
+      "bytes": 6648,
+      "lines": 197
+    },
+    {
+      "path": "90_change_history/README_90.md",
+      "sha256": "162a5c92c6d2322050669ec3d792d0fc8c16b4a2d4387118ffc24556a55dfd35",
+      "bytes": 1019,
       "lines": 23
     },
     {
@@ -371,21 +407,27 @@
     },
     {
       "path": "README.md",
-      "sha256": "85c3751da1c9425090b71b815dd0ee5a41fd906360472be7f28838a91f30d895",
-      "bytes": 40220,
-      "lines": 943
+      "sha256": "8ea5714db4cb86f0b67ea7942b52549a92dd00837ce104f52d714d1b2dd7023d",
+      "bytes": 49267,
+      "lines": 1225
     },
     {
-      "path": "TEMPLATE_Current_State_Control_Sheet.md",
-      "sha256": "d77cef49977ecd32109d0bd8ef2dab7c270e3350d6bbf6a0acf0855ac835eb4b",
-      "bytes": 4595,
-      "lines": 111
+      "path": "README_Appendix_HowToUse.md",
+      "sha256": "536189dd6c6c7b9f23b5a095e6886139f5a2e583198cbf3f5573345ca3f37984",
+      "bytes": 58520,
+      "lines": 1521
+    },
+    {
+      "path": "README_NAMING_CONVENTION.md",
+      "sha256": "92866c7b2a07495e88a1b02c08bc97747a54fcaafd7ecff2caaffccaff177565",
+      "bytes": 2138,
+      "lines": 69
     },
     {
       "path": "TEMPLATE_STRUCTURE.md",
-      "sha256": "b44cddf5977ab4dd39dd7f01762dc3c9a51468c9dc1cbc1e9c6696b0572a2f6a",
-      "bytes": 5564,
-      "lines": 113
+      "sha256": "cad0c6f44d2e96d7d5717433715b51f3c1bef4ae666fd6d848fd5520eb126657",
+      "bytes": 6656,
+      "lines": 134
     }
   ]
 }

@@ -10,7 +10,7 @@
 - Baseline: {{BASELINE_FULL_SHA}}
 - Contract status: FROZEN
 - Execution Mode: SINGLE_EXECUTION / WORK_PACKAGE
-- Current State Control Sheet: {{CONTROL_SHEET_PATH}}
+- canonical evidence-derived state model: {{CONTROL_SHEET_PATH}}
 
 ## 1. Gate definition / acceptance claim
 
@@ -121,7 +121,7 @@ Trial completion時:
 - source / test / migration / runtime target
 - previous PASS evidence
 - approved requirement / design provenance
-- Current State Control Sheetのverified fact
+- canonical evidence-derived state modelのverified fact
 
 参照先は本書のnormative implementation semanticsを変更・補完するauthorityとして扱わない。本書とverified factが衝突し実装判断不能な場合は推測せず`BLOCKED_CONTRACT_AMBIGUITY`として停止する。
 

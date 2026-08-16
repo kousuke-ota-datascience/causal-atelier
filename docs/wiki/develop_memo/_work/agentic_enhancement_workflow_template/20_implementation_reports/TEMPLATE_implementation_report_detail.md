@@ -55,7 +55,7 @@
 - package completeではfinalizeしない。
 - READY_FOR_TESTでもverified promotionしない。
 - final PASS後に`FINALIZED_AFTER_PASS`としてGate Decisionをlinkする。
-- verified stateはCurrent State Control Sheetで管理する。
+- verified stateはこのledgerで管理しない。Gate stateはcanonical 999 Gate Decision、candidate identityはImplementation Completion Report、package stateはcanonical package execution status reportから導出する。
 
 ## 10. Final Gate Decision
 {{FINAL_GATE_DECISION_PATH_OR_PENDING}}
