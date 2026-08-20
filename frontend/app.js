@@ -91,6 +91,10 @@ $$('nav [data-workspace]').forEach(button=>button.onclick=()=>{
   }
   return activateWorkspace(button.dataset.workspace,{button});
 });
+$('#return-to-project-list').onclick=()=>{
+  synchronizeProjectHistory({kind:'collection'},'PUSH');
+  return activateWorkspace('projects',{push:false});
+};
 
 function normalizeAnalysisNavigationContext(context){
   if(!state.navigationCatalog)throw new Error('Navigation catalog is unavailable');

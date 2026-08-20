@@ -18,6 +18,7 @@ tests/browser_e2e/*
 !tests/browser_e2e/run_enh_e3.py
 !tests/browser_e2e/run_enh_e6_family_stage_navigation.py
 !tests/browser_e2e/run_enh_e7_project_integration.py
+!tests/browser_e2e/run_enh_e8_g01_project_return.py
 src/ariadne/legacy
 src/ariadne/infrastructure/artifact_store
 src/ariadne/infrastructure/auth
