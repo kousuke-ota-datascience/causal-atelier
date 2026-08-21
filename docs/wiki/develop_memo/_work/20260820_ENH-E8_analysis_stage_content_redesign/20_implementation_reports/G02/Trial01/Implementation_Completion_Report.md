@@ -2,18 +2,18 @@
 
 - Gate: `G02`
 - Trial: `01`
-- Fixed Trial Candidate SHA: `UNRESOLVED — self-referential final-commit SHA requirement cannot be recorded in the Report that is hashed into that same final commit`
-- Candidate state: `NOT_READY`
+- Fixed Trial Candidate SHA: a2399662f4f81ceadf36ae2aa71850d49786cae4
+- Candidate state: `READY_FOR_TEST`
 
-## Candidate identity blocker
+## Candidate identity
 
 The integrated implementation commit is `a2399662f4f81ceadf36ae2aa71850d49786cae4`.
 
-The required operation-flow condition is that this Report both (1) records the final immutable candidate commit SHA and (2) is included in that same commit. Git computes a commit SHA from its tree, and this Report is part of that tree. Replacing the unresolved value above with the final SHA changes the tree and therefore changes the final SHA. Consequently, this Report cannot truthfully record an exact same-commit SHA without a workflow exception.
+This Completion Report is a later documentation/attestation commit and is not part of the fixed implementation candidate. Therefore it can record the exact immutable code candidate SHA without changing it.
 
-No production or test implementation change is required to resolve this blocker. A workflow decision is required: either permit a follow-up immutable attestation commit that records the preceding candidate SHA, or allow the Report to be an immutable external evidence artifact.
+No production or test implementation change is included in this attestation update.
 
-> `NOT_READY` is not Gate PASS.
+> `READY_FOR_TEST` is not Gate PASS.
 
 ## Package evidence
 
@@ -43,4 +43,4 @@ No production or test implementation change is required to resolve this blocker.
 
 ## Candidate handoff
 
-The implementation packages have no unresolved code conflict. Candidate identity remains blocked by the operation-flow condition described above; Independent Verification must not treat this Report as `READY_FOR_TEST` until the workflow decision is made.
+The implementation packages have no unresolved code conflict. Independent Verification should use the fixed Trial Candidate SHA above in a clean, isolated worktree; this report does not declare Gate PASS.
