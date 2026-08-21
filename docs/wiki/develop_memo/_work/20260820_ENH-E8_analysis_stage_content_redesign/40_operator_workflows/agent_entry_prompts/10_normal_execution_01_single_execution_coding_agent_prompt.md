@@ -1,7 +1,10 @@
 # Single Execution Coding Agent Prompt
 
-入力identity: `GATE_ID=G01`, `TRIAL_NO`
+## 入力identity: 
+GATE_ID=G01
+TRIAL_NO=01
 
+0. 対象エンハンスは `docs/wiki/develop_memo/_work/20260820_ENH-E8_analysis_stage_content_redesign/README.md` である 
 1. normative implementation semanticsとして `10_enhance_instruction/G01/06_Ariadne_ENH-E8_G01_implementation_instruction.md` のみを読む。
 2. 07、background、previous reportを使って06の不足を補完しない。
 3. source code/testはimplementation fact確認のために調査してよい。
