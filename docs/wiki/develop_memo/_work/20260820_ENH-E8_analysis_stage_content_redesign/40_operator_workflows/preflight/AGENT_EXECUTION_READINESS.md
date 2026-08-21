@@ -13,7 +13,16 @@ Current documentation state: `APPROVED/FROZEN`
 
 ## G01 execution-time preflight
 
-- [ ] actual implementation worktree/branch identityを確認
+- [x] actual implementation worktree/branch identityを確認
+
+```
+commit 7f846fd305b767ac93224a27c980e5dec8499729 (HEAD -> feature/ariadne_mvp_e8, causal-atelier/prototype/ariadne_mvp, prototype/ariadne_mvp)
+Author: kousuke-ota-datascience <kousuke.ota.datascience@gmail.com>
+Date:   Thu Aug 20 21:09:15 2026 +0000
+
+    add 20260820_docs
+```
+
 - [ ] worktreeがCoding Agent開始に適したcontrolled stateである
 - [ ] required local tooling / Docker / Compose / Playwright image build pathが利用可能
 - [ ] frozen G01 contractとtarget repository SHAをAgent起動時に再確認

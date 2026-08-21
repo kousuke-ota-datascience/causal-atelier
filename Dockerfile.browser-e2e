@@ -8,5 +8,8 @@ COPY --chmod=0755 tests/browser_e2e/run_enh_e3_predictive.py /workspace/tests/br
 COPY --chmod=0755 tests/browser_e2e/run_enh_e3.py /workspace/tests/browser_e2e/run_enh_e3.py
 COPY --chmod=0755 tests/browser_e2e/run_enh_e6_family_stage_navigation.py /workspace/tests/browser_e2e/run_enh_e6_family_stage_navigation.py
 COPY --chmod=0755 tests/browser_e2e/run_enh_e7_project_integration.py /workspace/tests/browser_e2e/run_enh_e7_project_integration.py
+COPY --chmod=0755 tests/browser_e2e/run_enh_e8_g01_project_return.py /workspace/tests/browser_e2e/run_enh_e8_g01_project_return.py
+COPY --chmod=0755 tests/browser_e2e/run_enh_e8_g02_causal_stage_content.py /workspace/tests/browser_e2e/run_enh_e8_g02_causal_stage_content.py
+COPY --chmod=0755 tests/browser_e2e/run_enh_e8_g02_predictive_stage_content.py /workspace/tests/browser_e2e/run_enh_e8_g02_predictive_stage_content.py
 
 ENTRYPOINT ["python", "tests/browser_e2e/run_enh_e1a.py"]

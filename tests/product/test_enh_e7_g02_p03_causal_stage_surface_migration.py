@@ -14,15 +14,15 @@ def test_existing_causal_operations_are_owned_by_their_presentation_stages() -> 
         "discovery": ('id="discovery-form"', "Discovery Executions", "Graph Candidates"),
         "identification": ('id="identification-inputs"', "Identification / Eligibility / Gate"),
         "estimation": ('id="estimation-inputs"',),
-        "effects": ("Effects / Diagnostics",),
-        "diagnostics": ("Effects / Diagnostics", "Diagnostics / Warnings"),
+        "effects": ("Treatment Effects", 'id="treatment-effect-results"'),
+        "diagnostics": ("Diagnostics", 'id="diagnostics-results"'),
         "sensitivity": ('id="refutation-form"', 'id="sensitivity-form"'),
     }
     for stage, markers in expected.items():
-        assert f'data-causal-stage-surface="{stage}"' in html or stage in {"effects", "diagnostics"}
+        assert f'data-causal-stage-surface="{stage}"' in html
         for marker in markers:
             assert marker in html
-    assert 'data-causal-stage-surface="effects diagnostics"' in html
+    assert 'data-causal-stage-surface="effects diagnostics"' not in html
 
 
 def test_stage_navigation_only_changes_presentation_visibility() -> None:

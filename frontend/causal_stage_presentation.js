@@ -15,27 +15,27 @@
     }),
     identification:Object.freeze({
       title:'Identification',
-      summary:'Assess the estimand, identification strategy, adjustment set, assumptions, and identification status separately from estimator tuning.',
+      summary:'因果効果を識別できるかを、FIXED Graph、因果質問、推定対象、仮定、および識別戦略から確認します。',
       resources:Object.freeze(['Causal estimand and question','Identification strategy and adjustment set','Exchangeability, positivity, and consistency','Strategy-specific assumptions','Identification status and warnings']),
     }),
     estimation:Object.freeze({
       title:'Estimation',
-      summary:'Select and configure an estimator, uncertainty procedure, and execution using an identified causal question.',
+      summary:'選択したIdentification Resultを参照し、推定量、不確実性、改訂・override条件を設定して推定を実行します。',
       resources:Object.freeze(['Estimator selection','Nuisance-model configuration','Bootstrap and uncertainty configuration','Execution submission','Estimation result linkage']),
     }),
     effects:Object.freeze({
       title:'Effects',
-      summary:'Read saved treatment-effect results, uncertainty, and heterogeneity projections.',
+      summary:'保存済み（saved）の処置効果、信頼区間、不確実性、および異質性を確認・比較します。',
       resources:Object.freeze(['Saved treatment-effect results','ATE, ATT, and CATE projections','Uncertainty']),
     }),
     diagnostics:Object.freeze({
       title:'Diagnostics',
-      summary:'Read saved diagnostic results such as balance, overlap, effective sample size, and weights.',
+      summary:'保存済み（saved）のdiagnosticsとして、balance、overlap、有効サンプルサイズ、weightsと科学的警告を確認します。',
       resources:Object.freeze(['Saved diagnostic results','Balance and overlap','Effective sample size and weights']),
     }),
     sensitivity:Object.freeze({
       title:'Sensitivity',
-      summary:'Review saved sensitivity results for alternate assumptions and specification dependence.',
+      summary:'保存済み（saved）のTreatment Effect Resultを対象に、Refutationと感度分析を実行・確認します。',
       resources:Object.freeze(['Saved sensitivity results','Alternate assumptions','Specification dependence']),
     }),
   });
