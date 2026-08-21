@@ -5,7 +5,7 @@
 - Gate: `G01`
 - Trial: `01`
 - Fixed Trial Candidate SHA: `f62e3e75ba474928d6f2ca886e9992375c6f16e5`
-- Candidate status: `IMPLEMENTED / SELF-CHECKED`
+- Candidate status: `READY_FOR_TEST`
 
 This record is implementation evidence only. It does not declare Gate PASS.
 
