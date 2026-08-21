@@ -1,8 +1,19 @@
-# ENH-E8 G02 Trial01 — Implementation Completion Report
+# Implementation Completion Report
 
-- Candidate status: `READY_FOR_TEST`
-- Gate status: not assessed; `READY_FOR_TEST` is not Gate PASS.
-- Candidate scope: G02 P01, P02, and P03 package outputs only.
+- Gate: `G02`
+- Trial: `01`
+- Fixed Trial Candidate SHA: `UNRESOLVED — self-referential final-commit SHA requirement cannot be recorded in the Report that is hashed into that same final commit`
+- Candidate state: `NOT_READY`
+
+## Candidate identity blocker
+
+The integrated implementation commit is `a2399662f4f81ceadf36ae2aa71850d49786cae4`.
+
+The required operation-flow condition is that this Report both (1) records the final immutable candidate commit SHA and (2) is included in that same commit. Git computes a commit SHA from its tree, and this Report is part of that tree. Replacing the unresolved value above with the final SHA changes the tree and therefore changes the final SHA. Consequently, this Report cannot truthfully record an exact same-commit SHA without a workflow exception.
+
+No production or test implementation change is required to resolve this blocker. A workflow decision is required: either permit a follow-up immutable attestation commit that records the preceding candidate SHA, or allow the Report to be an immutable external evidence artifact.
+
+> `NOT_READY` is not Gate PASS.
 
 ## Package evidence
 
@@ -32,4 +43,4 @@
 
 ## Candidate handoff
 
-No unresolved G02 package conflict or implementation blocker remains. Independent Verification should use the fixed candidate commit and independently assess acceptance; this report does not declare Gate PASS.
+The implementation packages have no unresolved code conflict. Candidate identity remains blocked by the operation-flow condition described above; Independent Verification must not treat this Report as `READY_FOR_TEST` until the workflow decision is made.
