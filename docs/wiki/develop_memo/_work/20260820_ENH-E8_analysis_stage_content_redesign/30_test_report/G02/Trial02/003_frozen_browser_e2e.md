@@ -33,3 +33,7 @@ docker compose -f compose.yaml -f compose.e1a.yaml -p ariadne-e8 \
 ## 判定理由
 
 The candidate delivery defect from Trial01 is fixed: both runners are present in the rebuilt image. The remaining non-zero exits are caused solely by the externally hosted, root-squashed evidence-volume permission policy after Compose bootstrap and candidate runner startup. Frozen Gate 07 specifies `BLOCKED` when the environment/harness prevents a determination. No valid-candidate product mismatch was observed, and the required browser evidence could not be emitted; therefore this item is `BLOCKED`.
+
+## Re-execution
+
+The two frozen commands were independently rerun against the same SHA after the initial Trial02 decision. Identity was rechecked in the same detached exact-candidate worktree. Both commands again rebuilt the candidate image, completed Compose bootstrap, and failed only at `/evidence` writes with the identical `PermissionError` paths above. This confirms that the blocker remains an unresolved harness/evidence-volume condition, not a transient candidate product failure.
