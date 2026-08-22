@@ -14,3 +14,34 @@ dialog:has(.modal-card.wide){width:min(94vw,1100px);max-width:min(94vw,1100px)}.
 .form-grid>fieldset{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-grid>fieldset>label{display:grid;align-items:initial}.form-grid>fieldset>label input,.form-grid>fieldset>label select,.form-grid>fieldset>label textarea{width:100%;min-height:40px}.form-grid>fieldset>button,.form-grid>fieldset>#preflight,.form-grid>fieldset>#scientific-warnings{grid-column:1/-1}
 .form-grid>[data-causal-stage-surface]{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:14px}.form-grid>[data-causal-stage-surface]>fieldset{grid-column:1/-1}
 @media(max-width:800px){.form-grid>[data-causal-stage-surface]{grid-template-columns:1fr}}
+
+/* ENH-E8: Causal Identification / Estimation use vertical reading flow. */
+#inference-form {
+  grid-template-columns: 1fr;
+}
+
+#inference-form > [data-causal-stage-surface] {
+  grid-template-columns: 1fr;
+  min-width: 0;
+}
+
+#identification-inputs,
+#estimation-inputs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  min-width: 0;
+}
+
+#identification-inputs > label,
+#estimation-inputs > label {
+  display: grid;
+  align-items: initial;
+}
+
+#estimation-inputs > fieldset {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  min-width: 0;
+}
