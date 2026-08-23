@@ -67,11 +67,13 @@
   }
 
   const form=$('#inference-form');
-  const button=$('#run-estimation');
+  const button=$('#estimation-inputs button');
   if(!form||!button)throw new Error('Estimation controls are unavailable');
 
   // Identification and Estimation share visual context, but no longer share submit ownership.
-  // This prevents hidden required Identification controls from blocking the Estimation action.
+  // Explicit button ownership bypasses native validation for hidden Identification fields.
+  button.type='button';
+  button.id='run-estimation';
   form.onsubmit=event=>event.preventDefault();
   button.onclick=runEstimation;
 })();
