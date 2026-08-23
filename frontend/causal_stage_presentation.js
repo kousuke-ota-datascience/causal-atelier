@@ -58,14 +58,18 @@
     estimationButton.disabled=true;
   }
 
-  // app.js executes before DOMContentLoaded and owns runtime state/APIs.
-  // Attach the action as soon as those declarations are available instead of
-  // waiting for window.load, which left a user-visible interaction race.
-  global.addEventListener('DOMContentLoaded',()=>{
-    if(document.querySelector('script[data-causal-estimation-submission]'))return;
+  function loadRuntimeScript(src,datasetKey){
+    if(document.querySelector(`script[data-${datasetKey}]`))return;
     const script=document.createElement('script');
-    script.src='/causal_estimation_submission.js';
-    script.dataset.causalEstimationSubmission='true';
+    script.src=src;
+    script.dataset[datasetKey.replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase())]='true';
     document.head.append(script);
+  }
+
+  // app.js executes before DOMContentLoaded and owns runtime state/APIs.
+  // Attach causal action/presentation modules as soon as those declarations are available.
+  global.addEventListener('DOMContentLoaded',()=>{
+    loadRuntimeScript('/causal_estimation_submission.js','causal-estimation-submission');
+    loadRuntimeScript('/causal_effects_presentation.js','causal-effects-presentation');
   },{once:true});
 })(globalThis);
