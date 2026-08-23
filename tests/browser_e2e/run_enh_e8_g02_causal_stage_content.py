@@ -55,6 +55,25 @@ def _assert_stage(page: Page, project_id: str, stage: str, labels: dict[str, str
         assert not page.locator(selector).is_visible(), f"{stage} exposed {selector}"
 
 
+def _assert_estimation_submit_bypasses_hidden_identification_validation(page: Page) -> dict[str, Any]:
+    button = page.locator("#run-estimation")
+    button.wait_for(state="visible", timeout=30_000)
+    invalid = page.evaluate("""() => [...document.querySelectorAll('#inference-form :invalid')].map(el => ({
+        name: el.name,
+        required: el.required,
+        hiddenByStage: Boolean(el.closest('[hidden]')),
+    }))""")
+    hidden_invalid = {item["name"] for item in invalid if item["hiddenByStage"]}
+    assert {"dataset_version_id", "graph_version_id"}.issubset(hidden_invalid), invalid
+    assert page.locator("#run-estimation").get_attribute("type") == "button"
+
+    button.click()
+    page.locator("#notice").filter(has_text="Identification Resultを選択してください").wait_for(
+        timeout=10_000
+    )
+    return {"status": "PASS", "hidden_invalid_controls": sorted(hidden_invalid)}
+
+
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     evidence_path = OUTPUT / "enh-e8-g02-causal-stage-content-evidence.json"
@@ -79,6 +98,10 @@ def main() -> int:
             for stage in STAGES:
                 _assert_stage(page, project_id, stage, labels)
                 evidence["stages"][stage] = {"status": "PASS", "route": page.url}
+                if stage == "estimation":
+                    evidence["estimation_submit_regression"] = (
+                        _assert_estimation_submit_bypasses_hidden_identification_validation(page)
+                    )
                 if stage != STAGES[-1]:
                     next_stage = STAGES[STAGES.index(stage) + 1]
                     page.locator(f'#analysis-stage-sidebar button[data-stage="{next_stage}"]').click()
