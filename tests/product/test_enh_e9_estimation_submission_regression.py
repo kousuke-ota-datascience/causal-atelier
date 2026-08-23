@@ -42,7 +42,7 @@ def test_causal_runtime_loads_estimation_action_after_app_runtime_is_available()
 
     assert "global.addEventListener('load'" in presentation
     assert "script.src='/causal_estimation_submission.js';" in presentation
-    assert "data-causal-estimation-submission" in presentation
+    assert "script.dataset.causalEstimationSubmission='true';" in presentation
 
 
 def test_stage_renderer_remains_presentation_only() -> None:
