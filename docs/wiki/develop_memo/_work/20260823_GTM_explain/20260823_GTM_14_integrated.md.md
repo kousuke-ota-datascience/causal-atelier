@@ -788,3 +788,202 @@ Web APIやSI組み込みComponentは「商品をどう提供するか」とい�
 | 結果だけでなく、目的・条件・前提を追える                       | #2 Product Principles |
 | 同じAnalysis CapabilityをWeb API / CLIから利用できる | #5 Interfaces         |
 | Execution先をAriadne自身に限定しない                 | #4 System Positioning |
+
+---
+
+# Appendix A. Agent / MCP Integration
+
+## A.1. AgentからのWeb API利用
+
+> **Ariadneは既にWeb APIを介して主要機能を利用できるため、HTTP APIを呼び出せるAgentからは現状でも利用可能な構成となっている**
+
+AriadneのWebUIは、Backendに用意されたWeb APIを呼び出す形で構成されている。
+
+また、Web APIはFastAPIを利用して構築されており、Analysis WorkflowやExecution、Result等の主要な操作を `/api/v1` 以下のAPIとして提供している。
+
+そのため、AgentがAriadne専用のWebUIを操作する必要はなく、Web APIを直接呼び出すことでAnalysis Capabilityを利用できる。
+
+| 利用主体 | Interface | Ariadneの利用方法 |
+|---|---|---|
+| Human | WebUI | 画面からAnalysis Workflowを操作 |
+| Application | Web API | APIからAnalysis Capabilityを呼び出す |
+| AI Agent | Web API | APIをToolとして呼び出す |
+
+> **AriadneはWebUI専用の分析Applicationではなく、Analysis Capabilityを外部から呼び出せる構造を既に持っている**
+
+### 現時点での位置づけ
+
+ただし、現状のWeb APIは「Agent専用Interface」として設計されたものではない。
+
+Agentから利用する場合には、APIの選択、Inputの構築、認証、Execution状態の確認、Resultの取得・解釈などをAgent側で扱う必要がある。
+
+> **現状でもAgentから呼び出し可能だが、Agent-nativeなTool Interfaceとしての整備は今後の拡張領域**
+
+---
+
+## A.2. MCP Serverとの接続
+
+> **Ariadneは既にWeb APIとしてAnalysis Capabilityを分離しているため、MCP Server追加との親和性が高い**
+
+MCP対応時にも、Ariadneの分析処理そのものをMCP Server内へ再実装する必要はない。
+
+MCP ServerをAriadne Web APIの前段に配置し、Agentへ公開するToolをAriadne APIへMappingする構成を想定できる。
+
+```text
+AI Agent
+   ↓
+MCP Client
+   ↓
+MCP Server
+   ↓
+Ariadne Web API
+   ↓
+Planning → Execution
+   ↓
+Analysis Capability
+```
+
+例えば、MCP Toolとして公開した分析操作をAriadne Web APIへMappingし、既存のPlanning → Executionを利用してAnalysis Capabilityを実行する。
+
+### MCP対応時に主に追加するもの
+
+| 領域 | 対応内容 |
+|---|---|
+| Tool Definition | Ariadne CapabilityをMCP Toolとして定義 |
+| Schema Mapping | MCP Tool InputとAriadne API Inputの対応付け |
+| Authentication | Agent / MCP ServerからAriadneへの認証伝播 |
+| Execution Handling | 非同期Executionの状態確認・Result取得 |
+| Error Mapping | Ariadne API ErrorをAgentが解釈可能な形へ変換 |
+| Observability | Agent経由のTool Call・Execution履歴の追跡 |
+
+Ariadne側には既に、Web API、構造化されたInput / Output、Execution Management、Authentication / Authorization、Analysis ResultというMCP ToolのBackendとなる要素が存在する。
+
+> **そのため、MCP対応はCore Analysis機能の再実装ではなくInterface Adapterの追加が中心となり、ゼロからMCP対応する場合と比較して相対的に低工数で実現できると見込む**
+
+---
+
+## A.3. Agent Integrationの発展イメージ
+
+> **Web APIを共通Backendとすることで、Human / Application / Agentのいずれからも同じAnalysis Capabilityを利用できる**
+
+```text
+                    ┌─ WebUI
+                    │  Human
+                    │
+Ariadne Core ───────┼─ Web API
+Planning → Execution│  Application
+                    │
+                    └─ MCP Server
+                       AI Agent
+```
+
+Interfaceが異なっても、その背後で利用するPlanning → ExecutionおよびAnalysis Capabilityは共通となる。
+
+> **Agent対応のために別のAriadneを作るのではなく、既存AriadneにAgent向けInterfaceを追加する**
+
+---
+
+# Appendix B. Ariadne開発で得られたもの
+
+## B.1. Ariadne開発の成果
+
+> **Ariadne開発では、Product本体だけでなく、分析実行基盤とAgentic Development Processという再利用可能な2つの資産も得られた**
+
+Ariadne開発の成果は、大きく3つに整理できる。
+
+| 成果 | 内容 | 再利用可能性 |
+|---|---|---|
+| **1. Ariadne Product** | 分析の目的・前提・実行・結果・解釈を一体管理する分析基盤 | Ariadneとして商品化 |
+| **2. Planning → Execution基盤** | PlanningとExecutionを分離し、異なる処理を共通モデルで実行・管理するFramework | 他の分析・計算処理への展開 |
+| **3. Agentic Enhancement Workflow Template** | AI Agentを活用して設計・実装・独立検証を進める開発Workflow | 他Project / Product開発への展開 |
+
+---
+
+## B.2. Ariadne Product
+
+> **第一の成果は、分析を「結果」ではなく「検証可能なプロセス」として扱うAriadne Productそのもの**
+
+Ariadneでは、ビジネス課題 / 問い、分析上の問い、前提、分析手法、Planning、Execution、Result、Interpretationを一連のAnalysis Contextとして扱う。
+
+現在はExploratory / Predictive / Causalを具体的なAnalysis Familyとして提供し、WebUI / CLI・Codebase / Web APIから利用可能なProductとして構成している。
+
+---
+
+## B.3. Planning → Execution実行基盤
+
+> **第二の成果は、Ariadne固有の分析手法から切り離して利用可能な `Planning → Execution` の実行Framework**
+
+Ariadne開発を通じて、Planningで「何を実行するか」を定義し、Executionで「実際に何を実行したか」を保持し、そのResult / Historyを関連付ける共通モデルが形成された。
+
+```text
+Planning
+「何を実行するか」
+    ↓
+Execution
+「実際に何を実行したか」
+    ↓
+Result / History
+```
+
+現在はExploratory / Predictive / Causalを中心に利用しているが、Execution実装を追加することで、異なる分析・計算処理を同じ上位構造へ組み込める。
+
+今後の商品化First Stepとして検討しているPredictive / Optimization Componentも、この基盤を利用する。
+
+> **Ariadne開発の副産物として、Analysis Familyを越えて再利用可能なExecution Foundationが形成された**
+
+ただし、現時点では完全な汎用Workflow Engineとしての商品化が完了しているわけではなく、今後の実案件適用を通じて再利用可能範囲を検証・拡張する。
+
+---
+
+## B.4. Agentic Enhancement Workflow Template
+
+> **第三の成果は、AI Agentを単なるCoding補助ではなく、設計・実装・独立検証へ組み込むための開発Workflow**
+
+Ariadneの継続的なEnhancementを通じて、Agentを利用した開発プロセス自体もTemplate化された。
+
+```text
+Enhancement Background
+        ↓
+Gate / Implementation Contract
+        ↓
+Coding Agent
+        ↓
+Implementation Evidence
+        ↓
+Independent Verification
+        ↓
+Gate Decision
+```
+
+Templateでは、Background / Requirement、Gate Contract、Work Package、Implementation Report、Independent Verification、Gate Decisionなどの責務を明示的に分離している。
+
+これにより、Coding Agent自身の自己評価だけで完了とせず、実装と検証の責務を分離し、Requirement → Implementation → TestのTraceabilityを残しながら、Agentによる長期間・複数Gateの開発を管理できる。
+
+> **Ariadneだけでなく、他のSoftware Enhancementにも転用可能なAgentic Development Workflowとして資産化されている**
+
+---
+
+## B.5. 3つの成果の関係
+
+> **Ariadne開発では、「Product」「Productを動かすFramework」「Productを作るProcess」の3層が同時に形成された**
+
+```text
+┌──────────────────────────────────┐
+│  Agentic Enhancement Workflow    │
+│  Productをどのように開発するか      │
+├──────────────────────────────────┤
+│  Planning → Execution Framework  │
+│  Analysis Capabilityをどう実行するか │
+├──────────────────────────────────┤
+│  Ariadne Product                 │
+│  顧客へどの価値を提供するか           │
+└──────────────────────────────────┘
+```
+
+| Layer | 得られたもの |
+|---|---|
+| **Product** | Ariadne |
+| **Framework** | Planning → Execution |
+| **Development Process** | Agentic Enhancement Workflow Template |
+
+> **Ariadne開発の成果はAriadne Product単体に閉じず、今後の分析Solution開発・Software開発へ再利用可能な技術資産・開発資産を含んでいる**
