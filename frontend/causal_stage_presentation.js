@@ -47,4 +47,13 @@
   }
 
   global.CausalStagePresentation=Object.freeze({STAGES,presentationFor});
+
+  // app.js owns runtime state and submission APIs; load the Estimation action only after it is ready.
+  global.addEventListener('load',()=>{
+    if(document.querySelector('script[data-causal-estimation-submission]'))return;
+    const script=document.createElement('script');
+    script.src='/causal_estimation_submission.js';
+    script.dataset.causalEstimationSubmission='true';
+    document.head.append(script);
+  },{once:true});
 })(globalThis);
