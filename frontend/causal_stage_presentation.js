@@ -25,13 +25,17 @@
     }),
     effects:Object.freeze({
       title:'Effects',
-      summary:'保存済み（saved）の処置効果、信頼区間、不確実性、および異質性を確認・比較します。',
-      resources:Object.freeze(['Saved treatment-effect results','ATE, ATT, and CATE projections','Uncertainty']),
+      summary:'保存済みTreatment Effect Resultから、処置によってOutcomeが平均的にどの程度変化したと推定されたか、その不確実性を含めて解釈・比較します。',
+      purpose:'このページでは、保存済みTreatment Effect Resultを読み、ATE / ATT等の推定対象について「処置によってOutcomeがどの程度変化したと推定されたか」「その推定値をどの程度の不確実性とともに読むべきか」を確認します。推定値が利用できないResultでは、効果量を無理に解釈せず、scientific statusとwarningから理由を確認します。',
+      displayScope:'Treatment / Outcome / Estimand / Estimator / Adjustment set、Estimated effect、Standard error、Confidence interval、scientific status / warning、およびResultを生成したExecution lineageを表示します。Effectの支持条件を詳しく検査するbalance / overlap / ESS / weight diagnosticsはDiagnosticsページで確認します。',
+      resources:Object.freeze(['Saved treatment-effect results','ATE / ATT and available effect projections','Estimated effect and uncertainty','Scientific status and warnings','Execution lineage']),
     }),
     diagnostics:Object.freeze({
       title:'Diagnostics',
-      summary:'保存済み（saved）のdiagnosticsとして、balance、overlap、有効サンプルサイズ、weightsと科学的警告を確認します。',
-      resources:Object.freeze(['Saved diagnostic results','Balance and overlap','Effective sample size and weights']),
+      summary:'保存済みDiagnostics Resultから、推定を支えるデータ条件・比較可能性・数値的安定性に問題がないかを確認します。',
+      purpose:'このページでは、推定値そのものの大きさではなく、その推定を支える条件を診断します。具体的には「推定に十分な観測が残っているか」「Treatment / Controlを比較できるsupportがあるか」「観測共変量のbalanceに大きな偏りがないか」「propensity overlapに問題がないか」「scientific warningが残っていないか」を確認し、Effectを解釈する前に注意すべき点を把握します。Diagnosticsは未観測交絡が存在しないことや因果推論の正しさそのものを証明するものではありません。',
+      displayScope:'Estimatorとcausal context、Sample loss、Treated / Control count、Covariate balance（現行Resultではunweighted / before weighting）、propensity系EstimatorでのOverlap、Scientific warnings、同一ExecutionのTreatment Effect Resultへのreferenceを表示します。ESS、weight diagnostics、weighted / post-adjustment balanceは現行backend Resultに構造化保存されていないため未表示であり、ENH-E9のbackend申し送り事項として扱います。',
+      resources:Object.freeze(['Saved diagnostic results','Sample support and sample loss','Treated / Control counts','Unweighted covariate balance','Propensity overlap where applicable','Scientific warnings','Associated Treatment Effect reference']),
     }),
     sensitivity:Object.freeze({
       title:'Sensitivity',
@@ -40,13 +44,28 @@
     }),
   });
 
+  function applyStageGuidance(presentation){
+    const sections=[...document.querySelectorAll('#analysis-stage-contents .analysis-semantic-section')];
+    const purposeSection=sections.find(section=>section.querySelector('h2')?.textContent==='目的');
+    const scopeSection=sections.find(section=>section.querySelector('h2')?.textContent==='表示範囲');
+    if(presentation.purpose&&purposeSection){
+      const paragraph=purposeSection.querySelector('p');
+      if(paragraph)paragraph.textContent=presentation.purpose;
+    }
+    if(presentation.displayScope&&scopeSection){
+      const paragraph=scopeSection.querySelector('p');
+      if(paragraph)paragraph.textContent=presentation.displayScope;
+    }
+  }
+
   function presentationFor(stageSlug){
     const presentation=STAGES[stageSlug];
     if(!presentation)throw new Error(`Unknown causal presentation stage: ${stageSlug}`);
+    applyStageGuidance(presentation);
     return presentation;
   }
 
-  global.CausalStagePresentation=Object.freeze({STAGES,presentationFor});
+  global.CausalStagePresentation=Object.freeze({STAGES,presentationFor,applyStageGuidance});
 
   // Make the Estimation action non-submitting immediately.  Until the runtime
   // handler is attached the disabled state prevents a click from silently
@@ -71,5 +90,6 @@
   global.addEventListener('DOMContentLoaded',()=>{
     loadRuntimeScript('/causal_estimation_submission.js','causal-estimation-submission');
     loadRuntimeScript('/causal_effects_presentation.js','causal-effects-presentation');
+    loadRuntimeScript('/causal_diagnostics_presentation.js','causal-diagnostics-presentation');
   },{once:true});
 })(globalThis);
