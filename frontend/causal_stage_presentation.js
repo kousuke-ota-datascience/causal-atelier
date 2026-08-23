@@ -48,8 +48,20 @@
 
   global.CausalStagePresentation=Object.freeze({STAGES,presentationFor});
 
-  // app.js owns runtime state and submission APIs; load the Estimation action only after it is ready.
-  global.addEventListener('load',()=>{
+  // Make the Estimation action non-submitting immediately.  Until the runtime
+  // handler is attached the disabled state prevents a click from silently
+  // falling back to shared-form native validation.
+  const estimationButton=document.querySelector('#estimation-inputs button');
+  if(estimationButton){
+    estimationButton.type='button';
+    estimationButton.id='run-estimation';
+    estimationButton.disabled=true;
+  }
+
+  // app.js executes before DOMContentLoaded and owns runtime state/APIs.
+  // Attach the action as soon as those declarations are available instead of
+  // waiting for window.load, which left a user-visible interaction race.
+  global.addEventListener('DOMContentLoaded',()=>{
     if(document.querySelector('script[data-causal-estimation-submission]'))return;
     const script=document.createElement('script');
     script.src='/causal_estimation_submission.js';
