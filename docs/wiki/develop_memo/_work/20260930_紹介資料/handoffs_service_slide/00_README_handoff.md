@@ -31,7 +31,7 @@ Document title: Ariadne分析PoCサービス紹介｜スライドブラッシュ
 - 本ファイル `00_README_handoff.md`
 - ブラッシュアップ対象の `[Section]-[Subsection]_[SLUG].md`
 
-本ファイルを**資料全体の背景・共通設計ルールのSingle Source of Truth**、各 `[Section]-[Subsection]_[SLUG].md` を**対象スライド内容のSingle Source of Truth**とする。個別の `Hxx_..._handoff.md` は使用しない。
+本ファイルを**資料全体の背景・共通設計ルールのSingle Source of Truth**、各 `[Section]-[Subsection]_[SLUG].md` を**対象スライド内容のSingle Source of Truth**とする。個別のスライド別handoffファイルは使用しない。
 
 ## 0.2. 参考にするべきコードベース / 資料
 
