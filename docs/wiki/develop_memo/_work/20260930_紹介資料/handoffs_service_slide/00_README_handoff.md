@@ -26,12 +26,13 @@ Document title: Ariadne分析PoCサービス紹介｜スライドブラッシュ
 
 スライドごとに、伝えたいMessageと、それを説明・論証するChartをブラッシュアップするため、30枚のスライドを1枚ずつ独立スレッドでブラッシュアップする方針である。
 
-各独立スレッドでは、原則として以下の2ファイルのみを入力とする。
+各独立スレッドでは、原則として以下の3ファイルのみを入力とする。
 
 - 本ファイル `00_README_handoff.md`
+- スライドMarkdown構造の正本 `../slide_skelton_structure.md`
 - ブラッシュアップ対象の `[Section]-[Subsection]_[SLUG].md`
 
-本ファイルを**資料全体の背景・共通設計ルールのSingle Source of Truth**、各 `[Section]-[Subsection]_[SLUG].md` を**対象スライド内容のSingle Source of Truth**とする。個別のスライド別handoffファイルは使用しない。
+本ファイルを**資料全体の背景・ストーリー・Scientific / Business制約・Cross-slide運用ルールのSingle Source of Truth**、`slide_skelton_structure.md` を**スライドMarkdown標準構造・各構成要素の用語定義・Audience / PurposeのSingle Source of Truth**、各 `[Section]-[Subsection]_[SLUG].md` を**対象スライド内容のSingle Source of Truth**とする。個別のスライド別handoffファイルは使用しない。
 
 ## 0.2. 参考にするべきコードベース / 資料
 
@@ -62,12 +63,12 @@ Document title: Ariadne分析PoCサービス紹介｜スライドブラッシュ
 - 実装済みCapabilityと資料上の表現を照合し、現時点で実装されていない機能をAriadneの提供機能として断定しない。
 - Ariadneで実装可能なアルゴリズムの範囲と、データサイエンティストがスクラッチ実装・OSS利用によって提供可能な分析サービスの範囲を混同しない。
 
-### 0.2.4. Markdownスケルトン作成の既存例
+### 0.2.4. Markdownスケルトン / 標準構造
 
 - https://github.com/kousuke-ota-datascience/causal-atelier/blob/prototype/ariadne_mvp/docs/wiki/develop_memo/_work/20260823_GTM_explain/20260823_GTM_14_integrated.md.md
 - ストーリーの構造化、論点の展開、スライド単位への分解方法を検討する際の参考とする。
-
-本資料のスライドMarkdown構造および各構成要素の定義については、`0.5. スライドMarkdown標準構造` と `0.6. 各構成要素の用語定義` を正本とする。
+- https://github.com/kousuke-ota-datascience/causal-atelier/blob/prototype/ariadne_mvp/docs/wiki/develop_memo/_work/20260930_%E7%B4%B9%E4%BB%8B%E8%B3%87%E6%96%99/slide_skelton_structure.md
+- スライドMarkdownの標準構造、各構成要素の用語定義、および資料のAudience / Purposeについては、`slide_skelton_structure.md` を正本とする。本ファイルでは同定義を重複管理しない。
 
 ## 0.3. 資料全体のストーリー / スライド構成
 
@@ -157,127 +158,15 @@ PoC結果を次のAction / 本番化判断へどう接続するのか
 
 ## 0.5. スライドMarkdown標準構造
 
-### 0.5.1. 標準テンプレート
+スライドMarkdownの標準構造は、`../slide_skelton_structure.md` を正本とする。
 
-各 `[Section]-[Subsection]_[SLUG].md` は、原則として以下の構造に従う。
-
-```markdown
-Document title: [スライドタイトル]
-
-# X. Slide X｜[スライドタイトル]
-
-## X.1. Message
-
-**[そのスライドで伝える中心的な一つの主張]**
-
-## X.2. Chart
-
-**チャートタイトル:** [主図のタイトル]
-
-[Messageを説明・論証するための主たる視覚表現について記述する]
-
-### X.2.1. Chart Structure
-
-[PowerPoint上の構造・配置・読み順・強調箇所を記述する]
-
-### X.2.2. Chart内の最小表示テキスト
-
-[実際のPowerPoint上へ載せるラベル・短文のみを記述する]
-
-## X.3. Supporting Logic
-
-[Chartを設計する根拠となる詳細な論拠・前提・補足情報を記述する]
-
-## X.4. Speaker Note
-
-[スライドを提示しながら口頭で説明する内容を記述する]
-
-## X.5. Slide XからSlide X+1への接続
-
-> [次スライドへ進むための論理接続]
-```
-
-Slide 30では、`X.5.` を `Slide 30からクロージングへの接続` としてよい。
-
-### 0.5.2. 見出し番号ルール
-
-見出しには必ず対応レベルの接頭辞番号を付ける。
-
-| 見出しレベル | 接頭辞番号 | 名称 |
-|---|---|---|
-| `#` | `X.` | 章 |
-| `##` | `X.1.` | 節 |
-| `###` | `X.1.1.` | 項 |
-| `####` | `X.1.1.1.` | 目 |
-
-- `Document title:` は見出しとして扱わない。
-- `X` はSlide番号を表す。
-- 見出しレベルと番号階層を一致させる。
-- `Message / Chart / Supporting Logic / Speaker Note / Transition` のトップレベル構造を各スライドで統一する。
-- スライド内容の編集によって標準構造を独自拡張する場合は、その必要性を明示する。
+本READMEでは標準テンプレート・見出し番号ルールを重複保持しない。構造に関する判断が必要な場合は、必ず `slide_skelton_structure.md` を参照する。
 
 ## 0.6. 各構成要素の用語定義
 
-### 0.6.1. Message
+Message、Chart、Chart Structure、Chart内の最小表示テキスト、Supporting Logic、Speaker Note、Transitionの定義は、`../slide_skelton_structure.md` を正本とする。
 
-- そのスライドで伝える**中心的な一つの主張**。
-- 単なるトピック名ではなく、読み手が理解すべき結論・示唆として記述する。
-- 原則として一文で表現する。
-- Chart、Supporting Logic、Speaker NoteはすべてMessageを支える関係にする。
-- 同じスライドに第二のMessageを置かない。
-
-### 0.6.2. Chart
-
-- Messageを説明・論証するために、**実際のスライド上に配置する主たる視覚表現**。
-- 狭義の棒グラフ、折れ線グラフ等だけを意味しない。
-- Diagram、Table、Process、Comparison、Matrix、Flow、Before / After等を含む。
-- Chart自体が新しい独立主張を増やすのではなく、Messageの理解・論証を担う。
-
-### 0.6.3. Chart Structure
-
-- ChartをPowerPoint上で**どう構造化して見せるか**を定義する設計情報。
-- 以下を必要に応じて記述する。
-  - 要素数
-  - 配置方向
-  - 読み順
-  - 入力 / 出力
-  - 矢印・包含・比較等の関係
-  - 強調箇所
-  - PowerPoint上の配置・視覚ウェイト
-- 旧スキーマの `Layout` に記載していた、当該Chart固有の配置・強調情報は原則としてここへ統合する。
-- 全資料共通のブランドカラー、フォント、余白等はChart Structureへ重複記載せず、別途共通デザインルールがある場合はそちらをauthorityとする。
-
-### 0.6.4. Chart内の最小表示テキスト
-
-- **実際のPowerPoint上に載せる文言**。
-- Chart内のラベル、短い説明、列見出し、工程名等に限定する。
-- Messageを理解するために必要な情報を残しつつ、詳細説明はSupporting LogicまたはSpeaker Noteへ逃がす。
-- スライド作成時の情報過多を防ぐための表示上限として扱う。
-- ここに書かれた文言は「必ずすべて載せる」ではなく、PowerPoint化時の最大候補集合としてさらに圧縮してよい。
-
-### 0.6.5. Supporting Logic
-
-- MessageとChartを成立させるための**詳細な論拠・前提・補足情報**。
-- Chart上で圧縮・省略されるが、スライド設計判断には必要な情報を保持する。
-- Scientific validity、Business linkage、用語定義、留保、適用条件等を保持してよい。
-- 原則として全量をPowerPoint上に掲載しない。
-- Supporting Logic単独でMessageとは別の結論を新設しない。
-- 旧スキーマの `Body` に保持していた詳細情報はここへ移管する。
-- 旧スキーマの `Key Message` は廃止し、Messageを補強する必要な論点のみSupporting Logicへ統合する。
-
-### 0.6.6. Speaker Note
-
-- **スライド上に記載せず、口頭で補足する説明**。
-- Chartの読み方、重要な前提、誤解しやすい点、補足例等を記述する。
-- スライド上の情報量を増やす代わりにSpeaker Noteで補う。
-- Messageと矛盾する説明や、Chartでは裏付けられていない新しい主張を追加しない。
-
-### 0.6.7. Transition
-
-- 当該スライドから次スライドへ進むための**論理接続**。
-- 「次に○○を説明する」という目次的な接続だけではなく、「このスライドで何が明らかになったため、次に何を問う必要があるか」が分かる形を優先する。
-- 前後スライド間の論理の飛躍・重複を検査するためにも使用する。
-- Slide 30では、次スライドではなくクロージング / Next Actionへの接続を記述する。
+本READMEでは各構成要素の定義を重複保持しない。各スライドのMessage / Chart等を作成・修正する際は、`slide_skelton_structure.md` に定義されたAudience / Purposeと用語定義に従う。
 
 ## 0.7. ブラッシュアップ時の評価基準
 
@@ -393,11 +282,12 @@ Cross-slide suggestionは**提案**であり、そのスレッドでは対象外
 
 ### 0.9.4. 独立スレッドでの推奨指示
 
-新しいChatGPTスレッドでは、以下の2ファイルを添付する。
+新しいChatGPTスレッドでは、以下の3ファイルを添付する。
 
 1. `00_README_handoff.md`
-2. 対象の `[Section]-[Subsection]_[SLUG].md`
+2. `slide_skelton_structure.md`
+3. 対象の `[Section]-[Subsection]_[SLUG].md`
 
 依頼文は、例えば以下とする。
 
-> `00_README_handoff.md` を資料全体・共通ルールのauthorityとして参照し、添付した `[Section]-[Subsection]_[SLUG].md` を対象スライドとしてブラッシュアップせよ。Message / Chart / Chart Structure / Chart内の最小表示テキスト / Supporting Logic / Speaker Note / Transitionを一貫させること。他スライド変更が必要な場合は、直接変更せずCross-slide suggestionとして示すこと。
+> `00_README_handoff.md` を資料全体・共通ルールのauthority、`slide_skelton_structure.md` をスライドMarkdown標準構造・構成要素定義・Audience / Purposeのauthorityとして参照し、添付した `[Section]-[Subsection]_[SLUG].md` を対象スライドとしてブラッシュアップせよ。Message / Chart / Chart Structure / Chart内の最小表示テキスト / Supporting Logic / Speaker Note / Transitionを一貫させること。他スライド変更が必要な場合は、直接変更せずCross-slide suggestionとして示すこと。
