@@ -12,7 +12,7 @@ Document title: スライドMarkdown標準構造
 
 ### 1.2.1. 標準テンプレート
 
-各 `Sxx_...md` は、原則として以下の構造に従う。
+各 `[Section]-[Subsection]_[SLUG].md` は、原則として以下の構造に従う。
 
 ```markdown
 Document title: [スライドタイトル]
