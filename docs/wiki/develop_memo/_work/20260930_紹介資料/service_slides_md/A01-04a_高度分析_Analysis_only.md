@@ -4,7 +4,7 @@ Document title: 高度分析 × Analysis-only の競争ポジション
 
 ## A01-04a.1. Message
 
-**分析難易度が高く実装接続が弱い案件では、専門Analytics組織が有力になりやすい。**
+**分析難易度が高く実装接続が弱い案件では、Capability・Fit・Evidenceが競争を決めやすい。**
 
 ## A01-04a.2. Chart
 
@@ -12,246 +12,149 @@ Document title: 高度分析 × Analysis-only の競争ポジション
 
 ### A01-04a.2.1. Chart Structure
 
-左にDeal Profile、中央にこのProfileで重くなりやすいCustomer Selection Criteria、右にProvider Positionを置く。
-
 ```text
-Deal Profile
-────────────────────
-Analytical Complexity      High
-Implementation Coupling    Low
+① Deal Profile｜6軸
+────────────────────────
+Decision Altitude          Operational〜Business
 Problem Novelty            Medium〜High
+Analytical Complexity      High
 Solution Standardizability Low〜Medium
+Implementation Coupling    Low
 Criticality / Governance   Low〜Medium
-          ↓
-Customer Selection Criteria
-────────────────────
-Capability / Quality       ↑↑
-Deal-specific Fit          ↑↑
-Evidence / Credibility     ↑↑
-Economic Value             ↑
-Delivery / Integration     →
-          ↓
-Provider Position 仮説
-────────────────────
-DS Specialist             Strong candidate
-Consulting Analytics      Competitive
-当チーム                  Competitive
-SIer Analytics            Competitive / 条件次第
-AI / Platform Vendor      Product Fit依存
+              ↓
+② Customer Selection Criteria｜Weight仮説
+────────────────────────
+Deal-specific Fit          H
+Capability / Quality       H
+Delivery Feasibility       L
+Economic Value             M
+Risk                       L〜M
+Evidence / Credibility     H
+Relational / Governance    M
+Organizational Acceptability L
+              ↓
+③ Provider Competition｜Position仮説
+────────────────────────
+DS Specialist              Strong candidate
+Consulting Analytics       Competitive
+当チーム                   Competitive
+SIer Analytics             Competitive / 条件次第
+AI / Platform Vendor       Product Fit依存
+              ↓
+④ Our Position
+────────────────────────
+**Competitive**
+Enterprise Baseの追加価値は小さく、
+Relative Advantageは専門性・実績・Economics次第
 ```
-
-右下に小さく以下を付す。
-
-> **この順位は市場実測ではなく、Deal Profile × Providerの事業特性から導くPositioning仮説。**
 
 ### A01-04a.2.2. Chart内の最小表示テキスト
 
-- 高Analytical Complexity
-- 低Implementation Coupling
-- Capability / Fit / Evidence重視
+- 6軸Profileを全表示
+- Capability / Fit / Evidence：High Weight
+- Delivery / Org. Acceptability：Low Weight
 - **DS Specialist：Strong candidate**
 - **当チーム：Competitive**
-- **Enterprise Baseは差になりにくい**
 
 ## A01-04a.3. Supporting Logic
 
-### A01-04a.3.1. このProfileを独立類型として扱う理由
+### A01-04a.3.1. なぜこの6軸Profileなのか
 
-このProfileでは、顧客が購入しているものの中心が「Enterprise Systemそのもの」ではなく、**分析によって未知の問いへ答える専門サービス**になる。
+この類型は、具体的な業務・事業判断に使う高度分析ではあるが、PoC成果を直ちにEnterprise Systemへ組み込むことが主目的ではない案件を表す。
 
-典型例は以下である。
+Decision AltitudeはOperational〜Businessとする。純粋なCorporate Transformationではなく、需要予測、リスク推定、因果効果推定、Target Definition等の具体的なDecision Problemを主対象とするためである。
 
-- 高度な需要予測・リスク推定の成立性検証
-- 因果効果推定のFeasibility Study
-- 新しい評価指標・Target Definitionの設計
-- 既存データで何が識別・推定できるかの検討
-- 特殊なData Generating Processを持つ分析
+Problem NoveltyとAnalytical ComplexityはMedium〜High / Highとする。既存テンプレートを適用するだけでなく、Outcome、Treatment、Estimand、Assumption、Evaluation等を個別設計する余地が大きい。
 
-この場合、Implementation Couplingが低いため、System Integration、Security Architecture、24/365 Operation等は選定上の中心課題になりにくい。一方、Problem Novelty / Analytical Complexityが高いため、分析担当者の専門性、方法論、関連実績、顧客固有条件への適合性が相対的に重要になると考える。
+一方、Implementation CouplingはLowであり、System Integration、Security Architecture、Production Operation等は案件価値の中心ではない。
 
-ここでの「重要になる」は、当資料の恣意的な主張だけではない。Organizational Buying研究では、購買条件・購買関係者・期待が購買状況によって異なることが示されている。2023年のB2B Customer Journey研究も、purchase taskがroutine / low-priorityからstrategic / complexまで変化し、buying approachやBuying Centerの構成が状況依存で変わると整理している。[T1][T2][T3]
+### A01-04a.3.2. なぜこのSelection Weightになるのか
 
-### A01-04a.3.2. なぜCapability / Fit / Evidenceの比重が上がるのか
+B2B購買ではBuying Situation、関係Stakeholder、Perceived Risk等によって評価基準が変化する。[T1][T2][T3]
 
-Professional Serviceは購入前に完成品質を直接観測しにくい。
+本Profileでは分析品質そのものが主要成果物であるため、Deal-specific Fit / Capability / EvidenceをHighと置く。Professional Serviceは購入前に品質を直接観察しにくく、専門家・実績・評判等のSignalが重要になるという研究とも整合する。[T4][T5]
 
-Pemer & Skjølsvik (2019)は51名のProfessional Service顧客へのInterviewをもとに、顧客がex anteでProvider Qualityを判断する際、Resource Quality / Delivery Quality / Relational Qualityと、それを示すSignalsを利用すると整理した。また、候補に残るための`qualifying signals`と、最終選択に寄与し得る`signals of excellence`を区別している。[T4]
+Implementation Couplingが低いためDelivery FeasibilityとOrganizational Acceptabilityは相対的に低く置く。ただし顧客環境でのData access等は必要なためゼロではない。
 
-Patterson (1995)の142組織を対象としたManagement Consultancy選定調査では、最終選択基準としてConsultancyのreputation、client industry experience、feesが上位だった。[T5]
+### A01-04a.3.3. Consulting AnalyticsのPosition
 
-したがって、高度なAnalysis-only案件で、
+Consulting Analyticsも高度なAI / Data / MLのBuildやAnalyticsを提供しており、「ConsultingはStrategyだけ」という前提は置かない。[P2][P3]
 
-- 「高度分析ができます」というCapability自己申告
+一方、Transformation / Stakeholder Alignmentが主要評価軸でないDealでは、それらのCapabilityが追加Scoreにならないため、本ProfileではCompetitiveと置く。
 
-だけでは弱く、
+### A01-04a.3.4. SIer AnalyticsのPosition
 
-- 関連する専門人材
-- 類似する分析問題の実績
-- 方法論的な説明力
-- 顧客Data / Assumptionへの適合性
-- 費用対価値
+SIer Analyticsも高度なData Science / AI Consulting / PoCを提供し得る。[P4]
 
-がSupplier Selectionに効く、という解釈には一定の根拠がある。
+ただしImplementation Couplingが低い本Profileでは、Integration / Security / Production等のEnterprise CapabilityのWeightが下がる。従って勝敗はAnalytical CapabilityとRelevant Evidenceへ寄りやすい。
 
-### A01-04a.3.3. DS SpecialistをStrong Candidateと置く根拠
+### A01-04a.3.5. DS SpecialistのPosition
 
-これは「DS Specialistなら必ず強い」という普遍命題ではない。
+専門Analytics会社はData Scientist等の専門人材と個別分析Projectを主要Offeringとして持つ場合があり、高度分析そのものが成果物となるDealとBusiness Model上のFitが高い。[P1]
 
-代表例としてBrainPadは、公式サービス説明で「専門人材によるデータ分析」とProduct Serviceの両面を掲げており、Professional Serviceを主要なOfferingとしている。[P1]
+そのためStrong candidateとする。ただし個別企業間の実績・価格・人材差まで含めた実測順位ではない。
 
-このように、専門Analytics会社はBusiness Modelとして、
+### A01-04a.3.6. AI / Platform VendorのPosition
 
-- Data Scientist / Analyst等の専門人材
-- 個別分析Project
-- Data活用Consulting
+AI / Platform VendorはPlatform Assetや標準Capabilityが顧客問題へFitすれば強い。[P5]
 
-を中心資産として持つ場合がある。
+ただし個別のOutcome / Treatment / Evaluation設計が中心でPlatform導入価値が小さい場合、標準Assetの寄与は低下するためProduct Fit依存とする。
 
-この構造から、**Analytical Complexityが高く、Enterprise Integrationが主価値ではない案件では、専門人材の密度・関連実績・方法論のFitが直接競争力になりやすい**と推論する。
+### A01-04a.3.7. 当チームのPosition
 
-重要なのは、ここから「DS Specialistが当チームより常に優位」とは結論しないことである。実際の勝敗は、個別会社の人材、案件実績、価格、顧客業界経験等による。
-
-### A01-04a.3.4. Consulting AnalyticsをCompetitiveと置く根拠
-
-「ConsultingはStrategyだけ」という前提は事実に反する。
-
-Deloitteは公式AI & Data Serviceで、AI Strategyだけでなく、bespoke AI-driven solutionのBuild、Data Engineering、Analytics、Intelligent Systemsまで扱うと説明している。[P2]
-
-AccentureもData / AI Serviceで、AI / MLのBuild・ScaleやPredictive Workflowまで提供している。[P3]
-
-したがって、高度なAnalysis-only案件でも、Consulting Analyticsが十分な専門人材を持つ場合は強い競合になり得る。
-
-一方、このDealでStrategy Transformation / Organization Change / Enterprise-wide Program Managementが主な選定基準でない場合、それらのCapabilityが必ずしも追加Scoreにならない。このため本資料では`Strong`ではなく`Competitive`と置く。
-
-これはProviderの能力不足ではなく、**今回のSelection WeightとのFit**の問題である。
-
-### A01-04a.3.5. SIer Analyticsを「条件次第」と置く根拠
-
-SIerも高度分析を提供し得る。例えばNTT DATAはAI Consultingにおいて、AI StrategyからUse Case prioritization、PoC、Model Training、Application IntegrationまでのRoadmapを掲げ、Data Science人材も明示している。[P4]
-
-従って「SIerは分析が弱い」という一般化は行わない。
-
-ただし、このProfileではImplementation Couplingが低いため、SIerが構造的に持ちやすい、
-
-- System Integration
-- Production Delivery
-- Security / Governance
-- Long-term Operation
-
-等のCapabilityは、顧客の評価Weightが低い可能性がある。
-
-そのため、SIer Analyticsの勝敗は、Enterprise Delivery力よりも**当該案件でのAnalytical Capability / Relevant Evidence**へ依存しやすいと考える。
-
-### A01-04a.3.6. AI / Platform VendorをProduct Fit依存と置く根拠
-
-AI / Platform Vendorの代表例としてPalantirは、Foundry / AIP上のOperational Application、Ontology、Application Building等を通じ、Data / Model / Workflow / ActionをPlatform上で統合する構造を提供している。[P5]
-
-この種のProviderは、顧客問題がProduct Capabilityと高くFitする場合、既存Assetの再利用により強いValueを出し得る。
-
-一方、Outcome定義、Treatment、Estimand、特殊なEvaluation、固有Data Structure等を案件ごとに設計する必要があり、かつPlatform導入価値が小さいAnalysis-only案件では、Product Assetの価値が相対的に下がる可能性がある。
-
-ここも「AI Vendorは非定型分析ができない」という主張ではない。**Product Fitが選定Valueへどれだけ寄与するかがDeal依存**という整理である。
-
-### A01-04a.3.7. 当チームのFit
-
-当チームについて現時点で確認できているCapabilityは、以下である。
-
-- Predictive / Causal PoCを提供する
-- Data ScientistによるScratch開発を基本とする
-- 必要に応じ成熟OSS / Libraryを利用する
-- Predictive / Causalで問い・推論対象・Assumption・Evaluationを分ける
-- 特定Product導入を必須前提としない
-
-これらは本Profileと整合する。
-
-特に、Problem Novelty / Analytical Complexityが高い案件では、
-
-- Question Definition
-- Predictive / Causalの選択
-- Estimand / Assumption / Identification
-- Unknown-data Performance / Calibration / Error Pattern
-
-等を案件ごとに設計するCapabilityが価値になり得る。
-
-一方、当チームのPositioning仮説のもう一方である`Enterprise Base`は、このProfileではSelection Weightが低い。
+当チームのPredictive / Causal、Scratch / OSS、前提・評価設計は本ProfileとFitする。一方、`Specialist Analytics × Enterprise Base`のうちEnterprise Baseが大きく加点されない。
 
 従って、
 
-> **当チームは十分Fitするが、Capability Bundle全体が差別化として効くProfileではない。**
+> **Competitive。ただし構造的Relative Advantageは未確認。**
 
-と評価する。
+とする。
 
-### A01-04a.3.8. 当チームのPosition
+### A01-04a.3.8. Relative Advantageの有無
 
-> **Competitive。ただし構造的なRelative Advantageは未確認。**
+当チームがこのProfileで競合を上回るには、Methodological Expertise、Relevant Evidence、Specialist Direct Access、Price / Lead Time等で具体的なCompetitive Gapが必要である。
 
-本Profileで「当チームが強い」と断定するには、少なくとも以下のEvidenceが必要である。
-
-- Predictive / Causalの専門人材・Seniority
-- 高難度案件の件数・具体例
-- 関連Projectでの品質・顧客評価
-- DS Specialist / Consulting Analyticsとの競合勝敗
-- Price / Lead Time / Specialist Direct Access
-
-これらが確認できない限り、DS Specialist等に対する`Competitive Gap > 0`は主張しない。
+現時点でそれを裏付ける比較データは不足しているため「当チームが最も強い」とは主張しない。
 
 ### A01-04a.3.9. 反証条件
 
-以下が確認された場合、本スライドのPositioningは修正すべきである。
+以下の場合はPositionを修正する。
 
-- RelevantなDS SpecialistがEnterprise条件を必要とせず、当チームより高い専門実績・専門人材を保有している
-- Consulting Analyticsが同等以上のHands-on Analytical Capabilityをより高いEconomic Valueで提供できる
-- 顧客が実際にはEnterprise Vendorとしての既存取引・契約容易性を強く重視しており、Implementation Couplingが低くてもSIer Baseが大きく効く
-- Product Vendorの既存Capabilityへ問題が高くFitし、個別分析よりPlatform利用が合理的である
+- Relevant DS Specialistが当チームより高い専門実績・人材を持つ
+- Consulting Analyticsが同等以上のHands-on Capabilityをより高いEconomic Valueで提供する
+- 顧客が既存Vendor契約等を強く重視し、Implementation Couplingが低くてもOrganizational AcceptabilityのWeightが高い
+- Product Vendorの既存Capabilityへ問題が高くFitする
 
-### A01-04a.3.10. Evidence / Inferenceの区分
+### A01-04a.3.10. Evidence / Inference区分
 
-**Published Evidence**
+**Published Evidence:** B2B購買の状況依存性、Professional ServiceのQuality Signal、Consulting選定におけるreputation / industry experience等。[T1]〜[T5]
 
-- B2B購買はBuying Situation・Buying Center・複数評価基準に依存する。[T1][T2][T3]
-- Professional Serviceはex ante Qualityを直接評価しにくく、Quality SignalsがProvider選定に使われる。[T4]
-- Management Consultancy選定ではreputation / client-industry experience / feesが重要だったという実証研究がある。[T5]
+**Provider一次情報:** BrainPad、Deloitte、Accenture、NTT DATA、PalantirのOffering。[P1]〜[P5]
 
-**Provider一次情報**
-
-- BrainPad、Deloitte、Accenture、NTT DATA、Palantirが実際に掲げるOffering / Capability。[P1]〜[P5]
-
-**当資料の分析仮説**
-
-- `高Analytical Complexity × 低Implementation Coupling`ではCapability / Fit / EvidenceのWeightが相対的に高い。
-- DS SpecialistをStrong Candidate、当チームをCompetitiveとする評価。
-- 当チームのEnterprise BaseはこのProfileでは差別化寄与が小さい、という解釈。
-
-上記の分析仮説は、学術研究が直接Provider類型の順位を実証したものではない。
+**当資料の分析仮説:** 本6軸Profile、8軸Weight、Provider Positionの順位づけ。学術研究がこの順位を直接実証したものではない。
 
 ## A01-04a.4. Speaker Note
 
-このProfileでは、分析そのものが商品です。高度な因果推論や予測、特殊なデータ構造など、方法論と専門人材の質が価値の中心になります。
+このProfileでは分析そのものが商品です。高度なPredictive / Causal、特殊な評価設計等が中心で、本番Systemとの接続はまだ重要ではありません。そのためCapability、案件Fit、関連実績が競争軸になります。
 
-そのため、専門Analytics会社は自然に強い候補になります。これは「SIerやConsultingには高度分析ができない」という意味ではありません。実際、DeloitteやNTT DATA等も高度なAI / Data Serviceを明確に提供しています。
+当チームは十分競争できますが、SIerとしてのEnterprise Baseが差になりにくいため、ここを最重要のWhy Us領域とは置きません。
 
-差が出るのは、今回の案件で何にWeightが付くかです。System Integrationがほぼ不要なら、Enterprise Delivery力を持っていても大きな加点にならず、分析専門性や関連実績が前面に出ます。
+## A01-04a.5. A01-04への示唆
 
-当チームはPredictive / CausalやScratch分析で十分競争できますが、このProfileでは`Specialist Analytics × Enterprise Base`のうちEnterprise Baseが効きにくいため、主戦場候補とは置きません。ここで当チームが勝つには、方法論、人材、実績、価格等で個別競合を上回るEvidenceが必要です。
-
-## A01-04a.5. 次頁への接続
-
-> 高度分析だけでなく、PoC後のData / System / Security / Operationまで同時に重要になると、選択基準は変わる。次頁では当チームのCapability Bundleがより全面的に効くProfileを見る。
+> 高度分析だけでは当チーム固有のCapability Bundleは全面的に効かない。Implementation Couplingが高まったA01-04bで、Specialist AnalyticsとEnterprise Baseが同時に価値化するかを確認する。
 
 ## A01-04a.6. Sources
 
 ### Academic / Published
-
-- [T1] Webster, F. E. Jr. & Wind, Y. (1972), “A General Model for Understanding Organizational Buying Behavior,” *Journal of Marketing*, 36(2), 12–19. DOI: https://doi.org/10.1177/002224297203600204
-- [T2] Sheth, J. N. (1973), “A Model of Industrial Buyer Behavior,” *Journal of Marketing*, 37(4), 50–56. DOI: https://doi.org/10.1177/002224297303700408
-- [T3] “B2B customer journeys: Conceptualization and an integrative framework,” *Industrial Marketing Management*, 113 (2023), 74–87. DOI: https://doi.org/10.1016/j.indmarman.2023.05.020
-- [T4] Pemer, F. & Skjølsvik, T. (2019), “The cues that matter: Screening for quality signals in the ex ante phase of buying professional services,” *Journal of Business Research*, 98, 352–365. DOI: https://doi.org/10.1016/j.jbusres.2019.02.005
-- [T5] Patterson, P. G. (1995), “Choice Criteria in Final Selection of a Management Consultancy Service,” *Journal of Professional Services Marketing*, 11(2), 177–187. DOI: https://doi.org/10.1300/J090v11n02_13
+- [T1] Webster, F. E. Jr. & Wind, Y. (1972), “A General Model for Understanding Organizational Buying Behavior,” *Journal of Marketing*, 36(2), 12–19. https://doi.org/10.1177/002224297203600204
+- [T2] Sheth, J. N. (1973), “A Model of Industrial Buyer Behavior,” *Journal of Marketing*, 37(4), 50–56. https://doi.org/10.1177/002224297303700408
+- [T3] “B2B customer journeys: Conceptualization and an integrative framework,” *Industrial Marketing Management*, 113 (2023), 74–87. https://doi.org/10.1016/j.indmarman.2023.05.020
+- [T4] Pemer, F. & Skjølsvik, T. (2019), “The cues that matter,” *Journal of Business Research*, 98, 352–365. https://doi.org/10.1016/j.jbusres.2019.02.005
+- [T5] Patterson, P. G. (1995), “Choice Criteria in Final Selection of a Management Consultancy Service,” *Journal of Professional Services Marketing*, 11(2), 177–187. https://doi.org/10.1300/J090v11n02_13
 
 ### Provider primary sources
-
 - [P1] BrainPad, Services: https://www.brainpad.co.jp/services/
 - [P2] Deloitte, AI & Data: https://www.deloitte.com/us/en/services/consulting/services/artificial-intelligence-and-data.html
-- [P3] Accenture, Data Services / AI and Data: https://www.accenture.com/us-en/services/data-ai/cloud-data-ai
+- [P3] Accenture, Data & AI: https://www.accenture.com/us-en/services/data-ai/cloud-data-ai
 - [P4] NTT DATA, AI Consulting: https://www.nttdata.com/global/en/services/ai/ai-consulting
-- [P5] Palantir, Operational Applications / App Building: https://www.palantir.com/docs/foundry/app-building/operational-apps
+- [P5] Palantir, Operational Applications: https://www.palantir.com/docs/foundry/app-building/operational-apps
