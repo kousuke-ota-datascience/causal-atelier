@@ -95,6 +95,8 @@ Palantir等のProductized Assetは、Data / Model / Workflow / ActionをPlatform
 
 > **Relative Weak候補。対応不能ではなく、Why Usの中心に置く合理性が低い。**
 
+とする。
+
 ### A01-04d.3.8. Relative Advantageの有無
 
 Product License / Integration Costが高い、標準Capabilityで重要要件を満たせない、Vendor Lock-in回避が重要等の場合は当チームPositionが上がり得る。したがってProduct Fitが本当に高いかを先に評価すべきである。
@@ -132,3 +134,20 @@ Product License / Integration Costが高い、標準Capabilityで重要要件を
 - [P3] Accenture Data & AI: https://www.accenture.com/us-en/services/data-ai/cloud-data-ai
 - [P4] NTT DATA AI Consulting: https://www.nttdata.com/global/en/services/ai/ai-consulting
 - [P5] Palantir Operational Applications: https://www.palantir.com/docs/foundry/app-building/operational-apps
+
+## A01-04d.7. Visualization Design Note｜2軸Projection
+
+本Profileの競争Positionは6軸Deal Profileと8つのCustomer Selection Criteriaを用いて評価する。**2軸Mapは、この多次元分析を分かりやすく伝えるためのProjectionとして使用できる。**
+
+説明用の主軸は以下を基本とする。
+
+- 縦軸：**Analytical Complexity**
+- 横軸：**Implementation Coupling**
+
+一方、`Decision Altitude / Problem Novelty / Solution Standardizability / Criticality / Governance`は、同じ2軸位置でもSelection CriteriaのWeightとProvider Positionを変え得る**補正条件**として扱う。
+
+従って、2軸MapだけからRelative Advantageを直接導出してはならない。正しい順序は、
+
+> **6軸で競争構造を分析する → 8軸Weight / Provider Positionを評価する → その結果を2軸へ投影して説明する**
+
+である。将来Visualizationを追加する場合、本Profileはこの2軸Map上の代表Anchorとして表示できる。
