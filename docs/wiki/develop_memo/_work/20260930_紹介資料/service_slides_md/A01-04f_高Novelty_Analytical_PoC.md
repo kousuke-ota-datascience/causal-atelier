@@ -4,7 +4,7 @@ Document title: 高Novelty × Analytical PoC の競争ポジション
 
 ## A01-04f.1. Message
 
-**新規性が高いPoCでは、方法論だけでなく「何を検証できるか」の設計力が重要になる。**
+**新規性が高いPoCでは、Fit・Capability・Evidenceと問いの設計力が競争を決めやすい。**
 
 ## A01-04f.2. Chart
 
@@ -13,178 +13,124 @@ Document title: 高Novelty × Analytical PoC の競争ポジション
 ### A01-04f.2.1. Chart Structure
 
 ```text
-Deal Profile
-────────────────────
+① Deal Profile｜6軸
+────────────────────────
+Decision Altitude          Operational〜Business
 Problem Novelty            High
 Analytical Complexity      High
-Implementation Coupling    Low〜Medium
 Solution Standardizability Low
+Implementation Coupling    Low〜Medium
 Criticality / Governance   Medium
-Decision Altitude          Operational〜Business
-          ↓
-Customer Selection Criteria
-────────────────────
-Deal-specific Fit          ↑↑
-Capability / Quality       ↑↑
-Evidence / Credibility     ↑↑
-Relational / Governance    ↑
-Economic Value             ↑
-          ↓
-Provider Position 仮説
-────────────────────
+              ↓
+② Customer Selection Criteria｜Weight仮説
+────────────────────────
+Deal-specific Fit          H
+Capability / Quality       H
+Delivery Feasibility       M
+Economic Value             M
+Risk                       M〜H
+Evidence / Credibility     H
+Relational / Governance    H
+Organizational Acceptability M
+              ↓
+③ Provider Competition｜Position仮説
+────────────────────────
 DS Specialist              Strong Candidate
-当チーム                  Core Candidate
+当チーム                   Core Candidate
 Consulting Analytics       Strong Candidate
 SIer Analytics             組織次第
 AI / Platform Vendor       Relative Weak候補
+              ↓
+④ Our Position
+────────────────────────
+**Core Candidate**
+問い・Answerability・前提・評価まで含む
+Analytical Designが価値化しやすい
 ```
 
 ### A01-04f.2.2. Chart内の最小表示テキスト
 
-- High Problem Novelty
-- High Analytical Complexity
-- Fit / Capability / Evidence重視
+- 6軸Profileを全表示
+- Fit / Capability / Evidence / Relational：High Weight
 - **当チーム：Core Candidate**
 - **DS Specialist / Consulting：Strong Candidate**
 
 ## A01-04f.3. Supporting Logic
 
-### A01-04f.3.1. このProfileの特徴
+### A01-04f.3.1. なぜこの6軸Profileなのか
 
-このProfileでは「既知の手法を適用できるか」より前に、
+この類型では、既知手法を適用する以前に、Outcome、PredictionかCausalか、Estimand、Assumption、Identification、Success Criteria、Data Sufficiency等を設計する必要がある。
 
-- 何をOutcomeとするか
-- PredictionかCausalか
-- 何をEstimandとするか
-- どのAssumptionが必要か
-- 今のDataでIdentification可能か
-- 何をSuccess Criteriaとするか
-- 何が分からなければ次に何を集めるか
+Decision AltitudeはOperational〜Business。全社Strategyではなく具体的なDecision Problemを扱う。Problem Novelty / Analytical ComplexityはHigh、StandardizabilityはLow。Implementation CouplingはLow〜Mediumで、まずAnswerabilityを検証しつつ、一定の業務利用条件も考慮する。CriticalityはMediumとする。
 
-を設計する必要がある。
+### A01-04f.3.2. なぜこのSelection Weightになるのか
 
-つまりPoCの主要成果はModelそのものだけでなく、**問いのAnswerabilityと検証設計を明らかにすること**になる。
+BUYGRIDのNew Taskは購買側の新規性・情報要求が高い状況を示すAnchorであり、B2B Customer Journey研究もpurchase complexity / uncertaintyによるBuying Processの変化を整理している。[T8][T3]
 
-BUYGRIDのNew Taskは、購買側の新規性・情報要求が高い状況を示す代表的Anchorである。[T8] 2023年のB2B Customer Journey研究でも、purchase taskの複雑性・不確実性によりBuying Processが変化すると整理される。[T3]
+高Novelty案件では一般的なAI Capabilityより、類似問題へのFit、専門人材、未知の条件を説明できる能力、共同でProblem Definitionを詰める関係性が重要になると考え、Fit / Capability / Evidence / RelationalをHighと置く。[T4][T5]
 
-このため、高Novelty案件では既製Solutionの比較だけでなく、Providerと顧客がProblem Definition自体を共同で詰める必要性が高まる、というのが本資料の仮説である。
+### A01-04f.3.3. Consulting AnalyticsのPosition
 
-### A01-04f.3.2. Deal-specific Fitが強く効く理由
+Deloitte / AccentureはProblem FramingからAI / Data Engineering / Buildまでを提供する。[P2][P3]
 
-PattersonのManagement Consultancy選定研究ではclient-industry experienceが上位基準であり、Pemer & SkjølsvikもProfessional Service購入時にResource Quality等のSignalsが使われることを示す。[T4][T5]
+Business Problem自体が曖昧な場合はConsulting AnalyticsがStrong Candidateとなる。ただしHands-on Methodological Detailが中心なら担当Teamの専門性が勝敗を左右す。
 
-新規性が高い案件では、一般的な「AI Capability」より、
+### A01-04f.3.4. SIer AnalyticsのPosition
 
-- 類似する問題を扱った経験
-- 該当方法論のSpecialist
-- 不確実性を説明できる能力
-- 無理にAnswerを出さず、Answerabilityを判断できる能力
+NTT DATA等のようにAI Consulting / Data Science / PoCまで持つSIerは有力になり得る。[P4]
 
-がProvider Fitとして評価される可能性が高い。
+ただしSIerというCategoryだけでは非定型Methodological Capabilityの強弱を決められないため「組織次第」とする。
 
-### A01-04f.3.3. DS SpecialistをStrong Candidateとする根拠
+### A01-04f.3.5. DS SpecialistのPosition
 
-BrainPadのようなAnalytics専門会社は、専門人材によるData Analysis / Consultingを中核Offeringとしている。[P1]
+専門Analytics会社はSpecialist Talent / Flexible Analysisを中核Offeringとする場合があり、高Novelty / High Complexityで直接価値化しやすい。[P1]
 
-Problem Novelty / Analytical Complexityが高いほど、Specialist Talent / Methodological Depth / Flexible Analysisが直接価値化しやすい。このためStrong Candidateとする。
+従ってStrong Candidateとする。ただしEnterprise接続力や業界実績は個社差がある。
 
-ただし、個別DS SpecialistのCausal Capability、業界実績、Enterprise Deliveryは各社で異なるため、一律の優位を意味しない。
+### A01-04f.3.6. AI / Platform VendorのPosition
 
-### A01-04f.3.4. Consulting AnalyticsをStrong Candidateとする根拠
+Problem Noveltyが高い段階ではProduct CapabilityとのFit自体が未確立の場合がある。[P5]
 
-Deloitte / AccentureはAI / Data Strategyだけでなく、Analytics / Engineering / Buildまでを公式Offeringとして持つ。[P2][P3]
+Platform Fitが早期に確認できれば評価は上がるが、探索的Custom Analysisが中心なら標準Assetの価値が小さくなるためRelative Weak候補とする。
 
-高Novelty案件ではProblem Framing、Stakeholder Alignment、Business Value Definitionも不確実であるため、Business / Strategy側から問いを構造化できるConsulting Analyticsは有力になり得る。
+### A01-04f.3.7. 当チームのPosition
 
-一方、PoCが非常にHands-onで、Methodological Detailが中心なら、担当Teamの専門性・Delivery Modelが勝敗を左右する。
+当チームのPredictive / Causalの使い分け、Causal Question / Estimand / Assumption / Identification、Scratch / OSS、特定Product非必須という特徴は本Profileと直接整合する。
 
-### A01-04f.3.5. SIer Analyticsを「組織次第」とする理由
-
-NTT DATAのようにAI Consulting / Data Science / PoCまで公式に持つSIerは十分有力である。[P4]
-
-しかしSIerというCategory自体から、非定型Methodological Capabilityの強弱は決められない。組織ごとの専門人材・案件実績を見る必要がある。
-
-従ってCategoryとして固定Scoreを付けず「組織次第」とする。
-
-### A01-04f.3.6. AI / Platform VendorのFitが下がり得る理由
-
-Problem Noveltyが高い場合、そもそもProduct CapabilityとのFitが確立していない。
-
-PalantirのようなPlatformは高度なCustom Application構築も可能だが、Platformを採用する価値がまだ明確でない探索的PoCでは、Product Assetの再利用メリットが小さい可能性がある。[P5]
-
-従ってRelative Weak候補とするが、Platform Fitが早期に確認できれば評価は上がる。
-
-### A01-04f.3.7. 当チームのFit
-
-当チームの確認済み特徴である、
-
-- Predictive / Causalを問いから区別する
-- Causal Question / Estimand / Assumption / Identification等を分ける
-- Scratch / OSSで個別設計する
-- 特定Productを必須としない
-
-は、高Novelty Profileと直接整合する。
-
-さらにImplementation CouplingがMediumへ近づけば、SIer内組織としてEnterprise Contextも追加価値になり得る。
+Implementation CouplingがMedium側へ上がればEnterprise Contextも追加価値になり得る。
 
 従って、
 
 > **Core Candidate。ただし主にAnalytical Design側のFitによる。**
 
-と評価する。
+とする。
 
-### A01-04f.3.8. A01-04aとの違い
+### A01-04f.3.8. Relative Advantageの有無
 
-A01-04aは「高度分析だが問題自体はある程度定義済み」の案件も含む。
+DS Specialist / Consulting AnalyticsもStrong Candidateであるため相対優位は未証明。Causal / Predictive専門人材、新規テーマPoC実績、Answerability判断、Price / Lead Time、Enterprise接続までの継続Delivery等のEvidenceが必要である。
 
-本ProfileはさらにProblem Noveltyが高く、Question / Answerability / Data Sufficiencyそのものを設計する必要がある。
+### A01-04f.3.9. 反証条件
 
-そのため当チームが重視する「問いから分析を選ぶ」Operating Modelは、A01-04aより強く価値化する可能性がある。
+- DS SpecialistがRelevant Evidence / Specialist Talentで明確に上回る
+- Consulting AnalyticsがProblem FramingとHands-on Analysisをより高Valueで提供
+- 顧客課題が既製Platformへ早期にFitする
+- 当チームに高Novelty案件の実績Evidenceがない
 
-### A01-04f.3.9. Competitive Gapは未証明
+### A01-04f.3.10. Evidence / Inference区分
 
-このProfileは当チームにFitするが、DS Specialist / Consulting Analyticsも強い。
+**Published Evidence:** BUYGRID / B2B Journey、Professional Service Signals。[T3][T4][T5][T8]
 
-相対優位を主張するには、
+**Provider一次情報:** BrainPad / Deloitte / Accenture / NTT DATA / Palantir。[P1]〜[P5]
 
-- Causal / Predictive専門人材
-- 新規テーマPoC実績
-- No-Goを含むAnswerability判断実績
-- Specialist Direct Access
-- PoC価格 / Lead Time
-- Enterprise接続まで必要になった際の継続Delivery
-
-のEvidenceが必要である。
-
-### A01-04f.3.10. 反証条件
-
-- DS Specialistが当チームより強いRelevant Evidence / Specialist Talentを持つ
-- Consulting AnalyticsがProblem FramingとHands-on Analysisを一体でより高いValueで提供
-- 顧客課題が早期に既製PlatformへFitし、探索的Custom Analysisが不要
-- 当チームに高Novelty案件の実績・人材Evidenceがない
-
-### A01-04f.3.11. Evidence / Inferenceの区分
-
-**Published Evidence**
-- BUYGRID / B2B Journeyは新規性・複雑性によるBuying Process変化を支持する。[T3][T8]
-- Professional ServiceではExperience / Resource Quality / Signalsが選択に使われる。[T4][T5]
-
-**Provider一次情報**
-- BrainPad / Deloitte / Accenture / NTT DATA / Palantirの公式Offering。[P1]〜[P5]
-
-**当資料の分析仮説**
-- 高Novelty × 高Analytical ComplexityではQuestion Design / Answerabilityが競争軸になる。
-- 当チームをCore Candidateとする評価。
+**当資料の分析仮説:** 本6軸Profile、8軸Weight、当チーム＝Core Candidate、DS Specialist / Consulting＝Strong CandidateというPositioning。
 
 ## A01-04f.4. Speaker Note
 
-新しいテーマのPoCでは、モデルを作る以前に「何を検証すれば意思決定できるのか」を決める必要があります。ここは当チームのPredictive / Causalの使い分け、EstimandやAssumptionの設計と相性がよい領域です。
+新しいテーマのPoCでは、モデルを作る以前に「何を検証すれば意思決定できるか」を決める必要があります。当チームのPredictive / Causalの使い分けやEstimand / Assumption設計と相性がよい領域です。ただしDS SpecialistやConsultingも強いため、競争優位はEvidenceで確認します。
 
-ただしDS SpecialistやConsulting Analyticsも強い領域です。したがって、当チームの主戦場候補とは言えても、競合より上とはまだ言えません。ここで勝つには、方法論人材、類似案件、顧客評価といったEvidenceが必要です。
+## A01-04f.5. A01-04への示唆
 
-## A01-04f.5. 次頁への接続
-
-> Problem Noveltyだけでなく、失敗時の影響や規制・運用責任まで重くなると、Capability以外にRisk / Governanceが強い選定軸となる。
+> A01-04fはA01-04無印の重点Positioningを支える第二の中核Anchorである。ただしImplementation Couplingが低いほどA01-04aに近づき、Enterprise Baseによる差は縮小する。
 
 ## A01-04f.6. Sources
 
