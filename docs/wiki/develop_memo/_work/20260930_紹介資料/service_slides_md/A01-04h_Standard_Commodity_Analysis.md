@@ -138,3 +138,20 @@ Problemが定型でStandardizabilityが高い場合、AutoML / BI / 既製AI機�
 - [T4] Pemer, F. & Skjølsvik, T. (2019), “The cues that matter: Screening for quality signals in the ex ante phase of buying professional services,” *Journal of Business Research*, 98, 352–365. https://doi.org/10.1016/j.jbusres.2019.02.005
 
 ※Provider別の一次情報はA01-04a〜gの各Sourcesを参照。
+
+## A01-04h.7. Visualization Design Note｜2軸Projection
+
+本Profileの競争Positionは6軸Deal Profileと8つのCustomer Selection Criteriaを用いて評価する。**2軸Mapは、この多次元分析を分かりやすく伝えるためのProjectionとして使用できる。**
+
+説明用の主軸は以下を基本とする。
+
+- 縦軸：**Analytical Complexity**
+- 横軸：**Implementation Coupling**
+
+一方、`Decision Altitude / Problem Novelty / Solution Standardizability / Criticality / Governance`は、同じ2軸位置でもSelection CriteriaのWeightとProvider Positionを変え得る**補正条件**として扱う。
+
+従って、2軸MapだけからRelative Advantageを直接導出してはならない。正しい順序は、
+
+> **6軸で競争構造を分析する → 8軸Weight / Provider Positionを評価する → その結果を2軸へ投影して説明する**
+
+である。将来Visualizationを追加する場合、本Profileはこの2軸Map上の代表Anchorとして表示できる。
