@@ -1,18 +1,18 @@
-Document title: 当チームのWhy Us仮説
+Document title: 競合比較から見た当チームのPositioning
 
-# A01-04. Appendix｜当チームのWhy Us仮説
+# A01-04. Appendix｜競合比較から見た当チームのPositioning
 
 ## A01-04.1. Message
 
-**非定型・高難度の分析とEnterprise利用の両方が重要な商談で強みが出やすい。**
+**当チームは、専門的な分析設計とEnterprise対応が同時に求められる領域を主戦場とする。**
 
 ## A01-04.2. Chart
 
-**チャートタイトル:** 当チームのSweet Spot仮説｜Specialist Analytics × Enterprise Base
+**チャートタイトル:** Deal Profile上のPositioning｜Specialist Analytics × Enterprise Base
 
 ### A01-04.2.1. Chart Structure
 
-中央に2軸マップを置く。
+A01-03で示した2軸上に、各Provider類型の「強みが出やすい領域」を重なりのある楕円で配置する。
 
 - 縦軸：Analytical Complexity
 - 横軸：Implementation Coupling
@@ -22,162 +22,162 @@ Document title: 当チームのWhy Us仮説
                         High
                          ▲
                          │
-  Specialist Analytics  │     ★ 当チームSweet Spot仮説
+      DS Specialist     │       Consulting Analytics
+        ╭──────╮         │          ╭────────╮
+       ╱ 高度分析 ╲──────┼────────╱ 高度分析＋変革 ╲
+       ╲ 柔軟性  ╱       │        ╲ Stakeholder  ╱
+        ╰──────╯         │          ╰────────╯
                          │
-  ・高度分析             │     Specialist Analytics
-  ・非定型検証           │             ×
-                         │       Enterprise Base
-                         │
+                         │        ╭══════════════╮
+                         │       ║ **当チーム**   ║
+                         │       ║ Specialist   ║
+                         │       ║ Analytics    ║
+                         │       ║ × Enterprise ║
+                         │        ╰══════════════╯
 ─────────────────────────┼────────────────────────▶
                          │              Implementation Coupling
-                         │
-  Standard / Commodity   │     SI / Production-oriented
+       AI / Platform     │           SIer Analytics
+        ╭──────╮         │          ╭────────╮
+       ╱標準化・Scale╲    │         ╱Integration╲
+       ╲ Speed      ╱     │         ╲Production ╱
+        ╰──────╯         │          ╰────────╯
                          │
                         Low
 ```
 
-Sweet Spotの右側にSupporting Capabilityを4つ置く。
+**重要:** 実際のPowerPointでは各Providerを一点ではなく、互いに重なる半透明の楕円で描く。当チーム領域も他社領域と重ねる。
 
-1. Predictive / CausalをDecision Problemから使い分ける
-2. Scratch / OSSによる非定型Analytical Design
-3. 前提・評価・Limitationまで扱うScientific Validity
-4. Enterprise Data / System / Governanceを考慮できるSIer context
+当チーム領域の横に、01-05と同じ3要素を置く。
 
-下部にWhy Us候補を置く。
+```text
+Predictive / Causal
+        ×
+Scratch / OSS
+        ×
+Enterprise Context
+```
 
-> **定型解のない分析課題に、専門的な分析設計とEnterpriseの実装視点を一つのPoCで持ち込む。**
+下部に顧客向けの結論を置く。
+
+> **定型Solutionでは解きにくく、分析だけでも終わらない課題に。**
 
 ### A01-04.2.2. Chart内の最小表示テキスト
 
-- **Specialist Analytics × Enterprise Base**
-- 高度・非定型な分析
-- Enterprise利用条件
-- Predictive / Causal
-- Scratch / OSS
-- Scientific Validity
-- Enterprise Fit
+- DS Specialist：高度分析 / 柔軟性
+- Consulting Analytics：高度分析 / Transformation
+- SIer Analytics：Integration / Production
+- AI Vendor：Standardization / Scale
+- **当チーム：Specialist Analytics × Enterprise Base**
+- **定型Solutionでは解きにくく、分析だけでも終わらない課題に**
 
 ## A01-04.3. Supporting Logic
 
-### A01-04.3.1. 確認済みのチーム特徴
+### A01-04.3.1. このMapが答える顧客の疑問
 
-現時点で確認できているのは以下である。
+01-05を見た顧客から、
 
-- SIerのデータ分析部門
-- Predictive / Causal PoCを提供
-- データサイエンティストによるスクラッチ開発を基本とする
-- 必要に応じ成熟OSS / Libraryを利用
-- 特定Product導入を必須前提としない
-- Predictive / Causalで問い・前提・評価を分けて扱う
-- 分析結果をDecision / Actionへ接続することを重視する
+> 「予測・因果、柔軟な分析、Enterprise利用まで考えるというが、他社も同じことができるのでは？」
 
-ただし、これらの個別項目は優秀な競合にも実行可能であり、単独では強い差別化にならない。
+という反論が想定される。
 
-### A01-04.3.2. 強み仮説1｜Analytical Design
+回答は、
 
-Problem Novelty / Analytical Complexityが高いほど、以下の価値が上がると仮説化する。
+> **はい、対応Capabilityは重なる。ただし、各Providerが最も強みを出しやすいDeal Profileは同じではない。**
 
-- 何を予測すべきかを定義する
-- PredictionとCausalを区別する
-- Estimand / Assumption / Evaluationを設計する
-- 既存データで何が答えられるかを見極める
-- 顧客固有の評価条件へ対応する
+である。
 
-既製Solutionへ課題を合わせるのではなく、問いへ必要な分析を構成する能力が効く。
+本Mapは「他社にはできない」ことを示すものではなく、**当チームがどの競争領域を主戦場としているか**を示す。
 
-### A01-04.3.3. 強み仮説2｜Technology非固定
+### A01-04.3.2. DS Specialistとの違い
 
-Solution Standardizabilityが低い商談では、Scratch / OSSによる柔軟な実装が価値を持つ。
+DS Specialist / Research Boutiqueは、Analytical Complexityが高く、Analysis単体でも価値が成立する案件で強みを持ちやすい。
 
-一方、既製Productに高くFitする課題では、AI Vendor等のSpeed / Economicsが優位になる可能性がある。
+当チームもAnalytical Designを重視する一方、SIer内の分析組織として、Data / System / Security / Operation等のEnterprise条件をPoC段階から考慮できることをPositioning上の違いとする。
 
-### A01-04.3.4. 強み仮説3｜Enterprise Base
+従って、Implementation Couplingが高まるほど、当チームのEnterprise Baseが追加価値になり得る。
 
-Implementation Coupling / Criticalityが高まるほど、分析だけでなく、
+### A01-04.3.3. SIer Analyticsとの違い
 
-- Enterprise Data
-- Security
-- System
-- Governance
-- 本番利用条件
+一般的なSIer Analyticsは、Enterprise Integration、Production、Security、Operationとの接続に強みを持ちやすい。
 
-等を考える必要性が増す。
+当チームはそこに加えて、Predictive / Causalを問いから使い分け、スクラッチ中心で非定型なAnalysis Designを行う専門組織としてPositioningする。
 
-これはSIer内の分析組織という位置づけが価値を持ち得る領域である。
+従って、Analytical Complexity / Problem Noveltyが高まるほど、Specialist Analytics側のCapabilityが追加価値になり得る。
 
-ただし、他SIer Analyticsとの差別化にはならないため、単独のWhy Usにはしない。
+ただし、他SIerにも同等の専門組織は存在し得るため、実案件ではRelevant Competitorの実績・人材との比較が必要である。
 
-### A01-04.3.5. 組合せとしての差別化仮説
+### A01-04.3.4. Consulting Analyticsとの違い
 
-個別Capabilityではなく、以下の交差領域を仮説上のSweet Spotとする。
+Consulting Analyticsは、Decision Altitudeが高く、Strategy / Transformation / Stakeholder Alignmentを含む案件で強みを持ちやすい。
+
+当チームは、全社変革構想そのものより、具体的なPredictive / Causal Questionをデータで検証し、将来利用へ接続するAnalytical PoCを中心にPositioningする。
+
+特に、実際のDataを用いたHands-onなAnalysis Designの比重が高い商談を主戦場とする。
+
+### A01-04.3.5. AI / Platform Vendorとの違い
+
+AI / Platform Vendorは、ProblemがProduct Capabilityへ高くFitし、Standardizabilityが高い場合にSpeed / Reuse / Scaleで強みを持ちやすい。
+
+当チームは、既製Solutionへ問題を合わせにくく、Outcome / Treatment / Evaluation / Data Structure等を個別に設計する必要がある案件を中心にPositioningする。
+
+### A01-04.3.6. 当チームの主戦場
+
+以上から、当チームが強みを訴求するDeal Profileを以下とする。
 
 ```text
 Problem Novelty           Medium〜High
 Analytical Complexity     Medium〜High
-Standardizability         Low〜Medium
+Solution Standardizability Low〜Medium
 Implementation Coupling   Medium〜High
 Criticality / Governance  Medium〜High
 ```
 
-つまり、
+一言で表すと、
 
-> **定型Solutionでは解きにくいが、分析だけのResearchでもなく、将来の業務・System利用を考慮する必要がある問題**
+> **定型Solutionでは解きにくく、分析だけでも終わらない課題**
 
 である。
 
-### A01-04.3.6. 競合類型との相対関係
+ここでは、
 
-以下は固定的な強弱ではなく、Deal Profile上の仮説である。
+- Specialist Analyticsとしての問い・前提・評価の設計
+- Scratch / OSSによる柔軟な分析
+- SIerとしてのEnterprise Context
 
-| Deal Profile | 比較優位が出やすいProvider仮説 |
+が同時に価値を持ちやすい。
+
+### A01-04.3.7. 01-05との対応
+
+01-05の3つの顧客価値と、本Mapは以下のように対応する。
+
+| 01-05の価値 | Positioning上の意味 |
 |---|---|
-| Decision Altitudeが極めて高くStrategy比率が高い | 総合コンサルAnalytics |
-| Analytical Complexityが高くImplementation Couplingが低い | DS専門会社 / Research Boutique |
-| Analytical Complexityが低くImplementation Couplingが高い | 一般SIer / Production Delivery |
-| Standardizabilityが極めて高い | AI / Product Vendor |
-| Analytical ComplexityとImplementation Couplingが共に高い | **当チームのSweet Spot候補** |
+| 問いに合う分析を選ぶ | Analytical Complexity / Problem Noveltyが高い案件へのFit |
+| 非定型課題にも合わせる | Standardizabilityが低い案件へのFit |
+| 利用段階まで見据える | Implementation Coupling / Criticalityが高い案件へのFit |
 
-他社にも同様のCapabilityを持つ組織は存在するため、この表は「他社にはできない」という主張ではない。
+従って、01-05は単なるCapability列挙ではなく、このDeal Profile上のPositioningを顧客向けに圧縮したものとして扱う。
 
-### A01-04.3.7. Evidence Gap
+### A01-04.3.8. 主張範囲
 
-Why Us仮説を顧客向けの競争優位主張へ昇格させるためには、以下のEvidenceが必要である。
-
-**人材**
-
-- Predictive / Causal専門人材数
-- Seniority
-- 論文 / 学会 / 特許 / OSS
-
-**案件**
-
-- 高難度・非定型分析案件数
-- Causal / Predictive案件数
-- System / Productionまで接続した事例
-
-**Delivery Model**
-
-- Specialistが顧客との問い設計から実装までどこまで直接担当するか
-- SI部門との連携方法
-
-**Customer Evidence**
-
-- 顧客が当チームを選んだ理由
-- Repeat率
-- 競合比較で勝った理由
-
-現時点では、Speed / Cost / Accuracy等の競合優位はEvidence不足のため主張しない。
+- 各Providerの楕円は市場シェアや実測Scoreを示すものではない。
+- Provider類型ごとの一般的なBusiness Model / Capability傾向をもとにしたPositioning仮説である。
+- 個別競合企業には例外があり、当チームより高いFitを持つ企業も当然存在する。
+- したがって営業現場では「他社にはできない」とは言わず、**「当チームはこの組み合わせを主戦場としている」**と説明する。
+- 最終的な競争優位の強さは、人材・案件実績・顧客評価等のEvidenceで補強する。
 
 ## A01-04.4. Speaker Note
 
-ここまでの競争分析を当チームへ当てはめると、現時点で最も有力なのは「Specialist AnalyticsとEnterprise Baseの組み合わせ」です。
+ここまでを一枚にまとめると、このPositioningになります。
 
-因果推論ができること自体や、SIerとして本番を考えられること自体は差別化ではありません。どちらも競合に存在します。
+確かに各社のCapabilityには重なりがあります。データサイエンス専門会社でもシステム支援はできますし、SIerやコンサルにも高度なデータサイエンティストはいます。ですから、境界線で「ここは当社だけ」とは説明しません。
 
-一方で、分析方法自体を設計しなければならない非定型・高難度の課題でありながら、分析だけで完結せず、将来の業務利用やシステム、Governanceも無視できない商談では、両方の能力が同時に必要になります。この交差領域が、当チームの比較優位が最も出やすいSweet Spotではないか、というのが現時点の仮説です。
+違いは主戦場です。データサイエンス専門会社は高度分析と柔軟性、SIerはIntegrationやProduction、AI Vendorは標準化とScale、コンサルはTransformationまで含む上位課題に、それぞれ強みを作りやすい構造があります。
 
-ただし、これはまだPositioning仮説です。最終的にWhy Usとして外部へ主張するには、専門人材、案件実績、顧客評価などのEvidenceで裏付ける必要があります。
+当チームが主戦場とするのは、その中でも分析方法自体を設計する必要がありながら、分析だけで完結せず、将来のEnterprise利用も考えなければならない領域です。Predictive / Causalを問いから使い分け、Scratch / OSSで個別に設計し、SIerのEnterprise Contextを同じPoCへ持ち込む。この組み合わせが01-05でお伝えしている強みです。
+
+したがって、「どこも同じでは」という問いに対する回答は、「できることには重なりがあります。ただし、私たちは定型Solutionでは解きにくく、分析だけでも終わらない課題を主戦場として、そこに必要なCapabilityを組み合わせています」となります。
 
 ## A01-04.5. Appendix A01-04から本編への接続
 
-> 本編Slide 5では、この詳細な競争分析を圧縮し、「高度・非定型な分析 × Enterprise利用」というSweet Spotを顧客向けのWhy Usとして提示する。
+> このPositioningを顧客向けに一枚へ圧縮したものが01-05である。予測・因果の専門分析、非定型課題への柔軟な設計、Enterprise利用まで見据えることを一つのPoCで提供する。
