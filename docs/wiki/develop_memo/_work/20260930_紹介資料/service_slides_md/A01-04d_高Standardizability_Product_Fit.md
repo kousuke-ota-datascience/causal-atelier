@@ -4,7 +4,7 @@ Document title: 高Standardizability × Product Fit の競争ポジション
 
 ## A01-04d.1. Message
 
-**既製Productへ高くFitする案件では、標準化・再利用・展開速度が主要な競争力になる。**
+**既製Productへ高くFitする案件では、Economics・Delivery・再利用性が競争を決めやすい。**
 
 ## A01-04d.2. Chart
 
@@ -13,151 +13,114 @@ Document title: 高Standardizability × Product Fit の競争ポジション
 ### A01-04d.2.1. Chart Structure
 
 ```text
-Deal Profile
-────────────────────
-Analytical Complexity      Low〜Medium
-Implementation Coupling    Medium
+① Deal Profile｜6軸
+────────────────────────
+Decision Altitude          Operational〜Business
 Problem Novelty            Low
+Analytical Complexity      Low〜Medium
 Solution Standardizability High
+Implementation Coupling    Medium
 Criticality / Governance   Low〜Medium
-          ↓
-Customer Selection Criteria
-────────────────────
-Economic Value             ↑↑
-Delivery Feasibility       ↑↑
-Time-to-Value              ↑↑
-Risk                       ↑
-Capability / Quality       ↑
-          ↓
-Provider Position 仮説
-────────────────────
+              ↓
+② Customer Selection Criteria｜Weight仮説
+────────────────────────
+Deal-specific Fit          H
+Capability / Quality       M
+Delivery Feasibility       H
+Economic Value             H
+Risk                       M
+Evidence / Credibility     M
+Relational / Governance    L〜M
+Organizational Acceptability M
+              ↓
+③ Provider Competition｜Position仮説
+────────────────────────
 AI / Platform Vendor       Strong Candidate
 SIer Analytics             Competitive
-当チーム                  Relative Weak候補
+当チーム                   Relative Weak候補
 Consulting Analytics       条件次第
 DS Specialist              Relative Weak候補
+              ↓
+④ Our Position
+────────────────────────
+**Relative Weak候補**
+標準解で十分ならScratch柔軟性は
+主要Selection Criteriaに接続しにくい
 ```
 
 ### A01-04d.2.2. Chart内の最小表示テキスト
 
-- 高Standardizability / 高Product Fit
-- Economics / Delivery / Time-to-Value重視
+- 6軸Profileを全表示
+- Fit / Delivery / Economics：High Weight
 - **AI / Platform Vendor：Strong Candidate**
 - **当チーム：Relative Weak候補**
 
 ## A01-04d.3. Supporting Logic
 
-### A01-04d.3.1. このProfileの特徴
+### A01-04d.3.1. なぜこの6軸Profileなのか
 
-このProfileでは、顧客固有の分析方法を新規設計するより、既にProduct / Platformへ実装されたCapabilityを再利用する方が合理的である可能性が高い。
+Operational〜Businessレベルの課題で、Problem Noveltyが低く、既存Product / PlatformのCapabilityへ高くFitする案件を表す。Analytical ComplexityはLow〜Medium、StandardizabilityはHighであり、個別のMethodological Designより既存Assetの再利用価値が高い。
 
-典型的には、
+Implementation CouplingはMediumとする。Product単体で完結せず一定のData / Workflow Integrationは必要だが、大規模なEnterprise Architecture変更までは前提としない代表Anchorである。
 
-- 問題定義が比較的定型
-- Input / Outputが既知
-- Evaluation方法が標準化可能
-- Product CapabilityとのGapが小さい
-- 大規模展開・反復利用が想定される
+### A01-04d.3.2. なぜこのSelection Weightになるのか
 
-という条件を持つ。
+BUYGRIDは購買の新規性・情報要求によってBuying Processが変わることを示す。[T8]
 
-このとき顧客価値は「柔軟に何でも作れること」よりも、**既存Assetを使って速く・安定的に・反復可能な形で使えること**へ移る。
+本Profileでは既知SolutionへのFitが高いため、Deal-specific Fit、Delivery Feasibility、Economic ValueをHighと置く。探索的な専門設計より、既存Capabilityをどれだけ短く・安定して利用できるかが価値になりやすいという当資料の仮説である。
 
-### A01-04d.3.2. 標準化が競争軸を変える理論的背景
+### A01-04d.3.3. Consulting AnalyticsのPosition
 
-BUYGRIDではStraight Rebuy / Modified Rebuy / New Taskのように、購買の新規性・情報要求によって購買プロセスが変わるとされる。[T8] 新規性が低くSolutionが既知に近づくほど、探索的な専門設計より、価格・Delivery・既存Supplier / Solutionの評価が相対的に重要になると考える余地がある。
+Consulting AnalyticsはTransformationやProduct Selection全体では価値を持つが、単純なProduct Fit案件では上位Consulting Capabilityが追加Scoreにならない場合がある。[P2][P3]
 
-またTCEの観点では、標準Assetの利用により取引固有投資を減らせる場合、個別開発よりGovernance Costを抑えられる可能性がある。[T6][T7]
+### A01-04d.3.4. SIer AnalyticsのPosition
 
-ただし「標準化すれば必ずProduct Vendorが安い・速い」という実証済み法則ではない。ここから先はDeal条件に基づく当資料の推論である。
+Product導入にLegacy Integration / Security / Data Pipelineが伴う場合、SIerのDelivery Capabilityが効く。[P4] そのためCompetitiveとする。
 
-### A01-04d.3.3. AI / Platform VendorをStrong Candidateとする根拠
+### A01-04d.3.5. DS SpecialistのPosition
 
-PalantirはOperational Application / Ontology / App Building等をPlatform Capabilityとして提供し、Data・Model・Workflow・Actionを再利用可能なPlatform上で統合する。[P5]
+Custom Analysisの必要性が低いほど、専門Analytics人材の希少性が選定理由になりにくい。[P1] 対応可能でも主戦場ではないためRelative Weak候補とする。
 
-このようなProductized Assetは、問題が既存Capabilityへ高くFitする場合、
+### A01-04d.3.6. AI / Platform VendorのPosition
 
-- Reuse
-- Standardized deployment
-- Shared governance
-- Scale
-- Operationalization
+Palantir等のProductized Assetは、Data / Model / Workflow / ActionをPlatform上で再利用可能な形で統合する。[P5]
 
-を通じて顧客価値を生み得る。
-
-従って、本ProfileではAI / Platform VendorをStrong Candidateと置く。
-
-### A01-04d.3.4. SIer AnalyticsがCompetitiveとなる理由
-
-Product導入だけでなくLegacy System、Security、Data Pipeline等へのIntegrationが必要なら、SIerのDelivery Capabilityが効く。NTT DATAはAI ConsultingからApplication IntegrationまでをOfferingとして掲げる。[P4]
-
-従って、Product Vendor単独ではなくSIerを含む構成が合理的な場合もある。
-
-### A01-04d.3.5. 当チームのFitが下がる理由
-
-当チームの特徴である、
-
-- Predictive / Causalの問いからの使い分け
-- Scratch / OSS
-- 非定型Analytical Design
-
-は、顧客固有性が高いほど価値を持つ。
-
-逆に、既製Productで十分な場合、Scratchによる柔軟性は、
-
-- 開発工数
-- Test工数
-- Maintenance
-- Delivery Lead Time
-
-を追加する可能性がある。
-
-そのため本Profileでは、当チームが対応可能でも**Differentiating Capabilityが顧客の主要Selection Criteriaとずれやすい**と評価する。
-
-### A01-04d.3.6. Consulting / DS Specialistの位置づけ
-
-Deloitte / AccentureのようなConsulting AnalyticsはProduct選定を含むTransformation全体では価値を出し得る。[P2][P3] しかし単純なProduct Fit案件では上位Consulting Capabilityが追加価値にならない可能性がある。
-
-DS SpecialistもCustom Analysisが不要なほど標準化された案件では、専門分析の希少性が選定理由になりにくい。[P1]
+問題が既存Capabilityへ高くFitする場合、Reuse / Deployment / Scale / Governanceの既存Assetが直接価値になるためStrong Candidateとする。
 
 ### A01-04d.3.7. 当チームのPosition
 
+当チームのPredictive / Causal、Scratch / OSS、非定型設計は、顧客固有性が高いほど価値が増す。逆に標準Productで十分な場合、その柔軟性は主要Selection Criteriaに接続しにくい。
+
+従って、
+
 > **Relative Weak候補。対応不能ではなく、Why Usの中心に置く合理性が低い。**
 
-この評価を覆すには、例えば、
+### A01-04d.3.8. Relative Advantageの有無
 
-- Scratch / OSSでもProductより短納期・低TCO
-- Productでは満たせない重要な要件が存在
-- 顧客がVendor Lock-in回避を強く評価
+Product License / Integration Costが高い、標準Capabilityで重要要件を満たせない、Vendor Lock-in回避が重要等の場合は当チームPositionが上がり得る。したがってProduct Fitが本当に高いかを先に評価すべきである。
 
-などのEvidenceが必要である。
+### A01-04d.3.9. 反証条件
 
-### A01-04d.3.8. 反証条件
+- Custom Buildの方がTCO / Lead Timeで有利
+- ProductではBusiness Requirementを満たせない
+- Security / Data residencyでProduct利用が困難
+- Portability / Vendor independenceが重要
 
-- Product License / Integration Costが大きく、Custom Buildの方がTCOで優位
-- Productの標準CapabilityではBusiness Requirementを満たせない
-- Data residency / Security等によりProduct利用が困難
-- 顧客が将来のPortability / Vendor independenceを重視し、Scratch / OSSを選好
+### A01-04d.3.10. Evidence / Inference区分
 
-これらの場合、当チームPositionは上がり得る。
+**Published Evidence:** BUYGRID、TCE。[T6][T7][T8]
 
-### A01-04d.3.9. Evidence / Inferenceの区分
+**Provider一次情報:** Palantir / NTT DATA / Deloitte / Accenture / BrainPad。[P1]〜[P5]
 
-**Published Evidence:** Buying Situationが購買行動に影響するBUYGRID、dependency / governanceを扱うTCE。[T6][T7][T8]
-
-**Provider一次情報:** Palantir / NTT DATA / Deloitte / Accenture / BrainPadのOffering。[P1]〜[P5]
-
-**当資料の分析仮説:** 高StandardizabilityではReuse / Economics / Time-to-ValueのWeightが高まり、Product VendorがStrong Candidateになりやすい。
+**当資料の分析仮説:** 本6軸Profile、8軸Weight、Product Vendor＝Strong Candidate、当チーム＝Relative Weak候補というPositioning。
 
 ## A01-04d.4. Speaker Note
 
-このProfileでは「柔軟に作れること」が必ずしも強みではありません。既製Productが十分Fitするなら、既存Assetを使う方が速く、保守しやすく、展開しやすい可能性があります。
+このProfileでは「柔軟に作れること」が必ずしも強みではありません。既製Productで十分なら、そのAssetを使う方が合理的な場合があります。当チームの価値は、標準解では足りないときに大きくなります。
 
-したがって当チームは、何でもScratchで作ることを売りにはしません。Productで十分ならProductを選ぶ方が合理的です。当チームの強みは、標準解では足りないときに初めて大きくなります。
+## A01-04d.5. A01-04への示唆
 
-## A01-04d.5. 次頁への接続
-
-> 次に、技術Solutionより経営・事業変革そのものが購買対象になるProfileを見る。
+> A01-04dは、Standardizabilityが高いほど当チームの非定型設計Capabilityの差別化寄与が下がることを示し、A01-04無印でStandardizability Low〜Mediumを重点条件とする根拠になる。
 
 ## A01-04d.6. Sources
 
