@@ -1,71 +1,82 @@
 Document title: IdentificationとEstimationを分けて考える
 
-# 24. Slide 24｜IdentificationとEstimationを分けて考える
+# 25. Slide 25｜IdentificationとEstimationを分けて考える
 
-## 24.1. Message
+## 25.1. Message
 
 **Identificationは「因果効果をデータから表現できるか」、Estimationは「その量を有限標本からどう推定するか」であり、別の問題である。**
 
-## 24.2. Chart
+## 25.2. Chart
 
-**チャートタイトル:** Identification → Estimationの二段階
+**チャートタイトル:** Identificationが成立して初めてEstimationへ進める
 
-Messageを説明・論証するための主たる視覚表現として、以下の構造を採用する。
+### 25.2.1. Chart Structure
 
-### 24.2.1. Chart Structure
-
-- 既存の論理フロー／概念図を主チャートとして用い、要素間の関係・順序が一目で追える構造にする。
+Causal QuestionからEffect Estimateまでを、Identification Gateを境に明確に二分する。
 
 ```text
 Causal Question / Estimand
         ↓
-[ Identification ]
-仮定のもとで観測分布から
-因果効果を表現できるか
+Assumptions / Data Generating Process
         ↓
-Identified Estimand
+┌────────────────────────────┐
+│ IDENTIFICATION             │
+│ 仮定のもとで、Estimandを     │
+│ Observed Data Distribution │
+│ から表現できるか？           │
+└────────────────────────────┘
         ↓
-[ Estimation ]
-回帰・Matching・Weighting・DR等で
-有限標本から数値推定
+   Identification Gate
+   ├─ No → Question / Data / Designを見直す
+   └─ Yes
+        ↓
+Identified Estimand / Functional
+        ↓
+┌────────────────────────────┐
+│ ESTIMATION                 │
+│ 有限標本から数値をどう推定するか│
+│ Regression / G-formula     │
+│ Weighting / Matching / DR  │
+└────────────────────────────┘
         ↓
 Effect Estimate + Uncertainty
 ```
 
 **PowerPoint上の配置・強調**
 
-- 上下二段の大きな箱でIdentification / Estimationを明確に分離する。
-- 境界部分にIdentified Estimandを置く。
-- Estimator名は下段の補助情報として扱う。
+- 上半分をIdentification、下半分をEstimationとして大きく分ける。
+- 境界に `Identification Gate` を置き、Noの場合はEstimator側へ進まずQuestion / Data / Designへ戻る矢印を示す。
+- Estimator名は下段の小さな例示とし、Identificationより視覚的に強くしない。
+- `Identified Estimand / Functional` を両者の橋渡しとして中央に置く。
 
-### 24.2.2. Chart内の最小表示テキスト
-
-実際のPowerPoint上では、以下のラベル・短文を中心に表示する。Supporting Logicの全文をスライド上へ掲載しない。
+### 25.2.2. Chart内の最小表示テキスト
 
 - Causal Question / Estimand
-- [ Identification ]
-- 仮定のもとで観測分布から
-- 因果効果を表現できるか
-- Identified Estimand
-- [ Estimation ]
-- 回帰・Matching・Weighting・DR等で
-- 有限標本から数値推定
+- Assumptions / Data Generating Process
+- **IDENTIFICATION｜因果効果を観測データから表現できるか**
+- **Gate｜識別できるか？**
+- No → Question / Data / Design見直し
+- Yes → Identified Estimand
+- **ESTIMATION｜有限標本からどう推定するか**
+- Regression / Weighting / Matching / DR（例）
 - Effect Estimate + Uncertainty
 
-## 24.3. Supporting Logic
+## 25.3. Supporting Logic
 
-- Identificationが成立しない場合、Estimatorを高度化しても目的の因果効果は得られない。
-- Backdoor adjustment、DiD、IV、RDD等は異なる識別仮定に基づく。
-- 同じIdentification Strategyに対して複数のEstimatorを比較できる場合がある。
-- Estimator選択時にはbias-variance、overlap、model misspecification等を考慮する。
-- 分析報告では識別仮定と推定方法を分けて説明する。
+- Identificationは、目的のCausal Estimandが、明示したAssumptionのもとでObserved Data Distributionの関数として表現可能かという問題である。
+- Estimationは、Identificationされた対象量を有限標本から数値的に推定する問題である。
+- したがって、必要なIdentification Assumptionが成立しない、または成立を合理的に支持できない場合、Estimatorを複雑化しても目的のCausal Effectを得られるわけではない。
+- Backdoor Adjustment、Randomized Comparison、Difference-in-Differences、Regression Discontinuity、Instrumental Variable等は、異なるData Generating ProcessとAssumptionを利用して因果効果を識別する考え方である。
+- 同じIdentification Strategyに対して複数のEstimatorを利用できる場合がある。たとえばBackdoor Adjustmentで識別された効果に対し、Outcome Regression / G-formula、Weighting、Matching、Doubly Robust Estimator等を検討できる。
+- Estimation段階ではBias / Variance、Model Misspecification、Finite Sample Behavior、Overlap、Extreme Weight等を考慮する。
+- 分析報告では「何を仮定して因果効果として識別したか」と「その量をどう推定したか」を分けて説明する。
 
-- 補足論点：**因果PoCの品質は「どのEstimatorを使ったか」より前に、「なぜそのEstimatorで因果効果を推定できるのか」を説明できるかで決まる。**
+## 25.4. Speaker Note
 
-## 24.4. Speaker Note
+因果推論では、「どのEstimatorを使ったか」と「なぜその数値を因果効果と解釈できるか」は別の話です。先に確認するのはIdentificationで、業務上のTreatment割付や時間構造、必要な仮定を使って、知りたい効果を観測データから表現できるかを考えます。
 
-因果推論の専門性を端的に示す重要スライド。営業資料でもここを落とすと単なる手法カタログになる。
+ここが成立して初めて、その対象量をRegression、Weighting、Matchingなどでどう推定するかを選びます。Identificationが成立しない問題を、より高度な機械学習モデルへ置き換えて解決することはできません。その場合はDataやDesign、場合によっては問い自体を見直します。
 
-## 24.5. Slide 24からSlide 25への接続
+## 25.5. Slide 25からSlide 26への接続
 
-> **次に、データ生成過程に応じてどのIdentification Strategyを選ぶかを代表例で示す。**
+> **IdentificationとEstimationを分けると、手法選定の起点も変わる。次に、Estimator名ではなく、Treatmentの割付・時間・制度・交絡情報からIdentification Strategyを選ぶ。**
