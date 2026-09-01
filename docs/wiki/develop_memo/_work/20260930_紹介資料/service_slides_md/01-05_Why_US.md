@@ -26,7 +26,7 @@ Document title: Why US
                                 ▼
               **Specialist Analytics × Enterprise Base**
                                 ▼
-       **難しい分析課題を、実際に使えるPoCとして検証**
+       **難しい分析課題を、Enterprise利用条件まで含めてPoCで検証**
 ```
 
 ### 5.2.1. Chart Structure
@@ -42,7 +42,7 @@ PowerPoint上では、横3列のValue Propositionとして構成する。
 
 3つの下に `Specialist Analytics × Enterprise Base` を共通バーとして置き、その下に顧客便益として
 
-> **難しい分析課題を、実際に使えるPoCとして検証**
+> **難しい分析課題を、Enterprise利用条件まで含めてPoCで検証**
 
 を配置する。
 
@@ -73,7 +73,7 @@ PowerPoint上では、横3列のValue Propositionとして構成する。
 **共通**
 
 - **Specialist Analytics × Enterprise Base**
-- **難しい分析課題を、実際に使えるPoCとして検証**
+- **難しい分析課題を、Enterprise利用条件まで含めてPoCで検証**
 
 ## 5.3. Supporting Logic
 
@@ -114,9 +114,64 @@ PowerPoint上では、横3列のValue Propositionとして構成する。
 
 **顧客価値:**
 
-> 分析上は成立しても実運用では使えない、という後工程の手戻りを減らし、本番化・追加検証・中止等の判断材料を得やすい。
+> 分析上は成立しても実運用で課題となる条件をPoC段階から確認し、本番化・追加検証・中止等の判断材料を得やすい。
 
-### 5.3.5. 3つを組み合わせる意味
+### 5.3.5. 3つのValue Propositionと8つのSelection Criteriaの対応
+
+本編で示す3つのValue Propositionは、Appendixで定義した8つのCustomer Selection Criteriaのうち、主に以下へ作用する。
+
+| Value Proposition | Capability | 主に対応するCustomer Selection Criteria |
+|---|---|---|
+| **① 問いに合う分析を選ぶ** | Predictive / Causal、Question / Estimand / Assumption / Evaluation設計 | **Deal-specific Fit / Capability / Quality** |
+| **② 非定型課題にも合わせる** | Scratch + OSS、特定Product非必須、個別設計 | **Deal-specific Fit / Capability / Quality**、一部Risk |
+| **③ 利用段階まで見据える** | Enterprise Context、Data / System / Security / Operation / Governance考慮 | **Delivery Feasibility / Risk / Relational-Governance Fit / Organizational Acceptability** |
+
+この対応により、01-05の3つは単なるCapability列挙ではなく、顧客がProvider選定時に重視する評価軸へ接続する。
+
+### 5.3.6. 8 Selection CriteriaからCore Deal Profileへの接続
+
+3つのValue Propositionは、すべてのDealで同じ強さで評価されるわけではない。
+
+Deal Profileが変わると、8つのSelection CriteriaのWeightが変化する。
+
+```text
+Problem Novelty / Analytical Complexity ↑
+        ↓
+Deal-specific Fit / CapabilityのWeight ↑
+        ↓
+① 問いに合う分析を選ぶ
+② 非定型課題にも合わせる
+が価値化しやすい
+
+Implementation Coupling / Criticality ↑
+        ↓
+Delivery / Risk / Governance / Org. AcceptabilityのWeight ↑
+        ↓
+③ 利用段階まで見据える
+が価値化しやすい
+
+両方が重なる
+        ↓
+①②③が同時に価値化しやすい
+        ↓
+A01-04b「高度分析 × Enterprise」がPrimary Core
+```
+
+従って、本SlideのCapability Bundleが最も全面的に効く代表Anchorは、A01-04bの、
+
+- Problem Novelty：Medium〜High
+- Analytical Complexity：High
+- Solution Standardizability：Low〜Medium
+- Implementation Coupling：High
+- Criticality / Governance：Medium〜High
+
+という領域である。
+
+A01-04f「High Novelty Analytical PoC」は、Implementation CouplingがLowなら①②中心で`Competitive`、Medium側へ上がるほど③も加わり`Conditional Core`へ近づく。
+
+A01-04g「High Criticality / Governance」は、Analytical ComplexityがMediumなら③中心で一般SIer / Consultingとの差が出にくく、High側へ上がるほど①②も加わり`Conditional Core`となる。
+
+### 5.3.7. 3つを組み合わせる意味
 
 3つのCapabilityは、それぞれ単独では他社も持ち得る。
 
@@ -129,24 +184,26 @@ PowerPoint上では、横3列のValue Propositionとして構成する。
         ×
 Enterprise利用条件の考慮
         ↓
-難しい分析課題を、実際に使えるPoCとして検証
+難しい分析課題を、Enterprise利用条件まで含めてPoCで検証
 ```
 
-この組合せは、特に以下のDeal Profileで価値が高まりやすいと考える。
+特に価値が出やすいのは、
 
-- Problem Noveltyが高い
-- Analytical Complexityが高い
-- Solution Standardizabilityが低い
-- Implementation Couplingが一定以上ある
-- Criticality / Governanceが一定以上ある
+- Problem NoveltyがMedium〜High
+- Analytical ComplexityがHigh
+- Solution StandardizabilityがLow〜Medium
+- Implementation CouplingがMedium〜High
+- Criticality / GovernanceがMedium〜High
+
+の重なりである。
 
 ただし、これはサービス提供範囲を限定するものではない。定型的なPrediction PoCや分析単体案件にも対応し得る。
 
-### 5.3.6. 競争優位に関する内部留保
+### 5.3.8. 競争優位に関する内部留保
 
-- `wk10`で整理した通り、当チームが得意であることとRelevant Competitorより優位であることは同義ではない。
-- `Specialist Analytics × Enterprise Base` は現時点では有力なPositioning仮説であり、競争優位を確定するには案件実績、人材、顧客評価、Delivery Model等のEvidenceが必要である。
-- ただし、この内部留保を顧客向けMessageの前面には出さない。顧客には、確認できているCapabilityとそこから得られる価値を明確に提示する。
+- 当チームがこのDeal ProfileへFitすることと、Relevant Competitorより優位であることは同義ではない。
+- `Specialist Analytics × Enterprise Base` は現時点では有力なPositioning仮説であり、競争優位を確定するには案件実績、人材、顧客評価、Delivery Model、Price / Lead Time、競合勝敗等のEvidenceが必要である。
+- 本編ではこの内部検討用語を前面に出さず、確認できているCapabilityと顧客価値を提示する。
 
 ## 5.4. Speaker Note
 
@@ -158,7 +215,9 @@ Enterprise利用条件の考慮
 
 三つ目は、利用段階まで見据えることです。SIerのデータ分析部門として、分析結果だけではなく、将来のデータ取得、システム連携、Security、運用条件まで必要に応じて考慮します。
 
-特に、既製の分析をそのまま当てはめにくく、かつ分析結果を実際の業務やシステムで使うことまで考える必要がある案件では、この組み合わせが活きます。PoCを単なる分析結果で終わらせず、次の判断につながる形まで検証することが、当チームの提供価値です。
+この3つは、案件によって価値の出方が違います。分析単体なら前者2つが中心で、一般SIerとの違いは出にくい。逆に標準的な分析をEnterpriseへ実装する案件なら三つ目は重要でも、分析専門性は差になりにくい。**高度で非定型な分析とEnterprise利用条件が同時に重い案件で、3つのValue Propositionが同時に選定理由へつながりやすい**というのが当チームの重点Positioningです。
+
+PoCを単なる分析結果で終わらせるのではなく、Enterprise利用条件まで含めて次の判断につながる形で検証することが、当チームの提供価値です。
 
 ## 5.5. Slide 5からSlide 6への接続
 
