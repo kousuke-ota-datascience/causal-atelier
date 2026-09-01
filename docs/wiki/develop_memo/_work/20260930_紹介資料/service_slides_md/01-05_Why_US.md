@@ -4,204 +4,162 @@ Document title: Why US
 
 ## 5.1. Message
 
-**高度な分析とEnterprise利用の両方が重要なPoCで、選ばれる理由をつくる。**
+**予測・因果の高度分析を、Enterprise利用まで見据えて柔軟に設計する。**
 
 ## 5.2. Chart
 
-**チャートタイトル:** Why Usは「得意領域」ではなく、競合との差が生まれる条件で考える
+**チャートタイトル:** 分析専門性と実装現実性を、一つのPoCに
 
-当チームのWhy Usを、単に「当チームが高い能力を発揮できる領域」ではなく、**同じ商談でRelevant Competitorと比較したときに、顧客にとって選択理由が成立する条件**として示す。
+当チームの強みを、顧客が発注判断に使える3つの価値として示す。
 
-現時点では、`Specialist Analytics × Enterprise Base` を有力なCapability構成仮説とする。ただし、この組合せだけで競争優位を断定しない。
+```text
+┌────────────────────┬────────────────────┬────────────────────┐
+│ ① 問いに合う分析を選ぶ │ ② 非定型課題にも合わせる │ ③ 利用段階まで見据える   │
+├────────────────────┼────────────────────┼────────────────────┤
+│ Predictive / Causal │ Scratch + OSS      │ Enterprise Context │
+│                     │                    │                    │
+│ 何を知りたいかから   │ 製品や単一手法に     │ Data / System /     │
+│ 分析を設計           │ 課題を合わせない     │ Security / Operation│
+└──────────┬─────────┴──────────┬─────────┴──────────┬─────────┘
+           │                    │                    │
+           └────────────────────┼────────────────────┘
+                                ▼
+              **Specialist Analytics × Enterprise Base**
+                                ▼
+       **難しい分析課題を、実際に使えるPoCとして検証**
+```
 
 ### 5.2.1. Chart Structure
 
-PowerPoint上では、左から右へ3段階で示す。
+PowerPoint上では、横3列のValue Propositionとして構成する。
 
-```text
-┌─────────────────────────┐
-│ ① 当チームのCapability │
-│                         │
-│ ・Predictive / Causal   │
-│ ・Scratch / OSS         │
-│ ・前提 / 評価まで設計   │
-│ ・Enterprise Fit        │
-└────────────┬────────────┘
-             │
-             ▼
-┌─────────────────────────┐
-│ ② Deal ProfileとのFit  │
-│                         │
-│ 高度・非定型な分析      │
-│        ×                │
-│ Enterprise利用条件      │
-│                         │
-│ ＝ 当チームのFitが高い  │
-└────────────┬────────────┘
-             │
-             ▼
-┌───────────────────────────────┐
-│ ③ Relevant Competitorとの比較 │
-│                               │
-│ 当チームのFit                  │
-│        −                      │
-│ 最有力競合のFit                │
-│        ↓                      │
-│ **Competitive Gap**           │
-└──────────────┬────────────────┘
-               │
-               ▼
-      **選ばれる理由 / Why Us**
-```
+1. **問いに合う分析を選ぶ**
+   - Predictive / Causalを、使いたい技術ではなく顧客の問いから使い分ける。
+2. **非定型課題にも合わせる**
+   - スクラッチ開発と成熟OSSを用い、特定Productや単一Algorithmの制約に課題を合わせない。
+3. **利用段階まで見据える**
+   - SIerのデータ分析部門として、Data / System / Security / Operation等のEnterprise利用条件を早期から考慮する。
 
-右端または下段に、小さく以下の補足を置く。
+3つの下に `Specialist Analytics × Enterprise Base` を共通バーとして置き、その下に顧客便益として
 
-```text
-高いFit ≠ 競争優位
-Competitive Gap > 0 をEvidenceで確認する
-```
+> **難しい分析課題を、実際に使えるPoCとして検証**
 
-**PowerPoint上の強調**
+を配置する。
 
-- `Specialist Analytics × Enterprise Base` は「競争優位」ではなく、**競争優位を生み得るCapability構成仮説**として表示する。
-- 最も強く見せるのは `Competitive Gap`。
-- 「Sweet Spot」という語は使わない。自社の得意領域と競争優位領域を混同させるため。
-- 競合名を本編で直接並べず、詳細はAppendixへ送る。
+**視覚上の強調**
+
+- 3カードの中央見出しはCapability名ではなく、顧客が得る価値を動詞で表す。
+- `Competitive Gap`、`Own Fit`、`Evidence Gap`等の内部検討用語は表示しない。
+- Deal Profileの制約は図上の注釈として前面に出さず、Supporting Logic / Speaker Noteで「特に価値が出やすい条件」として説明する。
+- 「対応可能範囲を限定する」印象は与えない。
 
 ### 5.2.2. Chart内の最小表示テキスト
 
-**① Capability**
+**① 問いに合う分析を選ぶ**
 
 - Predictive / Causal
-- Scratch / OSS
-- 前提・評価まで設計
-- Enterprise Fit
+- **何を知りたいかから設計**
 
-**② Deal Fit**
+**② 非定型課題にも合わせる**
 
-- 高度・非定型な分析
-- Enterprise利用条件
-- **当チームのFitが高い**
+- Scratch + OSS
+- **課題に合わせて柔軟に構成**
 
-**③ Competitive Gap**
+**③ 利用段階まで見据える**
 
-- 当チームのFit
-- − 最有力競合のFit
-- **選ばれる理由**
+- Enterprise Context
+- **Data / System / Securityまで考慮**
 
-**注記**
+**共通**
 
-- **高いFit ≠ 競争優位**
+- **Specialist Analytics × Enterprise Base**
+- **難しい分析課題を、実際に使えるPoCとして検証**
 
 ## 5.3. Supporting Logic
 
 ### 5.3.1. Slide 5の役割
 
-- Slide 1〜4では、Predictive / Causalの役割と、分析結果を業務判断へつなげる考え方を説明した。
-- Slide 5では「なぜ当チームへ依頼するのか」を扱う。
-- ここで、当チームが能力を発揮しやすいDeal Profileと、競合より選ばれやすいDeal Profileを分ける。
-- `wk08〜wk10`の検討から、Why UsはOwn Fitではなく、Relevant Competitorとの差分として考える必要がある。
+- Slide 1〜4では、Predictive / Causalがそれぞれどのような問いに答え、どのようなDecision / Actionへつながるかを説明した。
+- Slide 5では、顧客に対して**当チームへ発注することで何が得られるか**を示す。
+- 内部の競争分析では、Why UsはRelevant Competitorとの差分で成立するという前提を保持する。
+- ただし顧客向けスライドでは、その検討プロセスを見せるのではなく、当チームが提供する具体的な価値を簡潔に提示する。
 
-### 5.3.2. 高いOwn FitだけではWhy Usにならない
+### 5.3.2. ① 問いに合う分析を選ぶ
 
-例えば、あるDealに対して、
+- 当チームはPredictive AnalysisとCausal Inferenceの双方をPoC対象としている。
+- 「AIを使いたい」「機械学習を使いたい」から始めるのではなく、顧客が何を知り、何を判断したいかからAnalysis Questionを定義する。
+- 「何が起こりそうか」を知るPredictionと、「何をするとどう変わるか」を知るCausalを混同しない。
+- Causalでは必要に応じてCausal Question / Estimand / Assumptions / Identification / Estimation / Diagnostics / Sensitivityを分けて検討する。
+- Predictiveでは未知データ性能、Calibration、Error Pattern、業務上の誤判定コスト等を必要に応じて確認する。
+
+**顧客価値:**
+
+> 問いに対して不適切な分析を適用するリスクを下げ、PoC終了時に「何が分かったか」を明確にしやすい。
+
+### 5.3.3. ② 非定型課題にも合わせる
+
+- 分析実装はデータサイエンティストによるスクラッチ開発を基本とし、必要に応じて成熟OSS / Libraryを組み合わせる。
+- 特定Productや単一Algorithmへの適合を前提としない。
+- Outcome、Treatment、評価指標、データ構造、業務制約等が案件固有であっても、PoCで検証すべき問いに合わせて分析を構成する。
+
+**顧客価値:**
+
+> 既製Solutionの対応範囲に合わせて問いを狭めるのではなく、顧客固有の課題を検証対象として扱いやすい。
+
+### 5.3.4. ③ 利用段階まで見据える
+
+- 当チームはSIerのデータ分析部門としてサービスを提供する。
+- 分析精度やEffect Estimateだけでなく、将来的なData acquisition、System integration、Security、Operation、Governance等の制約を必要に応じてPoC段階から考慮する。
+- PoCの時点で本番構築を約束するという意味ではなく、PoCの結果が次工程へ接続可能かを判断しやすい設計を目指す。
+
+**顧客価値:**
+
+> 分析上は成立しても実運用では使えない、という後工程の手戻りを減らし、本番化・追加検証・中止等の判断材料を得やすい。
+
+### 5.3.5. 3つを組み合わせる意味
+
+3つのCapabilityは、それぞれ単独では他社も持ち得る。
+
+当チームのPositioning仮説は、それらを**一つのPoCの中で組み合わせること**にある。
 
 ```text
-当チーム   80
-競合A      85
+問いに合う分析選択
+        ×
+非定型課題への柔軟な設計
+        ×
+Enterprise利用条件の考慮
+        ↓
+難しい分析課題を、実際に使えるPoCとして検証
 ```
 
-であれば、そのDealは当チームの得意領域であっても競争優位領域ではない。
+この組合せは、特に以下のDeal Profileで価値が高まりやすいと考える。
 
-従って、
+- Problem Noveltyが高い
+- Analytical Complexityが高い
+- Solution Standardizabilityが低い
+- Implementation Couplingが一定以上ある
+- Criticality / Governanceが一定以上ある
 
-> 「高度・非定型な分析とEnterprise利用の両方が重要な商談では、当チームのFitが高い」
+ただし、これはサービス提供範囲を限定するものではない。定型的なPrediction PoCや分析単体案件にも対応し得る。
 
-だけではWhy Usとして不十分である。
+### 5.3.6. 競争優位に関する内部留保
 
-必要なのは、
-
-> **同じ商談でRelevant Competitorより高い顧客価値を提供できるか**
-
-である。
-
-### 5.3.3. Competitive Gapの概念
-
-概念的には、Deal `D` に対するVendor `V` の顧客評価を `U(V|D)` とすると、当チームのCompetitive Gapを以下と考える。
-
-```text
-Competitive Gap(D)
-  = U(Our Team | D)
-    - max U(Relevant Competitor | D)
-```
-
-この式は実証済みの定量モデルではなく、Why Usを考えるための概念モデルである。
-
-重要なのは、
-
-- Competitive Gap > 0：Right to Win候補
-- Competitive Gap ≈ 0：競争可能だが差別化弱い
-- Competitive Gap < 0：得意でもWhy Usにはならない
-
-という区別である。
-
-### 5.3.4. `Specialist Analytics × Enterprise Base` の位置づけ
-
-現時点で確認できる当チームのCapability構成から、
-
-> **Specialist Analytics × Enterprise Base**
-
-を有力な仮説とする。
-
-ただしこれは、
-
-> 「競合より優れている」
-
-ことを意味しない。
-
-例えば他SIer Analyticsが同等以上のAnalytical CapabilityとEnterprise Deliveryを持つ場合、Competitive Gapは生まれない。
-
-総合コンサルAnalyticsが高度分析とEnterprise Transformationを同時に提供できる場合も同様である。
-
-したがって、このCapability構成はWhy Usそのものではなく、**Competitive Gapを生み得る起点**として扱う。
-
-### 5.3.5. Competitive Gapが生まれる可能性がある要因
-
-今後確認すべき差分候補は以下である。
-
-- 特定のPredictive / Causal問題への方法論的専門性
-- Senior Data ScientistへのDirect Access
-- 非定型PoCを小さく開始できるDelivery Model
-- Product / Platform非固定での柔軟性
-- SIer内部のSystem / Security / Production組織への接続
-- 特定業界・課題でのRelevant Evidence
-- PoC価格・Lead Time・契約柔軟性
-- Analysisから次工程への引継ぎコスト
-
-これらは現時点ではEvidence Gapを含むため、本スライドで競争優位として断定しない。
-
-### 5.3.6. 本スライドで主張できる範囲
-
-現時点で顧客向けに安全に主張できるのは、
-
-> **高度な分析設計とEnterprise利用条件の双方を考慮できるCapability構成を持つこと**
-
-までである。
-
-「競合より選ばれる理由」を最終確定するには、`wk10`で整理するCompetitive Gap仮説を実案件・人材・実績・顧客評価等で検証する必要がある。
+- `wk10`で整理した通り、当チームが得意であることとRelevant Competitorより優位であることは同義ではない。
+- `Specialist Analytics × Enterprise Base` は現時点では有力なPositioning仮説であり、競争優位を確定するには案件実績、人材、顧客評価、Delivery Model等のEvidenceが必要である。
+- ただし、この内部留保を顧客向けMessageの前面には出さない。顧客には、確認できているCapabilityとそこから得られる価値を明確に提示する。
 
 ## 5.4. Speaker Note
 
-当チームのWhy Usを考えるうえで、重要な区別があります。それは「私たちが得意な領域」と「競合より選ばれる領域」は同じではない、という点です。
+当チームの強みは、高度な分析だけを行うことでも、システム実装だけを行うことでもありません。予測分析と因果推論を使い分けながら、非定型な課題に合わせて分析を設計し、その結果を実際の業務やシステムで利用する条件まで見据えてPoCを進めることです。
 
-例えば、ある高度な分析案件で当チームが十分高い品質を出せたとしても、同じ商談で競合がそれ以上の価値を出せるなら、その案件は当チームの得意領域ではあってもWhy Usにはなりません。
+一つ目は、問いに合う分析を選ぶことです。何が起こりそうかを知りたいのか、何かを変えたときの効果を知りたいのかによって、必要な分析は異なります。当チームではPredictiveとCausalを分けて扱い、問いに応じて前提や評価方法まで設計します。
 
-そのため、私たちはまず自分たちのCapabilityを整理し、次に案件とのFitを見ます。ただし、そこで止めずに、同じ商談に参加するRelevant Competitorとの比較まで行います。
+二つ目は、非定型な課題への柔軟性です。特定の製品やアルゴリズムへ課題を合わせるのではなく、スクラッチ開発と成熟したOSS等を組み合わせ、顧客固有のデータや評価条件に合わせて分析を構成します。
 
-当チームはPredictive / Causalの分析、スクラッチとOSSを使った柔軟な実装、分析前提や評価の設計、SIerとしてEnterprise利用を見据える視点を組み合わせています。この構成は、高度な分析とEnterprise利用の両方が重要なPoCで価値を持つ可能性があります。
+三つ目は、利用段階まで見据えることです。SIerのデータ分析部門として、分析結果だけではなく、将来のデータ取得、システム連携、Security、運用条件まで必要に応じて考慮します。
 
-ただし、それ自体が競争優位だとは考えていません。最終的なWhy Usは、競合との比較で顧客価値の差が生まれ、その差を実績や人材、Delivery Model等のEvidenceで説明できる場合に初めて成立します。
+特に、既製の分析をそのまま当てはめにくく、かつ分析結果を実際の業務やシステムで使うことまで考える必要がある案件では、この組み合わせが活きます。PoCを単なる分析結果で終わらせず、次の判断につながる形まで検証することが、当チームの提供価値です。
 
 ## 5.5. Slide 5からSlide 6への接続
 
-> Why UsはCapabilityの自己評価ではなく、特定の商談で競合との差を生み出せるかで決まる。そのうえで、当チームが提供するPoC自体は何を検証するものなのか。次にPoCの目的を整理する。
+> 当チームは、問いに合う分析設計とEnterprise利用の現実性を一つのPoCで検証する。では、そのPoCでは具体的に何を確認し、次の判断へつなげるのか。次にPoCの目的を整理する。
