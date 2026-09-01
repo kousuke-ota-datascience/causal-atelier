@@ -4,7 +4,7 @@ Document title: 標準分析 × Enterprise接続 の競争ポジション
 
 ## A01-04c.1. Message
 
-**分析が標準化し実装比重が高い案件では、SIer型Deliveryの重要性が高まる。**
+**分析が標準化し実装比重が高い案件では、Delivery・Risk・組織適合性が競争を決めやすい。**
 
 ## A01-04c.2. Chart
 
@@ -13,187 +13,129 @@ Document title: 標準分析 × Enterprise接続 の競争ポジション
 ### A01-04c.2.1. Chart Structure
 
 ```text
-Deal Profile
-────────────────────
-Analytical Complexity      Low〜Medium
-Implementation Coupling    High
+① Deal Profile｜6軸
+────────────────────────
+Decision Altitude          Operational〜Business
 Problem Novelty            Low〜Medium
+Analytical Complexity      Low〜Medium
 Solution Standardizability Medium〜High
+Implementation Coupling    High
 Criticality / Governance   Medium〜High
-          ↓
-Customer Selection Criteria
-────────────────────
-Delivery Feasibility       ↑↑
-Risk                       ↑↑
-Org. Acceptability         ↑↑
-Economic Value             ↑
-Capability / Quality       ↑
-          ↓
-Provider Position 仮説
-────────────────────
+              ↓
+② Customer Selection Criteria｜Weight仮説
+────────────────────────
+Deal-specific Fit          M
+Capability / Quality       M
+Delivery Feasibility       H
+Economic Value             M〜H
+Risk                       H
+Evidence / Credibility     M
+Relational / Governance    M
+Organizational Acceptability H
+              ↓
+③ Provider Competition｜Position仮説
+────────────────────────
 SIer Analytics             Strong Candidate
-当チーム                  Competitive
+当チーム                   Competitive
 Consulting Analytics       Competitive / 条件次第
 AI / Platform Vendor       Product Fit依存
 DS Specialist              Competitive / Fit低下可能性
+              ↓
+④ Our Position
+────────────────────────
+**Competitive**
+Enterprise Baseは効くが、
+Specialist Analytics側の差別化寄与は小さい
 ```
 
 ### A01-04c.2.2. Chart内の最小表示テキスト
 
-- 低〜中Analytical Complexity
-- 高Implementation Coupling
-- Delivery / Risk / Org. Acceptability重視
+- 6軸Profileを全表示
+- Delivery / Risk / Org. Acceptability：High Weight
 - **SIer Analytics：Strong Candidate**
 - **当チーム：Competitive**
 
 ## A01-04c.3. Supporting Logic
 
-### A01-04c.3.1. このProfileの特徴
+### A01-04c.3.1. なぜこの6軸Profileなのか
 
-典型的には、分析手法そのものは既知であり、案件難易度の中心が以下へ移っている。
+この類型は、Operational〜Businessレベルの既知・比較的標準的な分析を、Enterprise System / Workflowへ高く結合させる案件を表す。
 
-- Data Pipeline / Data Quality
-- API / Batch / Workflow Integration
-- Security / Access Control
-- Production Reliability
-- Monitoring / Operation
-- Release / Change Management
-- Governance / Auditability
+Decision AltitudeはOperational〜Business。Corporate Strategyではなく、既存業務の予測・分類・最適化等を実装・運用へ載せることが中心となる。
 
-この場合、顧客が購入している価値は「新しい分析方法」よりも、**既知の分析をEnterprise環境で安全・安定的に成立させるDelivery**へ近づく。
+Problem NoveltyとAnalytical ComplexityはLow〜Medium、StandardizabilityはMedium〜High。分析方法自体よりData Pipeline、API / Batch、Security、Monitoring、Release、Operation等が難所になる。
 
-Webster & Wind / ShethのOrganizational Buying研究では、購買意思決定が複数StakeholderのExpectationによって構成される。[T1][T2] Implementation Couplingが高い場合、Business / Data-AIに加えIT / Security / Operation / ProcurementがBuying Centerへ入りやすいため、Delivery / Risk / Organizational AcceptabilityのWeightが高まる、というのが本資料の仮説である。
+Implementation CouplingとCriticalityはHigh / Medium〜Highであり、失敗時の業務影響や運用責任も無視できない。
 
-### A01-04c.3.2. Delivery / RiskのWeightが上がる理論的背景
+### A01-04c.3.2. なぜこのSelection Weightになるのか
 
-TCEではAsset Specificity / Uncertainty等がGovernance設計上の主要属性として扱われる。[T6][T7]
+Organizational Buying研究では、複数Stakeholder・複数ExpectationがSupplier Selectionに影響する。[T1][T2]
 
-Enterprise Systemへ組み込むほど、Vendor変更、データ連携、運用移管等にSwitching Costが生じやすく、顧客は単なるModel Quality以外に、
+Implementation Couplingが高い本ProfileではBusiness / Data-AIだけでなくIT / Security / Operation / ProcurementもBuying Centerへ入りやすいため、Delivery Feasibility / Risk / Organizational AcceptabilityをHighと置く。
 
-- 継続Delivery能力
-- 契約・責任分界
-- Security / Compliance
-- Operation support
-- Vendor dependency
+TCEのAsset Specificity / Uncertaintyは、System結合、Switching Cost、責任分界、Vendor dependencyを考えるレンズとなる。[T6][T7]
 
-を評価する必要がある。
+### A01-04c.3.3. Consulting AnalyticsのPosition
 
-従って、本ProfileでDelivery / Riskが重くなることには一定の理論的裏付けがある。
+Deloitte / AccentureはEngineering / Build / Scaleまで提供するため本Profileにも参入できる。[P2][P3]
 
-### A01-04c.3.3. SIer AnalyticsをStrong Candidateとする根拠
+ただしTransformationやStakeholder AlignmentのWeightが低いPure Delivery中心の案件では、その上位Capabilityが必ずしも追加ScoreにならないためCompetitive / 条件次第とする。
 
-NTT DATAのAI ConsultingはPoC / Model TrainingだけでなくApplication Integrationまでを一連のOfferingとして明示している。[P4]
+### A01-04c.3.4. SIer AnalyticsのPosition
 
-SIer型Providerは一般に、Analytics部門の外側にも、
+NTT DATA等はPoC / Model TrainingからApplication IntegrationまでOfferingとして持つ。[P4]
 
-- Cloud / Infrastructure
-- Enterprise Architecture
-- Security
-- Application Development
-- Managed Service
+本ProfileではEnterprise Architecture、Security、Application Development、Managed Service等が直接評価されるためStrong Candidateとする。
 
-等のCapabilityを企業内に持つ場合がある。
+### A01-04c.3.5. DS SpecialistのPosition
 
-このため、本Profileでは「分析専門性が圧倒的に高いか」より、**分析をEnterprise Deliveryへ接続できる組織能力**が価値になりやすい。
+DS Specialistも分析部分では対応可能だが、Enterprise Deliveryを自社でどこまで持つかは企業差が大きい。[P1]
 
-ただし「SIerなら常に勝つ」とはしない。既存ProductやPlatformで十分な場合はAI Vendorが合理的であり、Transformation全体が主課題ならConsultingが強い場合もある。
+Implementation Couplingが高いほどResponsibility Boundary / Integration Governance / Operation Continuityが追加評価となるため、CompetitiveだがFit低下可能性ありとする。
 
-### A01-04c.3.4. AI / Platform VendorがProduct Fit次第で強くなる理由
+### A01-04c.3.6. AI / Platform VendorのPosition
 
-PalantirのようなPlatform ProviderはOperational Application / Ontology等を通じ、Data・Model・Workflow・Actionを統合する。[P5]
+Palantir等はData・Model・Workflow・Actionの統合Assetを持つ。[P5]
 
-分析が標準化されており、その問題がPlatformの既存Capabilityへ高くFitするなら、個別SIよりもReuse / Deployment Speed / Platform Integrationが高いValueを持ち得る。
-
-逆に、Product外のLegacy Integrationや特殊なEnterprise制約が大きい場合には、一般的なSI Capabilityの比重が高まる。
-
-### A01-04c.3.5. Consulting Analyticsを条件付きCompetitiveとする理由
-
-Deloitte / AccentureはAI StrategyだけでなくEngineering / Build / Scaleを公式に提供する。[P2][P3]
-
-従って、Consulting Analyticsも本Profileへ参入できる。
-
-ただし、案件価値の中心がPure System Delivery / Operationに寄り、Transformation / Business Design / Stakeholder AlignmentのWeightが低い場合、Consultingの上位Capabilityが必ずしも差別化Scoreにならない。
-
-### A01-04c.3.6. DS SpecialistのFitが低下し得る理由
-
-DS Specialistは分析部分で十分対応可能である。[P1]
-
-一方、Enterprise Deliveryを自社Capabilityとしてどこまで持つかは企業差がある。Partner依存が大きい場合、顧客から見ると、
-
-- Responsibility boundary
-- Integration governance
-- Operation continuity
-
-が追加Riskになり得る。
-
-従って本資料では「DS Specialistは弱い」ではなく、**Implementation Couplingが上がるほどAnalytics以外のCapabilityが評価に加わるため、相対Fitが低下する可能性がある**とする。
+問題がPlatform Capabilityへ高くFitする場合は非常に強い。一方Legacy Integrationや特殊制約が大きければSIer型Capabilityがより効くためProduct Fit依存とする。
 
 ### A01-04c.3.7. 当チームのPosition
 
-当チームはSIer内Analytics組織であるため、本ProfileのDelivery / Risk / Org. Acceptabilityと親和性がある。
+当チームはSIer内Analytics組織としてDelivery / Risk / Organizational Acceptabilityと親和性がある。
 
-しかし、01-05で差別化候補としている、
+一方、Predictive / Causal、Scratch / OSS、非定型Analytical Designの価値は、Analytical Complexityが低〜中になるほど小さくなる。
 
-- Predictive / Causal
-- Scratch / OSS
-- 非定型Analytical Design
-
-の価値は、Analytical Complexityが低〜中になるほど相対的に小さくなる。
-
-したがって、
+従って、
 
 > **Competitive。ただしWhy Usの中心領域ではない。**
 
-と評価する。
+とする。
 
-### A01-04c.3.8. 相対優位を主張しない理由
+### A01-04c.3.8. Relative Advantageの有無
 
-このProfileでは当チームより規模の大きいSIer Analytics、既存Systemの担当SIer、Platform Vendor等が構造的に有利な場合がある。
+既存SIer、Installed Baseを持つProvider、Platform Vendor等がより合理的な場合がある。特にSLA、Operation Cost、既存契約、System Knowledgeが重い場合は当チームの分析専門性が選定理由になりにくい。
 
-特に顧客が、
+### A01-04c.3.9. 反証条件
 
-- 既存Vendorとの契約容易性
-- Installed Base
-- Production体制
-- SLA
-- Operation cost
+- 当チームがPoC〜Production handoffを他SIerより低コスト・短Lead Timeで提供した実績がある
+- 顧客から「分析専門性を持つSIerだから選んだ」という明確なSelection Evidenceがある
+- 逆に既存SIer / Platform Vendorが同等品質をより低TCOで提供できる場合はPositionを下げる
 
-を強く重視する場合、当チームの高度分析Capabilityは選定理由になりにくい。
+### A01-04c.3.10. Evidence / Inference区分
 
-### A01-04c.3.9. 反証条件 / Evidence Gap
+**Published Evidence:** Organizational Buying、TCE。[T1][T2][T6][T7]
 
-以下を確認できれば評価を上げ得る。
+**Provider一次情報:** NTT DATA、Deloitte、Accenture、Palantir、BrainPad。[P1]〜[P5]
 
-- 当チームが分析からProduction handoffまで一貫して低コスト・短Lead Timeで提供した実績
-- 他SIer Analyticsより少人数でPoC〜実装を接続できるDelivery Model
-- 顧客から「分析専門性があるSIer部門だから選んだ」という明確なSelection Evidence
-
-逆に、既存SIerやPlatform Vendorが同等品質をより低いTCOで提供できるなら、本Profileでの当チームPositionは下がる。
-
-### A01-04c.3.10. Evidence / Inferenceの区分
-
-**Published Evidence**
-- Organizational Buyingでは複数Stakeholder / 複数基準が作用する。[T1][T2]
-- TCEはSystem結合・依存・Switching Costを考える理論的レンズになる。[T6][T7]
-
-**Provider一次情報**
-- NTT DATA / Deloitte / Accenture / Palantir / BrainPadの公式Offering。[P1]〜[P5]
-
-**当資料の分析仮説**
-- 標準分析 × 高Implementation CouplingではDelivery / Risk / Org. AcceptabilityのWeightが高まる。
-- SIer AnalyticsをStrong Candidate、当チームをCompetitiveとする評価。
+**当資料の分析仮説:** 本6軸Profile、8軸Weight、SIer Analytics＝Strong Candidate、当チーム＝CompetitiveというPositioning。
 
 ## A01-04c.4. Speaker Note
 
-このProfileでは、モデルよりも「Enterpriseで動かすこと」が難所になります。そのため、SIer型ProviderのDelivery capabilityが前面に出ます。
+このProfileではモデルより「Enterpriseで動かすこと」が難所です。そのためSIer型Deliveryが前面に出ます。当チームも競争できますが、高度分析の専門性が決定的な差になりにくいため、主戦場とは置きません。
 
-当チームもSIer内の分析組織なので十分競争できます。しかし、分析が標準的ならPredictive / CausalやScratch設計といった当チームの専門性は決定的な差になりません。
+## A01-04c.5. A01-04への示唆
 
-したがって、ここを当チームの主戦場とは置きません。勝てる可能性はありますが、勝因は当チーム固有のWhy Usというより、既存関係、Delivery体制、価格、System知識等に依存する可能性が高いと考えます。
-
-## A01-04c.5. 次頁への接続
-
-> さらにSolution Standardizabilityが高くなると、個別SIよりも既製Product / Platformの再利用性が競争軸になり得る。
+> A01-04cは、Enterprise Baseだけが効くProfileでは当チーム固有のWhy Usが弱まることを示す。A01-04無印で重点とするにはAnalytical Complexity / Noveltyも同時に高い必要がある。
 
 ## A01-04c.6. Sources
 
