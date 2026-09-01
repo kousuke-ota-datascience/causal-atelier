@@ -1,82 +1,81 @@
-Document title: Deal Profileと比較優位曲面
+Document title: Deal Profileで変わる比較優位
 
-# A01-03. Appendix｜Deal Profileと比較優位曲面
+# A01-03. Appendix｜Deal Profileで変わる比較優位
 
 ## A01-03.1. Message
 
-**商談は箱ではなく連続Profileとして捉え、比較優位もグラデーションで見る。**
+**同じ「分析PoC」でも、分析難易度と実装条件によって適したProviderは変わる。**
 
 ## A01-03.2. Chart
 
-**チャートタイトル:** Deal TypeからDeal Profileへ
+**チャートタイトル:** Providerの強みはDeal Profile上でグラデーションに変化する
 
 ### A01-03.2.1. Chart Structure
 
-左側に「離散分類」、右側に「連続Profile」の対比を置く。
+中央に、顧客が直感的に理解しやすい2軸を置く。
+
+- 縦軸：Analytical Complexity
+- 横軸：Implementation Coupling
 
 ```text
-Before｜Deal Type
-────────────────
-Strategy
-Analytical PoC
-Production
-Product Adoption
-
-        ↓
-
-After｜Deal Profile
-────────────────
-Decision Altitude
-Problem Novelty
-Analytical Complexity
-Solution Standardizability
-Implementation Coupling
-Criticality / Governance
+                 Analytical Complexity
+                        High
+                         ▲
+                         │
+   分析方法そのものを     │      高度分析とEnterprise条件を
+   設計する必要が高い     │      同時に考える必要が高い
+                         │
+                         │
+─────────────────────────┼────────────────────────▶
+                         │              Implementation Coupling
+                         │
+   定型的・分析単体       │      System / Operationとの
+                         │      接続が中心
+                        Low
 ```
 
-右下に、比較優位が固定ラベルではなく曲面として変わる概念図を置く。
+その周囲に補助軸として、Deal Profileの残りの特性を配置する。
 
 ```text
-Comparative Advantage
-High                 ▲
-                     │        ● Core Zone
-                     │      ●●●●
-                     │    ●●●●●
-                     │  ●●●
-                     │ ●
-Low  ────────────────┴────────────────▶ Deal Profile
+Problem Novelty            Established ───────── Novel
+Solution Standardizability High ──────────────── Low
+Criticality / Governance   Low ───────────────── High
+Decision Altitude          Operational ───────── Strategic
 ```
 
-下部に3ゾーンを置く。
+図の下に、比較優位を「点」ではなく「領域」で示す原則を置く。
 
-- Core Zone：比較優位が最も出やすい
-- Adjacent Zone：十分競争可能
-- Commodity / Disadvantaged Zone：対応可能だが他選択肢が合理的な場合もある
+> **各Providerの対応範囲は重なる。違いは、Deal Profile上で強みが最も効く領域。**
 
 ### A01-03.2.2. Chart内の最小表示テキスト
 
-- **Deal Type → Deal Profile**
-- 6つの連続軸
-- **Service Coverage ≠ Comparative Advantage**
-- Core / Adjacent / Commodity Zone
+- Analytical Complexity
+- Implementation Coupling
+- Problem Novelty
+- Standardizability
+- Criticality
+- **対応範囲は重なる / 比較優位はグラデーション**
 
 ## A01-03.3. Supporting Logic
 
-### A01-03.3.1. Deal Typeの限界
+### A01-03.3.1. Deal Typeだけでは競争条件を説明できない
 
-Strategy / PoC / Production等のDeal Typeは説明上は有用だが、同じPoCでも実際には以下が連続的に異なる。
+「分析PoC」という同じ名称でも、案件は大きく異なる。
 
-- 新規性が低い / 高い
-- 分析難易度が低い / 高い
-- 既製Solutionへ載せやすい / 個別設計が必要
-- 分析単体 / 業務・Systemと強く結合
-- 小規模 / Mission Critical
+例えば、
 
-したがって、商談を排他的なBoxへ分類すると、同一Type内の競争条件の違いを見落とす。
+- 定型的な需要予測
+- 特徴量・評価指標から設計するPrediction
+- 観察データから施策効果を推定するCausal Inference
+- 将来の本番System利用を前提とするPoC
 
-### A01-03.3.2. Deal Profileの6軸
+では、必要な専門性・Delivery・Risk管理が異なる。
 
-本資料では、分析PoCサービスの競争構造を見るための操作的な仮説として、以下の6軸を使う。
+従って、Strategy / PoC / Productionのような箱だけではなく、商談特性を連続Profileとして捉える。
+
+### A01-03.3.2. 本資料のDeal Profile
+
+分析PoCサービスの競争条件を説明する実務フレームとして、以下6軸を用いる。
 
 1. **Decision Altitude**：Operational ↔ Corporate / Strategic
 2. **Problem Novelty**：Established ↔ Novel / Uncertain
@@ -85,69 +84,70 @@ Strategy / PoC / Production等のDeal Typeは説明上は有用だが、同じPo
 5. **Implementation Coupling**：Analysis-only ↔ Enterprise System / Workflow統合
 6. **Criticality / Governance**：Low-risk / Reversible ↔ Mission Critical / High Governance
 
-これは既存理論の標準6分類ではない。BUYGRID、Organizational Buying、Contingency Logic等を踏まえた競争分析用の実務フレームである。
+これは既存研究の標準6分類ではなく、BUYGRID、Organizational Buying等を踏まえた本資料の操作的フレームである。
 
-### A01-03.3.3. BUYGRIDの位置づけ
+### A01-03.3.3. 顧客向けには2軸を主図にする
 
-New Task / Modified Rebuy / Straight Rebuyは、Vendorを排他的に選ぶルールではない。
+6軸すべてを一枚で可視化すると複雑になるため、01-05のPositioningと直接関係する、
 
-本検討では、Problem Novelty / Buying Uncertainty軸を理解する代表的なAnchorとして利用する。
+- Analytical Complexity
+- Implementation Coupling
 
-```text
-Low                                           High
-Straight Rebuy ─── Modified Rebuy ─── New Task
-```
+を主軸にする。
 
-### A01-03.3.4. Selection CriteriaもProfileから変化する
+残りの軸は、同じ2軸位置でも競争条件を変える補助条件として扱う。
 
-Deal Profileが変われば、顧客が重視するSelection CriteriaのWeightも変化する。
+### A01-03.3.4. なぜグラデーションなのか
 
-例：
+各Providerに「ここから先は対応不能」という硬い境界があるわけではない。
 
-- Analytical Complexity ↑ → Capability / Evidenceの重要度が上がりやすい
-- Implementation Coupling ↑ → Delivery / Risk / Organizational Acceptabilityが上がりやすい
-- Criticality ↑ → Evidence / Governance / Riskが上がりやすい
-- Problem Novelty ↑ → Deal-specific Fit / Capability / Relational Fitが上がりやすい
+例えば、
 
-これらは実証済み係数ではなく、Organizational Buying / Contingency logicに基づく仮説である。
+- Consulting Analyticsも高度分析を実行できる
+- DS SpecialistもSystem Integrationを支援できる
+- SIer AnalyticsもCausal / Advanced Analyticsを提供できる
 
-### A01-03.3.5. 比較優位は曲面として考える
+場合がある。
 
-VendorのCapabilityを固定Scoreとして扱わない。
+それでも、組織の人材構成、Asset、Delivery Model、案件経験、Commercial Model等により、**どのDeal Profileで相対的に強みを発揮しやすいか**は変わる。
 
-概念的には、Deal Profileを `x(D)` とすると、
+したがってPositioning MapではProviderを一点に固定せず、重なりを持つ領域・楕円として表現する。
+
+### A01-03.3.5. 比較優位の考え方
+
+内部分析上は、Deal Profile `x(D)` が変わることで、顧客のSelection CriteriaのWeightと各ProviderのFitが同時に変化すると考える。
 
 ```text
 Selection Weight_j = f_j(x(D))
-Vendor Fit_j       = g_j(V, x(D))
+Provider Fit_j     = g_j(V, x(D))
 ```
 
-となり、最終的な比較優位はProfileとのInteractionで変化する。
+これは実証済み係数ではなく、商談依存性を表現する概念モデルである。
 
-重要なのは、
+顧客向けの結論はシンプルである。
 
-> **ある領域で最も強いからといって、他領域を対応しないわけではない。**
+> **どのProviderも広く対応できるが、案件条件によって「最も選ぶ理由が強くなるProvider」は変わる。**
 
-という点である。
+### A01-03.3.6. 当チームへの接続
 
-### A01-03.3.6. Focused Positioningの再定義
+当チームの01-05で示した3つの価値、
 
-Focused Positioningは「この案件しかやらない」という意味ではない。
+- 問いに合うPredictive / Causalを選ぶ
+- Scratch / OSSで非定型課題に合わせる
+- Enterprise利用段階まで見据える
 
-> **比較優位が最大になるDeal Profileを明確にし、そこを主戦場として顧客に想起してもらう。**
+は、特にAnalytical ComplexityとImplementation Couplingが共に一定以上高い領域で同時に必要になりやすい。
 
-という意味である。
-
-従って、Service CoverageとMarketing Positioningは一致しなくてよい。
+次頁では、この2軸上に競合類型と当チームを同時に配置し、Positioningの違いを示す。
 
 ## A01-03.4. Speaker Note
 
-商談をStrategy、PoC、Productionのようなカテゴリーで分類するだけでは、まだ粗すぎます。同じPoCでも、定型的な需要予測と、前提や評価方法から設計する因果推論では競争条件が違います。
+同じ分析PoCでも、案件の中身によって必要なProviderは変わります。既存のモデルを適用すればよい案件もあれば、問いや評価方法から設計しなければならない案件もあります。また、分析単体で完結する案件もあれば、将来のSystemや業務運用まで考える必要がある案件もあります。
 
-そこで商談を、Decision Altitude、新規性、分析難易度、標準化可能性、Systemとの結合度、Criticalityという複数の連続軸で捉えます。
+ここではその違いを、分析設計の難しさと、Enterprise Systemや業務との接続度という2軸で見ています。実際には新規性、標準化可能性、Criticality等も影響します。
 
-こうすると、当チームにも競合にも「ここから先はできない」という硬い境界を置く必要がありません。対応可能な範囲は広くても、比較優位が最も出やすいCore Zone、その周辺のAdjacent Zone、他のProviderの方が合理的な場合も多い領域が連続的に存在すると考えます。
+重要なのは、各Providerの対応範囲にはかなり重なりがあることです。そのため境界線ではなくグラデーションで考えます。その上で、各社が最も強みを発揮しやすい領域を比較するのが次のPositioning Mapです。
 
 ## A01-03.5. Appendix A01-03からA01-04への接続
 
-> このDeal Profile上で当チームのCapabilityがどこで最も価値化しやすいかを置くと、Why Usの仮説を具体化できる。
+> このDeal Profile上に各Providerの強みが出やすい領域を重ねると、「どこも同じ」に見える市場の中で、当チームがどこを主戦場としているかを説明できる。
