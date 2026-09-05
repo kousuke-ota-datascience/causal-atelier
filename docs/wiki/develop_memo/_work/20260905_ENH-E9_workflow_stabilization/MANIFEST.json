@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "manifest_policy": "Initial ENH-E9 instance index. Hash manifest must be regenerated after workflow authoring is finalized; MANIFEST.json is excluded from its own hash set.",
+  "instance": {
+    "project": "Ariadne",
+    "enhancement_id": "ENH-E9",
+    "work_dir_name": "20260905_ENH-E9_workflow_stabilization",
+    "branch": "bugfix/ariadne_mvp_e9",
+    "authoring_observed_head": "9fd4ce03ccb00c3e5a0c9536ac94cedafff74d4c",
+    "baseline_sha": null,
+    "baseline_rule": "Set to exact accepted ENH-E8 G03 formal PASS SHA before E9 coding.",
+    "workflow_state": "DRAFT_NOT_FROZEN",
+    "agent_execution": "BLOCKED_PREREQUISITE"
+  },
+  "gates": [
+    {"gate_id":"G01","mode":"SINGLE_EXECUTION","state":"DRAFT_NOT_FROZEN"},
+    {"gate_id":"G02","mode":"WORK_PACKAGE","state":"DRAFT_NOT_FROZEN"},
+    {"gate_id":"G03","mode":"SINGLE_EXECUTION","state":"DRAFT_NOT_FROZEN"},
+    {"gate_id":"G04","mode":"WORK_PACKAGE","state":"DRAFT_NOT_FROZEN"},
+    {"gate_id":"G05","mode":"SINGLE_EXECUTION","state":"DRAFT_NOT_FROZEN"}
+  ],
+  "notes": [
+    "Canonical file hash inventory must be regenerated after all files are instantiated and final.",
+    "No unresolved placeholder may be passed to an execution Agent.",
+    "E8 G03 formal PASS is mandatory before E9 execution."
+  ]
+}
