@@ -46,7 +46,7 @@
       </section>
       <section id="analysis-context-header" class="card analysis-context-header" aria-label="Analysis Context">
         <div><span class="field-label">Current Project (read-only)</span><output id="analysis-context-project-name">Project未選択</output><span id="analysis-context-project-status" class="status">—</span></div>
-        <label>Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
+        <label data-tooltip="このProjectで現在の分析に適用する、FIXED済みResearch Contextのversionを選択します。選択は保存されますが、Contextの内容や他のresourceを変更しません。">Active Research Context<select id="common-context"><option value="">未選択</option></select></label>
         <label>Dataset Version<select id="common-dataset"><option value="">未選択</option></select></label>
         <label>Analysis View<select id="common-view"><option value="">未選択</option></select></label>
         <div>Role <span id="common-role" class="status">—</span></div>
@@ -247,6 +247,7 @@
       </section>
     </main>
   </div>
+  <dialog id="analysis-view-details-modal" aria-labelledby="analysis-view-details-title"><div class="modal-card wide"><div class="heading"><h2 id="analysis-view-details-title">Saved Analysis View</h2><button id="close-analysis-view-details" type="button" class="secondary">閉じる</button></div><p class="section-help">この表示はread-onlyです。Analysis Viewの更新、複製、新しいversionの作成は行いません。</p><div id="analysis-view-details"></div></div></dialog>
   <dialog id="archive-modal"><form method="dialog" class="modal-card"><h2>ProjectをARCHIVEDにしますか？</h2><p>既存のResultとLineageは保持されますが、このProjectでは新しい分析やmetadata更新ができなくなります。</p><div class="modal-actions"><button value="cancel" class="secondary">取消</button><button id="confirm-archive" value="confirm" type="button" class="danger">利用停止を確定</button></div></form></dialog>
   <dialog id="feature-modal"><form method="dialog" class="modal-card"><h2>Feature columns selector</h2><p>選択Datasetのschema列からDiscovery対象を選択します。不明なtext tokenは確定時に除去されます。</p><div id="feature-options"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button id="confirm-features" value="confirm" type="button">選択を反映</button></div></form></dialog>
   <dialog id="predictive-feature-modal" aria-labelledby="predictive-feature-modal-title"><form method="dialog" class="modal-card"><h2 id="predictive-feature-modal-title">Predictive feature columns</h2><p>選択Dataset Versionのschema列を選択します。変更は「選択を反映」まで確定しません。</p><div id="predictive-feature-options"></div><div class="modal-actions"><button id="cancel-predictive-features" value="cancel" class="secondary">Cancel</button><button id="confirm-predictive-features" value="confirm" type="button">選択を反映</button></div></form></dialog>

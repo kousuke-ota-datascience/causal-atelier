@@ -20,6 +20,8 @@ dialog:has(.modal-card.wide){width:min(94vw,1100px);max-width:min(94vw,1100px)}.
   grid-template-columns: 1fr;
 }
 
+.read-only-details{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 14px;margin:0}.read-only-details dt{font-weight:700;color:#52665c}.read-only-details dd{margin:0;overflow-wrap:anywhere}
+
 #inference-form > [data-causal-stage-surface] {
   grid-template-columns: 1fr;
   min-width: 0;
