@@ -1,217 +1,105 @@
-# FAIL Rework Coding Agent Prompt
+# FAIL Rework Coding Agent Prompt — ENH-E9
 
-この文書は formal FAIL 後の rework 専用 entry prompt である。
+formal FAIL後のrework専用entry prompt。
 
-実行時に Operator から以下を受け取る。
+## 1. Runtime parameters
 
-```text
-GATE_ID=<Gate ID>
-TRIAL_NO=<two-digit Trial number>
-```
-
-Template / Enhancement 固定値:
+Human / Orchestrator が与える値は次の2つだけ。
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
+GATE_ID={{GATE_ID}}
+TRIAL_NO={{TRIAL_NO}}
 ```
 
-## 1. Current Trial Remediation Contract
-
-current Trial の normative remediation contract は、必ず以下の exact path で解決する。
+Fixed values:
 
 ```text
-{{WORK_ROOT}}/
-10_enhance_instruction/<GATE_ID>/
-08_{{ENHANCE_ID}}_<GATE_ID>_<TRIAL_NO>_Remediation_Instruction.md
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E9
+ENHANCE_SHORT_ID=ENH-E9
+BRANCH_NAME=bugfix/ariadne_mvp_e9
+REMOTE_NAME=causal-atelier
+WORK_ROOT=/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization
+WORK_DIR_NAME=20260905_ENH-E9_workflow_stabilization
 ```
 
-この exact file が存在しない場合:
+`REMEDIATION_PACKAGE_ID` はHuman入力にしない。current Trialの08が `CONSOLIDATED / SINGLE_EXECUTION` であることをpreflightし、このpromptではGate単位reworkとして実行する。
+
+## 2. Current Trial Remediation Contract
+
+唯一のnormative contract:
 
 ```text
-BLOCKED_REMEDIATION_CONTRACT_MISSING
+/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/10_enhance_instruction/{{GATE_ID}}/08_ENH-E9_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
 ```
 
-旧 Trial の 08、別名の 08、original 06/Pxx/07 を代用してはならない。
+不存在は `BLOCKED_REMEDIATION_CONTRACT_MISSING`。
 
-current 08 をdirect executionへ使用するため、以下をpreflightで確認する。
+08が以下を満たすこと。
 
 ```text
 Remediation Mode: CONSOLIDATED
 Execution Mode: SINGLE_EXECUTION
 ```
 
-どちらかを満たさない場合、本promptで実装を開始してはならない。
+満たさなければ `BLOCKED_REMEDIATION_CONTRACT_NOT_SELF_CONTAINED`。
 
-```text
-BLOCKED_REMEDIATION_CONTRACT_NOT_SELF_CONTAINED
-```
+current 08だけをnormative sourceとする。original 06/Pxx/07、旧Trial、他Gate、過去Enhancement、external Webで仕様補完しない。ambiguityは `BLOCKED_CONTRACT_AMBIGUITY`。
 
-DELTA 08からoriginal 06/07を読んで仕様を補完してはならない。Rxx remediation Work Packageが必要な場合もnormal Pxx promptへfallbackしない。
+## 3. Rework
 
+original Work Package chainを再実行しない。old checkpointを再利用しない。previous failed candidateを再提出しない。
 
-## 2. Normative Source Isolation
+Browser E2E formal FAILの場合、failed evidenceがproduct/contract violationをsupportしていることを確認する。test implementation/orchestration/environment defect/UNKNOWNだけならproduction reworkせず `BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE`。
 
-freeze 済み current Trial 08 だけを normative source とする。
-repository は implementation substrate として調査してよい。
+08のrequired correction/protected behaviorだけを実装し、mandatory Coding-side verificationを実行する。test削除、assertion弱体化、skip/xfail、original contract改変は禁止。
 
-original 06/Pxx/07、旧 Trial report、ADR、他 Gate、過去 Enhancement、external Web を仕様補完に使わない。
+## 4. Semantic checkpoint / candidate
 
-required correction が current 08 だけで一意に決まらない場合:
+semantic changeをcommitし `IMPLEMENTATION_CHECKPOINT_SHA` を取得する。08の `PREVIOUS_FAILED_CANDIDATE_SHA` と比較し、08が要求するsemantic remediation diffが存在することを確認する。存在しなければ `BLOCKED_REMEDIATION_NOT_APPLIED`。
 
-```text
-BLOCKED_CONTRACT_AMBIGUITY
-```
-
-## 3. SINGLE_EXECUTION Rework Rule
-
-08 が:
-
-```text
-Execution mode: SINGLE_EXECUTION
-```
-
-を宣言している場合、original Work Package chain を再実行してはならない。
-
-禁止:
-
-- current Trial P01/P02/P03 の再実行
-- old Package checkpoint SHA の再利用
-- previous failed candidate の再提出
-- normal Work Package Candidate Assembly を rework implementation の代替として使用すること
-
-## 4. Implementation and Verification
-
-Browser E2Eがformal FAILのtriggerである場合、実装開始前にfailed 999 / Test Item evidenceがproduct / contract violationを支持していることを確認する。failure classificationが`TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN`のみでproduct violationがverifiedされていない場合、production reworkを開始せず`BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE`として停止する。
-
-08 の required correction と protected behavior を実装し、mandatory Coding-side verification をすべて実行する。Browser E2Eを再検証する場合も、未検証仮説をroot causeとして修正を反復せず、failure point / actual observable state / expected state / evidenceを確定してからscope内修正を行う。
-
-禁止:
-
-- failing test の削除
-- assertion の弱体化
-- skip / xfail
-- original contract の改変
-- literal input だけを hard-code して拒否する workaround
-
-## 5. Semantic Implementation Checkpoint
-
-semantic change を commit し、exact SHA を implementation checkpoint として固定する。
-
-08 に `PREVIOUS_FAILED_CANDIDATE_SHA` が定義されている場合:
-
-```bash
-git diff --name-only   <PREVIOUS_FAILED_CANDIDATE_SHA>..<IMPLEMENTATION_CHECKPOINT_SHA>   -- src frontend tests pyproject.toml uv.lock alembic
-```
-
-を必ず実行する。
-
-08 が要求する semantic remediation が diff に存在しない場合:
-
-```text
-BLOCKED_REMEDIATION_NOT_APPLIED
-```
-
-previous failed candidate と同一 SHA を採用してはならない。
-
-## 6. Fixed Trial Candidate
-
-required verification が PASS し required semantic remediation diff が存在する場合のみ:
+verification PASSかつsemantic diff存在時のみ:
 
 ```text
 FIXED_TRIAL_CANDIDATE_SHA=<IMPLEMENTATION_CHECKPOINT_SHA>
 ```
 
-として freeze する。
+とfreezeする。
 
-formal FAIL / SINGLE_EXECUTION Trial では FAIL Rework Coding Agent 自身が candidate freeze を行う。
-
-## 7. Canonical Implementation Completion Report
-
-以下の exact path に生成する。
+## 5. Canonical completion report
 
 ```text
-{{WORK_ROOT}}/
-20_implementation_reports/<GATE_ID>/Trial<TRIAL_NO>/
-{{ENHANCE_SHORT_ID}}-<GATE_ID>_<TRIAL_NO>__implementation_completion.md
+/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/ENH-E9-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
-最低限以下を記録する。
+最低限 `GATE_ID / TRIAL_NO / Execution status / PREVIOUS_FAILED_CANDIDATE_SHA / FIXED_TRIAL_CANDIDATE_SHA / changed production/test files / verification / blocker` を記録する。
 
-```text
-GATE_ID
-TRIAL_NO
-Execution status
-PREVIOUS_FAILED_CANDIDATE_SHA
-FIXED_TRIAL_CANDIDATE_SHA
-changed production files
-changed automated test files
-executed verification
-Blocker / remaining work
+`READY_FOR_TEST` には `new candidate != previous candidate / required semantic diff != empty / verification PASS / blocker NONE` が必要。
+
+## 6. Evidence commit / push
+
+Completion Reportをevidence-only commitとしてcommitし、
+
+```bash
+git push -u causal-atelier bugfix/ariadne_mvp_e9
 ```
 
-`READY_FOR_TEST` の場合:
+する。candidateからevidence HEADまでsemantic implementation changeがないことを確認する。
 
-- fixed candidate != previous failed candidate
-- required semantic diff != empty
-- required verification = PASS
-- blocker = NONE
-
-を満たす。
-
-## 8. Evidence Commit / Push
-
-Completion Report を evidence-only commit として commit / push する。
-
-Completion Report commit 後 `HEAD != FIXED_TRIAL_CANDIDATE_SHA` は許容するが、candidate から evidence HEAD まで semantic implementation change がないことを確認する。
-
-## 9. Final Status
+## 7. Final status
 
 成功時:
 
 ```text
-## READY_FOR_TEST
-
-- GATE_ID: <GATE_ID>
-- TRIAL_NO: <TRIAL_NO>
-- PREVIOUS_FAILED_CANDIDATE_SHA: <SHA>
-- FIXED_TRIAL_CANDIDATE_SHA: <new SHA>
-- COMPLETION_REPORT: <canonical exact path>
-- EVIDENCE_COMMIT_SHA: <SHA>
-- Working tree: clean
-- Push: completed
+READY_FOR_TEST
+GATE_ID
+TRIAL_NO
+PREVIOUS_FAILED_CANDIDATE_SHA
+FIXED_TRIAL_CANDIDATE_SHA
+COMPLETION_REPORT
+EVIDENCE_COMMIT_SHA
+Working tree: clean
+Push: completed
 ```
 
-Gate PASS / FAIL、promotion 可否は判定しない。
-
-<!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
-## 3. Execution identity control
-
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
-
-Enhancement-fixed values:
-
-```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
-```
-
-Runtime values for this execution:
-
-```text
-GATE_ID={{GATE_ID}}
-REMEDIATION_PACKAGE_ID={{REMEDIATION_PACKAGE_ID}}
-TRIAL_NO={{TRIAL_NO}}
-```
-
-If any Enhancement-fixed value remains unresolved in the Enhancement-side prompt, stop with `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED`. If required Runtime values are missing or ambiguous, stop with `BLOCKED_EXECUTION_UNRESOLVABLE`.
-<!-- END MANAGED: EXECUTION_IDENTITY_CONTROL -->
+Gate PASS/FAIL、promotion可否は判定しない。
