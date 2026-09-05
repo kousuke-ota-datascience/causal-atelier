@@ -1,40 +1,35 @@
 # Ariadne ENH-E9 G02 Implementation Instruction
 
-**Contract status:** `DRAFT_NOT_FROZEN`  
-**Execution mode:** `WORK_PACKAGE`
+**Document class:** Primary Execution Contract  
+**Contract status:** `FROZEN`  
+**Execution mode:** `WORK_PACKAGE`  
+**Entry:** G01 canonical `999_gate_decision = PASS`
 
-## Gate claim
+## 1. Gate claim
 
 DiscoveryからGraph比較・選択・採用までの既存workflowを、操作結果と比較対象を明確に把握できるinteractionとして成立させる。
 
-## Prerequisites
+## 2. Required residual behavior
 
-- G01 canonical 999 PASS
-- G02 residual candidatesがbaseline evidenceで`RESIDUAL`確定
-- G02 06/07 + P00/Pxx FROZEN
+- Discovery execution領域に目的が分かるtitleを持たせる。
+- Objective / Rationaleの意味をhelp/tooltipで説明する。
+- Graph Candidatesのcomponent-local overflowを修正する。
+- Graph CandidatesにSelect All / Clearを提供する。selection変更だけを行いadopt/fixを暗黙実行しない。
+- Graph Comparisonで現在の比較対象を視覚的に識別できる。
+- 比較対象のalgorithmとrelevant persisted parameter（現行PCならalpha等）をauthoritative dataから簡潔に表示する。
+- Algorithm Output採用結果を操作したmodal内で確認できる。
+- GraphのMermaid markdown source exportを提供する。exportはcurrent authoritative GraphのprojectionでありGraphをmutationしない。
 
-## Allowed implementation semantics
+Baselineで既に成立している項目は再実装せずevidence化してよい。
 
-residual確認済みpresentation/interactionだけを修正する。Graph scientific identity、comparison semantics、adoption/fix semanticsを変更しない。
+## 3. Protected semantics
 
-## Protected contract
+FR-035–FR-039、Graph Candidate identity、DRAFT/FIXED GraphVersion mutability、GraphVersion lineage、designated Outcome lineage、comparison/adoption/fix semantics、E8 Stage separationを維持する。
 
-- FR-035–FR-039
-- Graph Candidate identity
-- DRAFT/FIXED Graph Version mutability
-- GraphVersion lineage
-- designated Outcome lineage
-- current comparison API
-- E8 Stage separation
+## 4. Forbidden
 
-## Forbidden
+new discovery algorithm、new Graph lifecycle、FIXED Graph direct mutation、frontendでGraph scientific semantics再計算、Graph lineageと無関係なOutcome override。
 
-- new discovery algorithm
-- new Graph lifecycle
-- FIXED Graph direct mutation
-- frontendでGraph scientific semanticsを再計算
-- UI convenienceによるOutcome override
+## 5. Work Packages
 
-## Candidate assembly
-
-All required Pxx `PACKAGE_COMPLETE`後、Candidate AssemblyでGate-wide regression、candidate-affecting uncommitted changeなし、Fixed Trial Candidate SHA、Implementation Completion Reportを確定する。
+P01 Discovery copy/help/overflow、P02 selection/comparison clarity、P03 adoption feedback/export。Pxxは本Gate claim/ACを変更できない。全package complete後にGate-wide candidate assemblyを行う。

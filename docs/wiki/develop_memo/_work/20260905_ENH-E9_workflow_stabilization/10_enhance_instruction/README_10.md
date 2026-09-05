@@ -1,15 +1,9 @@
-# ENH-E9 Gate Contract Index
+# ENH-E9 Enhancement Instructions
 
-- Enhancement ID: `ENH-E9`
-- Status: `DRAFT_NOT_FROZEN`
-- Global blocker: E8 G03 formal Independent Verification PASS + exact PASS SHA baseline freeze
+- Status: `FROZEN`
+- Baseline: `93fc2492112889a9465296a8647c251f84151bc5`
+- Execution order: `G01 -> G02 -> G03 -> G04 -> G05`
 
-| Gate | Semantic claim | Mode | Dependency | Contract state |
-|---|---|---|---|---|
-| G01 | Context / Data Usability Residual | SINGLE_EXECUTION | E9 entry gate | DRAFT_NOT_FROZEN |
-| G02 | Causal Discovery / Graph Interaction Residual | WORK_PACKAGE | G01 PASS | DRAFT_NOT_FROZEN |
-| G03 | Identification Input Ergonomics | SINGLE_EXECUTION | G02 PASS | DRAFT_NOT_FROZEN |
-| G04 | Causal Diagnostics Backend Contract Completion | WORK_PACKAGE | G03 PASS | DRAFT_NOT_FROZEN |
-| G05 | Integrated Regression Acceptance | SINGLE_EXECUTION | G04 PASS | DRAFT_NOT_FROZEN |
+各Gateの`06`がimplementation semantic authority、`07`がAcceptance Criteria authorityである。G02/G04はWork Package modeだが、Pxx completionはGate PASSではない。各GateはFixed Trial Candidateに対するIndependent Verificationとcanonical `999_gate_decision`を経てPASSする。
 
-各Gateの06/07がFROZENになるまでCodingを開始しない。G01-G04のexact scopeは`00_enhance_background/06_residual_scope_matrix.md`のbaseline再検証結果からfreezeする。
+Human ownerの2026-09-05決定によりENH-E8 G03はresolved/frozenであり、E9の未解決prerequisiteではない。

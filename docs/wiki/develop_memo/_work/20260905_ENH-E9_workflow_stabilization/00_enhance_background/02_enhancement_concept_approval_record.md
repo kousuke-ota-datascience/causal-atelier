@@ -1,31 +1,11 @@
 # ENH-E9 Enhancement Concept Approval Record
 
-- Enhancement ID: `ENH-E9`
-- Status: `PENDING_HUMAN_APPROVAL`
-- Date initialized: `2026-09-05`
+- Status: `APPROVED_FOR_EXECUTION_CONTRACT_FREEZE`
+- Date: `2026-09-05`
+- Evidence: Human owner explicitly declared ENH-E8 G03 resolved/frozen, constrained all ENH-E9 documentation changes to this workflow directory, designated `Revised_requirements_definition_documents/` for revised canonical snapshots, and instructed that the Enhancement instruction documents be FIXED.
 
-## Proposed concept
+## Approved concept
 
-ENH-E9はPost-E8 Workflow Stabilizationとして、E8後のresidual usability gapとexisting Causal Diagnostics requirementへのbackend conformance gapのみを対象とする。
+ENH-E9 closes post-E8 workflow usability residuals and Causal Diagnostics backend conformance gaps without introducing new analytical capability or changing E8 Stage/lineage/navigation semantics.
 
-## Approval boundary
-
-Human approval対象:
-
-- E9 objective / out-of-scope
-- E8 G03 PASSをmandatory prerequisiteとすること
-- residual evidenceからG01-G04をfreezeすること
-- G05 integrated regression acceptanceを置くこと
-- Outcome one-way ownershipをprotected regressionとすること
-- FR-048 implementation truthを再評価し、silent requirement rewriteを禁止すること
-
-## Record
-
-| Item | State | Evidence / note |
-|---|---|---|
-| Concept approved | `PENDING` | Human approval required |
-| E8 G03 prerequisite accepted | `PENDING` | formal PASS未確定 |
-| Gate decomposition approved | `PENDING` | residual matrix確定後にfinal review |
-| Requirement semantic delta | `UNDETERMINED` | source/runtime verification後に判断 |
-
-この文書の`PENDING`をAgentが自己承認へ変更してはならない。
+This approval authorizes freezing E9 06/07 execution contracts. It does not constitute any Gate PASS or implementation acceptance.

@@ -1,30 +1,20 @@
 # ENH-E9 Requirements / Design Consistency and Traceability Review
 
-- Status: `BLOCKED_PREREQUISITE`
+- Status: `PASS_FOR_CONTRACT_FREEZE`
+- Date: `2026-09-05`
 
-## Review result at initialization
+## Review result
 
-Current requirement/design snapshotとE9 handoffの方向性に、E9 workflowを作成不能にする明白なsemantic conflictは確認していない。
+1. G01 traces to FR-106, FR-168, FR-171–FR-174 and changes presentation/usability only.
+2. G02 traces to FR-035–FR-039, FR-174 and preserves Graph identity/lifecycle/lineage.
+3. G03 traces to FR-040, FR-174. Treatment ergonomics does not change causal-question semantics. Identification Outcome inheritance is historical Enhance Request behavior, not a newly invented canonical term.
+4. G04 traces to FR-044/FR-048. Source audit confirms partial baseline conformance: structured sample/design/unweighted balance/overlap exist; structured actual-weight/ESS/post-weight balance contract is incomplete. E9 design delta closes this gap without new ResultType or route grammar.
+5. G05 is integrated regression acceptance and introduces no new capability.
 
-ただし、次は未検証でありfreeze不可。
+## Boundary
 
-| Item | State | Reason |
-|---|---|---|
-| E8 G03 protected baseline | `BLOCKED` | formal Independent Verification PASS未確定 |
-| Historical residual classification | `UNVERIFIED` | PASS baselineに対するsource/runtime再照合前 |
-| FR-048 implementation status consistency | `UNVERIFIED` | structured diagnostics implementation evidence未確認 |
-| G04 exact schema semantics | `UNFROZEN` | estimator-specific source/scientific review前 |
-| G05 exact browser journey contract | `UNFROZEN` | residual scope / G01-G04 contract freeze前 |
+Canonical files under `docs/wiki/requirement_definition/**` are not modified by this workflow. Any revised snapshot/delta belongs under `Revised_requirements_definition_documents/`.
 
-## Traceability invariants
+## Decision
 
-- Requirement semantics: `docs/wiki/requirement_definition/10_requirements_definition.md`
-- Logical model: `21_logical_data_design.md`
-- Surface responsibility: `22_product_basic_design.md`
-- API/interface: `23_api_interface_design.md`
-- module/state/presentation binding: `30_detailed_design.md`
-- E8 protected behavior: E8 G03 final PASS contract/evidence
-
-## Completion condition
-
-E8 G03 PASS SHA固定後、residual matrixをevidence-backedへ更新し、各Gate 06/07からRequirement/Design/Protected Gateへのtraceabilityが一意に辿れること。
+No unresolved requirement/design contradiction blocks freezing G01–G05 06/07. If execution reveals a new product obligation or scientific ambiguity not covered by frozen contracts, stop and use 09 Gate Contract Amendment rather than silently changing semantics.

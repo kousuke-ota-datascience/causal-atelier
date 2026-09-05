@@ -1,8 +1,9 @@
 # Ariadne ENH-E9 G05 Verification Contract
 
-**Verification contract status:** `DRAFT_NOT_FROZEN`
+**Document class:** Primary Execution Contract  
+**Verification contract status:** `FROZEN`
 
-## Draft blocking journey
+## Blocking journey
 
 ```text
 Analysis Context
@@ -15,20 +16,22 @@ Analysis Context
  -> Diagnostics
 ```
 
-## Draft Acceptance Criteria
+## Acceptance Criteria
 
 1. canonical Analysis route/contextからjourneyを開始できる。
-2. Discovery executionとGraph review/comparison/adoption/fixがexisting semanticsで成立する。
-3. FIXED Graph designated OutcomeがIdentificationへread-only継承される。
-4. selected Identification Result lineageからEstimationを実行できる。
-5. Effectsはpersisted `TREATMENT_EFFECT_RESULT`をprimary sourceとして表示する。
-6. Diagnosticsはpersisted structured `DIAGNOSTICS_RESULT`をprimary sourceとして表示する。
+2. Discovery executionとGraph review/comparison/adoption/fixがG02 semanticsで成立する。
+3. FIXED Graph designated OutcomeがIdentificationへ自動/read-only継承される。
+4. selected Identification Result execution lineageからEstimationを実行できる。
+5. Effectsはpersisted `TREATMENT_EFFECT_RESULT`をprimary sourceとしてhuman-readableに表示する。
+6. Diagnosticsはpersisted structured `DIAGNOSTICS_RESULT`をprimary sourceとし、G04 structured weighting/balance semanticsを表示できる。frontend再計算を行わない。
 7. Result / Execution / Graph lineageがjourney全体で保持される。
-8. Navigation Stageをruntime execution stateとして扱わない。
-9. E8 G01/G02/G03およびE9 G01-G04 protected contractsがregressionしない。
+8. Navigation Stageをruntime Execution stateとして扱わない。
+9. G01–G04およびE8 protected contractsがregressionしない。
 
 ## Browser E2E policy
 
-Browser E2Eはcritical cross-layer connectivity proofとして使用する。詳細なdiagnostics数値/formula/schema分岐はG04 unit/integration/contract testsをprimary proofとする。
+Canonical Compose/browser test environmentを使用し、fixtureはAnalysis ContextからDiagnosticsまで同一project lineageで到達可能なものとする。UI synchronizationはfixed sleepをprimary mechanismにせずobservable state/element conditionを使用する。Failure時はscreenshot/log/current route/visible Stage/last successful checkpointをevidenceとして保存する。
 
-Freeze時にcanonical command、hermetic environment、fixture、synchronization、assertion、failure evidence、classificationを本文へ具体化する。
+Browser E2Eはcross-layer connectivity proofであり、G04のESS/weight/balance数値correctnessはG04 unit/integration testsをprimary authorityとする。
+
+全blocking AC PASSのみG05 PASS。

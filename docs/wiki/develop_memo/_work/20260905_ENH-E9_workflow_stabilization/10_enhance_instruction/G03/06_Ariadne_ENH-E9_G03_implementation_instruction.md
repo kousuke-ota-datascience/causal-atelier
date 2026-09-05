@@ -1,40 +1,35 @@
 # Ariadne ENH-E9 G03 Implementation Instruction
 
-**Contract status:** `DRAFT_NOT_FROZEN`  
-**Execution mode:** `SINGLE_EXECUTION`
+**Document class:** Primary Execution Contract  
+**Contract status:** `FROZEN`  
+**Execution mode:** `SINGLE_EXECUTION`  
+**Entry:** G02 canonical `999_gate_decision = PASS`
 
-## Gate claim
+## 1. Gate claim
 
 Identification causal-question inputを、scientific semanticsを変更せず意味と候補を理解できるinteractionへ改善する。
 
-## Allowed scope
+## 2. Required behavior
 
-baselineでresidual確認された場合のみ:
+- Populationにtarget populationとして何を記述するか分かるhelp/tooltipを提供する。
+- ComparatorにTreatmentのcounterfactual/reference conditionとして何を記述するか分かるhelp/tooltipを提供する。
+- Treatmentはselected Dataset Version schemaをcandidate authorityとするselectorで選択できる。既存causal-question serialization/backend validationを維持する。
+- Dataset Version変更等でselected Treatmentがcandidateから消えた場合、stale valueをsilent保持しない。
 
-- Population meaning/help
-- Comparator meaning/help
-- Treatment candidate selection backed by selected Dataset Version schema
+## 3. Protected Identification Outcome behavior
 
-## Protected Outcome contract
+2026-08-23 historical Enhance Requestの明示仕様をregression protectionとする。
 
-```text
-Discovery designated Outcome
- -> GraphVersion designated_outcome_node
- -> Identification read-only Outcome
- -> Estimation
-```
+`Outcome = 必須・入力不要 / FIXED Graphから自動継承`。
 
-Outcomeをeditable selector/free textへ戻してはならない。
+Implementation上はselected FIXED Graph / GraphVersionのdesignated OutcomeをIdentificationにread-onlyで投影し、独立editable selector/free textを追加しない。Estimationはselected Identification Result lineageをauthorityとし、独立Outcome overrideを追加しない。
 
-## Other protected semantics
+`Outcome one-way ownership`という名称自体はcontract authorityではない。
 
-- FIXED Graph prerequisite
-- Population/Treatment/Comparator/Outcome/Time/Estimand/Decision Use semantics
-- identification strategy / adjustment set / assumptions
-- backend validation authority
+## 4. Other protected semantics
 
-## Forbidden
+FIXED Graph prerequisite、Population/Treatment/Comparator/Outcome/Time/Estimand/Decision Use、identification strategy、adjustment set、assumptions、backend validation authority。
 
-- selector独自のscientific validation追加
-- Treatment selectorを理由とするnew Dataset schema API
-- Estimation input architecture変更
+## 5. Forbidden
+
+selector独自scientific validation、新Dataset schema API、Estimation submission architecture変更。

@@ -1,26 +1,35 @@
 # Ariadne ENH-E9 G05 Implementation Instruction
 
-**Contract status:** `DRAFT_NOT_FROZEN`  
-**Execution mode:** `SINGLE_EXECUTION`
+**Document class:** Primary Execution Contract  
+**Contract status:** `FROZEN`  
+**Execution mode:** `SINGLE_EXECUTION`  
+**Entry:** G01–G04 canonical `999_gate_decision = PASS`
 
-## Gate purpose
+## 1. Gate purpose
 
-G05は新しいproduct capabilityを実装するGateではない。G01-G04 final PASS成果を統合したrepository stateでcritical Causal browser journeyが成立するcandidateをfinalizeする。
+新product capabilityを追加せず、G01–G04 PASS成果を統合したrepository stateでcritical Causal browser journeyをfinalizeする。
 
-## Allowed work
+## 2. Allowed work
 
-- integration-only defect correction that does not change passed Gate semantics
-- test fixture/orchestration wiring required for canonical journey
+- passed Gate semanticsを変えないintegration-only defect correction
+- canonical Browser E2E fixture/orchestration/synchronization wiring
 - documentation/evidence finalization
 
-Passed Gate semantic changeが必要ならG05内でsilent修正せず該当contract/amendment processへ戻す。
+Passed Gate semantic/AC変更が必要ならG05でsilent修正せずowner Gateの09 amendmentへ戻す。
 
-## Candidate completion
+## 3. Critical journey
 
-- G01-G04 canonical 999 PASS確認
-- E8 protected regression self-check
-- canonical Browser E2E environment ready
-- critical journey self-check PASS
-- candidate-affecting uncommitted changeなし
-- Fixed Trial Candidate SHA
-- Implementation Completion Report
+```text
+Analysis Context
+ -> Discovery execution
+ -> Graph candidate review / comparison
+ -> adopt / FIXED Graph
+ -> Identification
+ -> Estimation from selected Identification Result
+ -> Effects
+ -> Diagnostics
+```
+
+## 4. Candidate completion
+
+G01–G04 PASS、protected regression self-check、browser environment/fixture ready、journey self-check PASS、candidate-affecting uncommitted changeなし、exact Fixed Trial Candidate SHA、Implementation Completion Reportを揃える。Coding側からG05 PASSを宣言しない。

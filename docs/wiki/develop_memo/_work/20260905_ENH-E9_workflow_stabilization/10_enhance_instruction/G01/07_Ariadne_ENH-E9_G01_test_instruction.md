@@ -1,39 +1,18 @@
 # Ariadne ENH-E9 G01 Verification Contract
 
 **Document class:** Primary Execution Contract  
-**Verification contract status:** `DRAFT_NOT_FROZEN`
+**Verification contract status:** `FROZEN`
 
-## 1. Acceptance authority
+## Acceptance Criteria
 
-この文書がFROZENになった後、G01 Independent VerificationのAcceptance Criteria authorityとなる。
+1. Saved Analysis Viewの内容をread-onlyで確認できる明示的なUI actionが存在する。
+2. 表示操作でAnalysis View resourceの更新/複製/version作成が発生しない。
+3. Active Research Contextの意味をUI help/tooltipから確認できる。
+4. Current Projectはroute/project authorityを維持し、Research Context / Dataset Version / Analysis Viewの既存resource ownership/restore/invalidation semanticsがregressionしない。
+5. new Analysis View schema/API/persistent resourceを導入しない。
 
-## 2. Draft Acceptance Criteria
+## Verification
 
-### AC-01 Saved Analysis View observability
+frontend unit/integrationでAC1–3、existing architecture/contract testsでAC4–5をblocking verificationする。Browser E2Eはtooltip presenceのprimary proofにはしない。baselineが既にACを満たす場合も、evidenceを記録して判定する。
 
-Baselineでresidualと確認された場合、利用者はselected/saved Analysis Viewの内容を既存resource authorityから確認できる。表示のためにAnalysis Viewを更新・複製しない。
-
-### AC-02 Active Research Context meaning
-
-Baselineでresidualと確認された場合、Active Research Context inputの意味をUI上で理解できる説明を提供する。tooltip/help presentationはresource ownershipを変更しない。
-
-### AC-03 Context regression
-
-- Current ProjectはAnalysis route `project_id` authority / read-onlyを維持
-- Research Context / Dataset Version / Analysis ViewはProject-scoped existing resourceから選択
-- incompatible Analysis View invalidation semanticsを維持
-- context不足を理由にFamily/Stage routeを書き換えない
-
-### AC-04 Non-regression
-
-new Analysis View schema/API/persistent resourceを導入しない。
-
-## 3. Primary test layers
-
-- frontend unit/integration: AC-01/02/03
-- existing contract/architecture tests: AC-03/04
-- Browser E2E: G01単独でblockingにするかはfreeze時に判断。単純tooltip presenceだけをE2E primary proofにしない。
-
-## 4. Decision
-
-全blocking AC PASS -> G01 PASS。Product correctnessを判定不能なenvironment/harness failureはFAILへ読み替えずBLOCKEDとして分類する。
+全blocking AC PASSのみG01 PASS。environment/harness failureでproduct correctnessを判定不能ならBLOCKEDとする。

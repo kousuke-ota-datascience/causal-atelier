@@ -1,20 +1,20 @@
 # Ariadne ENH-E9 G03 Verification Contract
 
-**Verification contract status:** `DRAFT_NOT_FROZEN`
+**Document class:** Primary Execution Contract  
+**Verification contract status:** `FROZEN`
 
-## Draft Acceptance Criteria
+## Acceptance Criteria
 
-1. Population / Comparator helpをscopeに含めた場合、causal question上の意味をUIから確認できる。
-2. Treatment selectorをscopeに含めた場合、selected Dataset Version schemaをcandidate authorityとし、invalid/stale candidateをsilent保持しない。
-3. Treatment selection後もexisting causal-question serialization/backend validation semanticsを維持する。
-4. OutcomeはGraphVersion designated outcome由来のread-only inputであり、独立編集できない。
-5. FIXED Graph requirement、estimand、identification strategy、adjustment set、assumptionsがregressionしない。
-6. Estimation submission architectureを変更しない。
+1. Population / Comparatorのcausal-question上の意味をUI helpから確認できる。
+2. Treatment selectorはselected Dataset Version schemaをcandidate authorityとする。
+3. Dataset Version変更等でinvalid/stale Treatmentをsilent保持しない。
+4. Treatment selection後もexisting causal-question serialization/backend validation semanticsを維持する。
+5. Identification Outcomeはselected FIXED Graphのdesignated Outcomeから自動継承され、read-onlyかつ独立編集不能である。
+6. FIXED Graph requirement、estimand、identification strategy、adjustment set、assumptionsがregressionしない。
+7. selected Identification Result → Estimation submission lineage/architectureを変更しない。
 
-## Primary test layers
+## Verification layers
 
-- frontend interaction/unit: help/selector/read-only Outcome
-- integration/contract: causal question serialization, dataset schema candidate authority
-- regression: Graph -> Identification -> Estimation lineage
+frontend interaction/unitでhelp/selector/read-only Outcome、integration/contractでserialization/schema candidate authority、regressionでGraph → Identification → Estimation lineageを検証する。G03単独Browser E2Eは必須とせず、cross-layer journeyはG05でblocking verificationする。
 
-Browser E2Eを使う場合はG05 critical journeyとの重複を避け、G03固有blocking valueがある場合だけfreezeする。
+全blocking AC PASSのみG03 PASS。

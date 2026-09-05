@@ -1,30 +1,9 @@
-# ENH-E9 Gate G04 — Causal Diagnostics Backend Contract Completion
+# G04 — Causal Diagnostics Backend Contract Completion
 
-- Contract status: `DRAFT_NOT_FROZEN`
+- Gate status: `FROZEN_WAITING_G03_PASS`
 - Execution mode: `WORK_PACKAGE`
-- Dependency: G03 final PASS
+- Implementation authority: `06_Ariadne_ENH-E9_G04_implementation_instruction.md`
+- Verification authority: `07_Ariadne_ENH-E9_G04_test_instruction.md`
+- Package plan: `06_G04_P00_work_package_plan.md`
 
-## Semantic claim
-
-estimatorにapplicableなdiagnosticsがstable structured `DIAGNOSTICS_RESULT`として保存され、Frontendが文字列parseや推測を行わず利用できる。
-
-## Minimum design questions to freeze
-
-- Effective Sample Size contract
-- actual analysis weight diagnostics
-- weight scale / normalization semantics
-- balance before/after distinction
-- extreme-weight rule representation
-- estimator applicability matrix
-- AIPW weighting-component semantics
-
-## Methodological invariant
-
-all estimatorへ同一diagnostic setを強制しない。AIPW全体の単一final weightを捏造しない。
-
-## Requirement authority
-
-- FR-044
-- FR-048
-
-FR-048 current Implementation Status=`IMPLEMENTED`の整合性はbaseline evidenceで再評価する。
+Claim: estimator-applicable diagnosticsをstable structured `DIAGNOSTICS_RESULT`としてpersistし、frontendが推測/再計算せずconsumeできるようにする。Baseline conformance gapはsource auditでconfirmed。

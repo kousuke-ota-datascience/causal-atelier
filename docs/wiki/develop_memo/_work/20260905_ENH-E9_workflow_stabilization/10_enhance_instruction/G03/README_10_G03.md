@@ -1,25 +1,8 @@
-# ENH-E9 Gate G03 — Identification Input Ergonomics
+# G03 — Identification Input Ergonomics
 
-- Contract status: `DRAFT_NOT_FROZEN`
+- Gate status: `FROZEN_WAITING_G02_PASS`
 - Execution mode: `SINGLE_EXECUTION`
-- Dependency: G02 final PASS
+- Implementation authority: `06_Ariadne_ENH-E9_G03_implementation_instruction.md`
+- Verification authority: `07_Ariadne_ENH-E9_G03_test_instruction.md`
 
-## Semantic claim
-
-Identificationのcausal question inputsを、既存scientific semanticsを変えず、利用者が意味と入力候補を理解できる形で指定できる。
-
-## Draft candidates
-
-- Population tooltip
-- Comparator tooltip
-- Treatment Dataset-schema-backed selector
-
-## Protected
-
-- Outcome one-way inheritance / read-only
-- FIXED Graph requirement
-- estimand semantics
-- identification strategy
-- adjustment set semantics
-- scientific assumptions
-- FR-040 causal question semantics
+Claim: Population/Comparatorの意味とTreatment候補選択を改善する。Identification Outcomeはhistorical Enhance Requestに従いFIXED Graphから自動継承・input不要とし、独立編集を追加しない。

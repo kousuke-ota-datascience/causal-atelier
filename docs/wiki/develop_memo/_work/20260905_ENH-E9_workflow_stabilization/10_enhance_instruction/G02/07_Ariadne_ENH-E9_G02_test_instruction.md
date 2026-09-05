@@ -1,22 +1,21 @@
 # Ariadne ENH-E9 G02 Verification Contract
 
-**Verification contract status:** `DRAFT_NOT_FROZEN`
+**Document class:** Primary Execution Contract  
+**Verification contract status:** `FROZEN`
 
-## Draft Acceptance Criteria
+## Acceptance Criteria
 
-1. Residual確認済みDiscovery operationに目的/意味が明確なpresentationがある。
-2. Graph Candidate listはbaselineで確認されたoverflow defectを解消し、候補identityを失わない。
-3. Select All / Clearをscopeに含めた場合、selectionだけを変更しGraph adoption/fixを暗黙実行しない。
+1. Discovery execution領域のpurpose/titleとObjective/Rationale helpをUIで確認できる。
+2. Graph Candidate listはpage-level overflow defectを発生させずcandidate identityを保持する。
+3. Select All / Clearはselectionだけを変更しadoption/fixを実行しない。
 4. Graph Comparisonでcurrent comparison candidateを識別できる。
-5. algorithm/relevant parameter summaryをscopeに含めた場合、persisted/current authoritative dataだけを表示する。
-6. graph adoption feedbackをscopeに含めた場合、modal内でoperation resultを確認できるがadoption semantics自体は変えない。
-7. Mermaid exportをscopeに含めた場合、表示/保存済みGraph authorityからsourceを導出しscientific Graphを変更しない。
-8. Graph Candidate identity / GraphVersion lineage / DRAFT-FIXED / FIXED immutability / designated Outcome lineageがregressionしない。
+5. algorithm/relevant parameter summaryはpersisted/current authoritative dataだけを表示する。
+6. graph adoption resultを操作modal内で確認でき、adoption semanticsは変わらない。
+7. Mermaid exportはauthoritative Graphからdeterministically生成され、export操作はGraphをmutationしない。
+8. Graph Candidate identity / GraphVersion lineage / DRAFT-FIXED semantics / FIXED immutability / designated Outcome lineageがregressionしない。
 
-## Test strategy
+## Verification layers
 
-- interaction/unit tests: selection, highlight, tooltip, overflow, export
-- API/contract regression: comparison/adoption/fix semantics
-- Browser E2E: Discovery -> candidate review/comparison -> adopt/fix のcritical journeyをfreeze時に具体化
+interaction/unit: help, selection, highlight, overflow, export。API/contract regression: comparison/adoption/fix。Browser E2E: Discovery execution → candidate review/comparison → adopt/fix のcross-layer connectivityを確認する。詳細Graph correctnessはunit/contract testをprimary proofとする。
 
-Environment/harness defectでproduct correctnessを判定不能な場合は`BLOCKED`。
+全blocking AC PASSのみG02 PASS。harness failureはproduct failureと分離してBLOCKED分類する。

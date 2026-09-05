@@ -1,18 +1,12 @@
 # G02 P00 Work Package Plan
 
-- Status: `DRAFT_NOT_FROZEN`
-- Gate: `G02`
+- Status: `FROZEN`
+- Gate authority: G02 06/07
 
-## Draft package decomposition
+| Package | Scope | Dependency | Completion boundary |
+|---|---|---|---|
+| P01 | Discovery operation title, Objective/Rationale help, Graph Candidates overflow | G01 PASS | focused tests + checkpoint |
+| P02 | Select All/Clear, current comparison highlight, algorithm/parameter summary | P01 | interaction/API regression + checkpoint |
+| P03 | modal-local adoption feedback, Mermaid source export | P02 | interaction/export regression + checkpoint |
 
-| Package | Scope | Dependency |
-|---|---|---|
-| P01 | Discovery operation copy/help/overflow residual | G01 PASS |
-| P02 | Graph candidate selection/comparison clarity residual | P01 |
-| P03 | Graph adoption feedback/export residual | P02 |
-
-Packageはbaselineで`RESIDUAL`確認された項目だけを含む。不要packageはfreeze前に削除/再構成する。
-
-## Candidate assembly rule
-
-Pxx completionはGate PASSではない。all required packages `PACKAGE_COMPLETE`後にCandidate Assemblyを行い、Gate-wide regressionとFixed Trial Candidate SHAを確定する。
+Pxx completion is not Gate PASS. P03後にCandidate Assemblyを行い、G02 07に対するFixed Trial Candidateを作る。Gate semantic claimまたはAC変更が必要ならPxx内で変更せず09 amendmentへ戻す。
