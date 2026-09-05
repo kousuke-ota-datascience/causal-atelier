@@ -2,7 +2,10 @@
 
 **Document class:** Primary Execution Contract  
 **Contract status:** `FROZEN`  
-**Execution mode:** `SINGLE_EXECUTION`  
+**Execution mode:** `WORK_PACKAGE`  
+**Required packages:** `P01`  
+**First executable package:** `P01`  
+**P00 role:** `PLANNING_ONLY / NON_EXECUTABLE`  
 **Entry:** G02 canonical `999_gate_decision = PASS`
 
 ## 1. Gate claim
@@ -33,3 +36,9 @@ FIXED Graph prerequisite、Population/Treatment/Comparator/Outcome/Time/Estimand
 ## 5. Forbidden
 
 selector独自scientific validation、新Dataset schema API、Estimation submission architecture変更。
+
+## 6. Work Package
+
+- P01: Identification input ergonomics and protected lineage regression
+
+P00はplanning-onlyであり実行対象ではない。P01 completion後にCandidate Assemblyを行い、Fixed Trial Candidateを確定する。Package focused verificationではBrowser E2Eを実行しない。
