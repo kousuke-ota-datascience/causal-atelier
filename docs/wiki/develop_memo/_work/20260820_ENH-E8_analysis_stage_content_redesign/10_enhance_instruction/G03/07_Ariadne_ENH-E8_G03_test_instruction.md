@@ -1,11 +1,14 @@
 # Ariadne ENH-E8 G03 Verification Contract
 
 - Document class: Primary Execution Contract / Acceptance Authority
-- Verification contract status: `RETROSPECTIVE_FROZEN / A01_APPLIED`
-- Status: `RETROSPECTIVE_FROZEN / A01_APPLIED`
+- Verification contract status: `RETROSPECTIVE_FROZEN / A01_APPLIED / A02_APPLIED`
+- Status: `RETROSPECTIVE_FROZEN / A01_APPLIED / A02_APPLIED`
 - Gate: `G03`
-- Reconstruction date: `2026-08-23`
-- Amendment: `09_ENH-E8_G03_A01_Gate_Contract_Amendment.md`
+- Historical reconstruction update: `2026-09-05`
+- Source evidence cutoff: `61a4039ef90dafad74bf65b4ed7a43b7aca49aec`
+- Amendments:
+  - `09_ENH-E8_G03_A01_Gate_Contract_Amendment.md`
+  - `09_ENH-E8_G03_A02_Gate_Contract_Amendment.md`
 
 ## 1. Gate PASS rule
 
@@ -13,9 +16,9 @@ retrospective verification開始時に固定したexact repository commit SHAに
 
 environment / harness要因で判定不能な場合はproduct FAILではなく`BLOCKED`とする。
 
-本Gateは後追い文書化であるため、過去のbugfix commitを「当時formal verification済みだった」と遡及認定しない。
+CHAT-direct source commitsやhistorical test executionの存在だけを理由に、過去時点のformal PASSを遡及認定しない。
 
-## 2. Acceptance Criteria
+## 2. Acceptance Criteria — Estimation
 
 | AC | Criterion | Primary layer |
 |---|---|---|
@@ -27,84 +30,126 @@ environment / harness要因で判定不能な場合はproduct FAILではなく`B
 | G03-AC06 | `input_result_id`がselected Identification Resultを参照する | product test / integration |
 | G03-AC07 | invalid / incomplete Identification prefill lineageではsubmissionしない | frontend integration |
 | G03-AC08 | submission operation / endpointが既存`ESTIMATION` execution-batch contractを維持する | product/integration |
-| G03-AC09 | ENH-E8 G02のStage visibility/separation behaviorを壊さない | protected regression + Browser E2E |
-| G03-AC10 | API/schema/DB/backend causal semanticsに不要な変更がない | diff / architecture audit |
 | G03-AC11 | handler attachment前のEstimation buttonが`type="button"`かつdisabledで、native/shared-form submitへfallbackしない | Browser E2E / DOM lifecycle |
-| G03-AC12 | app runtime declaration後、`DOMContentLoaded`を起点としてsubmission module loadを開始し、`window.load`待ちのinteraction raceを作らない | frontend contract / Browser E2E |
+| G03-AC12 | `DOMContentLoaded`を起点としてsubmission module loadを開始し、`window.load`待ちinteraction raceを作らない | frontend contract / Browser E2E |
 | G03-AC13 | canonical Compose frontend runtimeがcurrent sourceの`/causal_estimation_submission.js`をHTTP successで配信し、runtime readerからread可能である | container/runtime integration |
 | G03-AC14 | regression evidenceがcurrent semantic contractを検証し、obsolete exact source-string assertionをPASS authorityにしない | test audit |
 
-## 3. Automated regression evidence policy
+## 3. Acceptance Criteria — Effects
 
-Historical regression guard:
+| AC | Criterion | Primary layer |
+|---|---|---|
+| G03-AC15 | Effects Stageが保存済み`TREATMENT_EFFECT_RESULT`をStage固有primary result sourceとしてrenderする | Browser E2E / frontend integration |
+| G03-AC16 | Effects surfaceがstatus / estimand / treatment / outcome / estimator / estimate / standard error / confidence interval / adjustment setをhuman-readableに提示する | Browser E2E / DOM contract |
+| G03-AC17 | scientific statusが解釈条件を満たさない場合、effect estimateを無条件のcausal conclusionとして提示しない | frontend behavior / focused test |
+| G03-AC18 | Scientific warningsとtechnical lineageを保持し、raw evidenceへ追跡可能である | Browser E2E / DOM contract |
+| G03-AC19 | Effects moduleがapp runtime declaration後にload/installされ、保存済みResult更新に追従する | Browser E2E / runtime integration |
+| G03-AC20 | Effects presentationはAPI/schema/backend estimation semanticsを変更しない | diff / architecture audit |
+
+## 4. Acceptance Criteria — Diagnostics
+
+| AC | Criterion | Primary layer |
+|---|---|---|
+| G03-AC21 | Diagnostics Stageが保存済み`DIAGNOSTICS_RESULT`をStage固有primary diagnostic sourceとしてrenderする | Browser E2E / frontend integration |
+| G03-AC22 | Diagnostics surfaceがanalysis context / sample support / balance / overlap / warningsをhuman-readableに提示する | Browser E2E / DOM contract |
+| G03-AC23 | associated Treatment Effectを同一Executionから参照し、effect主解釈をEffects Stageへ委譲する | frontend integration |
+| G03-AC24 | backend未保存のESS / weight diagnostics / weighted balance等を推測表示せず、利用不能であることを明示する | frontend behavior / code audit |
+| G03-AC25 | Diagnostics technical detailsからresult / execution / analysis spec / dataset / graph / upstream result lineageへ追跡できる | Browser E2E / DOM contract |
+| G03-AC26 | `causal_diagnostics_presentation.js`がcanonical runtimeで実際にload/installされる | Browser E2E / runtime integration |
+| G03-AC27 | source fileが存在するだけではDiagnostics completionと判定しない | verification audit |
+
+## 5. Cross-cutting Acceptance Criteria
+
+| AC | Criterion | Primary layer |
+|---|---|---|
+| G03-AC09 | ENH-E8 G02のStage visibility/separation behaviorを壊さない | protected regression + Browser E2E |
+| G03-AC10 | API/schema/DB/backend causal semanticsに不要な変更がない | diff / architecture audit |
+| G03-AC28 | canonical Compose runtimeからG03 required frontend assetsをcurrent candidate sourceとして配信できる | runtime integration |
+| G03-AC29 | historical commit messageの`ENH-E9`表記をprovenanceとして保持しつつ、Human指定どおりENH-E8 G03 evidenceとして追跡できる | audit / traceability |
+
+## 6. Historical source evidence audit
+
+A02では少なくとも次のsource commitsをaudit対象とする。
+
+- `4815d557f6a6d2ff354c11ee26f73c6be627c411`
+- `06f9aa11128ab3e82bab061524bcfe30343c5d98`
+- `f5367d66cef1c599dc9406dfedf8e20ee90a60cd`
+- `bf9ba32ea518135023aed2b47626bcde12dcb7bd`
+- `0a6719675a561ccb45cd6b4f9b041d5b974d09f2`
+- `09d168343498bab80a7b6df673ded64af28707fa`
+- `3cb24e8e647a9fc70c72b9336a9647937aded076`
+- `61a4039ef90dafad74bf65b4ed7a43b7aca49aec`
+
+これらはhistorical implementation evidenceであってformal verification evidenceではない。
+
+## 7. Automated regression evidence policy
+
+Historical Estimation regression guard:
 
 ```bash
 pytest -q tests/product/test_enh_e9_estimation_submission_regression.py
 ```
 
-このtest filenameの`ENH-E9`はhistorical artifact identityであり、G03のenhancement identityを変更しない。
+このtestはA01時点で旧bootstrap implementation detailをexact source stringとしてassertしていた。FAIL時はsemantic regressionかstale assertionかを分類し、stale assertionを満たすためcurrent implementationを後退させない。
 
-ただしA01時点では、このhistorical testは旧`const button=$('#estimation-inputs button');`および`global.addEventListener('load'`をexact source-stringとしてassertしており、current implementationに対してstaleである。
+Effects / Diagnosticsについては、source file existenceやstatic string assertionだけでblocking ACをPASSにしない。runtime renderingとStage ownershipをBrowser E2Eまたはequivalent integration evidenceで観測する。
 
-したがって、上記commandのFAILを直ちにproduct FAILとは判定しない。まずfailureがobsolete implementation-detail assertionによるものか、G03 semantic regressionによるものかを分類する。obsolete assertionの場合はtest harness defectとしてevidence化し、current semanticsを検証する更新済みtestまたは代替focused evidenceを用意するまでG03をPASSにしない。
+## 8. Required Browser E2E — Estimation
 
-obsolete testをgreenにする目的でcurrent implementationを旧`window.load`方式や旧button lookupへ戻してはならない。
-
-Causal Stage Browser E2E:
-
-```bash
-docker compose -f compose.yaml -f compose.e1a.yaml -p ariadne-e1a \
-  --profile e2e run --build --rm --entrypoint python browser-e2e \
-  tests/browser_e2e/run_enh_e8_g02_causal_stage_content.py
-```
-
-## 4. Required Browser E2E observations
-
-Browser E2Eでは少なくとも次を観測する。
+少なくとも:
 
 1. Estimation Stageで`#run-estimation`がvisibleである。
-2. hidden Identification controlsの`dataset_version_id` / `graph_version_id`がinvalidである状態を確認できる。
-3. handler ready後の`#run-estimation`が`type="button"`である。
-4. button activationがnative validationに遮断されず、Estimation action固有のvalidationへ到達する。
-5. Identification Result未選択時に`Identification Resultを選択してください`というaction-level rejectionを観測する。
-6. G02の各Causal Stageでwrong-stage primary surfacesが露出しない。
+2. hidden Identification required controlsがinvalidでもaction-level validationへ到達する。
+3. handler pre-ready stateでbuttonが`type="button"`かつdisabledである。
+4. module load完了後にbuttonがenableされる。
+5. selected Identification Resultからprefill lineageを復元し、`ESTIMATION` execution-batch requestへ渡る。
 
-A01追加critical journeyとして、**handler loadを意図的に遅延させた状態**を観測する。
+handler loadを意図的に遅延し、pre-ready temporal stateを観測する。最終DOMだけでAC11/AC12をPASSにしない。
 
-7. `causal_estimation_submission.js` responseをbrowser/network interception等で遅延させる。
-8. submission module未ready期間にEstimation buttonが`type="button"`かつdisabledであることを確認する。
-9. 未ready期間のclick / keyboard activationがshared form submitやIdentification native validationへfallbackしないことを確認する。
-10. delayed module load完了後にbuttonがenableされ、Estimation action-level validationへ到達することを確認する。
+## 9. Required Browser E2E — Effects
 
-単に最終DOMだけを観測してAC11/AC12をPASSにしてはならない。temporal pre-ready stateを観測する。
+保存済み`TREATMENT_EFFECT_RESULT`を持つcandidate dataを構成し、少なくとも:
 
-## 5. Frontend asset delivery verification
+1. Effects StageでTreatment Effect cardがvisibleである。
+2. estimator / estimand / treatment / outcome / estimate / uncertaintyがraw JSONを開かなくても読める。
+3. Scientific warningsが存在する場合に表示される。
+4. non-VALID等のstatusではinterpretationが無条件のcausal conclusionにならない。
+5. Technical details / Lineageから元Result / execution contextを追跡できる。
+6. 他StageでEffects primary surfaceがcurrent Stageとして露出しない。
 
-G03-AC13について、canonical Compose runtimeをbuildして次を確認する。
+## 10. Required Browser E2E — Diagnostics
 
-- frontend serviceが`Dockerfile.frontend`からcurrent sourceを含むimageとしてbuildされる。
-- `/causal_estimation_submission.js`へのHTTP requestがsuccessする。
-- response contentがFixed Verification Candidate内のcurrent sourceと対応する。
-- nginx processがstatic fileをreadできるpermissionを持つ。
+保存済み`DIAGNOSTICS_RESULT`を持つcandidate dataを構成し、少なくとも:
+
+1. Diagnostics Stageでhuman-readable diagnostic cardがvisibleである。
+2. sample support / covariate balance / applicable overlap / warningsが表示される。
+3. backendに構造化値がない項目は「利用不能」であることが明示され、fabricated numeric valueを表示しない。
+4. associated Treatment Effectが存在する場合に同一Executionへ対応する。
+5. Technical details / Lineageを追跡できる。
+6. `causal_diagnostics_presentation.js`のnetwork loadまたはequivalent runtime install evidenceが存在する。
+
+`61a4039...` source auditではDiagnostics artifactは存在する一方、`causal_stage_presentation.js`からのDiagnostics load wiringを確認できない。したがって同commitをcandidateとする場合、AC26はPASSと推定せず実runtime observationを要求する。load/installされなければ`FAIL`、environment上観測不能なら`BLOCKED`とする。
+
+## 11. Frontend asset delivery verification
+
+canonical Compose runtimeをbuildし、少なくとも:
+
+- frontend serviceが`Dockerfile.frontend`からcurrent candidate sourceを含むimageとしてbuildされる。
+- required G03 JS assetsがHTTP successで取得できる。
+- nginx processがstatic assetsをread/traverseできるpermissionを持つ。
 - host bind mountの偶然のpermission / local filesystem stateへ依存しない。
 
-`Dockerfile.frontend` / `compose.yaml`の変更自体をPASS理由にせず、runtime observationをevidenceとする。
+fileがrepositoryに存在すること自体をruntime delivery PASS evidenceにしない。
 
-## 6. Additional lineage verification
+## 12. Fixed Verification Candidate identity
 
-G03-AC04〜AC08について、static contract assertionsだけで十分とみなさない。
+verification開始直前にrepositoryのexact commit SHAを取得し、A02適用済みG03 Trial01のFixed Verification Candidateとしてevidenceへ記録する。
 
-Independent Verificationでは、可能な範囲でintegration/API evidenceまたはfocused browser scenarioを追加し、selected Identification Resultのexecution prefillからdataset / graph / analysis specが復元され、`ESTIMATION` execution batch requestへ渡ることを確認する。
-
-この追加観測が現行test harnessでは構成不能な場合、理由と未検証範囲をevidenceへ明記する。blocking ACを観測できない場合は`BLOCKED`とし、推測でPASSにしない。
-
-## 7. Fixed Verification Candidate identity
-
-verification開始直前にrepositoryのexact commit SHAを取得し、A01適用済みG03 Trial01のFixed Verification Candidateとしてevidenceへ記録する。
+`61a4039...`はhistorical source evidence cutoffであり、自動的なFixed Verification Candidateではない。
 
 verification中にcandidateが変化した場合、その結果を同一candidateのPASS evidenceとして使用しない。
 
-## 8. Protected regression
+## 13. Protected regression
 
 少なくとも次を保護する。
 
@@ -113,21 +158,23 @@ verification中にcandidateが変化した場合、その結果を同一candidat
 - existing Identification submission behavior
 - existing execution-batch API contract
 - canonical Compose API/backend startup behavior
+- existing Result / execution lineage semantics
 
-## 9. Test Agent prohibited work
+## 14. Test Agent prohibited work
 
 Test Agentはverification中に次を行わない。
 
 - product code修正
 - Acceptance Criteriaの緩和
-- hidden Identification controlsの再表示等によるworkaround
+- hidden Identification controls再表示等のworkaround
 - historical evidenceの改変
-- ENH-E9名のtest artifactを根拠なくrenameしてprovenanceを消すこと
+- `ENH-E9` commit labelを削除・改変してprovenanceを消すこと
 - stale testをgreenにするためcurrent implementationを旧bootstrap方式へ戻すこと
-- handler load raceをfixed sleepだけで「検証済み」とみなすこと
+- Effects / Diagnosticsの未保存情報をfrontendで捏造してACを満たすこと
+- Diagnostics source file存在だけでruntime integrationをPASSにすること
 
-## 10. Decision
+## 15. Decision
 
 Test Item evidence作成後、G03のcanonical decisionを`PASS` / `FAIL` / `BLOCKED`のいずれかで記録する。
 
-本ドキュメントre-baseline時点では、retrospective Independent Verificationを実行済みとは扱わない。
+A02 re-baseline時点では、retrospective Independent Verificationを実行済みとは扱わない。
