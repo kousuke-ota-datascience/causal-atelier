@@ -3,6 +3,9 @@
 **Document class:** Primary Execution Contract  
 **Contract status:** `FROZEN`  
 **Execution mode:** `WORK_PACKAGE`  
+**Required packages:** `P01, P02, P03`  
+**First executable package:** `P01`  
+**P00 role:** `PLANNING_ONLY / NON_EXECUTABLE`  
 **Entry:** G01 canonical `999_gate_decision = PASS`
 
 ## 1. Gate claim
@@ -32,4 +35,10 @@ new discovery algorithm、new Graph lifecycle、FIXED Graph direct mutation、fr
 
 ## 5. Work Packages
 
-P01 Discovery copy/help/overflow、P02 selection/comparison clarity、P03 adoption feedback/export。Pxxは本Gate claim/ACを変更できない。全package complete後にGate-wide candidate assemblyを行う。
+- P01: Discovery copy/help/overflow
+- P02: selection/comparison clarity
+- P03: adoption feedback/export
+
+P00は計画表でありCoding Agent実行対象ではない。Pxxは本Gate claim/ACを変更できない。全required package complete後にGate-wide Candidate Assemblyを行う。
+
+Package focused verificationではBrowser E2Eを実行しない。Browser E2Eが必要な場合はG02 Independent Verificationの最後のverification itemとしてのみ実行する。
