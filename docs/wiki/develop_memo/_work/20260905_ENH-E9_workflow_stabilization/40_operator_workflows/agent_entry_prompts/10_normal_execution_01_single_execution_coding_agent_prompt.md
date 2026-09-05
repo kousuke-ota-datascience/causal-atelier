@@ -1,51 +1,37 @@
-# Single Execution Coding Agent Prompt — `SINGLE_EXECUTION` Gate
+# Single Execution Coding Agent Prompt — ENH-E9
 
-## 1. Invocation parameters
+## 1. Runtime parameters
 
-Human / Orchestrator は実行前に以下を確定して与える。
+Human / Orchestrator が実行時に与える値は次の2つだけとする。
 
 ```text
 GATE_ID={{GATE_ID}}
 TRIAL_NO={{TRIAL_NO}}
 ```
 
-固定値:
+Enhancement fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E9
+ENHANCE_SHORT_ID=ENH-E9
+BRANCH_NAME=bugfix/ariadne_mvp_e9
+REMOTE_NAME=causal-atelier
+WORK_ROOT=/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization
+WORK_DIR_NAME=20260905_ENH-E9_workflow_stabilization
 ```
 
-本実行では、上記の `GATE_ID` および `TRIAL_NO` を以降の placeholder に代入して実行せよ。
+本実行では `GATE_ID` と `TRIAL_NO` だけをplaceholderへ代入して実行せよ。
 
----
+## 2. Responsibility
 
-## 2. Responsibility boundary
+指定された `SINGLE_EXECUTION` Gateについて、repository state確認、freeze済み06 contractの特定、scope内実装、self-verification、Fixed Trial Candidate commit、implementation completion report、evidence commit/pushまでを行い、`READY_FOR_TEST` または明示的な `BLOCKED_*` で終了する。
 
-本 Agent の責務は、指定された `SINGLE_EXECUTION` Gate について、
-
-1. repository state を確認する
-2. freeze 済み implementation contract を正確に1件特定する
-3. contract の scope 内だけを実装する
-4. contract が要求する self-verification を実行する
-5. Fixed Trial Candidate を commit として固定する
-6. implementation completion report を作成する
-7. evidence を commit / push する
-8. `READY_FOR_TEST` または明示的な `BLOCKED_*` 状態で終了する
-
-ことである。
-
-本 Agent は **Gate PASS / FAIL Decision を行わない**。
-
----
+本AgentはGateの `PASS / FAIL` を判定しない。
 
 ## 3. Repository preflight
 
-実装開始前に以下を実行せよ。
+実装開始前に以下を確認する。
 
 ```bash
 git branch --show-current
@@ -53,116 +39,46 @@ git status --porcelain
 git rev-parse HEAD
 ```
 
-以下を確認する。
+- branchは `bugfix/ariadne_mvp_e9`
+- working treeはclean
+- 開始時HEADを `START_SHA` として記録
 
-* current branch が `{{BRANCH_NAME}}` であること
-* working tree が clean であること
-* 実行開始時 HEAD を `START_SHA` として記録すること
+不一致や既存uncommitted changeがある場合、reset / restore / stash / commitで処理せず `BLOCKED_REPOSITORY_STATE` で停止する。
 
-current branch が異なる場合、または開始時点で uncommitted change が存在する場合は、既存変更を reset / checkout / restore / stash / commit してはならない。
-
-その場合は実装を開始せず、`BLOCKED_REPOSITORY_STATE` として終了せよ。
-
-
-### Formal FAIL remediation route guard
-
-current Trial に current Trial 用の frozen Remediation Contract が存在する場合、この通常 `SINGLE_EXECUTION` entry を formal FAIL rework の代替として使用してはならない。
-
-formal FAIL 後は `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` を使用する。通常 execution を続行せず、以下で停止せよ。
-
-```text
-BLOCKED_EXECUTION_MODE_MISMATCH
-```
-
----
+current Trial用のfrozen Remediation Contractが存在する場合は通常executionを行わず `BLOCKED_EXECUTION_MODE_MISMATCH` とする。
 
 ## 4. Normative implementation contract
 
-以下 directory から、指定された `GATE_ID` に対応する freeze 済み implementation contract を**正確に1件**特定せよ。
+次の06 contractをnormative implementation authorityとする。
 
 ```text
-{{WORK_ROOT}}/
+/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/
 10_enhance_instruction/
   {{GATE_ID}}/
-    06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_implementation_instruction.md
+    06_Ariadne_ENH-E9_{{GATE_ID}}_implementation_instruction.md
 ```
 
-該当 contract が存在しない、または一意に特定できない場合は実装を開始せず停止せよ。
+該当06が存在しない、FROZENでない、または一意に特定できない場合は `BLOCKED_CONTRACT_AMBIGUITY` で停止する。
 
-特定した **06 のみ**を normative implementation contract とする。
+required behavior / scope / protected invariantは06から取得する。source / test / configurationはimplementation substrateを理解するために調査してよいが、repository現状を仕様authorityとして扱わない。
 
-以下を仕様補完のために読んではならない。
-
-* 07
-* 00〜30 の planning / analysis 文書
-* ADR
-* Gate decomposition
-* 他 Gate の文書
-* 過去 Enhancement の文書
-* issue
-* 外部 Web
-
-current repository の source / test / configuration / migration 等は、**implementation substrate を理解する目的では調査してよい**。
-
-ただし repository の現状を仕様 authority として扱ってはならない。
-
-> 実装方法を repository から発見してよい。
-> required behavior を repository や別文書から発見してはならない。
-
-06 だけでは entry condition、scope、protected invariant、required behavior、acceptance criteria のいずれかを一意に判断できない場合、他資料へ探索を広げてはならない。
-
-その場合は `BLOCKED_CONTRACT_AMBIGUITY` として停止せよ。
-
----
+通常Coding Agentは07、他Gate、過去Enhancement、issue、外部Webを仕様補完のために使用しない。06だけでは実装判断が一意にできない場合は推測せず `BLOCKED_CONTRACT_AMBIGUITY` とする。
 
 ## 5. Implementation
 
-06 に記載された Active Gate scope のみを実装せよ。
+06のActive Gate scopeだけを実装する。scope外機能変更、不要refactoring、architecture変更、unrelated cleanup、speculative fix、protected invariant変更を行わない。
 
-以下を行ってはならない。
-
-* scope 外の機能変更
-* contract に要求されない refactoring
-* contract に要求されない architecture 変更
-* protected invariant の変更
-* unrelated cleanup
-* speculative fix
-* contract に存在しない仕様の補完
-* verification を通すための期待値緩和
-* failure の握り潰し
-
-既存実装に問題を発見しても、それが Active Gate scope 外であれば変更してはならない。
-
-scope 内の実装を完了できない場合は `BLOCKED_IMPLEMENTATION` として扱う。
-
----
+scope内で完了できない場合は `BLOCKED_IMPLEMENTATION` とする。
 
 ## 6. Self-verification
 
-06 が要求する focused verification および Gate-wide self-verification をすべて実行せよ。
+06が要求するfocused verification / regression verificationを実行し、commandと結果を記録する。
 
-実行した command と結果を記録すること。
+failureは原因を確認し、06 scope内で修正可能な場合だけ修正する。assertion弱体化、test削除、skip/xfail、error suppression、scope外変更による回避は禁止する。
 
-verification が失敗した場合は原因を調査し、06 の scope 内で修正可能なら修正して再実行してよい。
+## 7. Fixed Trial Candidate
 
-Browser E2E failureの場合、修正前に最低限 `failure point / actual observable state / expected state / candidate cause / supporting evidence` を確定する。`raceかもしれない`等の未検証仮説をroot causeとして即修正しない。test implementation / orchestration / environment defectが疑われ、06 scope外の変更なしではverificationを成立させられない場合は、scope外修正で回避せず適切な`BLOCKED_*`として停止する。
-
-以下によって verification failure を隠してはならない。
-
-* test の削除
-* assertion の弱体化
-* expected value の恣意的変更
-* error suppression
-* skip / xfail 等の追加
-* scope 外の変更による回避
-
-06 の要求を満たす状態に到達できない場合は `BLOCKED_IMPLEMENTATION` とする。
-
----
-
-## 7. Fixed Trial Candidate commit
-
-実装および self-verification が完了したら、変更内容を確認する。
+実装とself-verification完了後、変更を確認する。
 
 ```bash
 git status
@@ -170,117 +86,46 @@ git diff --stat
 git diff
 ```
 
-今回の Active Gate scope に属する変更だけを stage せよ。
-
-`git add .` または scope 外変更を含む一括 stage を行ってはならない。
-
-stage 後、以下を確認する。
+Active Gate scopeの変更だけをstageし、確認後にcommitする。
 
 ```bash
-git diff --cached --stat
-git diff --cached
-git status
-```
-
-問題がなければ Fixed Trial Candidate を commit する。
-
-```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation candidate"
+git commit -m "ENH-E9 Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation candidate"
 git rev-parse HEAD
 ```
 
-取得した exact SHA を、
-
-```text
-FIXED_TRIAL_CANDIDATE_SHA
-```
-
-として記録する。
-
-`READY_FOR_TEST` とする場合、未commitの implementation change を残してはならない。
-
----
+取得したSHAを `FIXED_TRIAL_CANDIDATE_SHA` とする。`READY_FOR_TEST` ではimplementation changeをuncommittedで残さない。
 
 ## 8. Implementation completion report
 
-以下に implementation completion report を作成せよ。
+以下にreportを作成する。
 
 ```text
-{{WORK_ROOT}}/
+/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/
 20_implementation_reports/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
-      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+      ENH-E9-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
-report には最低限以下を記録する。
-
-* `PROJECT_NAME`
-* `ENHANCE_ID`
-* `GATE_ID`
-* `TRIAL_NO`
-* normative contract path
-* `START_SHA`
-* execution status
-* changed files
-* implementation summary
-* executed verification commands
-* verification results
-* `FIXED_TRIAL_CANDIDATE_SHA`
-* blocker / remaining work（存在する場合）
-
-`READY_FOR_TEST` の場合、`FIXED_TRIAL_CANDIDATE_SHA` は必須である。
-
-BLOCKED の場合、candidate が存在しなければ SHA を捏造してはならない。
-
----
+最低限、`GATE_ID / TRIAL_NO / normative contract path / START_SHA / execution status / changed files / implementation summary / verification commands and results / FIXED_TRIAL_CANDIDATE_SHA / blocker or remaining work` を記録する。
 
 ## 9. Evidence commit and push
 
-completion report 作成後、evidence file のみを stage せよ。
+reportだけを追加stageし、evidence commitを作成してpushする。
 
 ```bash
-git add {{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
-git status
-git diff --cached
-```
-
-問題がなければ evidence commit を作成する。
-
-```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation evidence"
-git push -u {{REMOTE_NAME}} {{BRANCH_NAME}}
+git add /loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/ENH-E9-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+git commit -m "ENH-E9 Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation evidence"
+git push -u causal-atelier bugfix/ariadne_mvp_e9
 git log -2 --oneline
 git status
 ```
 
-Fixed Trial Candidate commit と evidence commit は別 commit でよい。
+reportに記録するcandidate identityはevidence commitではなく `FIXED_TRIAL_CANDIDATE_SHA` とする。
 
-implementation completion report に記録する candidate identity は、**evidence commit ではなく `FIXED_TRIAL_CANDIDATE_SHA`** である。
+## 10. Final status
 
----
-
-## 10. BLOCKED / interrupted execution
-
-実装開始後に完了不能となった場合も、可能な限り implementation completion report を作成し、以下を記録せよ。
-
-* どこまで実行したか
-* 何を変更したか
-* どの verification を実行したか
-* failure / blocker
-* uncommitted change の有無
-* candidate SHA が存在するか
-* 再開時に必要な情報
-
-BLOCKED 状態で incomplete implementation を Fixed Trial Candidate として commit してはならない。
-
-既存変更を破壊して clean state を作ってはならない。
-
----
-
-## 11. Final status
-
-最終応答では、必ず以下のいずれかを明示せよ。
+最終応答では次のいずれかを明示する。
 
 ```text
 READY_FOR_TEST
@@ -290,55 +135,6 @@ BLOCKED_IMPLEMENTATION
 BLOCKED_EXECUTION_MODE_MISMATCH
 ```
 
-`READY_FOR_TEST` の場合は最低限以下を報告する。
+`READY_FOR_TEST` の場合は `GATE_ID / TRIAL_NO / START_SHA / FIXED_TRIAL_CANDIDATE_SHA / EVIDENCE_COMMIT_SHA / completion report path / verification summary` を報告する。
 
-```text
-GATE_ID
-TRIAL_NO
-START_SHA
-FIXED_TRIAL_CANDIDATE_SHA
-EVIDENCE_COMMIT_SHA
-completion report path
-verification summary
-```
-
-BLOCKED の場合は最低限以下を報告する。
-
-```text
-GATE_ID
-TRIAL_NO
-START_SHA
-BLOCKED status
-blocker
-changed / uncommitted files
-report path（作成できた場合）
-```
-
-本 Agent は `PASS` / `FAIL` の Gate Decision を出してはならない。
-
-<!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
-## 3. Execution identity control
-
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
-
-Enhancement-fixed values:
-
-```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
-```
-
-Runtime values for this execution:
-
-```text
-GATE_ID={{GATE_ID}}
-TRIAL_NO={{TRIAL_NO}}
-```
-
-If any Enhancement-fixed value remains unresolved in the Enhancement-side prompt, stop with `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED`. If required Runtime values are missing or ambiguous, stop with `BLOCKED_EXECUTION_UNRESOLVABLE`.
-<!-- END MANAGED: EXECUTION_IDENTITY_CONTROL -->
+BLOCKEDの場合は `GATE_ID / TRIAL_NO / START_SHA / blocker / changed or uncommitted files / report path` を報告する。
