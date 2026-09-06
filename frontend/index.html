@@ -134,15 +134,15 @@
         <div id="exploratory-results-surface" class="card"><div class="heading"><h2>Saved Exploratory Results</h2><button id="refresh-exploration" type="button">更新</button></div><div id="exploration-output"></div><div id="exploration-results"></div></div>
       </section>
       <section id="discovery" class="workspace">
-        <h1>Discovery</h1><p>PC・GESとPC parameter sensitivityを別Executionとして比較します。</p>
+        <h1>Discovery: Causal Structure Candidates</h1><p>データから候補因果構造を探索し、PC・GESとPC parameter sensitivityを別Executionとして比較します。</p>
         <form id="discovery-form" class="card form-grid" data-causal-stage-surface="discovery">
           <label data-tooltip="Discoveryへ入力する不変Dataset Versionを選択します。">Dataset<select name="dataset_version_id" class="datasets-select" required></select></label>
           <label data-tooltip="因果探索に含める列をDataset schemaから複数選択します。指定順はschema順へ正規化されます。">Feature columns<span class="input-action"><input name="features" placeholder="coupon, visits, sales" required readonly><button id="open-feature-selector" type="button">列を選択</button></span><small>Dataset schemaから1件以上選択します。</small></label>
           <label data-tooltip="因果効果の結果変数として扱う列をFeature columnsから1件選択します。GraphとInferenceへ継承されます。">Outcome<select name="designated_outcome_node" id="discovery-outcome" required><option value="">Featureを先に選択</option></select><small>Feature columnsに含まれる列を1件指定し、Inferenceまで継承します。</small></label>
           <fieldset><legend>Algorithms</legend><label><input type="checkbox" name="algorithms" value="pc" checked> PC</label><label><input type="checkbox" name="algorithms" value="ges" checked> GES</label></fieldset>
           <label data-tooltip="PCの条件付き独立性検定で使用する有意水準をカンマ区切りで指定します。各値ごとに別Executionを生成します。">PC alpha grid<input name="alpha" value="0.01,0.05" required></label>
-          <label>Objective<input name="objective" value="Compare candidate causal structures" maxlength="4000"></label>
-          <label>Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
+          <label data-tooltip="このDiscovery実行で比較・検討したい候補因果構造に関する目的を記録します。実行の入力やGraph Candidateのidentityは変更しません。">Objective<input name="objective" value="Compare candidate causal structures" maxlength="4000"></label>
+          <label data-tooltip="選択したalgorithm、parameter、比較方法が目的に適うと考える理由を記録します。科学的な結果やGraph Candidateの内容を変更する入力ではありません。">Rationale<input name="rationale" value="Algorithm and PC sensitivity comparison" maxlength="8000"></label>
           <button>複数Executionを受付</button>
         </form>
         <div class="card" data-causal-stage-surface="discovery"><div class="heading"><div><h2>Discovery Executions</h2><p class="section-help">技術状態とDiscovery Resultを確認します。</p></div><button id="refresh-discovery" type="button">更新</button></div><div id="discovery-results"></div></div>

@@ -47,3 +47,13 @@ dialog:has(.modal-card.wide){width:min(94vw,1100px);max-width:min(94vw,1100px)}.
   gap: 8px;
   min-width: 0;
 }
+
+/* ENH-E9 G02 P01: keep wide candidate tables within their own scroll region. */
+#graph-candidates {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#graph-candidates table {
+  min-width: 900px;
+}
