@@ -125,7 +125,64 @@ Product semantic impact: NONE
 - 次にENH-E9の実行可能環境で `pytest tests/enhancement/enh_e9/...` のcollection / targeted verificationを行う際、本記録へ結果を追記する。
 - Comprehensive Test Code MigrationはENH-E12以降へdeferしたままとする。
 
-## 4. Batch template
+## 4. Batch M02 — G02 Trial01 BLOCKED Browser test implementation repair
+
+**状態:** `PASS / READY_FOR_INDEPENDENT_REVERIFICATION`
+
+```text
+Executed at: 2026-09-06
+Before SHA: 2efa8f114ace89ccd35c7758e873086ba9e73f83
+After SHA: 479f0685d348926e29be598cfa7d52aa39779c3e
+Purpose: G02 Trial01 BLOCKED test implementation repair
+Trial identity: SAME_TRIAL / G02 Trial01
+Fixed Trial Candidate impact: NONE (8cf70523093efa53b59a7de2c655f9755dbceb8d unchanged)
+```
+
+### Scope
+
+G02 Trial01のcanonical 999で `TEST_IMPLEMENTATION_DEFECT` と分類されたhistorical Browser E2Eのstale initial locatorを置き換える、G02専用のcurrent-UI Browser runnerを追加した。repository-wide migrationまたはproduct remediationではない。
+
+### Changed test / test-infrastructure paths
+
+```text
+tests/enhancement/enh_e9/g02/browser_e2e/run_discovery_candidate_adoption.py
+Dockerfile.browser-e2e
+.dockerignore
+```
+
+`Dockerfile.browser-e2e` と `.dockerignore` の変更は、new runnerをtest-only Browser imageのbuild contextへ含めるためだけのorchestration変更である。
+
+### Repair verification
+
+| Verification | Result | Evidence |
+|---|---|---|
+| Syntax/import compile | PASS | `python3 -c "compile(...)"` completed successfully |
+| Browser image build | PASS | new runner copied to `/workspace/tests/enhancement/enh_e9/g02/browser_e2e/` |
+| Current UI initial navigation | PASS | `Project List -> #new-project -> /projects/new -> overview` |
+| Required G02 journey | PASS | Dataset registration, current Discovery route, two Discovery executions, Graph Comparison, adopted FIXED Graph |
+| Failure diagnostics | PASS | runner writes JSON checkpoints/console, trace, screenshot, and video |
+| Product code diff | NONE | changed paths are test/test-infrastructure and this M02 record only |
+
+Executed Browser command:
+
+```bash
+docker compose -f compose.yaml -f compose.e1a.yaml -p ariadne-e9-g02-verify --profile e2e run --build --rm --no-deps --entrypoint python browser-e2e tests/enhancement/enh_e9/g02/browser_e2e/run_discovery_candidate_adoption.py
+```
+
+Observed result: `PASS`. Evidence: `test-results/browser_e2e/enh-e9-g02-discovery-candidate-adoption-evidence.json`, with all checkpoints through `adopted-fixed-graph`, two Discovery execution IDs, two comparison candidates, and modal feedback confirming a FIXED Graph Version.
+
+### Gate / Enhancement impact
+
+```text
+Product code changes: NONE
+07 changes: NONE
+Fixed Trial Candidate impact: NONE
+999 Gate Decision changes: NONE
+Remaining blocker: NONE for the repaired test implementation
+Next action: Independent Verification continuation for G02 Trial01
+```
+
+## 5. Batch template
 
 ### Batch Mxx — <title>
 
