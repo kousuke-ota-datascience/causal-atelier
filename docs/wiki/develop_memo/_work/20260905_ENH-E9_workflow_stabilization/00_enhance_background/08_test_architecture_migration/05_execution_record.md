@@ -1,42 +1,42 @@
-# Test Migration Execution Record
+# テストMigration Execution Record
 
-**Status:** `NOT_STARTED`  
-**Purpose:** append-only evidence of physical test-code migration batches
+**状態:** `NOT_STARTED`  
+**目的:** physical test-code migration batchの追記型実行証跡
 
-## 1. Execution policy
+## 1. 実行policy
 
-Each migration batch must record:
+各migration batchは以下を記録する。
 
-- batch ID;
-- execution date/time;
-- before SHA;
-- after SHA;
-- changed paths;
-- manifest rows implemented;
-- commands executed;
-- collection/test results;
-- deviations from manifest;
-- blocker/failure classification;
-- rollback or follow-up action if needed.
+- batch ID
+- execution date/time
+- before SHA
+- after SHA
+- changed paths
+- 実装したmanifest row
+- 実行command
+- collection / test result
+- manifestからのdeviation
+- blocker / failure classification
+- 必要なrollback / follow-up
 
-Do not use this document to rewrite design decisions; update `04_migration_decision_log.md` for new decisions and reference the decision ID here.
+Design decisionの変更は本書で行わず、`04_migration_decision_log.md` を更新してdecision IDを参照する。
 
-## 2. Current state
+## 2. 現在状態
 
-No physical test migration has been executed under this workstream yet.
+本workstreamにおけるphysical test migrationは未開始。
 
 ```text
 Migration batch count: 0
 Source-code/test-code moves: NONE
 Product semantic changes: NONE
-G02 Fixed Trial Candidate changes: NONE
+Gate contract/candidate remediation: NONE
 ```
 
 ## 3. Batch template
 
 ### Batch Mxx — <title>
 
-**Status:** `PLANNED | RUNNING | PASS | FAIL | BLOCKED | ROLLED_BACK`
+**状態:** `PLANNED | RUNNING | PASS | FAIL | BLOCKED | ROLLED_BACK`
 
 ```text
 Executed at:
@@ -82,6 +82,16 @@ source -> target
 PRODUCT_DEFECT | TEST_IMPLEMENTATION_DEFECT | TEST_ORCHESTRATION_DEFECT |
 TEST_ENVIRONMENT_DEFECT | MIGRATION_MANIFEST_DEFECT | NONE
 ```
+
+#### Gate / Enhancement impact
+
+```text
+Affected Gate(s): NONE | Gxx ...
+Product candidate impact: NONE | <explicit route reference>
+Frozen contract impact: NONE | <explicit amendment reference>
+```
+
+Migration自体を理由としてGate candidateやfrozen contractを変更してはならない。影響が生じる場合は、test migrationとは別の正式なGate routeとして記録する。
 
 #### Follow-up
 
