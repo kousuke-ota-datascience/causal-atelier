@@ -1,90 +1,66 @@
 # Migration後Verification
 
-**状態:** `NOT_STARTED`  
-**目的:** Test Architecture Migrationのclosure checklist
+**状態:** `MINIMUM_SCOPE`  
+**目的:** ENH-E9 minimum test migrationのclosure checklist
 
 ## 1. Structural verification
 
-- [ ] target directoryが設計どおり存在する
-- [ ] active testのownershipが `regression` / `enhancement` 間で曖昧になっていない
-- [ ] ENH-E9由来testがGate/layer単位で `tests/enhancement/enh_e9/...` に整理されている
-- [ ] permanent regression filenameが、明示的理由なしにhistorical Enhancement identityへ依存していない
+- [ ] ENH-E9で実際に使用・変更したtestが `tests/enhancement/enh_e9/<gate>/<layer>/...` に整理されている
+- [ ] 移動対象batchでownershipが曖昧になっていない
+- [ ] 明確にhistoricalと判断したtestのみ `tests/legacy_archive/` へ移している
+- [ ] 未判定既存testを、現時点で使わないという理由だけでarchiveしていない
 - [ ] `tests/legacy_archive/` が通常pytest collectionから除外されたままである
-- [ ] scientific benchmarkが独立識別可能である
 
-## 2. Pytest collection / fixture verification
+## 2. Batch dependency verification
 
-- [ ] default pytest collectionが成功する
-- [ ] active test countをpre-migration baselineと照合済み
-- [ ] path変更によりtestがsilent dropしていない
-- [ ] legacy testが誤って再collectionされていない
-- [ ] shared fixtureが意図したscopeからresolveする
-- [ ] PostgreSQL依存testのskip / marker behaviorが維持されている
-- [ ] custom markerが登録済みかつ意味を保持している
+各migration batchについて:
 
-## 3. Regression verification
+- [ ] `Path(__file__)` 等のpath依存を移動後locationに合わせて修正した
+- [ ] fixture / `conftest.py` scope impactを確認した
+- [ ] import pathを確認した
+- [ ] Docker / CI / docs / operator commandのpath referenceを必要に応じて更新した
+- [ ] targeted collectionが成功する
+- [ ] targeted testsがPASSする
 
-- [ ] unit regression suite PASS
-- [ ] contract regression suite PASS
-- [ ] integration regression suite PASS
-- [ ] frontend regression suite PASS
-- [ ] scientific deterministic regression suite PASS
-- [ ] benchmark suiteがdefault blocking regressionと分離して実行可能
+## 3. ENH-E9 execution continuity
 
-## 4. Enhancement verification
+- [ ] E9の今後のGate verificationに必要なtestを新配置から実行可能
+- [ ] test migration自体のためにproduct semanticsを変更していない
+- [ ] Gate candidate / frozen contractをmigration都合で変更していない
+- [ ] migrationでproduct defectを発見した場合は当該Gateの正式routeへ分離している
 
-- [ ] `tests/enhancement/<enhancement>/<gate>/...` をGate単位で独立実行できる
-- [ ] ENH-E9の各Gate由来testについてoriginal acceptance semanticsを保持している
-- [ ] PASS済みGateを含め、各Enhancement-specific testにpromotion / retain / retire / archiveのdispositionが追跡可能である
-- [ ] Enhancement-specific testが、明示的dispositionなしにhistorical permanent regressionとして残っていない
+## 4. 過渡期状態の確認
 
-## 5. Browser E2E verification
+ENH-E9 closure時点で以下が残っていても、本minimum migrationのFAIL条件とはしない。
 
-- [ ] canonical `run_project_lifecycle.py` がcurrent Project lifecycleを実行する
-- [ ] canonical `run_analysis_navigation.py` がcurrent family/stage navigationとhistory behaviorを実行する
-- [ ] canonical `run_causal_critical_journey.py` がDiscovery -> candidate -> comparison -> adopt/fix connectivityを実行する
-- [ ] canonical `run_predictive_critical_journey.py` がcurrent predictive connectivityを実行する
-- [ ] canonical runnerがhistorical Enhancement runner moduleをimportしていない
-- [ ] Browser assertionがobsolete internal DOMではなくsemantic observable state / canonical routeを優先している
-- [ ] failure時のtrace / screenshot / log / evidence生成が維持されている
+- `tests/product/` に未再認証testが残る
+- `tests/browser_e2e/` にhistorical Enhancement runnerが残る
+- `tests/integration/` / `tests/scientific/` が旧分類のまま残る
+- canonical regression suiteが全面再構築されていない
+- shared fixture / conftestが旧配置のまま残る
 
-## 6. Docker / CI / command-reference verification
+これらはENH-E12以降の Comprehensive Test Code Migration / Repository-wide Test Architecture Reconciliation のscopeである。
 
-- [ ] `Dockerfile.browser-e2e` がcurrent canonical runner pathを参照する
-- [ ] `.dockerignore` が必要なtest file/directoryを含む
-- [ ] Compose / Browser execution commandがcurrent pathを使用する
-- [ ] CI / workflow scriptがcurrent pathを使用する
-- [ ] documentation / operator promptがarchived runner pathを実行しない
-- [ ] repository searchで意図しないstale referenceが残っていない
+## 5. E10/E11 handoff verification
 
-## 7. Semantic non-regression audit
+- [ ] `07_handoff_to_enh_e10_e11.md` が存在する
+- [ ] E10/E11で新規testを置く推奨pathが明記されている
+- [ ] historical Browser E2E failureを即product defectとみなさない注意事項がある
+- [ ] 必要なtestだけbatch単位でmigrationしてよいことが明記されている
+- [ ] comprehensive migrationがENH-E12以降へdeferされていることが明記されている
 
-各 `SPLIT`, `MERGE`, `RETIRE`, `ARCHIVE` actionについて:
+## 6. Template non-change verification
 
-- [ ] durable current invariantにreplacement testが存在する、または
-- [ ] 当該behaviorがauthoritativeではなくなった明示的rationaleがある。
+- [ ] `docs/wiki/develop_memo/_work/agentic_enhancement_workflow_template/README.md` にrepository固有の過渡期test estate説明を追加していない
 
-Migrationが面倒であるという理由だけでassertionを消してはならない。
-
-## 8. Gate / Enhancement provenance保護
-
-- [ ] test architecture migrationによってactive/completed Gateのcandidate identityを遡及変更していない
-- [ ] 各Gateのfrozen `07` をmigration都合で変更していない
-- [ ] test harness / filesystem migration commitとproduct remediation commitを区別できる
-- [ ] migration中にproduct defectを発見した場合、該当Gateの正式routeへ分離している
-- [ ] 特定Gate固有のblocker resolutionを本migration全体のscopeやclosure条件として誤定義していない
-
-## 9. Closure record
-
-Migration execution完了後に記入する。
+## 7. Closure record
 
 ```text
-Final migration commit(s):
-Pre-migration baseline SHA:
-Post-migration verification SHA:
-Regression result:
-Enhancement result:
-Browser result:
-Known residual risks:
+Minimum migration commit(s):
+Migrated ENH-E9 test paths:
+Archived historical test paths:
+Targeted test result:
+Known transitional debt:
+Deferred comprehensive migration: ENH-E12 or later
 Final status: PASS | BLOCKED | FAIL
 ```
