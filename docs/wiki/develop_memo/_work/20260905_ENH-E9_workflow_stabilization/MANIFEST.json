@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "manifest_policy": "ENH-E9 frozen workflow index. E9 changes are confined to this workflow directory until Coding starts under Gate contracts.",
+  "manifest_policy": "ENH-E9 workflow index. Gate terminal authority is canonical 999; this manifest is an operational index and must not replace Gate evidence.",
   "instance": {
     "project": "Ariadne",
     "enhancement_id": "ENH-E9",
@@ -8,20 +8,25 @@
     "branch": "bugfix/ariadne_mvp_e9",
     "baseline_sha": "93fc2492112889a9465296a8647c251f84151bc5",
     "baseline_rule": "Human owner declared ENH-E8 G03 resolved/frozen on 2026-09-05. Baseline is the E9 workflow initialization commit; no source implementation change was introduced by that commit.",
-    "workflow_state": "FROZEN",
-    "agent_execution": "READY_FOR_G01_CODING"
+    "workflow_state": "FROZEN_ACTIVE_EXECUTION",
+    "agent_execution": "READY_FOR_G02_INDEPENDENT_VERIFICATION",
+    "execution_contract_rebaseline": "2026-09-06 self-containment hardening; no Gate claim/AC change"
   },
   "gates": [
-    {"gate_id":"G01","mode":"SINGLE_EXECUTION","state":"FROZEN_READY"},
-    {"gate_id":"G02","mode":"WORK_PACKAGE","state":"FROZEN_WAITING_G01_PASS"},
-    {"gate_id":"G03","mode":"SINGLE_EXECUTION","state":"FROZEN_WAITING_G02_PASS"},
-    {"gate_id":"G04","mode":"WORK_PACKAGE","state":"FROZEN_WAITING_G03_PASS"},
-    {"gate_id":"G05","mode":"SINGLE_EXECUTION","state":"FROZEN_WAITING_G04_PASS"}
+    {"gate_id":"G01","mode":"SINGLE_EXECUTION","state":"PASS","terminal_authority":"30_test_report/G01/Trial01/ENH-E9-G01_01__999_gate_decision.md"},
+    {"gate_id":"G02","mode":"WORK_PACKAGE","state":"READY_FOR_TEST","candidate_sha":"8cf70523093efa53b59a7de2c655f9755dbceb8d"},
+    {"gate_id":"G03","mode":"WORK_PACKAGE","state":"FROZEN_WAITING_G02_PASS","first_package":"P01"},
+    {"gate_id":"G04","mode":"WORK_PACKAGE","state":"FROZEN_WAITING_G03_PASS","first_package":"P01"},
+    {"gate_id":"G05","mode":"WORK_PACKAGE","state":"FROZEN_WAITING_G04_PASS","first_package":"P01"}
   ],
   "notes": [
     "Do not treat ENH-E8 G03 formal verification as an unresolved E9 blocker.",
+    "G02 READY_FOR_TEST is not PASS. G03 cannot start until canonical G02 999 is PASS.",
+    "Any G03 P01 execution started before the 2026-09-06 self-containment rebaseline is not eligible as Fixed Trial Candidate evidence; restart after G02 PASS.",
     "Outcome protected behavior is named FIXED Graph to Identification Outcome inheritance; 'Outcome one-way ownership' is not a canonical term.",
     "G04 baseline conformance gap is confirmed: structured ESS/analysis-weight diagnostics and weighted/post-adjustment balance are absent from current DIAGNOSTICS_RESULT.",
+    "P00 is planning-only/non-executable. All not-yet-completed Gates start with P01 through the shared Work Package Coding Agent prompt.",
+    "Browser E2E is never run at Package level; it is reserved for the final Gate-level connectivity verification where required, with G05 as the integrated blocking journey.",
     "Canonical source documents under docs/wiki/requirement_definition are reference-only for this Enhancement; revised copies/deltas live under 00_enhance_background/Revised_requirements_definition_documents."
   ]
 }
