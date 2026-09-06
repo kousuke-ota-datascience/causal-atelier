@@ -1,7 +1,14 @@
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[2]
+def _repository_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "pyproject.toml").is_file():
+            return parent
+    raise RuntimeError("repository root not found")
+
+
+ROOT = _repository_root()
 FRONTEND = ROOT / "frontend"
 
 

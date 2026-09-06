@@ -3,7 +3,14 @@
 from pathlib import Path
 
 
-REPOSITORY = Path(__file__).parents[2]
+def _repository_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "pyproject.toml").is_file():
+            return parent
+    raise RuntimeError("repository root not found")
+
+
+REPOSITORY = _repository_root()
 
 
 def test_estimation_action_bypasses_hidden_identification_form_validation() -> None:
