@@ -26,6 +26,9 @@ tests/browser_e2e/*
 !tests/enhancement/enh_e9/g02/
 !tests/enhancement/enh_e9/g02/browser_e2e/
 !tests/enhancement/enh_e9/g02/browser_e2e/run_discovery_candidate_adoption.py
+!tests/enhancement/enh_e9/g05/
+!tests/enhancement/enh_e9/g05/browser_e2e/
+!tests/enhancement/enh_e9/g05/browser_e2e/run_critical_causal_journey.py
 src/ariadne/legacy
 src/ariadne/infrastructure/artifact_store
 src/ariadne/infrastructure/auth
