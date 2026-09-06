@@ -72,7 +72,9 @@ Regression testが表現するのはEnhancement履歴ではなく、**現在のa
 | `04_migration_decision_log.md` | migration scope / architecture decision log |
 | `05_execution_record.md` | 実際に行ったmigration batch / commitの追記型実行証跡 |
 | `06_post_migration_verification.md` | ENH-E9 minimum migrationのverification checklist |
-| `07_handoff_to_enh_e10_e11.md` | ENH-E10/E11へ引き継ぐ過渡期test estate運用事項 |
+| `07_handoff_to_enh_e10_e11.md` | ENH-E10/E11へ共通で引き継ぐ過渡期test estate運用baseline |
+| `08_handoff_to_enh_e10.md` | ENH-E10 planning / 10 / 40 / verification authoringへ直接適用する個別handoff |
+| `09_handoff_to_enh_e11.md` | ENH-E11 planning / 10 / 40 / verification authoringへ直接適用する個別handoff |
 
 ## 7. Authority boundary
 
