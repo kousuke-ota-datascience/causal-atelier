@@ -24,7 +24,7 @@ WORK_DIR_NAME=20260905_ENH-E9_workflow_stabilization
 
 ## 2. Responsibility
 
-assigned Work Packageについてrepository preflight、frozen Pxx contract特定、Package scope実装、focused verification、Package checkpoint commit、Package status report、evidence commit/pushまでを行う。
+assigned Work Packageについてrepository preflight、frozen Pxx contract特定、Package dependency verification、Package scope実装、focused verification、Package checkpoint commit、Package status report、evidence commit/pushまでを行う。
 
 本Agentは他Package実行、次Package選択、Candidate Assembly、Gate PASS/FAIL判定を行わない。
 
@@ -40,6 +40,8 @@ branchは `bugfix/ariadne_mvp_e9`、working treeはcleanでなければならな
 
 current Trialにfrozen Remediation Contractがある場合は通常Package executionを開始せず `BLOCKED_EXECUTION_MODE_MISMATCH`。
 
+`PACKAGE_ID=P00` は実行しない。P00はplanning-only/non-executableである。P00が渡された場合は `BLOCKED_EXECUTION_MODE_MISMATCH` とする。
+
 ## 4. Normative Package contract
 
 次から `{{GATE_ID}} / {{PACKAGE_ID}}` に一致するfrozen Pxx contractを正確に1件特定する。
@@ -53,15 +55,50 @@ current Trialにfrozen Remediation Contractがある場合は通常Package execu
 
 assigned Pxxのみをnormative implementation contractとする。source/test/configurationはimplementation substrate調査に使用してよいが仕様authorityではない。Gate-level 06、07、P00、他Pxx、過去Enhancement、issue、外部Webで仕様補完しない。
 
-## 5. Implementation / verification
+## 5. Self-containment preflight
+
+Coding開始前にassigned Pxx単独で次を一意に解決できることを確認する。
+
+- objective / assigned scope
+- dependencyとdependencyを満たすcanonical evidence
+- relevant baseline facts
+- required behavior / output semantics
+- source-of-truth / authority boundary
+- protected invariants
+- explicit forbidden behavior
+- focused verification required cases
+- completion boundary
+- ambiguity / stop rule
+
+Pxx本文がparent Gate 06/07、P00、other Pxxを**normative semantic補完先**として要求している場合は、その参照先を読んで補完せず `BLOCKED_CONTRACT_AMBIGUITY` とする。
+
+Path、report filename、workflow共通手続等のnon-semantic referenceは許容するが、product/scientific semanticsを外部contractから復元してはならない。
+
+## 6. Dependency preflight
+
+Pxxに記載されたdependencyを、Pxxが指定するcanonical evidenceだけで検証する。
+
+Examples:
+
+- previous Gate dependency: canonical `999_gate_decision` exactly one + `Gate decision: PASS`
+- previous Package dependency: canonical package report exactly one + `State: PACKAGE_COMPLETE`
+- `READY_FOR_TEST` / Candidate Assembly / implementation completionはGate PASSの代替ではない。
+
+Dependency未成立ならproduct codeを変更せず `BLOCKED_PRECHECK`。
+
+## 7. Implementation / verification
 
 assigned Pxx scopeのみ実装する。scope外変更、不要refactoring、architecture変更、protected invariant変更、unrelated cleanup、speculative fixは禁止。
 
 Pxxが要求するfocused verificationを実行し、commandと結果を記録する。test削除、assertion弱体化、skip/xfail、error suppression、他Package変更による回避は禁止。
 
+**Package CodingではBrowser E2Eを実行しない。** Browser E2EはGate-level Independent Verificationで明示された最終connectivity verificationへ留保する。PxxがBrowser E2Eをrequired focused verificationとして要求していた場合はself-containment/workflow contract conflictとして`BLOCKED_CONTRACT_AMBIGUITY`。
+
 scope内で完了できなければ `BLOCKED_IMPLEMENTATION`。
 
-## 6. Package checkpoint
+Source factとPxx contractが矛盾し、new API/schema/persistence/scientific semanticsまたはGate claim/AC変更が必要ならsilent reinterpretせずBLOCKED。Gate semantic defectは09 amendment対象でありCoding Agentが補完しない。
+
+## 8. Package checkpoint
 
 変更を確認してassigned Package scopeのみstageする。
 
@@ -82,7 +119,7 @@ git rev-parse HEAD
 
 取得SHAを `PACKAGE_CHECKPOINT_SHA` とする。
 
-## 7. Package status report
+## 9. Package status report
 
 canonical path:
 
@@ -92,7 +129,7 @@ canonical path:
 ENH-E9-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
 ```
 
-最低限、Gate/Package/Trial、normative contract path、START_SHA、Package status、changed files、implementation summary、verification commands/results、PACKAGE_CHECKPOINT_SHA、blocker/remaining workを記録する。
+最低限、Gate/Package/Trial、normative contract path、START_SHA、dependency evidence、Package status、changed files、implementation summary、verification commands/results、PACKAGE_CHECKPOINT_SHA、blocker/remaining workを記録する。
 
 正常時のcanonical semantic stateは:
 
@@ -105,7 +142,7 @@ State: PACKAGE_COMPLETE
 
 terminal response labelは `PACKAGE_READY` とする。
 
-## 8. Evidence commit / push
+## 10. Evidence commit / push
 
 reportだけをstageし、evidence commitを作成する。
 
@@ -115,14 +152,15 @@ git commit -m "ENH-E9 Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} impleme
 git push -u causal-atelier bugfix/ariadne_mvp_e9
 ```
 
-## 9. Final status
+## 11. Final status
 
 ```text
 PACKAGE_READY
+BLOCKED_PRECHECK
 BLOCKED_CONTRACT_AMBIGUITY
 BLOCKED_REPOSITORY_STATE
 BLOCKED_IMPLEMENTATION
 BLOCKED_EXECUTION_MODE_MISMATCH
 ```
 
-`PACKAGE_READY` では `GATE_ID / PACKAGE_ID / TRIAL_NO / START_SHA / PACKAGE_CHECKPOINT_SHA / EVIDENCE_COMMIT_SHA / report path / verification summary` を報告する。
+`PACKAGE_READY` では `GATE_ID / PACKAGE_ID / TRIAL_NO / START_SHA / dependency evidence / PACKAGE_CHECKPOINT_SHA / EVIDENCE_COMMIT_SHA / report path / verification summary` を報告する。
