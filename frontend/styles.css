@@ -63,3 +63,10 @@ dialog:has(.modal-card.wide){width:min(94vw,1100px);max-width:min(94vw,1100px)}.
   border-color: #173f31;
   color: #fff;
 }
+
+#graph-modal-feedback:not(:empty) {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-left: 4px solid #2a7254;
+  background: #eaf1e5;
+}
