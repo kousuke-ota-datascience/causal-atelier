@@ -1,80 +1,82 @@
-# Post-Migration Verification
+# Migration後Verification
 
-**Status:** `NOT_STARTED`  
-**Purpose:** closure checklist for Test Architecture Migration
+**状態:** `NOT_STARTED`  
+**目的:** Test Architecture Migrationのclosure checklist
 
 ## 1. Structural verification
 
-- [ ] target directories exist as designed
-- [ ] active tests have no ambiguous ownership between `regression` and `enhancement`
-- [ ] current ENH-E9 tests are under `tests/enhancement/enh_e9/...`
-- [ ] permanent regression filenames no longer depend on historical Enhancement identity unless explicitly justified
-- [ ] `tests/legacy_archive/` remains excluded from normal pytest collection
-- [ ] scientific benchmarks remain separately identifiable
+- [ ] target directoryが設計どおり存在する
+- [ ] active testのownershipが `regression` / `enhancement` 間で曖昧になっていない
+- [ ] ENH-E9由来testがGate/layer単位で `tests/enhancement/enh_e9/...` に整理されている
+- [ ] permanent regression filenameが、明示的理由なしにhistorical Enhancement identityへ依存していない
+- [ ] `tests/legacy_archive/` が通常pytest collectionから除外されたままである
+- [ ] scientific benchmarkが独立識別可能である
 
 ## 2. Pytest collection / fixture verification
 
-- [ ] default pytest collection succeeds
-- [ ] expected active test count is reconciled against pre-migration baseline
-- [ ] no tests are silently dropped by path changes
-- [ ] no legacy tests are accidentally reintroduced
-- [ ] shared fixtures resolve from intended scopes
-- [ ] PostgreSQL-dependent tests retain explicit skip/marker behavior
-- [ ] custom markers remain registered and meaningful
+- [ ] default pytest collectionが成功する
+- [ ] active test countをpre-migration baselineと照合済み
+- [ ] path変更によりtestがsilent dropしていない
+- [ ] legacy testが誤って再collectionされていない
+- [ ] shared fixtureが意図したscopeからresolveする
+- [ ] PostgreSQL依存testのskip / marker behaviorが維持されている
+- [ ] custom markerが登録済みかつ意味を保持している
 
 ## 3. Regression verification
 
-- [ ] unit regression suite passes
-- [ ] contract regression suite passes
-- [ ] integration regression suite passes
-- [ ] frontend regression suite passes
-- [ ] scientific deterministic regression suite passes
-- [ ] benchmark suite can be invoked separately from default blocking regression as intended
+- [ ] unit regression suite PASS
+- [ ] contract regression suite PASS
+- [ ] integration regression suite PASS
+- [ ] frontend regression suite PASS
+- [ ] scientific deterministic regression suite PASS
+- [ ] benchmark suiteがdefault blocking regressionと分離して実行可能
 
 ## 4. Enhancement verification
 
-- [ ] ENH-E9 G01/G02 test paths are executable independently
-- [ ] G02 focused frontend tests retain their original acceptance semantics
-- [ ] enhancement-specific tests are not accidentally required as historical permanent regression without disposition
+- [ ] `tests/enhancement/<enhancement>/<gate>/...` をGate単位で独立実行できる
+- [ ] ENH-E9の各Gate由来testについてoriginal acceptance semanticsを保持している
+- [ ] PASS済みGateを含め、各Enhancement-specific testにpromotion / retain / retire / archiveのdispositionが追跡可能である
+- [ ] Enhancement-specific testが、明示的dispositionなしにhistorical permanent regressionとして残っていない
 
 ## 5. Browser E2E verification
 
-- [ ] canonical `run_project_lifecycle.py` executes the current Project lifecycle
-- [ ] canonical `run_analysis_navigation.py` executes current family/stage navigation and history behavior
-- [ ] canonical `run_causal_critical_journey.py` executes Discovery -> candidate -> comparison -> adopt/fix connectivity
-- [ ] canonical `run_predictive_critical_journey.py` executes current predictive connectivity
-- [ ] no canonical runner imports historical Enhancement runner modules
-- [ ] Browser runner assertions target semantic observable state / canonical routes rather than obsolete internal DOM where avoidable
-- [ ] traces/screenshots/logs/evidence are still produced on failure
+- [ ] canonical `run_project_lifecycle.py` がcurrent Project lifecycleを実行する
+- [ ] canonical `run_analysis_navigation.py` がcurrent family/stage navigationとhistory behaviorを実行する
+- [ ] canonical `run_causal_critical_journey.py` がDiscovery -> candidate -> comparison -> adopt/fix connectivityを実行する
+- [ ] canonical `run_predictive_critical_journey.py` がcurrent predictive connectivityを実行する
+- [ ] canonical runnerがhistorical Enhancement runner moduleをimportしていない
+- [ ] Browser assertionがobsolete internal DOMではなくsemantic observable state / canonical routeを優先している
+- [ ] failure時のtrace / screenshot / log / evidence生成が維持されている
 
 ## 6. Docker / CI / command-reference verification
 
-- [ ] `Dockerfile.browser-e2e` references current canonical runner paths
-- [ ] `.dockerignore` includes required test files/directories
-- [ ] Compose/browser execution commands use current paths
-- [ ] CI/workflow scripts use current paths
-- [ ] documentation/operator prompts do not invoke archived runner paths
-- [ ] repository search finds no unintended stale references to migrated paths
+- [ ] `Dockerfile.browser-e2e` がcurrent canonical runner pathを参照する
+- [ ] `.dockerignore` が必要なtest file/directoryを含む
+- [ ] Compose / Browser execution commandがcurrent pathを使用する
+- [ ] CI / workflow scriptがcurrent pathを使用する
+- [ ] documentation / operator promptがarchived runner pathを実行しない
+- [ ] repository searchで意図しないstale referenceが残っていない
 
 ## 7. Semantic non-regression audit
 
-For each `SPLIT`, `MERGE`, `RETIRE`, or `ARCHIVE` action:
+各 `SPLIT`, `MERGE`, `RETIRE`, `ARCHIVE` actionについて:
 
-- [ ] durable current invariant has an identified replacement test, or
-- [ ] explicit rationale confirms the behavior is no longer authoritative.
+- [ ] durable current invariantにreplacement testが存在する、または
+- [ ] 当該behaviorがauthoritativeではなくなった明示的rationaleがある。
 
-No assertion may disappear solely because it was inconvenient to migrate.
+Migrationが面倒であるという理由だけでassertionを消してはならない。
 
-## 8. G02 provenance protection
+## 8. Gate / Enhancement provenance保護
 
-- [ ] G02 Trial01 Fixed Candidate identity remains unchanged by test architecture migration
-- [ ] G02 frozen `07` remains unchanged
-- [ ] Browser harness repair/migration commits are distinguishable from product candidate commits
-- [ ] G02 Independent Verification is rerun under the same Trial after the test-side blocker is resolved
+- [ ] test architecture migrationによってactive/completed Gateのcandidate identityを遡及変更していない
+- [ ] 各Gateのfrozen `07` をmigration都合で変更していない
+- [ ] test harness / filesystem migration commitとproduct remediation commitを区別できる
+- [ ] migration中にproduct defectを発見した場合、該当Gateの正式routeへ分離している
+- [ ] 特定Gate固有のblocker resolutionを本migration全体のscopeやclosure条件として誤定義していない
 
 ## 9. Closure record
 
-Complete only after migration execution.
+Migration execution完了後に記入する。
 
 ```text
 Final migration commit(s):
