@@ -6,7 +6,7 @@
 - State: PACKAGE_COMPLETE
 - Normative contract: `10_enhance_instruction/G04/06_G04_P04_frontend_structured_consumption.md` (FROZEN)
 - START_SHA: `f6dc206dd9a602857a28486d35411164df2c6327`
-- PACKAGE_CHECKPOINT_SHA: `d9931cd44df59d8646390b79d9a630a5483f7068`
+- PACKAGE_CHECKPOINT_SHA: `0a841487d8b114563e5db6cacda406619fae4e5b`
 
 ## Dependency evidence
 
