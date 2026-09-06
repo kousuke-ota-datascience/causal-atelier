@@ -1,18 +1,20 @@
 # テストMigration Manifest
 
-**状態:** `DRAFT`  
-**目的:** test architecture再編におけるsource-to-target migration authority
+**状態:** `BATCH_SCOPED / ACTIVE`  
+**目的:** ENH-E9 minimum test migrationにおけるsource-to-target authority
 
 ## 1. Manifest rule
 
-各migration itemは以下を記録する。
+Physical migrationはrepository全体のclassification完了を待たず、**batch単位**で開始してよい。
+
+各batchでは対象fileについてのみ、以下を事前確定する。
 
 - source path
-- target pathまたはtarget test family
+- target pathまたはtarget family
 - action
 - rationale
-- dependency note
-- migration後に必要なverification
+- path/import/fixture/Docker/CI dependency
+- migration後verification
 
 許可するaction vocabulary:
 
@@ -29,100 +31,65 @@ RETIRE
 REVIEW_SUPERSEDED
 ```
 
-Ownershipが曖昧な状態でphysical moveを開始してはならない。
+## 2. ENH-E9 minimum migration開始条件
 
-## 2. 初期high-confidence mapping
+対象batchについて以下を満たせばphysical moveを開始できる。
+
+1. batch対象fileのdispositionが確定している;
+2. batch対象fileのpath/import/fixture dependencyを調査済み;
+3. move後のtargeted test / collection verificationを定義済み;
+4. archiveの場合、historical / supersededであることを十分確認している;
+5. Gate contract / product candidate remediationを含まない。
+
+**全active test fileの分類完了はENH-E9 migrationの開始条件としない。**
+
+## 3. ENH-E9で優先するmigration
+
+ENH-E9で実際に使用・変更するtestを優先し、以下へ移行する。
+
+```text
+tests/enhancement/enh_e9/<gate>/<layer>/...
+```
+
+現在確認済みの例:
 
 | Source | Target | Action | Notes |
 |---|---|---|---|
-| `tests/browser_e2e/run_enh_e7_project_integration.py` | `tests/regression/browser_e2e/run_project_lifecycle.py` | `PROMOTE + REWRITE` | current Project lifecycleのsource |
-| `tests/browser_e2e/run_enh_e8_g01_project_return.py` | `tests/regression/browser_e2e/run_project_lifecycle.py` | `MERGE` | return/history scenarioをcanonical project journeyへ統合 |
-| `tests/browser_e2e/run_enh_e6_family_stage_navigation.py` | `tests/regression/browser_e2e/run_analysis_navigation.py` | `PROMOTE + REWRITE` | Enhancement identityを除去しcurrent family/stage navigationを保持 |
-| `tests/browser_e2e/run_enh_e3_predictive.py` | `tests/regression/browser_e2e/run_predictive_critical_journey.py` | `PROMOTE + REWRITE` | current predictive journeyをdistill |
-| `tests/browser_e2e/run_enh_e1a.py` | historical archive + causal scenario source | `ARCHIVE + SPLIT` | canonical regressionとして全体修理しない |
-| `tests/browser_e2e/run_enh_e3.py` | historical archive + scenario source | `ARCHIVE + SPLIT` | historical runner dependencyからcurrent invariantのみ抽出 |
-| `tests/product/test_enh_e9_g02_p01_discovery_copy_help_overflow.py` | `tests/enhancement/enh_e9/g02/frontend/test_discovery_copy_help_overflow.py` | `MOVE + RENAME` | 現在確認済みのENH-E9/G02由来test |
-| `tests/product/test_enh_e9_g02_p02_selection_comparison_clarity.py` | `tests/enhancement/enh_e9/g02/frontend/test_selection_comparison_clarity.py` | `MOVE + RENAME` | 現在確認済みのENH-E9/G02由来test |
-| `tests/product/test_enh_e9_g02_p03_adoption_feedback_export.py` | `tests/enhancement/enh_e9/g02/frontend/test_adoption_feedback_export.py` | `MOVE + RENAME` | 現在確認済みのENH-E9/G02由来test |
-| `tests/scientific_benchmarks/` | `tests/benchmarks/scientific/` | `MOVE + REWRITE_NAMES_AS_NEEDED` | benchmark marker / semanticsを保持 |
-| `tests/legacy_archive/` | unchanged | `KEEP` | default collection外を維持 |
+| `tests/product/test_enh_e9_g02_p01_discovery_copy_help_overflow.py` | `tests/enhancement/enh_e9/g02/frontend/test_discovery_copy_help_overflow.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | path resolutionを移動後locationに合わせる |
+| `tests/product/test_enh_e9_g02_p02_selection_comparison_clarity.py` | `tests/enhancement/enh_e9/g02/frontend/test_selection_comparison_clarity.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | 同上 |
+| `tests/product/test_enh_e9_g02_p03_adoption_feedback_export.py` | `tests/enhancement/enh_e9/g02/frontend/test_adoption_feedback_export.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | 同上 |
 
-上表のG02行は、現時点で具体的source pathが確定しているため記載している。Migrationの対象範囲はENH-E9全Gateおよび既存test体系全体であり、G02限定ではない。
+G02は具体的file pathが確定している例として記載している。ENH-E9のminimum migrationはG02限定ではなく、今後E9で使用するG01-G05各Gateのtestへ同じbatch ruleを適用する。
 
-## 3. Generic product tests
+## 4. 明確なhistorical testの扱い
 
-初期target family:
+Historical / supersededと十分確認でき、current invariantの唯一coverageではないtestは `tests/legacy_archive/` へ移動できる。
 
-| Source pattern | Target family | Action |
-|---|---|---|
-| `tests/product/test_architecture.py` | `tests/regression/contract/architecture/` | `PROMOTE` |
-| `tests/product/test_cli_contract.py` | `tests/regression/contract/` | `PROMOTE` |
-| `tests/product/test_domain_and_snapshot.py` | `tests/regression/unit/` | `PROMOTE` |
-| `tests/product/test_frontend_contract.py` | `tests/regression/frontend/` | `PROMOTE` |
-| `tests/product/test_postgres_contract.py` | `tests/regression/integration/persistence/` | `PROMOTE` |
-| `tests/product/test_api_worker_e2e.py` | `tests/regression/integration/` | `PROMOTE_REVIEW_LAYER` |
-| `tests/product/compose_golden_path_smoke.py` | `tests/regression/integration/` | `PROMOTE_REVIEW_LAYER` |
+一方、現在使用していないだけでcurrent invariantか未判定のtestはarchiveしない。ENH-E9では既存位置に残置してよい。
 
-Exact filenameはsemantic review後に確定する。
+## 5. ENH-E12以降へdeferするcomprehensive migration
 
-## 4. Enhancement family review group
+以下はENH-E9では実施しない。
 
-### E1-E3
+- E1-E8を含む既存test全件のfile-by-file再分類;
+- Browser runner全件のcanonical journeyへの統合;
+- generic product / integration / scientific testsの全面移動;
+- shared fixture / conftest体系の全面再編;
+- old test directoryの完全撤去;
+- canonical regression suiteのrepository-wide再構築。
 
-現在も有効なbehaviorは `PROMOTE + REWRITE + DEDUPE`。
+これらは **Comprehensive Test Code Migration / Repository-wide Test Architecture Reconciliation** としてENH-E12以降で実施する。
 
-Provenanceそのものがrequirementでない限り、恒久regression filenameからhistorical Enhancement identityを除去する。
+## 6. 過渡期の許容状態
 
-### E4
-
-Action: `SPLIT`。
-
-- canonical execution/result/artifact/lineage invariant -> regression
-- migration/cutover procedure assertion -> invariant抽出後archiveまたはretire
-
-### E5
-
-- navigation/history -> E6/E7と比較し `REVIEW_SUPERSEDED`
-- causal/predictive/exploratory semantics -> `PROMOTE + MERGE`
-
-### E6-E8
-
-原則 `PROMOTE + MERGE`。Migration/runner-specific assertionはcurrent generic contractへ再記述する。
-
-### E9
-
-ENH-E9全Gateのtestを `tests/enhancement/enh_e9/<gate>/<layer>/...` の体系で整理し、Gate/Enhancementの安定化状態に応じて個別dispositionを行う。
-
-`ACTIVE_ENH` は「ENH-E9全体が未完了であるため永続的にpromotionしない」という意味ではない。PASS済みGateも含め、current authoritative behaviorとして恒久保証すべきtestは明示的にpromotion candidateとして評価する。
-
-## 5. Support migration
-
-`tests/conftest.py` と `tests/product/conftest.py` は初回batchで機械的に移動しない。
-
-事前に以下を記録する。
-
-- fixture consumer
-- pytest discovery scope
-- environment variables
-- import/path assumptions
-- Docker/CI reference
-
-Potential target:
+ENH-E10 / E11を含む移行完了前のEnhancementでは、以下の新旧共存を許容する。
 
 ```text
-tests/support/fixtures/
-tests/support/factories/
-tests/support/helpers/
+tests/enhancement/...   # 新規/変更testの推奨配置
+tests/product/...       # 未再認証の既存testが残り得る
+tests/browser_e2e/...   # historical runnerが残り得る
+tests/integration/...
+tests/scientific/...
 ```
 
-ただし `conftest.py` placementはpytest semantics上の構造要件として残る可能性がある。
-
-## 6. Manifest completion condition
-
-Physical migration開始条件:
-
-1. 全active test fileにdispositionがある;
-2. 全`SPLIT` / `MERGE` rowでdestination invariantが特定されている;
-3. Browser / CI / Docker path referenceがinventory済み;
-4. pytest fixture scope impactを理解している;
-5. ENH-E9全GateのEnhancement-specific testとpermanent regression candidateの責務が分類されている。
+この共存はtarget architecture完成を意味しない。各Enhancementは必要なtestのみbatch単位で新体系へ移し、既存未判定testを無理に動かさない。
