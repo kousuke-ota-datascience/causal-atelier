@@ -57,3 +57,9 @@ dialog:has(.modal-card.wide){width:min(94vw,1100px);max-width:min(94vw,1100px)}.
 #graph-candidates table {
   min-width: 900px;
 }
+
+#comparison-tabs button.current-comparison-candidate {
+  background: #173f31;
+  border-color: #173f31;
+  color: #fff;
+}
