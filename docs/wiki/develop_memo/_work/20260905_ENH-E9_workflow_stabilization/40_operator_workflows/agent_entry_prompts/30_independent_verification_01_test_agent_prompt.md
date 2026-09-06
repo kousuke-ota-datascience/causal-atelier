@@ -70,7 +70,22 @@ git show --stat --oneline --no-renames "$FIXED_TRIAL_CANDIDATE_SHA"
 
 07に定義されたTest Item、Acceptance Criteria、protected regression、Transition Debt auditを実行する。各itemにcommand/input、test target、observed output、evidence、PASS/FAIL/BLOCKED、理由を記録する。
 
-Browser E2Eは07がGate-blockingとして定義したものだけ実行する。product violationがverifiedされた場合のみFAIL候補。test implementation/orchestration/environment defectまたはUNKNOWNでproduct correctnessを判定できない場合はBLOCKED候補。
+### Mandatory verification order
+
+1. candidate identity audit
+2. static / syntax checks required by 07
+3. non-browser unit / scientific / integration / contract / regression verification required by 07
+4. non-browser blocking verification resultsを評価する
+5. 07がBrowser E2Eを要求する場合、**Browser E2Eは最後のverification itemとしてのみ実行する**
+6. Gate Decisionを確定する
+
+Browser E2Eをnon-browser verificationより先に実行しない。Package実装時のfocused verification結果を理由にこの順序を省略しない。
+
+07がBrowser E2Eを要求しないGateではBrowser E2Eを追加実行しない。07がGate-blocking Browser E2Eを定義する場合のみ最後に実行する。
+
+non-browser verificationでproduct violationが既にverifiedされた場合、そのFAILを先にevidence化し、Browser E2Eを先行・代替proofとして使用しない。Browser E2Eはcross-layer connectivity proofとして扱い、詳細scientific/numeric correctnessのprimary proofにしない。
+
+Browser E2Eのproduct violationがverifiedされた場合のみFAIL候補。test implementation/orchestration/environment defectまたはUNKNOWNでproduct correctnessを判定できない場合はBLOCKED候補。
 
 ## 7. Prohibited actions
 
