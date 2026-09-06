@@ -1,9 +1,9 @@
-# Target Test Architecture
+# 目標テストアーキテクチャ
 
-**Status:** `PROPOSED_BASELINE`  
-**Scope:** filesystem organization and test lifecycle policy
+**状態:** `PROPOSED_BASELINE`  
+**Scope:** filesystem organization / test lifecycle policy
 
-## 1. Target filesystem
+## 1. 目標filesystem
 
 ```text
 tests/
@@ -34,15 +34,13 @@ tests/
 │       └── run_predictive_critical_journey.py
 │
 ├── enhancement/
-│   └── enh_e9/
-│       ├── g01/
-│       ├── g02/
-│       │   ├── unit/
-│       │   ├── contract/
-│       │   ├── integration/
-│       │   ├── frontend/
-│       │   └── browser_e2e/
-│       └── ...
+│   └── <enhancement>/
+│       └── <gate>/
+│           ├── unit/
+│           ├── contract/
+│           ├── integration/
+│           ├── frontend/
+│           └── browser_e2e/
 │
 ├── characterization/
 │   └── scientific/
@@ -58,16 +56,16 @@ tests/
 └── legacy_archive/
 ```
 
-## 2. Orthogonal classification axes
+## 2. 直交する分類軸
 
 ### Lifecycle / authority axis
 
-- `regression` — current authoritative product behavior that must continue to hold
-- `enhancement` — active Enhancement delta under development/verification
-- `characterization` — observational/scientific characterization that is not a hard regression contract
-- `benchmarks` — repeated scientific/statistical acceptance benchmarks
-- `support` — fixtures/factories/helpers, not independent assertions
-- `legacy_archive` — retired historical tests excluded from normal collection
+- `regression` — 現在のauthoritative product behaviorとして恒久的に守るもの
+- `enhancement` — 開発・verification中のEnhancement delta
+- `characterization` — hard regression contractではない観測的・scientific characterization
+- `benchmarks` — repeated scientific/statistical acceptance benchmark
+- `support` — fixtures / factories / helpers。独立assertionではない
+- `legacy_archive` — retired historical tests。通常collection対象外
 
 ### Verification-layer axis
 
@@ -77,49 +75,49 @@ tests/
 - `frontend`
 - `browser_e2e`
 
-These axes are intentionally orthogonal. A test must first have a lifecycle/authority role, then a verification layer.
+各testはまずlifecycle / authority上の責務を持ち、その内側でverification layerに分類する。
 
-## 3. Regression definition
+## 3. Regressionの定義
 
-`tests/regression/` is not a historical archive of all previously passing tests.
+`tests/regression/` は「過去にpassしたtestをすべて保存する場所」ではない。
 
-A regression test must represent **current authoritative behavior**. If an intentional Enhancement changes navigation, API shape, or internal architecture while preserving product semantics, the regression suite is re-authored to express the new current contract.
+Regression testは **現在のauthoritative behavior** を表現する。Intentional Enhancementによってnavigation、API shape、内部architecture等が変わった場合、旧実装形状を維持するのではなく、新しいcurrent contractを表すようregressionを再記述する。
 
-Regression expectations must not be weakened merely to make a failing test pass. Each drift must be classified:
+Failureを通すためだけのexpectation弱体化は禁止する。Driftは以下に分類する。
 
 | Drift type | Required action |
 |---|---|
-| Intended specification change | update regression to the newly approved current contract |
-| Product violates existing contract | fix product; do not weaken regression |
-| Implementation/DOM/navigation changes but semantics remain | update harness/locator/route expression |
-| Old specification retired | explicitly replace/remove old regression with recorded decision |
+| Intended specification change | 承認済みcurrent contractへregressionを更新 |
+| Product violates existing contract | productを修正し、regressionは弱めない |
+| Implementation/DOM/navigationのみ変更しsemanticsは同じ | harness / locator / route表現を更新 |
+| Old specification retired | decisionを記録した上で旧regressionを置換・削除 |
 
 ## 4. Enhancement test lifecycle
 
-New or changed behavior begins under:
+新規・変更behaviorは以下から開始する。
 
 ```text
 tests/enhancement/<enhancement>/<gate>/<layer>/
 ```
 
-After Gate/Enhancement stabilization, each test receives a disposition:
+GateまたはEnhancementの安定化後、各testに以下のdispositionを与える。
 
 ```text
-PROMOTE      -> move current invariant into regression
-REWRITE      -> preserve semantics while replacing historical/temporary structure
-MERGE        -> combine overlapping assertions into canonical regression
-SPLIT        -> separate current invariant from migration/history-only assertions
-RETIRE       -> remove no-longer-needed temporary assertion
-ARCHIVE      -> preserve historical evidence outside active regression
+PROMOTE      -> current invariantをregressionへ昇格
+REWRITE      -> semanticsを維持しつつhistorical/temporary structureを置換
+MERGE        -> 重複assertionをcanonical regressionへ統合
+SPLIT        -> current invariantとmigration/history assertionを分離
+RETIRE       -> 不要になったtemporary assertionを終了
+ARCHIVE      -> historical evidenceとしてactive regression外に保存
 ```
 
-Promotion is semantic, not necessarily a file move. Enhancement-specific tests may be distilled into fewer canonical regression tests.
+Promotionはsemanticな判断であり、単純file moveとは限らない。複数のEnhancement-specific testsを少数のcanonical regressionへdistillしてよい。
 
-## 5. Browser E2E policy in target architecture
+## 5. Browser E2E policy
 
-Browser E2E is restricted to critical cross-layer user journeys. Detailed correctness remains primarily in lower deterministic layers.
+Browser E2Eはcritical cross-layer user journeyに限定する。詳細なcorrectnessはdeterministicなlower layerをprimary proofとする。
 
-Initial canonical Browser regression candidates:
+初期canonical Browser regression候補:
 
 1. `run_project_lifecycle.py`
    - Project List -> New Project -> overview/context/data/results -> return/history
@@ -130,35 +128,27 @@ Initial canonical Browser regression candidates:
 4. `run_predictive_critical_journey.py`
    - dataset/fixture -> predictive setup/run -> result -> persisted observable result
 
-Historical Enhancement acceptance runners are sources for scenario extraction, not permanent authorities.
+Historical Enhancement acceptance runnerはscenario抽出元であり、恒久authorityではない。
 
-## 6. ENH-E9 initial placement
+## 6. ENH-E9への適用
 
-Current G02 focused tests should stage under:
-
-```text
-tests/enhancement/enh_e9/g02/frontend/
-├── test_discovery_copy_help_overflow.py
-├── test_selection_comparison_clarity.py
-└── test_adoption_feedback_export.py
-```
-
-A dedicated G02 Browser connectivity runner may stage under:
+ENH-E9では、各Gate由来testを以下の原則で整理する。
 
 ```text
-tests/enhancement/enh_e9/g02/browser_e2e/
+tests/enhancement/enh_e9/<gate>/<layer>/...
 ```
 
-until its durable behavior is distilled into the canonical causal critical journey.
+特定Gateのtestだけを対象とするのではなく、G01-G05を含むENH-E9全体のtest lifecycleを同じ規則で扱う。既にPASS済みのGateであっても、恒久regressionへ昇格すべきか、Enhancement provenanceとして保持すべきか、retire/archiveすべきかを明示的に判定する。
 
 ## 7. Migration invariants
 
-The migration must preserve the following:
+Migrationは以下を維持しなければならない。
 
-- no product semantic change solely for filesystem cleanup;
-- no weakening/removal of current authoritative assertions without recorded disposition;
-- no mutation of G02 Fixed Trial Candidate as part of test architecture work;
-- legacy archive remains excluded from default pytest collection;
-- scientific benchmark execution remains separately identifiable;
-- fixture resolution and pytest markers remain valid;
-- Docker/CI/browser runner paths are updated atomically when files move.
+- filesystem cleanupのみを理由とするproduct semantic changeを行わない;
+- recorded dispositionなしにcurrent authoritative assertionを弱体化・削除しない;
+- test architecture workを特定Gateのproduct remediationと混同しない;
+- activeなGate candidateやfrozen contractをmigration都合で遡及変更しない;
+- `legacy_archive` はdefault pytest collection外を維持する;
+- scientific benchmark executionを独立識別可能に保つ;
+- fixture resolution / pytest markersを維持する;
+- file move時はDocker / CI / Browser runner path referenceをatomicに更新する。
