@@ -28,10 +28,20 @@ Analysis Context
 8. Navigation Stageをruntime Execution stateとして扱わない。
 9. G01–G04およびE8 protected contractsがregressionしない。
 
+## Mandatory verification order
+
+1. candidate identity audit
+2. static / syntax checks
+3. non-browser unit / integration / contract / protected regression verification for AC1–AC9
+4. non-browser blocking verification result evaluation
+5. **Browser E2Eを最後のverification itemとしてのみ実行する**
+
+Non-browser verificationでproduct defectが確定した場合、Browser E2Eを先行・代替実行して原因を曖昧化しない。
+
 ## Browser E2E policy
 
 Canonical Compose/browser test environmentを使用し、fixtureはAnalysis ContextからDiagnosticsまで同一project lineageで到達可能なものとする。UI synchronizationはfixed sleepをprimary mechanismにせずobservable state/element conditionを使用する。Failure時はscreenshot/log/current route/visible Stage/last successful checkpointをevidenceとして保存する。
 
-Browser E2Eはcross-layer connectivity proofであり、G04のESS/weight/balance数値correctnessはG04 unit/integration testsをprimary authorityとする。
+Browser E2Eはcross-layer connectivity proofであり、G04のESS/weight/balance数値correctnessはG04 unit/integration testsをprimary authorityとする。Browser harness/environment failureはproduct failureと分離してBLOCKED分類する。
 
 全blocking AC PASSのみG05 PASS。
