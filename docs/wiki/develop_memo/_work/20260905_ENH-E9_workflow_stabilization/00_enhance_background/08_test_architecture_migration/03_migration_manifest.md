@@ -43,23 +43,32 @@ REVIEW_SUPERSEDED
 
 **全active test fileの分類完了はENH-E9 migrationの開始条件としない。**
 
-## 3. ENH-E9で優先するmigration
+## 3. M01 — ENH-E9 active test migration
 
-ENH-E9で実際に使用・変更するtestを優先し、以下へ移行する。
+**Physical migration commit:** `ce65c20ae7f3f6d5d4c3be0e9661137ef8a140bd`
 
-```text
-tests/enhancement/enh_e9/<gate>/<layer>/...
-```
-
-現在確認済みの例:
-
-| Source | Target | Action | Notes |
+| Source | Target | Action | Dependency / rationale |
 |---|---|---|---|
-| `tests/product/test_enh_e9_g02_p01_discovery_copy_help_overflow.py` | `tests/enhancement/enh_e9/g02/frontend/test_discovery_copy_help_overflow.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | path resolutionを移動後locationに合わせる |
-| `tests/product/test_enh_e9_g02_p02_selection_comparison_clarity.py` | `tests/enhancement/enh_e9/g02/frontend/test_selection_comparison_clarity.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | 同上 |
-| `tests/product/test_enh_e9_g02_p03_adoption_feedback_export.py` | `tests/enhancement/enh_e9/g02/frontend/test_adoption_feedback_export.py` | `MOVE + RENAME + REWRITE_AS_NEEDED` | 同上 |
+| `tests/product/test_enh_e9_g01_analysis_view_context_clarity.py` | `tests/enhancement/enh_e9/g01/frontend/test_analysis_view_context_clarity.py` | `MOVE + RENAME + REWRITE` | G01 frontend focused test。固定depthのrepo-root解決をmarker探索へ変更 |
+| `tests/product/test_enh_e9_g02_p01_discovery_copy_help_overflow.py` | `tests/enhancement/enh_e9/g02/frontend/test_discovery_copy_help_overflow.py` | `MOVE + RENAME + REWRITE` | G02 frontend focused test。同上 |
+| `tests/product/test_enh_e9_g02_p02_selection_comparison_clarity.py` | `tests/enhancement/enh_e9/g02/frontend/test_selection_comparison_clarity.py` | `MOVE + RENAME + REWRITE` | G02 frontend focused test。同上 |
+| `tests/product/test_enh_e9_g02_p03_adoption_feedback_export.py` | `tests/enhancement/enh_e9/g02/frontend/test_adoption_feedback_export.py` | `MOVE + RENAME + REWRITE` | G02 frontend focused test。同上 |
+| `tests/product/test_enh_e9_estimation_submission_regression.py` | `tests/enhancement/enh_e9/g03/frontend/test_estimation_submission_regression.py` | `MOVE + RENAME + REWRITE` | G03 protected Estimation lineage/submission behaviorに対応。同上 |
+| `tests/product/test_enh_e9_causal_result_presentation.py` | `tests/enhancement/enh_e9/g04/frontend/test_causal_result_presentation.py` | `MOVE + RENAME + REWRITE` | G04 frontend structured diagnostics presentation boundaryに対応。同上 |
 
-G02は具体的file pathが確定している例として記載している。ENH-E9のminimum migrationはG02限定ではなく、今後E9で使用するG01-G05各Gateのtestへ同じbatch ruleを適用する。
+### M01 preflight結果
+
+- 6 fileとも `tests/product/conftest.py` fixtureを使用しない;
+- 6 fileともstatic frontend/source contract testである;
+- moveに伴うpath-sensitive dependencyは `Path(__file__).parents[2]` / `resolve().parents[2]` のrepo-root解決である;
+- repo-root解決は `pyproject.toml` markerをancestor方向に探索する方式へ変更した;
+- product code、Gate contract、product candidateは変更しない。
+
+### M01 structural verification
+
+GitHub compareにより6 fileすべてが旧pathから新pathへの `renamed` と認識された。各fileのsemantic assertion本体は維持し、差分はrepo-root探索の追加と固定depth指定の削除に限定されている。
+
+Runtime pytest / targeted testは、この作業セッションで利用可能なrepository execution environmentがないため未実行。`05_execution_record.md` に明示する。
 
 ## 4. 明確なhistorical testの扱い
 
