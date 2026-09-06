@@ -1,26 +1,24 @@
-# Test Classification Inventory
+# テスト分類Inventory
 
-**Status:** `INITIAL_BASELINE`  
+**状態:** `INITIAL_BASELINE`  
 **Inventory date:** 2026-09-06  
 **Repository branch:** `bugfix/ariadne_mvp_e9`
 
-## 1. Classification vocabulary
+## 1. 分類語彙
 
-| Classification / Action | Meaning |
+| Classification / Action | 意味 |
 |---|---|
-| `PROMOTE` | Move current authoritative behavior into permanent regression coverage |
-| `PROMOTE_REWRITE` | Preserve semantic coverage but rewrite/rename to remove historical Enhancement identity or obsolete structure |
-| `MERGE` | Consolidate overlapping tests into a smaller current regression surface |
-| `SPLIT` | Separate current invariant coverage from migration/history-only assertions |
-| `ACTIVE_ENH` | Keep under the currently active Enhancement staging area |
-| `BENCHMARK` | Keep as scientific/statistical benchmark, separate from normal regression |
-| `ARCHIVE` | Preserve as historical evidence but remove from active regression execution |
-| `REVIEW_SUPERSEDED` | Compare with newer tests and retain only unique current invariants |
-| `KEEP` | Retain current placement/role |
+| `PROMOTE` | 現在のauthoritative behaviorを恒久regressionへ昇格する |
+| `PROMOTE_REWRITE` | semantic coverageを維持しつつ、歴史的Enhancement identityやobsolete structureを除去して再記述する |
+| `MERGE` | 重複するtest coverageをより小さいcurrent regressionへ統合する |
+| `SPLIT` | current invariantとmigration/history専用assertionを分離する |
+| `ACTIVE_ENH` | 現在のEnhancement staging areaに保持する |
+| `BENCHMARK` | 通常regressionと分離したscientific/statistical benchmarkとして保持する |
+| `ARCHIVE` | historical evidenceとして保持するがactive regressionから外す |
+| `REVIEW_SUPERSEDED` | 後続テストと比較し、現在も有効な固有invariantのみ残す |
+| `KEEP` | 現在の配置・責務を維持する |
 
-## 2. Current top-level structure
-
-Current repository test areas:
+## 2. 現在のトップレベル構造
 
 ```text
 tests/
@@ -32,13 +30,13 @@ tests/
 └── scientific_benchmarks/
 ```
 
-The current tree mixes lifecycle/authority and verification-layer concepts at the same directory level. `product` and `scientific` describe domain/purpose, while `integration` and `browser_e2e` describe verification layers.
+現状は、lifecycle / authorityとverification layerが同一階層で混在している。`product` / `scientific` はdomain・purpose寄りの分類である一方、`integration` / `browser_e2e` はverification layerであり、分類軸が揃っていない。
 
-## 3. Initial inventory by test family
+## 3. Test family別の初期inventory
 
 ### 3.1 Generic product tests
 
-Examples:
+例:
 
 - `tests/product/compose_golden_path_smoke.py`
 - `tests/product/test_api_worker_e2e.py`
@@ -48,148 +46,144 @@ Examples:
 - `tests/product/test_frontend_contract.py`
 - `tests/product/test_postgres_contract.py`
 
-Initial disposition: **PROMOTE** into `tests/regression/<layer>/...` according to actual verification layer.
+初期判定: 実際のverification layerに応じて `tests/regression/<layer>/...` へ **PROMOTE**。
 
 ### 3.2 ENH-E1 / E2 / E3 product tests
 
-Examples include analysis specification/view, causal workflow, predictive workflow, exploratory workflow, research context, lineage/export, estimator compatibility, and frontend contracts.
+Analysis specification/view、causal workflow、predictive workflow、exploratory workflow、research context、lineage/export、estimator compatibility、frontend contract等を含む。
 
-Initial disposition: **PROMOTE_REWRITE**. Historical suffixes such as `_e3` should not define permanent regression identity when the asserted behavior remains current.
+初期判定: **PROMOTE_REWRITE**。現在も有効なbehaviorに対し、`_e3` 等の歴史的suffixを恒久regression identityとして残さない。
 
 ### 3.3 ENH-E4 execution-authority tests
 
-E4 contains both durable execution semantics and historical migration/cutover assertions.
+E4には、恒久的なexecution semanticsと、当時のmigration/cutover assertionが混在している。
 
-Durable examples:
+恒久invariantの例:
 
-- rerun creates a new canonical execution;
-- base execution remains immutable;
-- stage semantics and revision lineage are preserved;
-- canonical execution/result/artifact authority remains consistent.
+- rerunが新しいcanonical executionを作成する;
+- base executionがimmutableである;
+- stage semanticsとrevision lineageを保持する;
+- canonical execution/result/artifact authorityが一貫する。
 
-Initial disposition: **SPLIT**.
+初期判定: **SPLIT**。
 
-- durable current invariants -> `PROMOTE_REWRITE`
-- migration/cutover procedure/history -> `ARCHIVE` or retire after invariant extraction
+- durable current invariant -> `PROMOTE_REWRITE`
+- migration/cutover procedure/history -> invariant抽出後に `ARCHIVE` またはretire
 
 ### 3.4 ENH-E5 tests
 
-Navigation tests are likely superseded by E6/E7 navigation architecture.
+Navigation系はE6/E7の後続navigation architectureでsupersedeされている可能性が高い。
 
-Initial disposition:
+初期判定:
 
-- old navigation/history shell tests -> `REVIEW_SUPERSEDED`
-- predictive/causal/exploratory semantic tests -> `PROMOTE_REWRITE` / `MERGE`
+- old navigation/history shell -> `REVIEW_SUPERSEDED`
+- predictive/causal/exploratory semantics -> `PROMOTE_REWRITE` / `MERGE`
 
 ### 3.5 ENH-E6 tests
 
-Navigation and stage-presentation behavior remains relevant, but static tests that assert a specific historical Browser runner filename are too implementation-specific.
+Navigation / stage-presentation behaviorは現在も有効な可能性が高い。一方、特定historical Browser runner filenameの存在そのものをassertするtestはimplementation-specificである。
 
-Initial disposition:
+初期判定:
 
 - navigation semantics -> `PROMOTE_REWRITE`
-- specific runner integration assertions -> `SPLIT` and rewrite as generic Browser harness contract
+- specific runner integration assertion -> `SPLIT`し、generic Browser harness contractへ再記述
 
 ### 3.6 ENH-E7 tests
 
-E7 Project / Analysis routing and surface architecture are strong sources for current regression coverage. Migration/cutover/cleanup assertions are mixed in the same family.
+Project / Analysis routingとsurface architectureはcurrent regressionの主要sourceである。一方、migration/cutover/cleanup assertionも混在する。
 
-Initial disposition:
+初期判定:
 
-- current Project / Analysis invariants -> `PROMOTE_REWRITE` / `MERGE`
-- migration/cutover/history assertions -> `SPLIT` / `ARCHIVE`
+- current Project / Analysis invariant -> `PROMOTE_REWRITE` / `MERGE`
+- migration/cutover/history assertion -> `SPLIT` / `ARCHIVE`
 
 ### 3.7 ENH-E8 tests
 
-Current causal/predictive stage-surface behavior is likely permanent regression behavior.
+現行causal/predictive stage-surface behaviorは恒久regression候補。
 
-Initial disposition: **PROMOTE_REWRITE / MERGE**.
+初期判定: **PROMOTE_REWRITE / MERGE**。
 
 ### 3.8 ENH-E9 tests
 
-Current files include G01/G02 and causal-result/estimation-presentation guards.
+ENH-E9内で追加・変更されたtestは、Gate単位の由来を保持したまま、まず `tests/enhancement/enh_e9/<gate>/<layer>/...` に整理する。
 
-Initial disposition: **ACTIVE_ENH**.
+初期判定: **ACTIVE_ENH**。Gate PASSやEnhancement completion後に、各testを個別にPROMOTE / REWRITE / MERGE / RETIRE / ARCHIVE判定する。
 
-Proposed location pattern:
+現在確認済みの具体例としてG01/G02由来testやcausal-result/estimation-presentation guardが存在するが、これはinventory上の実在ファイルを示すものであり、本migrationのscopeを特定Gateに限定するものではない。
 
-```text
-tests/enhancement/enh_e9/<gate>/<layer>/...
-```
-
-Special case: `test_enh_e9_causal_result_presentation.py` mixes product presentation assertions with an assertion against an ENH-E9 work/handoff document. It requires **SPLIT** before permanent promotion.
+特記事項: `test_enh_e9_causal_result_presentation.py` はproduct presentation assertionとENH-E9作業文書に対するassertionを混在させているため、恒久promotion前に **SPLIT** が必要。
 
 ## 4. Browser E2E inventory
 
-| Existing runner | Initial disposition |
+| Existing runner | 初期判定 |
 |---|---|
-| `run_enh_e1a.py` | `ARCHIVE` + extract still-valid scenarios |
+| `run_enh_e1a.py` | `ARCHIVE` + 現在も有効なscenarioを抽出 |
 | `run_enh_e3.py` | `ARCHIVE` / `DISTILL` |
-| `run_enh_e3_predictive.py` | `PROMOTE_REWRITE` into predictive critical journey |
-| `run_enh_e6_family_stage_navigation.py` | `PROMOTE_REWRITE` into analysis navigation regression |
-| `run_enh_e7_project_integration.py` | `PROMOTE_REWRITE` into project lifecycle regression |
-| `run_enh_e8_g01_project_return.py` | `MERGE` into project lifecycle regression |
-| `run_enh_e8_g02_causal_stage_content.py` | `MERGE` into causal/navigation regression |
-| `run_enh_e8_g02_predictive_stage_content.py` | `MERGE` into predictive regression |
+| `run_enh_e3_predictive.py` | predictive critical journeyへ `PROMOTE_REWRITE` |
+| `run_enh_e6_family_stage_navigation.py` | analysis navigation regressionへ `PROMOTE_REWRITE` |
+| `run_enh_e7_project_integration.py` | project lifecycle regressionへ `PROMOTE_REWRITE` |
+| `run_enh_e8_g01_project_return.py` | project lifecycle regressionへ `MERGE` |
+| `run_enh_e8_g02_causal_stage_content.py` | causal/navigation regressionへ `MERGE` |
+| `run_enh_e8_g02_predictive_stage_content.py` | predictive regressionへ `MERGE` |
 
-Important observation: historical Browser runners have dependency chains and stale navigation assumptions. They must not be treated as immutable regression authorities simply because they were once acceptance runners.
+重要な観測: historical Browser runnerにはdependency chainとstale navigation assumptionが存在する。過去にacceptance runnerだったという理由だけで、immutableなregression authorityとして扱ってはならない。
 
 ## 5. Scientific tests
 
 ### `tests/scientific/`
 
-These tests contain deterministic scientific product semantics such as identification/eligibility behavior, discovery graph semantics, estimator recovery, overlap handling, and explicit requirement linkage.
+Identification/eligibility、discovery graph semantics、estimator recovery、overlap handling、requirement linkage等のdeterministic scientific product semanticsを含む。
 
-Initial disposition: primarily **PROMOTE** into current scientific regression layers, not characterization-only storage.
+初期判定: 主としてcurrent scientific regression layerへ **PROMOTE**。単なるcharacterization扱いにはしない。
 
 ### `tests/scientific_benchmarks/`
 
-These tests evaluate repeated synthetic/semi-synthetic scenarios, bias/RMSE/coverage, and scientific acceptance thresholds.
+Synthetic / semi-synthetic repeated scenario、bias/RMSE/coverage、scientific acceptance threshold等を評価する。
 
-Initial disposition: **BENCHMARK** under `tests/benchmarks/scientific/`.
+初期判定: `tests/benchmarks/scientific/` 配下の **BENCHMARK**。
 
 ## 6. Existing integration directory
 
 ### `tests/integration/test_core.py`
 
-Contains mixed pure-unit, config, feature-semantic, and architecture-boundary assertions.
+Pure unit、config、feature semantics、architecture boundary assertionが混在する。
 
-Initial disposition: **SPLIT** into unit/contract regression layers.
+初期判定: unit / contract regressionへ **SPLIT**。
 
 ### `tests/integration/test_inference.py`
 
-Contains estimator and fixed-seed scientific behavior that overlaps newer scientific tests.
+Estimatorおよびfixed-seed scientific behaviorを含み、新しいscientific testsとの重複可能性がある。
 
-Initial disposition: **PROMOTE_REWRITE / DEDUPE REVIEW**.
+初期判定: **PROMOTE_REWRITE / DEDUPE REVIEW**。
 
-## 7. Legacy and support
+## 7. Legacy / support
 
 ### `tests/legacy_archive/`
 
-Already isolated from normal pytest collection.
+既にdefault pytest collectionから隔離されている。
 
-Initial disposition: **KEEP**.
+初期判定: **KEEP**。
 
 ### `conftest.py` / shared fixtures
 
-Fixture placement affects pytest scope and discovery. Do not move these mechanically during the first migration batch.
+Fixture placementはpytest scope/discoveryに影響するため、初回migration batchで機械的に移動しない。
 
-Initial disposition: **SUPPORT REVIEW**, migrate only after dependency analysis.
+初期判定: **SUPPORT REVIEW**。consumer/dependency分析後に移行する。
 
-## 8. Confidence and unresolved work
+## 8. 高確度結論と未解決事項
 
-High-confidence conclusions:
+高確度で確定できる事項:
 
-- current ENH-E9 tests belong in enhancement staging;
-- historical Browser runners must be distilled, not blindly repaired/promoted;
-- scientific benchmarks remain separate from standard regression;
-- legacy archive should remain excluded;
-- migration/cutover history must not become permanent product regression merely because the tests still pass.
+- ENH-E9固有testはまずenhancement stagingで管理する;
+- historical Browser runnerはそのまま修理・昇格せず、current invariantをdistillする;
+- scientific benchmarkはstandard regressionから分離する;
+- legacy archiveはdefault collection外を維持する;
+- migration/cutover historyを、単に現在もpassするという理由で恒久product regressionにしてはならない。
 
-Pending before physical migration:
+Physical migration前に必要な作業:
 
-1. file-by-file duplicate/superseded comparison for E1-E8;
-2. exact target verification layer per file;
-3. final rename targets;
-4. fixture/import/path dependency analysis;
-5. CI / Docker / command reference inventory.
+1. E1-E8のfile-by-file duplicate / superseded比較;
+2. 各fileのexact verification layer決定;
+3. rename後targetの確定;
+4. fixture/import/path dependency分析;
+5. CI / Docker / command reference inventory。
