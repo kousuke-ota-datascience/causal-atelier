@@ -144,6 +144,7 @@ class EstimationAdapter:
             method = _METHODS[estimator]
             if method == "ipw":
                 record = engine.ipw(estimand)
+                diagnostics["weighting"] = _ipw_weighting_payload(engine.last_weighting_diagnostics)
             elif method == "aipw":
                 record = engine.aipw(estimand)
             elif method == "ols_coefficient":
@@ -222,6 +223,67 @@ class EstimationAdapter:
             warnings=warnings,
             artifacts=[ArtifactDescriptor(diagnostics_path)],
         )])
+
+
+def _ipw_weighting_payload(weighting_input: Any) -> dict[str, Any]:
+    """Serialize the estimator's actual IPW arm weights for diagnostics.
+
+    The estimator owns the formula and exposes positive observed arm weights.
+    This adapter only summarizes that authoritative input; it never rebuilds
+    weights from propensity scores or reuses overlap clipping counts.
+    """
+
+    from ariadne.causal.inference.estimators.inference import effective_sample_size
+    from ariadne.causal.inference.estimators.treatment_effect import (
+        WeightingApplicability,
+        count_extreme_weights,
+    )
+
+    if weighting_input.applicability is not WeightingApplicability.ESTIMATOR_WEIGHT:
+        raise ValueError("IPW diagnostics require ESTIMATOR_WEIGHT applicability")
+    if weighting_input.estimand not in {"ATE", "ATT"}:
+        raise ValueError("IPW diagnostics require ATE or ATT estimand")
+    treated = _finite_positive_weights(weighting_input.treated_weights, "treated")
+    control = _finite_positive_weights(weighting_input.control_weights, "control")
+    treated_ess = float(effective_sample_size(treated))
+    control_ess = float(effective_sample_size(control))
+    if not math.isfinite(treated_ess) or not math.isfinite(control_ess):
+        raise ValueError("IPW diagnostics require finite arm effective sample sizes")
+    return {
+        "applicability": WeightingApplicability.ESTIMATOR_WEIGHT.value,
+        "estimand": weighting_input.estimand,
+        "definition": (
+            "arm-specific IPW analysis weights computed from clipped propensity scores; "
+            "weighted means normalize by each arm's weight sum"
+        ),
+        "effective_sample_size": {"treated": treated_ess, "control": control_ess},
+        "treated": _weight_statistics(treated, count_extreme_weights),
+        "control": _weight_statistics(control, count_extreme_weights),
+    }
+
+
+def _finite_positive_weights(weights: Any, arm: str) -> np.ndarray:
+    if weights is None:
+        raise ValueError(f"IPW diagnostics require {arm} arm weights")
+    values = np.asarray(weights, dtype=float)
+    if values.ndim != 1 or len(values) == 0 or not np.isfinite(values).all() or not (values > 0).all():
+        raise ValueError(f"IPW diagnostics require finite positive {arm} arm weights")
+    return values
+
+
+def _weight_statistics(weights: np.ndarray, count_extreme_weights: Any) -> dict[str, Any]:
+    quantiles = np.quantile(weights, [0.50, 0.95, 0.99], method="linear")
+    return {
+        "count": int(len(weights)),
+        "min": float(np.min(weights)),
+        "mean": float(np.mean(weights)),
+        "p50": float(quantiles[0]),
+        "p95": float(quantiles[1]),
+        "p99": float(quantiles[2]),
+        "max": float(np.max(weights)),
+        "extreme_count": int(count_extreme_weights(weights)),
+        "extreme_rule": "weight > 10.0",
+    }
 
 
 def _required_string(spec: dict[str, Any], name: str) -> str:
