@@ -14,13 +14,13 @@ TRIAL_NO={{TRIAL_NO}}
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME=Ariadne
-ENHANCE_ID=ENH-E9
-ENHANCE_SHORT_ID=ENH-E9
-BRANCH_NAME=bugfix/ariadne_mvp_e9
-REMOTE_NAME=causal-atelier
-WORK_ROOT=/loc0/bigbrother/repositories/causal-atelier/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization
-WORK_DIR_NAME=20260905_ENH-E9_workflow_stabilization
+PROJECT_NAME={{PROJECT_NAME}}
+ENHANCE_ID={{ENHANCE_ID}}
+ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
+BRANCH_NAME={{BRANCH_NAME}}
+REMOTE_NAME={{REMOTE_NAME}}
+WORK_ROOT={{WORK_ROOT}}
+WORK_DIR_NAME={{WORK_DIR_NAME}}
 ```
 
 ## 2. Responsibility
@@ -57,7 +57,7 @@ git rev-parse HEAD
 
 必須条件:
 
-- branch = `bugfix/ariadne_mvp_e9`
+- branch = `{{BRANCH_NAME}}`
 - working tree = clean
 - canonical 999 が exactly one 存在する
 - 999 の current decision = `BLOCKED`
@@ -194,8 +194,8 @@ repair scope の test-side files だけを stage する。
 ```bash
 git diff --cached --stat
 git diff --cached
-git commit -m "ENH-E9 Gate ${GATE_ID} Trial ${TRIAL_NO} repair blocked test infrastructure"
-git push -u causal-atelier bugfix/ariadne_mvp_e9
+git commit -m "{{ENHANCE_ID}} Gate ${GATE_ID} Trial ${TRIAL_NO} repair blocked test infrastructure"
+git push -u {{REMOTE_NAME}} {{BRANCH_NAME}}
 git rev-parse HEAD
 git status --porcelain
 ```
