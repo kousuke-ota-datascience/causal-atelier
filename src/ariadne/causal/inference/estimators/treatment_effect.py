@@ -74,6 +74,7 @@ class WeightingDiagnosticsInput:
     definition: str
     treated_weights: np.ndarray | None
     control_weights: np.ndarray | None
+    balance_observation_weights: np.ndarray | None = None
 
 
 WEIGHT_EXTREME_THRESHOLD = 10.0
@@ -203,6 +204,7 @@ class TreatmentEffectEstimator:
             definition="No estimator analysis-weight or propensity-component diagnostic applies.",
             treated_weights=None,
             control_weights=None,
+            balance_observation_weights=None,
         )
 
     def _set_not_applicable_weighting(self) -> None:
@@ -212,6 +214,7 @@ class TreatmentEffectEstimator:
             definition="No estimator analysis-weight or propensity-component diagnostic applies.",
             treated_weights=None,
             control_weights=None,
+            balance_observation_weights=None,
         )
 
     def _set_ipw_weighting(
@@ -228,6 +231,9 @@ class TreatmentEffectEstimator:
             ),
             treated_weights=observed_treated,
             control_weights=observed_control,
+            # Each row receives its own arm's actual analysis weight. This is
+            # solely an aligned input for weighted balance, not a final weight.
+            balance_observation_weights=treated + control,
         )
         return treated, control
 
@@ -252,6 +258,7 @@ class TreatmentEffectEstimator:
             ),
             treated_weights=observed_treated,
             control_weights=observed_control,
+            balance_observation_weights=None,
         )
 
     def complete_case_data(self, include_covariates: bool) -> pd.DataFrame:

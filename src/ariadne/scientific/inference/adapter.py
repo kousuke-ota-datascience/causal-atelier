@@ -147,13 +147,22 @@ class EstimationAdapter:
                 diagnostics["weighting"] = _ipw_weighting_payload(engine.last_weighting_diagnostics)
             elif method == "aipw":
                 record = engine.aipw(estimand)
+                diagnostics["weighting"] = _non_ipw_weighting_payload(engine.last_weighting_diagnostics)
             elif method == "ols_coefficient":
                 record = engine.ols()
+                diagnostics["weighting"] = _non_ipw_weighting_payload(engine.last_weighting_diagnostics)
             else:
                 record = engine.diff_in_means()
+                diagnostics["weighting"] = _non_ipw_weighting_payload(engine.last_weighting_diagnostics)
 
             diagnostics["design"] = _first_record(summarize_design(complete, treatment))
-            diagnostics["balance"] = _records(compute_balance_table(complete, treatment, adjustment_set))
+            diagnostics["balance"] = _balance_payload(
+                complete,
+                treatment,
+                adjustment_set,
+                engine.last_weighting_diagnostics,
+                compute_balance_table,
+            )
             if engine.last_propensity_score is not None:
                 overlap = _first_record(summarize_propensity_overlap(engine.last_propensity_score, clip))
                 diagnostics["overlap"] = overlap
@@ -259,6 +268,52 @@ def _ipw_weighting_payload(weighting_input: Any) -> dict[str, Any]:
         "effective_sample_size": {"treated": treated_ess, "control": control_ess},
         "treated": _weight_statistics(treated, count_extreme_weights),
         "control": _weight_statistics(control, count_extreme_weights),
+    }
+
+
+def _balance_payload(
+    frame: pd.DataFrame,
+    treatment: str,
+    covariates: list[str],
+    weighting_input: Any,
+    compute_balance_table: Any,
+) -> dict[str, Any]:
+    """Persist unweighted balance and only scientifically applicable after-balance."""
+
+    from ariadne.causal.inference.estimators.treatment_effect import WeightingApplicability
+
+    before = _records(compute_balance_table(frame, treatment, covariates))
+    applicability = weighting_input.applicability
+    after: list[dict[str, Any]] | None = None
+    if applicability is WeightingApplicability.ESTIMATOR_WEIGHT:
+        values = _finite_positive_weights(
+            weighting_input.balance_observation_weights, "balance observation"
+        )
+        if len(values) != len(frame):
+            raise ValueError("IPW balance weights must align to every complete-case row")
+        weights = pd.Series(values, index=frame.index, dtype=float)
+        after = _records(compute_balance_table(frame, treatment, covariates, weights=weights))
+    return {
+        "before": before,
+        "after": after,
+        "after_applicability": applicability.value,
+    }
+
+
+def _non_ipw_weighting_payload(weighting_input: Any) -> dict[str, Any]:
+    """Persist applicability without inventing non-IPW weights or ESS."""
+
+    from ariadne.causal.inference.estimators.treatment_effect import WeightingApplicability
+
+    if weighting_input.applicability is WeightingApplicability.ESTIMATOR_WEIGHT:
+        raise ValueError("IPW weighting must include actual arm statistics")
+    return {
+        "applicability": weighting_input.applicability.value,
+        "estimand": weighting_input.estimand,
+        "definition": weighting_input.definition,
+        "effective_sample_size": {"treated": None, "control": None},
+        "treated": None,
+        "control": None,
     }
 
 
