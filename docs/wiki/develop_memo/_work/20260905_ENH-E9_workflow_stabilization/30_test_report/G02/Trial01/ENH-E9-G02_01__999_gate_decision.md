@@ -3,64 +3,66 @@
 > **Document class:** Decision / Evidence Artifact
 
 - Project / Enhancement / Gate / Trial: Ariadne / ENH-E9 / G02 / 01
-- Reserved Test Item ID / Status: 999 / BLOCKED
+- Reserved Test Item ID / Status: 999 / PASS
 - Fixed Trial Candidate SHA: `8cf70523093efa53b59a7de2c655f9755dbceb8d`
-- Tested Repository State: `6355ce9252a896c5907ac465b102e959c5b481f7`
+- Tested Repository State: `7a142e306bc3c921e1b6be81e6f20e58ac223d80`
 - 07 Contract: `10_enhance_instruction/G02/07_Ariadne_ENH-E9_G02_test_instruction.md` (FROZEN)
 - Completion report: `20_implementation_reports/G02/Trial01/ENH-E9-G02_01__implementation_completion.md`
 - Applicable 08: NONE
-- Decision timestamp: 2026-09-06T01:13:54Z
+- Decision timestamp: 2026-09-06T05:14:21Z
 
 ## Decision summary
 
-**BLOCKED — PROMOTION_NOT_ALLOWED.** Candidate identity and all non-browser blocking checks passed, but the frozen contract requires a final Browser E2E. The available runner stopped before its first scenario because its initial navigation selector is obsolete. This is `TEST_IMPLEMENTATION_DEFECT`, not a verified product violation; it cannot support either product FAIL or Gate PASS.
+**PASS — PROMOTION_ALLOWED.** The previous BLOCKED state resulted only from a Browser test implementation defect, with SAME_TRIAL continuation authorized. M02 repaired only Browser test infrastructure. Reverification passed valid candidate identity, all 11 non-browser tests, and the required current-UI Browser journey.
 
-## Candidate identity and package provenance
+## Candidate identity and provenance
 
-- Fixed candidate established by Completion Report: YES.
-- Tested state equals candidate: NO; post-candidate range classification: DOCUMENTATION_ONLY.
-- Candidate identity valid for acceptance: YES (item 001).
-- Previous failed candidate / remediation comparison: N/A.
-
-| Package | Checkpoint present | Report present | Required | Provenance |
-|---|---|---|---|---|
-| P01 | YES | YES | YES | COMPLETE |
-| P02 | YES | YES | YES | COMPLETE |
-| P03 | YES | YES | YES | COMPLETE |
+- Fixed candidate established by canonical Completion Report: YES.
+- Tested state equals candidate: NO; post-candidate changes are documentation/test-infrastructure only.
+- Candidate identity valid: YES (item 004).
+- P01/P02/P03 package reports and checkpoint ancestry: COMPLETE.
 
 ## Test Item evidence index
 
-| Item | Name | Status | AC | Evidence path |
+| Item | Name | Status | AC | Evidence |
 |---|---|---|---|---|
-| 001 | Candidate identity and provenance audit | PASS | prerequisite AC1–AC8 | `ENH-E9-G02_01__001_candidate_identity_and_provenance_audit.md` |
-| 002 | Non-browser interaction and contract regression | PASS | AC1–AC8 primary proof | `ENH-E9-G02_01__002_non_browser_contract_regression.md` |
-| 003 | Browser cross-layer connectivity | BLOCKED | mandatory final connectivity AC1–AC8 | `ENH-E9-G02_01__003_browser_cross_layer_connectivity.md` |
+| 004 | Reverification candidate identity | PASS | prerequisite AC1–AC8 | `ENH-E9-G02_01__004_reverification_candidate_identity.md` |
+| 005 | Reverification non-browser contract | PASS | AC1–AC8 primary proof | `ENH-E9-G02_01__005_reverification_non_browser_contract.md` |
+| 006 | Reverification Browser connectivity | PASS | mandatory final connectivity | `ENH-E9-G02_01__006_reverification_browser_connectivity.md` |
+
+Items 001–003 retain the original BLOCKED attempt history; 004–006 are the final SAME_TRIAL continuation evidence.
 
 ## Acceptance Criteria and protected regression
 
 | Requirement | Result | Evidence |
 |---|---|---|
-| AC1–AC8 non-browser primary proof | PASS | Item 002: 11 passed |
-| Graph Candidate identity / GraphVersion lineage / DRAFT-FIXED / FIXED immutability / designated Outcome | PASS | Item 002 E2/E7 regression contracts |
-| Mandatory Browser cross-layer connectivity | BLOCKED | Item 003: zero scenarios reached |
+| AC1–AC2 | PASS | Item 005 frontend contracts; item 006 UI journey |
+| AC3–AC5 | PASS | Item 005 contracts; item 006 comparison |
+| AC6–AC7 | PASS | Item 005 contracts; item 006 modal adoption |
+| AC8 | PASS | Item 005 E2/E7 lifecycle and lineage regression |
+| Mandatory Browser connectivity | PASS | Item 006: 7 checkpoints, 2 Discovery executions, 2-candidate comparison, FIXED adoption |
 
-Browser diagnostic: `TEST_IMPLEMENTATION_DEFECT`; product judgment possible: **NO**. Trace/screenshot/video are listed in item 003. No Transition Debt audit is defined by frozen 07.
+## Browser E2E diagnostic summary
 
-## Established contract and promotion consequence
+| Test Item | Classification | Product judgment possible | Evidence |
+|---|---|---|---|
+| 006 | N/A (PASS) | YES | Item 006 JSON, trace, screenshot, video |
 
-N/A — this decision is BLOCKED. This canonical 999 is the Gate state authority; no mutable promotion artifact or Phase F write-set was produced.
+## Transition Debt decision
 
-## Failure remediation input
+Frozen 07 defines no Transition Debt audit.
 
-N/A — this is BLOCKED, not FAIL.
+## Established contract after PASS
 
-## Blocker record
+The current Discovery UI supports clear execution intent, local candidate review/comparison, and modal adoption feedback while preserving Graph lifecycle/lineage semantics. Mermaid export remains a deterministic read-only projection. Downstream work may rely on this canonical PASS decision.
 
-- Blocker class: test implementation.
-- Facts: `run_enh_e1a.py` requires `nav button[data-workspace="management"]`, while the current initial UI has `#new-project` and no matching selector. It stops before project registration, Discovery, comparison, adoption, or fix; `evidence.json` records empty scenarios and no console error.
-- Required owner/action: update or provide the authoritative G02 Browser E2E runner to use current Project List → New Project navigation, then rerun Discovery → candidate review/comparison → adopt/fix.
-- Trial identity handling: SAME_TRIAL. Candidate identity remains valid and no product defect is established.
+## Canonical Gate state consequence after PASS
+
+- Gate state authority: this canonical `999_gate_decision`.
+- Mutable promotion artifact update: NONE.
+- Downstream dependency evidence: this Gate Decision.
+- Phase F write-set: NONE.
 
 ## Final rationale
 
-Frozen 07 is unambiguous. The candidate is valid and its package provenance complete. The 11 mandatory non-browser tests pass, covering AC1–AC8 and the protected lifecycle/lineage semantics. The contract nevertheless explicitly requires Browser E2E as the final item. Its failure is prior to any G02 product assertion and is attributable to a stale test locator, so product correctness cannot be determined. The only valid final state is `BLOCKED`, with `PROMOTION_NOT_ALLOWED`.
+The frozen contract is unambiguous. Candidate identity is fixed and valid; M02 did not alter product semantics, 07, or candidate identity. The required order succeeded: static/syntax, interaction/unit/API protected regressions (11 passed), then Browser E2E. No mandatory AC, protected regression, or required audit failed or remains blocked. Therefore G02 Trial 01 is PASS and promotion is allowed.
