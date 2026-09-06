@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from enum import StrEnum
 
 import numpy as np
 import pandas as pd
@@ -49,6 +50,59 @@ class TreatmentEffectResult:
     ci_high: float | None
     p_value: float | None
     notes: str = ""
+
+
+class WeightingApplicability(StrEnum):
+    """Stable diagnostics applicability boundary for E9 estimators."""
+
+    ESTIMATOR_WEIGHT = "ESTIMATOR_WEIGHT"
+    PROPENSITY_COMPONENT = "PROPENSITY_COMPONENT"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
+@dataclass(frozen=True)
+class WeightingDiagnosticsInput:
+    """Authoritative estimator-side input for downstream weighting diagnostics.
+
+    ``treated_weights`` and ``control_weights`` contain only observed rows with
+    positive weights.  They must never be interpreted as a common final weight
+    vector when ``applicability`` is ``PROPENSITY_COMPONENT``.
+    """
+
+    applicability: WeightingApplicability
+    estimand: str | None
+    definition: str
+    treated_weights: np.ndarray | None
+    control_weights: np.ndarray | None
+
+
+WEIGHT_EXTREME_THRESHOLD = 10.0
+
+
+def count_extreme_weights(weights: np.ndarray) -> int:
+    """Return the frozen E9 count for un-normalized analysis weights > 10.0."""
+
+    return int(np.count_nonzero(np.asarray(weights, dtype=float) > WEIGHT_EXTREME_THRESHOLD))
+
+
+def _ipw_analysis_weights(
+    treatment: np.ndarray, propensity_score: np.ndarray, estimand: str
+) -> tuple[np.ndarray, np.ndarray]:
+    """Build the exact arm-specific IPW vectors used by effect calculation."""
+
+    if estimand == "ATE":
+        return treatment / propensity_score, (1.0 - treatment) / (1.0 - propensity_score)
+    if estimand == "ATT":
+        return treatment, (1.0 - treatment) * propensity_score / (1.0 - propensity_score)
+    raise ValueError(f"unsupported IPW estimand: {estimand}")
+
+
+def _positive_observed_weights(
+    treated: np.ndarray, control: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Drop opposite-arm zero placeholders before distribution/ESS diagnostics."""
+
+    return treated[treated > 0.0], control[control > 0.0]
 
 
 def validate_treatment_effect_inputs(
@@ -143,6 +197,62 @@ class TreatmentEffectEstimator:
         self.cross_fitting_folds = cross_fitting_folds
         self.last_propensity_score: np.ndarray | None = None
         self.last_propensity_notes = ""
+        self.last_weighting_diagnostics = WeightingDiagnosticsInput(
+            applicability=WeightingApplicability.NOT_APPLICABLE,
+            estimand=None,
+            definition="No estimator analysis-weight or propensity-component diagnostic applies.",
+            treated_weights=None,
+            control_weights=None,
+        )
+
+    def _set_not_applicable_weighting(self) -> None:
+        self.last_weighting_diagnostics = WeightingDiagnosticsInput(
+            applicability=WeightingApplicability.NOT_APPLICABLE,
+            estimand=None,
+            definition="No estimator analysis-weight or propensity-component diagnostic applies.",
+            treated_weights=None,
+            control_weights=None,
+        )
+
+    def _set_ipw_weighting(
+        self, treatment: np.ndarray, propensity_score: np.ndarray, estimand: str
+    ) -> tuple[np.ndarray, np.ndarray]:
+        treated, control = _ipw_analysis_weights(treatment, propensity_score, estimand)
+        observed_treated, observed_control = _positive_observed_weights(treated, control)
+        self.last_weighting_diagnostics = WeightingDiagnosticsInput(
+            applicability=WeightingApplicability.ESTIMATOR_WEIGHT,
+            estimand=estimand,
+            definition=(
+                "IPW analysis weights used directly for the effect calculation after "
+                "configured propensity clipping."
+            ),
+            treated_weights=observed_treated,
+            control_weights=observed_control,
+        )
+        return treated, control
+
+    def _set_aipw_propensity_component(
+        self, treatment: np.ndarray, propensity_score: np.ndarray, estimand: str
+    ) -> None:
+        if estimand == "ATE":
+            treated, control = _ipw_analysis_weights(treatment, propensity_score, estimand)
+        elif estimand == "ATT":
+            treated_rate = float(treatment.mean())
+            treated = treatment / treated_rate
+            control = (1.0 - treatment) * propensity_score / (1.0 - propensity_score) / treated_rate
+        else:
+            raise ValueError(f"unsupported AIPW estimand: {estimand}")
+        observed_treated, observed_control = _positive_observed_weights(treated, control)
+        self.last_weighting_diagnostics = WeightingDiagnosticsInput(
+            applicability=WeightingApplicability.PROPENSITY_COMPONENT,
+            estimand=estimand,
+            definition=(
+                "AIPW propensity-derived residual-score multipliers after configured "
+                "propensity clipping; not a whole-estimator final weight vector and not for ESS."
+            ),
+            treated_weights=observed_treated,
+            control_weights=observed_control,
+        )
 
     def complete_case_data(self, include_covariates: bool) -> pd.DataFrame:
         """指定 estimator が使う complete-case data を返す。
@@ -245,6 +355,7 @@ class TreatmentEffectEstimator:
             Treatment-effect result. The numerical contrast is identical for
             ATE and ATT, but it is not adjusted for confounding.
         """
+        self._set_not_applicable_weighting()
         data = self.complete_case_data(include_covariates=False)
         y = data[self.outcome].to_numpy(dtype=float)
         t = data[self.treatment].to_numpy(dtype=float)
@@ -273,6 +384,7 @@ class TreatmentEffectEstimator:
             Treatment-effect result using the treatment coefficient from
             ``outcome ~ treatment + covariates``.
         """
+        self._set_not_applicable_weighting()
         data = self.complete_case_data(include_covariates=True)
         y = data[self.outcome].to_numpy(dtype=float)
         regressors = [self.treatment, *self.covariates]
@@ -300,6 +412,7 @@ class TreatmentEffectEstimator:
     def g_computation(self, estimand: str) -> TreatmentEffectResult:
         """Estimate ATE or ATT by regression g-computation."""
 
+        self._set_not_applicable_weighting()
         data = self.complete_case_data(include_covariates=True)
         y = data[self.outcome].to_numpy(dtype=float)
         t = data[self.treatment].to_numpy(dtype=float)
@@ -362,14 +475,7 @@ class TreatmentEffectEstimator:
             configured propensity clipping.
         """
         data, y, t, propensity_score = self.propensity_data()
-        if estimand == "ATE":
-            weights_treated = t / propensity_score
-            weights_control = (1.0 - t) / (1.0 - propensity_score)
-        elif estimand == "ATT":
-            weights_treated = t
-            weights_control = (1.0 - t) * propensity_score / (1.0 - propensity_score)
-        else:
-            raise ValueError(f"unsupported IPW estimand: {estimand}")
+        weights_treated, weights_control = self._set_ipw_weighting(t, propensity_score, estimand)
 
         mean_treated = weighted_mean(y, weights_treated)
         mean_control = weighted_mean(y, weights_control)
@@ -435,6 +541,8 @@ class TreatmentEffectEstimator:
             mu_treated = design @ treated_fit.coefficients
             mu_control = design @ control_fit.coefficients
             nuisance_notes = "no_sample_splitting"
+
+        self._set_aipw_propensity_component(t, propensity_score, estimand)
 
         if estimand == "ATE":
             score = (
