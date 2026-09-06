@@ -1,42 +1,38 @@
-# ENH-E9 Test Architecture Migration
+# ENH-E9 テストアーキテクチャ移行
 
-**Document class:** Cross-cutting Test Architecture Migration Workstream  
-**Status:** `PLANNING / INVENTORY`  
-**Parent workflow:** `20260905_ENH-E9_workflow_stabilization`  
+**文書種別:** ENH-E9横断 Test Architecture Migration Workstream  
+**状態:** `PLANNING / INVENTORY`  
+**親Workflow:** `20260905_ENH-E9_workflow_stabilization`  
 **Scope classification:** `TEST_INFRASTRUCTURE / TEST_ARCHITECTURE STABILIZATION`
 
-## 1. Purpose
+## 1. 目的
 
-This directory records the design decisions, classification inventory, migration plan, execution evidence, and post-migration verification for restructuring Ariadne tests around two orthogonal axes:
+本ディレクトリは、Ariadneのテストコード体系を以下の直交する2軸で再編するための設計判断、分類inventory、migration plan、実行証跡、移行後verificationを記録する。
 
 1. **test lifecycle / authority** — `regression`, `enhancement`, `characterization`, `benchmark`, `support`, `legacy`
 2. **verification layer** — `unit`, `contract`, `integration`, `frontend`, `browser_e2e`
 
-The work was initiated after ENH-E9 G02 Trial01 independent verification was blocked before the product workflow because the historical Browser E2E runner had drifted from the current Project / Analysis navigation model.
+本作業の対象はENH-E9内の特定Gateに限定されない。ENH-E9全体を通じて使用されるテストコード、および過去Enhancementから継承された既存テストを対象に、恒久regressionとEnhancement固有verificationの責務を整理する。
 
-## 2. Non-semantic classification
+本作業は、ENH-E9 workflow stabilizationの過程で、過去Enhancement由来のtest identity、後続Enhancementによる仕様・UI drift、verification layerとlifecycle分類の混在が確認されたことを受けて開始した。個別Gateで観測されたテスト不整合は調査契機になり得るが、本workstreamのscope定義やauthorityではない。
 
-This workstream does **not** change product semantics.
+## 2. 非セマンティック変更としての位置付け
+
+本workstream自体はproduct semanticsを変更しない。
 
 ```text
 Product semantic change: NONE
-G02 Fixed Trial Candidate mutation: PROHIBITED
-G02 Acceptance Criteria change: NONE
-Frozen 07 change: NONE
+Gate Acceptance Criteria change: NONE
+Frozen verification contract change: NONE
 Requirement/design authority change: NONE
+Product candidate remediation: OUT_OF_SCOPE
 ```
 
-G02 Trial01 Fixed Candidate remains:
+Test Architecture Migrationによって、特定GateのCandidate、Acceptance Criteria、frozen verification contractを遡及変更してはならない。移行作業中にproduct defectが見つかった場合は、当該Gate/Enhancementの正式なremediation routeへ分離する。
 
-```text
-8cf70523093efa53b59a7de2c655f9755dbceb8d
-```
+## 3. 基本原則
 
-The Browser E2E blocker is treated as a test implementation / test architecture problem until independent verification establishes a product defect.
-
-## 3. Target principle
-
-Enhancement tests are a staging area for newly introduced or modified behavior. After a Gate / Enhancement stabilizes, each test is explicitly dispositioned:
+Enhancement testは、新規・変更behaviorを検証するためのstaging areaとして扱う。GateまたはEnhancementの安定化後、各テストに明示的なdispositionを与える。
 
 ```text
 Enhancement-specific test
@@ -48,34 +44,34 @@ PROMOTE / REWRITE / MERGE / RETIRE / ARCHIVE
 Current authoritative regression suite
 ```
 
-Regression tests represent **current authoritative behavior**, not the historical implementation shape of the Enhancement that originally introduced the behavior.
+Regression testが表現するのは、当該behaviorを最初に導入したEnhancementの歴史的実装形状ではなく、**現在のauthoritative behavior** である。
 
-## 4. Document index
+## 4. 文書一覧
 
-| File | Purpose |
+| File | 役割 |
 |---|---|
-| `01_classification_inventory.md` | Baseline inventory and initial classification of current tests |
-| `02_target_test_architecture.md` | Target filesystem and lifecycle architecture |
-| `03_migration_manifest.md` | Source-to-target migration manifest and disposition vocabulary |
-| `04_migration_decision_log.md` | Decision log explaining non-obvious migration choices |
-| `05_execution_record.md` | Append-only record of actual migration batches and commits |
-| `06_post_migration_verification.md` | Verification checklist and final closure evidence |
+| `01_classification_inventory.md` | 現行テストのbaseline inventoryと初期分類 |
+| `02_target_test_architecture.md` | 目標filesystem構造とtest lifecycle policy |
+| `03_migration_manifest.md` | source-to-target migration manifestとdisposition定義 |
+| `04_migration_decision_log.md` | 非自明なmigration判断のdecision log |
+| `05_execution_record.md` | 実際に行ったmigration batch / commitの追記型実行証跡 |
+| `06_post_migration_verification.md` | 移行後verification checklistとclosure evidence |
 
-## 5. Current status
+## 5. 現在状態
 
-- Classification principles: **defined**
-- Initial repository inventory: **completed at directory / test-family level**
-- File-by-file final target mapping: **pending**
-- Physical filesystem migration: **not started**
-- Test execution after migration: **not started**
+- Classification principle: **定義済み**
+- Repository初期inventory: **directory / test-family単位で完了**
+- File-by-file final target mapping: **未完了**
+- Physical filesystem migration: **未開始**
+- Migration後test execution: **未開始**
 
 ## 6. Authority boundary
 
-This directory is supporting design/evidence for test architecture stabilization. It does not override:
+本ディレクトリはtest architecture stabilizationのためのsupporting design/evidenceであり、以下をoverrideしない。
 
-- canonical requirements/design documents;
-- Gate `06` implementation semantic authority;
-- frozen Gate `07` verification authority;
-- canonical `999_gate_decision` terminal authority.
+- canonical requirements / design documents
+- 各Gate `06` implementation semantic authority
+- 各Gateのfrozen `07` verification authority
+- canonical `999_gate_decision` terminal authority
 
-If a migration decision conflicts with any frozen Gate contract, the migration must stop and the conflict must be resolved explicitly rather than weakening the Gate contract.
+Migration判断が既存のfrozen Gate contractと競合する場合、Gate contractを弱めるのではなくmigrationを停止し、競合を明示的に解消する。
