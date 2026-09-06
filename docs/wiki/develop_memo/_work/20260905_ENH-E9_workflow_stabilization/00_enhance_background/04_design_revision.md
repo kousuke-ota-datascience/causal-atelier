@@ -49,37 +49,112 @@ weighting:
   effective_sample_size:
     treated: <number | null>
     control: <number | null>
-  treated:
-    count: <integer>
-    min: <number>
-    mean: <number>
-    p50: <number>
-    p95: <number>
-    p99: <number>
-    max: <number>
-    extreme_count: <integer>
-    extreme_rule: <string>
-  control: <same fields>
+  treated: <weight stats object | null>
+  control: <weight stats object | null>
+```
+
+Applicable weight stats object:
+
+```text
+count: <integer>
+min: <number>
+mean: <number>
+p50: <number>
+p95: <number>
+p99: <number>
+max: <number>
+extreme_count: <integer>
+extreme_rule: "weight > 10.0"
 ```
 
 `balance.before`はunweighted balance。`balance.after`は実際に定義されたweight/component weightによるbalanceのみを格納する。存在しない場合は`null`とし、beforeをafterへコピーしない。
 
 ### 4.1 IPW
 
-`weighting.applicability = ESTIMATOR_WEIGHT`。ATE/ATTでestimatorが実際に用いるtreated/control arm weightを対象とする。ESSは各armについて `(sum w)^2 / sum(w^2)` とし、TreatmentEffectEstimatorがstandard-error計算に用いるESSと一致させる。
+`weighting.applicability = ESTIMATOR_WEIGHT`。ATE/ATTでestimatorが実際に用いるtreated/control arm weightを対象とする。
 
-Current estimatorのweighted meanは各arm weightのsumでnormalizeしてcontrastを計算するため、`definition`に「arm-specific analysis weights; normalization occurs through weighted-mean denominator」を明示する。Combined one-vector final weightを捏造しない。
+Current estimator semantics:
 
-Extreme ruleはpropensity clippingとは別概念である。初期contractでは `weight > p99` 等のdata-relative ruleを固定せず、実装で採用するruleを06/07 fixtureと同時に明示する。ruleなしでextreme_countだけを保存してはならない。
+```text
+ATE:
+  treated arm: 1 / e(x)
+  control arm: 1 / (1 - e(x))
 
-### 4.2 AIPW
+ATT:
+  treated arm: 1
+  control arm: e(x) / (1 - e(x))
+```
 
-`weighting.applicability = PROPENSITY_COMPONENT`。AIPW estimator全体の単一final weightは存在するものとして表現しない。Propensity-derived componentについてscientifically definedなdiagnosticsを保存してよいが、IPWと同じweight distribution/ESSを機械的に要求しない。`balance.after`もcomponent definitionが明確な場合のみ保存する。
+ここで`e(x)`はconfigured propensity clipping後のpropensity scoreである。Persist/distribution summaryの対象は各armのobserved rowsに対応するpositive analysis weightsだけとし、反対arm用のzero placeholderをstatisticsへ含めない。
 
-### 4.3 OLS / difference-in-means
+ESSは各armについて `(sum w)^2 / sum(w^2)` とし、TreatmentEffectEstimatorがstandard-error計算に用いるESSと一致させる。
 
-`weighting.applicability = NOT_APPLICABLE`。weight statistics/ESSを架空値で埋めない。`balance.before`は利用可能、`balance.after = null`を許容する。
+Current estimatorのweighted meanは各arm weightのsumでnormalizeしてcontrastを計算するため、`definition`には次のstable semanticsを表現する。
 
-## 5. Compatibility
+```text
+arm-specific IPW analysis weights computed from clipped propensity scores; weighted means normalize by each arm's weight sum
+```
+
+Combined one-vector final weightを捏造しない。
+
+### 4.2 Extreme-weight rule
+
+E9の初期stable ruleを次へ固定する。
+
+```text
+extreme_rule = "weight > 10.0"
+extreme_count = number of diagnosed arm weights satisfying weight > 10.0
+```
+
+- `weight == 10.0`はextremeに含めない。
+- propensity score clipping countをextreme_countへ流用しない。
+- thresholdはun-normalized arm-specific analysis weightに適用する。
+- p95/p99等のdata-relative thresholdをextreme ruleとして使用しない。
+- later threshold/configuration変更が必要なら別contract amendmentで扱い、silent変更しない。
+
+### 4.3 AIPW
+
+`weighting.applicability = PROPENSITY_COMPONENT`。AIPW estimator全体の単一final weightは存在するものとして表現しない。
+
+AIPWについては、propensity-derived componentの意味をwhole-estimator final weightと混同しないことを優先する。E9では以下を許容する。
+
+- `weighting.definition`でpropensity componentでありfinal estimator weightではないことを明記する。
+- 科学的に一意に定義できるcomponent weight statisticsのみ保存する。
+- whole-estimator treated/control ESSを生成しない。`effective_sample_size.treated/control = null`を許容する。
+- component balanceを一意に定義・説明できない場合、`balance.after = null`とする。
+
+AIPWへIPWと同じweight distribution/ESS/post-weight balanceを機械的に要求しない。
+
+### 4.4 OLS / difference-in-means
+
+`weighting.applicability = NOT_APPLICABLE`。
+
+```text
+weighting.estimand = <current estimand or null as payload convention requires>
+weighting.effective_sample_size.treated = null
+weighting.effective_sample_size.control = null
+weighting.treated = null
+weighting.control = null
+balance.before = <unweighted rows>
+balance.after = null
+balance.after_applicability = NOT_APPLICABLE
+```
+
+weight statistics/ESSを架空値で埋めない。
+
+## 5. Quantile/statistics semantics
+
+Applicable arm weight statisticsはdiagnosed positive arm weightsから計算する。
+
+- `count`: diagnosed arm row count
+- `min`, `mean`, `max`: standard numeric summaries
+- `p50`, `p95`, `p99`: NumPy-compatible linear quantile semantics（default `numpy.quantile` / `numpy.percentile` linear interpolation）
+- all persisted numbers must be finite JSON-compatible values; undefined values are represented by `null`, not NaN/Infinity
+
+Testsはproduction helperの結果をそのままexpected valueへ流用せず、known fixture weightsから独立計算する。
+
+## 6. Compatibility
 
 Result type、existing API route grammar、Treatment Effect payload semantics、Execution/Result lineageを変更しない。新field追加はbackward-compatible structured diagnostics extensionとして実施する。
+
+Legacy top-level `balance` listをmigration compatibilityのため残す場合、それは`balance.before`のprojectionとしてのみ扱い、新しいpost-weight authorityにしない。
