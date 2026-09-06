@@ -13,8 +13,14 @@
 6. FIXED Graph requirement、estimand、identification strategy、adjustment set、assumptionsがregressionしない。
 7. selected Identification Result → Estimation submission lineage/architectureを変更しない。
 
-## Verification layers
+## Verification layers and execution order
 
-frontend interaction/unitでhelp/selector/read-only Outcome、integration/contractでserialization/schema candidate authority、regressionでGraph → Identification → Estimation lineageを検証する。G03単独Browser E2Eは必須とせず、cross-layer journeyはG05でblocking verificationする。
+1. static / syntax checks
+2. frontend interaction/unit: help, selector, stale clearing, read-only Outcome
+3. integration/contract: serialization and Dataset Version schema candidate authority
+4. regression: Graph → Identification → Estimation lineage and protected semantics
+5. blocking AC evaluation
+
+G03単独Browser E2Eは実行しない。cross-layer Browser E2EはG05で、G05のnon-browser verification完了後の最後のverification itemとして実行する。
 
 全blocking AC PASSのみG03 PASS。
