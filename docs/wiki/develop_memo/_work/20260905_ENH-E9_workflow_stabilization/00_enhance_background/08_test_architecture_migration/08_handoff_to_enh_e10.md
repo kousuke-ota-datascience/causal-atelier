@@ -40,7 +40,7 @@ Test分類は少なくとも次の2軸を分ける。
 
 ```text
 regression
-ancement
+enhancement
 characterization
 benchmark
 support
