@@ -6,16 +6,11 @@
 
 ## 1. Runtime parameters
 
-Human / Orchestrator が与える値は次の2つだけ。
-
-```text
-GATE_ID={{GATE_ID}}
-TRIAL_NO={{TRIAL_NO}}
-```
-
 Fixed values:
 
 ```text
+GATE_ID=G02
+TRIAL_NO=01
 PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E9
 BRANCH_NAME=bugfix/ariadne_mvp_e9
