@@ -3,6 +3,9 @@
 **Document class:** Primary Execution Contract  
 **Contract status:** `FROZEN`  
 **Execution mode:** `WORK_PACKAGE`  
+**Required packages:** `P01, P02, P03, P04`  
+**First executable package:** `P01`  
+**P00 role:** `PLANNING_ONLY / NON_EXECUTABLE`  
 **Entry:** G03 canonical `999_gate_decision = PASS`
 
 ## 1. Gate claim
@@ -56,4 +59,9 @@ Treatment Effect calculation、ResultType、Execution/Result lineage、existing 
 
 ## 8. Work Packages
 
-P01 contract/applicability + estimator exposure、P02 IPW ESS/weight persistence、P03 before/after balance + AIPW applicability、P04 frontend structured consumption/regression。Pxxは本06/07 semanticsを変更できない。
+- P01: contract/applicability + estimator exposure
+- P02: IPW ESS/weight persistence
+- P03: before/after balance + AIPW/non-weighted applicability
+- P04: frontend structured consumption/regression
+
+P00はplanning-onlyであり実行対象ではない。Pxxは本06/07 semanticsを変更できない。全required package complete後にCandidate Assemblyを行う。Package focused verificationではBrowser E2Eを実行しない。G04のscientific/numeric correctnessはunit/integration/contract testをprimary authorityとし、cross-layer Browser E2EはG05の最後にのみ実行する。
