@@ -14,54 +14,137 @@ Estimator/analysisにapplicableなcausal diagnosticsをstable structured `DIAGNO
 
 ## 2. Baseline facts
 
-Baseline adapterはsample_size/design/unweighted balance/overlapをstructured diagnosticsとして保存する。`compute_balance_table`自体はoptional weightsを受けられるがadapterはweightなしで呼ぶ。IPW estimatorはanalysis weightsとESSを内部で計算するがstructured Resultへ公開しない。したがってFR-048 full conformance gapが存在する。
+Baseline adapterはsample_size/design/unweighted balance/overlapをstructured diagnosticsとして保存する。`compute_balance_table`自体はoptional weightsを受けられるがadapterはweightなしで呼ぶ。IPW estimatorはanalysis weightsとESSを内部で計算するがstructured Resultへ公開しない。AIPWはpropensity-derived augmentation componentを用いるがwhole-estimator single final weightは存在しない。したがってFR-048 full conformance gapが存在する。
 
 ## 3. Required structured semantics
 
-既存`sample_size`, `design`, `overlap`を互換維持し、次を追加/移行する。
+既存`sample_size`, `design`, `overlap`を互換維持し、次をstable contractとする。
 
-- `balance.before`: unweighted covariate balance rows
-- `balance.after`: applicable weight/component weightによるbalance rows。non-applicable/undefinedならnull
-- `balance.after_applicability`: `ESTIMATOR_WEIGHT | PROPENSITY_COMPONENT | NOT_APPLICABLE`
-- `weighting.applicability`: 同上
-- `weighting.estimand`
-- `weighting.definition`
-- `weighting.effective_sample_size.treated/control`
-- applicableなtreated/control weight distribution: `count,min,mean,p50,p95,p99,max,extreme_count,extreme_rule`
+```text
+balance:
+  before: <balance row list>
+  after: <balance row list | null>
+  after_applicability: ESTIMATOR_WEIGHT | PROPENSITY_COMPONENT | NOT_APPLICABLE
 
-Backward compatibilityが必要なcurrent consumerがある場合、migration期間だけlegacy `balance` projectionを維持してよいが、frontend新実装のauthorityはbefore/after contractとする。
+weighting:
+  applicability: ESTIMATOR_WEIGHT | PROPENSITY_COMPONENT | NOT_APPLICABLE
+  estimand: ATE | ATT | null
+  definition: <stable human-readable semantics>
+  effective_sample_size:
+    treated: <number | null>
+    control: <number | null>
+  treated: <stats object | null>
+  control: <stats object | null>
+```
 
-## 4. Estimator applicability
+Applicable stats object:
 
-### IPW
+```text
+count, min, mean, p50, p95, p99, max, extreme_count, extreme_rule
+```
 
-`ESTIMATOR_WEIGHT`。ATE/ATTで実際にeffect calculationに用いるarm-specific weightsをdiagnoseする。ESSは `(sum w)^2 / sum(w^2)` でestimator internal ESSと一致する。Weight scale/normalizationは`definition`で明示する。
+`balance.before`はunweighted。`balance.after`はscientifically defined actual estimator/component weightsによる場合だけ保存し、undefined/non-applicableならnull。beforeをafterへコピーしない。
 
-### AIPW
+## 4. Applicability semantics
 
-`PROPENSITY_COMPONENT`。AIPW全体のsingle final weightとして表現しない。Propensity-derived componentに対し科学的に定義できるdiagnosticsのみ保存する。IPWと同一setを機械的に要求しない。
+### IPW — `ESTIMATOR_WEIGHT`
 
-### OLS / difference-in-means
+`e(x)`はconfigured clipping後のpropensity score。
 
-`NOT_APPLICABLE`。weight/ESSを架空値で埋めない。before balanceは保存可、afterはnullを許容する。
+```text
+ATE:
+  treated observed rows = 1 / e(x)
+  control observed rows = 1 / (1 - e(x))
 
-## 5. Extreme-weight rule
+ATT:
+  treated observed rows = 1
+  control observed rows = e(x) / (1 - e(x))
+```
 
-`extreme_count`は必ず`extreme_rule`と対で保存する。Ruleはscientific/configuration authorityとして実装時に一意に固定し、test fixtureで境界値を検証する。Propensity clipping countをweight extreme countとして流用しない。
+Statistics/ESSは各arm observed rowsのpositive actual analysis weightsだけを対象とする。反対arm zero placeholderを含めない。
 
-## 6. Frontend boundary
+ESS:
 
-Frontendはstructured fieldsをpresentationへ投影するだけとし、ESS、weights、weighted balanceを再計算しない。利用不能項目はnot applicable/unavailableとして表示する。
+```text
+(sum w)^2 / sum(w^2)
+```
 
-## 7. Protected semantics
+`definition`は次のsemanticsを表現する。
 
-Treatment Effect calculation、ResultType、Execution/Result lineage、existing API route grammar、Effects/Diagnostics Stage ownershipを維持する。
+```text
+arm-specific IPW analysis weights computed from clipped propensity scores; weighted means normalize by each arm's weight sum
+```
 
-## 8. Work Packages
+### AIPW — `PROPENSITY_COMPONENT`
 
-- P01: contract/applicability + estimator exposure
-- P02: IPW ESS/weight persistence
-- P03: before/after balance + AIPW/non-weighted applicability
-- P04: frontend structured consumption/regression
+AIPW全体をsingle final weightとして表現しない。Propensity-derived componentについてscientifically一意に定義できるdiagnosticsだけ保存する。
 
-P00はplanning-onlyであり実行対象ではない。Pxxは本06/07 semanticsを変更できない。全required package complete後にCandidate Assemblyを行う。Package focused verificationではBrowser E2Eを実行しない。G04のscientific/numeric correctnessはunit/integration/contract testをprimary authorityとし、cross-layer Browser E2EはG05の最後にのみ実行する。
+- whole-estimator treated/control ESSをfabricateしない。null可。
+- component after-balanceを一意に定義できない場合`balance.after = null`。
+- IPWと同じdiagnostic setを機械的に要求しない。
+
+### OLS / difference-in-means — `NOT_APPLICABLE`
+
+weight statistics/ESSを架空値で埋めない。`balance.before`は保存可、`balance.after = null`。
+
+## 5. Extreme-weight rule — frozen
+
+```text
+extreme_rule = "weight > 10.0"
+extreme_count = number of diagnosed arm weights satisfying weight > 10.0
+```
+
+- `weight == 10.0`はextremeではない。
+- un-normalized arm-specific actual analysis weightへ適用。
+- propensity clipping countを流用しない。
+- thresholdをsilent変更しない。
+
+## 6. Statistics semantics
+
+Applicable arm weights:
+
+- `count`: diagnosed arm row count
+- `min`, `mean`, `max`: numeric summaries
+- `p50`, `p95`, `p99`: NumPy-compatible linear quantiles
+- undefined/non-applicable: null。NaN/Infinityをstable JSON fieldとしてpersistしない。
+
+## 7. Frontend boundary
+
+Frontendはpersisted structured fieldsをpresentationへ投影するだけとし、ESS、weights、quantiles、extreme_count、weighted balanceを再計算しない。`definition`/notes string parsingでscientific valuesを復元しない。利用不能項目はnot applicable/unavailableとして表示する。
+
+Legacy top-level`balance`をmigration compatibilityで残す場合、それはunweighted before projectionとしてのみ扱い、new after-weight authorityにしない。
+
+## 8. Protected semantics
+
+- Treatment Effect estimate/uncertainty calculation
+- ResultType
+- Execution/Result lineage
+- existing API route grammar
+- Effects/Diagnostics Stage ownership
+- propensity clipping behavior
+- E8 Stage separation / Navigation Stage != Execution state
+
+## 9. Forbidden
+
+- fabricated weights/ESS
+- AIPW whole-estimator final weight捏造
+- propensity clipping countのextreme_count流用
+- before→after copy
+- frontend scientific recomputation/string parsing
+- new ResultType / unnecessary route/persistence redesign
+- Pxx内でGate claim/ACを変更
+
+## 10. Work Packages
+
+- P01: applicability contract + estimator/component exposure + extreme rule boundary
+- P02: IPW actual-weight stats + treated/control ESS structured persistence
+- P03: before/after balance + estimator applicability semantics
+- P04: frontend structured consumption + compatibility/regression
+
+各Pxxはassigned Coding Agentにとってself-contained normative contractでなければならず、parent 06/07/P00/other Pxxを仕様補完目的で参照させない。必要semantic fragmentはPxxへ明示的に複製する。
+
+全Pxx complete後にCandidate Assemblyを行う。Pxx completionはGate PASSではない。
+
+## 11. Browser E2E
+
+G04 Package executionおよびG04 Independent VerificationではBrowser E2Eをnumeric/scientific proofとして実行しない。G04 correctnessはscientific/unit/backend integration/frontend integrationをprimary authorityとする。Integrated Browser E2EはG05 final verificationへ委譲する。
