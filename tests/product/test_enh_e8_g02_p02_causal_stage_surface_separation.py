@@ -18,7 +18,7 @@ def test_causal_primary_surfaces_are_stage_owned_and_have_japanese_purposes() ->
 
     for stage in ("identification", "estimation", "effects", "diagnostics", "sensitivity"):
         assert f"{stage}:Object.freeze" in presentation
-    for expected in ("因果効果を識別", "選択したIdentification Result", "保存済み（saved）の処置効果", "balance、overlap", "Refutationと感度分析"):
+    for expected in ("因果効果を識別", "選択したIdentification Result", "保存済みTreatment Effect Result", "Covariate balance", "propensity overlap", "Refutationと感度分析"):
         assert expected in presentation
     assert 'data-causal-stage-surface="effects diagnostics"' not in html
     assert 'id="treatment-effect-results"' in _surface(html, "effects")

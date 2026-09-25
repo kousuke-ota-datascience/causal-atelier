@@ -126,28 +126,53 @@
   }
 
   function balanceSection(payload){
-    const rows=Array.isArray(payload.balance)?payload.balance:[];
-    if(!rows.length){
+    const structured=payload.balance&&typeof payload.balance==='object'&&!Array.isArray(payload.balance)
+      ?payload.balance:null;
+    const before=structured&&Array.isArray(structured.before)?structured.before:
+      (Array.isArray(payload.balance)?payload.balance:[]);
+    const after=structured&&Array.isArray(structured.after)?structured.after:null;
+    const applicability=structured?.after_applicability||null;
+    if(!before.length){
       return `<section class="diagnostic-section"><h4>Covariate balance</h4><p>このResultにはCovariate balanceの構造化診断値がありません。</p></section>`;
     }
-    const ranked=rows.map(row=>({row,smd:finiteNumber(row.standardized_mean_difference)}))
+    const ranked=before.map(row=>({row,smd:finiteNumber(row.standardized_mean_difference)}))
       .filter(item=>item.smd!==null)
       .sort((a,b)=>Math.abs(b.smd)-Math.abs(a.smd));
     const largest=ranked[0]||null;
+    const table=(rows,label)=>`<h5>${esc(label)}</h5><div class="diagnostic-table-wrap"><table class="diagnostic-table">
+      <thead><tr><th>Covariate</th><th>Treated mean</th><th>Control mean</th><th>SMD</th><th>Missing rate</th></tr></thead>
+      <tbody>${rows.map(row=>`<tr>
+        <td>${esc(row.covariate??'—')}</td><td>${esc(formatNumber(row.mean_treated))}</td>
+        <td>${esc(formatNumber(row.mean_control))}</td><td>${esc(formatNumber(row.standardized_mean_difference))}</td>
+        <td>${esc(row.missing_rate===undefined||row.missing_rate===null?'—':`${formatNumber(Number(row.missing_rate)*100,{digits:3})}%`)}</td>
+      </tr>`).join('')}</tbody></table></div>`;
+    const afterMarkup=after?table(after,'Weighted / after adjustment'):
+      `<p class="diagnostic-unavailable">Post-weight balance: ${applicability?'not provided / not applicable':'このlegacy Resultには構造化保存されていません'}。</p>`;
     return `<section class="diagnostic-section">
       <h4>Covariate balance</h4>
-      <p class="diagnostic-note"><b>Unweighted / before weighting.</b> 現行backendが保存しているbalanceは重み付け前の値です。</p>
-      <div class="diagnostic-table-wrap"><table class="diagnostic-table">
-        <thead><tr><th>Covariate</th><th>Treated mean</th><th>Control mean</th><th>SMD</th><th>Missing rate</th></tr></thead>
-        <tbody>${rows.map(row=>`<tr>
-          <td>${esc(row.covariate??'—')}</td>
-          <td>${esc(formatNumber(row.mean_treated))}</td>
-          <td>${esc(formatNumber(row.mean_control))}</td>
-          <td>${esc(formatNumber(row.standardized_mean_difference))}</td>
-          <td>${esc(row.missing_rate===undefined||row.missing_rate===null?'—':`${formatNumber(Number(row.missing_rate)*100,{digits:3})}%`)}</td>
-        </tr>`).join('')}</tbody>
-      </table></div>
+      <p class="diagnostic-note"><b>Unweighted / before weighting.</b> ${structured?'persisted before-balance':'legacy balance is shown only as before-balance'}。</p>
+      ${table(before,'Unweighted / before weighting')}
+      ${afterMarkup}
       <p>${largest?`最大の|SMD|は ${esc(largest.row.covariate)} = ${esc(formatNumber(largest.smd))} です。SMDは0に近いほど、観測共変量のTreatment群とControl群の分布が近いことを示します。`:'SMDを計算できる共変量がありません。'}</p>
+    </section>`;
+  }
+
+  function weightingSection(payload){
+    const weighting=payload.weighting;
+    if(!weighting||typeof weighting!=='object')return `<section class="diagnostic-section diagnostic-unavailable"><h4>Weight diagnostics</h4><p>このlegacy Resultにはweightingの構造化保存値がありません。推定・補完は行いません。</p></section>`;
+    const applicability=weighting.applicability||'N/A';
+    const ess=weighting.effective_sample_size||{};
+    const summary=(label,stats)=>!stats?`<p>${esc(label)}: N/A</p>`:`<dl class="diagnostic-fields">
+      ${field(`${label} count`,formatNumber(stats.count))}${field(`${label} min`,formatNumber(stats.min))}${field(`${label} mean`,formatNumber(stats.mean))}
+      ${field(`${label} p50`,formatNumber(stats.p50))}${field(`${label} p95`,formatNumber(stats.p95))}${field(`${label} p99`,formatNumber(stats.p99))}
+      ${field(`${label} max`,formatNumber(stats.max))}${field(`${label} extreme count`,formatNumber(stats.extreme_count))}${field(`${label} extreme rule`,stats.extreme_rule||'N/A')}
+    </dl>`;
+    const afterMessage=applicability==='PROPENSITY_COMPONENT'?'AIPW等のpropensity componentであり、whole-estimator final weightではありません。':
+      applicability==='NOT_APPLICABLE'?'このEstimatorではweight/ESS/after-balanceはnot applicableです。':'';
+    return `<section class="diagnostic-section">
+      <h4>Weight diagnostics</h4><p>${esc(weighting.definition||'Persisted weighting definition is unavailable.')}</p>
+      <dl class="diagnostic-fields">${field('Applicability',applicability)}${field('Estimand',weighting.estimand??'N/A')}${field('Treated ESS',ess.treated===null||ess.treated===undefined?'N/A':formatNumber(ess.treated))}${field('Control ESS',ess.control===null||ess.control===undefined?'N/A':formatNumber(ess.control))}</dl>
+      ${summary('Treated',weighting.treated)}${summary('Control',weighting.control)}${afterMessage?`<p class="diagnostic-note">${esc(afterMessage)}</p>`:''}
     </section>`;
   }
 
@@ -183,10 +208,8 @@
     </section>`;
   }
 
-  function backendGapSection(prefill){
-    const estimator=String(prefill?.algorithm_or_estimator||'').toLowerCase();
-    const weighted=['ipw','aipw'].includes(estimator);
-    if(!weighted)return '';
+  function backendGapSection(payload){
+    if(payload.weighting||payload.balance&&typeof payload.balance==='object'&&!Array.isArray(payload.balance))return '';
     return `<section class="diagnostic-section diagnostic-unavailable">
       <h4>Weight stability / post-adjustment balance</h4>
       <p>ESS、weight diagnostics、weighted/post-adjustment balanceは現行backend Resultに構造化保存されていないため、この画面では表示できません。ENH-E9申し送り事項としてbackend改修対象に記録しています。</p>
@@ -262,8 +285,9 @@
       </section>
       ${sampleSection(payload)}
       ${balanceSection(payload)}
+      ${weightingSection(payload)}
       ${overlapSection(payload,prefill)}
-      ${backendGapSection(prefill)}
+      ${backendGapSection(payload)}
       <section class="diagnostic-section diagnostic-warnings">
         <h4>Scientific warnings</h4>
         ${warningMarkup(result)}

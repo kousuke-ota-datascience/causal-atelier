@@ -3,7 +3,14 @@
 from pathlib import Path
 
 
-REPOSITORY = Path(__file__).parents[2]
+def _repository_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "pyproject.toml").is_file():
+            return parent
+    raise RuntimeError("repository root not found")
+
+
+REPOSITORY = _repository_root()
 
 
 def test_estimation_action_bypasses_hidden_identification_form_validation() -> None:
@@ -11,7 +18,7 @@ def test_estimation_action_bypasses_hidden_identification_form_validation() -> N
         encoding="utf-8"
     )
 
-    assert "const button=$('#estimation-inputs button');" in module
+    assert "const button=$('#run-estimation')||$('#estimation-inputs button');" in module
     assert "button.type='button';" in module
     assert "button.id='run-estimation';" in module
     assert "button.onclick=runEstimation;" in module
@@ -40,9 +47,9 @@ def test_causal_runtime_loads_estimation_action_after_app_runtime_is_available()
         encoding="utf-8"
     )
 
-    assert "global.addEventListener('load'" in presentation
-    assert "script.src='/causal_estimation_submission.js';" in presentation
-    assert "script.dataset.causalEstimationSubmission='true';" in presentation
+    assert "global.addEventListener('DOMContentLoaded'" in presentation
+    assert "function loadRuntimeScript(src,datasetKey)" in presentation
+    assert "loadRuntimeScript('/causal_estimation_submission.js','causal-estimation-submission');" in presentation
 
 
 def test_stage_renderer_remains_presentation_only() -> None:
