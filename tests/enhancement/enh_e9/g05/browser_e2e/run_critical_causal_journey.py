@@ -140,8 +140,9 @@ def _fill_identification(page: Page, dataset_id: str, graph_id: str) -> None:
     form.locator('select[name="dataset_version_id"]').select_option(dataset_id)
     form.locator('select[name="graph_version_id"]').select_option(graph_id)
     form.locator('select[name="analysis_mode"]').select_option("EXPLORATORY")
+    form.locator('select[name="treatment"]').select_option("treatment")
     for name, value in {
-        "population": "eligible rows", "comparator": "untreated", "treatment": "treatment",
+        "population": "eligible rows", "comparator": "untreated",
         "analysis_unit": "row", "treatment_time": "baseline", "outcome_window": "follow-up",
     }.items():
         form.locator(f'[name="{name}"]').fill(value)
@@ -213,16 +214,19 @@ def main() -> int:
             page.locator("#notice").filter(has_text="Identificationを受け付けました").wait_for(timeout=30_000)
             identification_execution = _wait_new_executions(project_id, before, "IDENTIFICATION", 1)[0]
             identification_result = next(item for item in _results(identification_execution["execution_id"]) if item["result_type"] == "IDENTIFICATION_RESULT")
-            page.locator("#refresh-inference").click()
-            page.wait_for_function("() => document.querySelector('#refresh-inference').dataset.refreshStatus === 'done'", timeout=30_000)
-            page.locator(f'#identification-results option[value="{identification_result["result_id"]}"]').wait_for(timeout=30_000)
             evidence["lineage"]["identification_execution_id"] = identification_execution["execution_id"]
             evidence["lineage"]["identification_result_id"] = identification_result["result_id"]
-            _checkpoint(evidence, page, "identification-result-selected", "identification")
+            _checkpoint(evidence, page, "identification-result-persisted", "identification")
 
             page.locator('#analysis-stage-sidebar button[data-stage="estimation"]').click()
             _route(page, f"/projects/{project_id}/analysis/causal/estimation", "inference")
+            page.locator("#refresh-inference").click()
+            page.wait_for_function("() => document.querySelector('#refresh-inference').dataset.refreshStatus === 'done'", timeout=30_000)
+            page.locator(f'#identification-results option[value="{identification_result["result_id"]}"]').wait_for(state="attached", timeout=30_000)
             page.locator("#identification-results").select_option(identification_result["result_id"])
+            assert page.locator("#identification-results").input_value() == identification_result["result_id"]
+            page.locator('input[name="override_reason"]').fill("G05 journey continues with documented eligibility warning")
+            _checkpoint(evidence, page, "identification-result-selected", "estimation")
             for estimator in ("difference_in_means", "ols", "ipw", "aipw"):
                 page.locator(f'#inference-form input[name="estimators"][value="{estimator}"]').set_checked(estimator == "ipw")
             before = {item["execution_id"] for item in _executions(project_id)}
@@ -241,14 +245,14 @@ def main() -> int:
             _route(page, f"/projects/{project_id}/analysis/causal/effects", "inference")
             page.locator("#refresh-effects").click()
             page.wait_for_function("() => document.querySelector('#refresh-effects').dataset.refreshStatus === 'done'", timeout=30_000)
-            page.locator(f'#treatment-effect-results input[value="{effect["result_id"]}"]').wait_for(timeout=30_000)
+            page.locator(f'#treatment-effect-results article[data-result-id="{effect["result_id"]}"]').first.wait_for(timeout=30_000)
             _checkpoint(evidence, page, "persisted-treatment-effect-presented", "effects")
 
             page.locator('#analysis-stage-sidebar button[data-stage="diagnostics"]').click()
             _route(page, f"/projects/{project_id}/analysis/causal/diagnostics", "inference")
             page.locator("#refresh-diagnostics").click()
             page.wait_for_function("() => document.querySelector('#refresh-diagnostics').dataset.refreshStatus === 'done'", timeout=30_000)
-            page.locator(f'#diagnostics-results input[value="{diagnostics["result_id"]}"]').wait_for(timeout=30_000)
+            page.locator(f'#diagnostics-results article[data-result-id="{diagnostics["result_id"]}"]').first.wait_for(timeout=30_000)
             _checkpoint(evidence, page, "persisted-diagnostics-presented", "diagnostics")
             assert not [value for value in console if value.startswith("error:")], console
             evidence["status"] = "PASS"
