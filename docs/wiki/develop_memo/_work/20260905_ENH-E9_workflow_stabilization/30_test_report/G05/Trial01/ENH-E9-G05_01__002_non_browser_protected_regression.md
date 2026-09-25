@@ -25,3 +25,7 @@ Exit code: `0`.
 ```
 
 The suite passes G01 Context/View, G02 Discovery/adoption, G03 lineage, G04 structured effects/diagnostics, G05 runner readiness, and protected stage/navigation contracts. This covers AC1–AC9 non-browser primary/protected evidence. Test Agent production/migration/dependency changes: NONE.
+
+## SAME_TRIAL continuation — 2026-09-25
+
+The repaired runner was syntax-compiled, `git diff --check` passed, the same 07-aligned non-browser suite passed again (`50 passed in 6.44s`), and `docker compose -f compose.yaml -f compose.e1a.yaml --profile e2e config --quiet` passed. This rerun was completed before the final Browser item. No non-browser product violation was observed; the original PASS evidence remains valid and is reconfirmed on tested state `e9c35a9b635a9cc905a335ddc52d23618bb35a81`.
