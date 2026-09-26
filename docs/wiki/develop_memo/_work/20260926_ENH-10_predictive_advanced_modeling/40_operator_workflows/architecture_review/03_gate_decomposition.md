@@ -98,8 +98,10 @@ The three-Package decomposition inside each Gate is execution decomposition only
 
 Architecture decisions required by 06/07/Pxx are technically resolved by `02_target_architecture_decision_record.md`.
 
-Remaining pre-freeze work:
+Canonical requirement/design application and final traceability are complete at snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
-1. apply approved requirement delta to canonical requirement/design documents
-2. finalize the approved revised requirement/design snapshot and traceability review
-3. freeze 06/07/Pxx in one consistent batch
+Remaining pre-execution work:
+
+1. freeze the applicable Gate's 06/07/Pxx in one consistent batch
+2. satisfy declared upstream Gate prerequisites
+3. run Agent Execution Readiness

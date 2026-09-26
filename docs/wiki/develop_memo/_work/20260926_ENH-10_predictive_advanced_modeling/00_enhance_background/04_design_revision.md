@@ -1,7 +1,7 @@
 # ENH-E10 設計書改定 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / ARCHITECTURE_APPROVED / NOT_FROZEN`  
+> **Status:** `MATERIALIZED / ARCHITECTURE_APPROVED / CANONICAL_APPLIED / NOT_FROZEN`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -11,7 +11,7 @@
   - `docs/wiki/requirement_definition/23_api_interface_design.md`
   - `docs/wiki/requirement_definition/30_detailed_design.md`
 - Requirement delta: `00_enhance_background/03_requirements_revision.md`
-- Freeze state: **NOT FROZEN — Architecture Review approved; canonical application/final traceability/Gate freeze remain**
+- Freeze state: **NOT FROZEN — canonical design applied at `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`; Gate freeze remains**
 
 ## 1. Current design constraints to preserve
 
@@ -26,13 +26,13 @@ Current design establishes:
 - UI/navigation change alone must not alter backend scientific semantics.
 - external analytical engine must not become mandatory core dependency.
 
-## 2. Proposed design delta
+## 2. Applied design delta
 
 ### 2.1 Model Capability layer
 
 Current small model registryをprovider-neutral capability registryへ拡張する。
 
-Proposed descriptor responsibilities:
+Descriptor responsibilities:
 
 - `model_id`
 - model contract version
@@ -69,16 +69,16 @@ LightGBM classifier/regressorはtask-specific backendとして追加する。
 
 Existing linear `fitted-model/1` JSON contractを破壊的にprovider objectへ置換しない。
 
-Architecture Reviewで次のどちらかをfreezeする。
+Architecture ReviewでOption Aを選択し、canonical designへ適用した。
 
-**Option A — versioned provider-neutral artifact envelope**
+**Selected — versioned provider-neutral artifact envelope**
 - new fitted-model schema version
 - metadata/envelopeはcanonical JSON
 - provider model payloadはprovider-supported durable serialization
 - loader identity/provider/versionをmetadataへ保持
 - existing `fitted-model/1` read compatibilityを維持
 
-**Option B — provider-specific artifact schema**
+**Rejected alternative — provider-specific artifact schema**
 - linear v1を維持
 - LightGBM用artifact schemaを明示追加
 - common model descriptorからprovider-specific loaderへdispatch
@@ -92,7 +92,7 @@ Common invariant:
 
 ### 2.4 Optional dependency lifecycle
 
-Proposed package topology:
+Approved package topology:
 
 ```text
 Ariadne core
@@ -102,7 +102,7 @@ Ariadne core
       - LIME
 ```
 
-exact group name/version boundsはfreeze前に決定する。
+approved group/version boundsは `predictive-advanced`: LightGBM `>=4.7.0,<4.8`, SHAP `>=0.52.0,<0.53`, LIME `==0.2.0.1`。
 
 Dependency resolver responsibilities:
 
@@ -133,7 +133,7 @@ Initial methods:
 - SHAP
 - LIME
 
-exact canonical method IDsはfreeze decision。
+canonical method IDsは `LINEAR_COEFFICIENT_CONTRIBUTION`, `SHAP_TREE`, `LIME_TABULAR`。
 
 ### 2.6 SHAP adapter
 
@@ -146,12 +146,12 @@ Design intent:
 - expected/base value、feature mapping、sample identity、background/reference provenanceを保持する。
 - additivityをacceptanceに含める場合はscale/toleranceをfreezeする。
 
-未決:
-- binary classification SHAP scale
-- background/reference dataset
-- linear model SHAP support
-- exact global aggregation
-- additivity metadata/tolerance
+Applied decision:
+- binary classification SHAP scale = raw LOG_ODDS
+- reference = tree_path_dependent training path semantics
+- SHAP support = LightGBM only
+- global aggregation = TEST全体のmean absolute contribution + signed mean
+- additivity tolerance = atol 1e-6 / rtol 1e-5
 
 ### 2.7 LIME adapter
 
@@ -162,12 +162,13 @@ Design intent:
 - instance identity、feature representation、seed、number of samples/features、kernel/discretization等をprovenanceへ保持する。
 - unsupported global requestからpseudo-global aggregateを生成しない。
 
-未決:
-- perturbation/discretization defaults
-- number of samples/features
-- classification target semantics
-- original vs preprocessed feature representation
-- exact reproducibility guarantee
+Applied decision:
+- local-only
+- num_samples=2000 / num_features=min(10,n_features)
+- classification target = positive-class probability
+- representation = preprocessed model feature space
+- deterministic TRAIN-derived explanation reference
+- same-runtime/config reproducibility
 
 ### 2.8 Canonical explanation result
 
@@ -210,7 +211,7 @@ Responseはfrontendが次を判断できる情報を提供する。
 
 backend validationがfinal authorityであり、capabilities responseはclient convenience onlyにならないよう同一domain authorityから生成する。
 
-response schema/versionを新設するかはfreeze decision。
+response schemaは `predictive-capabilities/1` を維持し、backward-compatible additive extensionとする。
 
 ### 2.10 Frontend integration
 
@@ -289,11 +290,12 @@ TEST explanation data must not feed model fitting/selection.
 
 Current expectation:
 
-- DB schema migration: **not assumed**
+- DB schema migration: **not required**
 - new persistent entity: **not required**
-- Artifact metadata/schema evolution: **likely**
-- Result payload/schema evolution: **possible**
-- `predictive-analysis-spec/1` revision: **undecided**
+- Artifact schema evolution: **`fitted-model/2` new-write + `fitted-model/1` read compatibility**
+- Explanation Result/Artifact/Model Card: **v1 additive extension**
+- `predictive-analysis-spec/1`: **retained**
+- `predictive-capabilities/1`: **retained with additive extension**
 
 Prefer additive/versioned artifact/result evolution over DB schema change unless Architecture Review finds a hard requirement.
 
@@ -411,13 +413,15 @@ G01 Predictive Model Backend Contract
 
 Each Gate uses three Work Packages for execution/failure localization only. Work Package completion is not a Gate acceptance boundary.
 
-## 10. Remaining pre-freeze workflow
+## 10. Canonical application state
 
-Architecture questions are no longer technically open. Remaining blockers before Gate freeze are governance/application steps:
+Approved requirement/design delta was applied in snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
-1. apply the approved requirement delta to canonical requirement/design documents.
-2. save the approved revised requirement/design snapshot.
-3. finalize 05 traceability review against that canonical snapshot.
-4. freeze G01–G03 06/07/Pxx in one internally consistent batch.
+Canonical authorities:
 
-Until those steps complete, implementation remains NOT EXECUTABLE.
+- `docs/wiki/requirement_definition/10_requirements_definition.md`
+- `docs/wiki/requirement_definition/22_product_basic_design.md`
+- `docs/wiki/requirement_definition/23_api_interface_design.md`
+- `docs/wiki/requirement_definition/30_detailed_design.md`
+
+05 final traceability review is complete against this snapshot. Remaining pre-execution action is to freeze each Gate's 06/07/P01-P03 consistently, then run Agent Execution Readiness.

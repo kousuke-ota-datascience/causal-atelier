@@ -1,13 +1,13 @@
 # ENH-E10 要件定義書改定 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / APPROVED_REQUIREMENT_DELTA / NOT_APPLIED`  
+> **Status:** `MATERIALIZED / APPROVED_REQUIREMENT_DELTA / APPLIED`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
 - Canonical requirement source: `docs/wiki/requirement_definition/10_requirements_definition.md`
-- Application state: **APPROVED delta; canonical requirements have not yet been rewritten**
+- Application state: **APPLIED to canonical requirements/design snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`**
 - Approval dependency: `02_enhancement_concept_approval_record.md`
 
 ## 1. Source requirements
@@ -37,7 +37,7 @@ Relevant current requirements:
 
 ## 2. Requirement delta
 
-以下はcanonical requirement documentへ適用するための**proposed delta**である。新規IDはcurrent branch上の既存番号との衝突がないことをapply時に再確認する。
+以下はHuman-approved deltaとしてcanonical requirement documentへ適用済みである。apply時にID collisionを再確認し、FR-178〜FR-184 / NFR-028 / AR-027はいずれも未使用であることを確認した。
 
 | Requirement ID | Before | Proposed After | Reason |
 |---|---|---|---|
@@ -46,15 +46,15 @@ Relevant current requirements:
 | FR-069 | global/local Predictive Explanationを生成 | explanation method capabilityに応じ、global/localのsupported scopeを保持してPredictive Explanationを生成する | SHAP/LIME/coefficientでcapabilityが異なるため |
 | FR-071 | Model Cardへintended use/training data/metric/limitations | model/provider/version/effective parameters/seed/feature/preprocessor identity/explanation method等、再現性に必要なprovenanceをcurrent contractに従って記録する | advanced backendの再現性・監査性確保 |
 | FR-161 | external analytical engineをmandatory dependencyとして追加しない | **維持**。LightGBM/SHAP/LIMEをoptional capabilityとして導入し、未導入でもcore startup/existing supported flowを壊さない | E10 scopeと既存constraintを両立 |
-| FR-178 (NEW proposed) | N/A | Binary Classification / RegressionでLightGBM backendをtask-compatible modelとして選択できる | E10 named capability acceptance |
-| FR-179 (NEW proposed) | N/A | optional model dependencyが利用不可の場合、明示的capability-unavailable error/stateを返し、別modelへsilent fallbackしない | optional dependency safety |
-| FR-180 (NEW proposed) | N/A | fitted modelはserialize/load round-trip後もmodel/task/feature/preprocessor identityを保持し、同一fixtureでprediction contractを満たす | artifact/load correctness |
-| FR-181 (NEW proposed) | N/A | Predictive Explanation methodはmodel-method compatibilityを検証し、coefficient / SHAP / LIMEを明示methodとして解決する | incompatible explanation防止 |
-| FR-182 (NEW proposed) | N/A | SHAPはfrozen compatibility範囲でglobal/local、LIMEはfrozen contractでlocal capabilityを提供し、unsupported capabilityを擬似出力で補完しない | method semantics preservation |
-| FR-183 (NEW proposed) | N/A | explanation Result/Artifactはmethod、model、feature/sample identity、output scale、background/reference、seed、package version等のprovenanceを保持する | XAI traceability |
-| FR-184 (NEW proposed) | N/A | Train / Explainability / Model Managementはbackend capability metadataを利用してcompatible option、availability、provenanceを表示し、frontendを独立compatibility authorityにしない | product integration |
-| NFR-028 (NEW proposed) | N/A | optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability選択時に局所化して報告する | optional dependency isolation |
-| AR-027 (NEW proposed) | N/A | SHAP/LIME/coefficient contributionはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない | XAI scientific interpretation guard |
+| FR-178 (NEW applied) | N/A | Binary Classification / RegressionでLightGBM backendをtask-compatible modelとして選択できる | E10 named capability acceptance |
+| FR-179 (NEW applied) | N/A | optional model dependencyが利用不可の場合、明示的capability-unavailable error/stateを返し、別modelへsilent fallbackしない | optional dependency safety |
+| FR-180 (NEW applied) | N/A | fitted modelはserialize/load round-trip後もmodel/task/feature/preprocessor identityを保持し、同一fixtureでprediction contractを満たす | artifact/load correctness |
+| FR-181 (NEW applied) | N/A | Predictive Explanation methodはmodel-method compatibilityを検証し、coefficient / SHAP / LIMEを明示methodとして解決する | incompatible explanation防止 |
+| FR-182 (NEW applied) | N/A | SHAPはfrozen compatibility範囲でglobal/local、LIMEはfrozen contractでlocal capabilityを提供し、unsupported capabilityを擬似出力で補完しない | method semantics preservation |
+| FR-183 (NEW applied) | N/A | explanation Result/Artifactはmethod、model、feature/sample identity、output scale、background/reference、seed、package version等のprovenanceを保持する | XAI traceability |
+| FR-184 (NEW applied) | N/A | Train / Explainability / Model Managementはbackend capability metadataを利用してcompatible option、availability、provenanceを表示し、frontendを独立compatibility authorityにしない | product integration |
+| NFR-028 (NEW applied) | N/A | optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability選択時に局所化して報告する | optional dependency isolation |
+| AR-027 (NEW applied) | N/A | SHAP/LIME/coefficient contributionはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない | XAI scientific interpretation guard |
 
 ## 3. New invariants / constraints
 
@@ -93,7 +93,7 @@ Relevant current requirements:
 
 ## 4. Removed / deprecated requirements
 
-**NONE proposed.**
+**NONE.**
 
 ENH-E10は既存Predictive requirementsを削除・緩和するEnhancementではない。
 
@@ -160,6 +160,8 @@ The previously open technical requirement questions are resolved for the propose
 6. model artifact evolution = provider-neutral `fitted-model/2` new-write envelope with `fitted-model/1` read compatibility.
 7. optional external engines remain optional and unavailable capability never silently falls back.
 
-The remaining requirement-level decision is governance rather than technical ambiguity: whether proposed new IDs FR-178–FR-184 / NFR-028 / AR-027 are applied as written or folded into existing canonical requirement IDs during approved canonical update. Requirement ID collision must be rechecked at apply time.
+Approved requirement IDs were applied as written: FR-178–FR-184 / NFR-028 / AR-027. No collisions were found at application time.
 
-本書は引き続き `PROPOSED_REQUIREMENT_DELTA / NOT_APPLIED` であり、Human approval前にcanonical requirement sourceを書き換えない。
+Canonical application snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
+
+本書はapplied deltaのprovenance recordであり、current requirement authorityはcanonical `docs/wiki/requirement_definition/10_requirements_definition.md` とする。

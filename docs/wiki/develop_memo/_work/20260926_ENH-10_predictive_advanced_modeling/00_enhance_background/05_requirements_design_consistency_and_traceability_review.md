@@ -1,36 +1,37 @@
 # ENH-E10 要件・設計整合性およびトレーサビリティ確認
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / APPROVED_ARCHITECTURE / NOT_READY_FOR_IMPLEMENTATION`  
+> **Status:** `FINAL / TRACEABILITY_PASS / READY_FOR_GATE_FREEZE`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
-- Requirement proposal: `03_requirements_revision.md`
-- Design proposal: `04_design_revision.md`
+- Requirement delta provenance: `03_requirements_revision.md`
+- Design delta provenance: `04_design_revision.md`
 - Gate drafts: `10_enhance_instruction/G01..G03`
 - Approval record: `02_enhancement_concept_approval_record.md`
 - Current approval state: `APPROVED`
+- Canonical requirement/design snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`
 
 ## 1. Traceability matrix
 
-| Requirement / Invariant | Proposed design realization | Gate | Acceptance mapping |
+| Requirement / Invariant | Applied design realization | Gate | Acceptance mapping |
 |---|---|---|---|
 | FR-061 revised — capability-aware model registry | Model Capability descriptor + backend resolver | G01 | registry/task compatibility / backward compatibility |
 | FR-068 revised — durable model round-trip | provider-aware serializer/loader + fitted-model Artifact | G01 | binary/regression train→serialize→load→predict |
 | FR-161 — no mandatory external engine | optional dependency resolver + availability state | G01/G02/G03 | core startup/existing flow without advanced packages; explicit unavailable state |
-| FR-178 proposed — LightGBM classifier/regressor | LightGBM task-specific model backends | G01 | binary + regression LightGBM integration |
-| FR-179 proposed — no fallback on unavailable dependency | explicit capability-unavailable taxonomy | G01 | dependency-absence negative test |
-| FR-180 proposed — artifact/load identity | model descriptor + feature/preprocessor identity + loader | G01 | round-trip parity / mismatch rejection |
+| FR-178 applied — LightGBM classifier/regressor | LightGBM task-specific model backends | G01 | binary + regression LightGBM integration |
+| FR-179 applied — no fallback on unavailable dependency | explicit capability-unavailable taxonomy | G01 | dependency-absence negative test |
+| FR-180 applied — artifact/load identity | model descriptor + feature/preprocessor identity + loader | G01 | round-trip parity / mismatch rejection |
 | NFR-001a/b — seed/library provenance | model descriptor, artifact metadata, Model Card/runtime metadata | G01/G02/G03 | provenance audit |
 | AR-009 — external model object not JSON canonical | versioned artifact payload + canonical metadata; no implicit pickle/JSON object dump | G01 | artifact format audit |
 | AR-011/012 — TRAIN-only preprocessing / TEST isolation | existing prepare/evaluate boundaries preserved | G01/G02 | leakage/isolation regression |
 | FR-069 revised — method-aware global/local explanation | Explanation Method Capability registry + canonical explanation result | G02 | coefficient/SHAP/LIME capability tests |
-| FR-181 proposed — model-method compatibility | compatibility resolver | G02/G03 | unsupported combination rejection / UI compatibility |
-| FR-182 proposed — SHAP/LIME method-specific capability | SHAP global/local adapter; LIME local contract candidate | G02 | SHAP binary/regression, LIME local, unsupported global |
-| FR-183 proposed — explanation provenance | normalized result/artifact metadata | G02/G03 | output scale/sample/background/provider audit |
-| FR-070 / AR-003 / AR-025 / AR-027 proposed | predictive-not-causal limitation + UI/result language | G02/G03 | terminology/content assertions |
+| FR-181 applied — model-method compatibility | compatibility resolver | G02/G03 | unsupported combination rejection / UI compatibility |
+| FR-182 applied — SHAP/LIME method-specific capability | SHAP global/local adapter; LIME local contract candidate | G02 | SHAP binary/regression, LIME local, unsupported global |
+| FR-183 applied — explanation provenance | normalized result/artifact metadata | G02/G03 | output scale/sample/background/provider audit |
+| FR-070 / AR-003 / AR-025 / AR-027 applied | predictive-not-causal limitation + UI/result language | G02/G03 | terminology/content assertions |
 | FR-149–152 | existing six-stage navigation; Setup/Train/Predict responsibility; read-oriented Model Management | G03 | stage responsibility regression |
-| FR-184 proposed — capability-driven product UI | capabilities API → Train/Explainability/Model Management consumers | G03 | frontend contract/API + Browser E2E |
+| FR-184 applied — capability-driven product UI | capabilities API → Train/Explainability/Model Management consumers | G03 | frontend contract/API + Browser E2E |
 | ENH-E8 protected contract | no feature-edit authority move; no navigation/runtime coupling | G03 | navigation/stage regression |
 | ENH-E9 protected contract | no unrelated Project/Causal/Graph changes | G03 | targeted non-predictive smoke |
 
@@ -38,21 +39,21 @@
 
 ### 2.1 Requirement vs design
 
-**PROVISIONAL PASS**
+**PASS**
 
 理由:
 
-- proposed requirementの各capabilityに対応するdesign responsibilityが存在する。
+- applied requirementの各capabilityに対応するdesign responsibilityが存在する。
 - FR-161 mandatory dependency prohibitionとoptional dependency designは整合する。
 - AR-009とprovider artifact proposalは整合する。
 - AR-003/025とSHAP/LIMEのpredictive-not-causal treatmentは整合する。
 - leakage/TEST isolationをadvanced backend追加で変更していない。
 
-ただしartifact schema、SHAP scale、LIME semantics等のopen decisionが残るためfinal PASSではない。
+Architecture Reviewでartifact schema、SHAP scale、LIME semanticsを含むblocking decisionはすべて解消され、canonical designへ適用済み。
 
 ### 2.2 Design vs Gate decomposition
 
-**PROVISIONAL PASS**
+**PASS**
 
 - G01 = model capability/artifact/predict/provenance
 - G02 = explanation compatibility/method semantics/provenance
@@ -77,17 +78,17 @@ dependencyは `G01 -> G02 -> G03` で一方向。G03がG01/G02のscientific sema
 
 ### 2.5 Approval / freeze readiness
 
-**FAIL / BLOCKING**
+**PASS FOR GATE FREEZE / NOT YET READY FOR CODING**
 
-- 02 concept approval = PENDING
-- requirement delta = NOT APPLIED
-- architecture technical decisions = COMPLETE / Human approval APPROVED
-- Gate 06/07 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
-- P00/P01-P03 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
+- 02 concept / architecture approval = APPROVED
+- requirement/design delta = APPLIED
+- canonical snapshot = `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`
+- requirement/design traceability = PASS
+- Gate 06/07/P01-P03 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
 
-従ってimplementation readinessは成立していない。
+Planning/governance blockers are cleared. Coding remains blocked only because Gate contracts have not yet been explicitly transitioned to FROZEN and mechanical execution readiness has not run.
 
-## 3. Post-Architecture-Review state
+## 3. Final canonical application state
 
 The technical issues previously listed as blocking decisions are resolved by:
 
@@ -97,12 +98,15 @@ The technical issues previously listed as blocking decisions are resolved by:
 
 Resolved technical decisions include optional dependency versions, LightGBM model/parameter contract, preprocessing boundary, determinism, fitted-model/2, SHAP semantics, LIME semantics, explanation compatibility/provenance, predictive spec version, capabilities API version, unavailable-state UX, and G03 Browser E2E runtime design.
 
-Remaining blocking items are governance/materialization steps rather than unresolved technical architecture:
+Canonical application is complete.
 
-1. Approved requirement delta remains `NOT_APPLIED` to canonical requirement/design documents.
-2. Approved revised requirement/design snapshot has not yet been recorded.
-3. Gate 06/07/P01-P03 remain `MATERIALIZED_DRAFT / NOT_EXECUTABLE`.
-4. Agent Execution Readiness therefore MUST remain not-ready.
+- requirements: `10_requirements_definition.md`
+- product basic design: `22_product_basic_design.md`
+- API/interface design: `23_api_interface_design.md`
+- detailed design: `30_detailed_design.md`
+- snapshot commit: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`
+
+Remaining action is execution-contract state transition: verify G01 06/07/P01-P03 against this snapshot, mark the G01 set FROZEN consistently, then run Agent Execution Readiness. G02/G03 remain downstream-prerequisite blocked until upstream Gate PASS.
 
 ## 4. Contradiction / risk review
 
@@ -119,7 +123,7 @@ The fitted-model and SHAP ambiguities identified in the provisional review are r
 
 ## 5. Test architecture consistency
 
-ENH-E10 test handoff is consistent with proposed Gate structure.
+ENH-E10 test handoff is consistent with applied Gate structure.
 
 - new/materially rebuilt tests: `tests/enhancement/enh_e10/<gate>/<layer>/`
 - G01/G02 detailed correctness: unit/contract/integration
@@ -132,18 +136,18 @@ ENH-E10 test handoff is consistent with proposed Gate structure.
 
 ### Planning coherence
 
-**PASS — technical Architecture Review complete**
+**PASS — requirement/design/architecture traceability complete**
 
-Problem, requirement proposal, target architecture, Gate boundaries and Work Package decomposition are technically coherent.
+Problem, canonical requirements, canonical target design, Gate boundaries and Work Package decomposition are coherent at snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
 ### Implementation readiness
 
-**NOT READY — BLOCKED_BY_REQUIREMENT_APPLICATION_AND_GATE_FREEZE**
+**READY FOR GATE FREEZE — CODING STILL BLOCKED UNTIL FROZEN + READINESS PASS**
 
-Required sequence:
+Next sequence:
 
-1. Apply the approved requirement/design delta to canonical requirement/design documents and save the approved snapshot.
-2. Finalize this traceability review against that snapshot.
-3. Freeze G01/G02/G03 06/07/P01-P03 consistently.
-4. Run Agent Execution Readiness.
-5. Start G01 P01 Coding Agent only after readiness reports READY.
+1. Reconcile G01 06/07/P01-P03 metadata/text against snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
+2. Freeze the G01 contract set consistently.
+3. Run Agent Execution Readiness for G01/P01/Trial01.
+4. Start G01 P01 Coding Agent only after readiness reports READY.
+5. G02/G03 freeze/execution remains subject to their declared upstream Gate PASS prerequisites.

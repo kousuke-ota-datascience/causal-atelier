@@ -87,10 +87,10 @@ APPROVED decisionは以下のreview対象を含む。
 
 Approval後のremaining workflow:
 
-1. approved requirement deltaをcanonical requirement/design documentsへapplyする。
-2. approved revised requirement/design snapshotを保存する。
-3. 05 traceability reviewをfinalizeする。
-4. G01/G02/G03の06/07/P01-P03をapproved architectureと一致させてFROZENにする。
+1. canonical requirement/design application completed at `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
+2. approved revised requirement/design snapshot recorded.
+3. 05 final traceability review completed.
+4. G01の06/07/P01-P03をapproved canonical snapshotと一致させてFROZENにする。
 5. Agent Execution Readinessを実行する。
 6. READY後にG01 P01 Coding Agentを開始する。
 
