@@ -1,15 +1,15 @@
 # Ariadne ENH-E10 G01 テスト指示書 — Predictive Model Backend Contract
 
-**Document class:** Primary Execution Contract — MATERIALIZED DRAFT  
-**Self-containment:** MUST after freeze  
+**Document class:** Primary Execution Contract
+**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
+**Self-containment:** MUST after freeze
 **Execution eligibility:** **NOT EXECUTABLE** until G01 architecture/requirement decisions are frozen.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
 - Active Gate: G01
-- Verification contract status: `MATERIALIZED_DRAFT`
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
-- Depends on: ENH-E9 final PASS / accepted pre-E10 baseline
 
 ## 1. Acceptance authority
 

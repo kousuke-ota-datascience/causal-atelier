@@ -1,7 +1,12 @@
 # Ariadne ENH-E10 G02 実装指示書 — Predictive Explanation Backend Contract
 
-**Document class:** Primary Execution Contract — MATERIALIZED DRAFT  
-**Self-containment:** MUST after freeze  
+**Document class:** Primary Execution Contract
+**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Execution mode:** `UNFROZEN` — `WORK_PACKAGE` expected
+**Required packages:** `NOT_MATERIALIZED_UNTIL_FREEZE`
+**First executable package:** `NONE`
+**Depends on:** `G01 PASS`
+**Self-containment:** MUST after freeze
 **Execution eligibility:** **NOT EXECUTABLE** until G01 PASS and the explanation architecture freeze blockers in §3 are resolved.
 
 - Project: Ariadne
@@ -10,9 +15,6 @@
 - Gate name: Predictive Explanation Backend Contract
 - Branch: `feature/ariadne_mvp_e10`
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
-- Contract status: `MATERIALIZED_DRAFT`
-- Execution Mode: `UNFROZEN` — `WORK_PACKAGE` expected
-- Depends on: G01 PASS
 - Mutable Control Sheet: N/A
 
 ## 1. Gate definition / acceptance claim

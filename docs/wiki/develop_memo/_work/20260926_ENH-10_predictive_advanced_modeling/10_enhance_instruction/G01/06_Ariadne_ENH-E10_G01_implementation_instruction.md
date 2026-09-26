@@ -1,7 +1,12 @@
 # Ariadne ENH-E10 G01 実装指示書 — Predictive Model Backend Contract
 
-**Document class:** Primary Execution Contract — MATERIALIZED DRAFT  
-**Self-containment:** MUST after freeze  
+**Document class:** Primary Execution Contract
+**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Execution mode:** `UNFROZEN` — `WORK_PACKAGE` expected
+**Required packages:** `NOT_MATERIALIZED_UNTIL_FREEZE`
+**First executable package:** `NONE`
+**Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
+**Self-containment:** MUST after freeze
 **Execution eligibility:** **NOT EXECUTABLE** until the freeze blockers in §3 are resolved and this document is explicitly changed to `FROZEN`.
 
 - Project: Ariadne
@@ -10,9 +15,6 @@
 - Gate name: Predictive Model Backend Contract
 - Branch: `feature/ariadne_mvp_e10`
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
-- Contract status: `MATERIALIZED_DRAFT`
-- Execution Mode: `UNFROZEN` — `WORK_PACKAGE` expected
-- Depends on: ENH-E9 final PASS / accepted pre-E10 baseline
 - Mutable Control Sheet: N/A — verified state is derived from canonical reports and Gate Decisions
 
 ## 1. Gate definition / acceptance claim
