@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G03 実装指示書 — Predictive Product Integration Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Execution mode:** `UNFROZEN` — `WORK_PACKAGE` expected
-**Required packages:** `NOT_MATERIALIZED_UNTIL_FREEZE`
+**Contract status:** `FROZEN`
+**Execution mode:** `WORK_PACKAGE`
+**Required packages:** `NOT_MATERIALIZED`
 **First executable package:** `NONE`
 **Depends on:** `G01 PASS + G02 PASS`
-**Self-containment:** MUST after freeze
-**Execution eligibility:** **NOT EXECUTABLE** until G01 and G02 PASS and G03 product-integration decisions are frozen.
+**Self-containment:** MUST — this frozen contract is the Gate implementation authority
+**Execution eligibility:** **BLOCKED_PREREQUISITE / BLOCKED_PACKAGE_MATERIALIZATION** — requires G01/G02 PASS and materialized required Pxx execution contracts.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -54,7 +54,7 @@ Accepted pre-E10 baselineでは以下を確認済み。
 
 G03は既存capabilities APIを拡張可能な軸として利用し、hard-coded model/method assumptionsをcapability-driven contractへ置換する。
 
-## 3. Freeze blockers — MUST resolve before coding
+## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
 
 1. predictive capabilities APIのresponse schema/version revision要否
 2. model registry capability metadataのUI-consumable fields
@@ -216,5 +216,4 @@ fixed sleepをprimary synchronizationにしない。historical runnerがcurrent 
 
 ## 14. Stop condition
 
-draft中は `BLOCKED_CONTRACT_NOT_FROZEN`。  
-FROZEN後は `READY_FOR_TEST` または `BLOCKED_*` で停止する。
+本書は `FROZEN` である。ただしRequired Pxx未materializeまたはupstream prerequisite未達なら `BLOCKED_*`。Coding sideは `READY_FOR_TEST` または `BLOCKED_*` で停止する。

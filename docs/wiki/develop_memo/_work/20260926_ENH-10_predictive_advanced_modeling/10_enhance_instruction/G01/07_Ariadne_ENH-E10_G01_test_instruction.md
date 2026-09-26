@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G01 テスト指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Verification contract status:** `FROZEN`
 **Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST after freeze
-**Execution eligibility:** **NOT EXECUTABLE** until G01 architecture/requirement decisions are frozen.
+**Self-containment:** MUST — this frozen document is the Gate verification authority
+**Execution eligibility:** Independent Verification starts only after a G01 Fixed Trial Candidate exists; coding remains blocked until required Pxx contracts are materialized.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -15,7 +15,7 @@
 
 FROZEN後は本書07がG01 original Acceptance Criteria authorityとなる。Coding self-check、Package completion、Completion Reportの `READY_FOR_TEST` をGate acceptanceへ読み替えない。
 
-現時点はmaterialized authoring draftであり、§5のfreeze blockersが解消されるまではIndependent Verificationを開始しない。
+本書はFROZEN verification authorityである。Independent VerificationはFixed Trial Candidate成立後に開始し、§5のexecution-precondition未確定が残る場合はBLOCKEDとする。
 
 ## 2. Gate objective / acceptance claim
 
@@ -44,7 +44,7 @@ baseline facts:
 - ENH-E9 accepted baseline/protected regression evidence
 - Architecture Reviewでfreezeされたmodel/artifact/dependency contract
 
-## 5. Freeze blockers
+## 5. Frozen verification preconditions
 
 Independent Verification前に最低限以下がFROZEN 06/07へ具体値として反映されていること。
 
@@ -58,7 +58,7 @@ Independent Verification前に最低限以下がFROZEN 06/07へ具体値とし�
 - feature mismatch/error taxonomy
 - predictive spec/schema revision decision
 
-未解決の場合は `BLOCKED_CONTRACT_NOT_FROZEN`。
+未解決の場合は `BLOCKED_PREREQUISITE`。
 
 ## 6. Acceptance Criteria
 

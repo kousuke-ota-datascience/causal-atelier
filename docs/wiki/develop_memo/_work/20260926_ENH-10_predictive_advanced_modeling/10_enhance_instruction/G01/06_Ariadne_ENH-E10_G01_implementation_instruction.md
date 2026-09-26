@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G01 実装指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Execution mode:** `UNFROZEN` — `WORK_PACKAGE` expected
-**Required packages:** `NOT_MATERIALIZED_UNTIL_FREEZE`
+**Contract status:** `FROZEN`
+**Execution mode:** `WORK_PACKAGE`
+**Required packages:** `NOT_MATERIALIZED`
 **First executable package:** `NONE`
 **Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST after freeze
-**Execution eligibility:** **NOT EXECUTABLE** until the freeze blockers in §3 are resolved and this document is explicitly changed to `FROZEN`.
+**Self-containment:** MUST — this frozen contract is the Gate implementation authority
+**Execution eligibility:** **BLOCKED_PACKAGE_MATERIALIZATION** — contract is FROZEN; coding starts only after required Pxx execution contracts are materialized.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -51,9 +51,9 @@ Accepted pre-E10 baseline `c56a8809...` では以下を確認済み。
 
 Historical handoffの仮説は上記baselineでは確認されたが、implementation時にはcurrent checkoutで再確認する。
 
-## 3. Freeze blockers — MUST resolve before coding
+## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
 
-本書を `FROZEN` へ変更する前に、Requirement Revision + Architecture Reviewで少なくとも以下を一意に決定する。
+本書は `FROZEN` である。以下はCoding Agentへ委譲しないexecution-precondition decisionとして固定し、Pxx materialization前にapproved amendmentで一意に確定する。
 
 1. model capability interfaceとregistry entry schema
 2. LightGBM model ID / version naming
@@ -70,11 +70,11 @@ Historical handoffの仮説は上記baselineでは確認されたが、implement
 13. failure taxonomyとHTTP/application error mapping
 14. `predictive-analysis-spec/1` を維持するかversion revisionするか
 
-freeze前の変更はauthoring revisionでありTrial amendmentではない。Gate execution開始後は06/07をsilent rewriteしない。
+本freeze以降、以下のpreconditionを具体化する変更はexplicit amendmentとして扱う。Gate execution開始後は06/07をsilent rewriteしない。
 
 ## 4. Expected execution-mode decomposition
 
-最終freezeでは `WORK_PACKAGE` を第一候補とする。想定implementation boundaryは以下。
+`WORK_PACKAGE` をexecution modeとしてfreezeする。Required Pxxは未materializeであり、想定implementation boundaryは以下。
 
 - model capability/registry + optional dependency availability
 - LightGBM binary/regression adapter + parameter validation
@@ -85,7 +85,7 @@ P00/PxxはArchitecture Review後に作成し、06のsemantic contractを分割�
 
 ## 5. Required implementation semantics
 
-freeze後のG01は最低限以下を満たすこと。
+G01実装は最低限以下を満たすこと。
 
 1. **Registry / capability**
    - model entryはtask compatibility、parameter schema、dependency requirement、availability/version、determinism capabilityを機械可読に表現する。
@@ -151,7 +151,7 @@ freeze後のG01は最低限以下を満たすこと。
 
 ## 9. Schema / API / runtime policy
 
-- `predictive-analysis-spec/1`、`fitted-model/1`、result/artifact schemaのrevision要否はfreeze blockerであり、実装者が独断でversionを変更しない。
+- `predictive-analysis-spec/1`、`fitted-model/1`、result/artifact schemaのrevision要否はexecution-precondition decisionであり、実装者が独断でversionを変更しない。
 - model artifactを既存linear JSON形式へ偽装してLightGBMを格納しない。
 - provider-specific serializationを採用する場合、artifact metadata/schemaからloaderを一意に解決可能にする。
 - dependency unavailable / model task mismatch / invalid parameter / feature mismatchは区別可能なfailure taxonomyを持つ。
@@ -202,7 +202,7 @@ Package checkpoint単体をFixed Trial Candidateとしない。
 - package scope外の便乗変更
 - repository-wide test cleanup
 
-## 13. Required outputs after freeze/execution
+## 13. Required outputs after execution
 
 - package execution status / checkpoint reports（WORK_PACKAGE時）
 - Fixed Trial Candidate SHA
@@ -212,5 +212,4 @@ Package checkpoint単体をFixed Trial Candidateとしない。
 
 ## 14. Stop condition
 
-本書が `MATERIALIZED_DRAFT` の間はcodingを開始せず `BLOCKED_CONTRACT_NOT_FROZEN` とする。  
-FROZEN後のCoding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、Gate PASSを宣言しない。
+本書は `FROZEN` である。ただしRequired Pxxが未materializeの間はcodingを開始せず `BLOCKED_PACKAGE_MATERIALIZATION` とする。Pxx materialization後のCoding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、Gate PASSを宣言しない。

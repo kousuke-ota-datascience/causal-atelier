@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G03 テスト指示書 — Predictive Product Integration Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Verification contract status:** `FROZEN`
 **Depends on:** `G01 PASS + G02 PASS`
-**Self-containment:** MUST after freeze
-**Execution eligibility:** **NOT EXECUTABLE** until G01/G02 PASS and G03 Browser/API/UI contract is explicitly FROZEN.
+**Self-containment:** MUST — this frozen document is the Gate verification authority
+**Execution eligibility:** Independent Verification requires G01/G02 PASS and a G03 Fixed Trial Candidate.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -37,7 +37,7 @@ advanced predictive model/explanation capabilitiesが、existing Predictive Navi
 - current frontend/API/backend source
 - current test estate discovered from repository
 
-## 5. Freeze blockers
+## 5. Frozen verification preconditions
 
 - capabilities API fields/schema
 - parameter rendering contract
@@ -48,7 +48,7 @@ advanced predictive model/explanation capabilitiesが、existing Predictive Navi
 - Browser command/environment/fixture/routes/synchronization/assertions
 - accessibility/error semantics
 
-未解決なら `BLOCKED_CONTRACT_NOT_FROZEN`。
+未解決なら `BLOCKED_PREREQUISITE`。
 
 ## 6. Acceptance Criteria
 
@@ -98,7 +98,7 @@ FROZEN版ではTest Item 100/110ごとに次を具体化する。
 - teardown
 - failure classification
 
-本draftではcommand/environmentが未freezeなのでBrowser E2Eを実行してGate判定してはならない。
+Browser command/environmentがapproved execution contractへ具体化されるまではBrowser E2Eを実行してGate判定してはならず、`BLOCKED_PREREQUISITE` とする。
 
 ## 9. Browser failure classification
 

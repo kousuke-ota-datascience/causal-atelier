@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G02 実装指示書 — Predictive Explanation Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Execution mode:** `UNFROZEN` — `WORK_PACKAGE` expected
-**Required packages:** `NOT_MATERIALIZED_UNTIL_FREEZE`
+**Contract status:** `FROZEN`
+**Execution mode:** `WORK_PACKAGE`
+**Required packages:** `NOT_MATERIALIZED`
 **First executable package:** `NONE`
 **Depends on:** `G01 PASS`
-**Self-containment:** MUST after freeze
-**Execution eligibility:** **NOT EXECUTABLE** until G01 PASS and the explanation architecture freeze blockers in §3 are resolved.
+**Self-containment:** MUST — this frozen contract is the Gate implementation authority
+**Execution eligibility:** **BLOCKED_PREREQUISITE / BLOCKED_PACKAGE_MATERIALIZATION** — requires G01 PASS and materialized required Pxx execution contracts.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -52,7 +52,7 @@ Accepted baselineでは以下を確認済み。
 - `explanation_dataset` はTEST partition由来で `explanation_only=True` として分離されている。
 - SHAP/LIMEはbaseline dependencyに存在しない。
 
-## 3. Freeze blockers — MUST resolve before coding
+## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
 
 1. explanation capability interface / registry entry schema
 2. model × method compatibility matrix
@@ -70,7 +70,7 @@ Accepted baselineでは以下を確認済み。
 14. model cardへのexplanation provenance格納範囲
 15. failure taxonomy: method unavailable / not compatible / not supported / computation failure
 
-freeze前は `MATERIALIZED_DRAFT`。execution開始後のsilent contract rewriteは禁止。
+本書は `FROZEN`。未確定preconditionの具体化はexplicit amendmentで行い、execution開始後のsilent contract rewriteは禁止。
 
 ## 4. Expected execution-mode decomposition
 
@@ -203,7 +203,7 @@ Browser E2EはG02でblockingにしない。method-specific scientific semantics�
 - repo-wide test cleanup
 - Gate PASS declaration
 
-## 13. Required outputs after freeze/execution
+## 13. Required outputs after execution
 
 - package status/checkpoint reports（WORK_PACKAGE時）
 - Fixed Trial Candidate SHA
@@ -213,5 +213,4 @@ Browser E2EはG02でblockingにしない。method-specific scientific semantics�
 
 ## 14. Stop condition
 
-draft中は `BLOCKED_CONTRACT_NOT_FROZEN`。  
-FROZEN後は `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、PASSを宣言しない。
+本書は `FROZEN` である。ただしRequired Pxx未materializeまたはupstream prerequisite未達なら `BLOCKED_*`。Coding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、PASSを宣言しない。
