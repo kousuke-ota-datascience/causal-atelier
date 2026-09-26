@@ -12,6 +12,7 @@ ENH-E10 Enhancement固定値:
 - `BRANCH_NAME=feature/ariadne_mvp_e10`
 - `REMOTE_NAME=origin`
 - `WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling`
+- `WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling`
 
 Runtime-derived values:
 - `START_SHA`
@@ -28,7 +29,7 @@ Runtime-derived values:
 SHA は実行時の repository state からのみ取得する。架空 SHA を事前生成してはならない。
 `PACKAGE_CHECKPOINT_SHA`、`FIXED_TRIAL_CANDIDATE_SHA`、`EVIDENCE_COMMIT_SHA` は意味が異なるため混同しない。
 
-Agent実行前に全variableを明示的に置換・確定する。任意のglob matchを選んではならない。
+Agent実行前に、各promptが要求するRuntime variableだけを明示的に確定する。Enhancement-fixed identityを再入力・再推測しない。任意のglob matchを選んではならない。
 
 <!-- BEGIN MANAGED: AGENT_ENTRY_PROMPT_CONTROL -->
 ## 2. Agent Entry Prompt Variable Conventions
@@ -63,7 +64,6 @@ Enhancement-side `agent_entry_prompts/` に上記の未解決placeholderが1件�
 GATE_ID
 PACKAGE_ID
 TRIAL_NO
-REMEDIATION_PACKAGE_ID
 ```
 
 各promptは必要なRuntime variableだけを要求する。不要なRuntime variableを推測で補完してはならない。

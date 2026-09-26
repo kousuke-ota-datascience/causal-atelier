@@ -5,11 +5,11 @@
 実行時に Operator から以下を受け取る。
 
 ```text
-GATE_ID=<Gate ID>
-TRIAL_NO=<two-digit Trial number>
+GATE_ID={{GATE_ID}}
+TRIAL_NO={{TRIAL_NO}}
 ```
 
-Template / Enhancement 固定値:
+ENH-E10 Enhancement固定値:
 
 ```text
 PROJECT_NAME=Ariadne
@@ -18,6 +18,7 @@ ENHANCE_SHORT_ID=E10
 BRANCH_NAME=feature/ariadne_mvp_e10
 REMOTE_NAME=origin
 WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 ## 1. Current Trial Remediation Contract
@@ -209,7 +210,6 @@ Runtime values for this execution:
 
 ```text
 GATE_ID={{GATE_ID}}
-REMEDIATION_PACKAGE_ID={{REMEDIATION_PACKAGE_ID}}
 TRIAL_NO={{TRIAL_NO}}
 ```
 

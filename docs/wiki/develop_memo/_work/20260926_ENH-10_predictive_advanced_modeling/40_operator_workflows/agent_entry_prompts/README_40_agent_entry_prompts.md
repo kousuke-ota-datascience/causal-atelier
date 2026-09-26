@@ -52,7 +52,7 @@ Human / Orchestratorがexecutionごとに指定する値はprompt種別に応じ
 | Work Package Coding | `GATE_ID`, `PACKAGE_ID`, `TRIAL_NO` |
 | Candidate Assembly | `GATE_ID`, `TRIAL_NO` |
 | Independent Verification | `GATE_ID`, `TRIAL_NO` |
-| Formal FAIL Remediation | `GATE_ID`, `REMEDIATION_PACKAGE_ID`, `TRIAL_NO` |
+| Formal FAIL Remediation | `GATE_ID`, `TRIAL_NO` |
 | Gate Orchestrator | `GATE_ID`, `TRIAL_NO` |
 
 SHA valuesはHuman-supplied variableではない。repository state / canonical reportから導出する。
