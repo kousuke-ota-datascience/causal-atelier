@@ -7,7 +7,7 @@
 **First executable package:** `P01`
 **Depends on:** `G01 PASS + G02 PASS`
 **Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until §3 architecture decisions are resolved, G01/G02 PASS exist, and 06/07/P01-P03 are explicitly FROZEN.
+**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01/G02 PASS exist, and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10

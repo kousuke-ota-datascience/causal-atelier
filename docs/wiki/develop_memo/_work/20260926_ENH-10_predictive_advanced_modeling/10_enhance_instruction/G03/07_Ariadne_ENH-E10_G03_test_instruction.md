@@ -4,7 +4,7 @@
 **Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
 **Depends on:** `G01 PASS + G02 PASS`
 **Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until §5 architecture decisions are resolved, G01/G02 PASS exist, and 06/07/P01-P03 are explicitly FROZEN.
+**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01/G02 PASS and a G03 Fixed Trial Candidate exist, and 06/07/P01-P03 are FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
