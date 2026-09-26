@@ -1,9 +1,10 @@
 # Ariadne ENH-E10 G01 実装指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
+**Gate:** `G01`
 **Contract status:** `FROZEN`
 **Execution mode:** `WORK_PACKAGE`
-**Required packages:** `P01, P02, P03`
+**Required packages:** P01, P02, P03
 **First executable package:** `P01`
 **Depends on:** `NONE`
 **Self-containment:** `MUST`

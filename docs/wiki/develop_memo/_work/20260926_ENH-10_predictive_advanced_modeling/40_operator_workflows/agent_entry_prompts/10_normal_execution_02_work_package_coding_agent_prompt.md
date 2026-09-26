@@ -102,9 +102,9 @@ semantic match が0件または複数存在する場合、任意のファイル�
 
 その場合は実装を開始せず停止せよ。
 
-特定した **assigned Pxx のみ**を normative implementation contract とする。
+特定した **assigned Pxxのみ**を normative implementation contract とする。
 
-以下を仕様補完のために読んではならない。
+仕様補完目的で以下を読んではならない。
 
 * Gate-level 06 Contract
 * 07
