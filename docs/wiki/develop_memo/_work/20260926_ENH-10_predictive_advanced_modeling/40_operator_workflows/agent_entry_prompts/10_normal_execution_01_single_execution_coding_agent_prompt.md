@@ -319,7 +319,7 @@ report path（作成できた場合）
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## 3. Execution identity control
 
-This prompt MUST be instantiated under `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+This is the ENH-E10 Enhancement-side instantiated prompt. Execute it only after the Runtime values below are supplied and the referenced Gate contract is executable.
 
 Enhancement-fixed values:
 

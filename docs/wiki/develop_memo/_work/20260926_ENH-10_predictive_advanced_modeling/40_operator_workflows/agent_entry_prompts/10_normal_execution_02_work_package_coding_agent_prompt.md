@@ -13,12 +13,12 @@ TRIAL_NO={{TRIAL_NO}}
 固定値:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 ```
 
 本実行では、上記の `GATE_ID`、`PACKAGE_ID`、`TRIAL_NO` を以降の placeholder に代入して実行せよ。
@@ -64,7 +64,7 @@ git rev-parse HEAD
 
 以下を確認する。
 
-* current branch が `{{BRANCH_NAME}}` であること
+* current branch が `feature/ariadne_mvp_e10` であること
 * working tree が clean であること
 * 実行開始時 HEAD を `START_SHA` として記録すること
 
@@ -92,7 +92,7 @@ old Package checkpoint を再利用して current Trial を完了扱いにして
 以下 directory から、指定された `GATE_ID` および `PACKAGE_ID` に対応する freeze 済み Work Package contract を**正確に1件**特定せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 10_enhance_instruction/
   {{GATE_ID}}/
     06_{{GATE_ID}}_{{PACKAGE_ID}}_*.md
@@ -199,7 +199,7 @@ git status
 問題がなければ Package checkpoint を commit する。
 
 ```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} implementation checkpoint"
+git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} implementation checkpoint"
 git rev-parse HEAD
 ```
 
@@ -220,12 +220,12 @@ PACKAGE_CHECKPOINT_SHA
 以下に Package checkpoint/status report を作成せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
       packages/
-        {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
+        E10-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
 ```
 
 必要な directory が存在しない場合は作成してよい。
@@ -258,7 +258,7 @@ BLOCKED の場合、checkpoint が存在しなければ SHA を捏造しては�
 Package checkpoint/status report 作成後、evidence file のみを stage せよ。
 
 ```bash
-git add {{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
+git add docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/E10-{{GATE_ID}}_{{TRIAL_NO}}_{{PACKAGE_ID}}__status.md
 git status
 git diff --cached
 ```
@@ -266,8 +266,8 @@ git diff --cached
 問題がなければ evidence commit を作成する。
 
 ```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} implementation evidence"
-git push -u {{REMOTE_NAME}} {{BRANCH_NAME}}
+git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} implementation evidence"
+git push -u origin feature/ariadne_mvp_e10
 git log -2 --oneline
 git status
 ```
@@ -359,18 +359,18 @@ report path（作成できた場合）
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## Execution identity control
 
-This template-side prompt is an authoring source and MUST NOT be executed directly. Before execution it MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/`.
+This is the ENH-E10 Enhancement-side instantiated prompt. Execute it only after the Runtime values below are supplied and the referenced Gate contract is executable.
 
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 Runtime values for this execution:

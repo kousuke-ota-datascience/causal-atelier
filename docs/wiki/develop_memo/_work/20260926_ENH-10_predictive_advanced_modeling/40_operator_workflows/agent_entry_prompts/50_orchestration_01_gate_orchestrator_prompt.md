@@ -95,18 +95,18 @@ Gate Orchestrator は `PASS` / `FAIL` を出してはならない。
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## 3. Execution identity control
 
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+This is the ENH-E10 Enhancement-side instantiated prompt. Execute it only after the Runtime values below are supplied and the referenced Gate contract is executable.
 
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 Runtime values for this execution:

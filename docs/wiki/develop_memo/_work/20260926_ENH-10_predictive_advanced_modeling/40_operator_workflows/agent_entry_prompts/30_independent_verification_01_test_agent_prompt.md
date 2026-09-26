@@ -12,12 +12,12 @@ TRIAL_NO={{TRIAL_NO}}
 固定値:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 ```
 
 本実行では、上記の `GATE_ID` および `TRIAL_NO` を以降の placeholder に代入して実行せよ。
@@ -58,7 +58,7 @@ git rev-parse HEAD
 
 以下を確認する。
 
-* current branch が `{{BRANCH_NAME}}` であること
+* current branch が `feature/ariadne_mvp_e10` であること
 * working tree が clean であること
 * Test Agent 実行開始時 HEAD を `TEST_START_SHA` として記録すること
 
@@ -73,10 +73,10 @@ current branch が異なる場合、または開始時点で uncommitted change 
 以下 directory から、指定された `GATE_ID` に対応する freeze 済み Gate 07 を**正確に1件**特定せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 10_enhance_instruction/
   {{GATE_ID}}/
-    07_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_test_instruction.md
+    07_Ariadne_ENH-E10_{{GATE_ID}}_test_instruction.md
 ```
 
 該当 07 が存在しない、または一意に特定できない場合は verification を開始せず停止せよ。
@@ -114,11 +114,11 @@ repository / source / automated test / runtime output は、実際の observatio
 以下の current Trial Implementation Completion Report を確認せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
-      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+      E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
 Implementation Completion Report は **candidate identity evidence としてのみ**参照してよい。
@@ -141,11 +141,12 @@ FIXED_TRIAL_CANDIDATE_SHA
 * SHA に対応する commit が repository に存在しない
 * test target と candidate identity の対応を監査できない
 
-candidate commit の存在確認を行う。
+candidate commit の存在確認を行う。Implementation Completion Reportから取得したexact SHAをruntime-derived valueとして設定し、Human入力やprompt placeholderから推測してはならない。
 
 ```bash
-git cat-file -e "{{FIXED_TRIAL_CANDIDATE_SHA}}^{commit}"
-git show --stat --oneline --decorate --no-renames "{{FIXED_TRIAL_CANDIDATE_SHA}}"
+FIXED_TRIAL_CANDIDATE_SHA=<exact SHA read from the current Trial implementation completion report>
+git cat-file -e "${FIXED_TRIAL_CANDIDATE_SHA}^{commit}"
+git show --stat --oneline --decorate --no-renames "${FIXED_TRIAL_CANDIDATE_SHA}"
 ```
 
 ---
@@ -256,7 +257,7 @@ implementation defect を発見した場合、本 Agent は修正せず **FAIL e
 以下 directory に current Trial の independent verification evidence を作成せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 30_test_report/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
@@ -265,14 +266,14 @@ implementation defect を発見した場合、本 Agent は修正せず **FAIL e
 07 に定義された各 Test Item について、以下の filename convention を使用する。
 
 ```text
-{{ENHANCE_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__<TEST_ITEM_ID>.md
+ENH-E10-{{GATE_ID}}_{{TRIAL_NO}}__<TEST_ITEM_ID>.md
 ```
 
 例:
 
 ```text
-{{ENHANCE_ID}}-G00_01__001_candidate_identity.md
-{{ENHANCE_ID}}-G00_01__999_gate_decision.md
+ENH-E10-G00_01__001_candidate_identity.md
+ENH-E10-G00_01__999_gate_decision.md
 ```
 
 各 item report は、その Test Item の raw evidence と判定を単独で追跡可能な状態にする。
@@ -338,6 +339,8 @@ candidate identity、contract ambiguity、environment / prerequisite 等によ�
 
 BLOCKED を product FAIL に自動変換してはならない。
 
+ENH-E10ではIndependent Test Agentがtest implementation / orchestration / environmentを修復してはならない。product correctnessを判定できないtest-side defectを確認した場合は、evidenceとfailure classificationを記録してBLOCKEDで停止し、Operatorへ返す。専用の`31_blocked_test_repair` routeはENH-E10 standard workflowには存在しない。
+
 可能な場合は blocker code を明記する。
 
 例:
@@ -356,7 +359,7 @@ BLOCKED_PREREQUISITE
 Test Item report 作成後、current Trial の test evidence のみを stage せよ。
 
 ```bash
-git add {{WORK_ROOT}}/30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/
+git add docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/30_test_report/{{GATE_ID}}/Trial{{TRIAL_NO}}/
 git status
 git diff --cached --stat
 git diff --cached
@@ -367,8 +370,8 @@ production / test / migration / dependency / implementation file が staged さ�
 問題がなければ test evidence commit を作成する。
 
 ```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} independent verification evidence"
-git push -u {{REMOTE_NAME}} {{BRANCH_NAME}}
+git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} independent verification evidence"
+git push -u origin feature/ariadne_mvp_e10
 git rev-parse HEAD
 git status
 ```
@@ -445,18 +448,18 @@ PASS / FAIL / BLOCKED の判定根拠は、必ず freeze 済み 07 と current T
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## 3. Execution identity control
 
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+This is the ENH-E10 Enhancement-side instantiated prompt. Execute it only after the Runtime values below are supplied and the referenced Gate contract is executable.
 
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 Runtime values for this execution:

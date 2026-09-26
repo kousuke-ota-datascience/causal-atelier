@@ -1,7 +1,11 @@
-# Agent Entry Prompts — 使用ガイド
+# ENH-E10 Agent Entry Prompts — 使用ガイド
 
-**Document class:** Authoring Guide  
-**Self-containment:** MUST — このREADMEだけでprompt選択と共通変数原則が分かること。各実行promptも同じ規則を必要分だけ内部に再掲する。
+**Document class:** Enhancement-side Execution Guide  
+**Enhancement:** `ENH-E10`  
+**Status:** `MATERIALIZED`  
+**Canonical work root:** `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling`
+
+このdirectoryはgeneric templateではなく、ENH-E10用にmaterialize済みのAgent execution entry pointを保持する。Enhancement-fixed identityは再推測せず、各promptに残されたRuntime variableだけをexecution時に解決する。
 
 ## 1. Prompt selection
 
@@ -11,143 +15,141 @@
 | Normal `WORK_PACKAGE` assigned Pxx | `10_normal_execution_02_work_package_coding_agent_prompt.md` |
 | Normal `WORK_PACKAGE` — all required Pxx completed | `20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md` |
 | Independent Gate verification | `30_independent_verification_01_test_agent_prompt.md` |
-| Independent Verification `BLOCKED` — test implementation / orchestration / environment defect, product FAIL未成立、`SAME_TRIAL` continuation明示 | `31_blocked_test_repair_01_test_infrastructure_agent_prompt.md` |
-| formal FAIL — next Trial `CONSOLIDATED + SINGLE_EXECUTION` remediation | `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` |
-| Work Package Gateの自動control-plane | `50_orchestration_01_gate_orchestrator_prompt.md` |
+| formal product FAIL — next Trial `CONSOLIDATED + SINGLE_EXECUTION` remediation | `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` |
+| Work Package Gate control-plane | `50_orchestration_01_gate_orchestrator_prompt.md` |
 
-**禁止:**
+### ENH-E10-specific exclusion
 
-- formal FAIL後に`10_normal_execution_02_work_package_coding_agent_prompt.md`へ戻らない。
-- test-side `BLOCKED` を product FAIL とみなして `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` へ送らない。
-- `31` は canonical `999_gate_decision` が同一Trial repair/reverificationを一意に指示する場合だけ使用する。
+`31_blocked_test_repair_01_test_infrastructure_agent_prompt.md` はENH-E10 standard workflowでは使用しない。
 
-Numeric prefixは無条件な実行順ではなくworkflow responsibility categoryを表す。
+ENH-E10 test architecture handoffでは、Independent Test Agentはtest implementation / orchestration / environment defectを修復しない。product correctnessを判定できない場合は `BLOCKED` としてevidenceを残し、Operatorへ返す。test-side BLOCKEDをproduct FAILへ変換せず、formal FAIL remediation promptも自動起動しない。
+
+このため、ENH-E9 G02で使用されたSAME_TRIAL blocked-test-repair routeは本directoryから除外する。
+
+## 2. Enhancement-fixed identity
+
+以下は全promptで固定済みである。
 
 ```text
-00 = shared convention
-10 = normal execution
-20 = candidate assembly
-30 = independent verification
-31 = blocked test-side repair / SAME_TRIAL recovery
-40 = formal fail remediation
-50 = orchestration
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
-## 2. Common variable rule
+Enhancement-side promptにこれらの未解決placeholderが残っている場合、execution readinessは `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED` とする。
 
-Humanはexecution identityを指定し、path / filenameはderived variableで構成する。
+## 3. Runtime identity
 
-Common human-supplied variables:
+Human / Orchestratorがexecutionごとに指定する値はprompt種別に応じて次だけである。
 
-- `PROJECT_NAME`
-- `ENHANCE_ID`
-- `ENHANCE_SHORT_ID`
-- `GATE_ID`
-- `TRIAL_NO`
-- `PACKAGE_ID` — normal Work Package時のみ。`P01-P99`
-- `REMEDIATION_PACKAGE_ID` — formal FAIL remediation時のみ
-- `WORK_ROOT` — enhancement work directory root
-- `WORK_DIR_NAME`
-- `REMOTE_NAME`
-- `BRANCH_NAME`
-
-`31` blocked-test-repair がHumanから受け取るruntime variableは `GATE_ID`, `TRIAL_NO` のみ。candidate SHA / repair SHAはrepository stateから導出する。
-
-Common expansion rules:
-
-- `{{VARIABLE}}`を再帰展開する。
-- 未解決placeholderが残れば開始しない。
-- derived filenameをHumanが別途手入力して二重管理しない。
-- globが複数fileへ一致したら任意選択せず停止する。
-
-## 3. Trial / Package / repair rules
-
-- Trial番号はAgent起動回数ではない。
-- Package interruption / restartだけでTrialを増やさない。
-- Normal Work Package promptはassigned `Pxx`だけを実行する。formal FAIL remediation Trialでは使用しない。
-- Candidate Assemblyはall required Pxx=`PACKAGE_READY`後にのみ通常assemblyを行う。
-- formal FAIL remediation direct entryはcurrent Trial 08をexactly oneに解決し、`CONSOLIDATED + SINGLE_EXECUTION`であることを確認する。
-- Test promptはFixed Trial Candidate identity auditから開始する。
-- `31` repairでは既存Fixed Trial Candidateを維持し、new Trialやcandidate reassemblyを行わない。
-- `31` repairはproduction / 06 / 07 / Pxx / canonical 999 decisionを変更しない。repair後のGate decision更新はIndependent Test Agentが同一Trial continuationで行う。
-- repairにproduct semantic changeが必要なら`31`は停止し、operator reviewへ戻す。
-
-## 4. Browser E2E common policy
-
-Browser E2Eを含むverificationの共通authoring / operational policyは`../BROWSER_E2E_GATE_POLICY.md`に置く。ただし各entry promptは実行時に必要なfailure handlingを自身に保持し、Test AgentのAcceptance authorityはfreeze済み07から移さない。
-
-Browser E2E が `TEST_IMPLEMENTATION_DEFECT` / `TEST_ORCHESTRATION_DEFECT` / `TEST_ENVIRONMENT_DEFECT` でBLOCKEDとなり、product correctnessを判定できない場合は、formal product remediationではなく `31` repair routeを使用できる。ただしcanonical 999が `SAME_TRIAL` continuationを明示することが前提である。
-
-## Canonical filename rule
-
-- canonical filename / directory nameはASCII charactersのみを使用する。
-- semantic filename suffixはtechnical Englishとする。
-- 日本語はdocument title / body textにのみ使用してよい。
-
-<!-- BEGIN MANAGED: AGENT_ENTRY_PROMPT_CONTROL -->
-## 2. Agent Entry Prompts
-
-### 2.1. Purpose
-
-このdirectoryはAgent execution entry pointのgeneric templateを保持する。
-
-**template directory上のpromptをAgentへ直接渡してはならない。** Enhancement開始時にEnhancement-specific instanceを `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` へ生成し、Enhancement-fixed variablesを全て展開してから使用する。
-
-### 2.2. Prompt inventory
-
-| File | Role | Runtime variables |
-|---|---|---|
-| `10_normal_execution_01_single_execution_coding_agent_prompt.md` | Single Execution Coding Agent | `GATE_ID`, `TRIAL_NO` |
-| `10_normal_execution_02_work_package_coding_agent_prompt.md` | Work Package Coding Agent | `GATE_ID`, `PACKAGE_ID`, `TRIAL_NO` |
-| `20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md` | Fixed Trial Candidate Assembly | `GATE_ID`, `TRIAL_NO` |
-| `30_independent_verification_01_test_agent_prompt.md` | Independent Verification | `GATE_ID`, `TRIAL_NO` |
-| `31_blocked_test_repair_01_test_infrastructure_agent_prompt.md` | BLOCKED test-side SAME_TRIAL Repair | `GATE_ID`, `TRIAL_NO` |
-| `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` | Formal FAIL Remediation Coding | `GATE_ID`, `REMEDIATION_PACKAGE_ID`, `TRIAL_NO` |
-| `50_orchestration_01_gate_orchestrator_prompt.md` | Gate-wide Orchestration | `GATE_ID`, `TRIAL_NO` |
-
-### 2.3. Instantiation MUST
-
-Enhancement開始時に `../tools/instantiate_agent_entry_prompts.py` または同等の手順でこのdirectoryをEnhancement work rootへinstance化する。
-
-instance化完了条件:
-
-1. Enhancement-side `agent_entry_prompts/` が存在する。
-2. Enhancement-fixed placeholdersが0件である。
-3. `WORK_ROOT` がexactly one Enhancement rootを指す。
-4. branch / remote identityが具体値である。
-
-未達ならAgent executionを開始しない。
-
-### 2.4. Agent Execution Readiness
-
-Document/template complianceとAgent Execution Readinessを別判定する。
-
-| Axis | Required check |
+| Prompt | Runtime values |
 |---|---|
-| Artifact completeness | 必須instance artifactが存在する |
-| Content completeness | required section/fieldを省略していない |
-| Execution resolvability | Human entryからEnhancement/Gate/Package/Trial等が一意 |
-| Information isolation | Agentが許可されたnormative sourceだけで実行可能 |
+| Single Execution Coding | `GATE_ID`, `TRIAL_NO` |
+| Work Package Coding | `GATE_ID`, `PACKAGE_ID`, `TRIAL_NO` |
+| Candidate Assembly | `GATE_ID`, `TRIAL_NO` |
+| Independent Verification | `GATE_ID`, `TRIAL_NO` |
+| Formal FAIL Remediation | `GATE_ID`, `REMEDIATION_PACKAGE_ID`, `TRIAL_NO` |
+| Gate Orchestrator | `GATE_ID`, `TRIAL_NO` |
 
-template-side `40_operator_workflows/tools/validate_agent_execution_readiness.py` をnormal execution / assembly / independent verification / formal FAIL remediation / orchestrationのreadiness確認に使用する。`31` blocked-test-repairはcanonical 999がeligibility authorityなので、`31` prompt自身のMandatory repository preflightを必ず完遂してからrepairを開始する。
+SHA valuesはHuman-supplied variableではない。repository state / canonical reportから導出する。
 
-### 2.5. Information isolation
+主なruntime-derived values:
 
-Work Package Coding Agentのnormative workflow documentはassigned Pxxだけとする。
+- `START_SHA`
+- `PACKAGE_CHECKPOINT_SHA`
+- `FIXED_TRIAL_CANDIDATE_SHA`
+- `EVIDENCE_COMMIT_SHA`
+- `TEST_START_SHA`
+- `TEST_EVIDENCE_COMMIT_SHA`
+- `PREVIOUS_FAILED_CANDIDATE_SHA`
+
+架空SHA、過去Trial SHA、別Gate SHAをprompt placeholderとして事前入力してはならない。
+
+## 4. Routing rules
+
+Normal executionではGate 06のmetadataをrouting authorityとする。
 
 ```text
-Normative workflow document reachable by Work Package Coding Agent = assigned Pxx only
+Gate dependency declaration -> Gate 06 "Depends on"
+Execution mode              -> Gate 06 "Execution mode"
+Required package set        -> Gate 06 "Required packages"
+Verification authority      -> Gate 07
+Gate decision evidence      -> canonical 999
 ```
 
-Human/auditor向けtraceability linkをCoding Agentのread dependencyにしてはならない。
+Rules:
 
-Independent Test AgentはGate 07をverification authorityとして使用する。Gate 07をCoding Agentのacceptance-answer keyとして露出させてはならない。
+- `SINGLE_EXECUTION` の場合はsingle execution coding promptを使用する。
+- `WORK_PACKAGE` の場合はrequired Pxxを順に実行し、全required package completion後にCandidate Assemblyを行う。
+- formal FAIL後はnormal Work Package promptへ戻らず、current Trialの08 remediation contractが要求するnext Trial remediation routeを使用する。
+- Independent Verificationのtest-side `BLOCKED` はproduct FAILではない。
+- ENH-E10ではtest-side `BLOCKED` を修復する専用31 promptを持たない。
+- Gate dependencyやrequired packageが未freezeならexecutionを開始しない。
 
-Blocked Test Repair Agentはcanonical 999/blocker evidenceをrepair authority、frozen 07をverification scope boundaryとして使用し、06/Pxx等からrepair scopeを補完しない。
+## 5. Information isolation
 
-### 2.6. README identity
+### Coding Agent
 
-このdirectoryのlocal README canonical filenameは `README_40_agent_entry_prompts.md` とする。root以外の無印 `README.md` は禁止する。
+- `SINGLE_EXECUTION`: normative implementation authorityはactive Gateのfrozen 06のみ。
+- `WORK_PACKAGE`: normative implementation authorityはassigned frozen Pxxのみ。
+- 07をCoding Agentのacceptance answer keyとして使用しない。
+- planning/background/他Gate/external Webからrequired behaviorを補完しない。
 
-filenameは手作業で決めず、`40_operator_workflows/tools/readme_naming.py` のpath-derived naming functionから導出する。
-<!-- END MANAGED: AGENT_ENTRY_PROMPT_CONTROL -->
+### Independent Test Agent
+
+- normative verification authorityはactive Gateのfrozen 07。
+- current TrialのFixed Trial Candidate identityをcanonical implementation evidenceから導出する。
+- production code、test implementation、test orchestration、environment bootstrapを修復しない。
+- product correctnessを判定不能なら `BLOCKED` として停止する。
+
+## 6. Browser E2E
+
+Browser E2E common policyは `../BROWSER_E2E_GATE_POLICY.md` を参照する。ただしacceptance authorityはfrozen 07から移さない。
+
+Browser failure classification:
+
+```text
+PRODUCT_DEFECT
+TEST_IMPLEMENTATION_DEFECT
+TEST_ORCHESTRATION_DEFECT
+TEST_ENVIRONMENT_DEFECT
+UNKNOWN
+```
+
+`PRODUCT_DEFECT` を07に対して検証できた場合のみFAIL候補とする。その他の原因でproduct correctnessを判定できない場合はBLOCKED候補とする。
+
+## 7. Execution readiness
+
+`../tools/validate_agent_execution_readiness.py` をnormal execution / package / assembly / independent verification / remediation / orchestrationのreadiness確認に使用できる。
+
+最低条件:
+
+1. required prompt artifactが存在する。
+2. Enhancement-fixed placeholderが0件である。
+3. runtime identityが一意に与えられている。
+4. active Gateの06/07またはPxxがworkflow modeに応じてfreeze済みである。
+5. required package / dependency / candidate identityを一意に解決できる。
+6. repository preflightが成立する。
+
+ENH-E10では `31_blocked_test_repair_01_test_infrastructure_agent_prompt.md` をrequired inventoryへ含めない。
+
+## 8. Canonical filename rule
+
+- filename / directory nameはASCII charactersのみを使用する。
+- semantic suffixはtechnical Englishを使用する。
+- 日本語はdocument title/bodyで使用してよい。
+- local README canonical filenameは `README_40_agent_entry_prompts.md` とする。
+- nested unqualified `README.md` は置かない。
+
+## 9. Materialization invariant
+
+このdirectoryはすでにENH-E10 instanceである。
+
+- generic templateへ戻さない。
+- Enhancement-fixed template markerを再導入しない。
+- Runtime placeholder以外を追加しない。
+- generic instantiation処理を再実行してENH-E9-specific `31` promptを復活させない。

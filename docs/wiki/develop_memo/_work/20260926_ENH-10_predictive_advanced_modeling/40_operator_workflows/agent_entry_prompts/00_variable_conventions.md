@@ -5,13 +5,13 @@
 - `TRIAL_NO` = 2桁 Trial number（例: `01`）
 - `PACKAGE_ID` = Package ID（例: `P01`。Work Package coding時のみ）
 
-Template / Enhancement 固定値:
-- `PROJECT_NAME={{PROJECT_NAME}}`
-- `ENHANCE_ID={{ENHANCE_ID}}`
-- `ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}`
-- `BRANCH_NAME={{BRANCH_NAME}}`
-- `REMOTE_NAME={{REMOTE_NAME}}`
-- `WORK_ROOT={{WORK_ROOT}}`
+ENH-E10 Enhancement固定値:
+- `PROJECT_NAME=Ariadne`
+- `ENHANCE_ID=ENH-E10`
+- `ENHANCE_SHORT_ID=E10`
+- `BRANCH_NAME=feature/ariadne_mvp_e10`
+- `REMOTE_NAME=origin`
+- `WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling`
 
 Runtime-derived values:
 - `START_SHA`
@@ -23,7 +23,7 @@ Runtime-derived values:
 - `PREVIOUS_FAILED_CANDIDATE_SHA`（formal FAIL remediation時）
 
 導出path:
-- `{{WORK_ROOT}}/10_enhance_instruction/$GATE_ID/06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_$GATE_ID...` — directory listingから正確なfilenameを導出する。semantic matchが0件または複数ならSTOPする。
+- `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/10_enhance_instruction/$GATE_ID/06_Ariadne_ENH-E10_$GATE_ID...` — directory listingから正確なfilenameを導出する。semantic matchが0件または複数ならSTOPする。
 
 SHA は実行時の repository state からのみ取得する。架空 SHA を事前生成してはならない。
 `PACKAGE_CHECKPOINT_SHA`、`FIXED_TRIAL_CANDIDATE_SHA`、`EVIDENCE_COMMIT_SHA` は意味が異なるため混同しない。
@@ -35,9 +35,9 @@ Agent実行前に全variableを明示的に置換・確定する。任意のglob
 
 ### 2.1. Purpose
 
-`agent_entry_prompts/` は、template側のgeneric promptをEnhancement開始時に `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` へinstance化して使用する。
+`agent_entry_prompts/` は、ENH-E10用にmaterialize済みのAgent execution entry pointを保持する。
 
-template directory上のpromptをAgent executionへ直接指定してはならない。
+このdirectoryのpromptではEnhancement-fixed identityを再推測・再置換しない。実行時に解決するのは各promptが宣言するRuntime variableだけである。
 
 ### 2.2. Enhancement-fixed variables
 
@@ -64,7 +64,6 @@ GATE_ID
 PACKAGE_ID
 TRIAL_NO
 REMEDIATION_PACKAGE_ID
-AMENDMENT_ID
 ```
 
 各promptは必要なRuntime variableだけを要求する。不要なRuntime variableを推測で補完してはならない。
@@ -85,10 +84,10 @@ Human entryだけで対象を一意に解決できない場合は実行を開始
   - authoring source
   - Enhancement-fixed placeholdersを保持してよい
   - Agent executionへ直接使用しない
-- Enhancement側: `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/`
-  - execution source
+- ENH-E10 instance: `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/40_operator_workflows/agent_entry_prompts/`
+  - canonical execution source
   - Enhancement-fixed placeholdersは0件でなければならない
-  - Human Quick HowToUseが参照するcanonical path
+  - Runtime placeholderのみ各executionで解決する
 
 ### 2.6. Markdown heading numbering
 

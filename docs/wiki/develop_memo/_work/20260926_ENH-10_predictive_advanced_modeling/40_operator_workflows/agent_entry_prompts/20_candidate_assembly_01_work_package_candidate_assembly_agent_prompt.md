@@ -96,7 +96,7 @@ Candidate Assembly のために、最低限以下を読むこと。
 ### 4.1 Gate implementation contract
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 10_enhance_instruction/{{GATE_ID}}/
 ```
 
@@ -109,7 +109,7 @@ Candidate Assembly のために、最低限以下を読むこと。
 ### 4.2 Package implementation reports
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/packages/
 ```
 
@@ -276,11 +276,11 @@ BLOCKED_CANDIDATE_IDENTITY
 Implementation Completion Report は、**必ず以下の exact path に生成すること。**
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
-      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+      E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
 これは Test Agent が candidate identity evidence として探索する canonical path である。
@@ -290,7 +290,7 @@ Implementation Completion Report は、**必ず以下の exact path に生成す
 ファイル名は必ず、
 
 ```text
-{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
 とする。
@@ -298,10 +298,10 @@ Implementation Completion Report は、**必ず以下の exact path に生成す
 以下は禁止する。
 
 ```text
-{{ENHANCE_ID}}-{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion.md
-{{ENHANCE_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_complete.md
-{{ENHANCE_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__completion.md
-{{ENHANCE_SHORT_ID}}_{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+ENH-E10-{{GATE_ID}}_{{TRIAL_NO}}_implementation_completion.md
+ENH-E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_complete.md
+ENH-E10-{{GATE_ID}}_{{TRIAL_NO}}__completion.md
+E10_{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 implementation_completion.md
 ```
 
@@ -341,7 +341,7 @@ Completion Report は **Trial directory 直下**に置く。
 ファイルを作成する前に、以下の path を文字列として組み立てること。
 
 ```bash
-COMPLETION_REPORT="{{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
+COMPLETION_REPORT="docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
 
 printf '%s\n' "$COMPLETION_REPORT"
 ```
@@ -356,7 +356,7 @@ test -f "$COMPLETION_REPORT"
 
 ```bash
 find \
-  "{{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}" \
+  "docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}" \
   -maxdepth 2 \
   -type f \
   -name '*implementation*completion*.md' \
@@ -383,29 +383,29 @@ TRIAL_NO=03
 の場合、**唯一の正しい出力先は以下である。**
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/G12/Trial03/
-{{ENHANCE_SHORT_ID}}-G12_03__implementation_completion.md
+E10-G12_03__implementation_completion.md
 ```
 
 1行で表すと、
 
 ```text
-{{WORK_ROOT}}/20_implementation_reports/G12/Trial03/{{ENHANCE_SHORT_ID}}-G12_03__implementation_completion.md
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/G12/Trial03/E10-G12_03__implementation_completion.md
 ```
 
 以下は誤りである。
 
 ```text
-{{WORK_ROOT}}/20_implementation_reports/G12/Trial03/packages/{{ENHANCE_SHORT_ID}}-G12_03__implementation_completion.md
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/G12/Trial03/packages/E10-G12_03__implementation_completion.md
 ```
 
 ```text
-{{WORK_ROOT}}/20_implementation_reports/G12/Trial03/{{ENHANCE_SHORT_ID}}-G12_3__implementation_completion.md
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/G12/Trial03/E10-G12_3__implementation_completion.md
 ```
 
 ```text
-{{WORK_ROOT}}/20_implementation_reports/G12/Trial03/{{ENHANCE_SHORT_ID}}-G12-03__implementation_completion.md
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/G12/Trial03/E10-G12-03__implementation_completion.md
 ```
 
 ### 10.6 Required content
@@ -444,7 +444,7 @@ Completion Report は Test Agent が Fixed Trial Candidate identity を取得す
 commit 前に以下を必ず実行する。
 
 ```bash
-COMPLETION_REPORT="{{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
+COMPLETION_REPORT="docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
 
 test -f "$COMPLETION_REPORT"
 
@@ -491,7 +491,7 @@ Completion Report の生成後、
 stage は明示的に canonical path を指定する。
 
 ```bash
-COMPLETION_REPORT="{{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
+COMPLETION_REPORT="docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md"
 
 git add "$COMPLETION_REPORT"
 git diff --cached --name-only
@@ -553,7 +553,7 @@ push status
 - TRIAL_NO: <TRIAL_NO>
 - FIXED_TRIAL_CANDIDATE_SHA: <SHA>
 - COMPLETION_REPORT:
-  {{WORK_ROOT}}/20_implementation_reports/<GATE_ID>/Trial<TRIAL_NO>/{{ENHANCE_SHORT_ID}}-<GATE_ID>_<TRIAL_NO>__implementation_completion.md
+  docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/<GATE_ID>/Trial<TRIAL_NO>/E10-<GATE_ID>_<TRIAL_NO>__implementation_completion.md
 - EVIDENCE_COMMIT_SHA: <SHA>
 - Working tree: clean
 - Push: completed
@@ -611,9 +611,9 @@ Candidate Assembly Agent の目的は、この境界を越えずに **Package �
 current Trial に以下の exact remediation contract が存在し:
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 10_enhance_instruction/{{GATE_ID}}/
-08_{{ENHANCE_ID}}_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
+08_ENH-E10_{{GATE_ID}}_{{TRIAL_NO}}_Remediation_Instruction.md
 ```
 
 その 08 が:
@@ -683,18 +683,18 @@ BLOCKED_REMEDIATION_NOT_APPLIED
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## 3. Execution identity control
 
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+This is the ENH-E10 Enhancement-side instantiated prompt. Execute it only after the Runtime values below are supplied and the referenced Gate contract is executable.
 
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 Runtime values for this execution:
