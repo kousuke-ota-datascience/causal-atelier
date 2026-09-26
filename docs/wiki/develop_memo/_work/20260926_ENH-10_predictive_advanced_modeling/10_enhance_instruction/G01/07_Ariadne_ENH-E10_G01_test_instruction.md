@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G01 テスト指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `FROZEN`
+**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
 **Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST — this frozen document is the Gate verification authority
-**Execution eligibility:** Independent Verification starts only after a G01 Fixed Trial Candidate exists; coding remains blocked until required Pxx contracts are materialized.
+**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
+**Execution eligibility:** **NOT EXECUTABLE** until §5 architecture decisions are resolved and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -15,7 +15,7 @@
 
 FROZEN後は本書07がG01 original Acceptance Criteria authorityとなる。Coding self-check、Package completion、Completion Reportの `READY_FOR_TEST` をGate acceptanceへ読み替えない。
 
-本書はFROZEN verification authorityである。Independent VerificationはFixed Trial Candidate成立後に開始し、§5のexecution-precondition未確定が残る場合はBLOCKEDとする。
+現時点はmaterialized authoring draftでありIndependent Verificationへ使用しない。§5を06/Pxxと整合させた上でFROZENへ変更し、Fixed Trial Candidate成立後にIndependent Verificationを開始する。
 
 ## 2. Gate objective / acceptance claim
 
@@ -44,9 +44,9 @@ baseline facts:
 - ENH-E9 accepted baseline/protected regression evidence
 - Architecture Reviewでfreezeされたmodel/artifact/dependency contract
 
-## 5. Frozen verification preconditions
+## 5. Architecture decisions required before freeze
 
-Independent Verification前に最低限以下がFROZEN 06/07へ具体値として反映されていること。
+FROZENへ変更する前に最低限以下を06/07/Pxxへ具体値として反映する。
 
 - LightGBM model IDs
 - parameter schema/defaults
@@ -58,7 +58,7 @@ Independent Verification前に最低限以下がFROZEN 06/07へ具体値とし�
 - feature mismatch/error taxonomy
 - predictive spec/schema revision decision
 
-未解決の場合は `BLOCKED_PREREQUISITE`。
+未解決のままfreezeしてはならない。現時点のexecution statusは `BLOCKED_CONTRACT_NOT_FROZEN`。
 
 ## 6. Acceptance Criteria
 

@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G01 実装指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `FROZEN`
-**Execution mode:** `WORK_PACKAGE`
-**Required packages:** `NOT_MATERIALIZED`
-**First executable package:** `NONE`
+**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
+**Required packages:** `P01, P02, P03`
+**First executable package:** `P01`
 **Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST — this frozen contract is the Gate implementation authority
-**Execution eligibility:** **BLOCKED_PACKAGE_MATERIALIZATION** — contract is FROZEN; coding starts only after required Pxx execution contracts are materialized.
+**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
+**Execution eligibility:** **NOT EXECUTABLE** until §3 architecture decisions are resolved and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -51,9 +51,9 @@ Accepted pre-E10 baseline `c56a8809...` では以下を確認済み。
 
 Historical handoffの仮説は上記baselineでは確認されたが、implementation時にはcurrent checkoutで再確認する。
 
-## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
+## 3. Architecture decisions required before freeze — MUST resolve before coding
 
-本書は `FROZEN` である。以下はCoding Agentへ委譲しないexecution-precondition decisionとして固定し、Pxx materialization前にapproved amendmentで一意に確定する。
+本書はmaterialized draftであり、以下はCoding Agentへ委譲しない。Architecture Review / requirement-design revisionで一意に確定し、06/07/P01-P03へ反映してからFROZENへ移行する。
 
 1. model capability interfaceとregistry entry schema
 2. LightGBM model ID / version naming
@@ -70,7 +70,7 @@ Historical handoffの仮説は上記baselineでは確認されたが、implement
 13. failure taxonomyとHTTP/application error mapping
 14. `predictive-analysis-spec/1` を維持するかversion revisionするか
 
-本freeze以降、以下のpreconditionを具体化する変更はexplicit amendmentとして扱う。Gate execution開始後は06/07をsilent rewriteしない。
+freeze前はauthoring revisionとして具体化する。FROZEN後は06/07/Pxxをsilent rewriteせず、必要なsemantic変更は09 amendment routeを使用する。
 
 ## 4. Expected execution-mode decomposition
 
@@ -212,4 +212,4 @@ Package checkpoint単体をFixed Trial Candidateとしない。
 
 ## 14. Stop condition
 
-本書は `FROZEN` である。ただしRequired Pxxが未materializeの間はcodingを開始せず `BLOCKED_PACKAGE_MATERIALIZATION` とする。Pxx materialization後のCoding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、Gate PASSを宣言しない。
+現時点は `MATERIALIZED_DRAFT / NOT_EXECUTABLE`。Architecture Reviewのblocking decisionを解消し、06/07/P01-P03を明示的にFROZENへ変更するまではcodingを開始せず `BLOCKED_CONTRACT_NOT_FROZEN` とする。FROZEN後はCoding sideが `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、Gate PASSを宣言しない。

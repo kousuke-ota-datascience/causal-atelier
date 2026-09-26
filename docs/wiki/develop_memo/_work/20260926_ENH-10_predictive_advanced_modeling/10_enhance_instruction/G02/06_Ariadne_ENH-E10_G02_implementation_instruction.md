@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G02 実装指示書 — Predictive Explanation Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `FROZEN`
-**Execution mode:** `WORK_PACKAGE`
-**Required packages:** `NOT_MATERIALIZED`
-**First executable package:** `NONE`
+**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
+**Required packages:** `P01, P02, P03`
+**First executable package:** `P01`
 **Depends on:** `G01 PASS`
-**Self-containment:** MUST — this frozen contract is the Gate implementation authority
-**Execution eligibility:** **BLOCKED_PREREQUISITE / BLOCKED_PACKAGE_MATERIALIZATION** — requires G01 PASS and materialized required Pxx execution contracts.
+**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
+**Execution eligibility:** **NOT EXECUTABLE** until §3 architecture decisions are resolved, G01 PASS exists, and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -52,7 +52,7 @@ Accepted baselineでは以下を確認済み。
 - `explanation_dataset` はTEST partition由来で `explanation_only=True` として分離されている。
 - SHAP/LIMEはbaseline dependencyに存在しない。
 
-## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
+## 3. Architecture decisions required before freeze — MUST resolve before coding
 
 1. explanation capability interface / registry entry schema
 2. model × method compatibility matrix
@@ -70,7 +70,7 @@ Accepted baselineでは以下を確認済み。
 14. model cardへのexplanation provenance格納範囲
 15. failure taxonomy: method unavailable / not compatible / not supported / computation failure
 
-本書は `FROZEN`。未確定preconditionの具体化はexplicit amendmentで行い、execution開始後のsilent contract rewriteは禁止。
+本書はmaterialized draftである。以下をArchitecture Reviewで具体化し、06/07/P01-P03へ反映してからFROZENへ移行する。FROZEN後のsilent contract rewriteは禁止する。
 
 ## 4. Expected execution-mode decomposition
 
@@ -213,4 +213,4 @@ Browser E2EはG02でblockingにしない。method-specific scientific semantics�
 
 ## 14. Stop condition
 
-本書は `FROZEN` である。ただしRequired Pxx未materializeまたはupstream prerequisite未達なら `BLOCKED_*`。Coding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止し、PASSを宣言しない。
+現時点は `MATERIALIZED_DRAFT / NOT_EXECUTABLE`。Architecture Reviewのblocking decisionを解消し、06/07/P01-P03をFROZENへ変更するまでは `BLOCKED_CONTRACT_NOT_FROZEN`。FROZEN後もG01 PASS未達なら `BLOCKED_PREREQUISITE` とし、Coding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止してPASSを宣言しない。

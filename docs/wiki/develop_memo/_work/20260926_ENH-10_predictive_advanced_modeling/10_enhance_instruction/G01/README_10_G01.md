@@ -10,6 +10,10 @@
 
 - `06_Ariadne_ENH-E10_G01_implementation_instruction.md`
 - `07_Ariadne_ENH-E10_G01_test_instruction.md`
+- `06_G01_P00_work_package_plan.md`
+- `06_G01_P01_model_capability_and_optional_dependency.md`
+- `06_G01_P02_lightgbm_model_adapters.md`
+- `06_G01_P03_model_artifact_load_and_provenance.md`
 
 ## Gate claim
 
@@ -19,9 +23,11 @@ LightGBM Binary Classification / Regressionをoptional model backendとしてreg
 
 Requirement Revision + Architecture Reviewでmodel capability interface、optional dependency policy、artifact/load format、seed policy、provenance、failure taxonomy、schema versioningを決定する。
 
-## Conditional artifacts
+## Work Package decision
 
-P00/PxxはExecution Modeをfreezeしてから必要に応じて作成する。08はformal FAIL後のみ、09はoriginal Gate semantic contract/AC自体のHuman-approved amendment時のみ作成する。
+Execution Modeは `WORK_PACKAGE` を採用する。Required packagesは `P01, P02, P03`、First executable packageは `P01`。P00/Pxxはmaterialized draftとして同時作成するが、Architecture Reviewのblocking decisionを06/07/Pxxへ反映し、同一freeze batchでFROZENにするまでは実行禁止。
+
+08はformal FAIL後のみ、09はoriginal Gate semantic contract/AC自体のHuman-approved amendment時のみ作成する。
 
 ## Authority rule
 

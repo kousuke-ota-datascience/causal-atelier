@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G03 実装指示書 — Predictive Product Integration Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `FROZEN`
-**Execution mode:** `WORK_PACKAGE`
-**Required packages:** `NOT_MATERIALIZED`
-**First executable package:** `NONE`
+**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
+**Required packages:** `P01, P02, P03`
+**First executable package:** `P01`
 **Depends on:** `G01 PASS + G02 PASS`
-**Self-containment:** MUST — this frozen contract is the Gate implementation authority
-**Execution eligibility:** **BLOCKED_PREREQUISITE / BLOCKED_PACKAGE_MATERIALIZATION** — requires G01/G02 PASS and materialized required Pxx execution contracts.
+**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
+**Execution eligibility:** **NOT EXECUTABLE** until §3 architecture decisions are resolved, G01/G02 PASS exist, and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -54,7 +54,7 @@ Accepted pre-E10 baselineでは以下を確認済み。
 
 G03は既存capabilities APIを拡張可能な軸として利用し、hard-coded model/method assumptionsをcapability-driven contractへ置換する。
 
-## 3. Frozen execution-precondition decisions — MUST resolve by explicit amendment before coding
+## 3. Architecture decisions required before freeze — MUST resolve before coding
 
 1. predictive capabilities APIのresponse schema/version revision要否
 2. model registry capability metadataのUI-consumable fields
@@ -216,4 +216,4 @@ fixed sleepをprimary synchronizationにしない。historical runnerがcurrent 
 
 ## 14. Stop condition
 
-本書は `FROZEN` である。ただしRequired Pxx未materializeまたはupstream prerequisite未達なら `BLOCKED_*`。Coding sideは `READY_FOR_TEST` または `BLOCKED_*` で停止する。
+現時点は `MATERIALIZED_DRAFT / NOT_EXECUTABLE`。Architecture Reviewのblocking decisionを解消し、06/07/P01-P03をFROZENへ変更するまでは `BLOCKED_CONTRACT_NOT_FROZEN`。FROZEN後もG01/G02 PASS未達なら `BLOCKED_PREREQUISITE` とし、Coding sideは `READY_FOR_TEST` または `BLOCKED_*` で停止する。

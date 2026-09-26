@@ -10,6 +10,10 @@
 
 - `06_Ariadne_ENH-E10_G03_implementation_instruction.md`
 - `07_Ariadne_ENH-E10_G03_test_instruction.md`
+- `06_G03_P00_work_package_plan.md`
+- `06_G03_P01_capabilities_and_train_integration.md`
+- `06_G03_P02_explainability_and_model_management_integration.md`
+- `06_G03_P03_browser_e2e_and_product_regression.md`
 
 ## Gate claim
 
@@ -23,9 +27,11 @@ G03のみBrowser E2EをGate-blockingとし、Binary + LightGBM + SHAP、Regressi
 
 capabilities API、parameter rendering、unavailable state、compatibility UX、Model Management provenance、Browser command/environment/fixture/synchronization/assertionをArchitecture Reviewで確定する。
 
-## Conditional artifacts
+## Work Package decision
 
-P00/PxxはExecution Mode freeze後。08はformal FAIL後のみ。09はoriginal Gate contract/AC amendment時のみ。
+Execution Modeは `WORK_PACKAGE` を採用する。Required packagesは `P01, P02, P03`、First executable packageは `P01`。P00/Pxxはmaterialized draftとして同時作成するが、Architecture Reviewのblocking decisionを06/07/Pxxへ反映し、同一freeze batchでFROZENにするまでは実行禁止。
+
+08はformal FAIL後のみ。09はoriginal Gate contract/AC amendment時のみ。
 
 ## Authority rule
 

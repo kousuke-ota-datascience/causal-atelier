@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G02 テスト指示書 — Predictive Explanation Backend Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `FROZEN`
+**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
 **Depends on:** `G01 PASS`
-**Self-containment:** MUST — this frozen document is the Gate verification authority
-**Execution eligibility:** Independent Verification requires G01 PASS and a G02 Fixed Trial Candidate.
+**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
+**Execution eligibility:** **NOT EXECUTABLE** until §5 architecture decisions are resolved, G01 PASS exists, and 06/07/P01-P03 are explicitly FROZEN.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -40,9 +40,9 @@ PASS後G03は、method compatibilityとcanonical explanation outputsをUI/produc
 - frozen compatibility matrix / output-scale / sampling/background contract
 - current source/artifact/result state
 
-## 5. Frozen verification preconditions
+## 5. Architecture decisions required before freeze
 
-以下がapproved amendment / execution contractへ具体化されていなければ `BLOCKED_PREREQUISITE`:
+FROZENへ変更する前に以下を06/07/Pxxへ具体化する:
 
 - method IDs/version
 - model-method compatibility

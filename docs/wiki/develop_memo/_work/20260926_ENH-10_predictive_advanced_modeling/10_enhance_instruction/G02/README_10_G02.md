@@ -10,6 +10,10 @@
 
 - `06_Ariadne_ENH-E10_G02_implementation_instruction.md`
 - `07_Ariadne_ENH-E10_G02_test_instruction.md`
+- `06_G02_P00_work_package_plan.md`
+- `06_G02_P01_explanation_capability_and_canonical_contract.md`
+- `06_G02_P02_shap_backend.md`
+- `06_G02_P03_lime_backend_and_integration.md`
 
 ## Gate claim
 
@@ -19,9 +23,11 @@ existing linear coefficient explanationを保護し、SHAP/LIMEをmodel capabili
 
 Architecture Reviewでmodel × method compatibility、SHAP scale/background、LIME local/global policy、method parameters、dependency/version bounds、canonical explanation schema、failure taxonomyを確定する。
 
-## Conditional artifacts
+## Work Package decision
 
-P00/PxxはExecution Mode freeze後。08はformal FAIL後のみ。09はoriginal Gate contract/ACのHuman-approved amendment時のみ。
+Execution Modeは `WORK_PACKAGE` を採用する。Required packagesは `P01, P02, P03`、First executable packageは `P01`。P00/Pxxはmaterialized draftとして同時作成するが、Architecture Reviewのblocking decisionを06/07/Pxxへ反映し、同一freeze batchでFROZENにするまでは実行禁止。
+
+08はformal FAIL後のみ。09はoriginal Gate contract/ACのHuman-approved amendment時のみ。
 
 ## Authority rule
 
