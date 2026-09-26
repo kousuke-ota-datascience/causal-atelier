@@ -85,6 +85,7 @@ Requirementの実装・主要改訂がどのdelivery scopeに属するかを表�
 | `BASELINE` | ENH-E5開始時点までにcurrent implementationへ含まれていた既存contract。 |
 | `ENH-E5` | ENH-E5で実装または不足部分の完成をdelivery対象としたRequirement。 |
 | `ENH-E7` | ENH-E7で追加、責務改訂、または実装充足したRequirement。 |
+| `ENH-E10` | ENH-E10 Predictive Advanced Modeling / XAIで追加または主要改訂したRequirement。 |
 | `FUTURE` | current snapshot時点では実装完了対象外で、将来Enhancementで扱うRequirement。 |
 
 三つの属性は独立した軸として扱う。`Delivery`はRequirementの由来・主要delivery段階を示し、`Requirement Status`や`Implementation Status`の代替ではない。
@@ -266,17 +267,17 @@ Supported resource typeは`analysis-specification / execution / result / graph-v
 | FR-058 | Predictive | random、stratified、group、time-based splitを選択できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-059 | Predictive | target leakage、future leakage、group leakage、split overlapをBackendで拒否する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-060 | Predictive | imputation、encoding、scaling等のfitをtraining partitionのみに限定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-061 | Predictive | Algorithm Registryからtask対応modelを選択できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-061 | Predictive | Algorithm Registryはtask compatibilityに加えてmodel capability、parameter schema/default、provider/optional dependency availability/versionを表現し、利用可能なtask-compatible modelをbackend authorityで選択できる | MUST | ACTIVE | PARTIAL | ENH-E10 |
 | FR-062 | Predictive | validation partitionまたはcross-validationによるautomated hyperparameter selectionを提供する | SHOULD | DEFERRED | NOT_IMPLEMENTED | FUTURE |
 | FR-063 | Predictive | 固定済みspecとsplitからmodelをtrainingできる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-064 | Predictive | test partitionをmodel selectionに使用せず、最終評価まで隔離する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-065 | Predictive | classificationとregressionでtask対応metricを生成する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-066 | Predictive | classificationでclass balance、threshold、calibrationを確認できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-067 | Predictive | untouched TEST population上で指定subgroup columnごとのmetric、`sample_count`、計算可能な場合のbootstrap uncertaintyを確認できる | SHOULD | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
-| FR-068 | Predictive | fitted model、fitted preprocessor、prediction等のdurable binary/tabular outputはArtifactとして、metric/error等の分析値はResult payloadとして保存する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-069 | Predictive | global / local Predictive Explanationを生成できる | SHOULD | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-068 | Predictive | fitted model、fitted preprocessor、prediction等のdurable outputをArtifactとして保存し、provider-specific fitted modelはartifact schema/provider/payload identityから対応loaderを一意に解決してfresh-process相当で再読込・predictionできる | MUST | ACTIVE | PARTIAL | ENH-E10 |
+| FR-069 | Predictive | explanation method capabilityが宣言するsupported scopeに従いglobal / local Predictive Explanationを生成でき、unsupported scopeを擬似出力で補完しない | SHOULD | ACTIVE | PARTIAL | ENH-E10 |
 | FR-070 | Predictive | Predictive Explanationを因果説明と区別して表示・exportする | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-071 | Predictive | intended use、training data、metric、limitationsをModel Cardへ記録する | SHOULD | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-071 | Predictive | intended use、training data、metric、limitationsに加え、model/provider/version、effective parameters、seed/deterministic settings、feature/preprocessor identity、explanation method等の再現性provenanceをModel Cardへ記録する | SHOULD | ACTIVE | PARTIAL | ENH-E10 |
 | FR-072 | Predictive | Result比較はまずsemantic compatibilityを検証し、direct metric comparisonではさらに同一DatasetVersion、同一TEST-row identity/hash、同一定義metricを要求する | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-073 | Predictive | Prediction Taskからsource Context、Dataset、Analysis Viewへ遡れる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-074 | Workflow | Analysis FamilyをEXPLORATORY、CAUSAL、PREDICTIVEとして識別する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
@@ -375,7 +376,7 @@ Supported resource typeは`analysis-specification / execution / result / graph-v
 | FR-158 | Domain / Compatibility | AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加しない | MUST NOT | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | FR-159 | Compatibility | supported legacy analytical entryはFamily Capability catalogで解決したcanonical Analysis routeへ一方向normalizeし、parallel navigation authorityとして維持しない | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-160 | Compatibility | Family / Navigation / application IAの変更だけを理由にDB schema migrationまたはnavigation-state persistenceを導入しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E7 |
-| FR-161 | Scope | LightGBM / DoWhy / EconML等のexternal analytical engineを必須dependencyとして追加しない | MUST NOT | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
+| FR-161 | Scope | LightGBM / SHAP / LIME等のexternal analytical engineはoptional capabilityとして導入し、未導入でもcore startupと既存supported flowを壊さず、unavailable capabilityから別model/methodへsilent fallbackしない | MUST | ACTIVE | PARTIAL | ENH-E10 |
 | FR-162 | Scope | Overview / FlagshipをAnalytical Family peerとして追加しない | MUST NOT | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | FR-163 | Project Navigation | `/projects`をProject Listのcanonical surfaceとする | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-164 | Project Navigation | `/projects/new`をProject Registerのcanonical surfaceとし、作成成功後は`/projects/{new_project_id}/overview`へ遷移する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
@@ -392,6 +393,13 @@ Supported resource typeは`analysis-specification / execution / result / graph-v
 | FR-175 | Exploratory Surface | Data Qualityはdedicated backend operationを新設せずread-only availabilityとして扱い、Comparisonの`TIME_TREND`は既存grouping/aggregation semanticsを維持し、Findingsの`CHART`は既存persistent operation/result/artifact semanticsを維持する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-176 | Predictive Surface | Predictive Navigation Stageを新しいbackend Execution modelまたは1:1 runtime Stageとして扱わず、既存Prediction Task → Split → Training → Evaluation → Explanation → Model Card semanticsを保持する | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-177 | Architecture | UI / IA再編だけを理由に既存API contract、persistence schema、backend analysis/domain semanticsを変更しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E7 |
+| FR-178 | Predictive | Binary Classification / RegressionでLightGBM backend（`lightgbm_classifier.v1` / `lightgbm_regressor.v1`）をtask-compatible modelとして選択できる | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-179 | Predictive | optional model dependencyが利用不可の場合は明示的capability-unavailable state/errorを返し、別modelへsilent fallbackしない | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-180 | Predictive | fitted modelはserialize/load round-trip後もmodel/task/feature/preprocessor identityを保持し、同一runtime/config fixtureでprediction contractを満たす | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-181 | Predictive | Predictive Explanationはmodel-method compatibilityをbackend authorityで検証し、`LINEAR_COEFFICIENT_CONTRIBUTION` / `SHAP_TREE` / `LIME_TABULAR`を明示methodとして解決する | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-182 | Predictive | `SHAP_TREE`はapproved compatibility範囲でglobal/localを提供し、`LIME_TABULAR`はlocal-onlyを提供する。unsupported capabilityを別methodまたは擬似global出力で補完しない | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-183 | Predictive | explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
+| FR-184 | Predictive / UI | Train / Explainability / Model Managementはbackend capability metadataからcompatible option、availability/reason、parameter definition、provenanceを表示し、Frontendを独立したmodel-method compatibility authorityにしない | MUST | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
 
 ## 6. 非機能要件
 
@@ -432,6 +440,7 @@ Supported resource typeは`analysis-specification / execution / result / graph-v
 | NFR-025 | Portability | CLI / library executionがWeb UI route、tab/sidebar state、NavigationStageDescriptorへ依存しない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | NFR-026 | Accessibility | Current Family / Stageを色だけでなくsemantic active state、label、focus等でも識別できる | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | NFR-027 | Performance | navigation metadata取得・renderingがanalysis executionのcritical pathへ不要なI/Oまたはblocking dependencyを追加しない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
+| NFR-028 | Dependency isolation | optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability discovery/selection時に局所化してstable unavailable state/errorとして報告する | — | ACTIVE | NOT_IMPLEMENTED | ENH-E10 |
 
 ## 7. 科学・統計・分析上の要件
 
@@ -463,6 +472,7 @@ Supported resource typeは`analysis-specification / execution / result / graph-v
 | AR-024 | Scientific Integrity | Causal Effectsは推定されたeffectの閲覧・利用を扱い、estimator configurationと混在させない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | AR-025 | Scientific Integrity | Predictive MetricsとPredictive Explainabilityを別目的として扱い、feature importance等をcausal effectへ読み替えない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | AR-026 | Scientific Integrity | Exploratory Findings / visualizationをcausal conclusionまたはconfirmatory resultへ自動昇格しない | — | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
+| AR-027 | Scientific Integrity | coefficient contribution / SHAP / LIMEはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない | — | ACTIVE | PARTIAL | ENH-E10 |
 
 
 
@@ -675,7 +685,8 @@ Current contractで有効なcurrent data-retention contractは次のとおりと
 - causal effectの自動保証
 - unbounded AutoML
 - automatic business decision
-- LightGBM / DoWhy / EconML等のexternal analytical engine追加
+- LightGBM / SHAP / LIMEのmandatory core dependency化
+- DoWhy / EconML等、ENH-E10でapprovedされていないexternal analytical engine追加
 - Navigation stateのDB persistence / last-stage memory
 - Overview / FlagshipをAnalytical Family peerとして追加すること
 - 新規persistent Findings / Evidence domain modelの必須化
@@ -696,6 +707,10 @@ Current contractで有効なcurrent data-retention contractは次のとおりと
 12. Analysis ContextのProject scope / Dataset-Version compatibility / read-only Current Project semanticsが守られる。
 13. UI再編だけを理由とする新しいDB schema / API / backend execution semanticsが導入されていない。
 14. 正本文書、OpenAPI、DB schema、Frontend文言およびtestが同じFamily / Navigation Stage / Execution Stage用語とcontractを使用する。
+15. advanced Predictive engine未導入環境でもcore process startupとexisting logistic/linear + coefficient flowが成立する。
+16. new fitted model writeはprovider-neutral `fitted-model/2` contractを満たし、existing `fitted-model/1`はread-compatibleである。
+17. Predictive capability metadata、backend validation、Frontend selectionが同一model/method compatibility authorityと整合する。
+18. SHAP/LIME/coefficient explanationをcausal effectまたはcausal mechanismへ読み替えない。
 ## 13. CHANGE LOG
 
 ### 13.4. ENH-E4 Canonical Execution Architecture Requirements
@@ -722,3 +737,10 @@ Current contractで有効なcurrent data-retention contractは次のとおりと
 ### 13.7. Project Management / Analysis Workspace Requirements
 
 Project ManagementとAnalysis Workspaceを別navigation scopeとし、Project routes、Analysis Context、surface ownership、browser restoration、existing analysis surface placementをcurrent requirementへ統合した。
+
+### 13.8. ENH-E10 Predictive Advanced Modeling / XAI Requirements
+
+- FR-061 / FR-068 / FR-069 / FR-071 / FR-161をadvanced model/XAI capabilityに合わせて改定した。
+- FR-178〜FR-184、NFR-028、AR-027を追加した。
+- LightGBM classifier/regressor、optional dependency isolation、durable fitted-model load contract、SHAP/LIME compatibility/provenance、capability-driven Product integrationをcurrent requirementへ統合した。
+- `predictive-analysis-spec/1`、TRAIN-only preprocessing、TEST isolation、Predictive-not-causal、Metrics/Explainability separationを維持した。

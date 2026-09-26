@@ -720,6 +720,54 @@ Predictiveの既存設定項目、default、validation、generated `predictive-a
 - outputはgroup valueをmap keyに埋め込まずrecord listとする。
 
 
+#### 10.3.2 Predictive advanced model / XAI capability
+
+ENH-E10ではexisting Predictive lifecycleを変更せず、model / explanation capabilityをprovider-neutralに拡張する。
+
+Canonical model IDs:
+
+| Model | Task | Default |
+|---|---|---:|
+| `logistic_regression.v1` | BINARY_CLASSIFICATION | Yes |
+| `linear_regression.v1` | REGRESSION | Yes |
+| `lightgbm_classifier.v1` | BINARY_CLASSIFICATION | No |
+| `lightgbm_regressor.v1` | REGRESSION | No |
+
+Model selection / compatibility / availability / parameter definitionのauthorityはbackend Model Capability registryとする。Frontendはこのmetadataのconsumerであり、model IDごとの独自compatibility tableをcanonical authorityとして持たない。
+
+Advanced dependencyはoptional extra `predictive-advanced` とし、current approved boundsはLightGBM `>=4.7.0,<4.8`、SHAP `>=0.52.0,<0.53`、LIME `==0.2.0.1`。core startup/importはこのextraを要求しない。Unavailable capabilityは明示し、existing model/methodへのsilent fallbackを行わない。
+
+LightGBMはexisting TRAIN-fitted numeric/one-hot feature matrixを受け取る。ENH-E10ではnative categorical、native missing handling、early stoppingを導入せず、TRAIN-only preprocessingとTEST isolationを維持する。
+
+LightGBM exposed parameter set:
+
+- `num_boost_round`
+- `learning_rate`
+- `num_leaves`
+- `max_depth`
+- `min_data_in_leaf`
+- `lambda_l2`
+
+実行はCPU、`deterministic=true`、`force_col_wise=true`、`num_threads=1`をcurrent reproducibility contractとし、same-runtime/config stabilityを対象とする。cross-platform bitwise identityは保証しない。
+
+New fitted model writes use provider-neutral `fitted-model/2` envelope。linear payloadは`ariadne-linear-json/1`、LightGBM payloadは`lightgbm-model-string/1`。existing `fitted-model/1`はread compatibilityを維持する。Python pickle/joblibをcanonical portable model representationとしない。
+
+Explanation methods:
+
+| Method | Compatible model | Scope | Model-output semantics |
+|---|---|---|---|
+| `LINEAR_COEFFICIENT_CONTRIBUTION` | logistic / linear | global + local | LOG_ODDS / PREDICTION |
+| `SHAP_TREE` | LightGBM classifier/regressor | global + local | raw LOG_ODDS / raw PREDICTION |
+| `LIME_TABULAR` | logistic / linear / LightGBM | local only | positive-class PROBABILITY / PREDICTION |
+
+`SHAP_TREE`はTreeExplainer + tree-path-dependent reference semanticsを用いる。globalはimmutable TEST explanation population上のmean absolute contribution、localはdeterministic sampleとする。
+
+`LIME_TABULAR`はmodelが消費するpreprocessed feature space上のlocal explanationのみを提供する。TRAIN transformed featuresからdeterministic explanation referenceを構成し、global LIMEはunsupportedとして明示する。
+
+Train / Explainability / Model Managementはcapability metadataを使用する。Unavailable advanced optionはhideせずreason付きでdisabled表示可能とし、Model Managementはread-onlyのままmodel/provider/version/effective parameters/seed/determinism/feature/preprocessor/artifact/Model Card/explanation/lineage provenanceを提示する。
+
+No new persistent Model Registry aggregate or DB migration is required. Existing generic Execution / Result / Artifact lifecycle remains authority。
+
 ## 11. Validation Architecture
 
 ### 11.1 Generic Validation
@@ -1063,6 +1111,14 @@ Application IAをProject ManagementとAnalysis Workspaceへ分離し、Project r
 
 
 
+### 20.9 ENH-E10 Predictive Advanced Modeling / XAI
+
+- backend Model / Explanation Capability registryをcompatibility・availability authorityとして追加した。
+- LightGBM Binary Classification / Regression、`fitted-model/2`、SHAP_TREE、LIME_TABULARのproduct-level responsibilityを定義した。
+- optional dependency isolation、no-silent-fallback、same-runtime/config reproducibility、Model Management provenanceをcurrent designへ統合した。
+- existing `predictive-analysis-spec/1`、generic execution lifecycle、TRAIN-only preprocessing、TEST isolation、Predictive Stage responsibilityを維持した。
+
+
 ---
 
 
@@ -1174,4 +1230,4 @@ ENH-E8はUI/IA変更のみを理由として以下を変更しない。
 - runtime `StageType`, `ExecutionPlan`, `Execution`, `StageExecution`
 - existing `predictive-analysis-spec/1` semantics
 
-LightGBM、LIME、SHAPはENH-E9へ送る。
+ENH-E8時点ではLightGBM / LIME / SHAPを後続Enhancementへdeferした。current effective snapshotではENH-E10 §10.3.2がそのadvanced Predictive capability contractを所有する。
