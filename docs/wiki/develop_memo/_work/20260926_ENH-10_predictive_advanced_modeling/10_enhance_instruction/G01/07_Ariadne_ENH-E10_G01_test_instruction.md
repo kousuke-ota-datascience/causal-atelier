@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G01 テスト指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01 implementation produces a Fixed Trial Candidate, and 06/07/P01-P03 are FROZEN.
+**Verification contract status:** `FROZEN`
+**Depends on:** `NONE`
+**Self-containment:** `MUST`
+**Execution eligibility:** **FROZEN / Independent Verification starts only after a G01 Fixed Trial Candidate exists**
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -15,7 +15,7 @@
 
 FROZEN後は本書07がG01 original Acceptance Criteria authorityとなる。Coding self-check、Package completion、Completion Reportの `READY_FOR_TEST` をGate acceptanceへ読み替えない。
 
-現時点はmaterialized authoring draftでありIndependent Verificationへ使用しない。§5を06/Pxxと整合させた上でFROZENへ変更し、Fixed Trial Candidate成立後にIndependent Verificationを開始する。
+本書はFROZEN acceptance authorityである。Independent VerificationはFixed Trial Candidate成立後に開始する。
 
 ## 2. Gate objective / acceptance claim
 
@@ -44,9 +44,9 @@ baseline facts:
 - ENH-E9 accepted baseline/protected regression evidence
 - Architecture Reviewでfreezeされたmodel/artifact/dependency contract
 
-## 5. Architecture Review values to verify
+## 5. Frozen Architecture Review values
 
-Before FROZEN, this 07 and P01-P03 must contain the same effective values:
+The following effective values are frozen consistently across 06/07/P01-P03:
 
 - model IDs: `lightgbm_classifier.v1`, `lightgbm_regressor.v1`
 - optional extra: `predictive-advanced` with LightGBM `>=4.7.0,<4.8`
@@ -59,7 +59,7 @@ Before FROZEN, this 07 and P01-P03 must contain the same effective values:
 - explicit model dependency/task/parameter/artifact/load/feature mismatch taxonomy
 - `predictive-analysis-spec/1` retained and no DB migration required
 
-Architecture decisions are technically resolved; Human approval is the remaining freeze authorization.
+Architecture decisions, Human approval, canonical requirement/design application, and final traceability are complete. Canonical snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
 ## 6. Acceptance Criteria
 

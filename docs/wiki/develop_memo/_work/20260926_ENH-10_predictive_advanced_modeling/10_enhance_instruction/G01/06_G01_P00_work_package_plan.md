@@ -1,10 +1,10 @@
 # ENH-E10 G01 P00 — Work Package Plan
 
 **Document class:** Work Package Planning Contract  
-**Status:** `MATERIALIZED_DRAFT / PLANNING_ONLY / NON_EXECUTABLE`  
+**Status:** `FROZEN / PLANNING_ONLY / NON_EXECUTABLE`  
 **Gate:** `G01`  
 **Execution mode:** `WORK_PACKAGE`  
-**Gate dependency:** `ENH-E9 final PASS / accepted pre-E10 baseline`  
+**Gate dependency:** `NONE`  
 **Authority:** Gate 06/07 define semantics and acceptance; P00 only defines execution decomposition.
 
 ## 1. WP adoption decision
@@ -25,7 +25,7 @@ WPはGate semantic boundaryを変更しない。Pxx completionはGate PASSを意
 
 Technical decisions are resolved in `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md` and materialized into 06/07/P01-P03.
 
-Remaining freeze blocker: **Human Architecture Review approval** and required requirement/design application. Pxx stays NOT_EXECUTABLE until the Gate set is explicitly FROZEN.
+Human approval, canonical requirement/design application, and final traceability are complete. Canonical snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`. P01-P03 are frozen execution contracts.
 
 ## 4. Package execution rule
 
@@ -38,4 +38,4 @@ Remaining freeze blocker: **Human Architecture Review approval** and required re
 
 ## 5. Current state
 
-`MATERIALIZED_DRAFT`。06/07/P01-P03と同一batchでfreezeする。
+`FROZEN / PLANNING_ONLY / NON_EXECUTABLE`。P00 is planning authority only; execution starts from P01 after Agent Execution Readiness.

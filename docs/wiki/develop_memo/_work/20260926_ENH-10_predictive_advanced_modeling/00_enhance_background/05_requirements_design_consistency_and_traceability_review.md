@@ -1,7 +1,7 @@
 # ENH-E10 要件・設計整合性およびトレーサビリティ確認
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `FINAL / TRACEABILITY_PASS / READY_FOR_GATE_FREEZE`  
+> **Status:** `FINAL / TRACEABILITY_PASS / G01_FROZEN / READY_FOR_EXECUTION_READINESS`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -78,7 +78,7 @@ dependencyは `G01 -> G02 -> G03` で一方向。G03がG01/G02のscientific sema
 
 ### 2.5 Approval / freeze readiness
 
-**PASS FOR GATE FREEZE / NOT YET READY FOR CODING**
+**G01 FROZEN / NOT YET READY FOR CODING**
 
 - 02 concept / architecture approval = APPROVED
 - requirement/design delta = APPLIED
@@ -86,7 +86,7 @@ dependencyは `G01 -> G02 -> G03` で一方向。G03がG01/G02のscientific sema
 - requirement/design traceability = PASS
 - Gate 06/07/P01-P03 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
 
-Planning/governance blockers are cleared. Coding remains blocked only because Gate contracts have not yet been explicitly transitioned to FROZEN and mechanical execution readiness has not run.
+Planning/governance blockers are cleared. G01 06/07/P00/P01-P03 are FROZEN. Coding remains blocked only until mechanical Agent Execution Readiness for G01/P01/Trial01 returns READY.
 
 ## 3. Final canonical application state
 
@@ -106,7 +106,7 @@ Canonical application is complete.
 - detailed design: `30_detailed_design.md`
 - snapshot commit: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`
 
-Remaining action is execution-contract state transition: verify G01 06/07/P01-P03 against this snapshot, mark the G01 set FROZEN consistently, then run Agent Execution Readiness. G02/G03 remain downstream-prerequisite blocked until upstream Gate PASS.
+G01 execution-contract state transition is complete: 06/07/P00/P01-P03 are FROZEN against this snapshot. Next action is Agent Execution Readiness for G01/P01/Trial01. G02/G03 remain downstream-prerequisite blocked until upstream Gate PASS.
 
 ## 4. Contradiction / risk review
 
@@ -142,12 +142,10 @@ Problem, canonical requirements, canonical target design, Gate boundaries and Wo
 
 ### Implementation readiness
 
-**READY FOR GATE FREEZE — CODING STILL BLOCKED UNTIL FROZEN + READINESS PASS**
+**G01 FROZEN — CODING BLOCKED UNTIL EXECUTION READINESS PASS**
 
 Next sequence:
 
-1. Reconcile G01 06/07/P01-P03 metadata/text against snapshot `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
-2. Freeze the G01 contract set consistently.
-3. Run Agent Execution Readiness for G01/P01/Trial01.
-4. Start G01 P01 Coding Agent only after readiness reports READY.
-5. G02/G03 freeze/execution remains subject to their declared upstream Gate PASS prerequisites.
+1. Run Agent Execution Readiness for G01/P01/Trial01.
+2. Start G01 P01 Coding Agent only after readiness reports READY.
+3. G02/G03 freeze/execution remains subject to their declared upstream Gate PASS prerequisites.

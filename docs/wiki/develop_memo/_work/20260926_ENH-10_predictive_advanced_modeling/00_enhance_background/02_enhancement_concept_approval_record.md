@@ -9,7 +9,7 @@
 - Decision authority: **Human enhancement owner / architecture owner**
 - Reviewed proposal: `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md`
 - Primary handoff: `00_enhance_background/_handoff/ENH-E10 Handoff — Predictive Advanced Modeling - XAI.md`
-- Implementation authorization: **CONDITIONAL — canonical requirement/design application, final traceability review, Gate freeze, and execution readiness are still required**
+- Implementation authorization: **CONDITIONAL — G01 contract freeze complete; Agent Execution Readiness is still required before Coding Agent execution**
 
 ## 1. Approval state
 
@@ -90,8 +90,8 @@ Approval後のremaining workflow:
 1. canonical requirement/design application completed at `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 2. approved revised requirement/design snapshot recorded.
 3. 05 final traceability review completed.
-4. G01の06/07/P01-P03をapproved canonical snapshotと一致させてFROZENにする。
-5. Agent Execution Readinessを実行する。
+4. G01 06/07/P00/P01-P03 freeze completed against the approved canonical snapshot.
+5. Agent Execution ReadinessをG01/P01/Trial01で実行する。
 6. READY後にG01 P01 Coding Agentを開始する。
 
 このAPPROVED記録だけではCoding開始条件は成立しない。

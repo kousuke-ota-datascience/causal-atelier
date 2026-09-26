@@ -1,13 +1,13 @@
 # Ariadne ENH-E10 G01 実装指示書 — Predictive Model Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
+**Contract status:** `FROZEN`
+**Execution mode:** `WORK_PACKAGE`
 **Required packages:** `P01, P02, P03`
 **First executable package:** `P01`
-**Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human Architecture Review/enhancement approval is recorded and 06/07/P01-P03 are explicitly FROZEN.
+**Depends on:** `NONE`
+**Self-containment:** `MUST`
+**Execution eligibility:** **FROZEN / SUBJECT_TO_AGENT_EXECUTION_READINESS**
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -51,7 +51,9 @@ Accepted pre-E10 baseline `c56a8809...` では以下を確認済み。
 
 Historical handoffの仮説は上記baselineでは確認されたが、implementation時にはcurrent checkoutで再確認する。
 
-## 3. Architecture Review decisions — effective values for freeze
+The accepted pre-E10 baseline is a protected historical baseline, not an in-work-root Gate dependency; therefore canonical `Depends on` metadata is `NONE`.
+
+## 3. Frozen Architecture Review decisions
 
 Source decision record: `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`.
 
@@ -110,6 +112,6 @@ These values are no longer delegated to Coding Agents.
     - keep `predictive-analysis-spec/1`.
     - no DB migration required by G01 architecture.
 
-Human approval of the Architecture Review remains required before changing this Gate set to FROZEN.
+Human approval, canonical requirement/design application, and final traceability review are complete. Canonical requirement/design snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
 

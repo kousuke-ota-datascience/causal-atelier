@@ -1,13 +1,18 @@
 # ENH-E10 G01 P03 — Model Artifact / Load / Provenance Integration
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`  
 **Gate:** `G01`  
 **Package:** `P03`  
-**Depends on:** `G01 P02 canonical package report = PACKAGE_COMPLETE`  
-**Self-containment:** MUST when FROZEN  
-**Information isolation:** MUST  
-**Execution eligibility:** `BLOCKED_CONTRACT_NOT_FROZEN`
+**Depends on:** `P02`  
+**Self-containment:** `MUST`  
+**Information isolation:** `MUST`  
+**Execution eligibility:** `BLOCKED_PREREQUISITE_P02`
+**Status at issuance:** `FROZEN`
+
+## 0. Frozen authority
+
+This P03 becomes executable only after the canonical P02 package report records `PACKAGE_COMPLETE` and Agent Execution Readiness for P03 returns READY. Canonical requirement/design snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
 ## 1. Package objective
 

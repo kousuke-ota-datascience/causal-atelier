@@ -1,13 +1,18 @@
 # ENH-E10 G01 P01 — Model Capability / Optional Dependency
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`  
 **Gate:** `G01`  
 **Package:** `P01`  
-**Depends on:** `ENH-E9 final PASS / accepted pre-E10 baseline`  
-**Self-containment:** MUST when FROZEN  
-**Information isolation:** MUST — after freeze, Coding Agent uses this assigned Pxx as normative implementation authority.  
-**Execution eligibility:** `BLOCKED_CONTRACT_NOT_FROZEN`
+**Depends on:** `NONE`  
+**Self-containment:** `MUST`  
+**Information isolation:** `MUST`  
+**Execution eligibility:** `SUBJECT_TO_AGENT_EXECUTION_READINESS`
+**Status at issuance:** `FROZEN`
+
+## 0. Frozen authority
+
+This P01 is the assigned-Pxx implementation authority after Agent Execution Readiness returns READY. The accepted pre-E10 baseline is protected context, not a runtime package dependency. Canonical requirement/design snapshot: `3e22d09e7e68e65aceb54d1a3a32cab697d7b480`.
 
 ## 1. Package objective
 
