@@ -12,12 +12,12 @@ TRIAL_NO={{TRIAL_NO}}
 固定値:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 ```
 
 本実行では、上記の `GATE_ID` および `TRIAL_NO` を以降の placeholder に代入して実行せよ。
@@ -55,7 +55,7 @@ git rev-parse HEAD
 
 以下を確認する。
 
-* current branch が `{{BRANCH_NAME}}` であること
+* current branch が `feature/ariadne_mvp_e10` であること
 * working tree が clean であること
 * 実行開始時 HEAD を `START_SHA` として記録すること
 
@@ -81,10 +81,10 @@ BLOCKED_EXECUTION_MODE_MISMATCH
 以下 directory から、指定された `GATE_ID` に対応する freeze 済み implementation contract を**正確に1件**特定せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 10_enhance_instruction/
   {{GATE_ID}}/
-    06_{{PROJECT_NAME}}_{{ENHANCE_ID}}_{{GATE_ID}}_implementation_instruction.md
+    06_Ariadne_ENH-E10_{{GATE_ID}}_implementation_instruction.md
 ```
 
 該当 contract が存在しない、または一意に特定できない場合は実装を開始せず停止せよ。
@@ -185,7 +185,7 @@ git status
 問題がなければ Fixed Trial Candidate を commit する。
 
 ```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation candidate"
+git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation candidate"
 git rev-parse HEAD
 ```
 
@@ -206,11 +206,11 @@ FIXED_TRIAL_CANDIDATE_SHA
 以下に implementation completion report を作成せよ。
 
 ```text
-{{WORK_ROOT}}/
+docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/
 20_implementation_reports/
   {{GATE_ID}}/
     Trial{{TRIAL_NO}}/
-      {{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+      E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 ```
 
 report には最低限以下を記録する。
@@ -240,7 +240,7 @@ BLOCKED の場合、candidate が存在しなければ SHA を捏造してはな
 completion report 作成後、evidence file のみを stage せよ。
 
 ```bash
-git add {{WORK_ROOT}}/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/{{ENHANCE_SHORT_ID}}-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
+git add docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/20_implementation_reports/{{GATE_ID}}/Trial{{TRIAL_NO}}/E10-{{GATE_ID}}_{{TRIAL_NO}}__implementation_completion.md
 git status
 git diff --cached
 ```
@@ -248,8 +248,8 @@ git diff --cached
 問題がなければ evidence commit を作成する。
 
 ```bash
-git commit -m "{{ENHANCE_ID}} Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation evidence"
-git push -u {{REMOTE_NAME}} {{BRANCH_NAME}}
+git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation evidence"
+git push -u origin feature/ariadne_mvp_e10
 git log -2 --oneline
 git status
 ```
@@ -319,18 +319,18 @@ report path（作成できた場合）
 <!-- BEGIN MANAGED: EXECUTION_IDENTITY_CONTROL -->
 ## 3. Execution identity control
 
-This prompt MUST be instantiated under `{{WORK_ROOT}}/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
+This prompt MUST be instantiated under `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/40_operator_workflows/agent_entry_prompts/` before Agent execution. The template-side prompt MUST NOT be executed directly.
 
 Enhancement-fixed values:
 
 ```text
-PROJECT_NAME={{PROJECT_NAME}}
-ENHANCE_ID={{ENHANCE_ID}}
-ENHANCE_SHORT_ID={{ENHANCE_SHORT_ID}}
-BRANCH_NAME={{BRANCH_NAME}}
-REMOTE_NAME={{REMOTE_NAME}}
-WORK_ROOT={{WORK_ROOT}}
-WORK_DIR_NAME={{WORK_DIR_NAME}}
+PROJECT_NAME=Ariadne
+ENHANCE_ID=ENH-E10
+ENHANCE_SHORT_ID=E10
+BRANCH_NAME=feature/ariadne_mvp_e10
+REMOTE_NAME=origin
+WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
+WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
 
 Runtime values for this execution:
