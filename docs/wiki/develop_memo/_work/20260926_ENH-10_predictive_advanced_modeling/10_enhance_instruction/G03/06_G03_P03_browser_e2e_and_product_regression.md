@@ -13,9 +13,26 @@
 
 2 critical Browser journeys、hermetic orchestration、observable assertions、G01/G02 protected integration、Predictive/non-predictive navigation regressionを成立させ、Candidate Assembly可能なG03 stateへ到達する。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-Browser canonical command、current-source bootstrap、fixture ownership、starting routes、semantic synchronization、observable assertions、evidence paths、teardown、failure classificationを07と一致させる。
+Canonical runner:
+
+`tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`
+
+Compose stack:
+
+`compose.yaml + compose.e1a.yaml + compose.enh_e10.yaml`, project `ariadne-enh-e10`.
+
+API/worker advanced image:
+
+`Dockerfile.predictive-advanced` with `.[predictive-advanced]`.
+
+Blocking execution begins from `down -v --remove-orphans`, runs the browser service with `--build`, executes both scenarios, captures evidence under `test-results/browser_e2e/enh_e10/`, then tears down volumes/orphans.
+
+Scenario 100 = Binary + `lightgbm_classifier.v1` + `SHAP_TREE`.
+Scenario 110 = Regression + `lightgbm_regressor.v1` + explicit local `LIME_TABULAR`.
+
+Primary synchronization is execution terminal state + required Result/Artifact availability + visible UI state; fixed sleep is not primary synchronization.
 
 ## 3. Required behavior
 

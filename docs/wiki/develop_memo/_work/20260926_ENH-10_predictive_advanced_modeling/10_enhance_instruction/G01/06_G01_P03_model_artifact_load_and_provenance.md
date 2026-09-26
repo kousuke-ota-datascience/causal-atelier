@@ -13,9 +13,27 @@
 
 durable serialization/load、feature/preprocessor identity、runner integration、provenance、existing linear protected regressionを成立させ、Candidate Assembly可能なG01 implementation stateへ到達する。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-artifact schema/version、provider serialization format、loader dispatch、feature/preprocessor identity contract、provenance fields、predictive spec revision decisionを06/07と一致させる。
+New writes use `fitted-model/2` with:
+
+- model/task/contract identity
+- effective parameters and seed
+- feature order + preprocessor hash
+- provider/library/version
+- determinism metadata
+- payload format
+
+Payload formats:
+
+- linear: `ariadne-linear-json/1`
+- LightGBM: `lightgbm-model-string/1`
+
+Existing `fitted-model/1` remains readable. Loader dispatch is provider/payload based. No canonical pickle/joblib.
+
+Additional failure codes: `MODEL_ARTIFACT_UNSUPPORTED`, `MODEL_ARTIFACT_LOAD_FAILED`, `MODEL_FEATURE_MISMATCH`; preserve `PREPROCESSOR_MODEL_MISMATCH`.
+
+Reproducibility is same-runtime/config stability only; provenance must record LightGBM/Python/Ariadne versions and deterministic settings.
 
 ## 3. Required behavior
 

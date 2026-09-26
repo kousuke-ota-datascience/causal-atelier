@@ -13,9 +13,18 @@
 
 capabilities API consumer contract、task-compatible model selection、model-specific parameter rendering/serialization、unavailable state、stage responsibility regressionを成立させ、P02へ引き渡す。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-capabilities API schema/version、model parameter UI schema、default model selection、unavailable/incompatible state semantics、client/server validation boundaryを06/07と一致させる。
+`predictive-capabilities/1` remains the schema. Existing fields/types are retained; add:
+
+- top-level `task_defaults`
+- model `contract_version`, structured `parameters`, provider/dependency/availability/version/reason, determinism, serializer/loader IDs, default_for_tasks
+- explanation dependency/availability/version/reason/default_for_models
+- top-level `model_explanation_compatibility`
+
+Retain legacy `parameter_schema`, `deterministic_seed`, `compatibility` and existing explanation fields as compatibility projections.
+
+Task defaults remain logistic/linear. Task change retains a compatible current selection; otherwise selects backend task default. Unavailable advanced models are visible-disabled with reason. Parameter controls consume structured `parameters`; backend remains final validation authority.
 
 ## 3. Required behavior
 

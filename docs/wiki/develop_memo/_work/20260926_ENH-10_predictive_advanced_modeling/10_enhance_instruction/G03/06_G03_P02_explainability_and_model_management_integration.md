@@ -13,9 +13,16 @@
 
 compatible method/global-local UI、explanation/result limitations、Model Management provenance/artifact/model-card presentationを成立させ、P03へ引き渡す。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-explanation capability UI semantics、unavailable/incompatible presentation、Model Management provenance fields、result/artifact labels/limitations、accessibility/error presentationを06/07と一致させる。
+- linear default explanation = `LINEAR_COEFFICIENT_CONTRIBUTION`.
+- LightGBM default explanation = `SHAP_TREE`.
+- `LIME_TABULAR` is an explicit local alternate on compatible models.
+- unavailable methods are visible-disabled with reason; no fallback.
+- scope controls derive from supports_global/supports_local.
+- Model Management displays model/task/parameters, provider/library version, seed/determinism, feature/preprocessor identity, fitted-model artifact schema/ID, Model Card, explanation metadata, lineage/runtime provenance.
+- Model Management remains read-only.
+- predictive-not-causal wording remains mandatory.
 
 ## 3. Required behavior
 

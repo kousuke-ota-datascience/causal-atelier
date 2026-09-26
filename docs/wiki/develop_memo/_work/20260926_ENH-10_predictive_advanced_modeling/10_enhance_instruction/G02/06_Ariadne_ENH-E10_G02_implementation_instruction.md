@@ -52,165 +52,54 @@ Accepted baselineでは以下を確認済み。
 - `explanation_dataset` はTEST partition由来で `explanation_only=True` として分離されている。
 - SHAP/LIMEはbaseline dependencyに存在しない。
 
-## 3. Architecture decisions required before freeze — MUST resolve before coding
+## 3. Architecture Review decisions — effective values for freeze
 
-1. explanation capability interface / registry entry schema
-2. model × method compatibility matrix
-3. SHAP supported model/task set
-4. SHAP global/local definition
-5. Binary Classification SHAP output scale
-6. expected value / base value / additivity informationのschema
-7. background/reference dataset selectionとprovenance
-8. SHAP sampling policyとdeterministic behavior
-9. LIME local-onlyを正式contractとするか
-10. LIME discretization / kernel / sample size / feature representation defaults
-11. LIME seed/reproducibility guarantee
-12. optional dependency group/version bounds for SHAP/LIME
-13. explanation result/artifact schema revision要否
-14. model cardへのexplanation provenance格納範囲
-15. failure taxonomy: method unavailable / not compatible / not supported / computation failure
+Source decision record: `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`.
 
-本書はmaterialized draftである。以下をArchitecture Reviewで具体化し、06/07/P01-P03へ反映してからFROZENへ移行する。FROZEN後のsilent contract rewriteは禁止する。
-
-## 4. Expected execution-mode decomposition
-
-`WORK_PACKAGE` を第一候補とする。
-
-- explanation capability/compatibility registry
-- SHAP adapter + global/local result normalization
-- LIME adapter + local result normalization
-- explanation artifact/provenance + protected coefficient regression
-
-P00/PxxはArchitecture Review後に作る。
-
-## 5. Required implementation semantics
-
-1. **Capability-driven selection**
-   - methodはstring branchの積み増しではなく、model capabilityとの互換性を明示できるregistry/capability contractから解決する。
-   - capability metadataは少なくともmethod identity/version、global/local support、required model interface、dependency availabilityを表現する。
-   - G01 model registryとのauthority重複を避け、model-side capabilitiesとexplanation-side method requirementsを明示的に照合する。
-
-2. **Existing coefficient explanation**
-   - existing linear model behaviorを保護する。
-   - model output scale / prediction scale / feature-order semanticsを維持する。
-   - G02導入を理由にcoefficient pathへSHAP/LIME semanticsを混ぜない。
-
+1. **Method IDs**
+   - existing `LINEAR_COEFFICIENT_CONTRIBUTION`
+   - new `SHAP_TREE`
+   - new `LIME_TABULAR`
+2. **Compatibility**
+   - logistic/linear: coefficient global+local; LIME local; SHAP unsupported.
+   - LightGBM classifier/regressor: SHAP global+local; LIME local; coefficient unsupported.
+   - no execution-time fallback.
 3. **SHAP**
-   - globalとlocalを同じraw outputの単純表示違いとして扱わず、それぞれのmeaning/provenanceを明示する。
-   - frozen output scale、base/expected value、feature contributions、background/reference data、selected sample identityをresult/artifactへ記録する。
-   - classification/regressionのoutput shape差をnormalization layerで明示的に扱う。
-   - unsupported shape/task/modelをsilent coercionしない。
-
+   - `shap.TreeExplainer`, LightGBM only.
+   - `feature_perturbation="tree_path_dependent"`.
+   - no explicit external background matrix.
+   - binary model-output = raw `LOG_ODDS`; prediction output remains `PROBABILITY`.
+   - regression model-output = raw `PREDICTION`.
+   - global = mean absolute SHAP contribution over the entire immutable TEST explanation dataset, plus signed mean.
+   - local = existing deterministic FIRST_N sampling.
+   - additivity check is mandatory; Ariadne tolerance `atol=1e-6, rtol=1e-5`.
 4. **LIME**
-   - local explanationをinstance-specific artifact/resultとして扱う。
-   - local sample/instance identity、feature representation、effective seed、method parametersを記録する。
-   - global explanation非対応を採用する場合、capability metadataとvalidationで明示し、global風の擬似aggregateを自動生成しない。
+   - local-only; global request is explicitly unsupported.
+   - representation = preprocessed model feature space.
+   - binary target = positive-class probability; regression target = numeric prediction.
+   - defaults: num_samples=2000, num_features=min(10,n_features), feature_selection=auto, discretize_continuous=false, distance_metric=euclidean, kernel_width=0.75*sqrt(n_features), sample_around_instance=false.
+   - one-hot output columns are categorical binary LIME features; limitation must state that perturbation can form invalid original-category combinations.
+   - each explained row gets an independently derived deterministic seed from sampling seed + row identity.
+5. **Explanation reference**
+   - PREPARE adds internal `predictive-explanation-reference/1` from transformed TRAIN features.
+   - role = `EXPLANATION_REFERENCE_ONLY`.
+   - deterministic sample without replacement, max 500 rows, seed = explanation sampling seed.
+   - raw reference rows are runtime bindings only; persisted Result/Artifact records hash/count/seed/provenance, not raw rows.
+6. **Optional dependency**
+   - `predictive-advanced` extra uses SHAP `>=0.52.0,<0.53` and LIME `==0.2.0.1`.
+   - availability is resolved per package; absence does not break core/G01.
+7. **Schemas**
+   - keep `predictive-explanation-result/1`, `predictive-explanation-artifact/1`, `predictive-model-card-result/1`, `predictive-model-card-artifact/1`; extend additively.
+   - semantically unsupported fields are omitted/null by contract, not fabricated.
+8. **Failure taxonomy**
+   - `EXPLANATION_METHOD_NOT_REGISTERED`
+   - `EXPLANATION_METHOD_NOT_APPLICABLE`
+   - `EXPLANATION_DEPENDENCY_UNAVAILABLE`
+   - `EXPLANATION_SCOPE_NOT_SUPPORTED`
+   - `EXPLANATION_COMPUTATION_FAILED`
+9. **Predictive-not-causal**
+   - existing semantic limitation remains mandatory.
 
-5. **Optional dependency**
-   - SHAP/LIME未導入でAriadne core/G01 model flowを壊さない。
-   - selected methodのdependency unavailable時はexplicit capability error。
-   - package/version availabilityをcapability/provenanceへ露出する。
+Human approval remains required before this Gate set is changed to FROZEN.
 
-6. **Isolation / terminology**
-   - explanation用dataはmodel selection/trainingへ逆流させない。
-   - TEST isolationを維持し、explanation executionがTESTを再学習へ使用しない。
-   - `Predictive Explanation is not a Causal Explanation or Treatment Effect.` 相当のsemantic boundaryを維持する。
 
-## 6. Allowed scope
-
-- predictive explanation capability / method registry
-- SHAP/LIME adapters
-- global/local explanation normalization
-- compatibility validation
-- explanation artifact/result/model-card provenance
-- optional dependency capability discovery
-- G02に必要なdomain/API contract
-- G02 tests
-
-## 7. Explicitly prohibited scope
-
-- G01 model backend semanticsの再設計
-- G03 product UIの本格統合
-- causal explanation / treatment effect / CATE / HTE interpretation
-- explanation値をfeature causal importanceと表記
-- automatic method fallback
-- global LIME風pseudo-summaryをcontractなしに追加
-- repository-wide test migration
-- unrelated Project/Causal/Graph changes
-
-## 8. Protected passed-Gate/upstream contracts
-
-| Source | Protected semantic | Mandatory regression |
-|---|---|---|
-| G01 | model registry, artifact/load/predict, optional dependency and provenance contract | G01 protected regression |
-| baseline | coefficient explanation semantics | coefficient global/local regression |
-| baseline | feature-order validation | mismatch rejection |
-| baseline | TEST explanation isolation | no training/selection feedback |
-| baseline | predictive-not-causal terminology | result/model-card assertions |
-
-## 9. Schema / API / runtime policy
-
-- existing `predictive-explanation-result/1` / artifact schemaをreuseするかversion-upするかはfreeze decisionとする。
-- provider-specific raw SHAP/LIME objectをpublic Result payloadへ無加工で露出しない。canonical normalized structureとprovider provenanceを分離する。
-- arbitrary pickled explainerをdurable contractへ混入させる場合はsecurity/portability/versioningを明示reviewし、暗黙導入しない。
-- explanation computation failureをmodel training failureへ読み替えない。
-
-## 10. Automated test obligations
-
-新規/materially rebuilt testは `tests/enhancement/enh_e10/g02/<layer>/` を原則とする。
-
-最低限:
-
-- existing coefficient global/local protected regression
-- SHAP binary global/local
-- SHAP regression global/local
-- SHAP frozen output-scale/base-value contract
-- SHAP feature contribution shape/name mapping
-- LIME binary local fixed-seed reproducibility
-- LIME regression local fixed-seed reproducibility
-- LIME global unsupported contract（採用時）
-- model-method compatibility reject cases
-- optional SHAP/LIME dependency unavailable
-- feature/sample identity provenance
-- background/reference provenance
-- TEST isolation
-- predictive-not-causal terminology
-- Model Card explanation metadata
-
-Browser E2EはG02でblockingにしない。method-specific scientific semanticsはdeterministic Unit/Contract/Integrationをprimary proofとする。
-
-## 11. Candidate Assembly requirement
-
-`READY_FOR_TEST` 前に:
-
-- required packages complete
-- G02-wide compatibility matrix self-check complete
-- coefficient protected regression complete
-- SHAP/LIME optional-dependency absence scenarios complete
-- G01 protected regression complete
-- unresolved candidate-affecting change = NONE
-- Fixed Trial Candidate SHA fixed
-- Completion Report created
-
-## 12. Coding Agent prohibited work
-
-- Acceptance Criteria変更
-- G01 contractのsilent rewrite
-- G03 UI先行実装
-- test回避のためのmethod semantics変更
-- unsupported methodをfallbackで成功扱い
-- causal wordingの追加
-- repo-wide test cleanup
-- Gate PASS declaration
-
-## 13. Required outputs after execution
-
-- package status/checkpoint reports（WORK_PACKAGE時）
-- Fixed Trial Candidate SHA
-- implementation completion report
-- model-method compatibility evidence
-- explanation provenance evidence
-
-## 14. Stop condition
-
-現時点は `MATERIALIZED_DRAFT / NOT_EXECUTABLE`。Architecture Reviewのblocking decisionを解消し、06/07/P01-P03をFROZENへ変更するまでは `BLOCKED_CONTRACT_NOT_FROZEN`。FROZEN後もG01 PASS未達なら `BLOCKED_PREREQUISITE` とし、Coding sideは `READY_FOR_TEST` または明示的 `BLOCKED_*` で停止してPASSを宣言しない。

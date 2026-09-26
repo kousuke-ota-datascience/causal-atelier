@@ -54,166 +54,50 @@ Accepted pre-E10 baselineでは以下を確認済み。
 
 G03は既存capabilities APIを拡張可能な軸として利用し、hard-coded model/method assumptionsをcapability-driven contractへ置換する。
 
-## 3. Architecture decisions required before freeze — MUST resolve before coding
+## 3. Architecture Review decisions — effective values for freeze
 
-1. predictive capabilities APIのresponse schema/version revision要否
-2. model registry capability metadataのUI-consumable fields
-3. model-specific parameter schemaをUIへどう公開/描画するか
-4. unavailable optional capabilityのUI semantics: hide / disabled / visible-with-reason
-5. task change時のdefault model選択ルール
-6. incompatible model/method selectionのclient/server responsibility
-7. Explainability global/local control semantics
-8. Model Managementで表示するmodel/library/runtime provenance set
-9. Result/Artifact displayのcanonical labels / limitations
-10. schema compatibility policy for existing `predictive-analysis-spec/1`
-11. Browser E2E canonical command、hermetic environment、fixture、bootstrap/teardown
-12. Browser E2E critical journeyのexact route/synchronization/assertion
-13. accessibility/focus/error presentation requirements for new controls
+Source decision record: `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`.
 
-## 4. Expected execution-mode decomposition
+1. **Capabilities API**
+   - endpoint remains `GET /projects/{project_id}/predictive/capabilities`.
+   - schema remains `predictive-capabilities/1`.
+   - existing top-level/model/method fields and their types remain available.
+   - additive fields:
+     - `task_defaults`
+     - model `contract_version`
+     - model `parameters` structured definitions
+     - model `provider`, `dependency`, `available`, `unavailable_reason`, `provider_version`, `determinism`, `serializer_id`, `loader_id`, `default_for_tasks`
+     - explanation `contract_version`, `dependency`, `available`, `unavailable_reason`, `provider_version`, `default_for_models`
+     - `model_explanation_compatibility`
+   - legacy `parameter_schema`, `deterministic_seed`, `compatibility`, and explanation `method/supported_models/supports_global/supports_local/model_output_scales` remain compatibility projections.
+2. **Train UI**
+   - current compatible model is retained on task change.
+   - incompatible model switches to backend-declared `task_defaults[task].model_id`.
+   - logistic/linear remain defaults.
+   - model parameter controls are generated from structured model `parameters`.
+3. **Unavailable state**
+   - unavailable advanced model/method is visible but disabled with backend-provided reason.
+   - no auto-fallback from explicitly selected unavailable advanced capability.
+4. **Explainability UI**
+   - linear default = `LINEAR_COEFFICIENT_CONTRIBUTION`.
+   - LightGBM default = `SHAP_TREE`.
+   - compatible `LIME_TABULAR` remains an explicit alternate local method.
+   - scope control is derived from supports_global/supports_local.
+5. **Model Management**
+   - remains read-only.
+   - display model ID/task/effective parameters, provider/library version, seed/determinism, feature/preprocessor identity, fitted-model artifact identity/schema, Model Card, explanation method metadata, lineage/runtime provenance.
+6. **Predictive spec**
+   - keep `predictive-analysis-spec/1`.
+7. **Browser runtime**
+   - `Dockerfile.predictive-advanced` installs `.[predictive-advanced]` for API/worker.
+   - `compose.enh_e10.yaml` overrides API/worker builds to that image.
+   - core Dockerfile/normal compose remain core-only.
+   - Browser image remains Playwright 1.62.0 and includes ENH-E10 runner.
+8. **Blocking Browser runner**
+   - canonical runner path: `tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`.
+   - one runner contains exactly two required advanced predictive scenarios: Binary+LightGBM+SHAP and Regression+LightGBM+LIME.
+   - detailed numeric correctness remains G01/G02 responsibility.
 
-`WORK_PACKAGE` を第一候補とする。
+Human approval remains required before changing this Gate set to FROZEN.
 
-- capabilities/API contract + frontend model parameter rendering
-- Explainability capability/compatibility UI
-- Model Management/result/provenance presentation
-- browser critical journey + protected navigation regression
 
-P00/Pxxはfreeze後に作成する。
-
-## 5. Required implementation semantics
-
-1. **Capability-driven Train**
-   - model selectorはG01 registry/capabilityのcurrent task-compatible modelsから構成する。
-   - current logistic/linearだけを前提にしたhard-coded parameter payloadを解消する。
-   - backend parameter controlsはfrozen parameter schemaに基づき、invalid/unsupported combinationを明示する。
-   - task change時にsilent incompatible selectionを残さない。
-   - Setup-owned feature selectionをTrainへ移さない。Trainはselected feature contextをread-onlyとして扱う。
-
-2. **Capability-driven Explainability**
-   - explanation selectorはG02 compatibility contractに従い、current modelでvalidなmethods/global/local capabilityを提示する。
-   - unavailable dependency / unsupported model-method combinationのreasonをユーザーが認識可能にする。
-   - unsupported combinationを別methodへsilent fallbackしない。
-
-3. **Predict / Metrics**
-   - existing responsibilityを維持し、G03のために新規standalone scoring engineを必須化しない。
-   - prediction/evaluation outputsはG01 canonical model contractに従う。
-   - numeric correctnessをfrontendで再計算しない。
-
-4. **Model Management**
-   - read-oriented scopeを維持する。
-   - fitted model artifact、model ID/version、task、effective parameters、feature/preprocessor identity、analytical library/version、runtime provenance、Model Card、lineageをcurrent contractの範囲で確認可能にする。
-   - deployment registry / online serving lifecycleへ拡張しない。
-
-5. **Explainability presentation**
-   - method、global/local、output scale、sample/background provenance、limitationsを表示可能にする。
-   - Predictive Explanationをcausal explanationとして表記しない。
-   - raw provider object dumpだけをuser-facing contractにしない。
-
-6. **Optional capability state**
-   - LightGBM/SHAP/LIME不在でもapplication startup/navigationは成立する。
-   - unavailable capabilityを選択不能/明示errorとし、既存linear pathは利用可能なままにする。
-
-## 6. Allowed scope
-
-- predictive capabilities API/schema
-- predictive frontend Train/Explainability/Model Management controls/presentation
-- G01/G02 result/artifact/provenance read model integration
-- validation/error display
-- G03 browser journey/supporting tests
-- accessibility/focus behavior for changed predictive controls
-
-## 7. Explicitly prohibited scope
-
-- Project Management変更
-- Causal workflow / Graph workflow / Identification UX / Causal diagnostics変更
-- Setup以外へfeature editing authorityを移すこと
-- Predict Stageをfeature editing surfaceへ変更
-- standalone scoring engineの新設を必須化
-- deployment/online inference/model serving/production registry
-- causal interpretation of SHAP/LIME
-- repository-wide test migration
-- G01/G02 semantic contractのsilent rewrite
-
-## 8. Protected passed-Gate/upstream contracts
-
-| Source | Protected semantic | Mandatory regression |
-|---|---|---|
-| G01 | model capability, artifact/load/predict/provenance | backend integration regression |
-| G02 | explanation compatibility/global-local/provenance | explanation integration regression |
-| ENH-E8 | Predictive stage responsibilities and Setup-owned feature editing | navigation/stage contract |
-| ENH-E9 | Project/Causal/Graph stabilized flows | no unrelated regression |
-| FR-149–152 | six Predictive stages, existing spec semantics, Metrics/Explainability separation, read-oriented Model Management | contract/frontend tests |
-
-## 9. Schema / API / runtime policy
-
-- capabilities APIをextension pointとして使う。UI側にlibrary-specific authorityを重複実装しない。
-- frontend表示都合だけでmodel/explanation compatibilityをclient-only authorityにしない。backend validationを維持する。
-- existing analysis specificationを破壊的に変更しない。schema revisionが必要ならfreezeされたmigration/compatibility ruleを適用する。
-- package availability/versionはruntime capability stateであり、hard-coded frontend constantにしない。
-
-## 10. Automated test obligations
-
-新規/materially rebuilt testは `tests/enhancement/enh_e10/g03/<layer>/` に置く。
-
-Lower deterministic layers:
-
-- capabilities response model/method compatibility
-- model-specific parameter schema rendering/serialization
-- classification/regression task switch
-- invalid/incompatible selection error
-- optional dependency unavailable UI/API state
-- Setup feature edit vs Train/Predict read-only contract
-- Explainability global/local capability
-- Model Management provenance/result/artifact rendering
-- predictive-not-causal wording
-- existing linear flow regression
-
-Gate-blocking Browser E2Eは原則2 journeys:
-
-1. Binary Classification → LightGBM → execute → Predict/Metrics → SHAP Explainability → Model Management artifact/model-card/provenance確認
-2. Regression → LightGBM → execute → Predict/Metrics → LIME local Explainability → Model Management確認
-
-Browser E2Eの責務はreal cross-layer connectivity。SHAP/LIME numeric correctness、serialization parity、fine-grained validationはG01/G02 lower layerをprimary proofとする。
-
-## 11. Browser E2E operational contract — freeze required
-
-FROZEN 07へ以下を具体値として記載する。
-
-- canonical command
-- current-source/hermetic bootstrap
-- dataset/fixture
-- route and user journey
-- semantic synchronization points
-- observable assertions
-- screenshot/trace/network/log evidence
-- teardown
-- failure classification
-
-fixed sleepをprimary synchronizationにしない。historical runnerがcurrent UIへ到達できない場合、ACを弱めずrunner/test orchestrationをcurrent journeyへ追従させる。
-
-## 12. Candidate Assembly requirement
-
-`READY_FOR_TEST` 前に:
-
-- all G03 packages complete
-- G01/G02 protected regression complete
-- frontend/API focused tests complete
-- Browser E2E coding-side smoke reaches both critical journeys or explicit BLOCKED evidence exists
-- unresolved candidate-affecting change = NONE
-- Fixed Trial Candidate SHA fixed
-- Completion Report created
-
-## 13. Coding Agent prohibited work
-
-- Gate Decision / AC変更
-- G01/G02 redefinition
-- non-predictive cleanup
-- Browser failureを根拠なしにproduction defectと決め打ちして修正
-- test-side workaroundによるAC weakening
-- repository-wide migration
-- PASS declaration
-
-## 14. Stop condition
-
-現時点は `MATERIALIZED_DRAFT / NOT_EXECUTABLE`。Architecture Reviewのblocking decisionを解消し、06/07/P01-P03をFROZENへ変更するまでは `BLOCKED_CONTRACT_NOT_FROZEN`。FROZEN後もG01/G02 PASS未達なら `BLOCKED_PREREQUISITE` とし、Coding sideは `READY_FOR_TEST` または `BLOCKED_*` で停止する。

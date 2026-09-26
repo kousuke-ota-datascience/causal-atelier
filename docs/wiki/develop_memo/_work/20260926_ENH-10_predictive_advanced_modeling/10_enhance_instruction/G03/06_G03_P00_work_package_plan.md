@@ -19,9 +19,11 @@ API/capability-driven Train、Explainability/Model Management presentation、rea
 | P02 | Explainability / Model Management Integration | P01 PACKAGE_COMPLETE |
 | P03 | Browser E2E / Product Regression | P02 PACKAGE_COMPLETE |
 
-## 3. Freeze blockers
+## 3. Architecture Review resolution
 
-capabilities API schema、parameter rendering/default selection、unavailable/incompatible UX、Model Management provenance set、Browser canonical command/environment/fixture/synchronization/assertions。
+Technical decisions are resolved and materialized into 06/07/P01-P03: additive capabilities API, task defaults, parameter rendering, unavailable/incompatible UX, explanation defaults, Model Management provenance, advanced compose runtime, and exact Browser runner/command semantics.
+
+Remaining freeze blocker: **Human Architecture Review approval** plus required requirement/design application.
 
 ## 4. Package execution rule
 

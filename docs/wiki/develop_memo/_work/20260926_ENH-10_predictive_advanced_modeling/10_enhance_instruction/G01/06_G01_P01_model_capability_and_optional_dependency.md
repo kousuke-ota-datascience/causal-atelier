@@ -13,9 +13,16 @@
 
 model capability registry、task compatibility、parameter metadata、optional dependency availability/version/error taxonomyをbounded execution unitとして成立させ、P02へ引き渡せるcheckpointを作る。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-model IDs/parameter schema、optional dependency group/version bounds、deterministic metadata、failure taxonomyを06/07と矛盾なく具体化する。Coding Agentに設計判断を委譲しない。
+- Model IDs: `lightgbm_classifier.v1`, `lightgbm_regressor.v1`.
+- Existing logistic/linear remain task defaults.
+- Optional extra: `predictive-advanced`.
+- LightGBM bound: `>=4.7.0,<4.8`.
+- Capability descriptor includes structured parameters, provider/dependency availability/version/reason, determinism, serializer/loader IDs, task default.
+- Dependency discovery/import is lazy and MUST NOT break core import/start.
+- Error codes owned by this package: `MODEL_NOT_REGISTERED`, `MODEL_TASK_MISMATCH`, `MODEL_PARAMETER_INVALID`, `MODEL_DEPENDENCY_UNAVAILABLE`.
+- `predictive-analysis-spec/1` remains unchanged.
 
 ## 3. Required behavior
 

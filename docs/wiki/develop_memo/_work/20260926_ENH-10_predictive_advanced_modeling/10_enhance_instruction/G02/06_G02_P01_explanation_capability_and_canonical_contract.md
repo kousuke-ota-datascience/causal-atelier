@@ -13,9 +13,16 @@
 
 method capability registry、model-method compatibility、global/local contract、canonical result/provenance、optional dependency semantics、coefficient compatibilityを成立させ、P02へ引き渡す。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-method IDs、compatibility matrix、canonical result schema、optional dependency/version metadata、failure taxonomyを06/07と一致させる。
+- method IDs: coefficient / `SHAP_TREE` / `LIME_TABULAR`.
+- compatibility: linear models = coefficient + LIME local; LightGBM = SHAP global/local + LIME local.
+- no method fallback.
+- explanation schemas remain v1 with additive provider/method provenance.
+- PREPARE contract adds internal `predictive-explanation-reference/1` for LIME runtime use.
+- SHAP dependency `>=0.52.0,<0.53`; LIME `==0.2.0.1`.
+- failure codes: method-not-registered, not-applicable, dependency-unavailable, scope-not-supported, computation-failed.
+- existing coefficient behavior and predictive-not-causal limitation remain protected.
 
 ## 3. Required behavior
 

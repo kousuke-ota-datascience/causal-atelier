@@ -1,7 +1,7 @@
 # ENH-E10 要件・設計整合性およびトレーサビリティ確認
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / PROVISIONAL_REVIEW / NOT_READY_FOR_IMPLEMENTATION`  
+> **Status:** `MATERIALIZED / POST_ARCHITECTURE_REVIEW / NOT_READY_FOR_IMPLEMENTATION`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -81,45 +81,30 @@ dependencyは `G01 -> G02 -> G03` で一方向。G03がG01/G02のscientific sema
 
 - 02 concept approval = PENDING
 - requirement delta = NOT APPLIED
-- architecture decisions = NOT FROZEN
+- architecture technical decisions = COMPLETE / Human approval PENDING
 - Gate 06/07 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
-- P00/Pxx = NOT MATERIALIZED
+- P00/P01-P03 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
 
 従ってimplementation readinessは成立していない。
 
-## 3. Unresolved issues
+## 3. Post-Architecture-Review state
 
-Blocking decisions:
+The technical issues previously listed as blocking decisions are resolved by:
 
-1. named capability requirementsをcanonical FRへ直接入れるか、general FR + Gate acceptanceへ分けるか
-2. optional dependency group name/composition/version bounds
-3. final LightGBM model IDs
-4. LightGBM parameter/default subset
-5. categorical handling
-6. missing-value responsibility
-7. early stopping
-8. fitted-model artifact schema/version/serialization
-9. provider loader dispatch
-10. SHAP supported model/task matrix
-11. SHAP binary output scale
-12. SHAP background/reference/global aggregation/additivity
-13. LIME local-only decision
-14. LIME perturbation/discretization/sample defaults
-15. LIME feature representation
-16. reproducibility guarantee strength
-17. predictive spec schema revision
-18. capabilities API schema/version
-19. unavailable capability UI semantics
-20. Browser E2E canonical environment/command/fixture/synchronization
+- `40_operator_workflows/architecture_review/01_architecture_discovery.md`
+- `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`
+- `40_operator_workflows/architecture_review/03_gate_decomposition.md`
 
-Non-blocking/deferred by scope:
+Resolved technical decisions include optional dependency versions, LightGBM model/parameter contract, preprocessing boundary, determinism, fitted-model/2, SHAP semantics, LIME semantics, explanation compatibility/provenance, predictive spec version, capabilities API version, unavailable-state UX, and G03 Browser E2E runtime design.
 
-- multiclass
-- AutoML
-- online inference/deployment
-- production monitoring/model registry
-- causal explanation/CATE/HTE
-- repository-wide test migration
+Remaining blocking items are governance/materialization steps rather than unresolved technical architecture:
+
+1. Human Architecture Review approval.
+2. Enhancement concept/scope approval record remains `PENDING`.
+3. Proposed requirement delta remains `NOT_APPLIED` to canonical requirement documents.
+4. Approved revised requirement/design snapshot has not yet been recorded.
+5. Gate 06/07/P01-P03 remain `MATERIALIZED_DRAFT / NOT_EXECUTABLE`.
+6. Agent Execution Readiness therefore MUST remain not-ready.
 
 ## 4. Contradiction / risk review
 
@@ -132,9 +117,7 @@ Non-blocking/deferred by scope:
 
 ### Main architecture risk
 
-The largest current ambiguity is fitted-model artifact evolution. LightGBM cannot be safely represented as the current coefficient-only `fitted-model/1` shape without semantic falsification. Architecture Review must choose a versioned provider-neutral or provider-specific artifact/load contract before G01 freeze.
-
-The second major ambiguity is SHAP output semantics. Binary classification output scale/background/base value must be frozen before acceptance tolerances or result schema are written.
+The fitted-model and SHAP ambiguities identified in the provisional review are resolved. The selected architecture is provider-neutral `fitted-model/2` with v1 read compatibility, and SHAP TreeExplainer on raw model output (`LOG_ODDS` for binary, `PREDICTION` for regression). The remaining risk is implementation fidelity to these frozen-intent contracts, not an unresolved architecture choice.
 
 ## 5. Test architecture consistency
 
@@ -151,23 +134,19 @@ ENH-E10 test handoff is consistent with proposed Gate structure.
 
 ### Planning coherence
 
-**PASS — provisional**
+**PASS — technical Architecture Review complete**
 
-ENH-E10のproblem、requirement delta、proposed architecture、G01/G02/G03 semantic boundariesは相互に矛盾していない。
+Problem, requirement proposal, target architecture, Gate boundaries and Work Package decomposition are technically coherent.
 
 ### Implementation readiness
 
-**NOT READY / BLOCKED_BY_APPROVAL_AND_ARCHITECTURE_FREEZE**
+**NOT READY — BLOCKED_BY_HUMAN_APPROVAL_REQUIREMENT_APPLICATION_AND_GATE_FREEZE**
 
-次に必要なのはcodingではなく:
+Required sequence:
 
-1. Human concept/scope approval
-2. open requirement decisionsの確定
-3. Architecture Reviewで04のblocking decisionsをfreeze
-4. 03 requirement deltaをcanonical requirement documentsへapply
-5. approved revised requirement/design snapshotを保存
-6. 本05をfinal reviewへ更新
-7. G01/G02/G03 06/07を`FROZEN`化
-8. required P00/Pxxをmaterialize
-
-この順序が完了するまで、ENH-E10 Gate executionを開始しない。
+1. Human approves the Architecture Review decision record and enhancement concept/scope.
+2. Apply the approved requirement/design delta to canonical requirement/design documents and save the approved snapshot.
+3. Finalize this traceability review against that snapshot.
+4. Materialize the Architecture Review decisions into G01/G02/G03 06/07/P01-P03 and freeze each Gate contract set consistently.
+5. Run Agent Execution Readiness.
+6. Start G01 P01 Coding Agent only after readiness reports READY.

@@ -13,9 +13,26 @@
 
 Binary Classification / Regression用LightGBM adapter、parameter validation、seed/determinism、fit/predict semanticsを成立させ、P03へ引き渡す。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-LightGBM model IDs、supported parameter subset/defaults、categorical/missing/early-stopping policy、deterministic settingsを06/07と一致させる。
+Exposed parameters:
+
+- `num_boost_round`: integer [1,2000], default 100
+- `learning_rate`: (0,1], default 0.1
+- `num_leaves`: integer [2,256], default 31
+- `max_depth`: -1 or integer [1,64], default -1
+- `min_data_in_leaf`: integer [1,10000], default 20
+- `lambda_l2`: finite >=0, default 0.0
+
+Fixed runtime:
+
+- objective by task; metric=None
+- CPU, deterministic=true, force_col_wise=true, num_threads=1
+- seed = immutable execution/spec seed
+- verbosity=-1, use_missing=false
+- existing mean-imputation/scaling/one-hot preprocessing remains authoritative
+- no native categorical/missing and no early stopping
+- use low-level LightGBM train/Booster interface
 
 ## 3. Required behavior
 

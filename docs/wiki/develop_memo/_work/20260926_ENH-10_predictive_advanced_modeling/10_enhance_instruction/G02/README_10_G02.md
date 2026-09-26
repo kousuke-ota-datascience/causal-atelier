@@ -21,7 +21,16 @@ existing linear coefficient explanationを保護し、SHAP/LIMEをmodel capabili
 
 ## Freeze prerequisites
 
-Architecture Reviewでmodel × method compatibility、SHAP scale/background、LIME local/global policy、method parameters、dependency/version bounds、canonical explanation schema、failure taxonomyを確定する。
+Architecture Review technical decisions are complete and recorded in `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`.
+
+Remaining prerequisites:
+
+- Human Architecture Review / enhancement approval
+- approved requirement/design delta application and snapshot
+- final traceability review
+- 06/07/P01-P03 consistency check
+- explicit FROZEN transition
+
 
 ## Work Package decision
 

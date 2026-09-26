@@ -40,19 +40,23 @@ PASS後G03は、method compatibilityとcanonical explanation outputsをUI/produc
 - frozen compatibility matrix / output-scale / sampling/background contract
 - current source/artifact/result state
 
-## 5. Architecture decisions required before freeze
+## 5. Architecture Review values to verify
 
-FROZENへ変更する前に以下を06/07/Pxxへ具体化する:
+Before FROZEN, 07 and P01-P03 must embody the following:
 
-- method IDs/version
-- model-method compatibility
-- SHAP output scale/base-value semantics
-- SHAP background/reference and sampling
-- LIME local-only/global policy
-- LIME kernel/discretization/sample/reproducibility policy
-- optional dependency/version bounds
-- normalized explanation result/artifact schema
-- failure taxonomy
+- methods: `LINEAR_COEFFICIENT_CONTRIBUTION`, `SHAP_TREE`, `LIME_TABULAR`
+- compatibility matrix exactly as G02 06 §3
+- SHAP LightGBM-only / tree_path_dependent / raw LOG_ODDS or PREDICTION
+- SHAP global mean-absolute + signed mean over immutable TEST; local FIRST_N
+- SHAP additivity tolerance `atol=1e-6, rtol=1e-5`
+- LIME local-only on preprocessed feature space
+- LIME defaults: 2000 samples, min(10,n_features), no continuous discretization, euclidean, 0.75*sqrt(n_features), no sample-around-instance
+- deterministic TRAIN-derived `predictive-explanation-reference/1`, max 500 rows
+- explanation result/artifact/model-card remain schema v1 with additive method-specific fields
+- explicit dependency/scope/applicability/computation failure codes
+- predictive-not-causal limitation retained
+
+Architecture decisions are technically resolved; Human approval remains the freeze authorization.
 
 ## 6. Acceptance Criteria
 
@@ -60,11 +64,11 @@ FROZENへ変更する前に以下を06/07/Pxxへ具体化する:
 |---|---|---|---|
 | AC-01 | Existing linear coefficient global/local explanation remains available for compatible existing linear models with prior scale/feature-order semantics preserved. | protected unit/integration regression | MUST |
 | AC-02 | Explanation method availability is resolved through a compatibility/capability contract; unsupported model-method combinations are rejected explicitly without fallback. | compatibility matrix contract tests | MUST |
-| AC-03 | SHAP Binary Classification explanation produces the frozen global/local canonical representation with declared model-output scale, feature mapping, base/reference information and sample identity. | deterministic SHAP integration evidence | MUST |
-| AC-04 | SHAP Regression explanation satisfies the analogous frozen canonical representation and provenance contract. | deterministic SHAP integration evidence | MUST |
-| AC-05 | LIME Binary Classification local explanation records instance identity, feature representation, effective seed/parameters and is reproducible within the frozen guarantee. | deterministic LIME integration evidence | MUST |
+| AC-03 | SHAP Binary Classification produces global/local canonical values on raw LOG_ODDS scale with base value, feature mapping, TEST sample identity and tree-path-dependent reference semantics. | deterministic SHAP integration evidence | MUST |
+| AC-04 | SHAP Regression produces the analogous raw PREDICTION-scale canonical representation and provenance contract. | deterministic SHAP integration evidence | MUST |
+| AC-05 | LIME Binary Classification local explanation operates on preprocessed features, explains positive-class probability, records instance/reference identity and per-row effective seed/parameters, and is reproducible within the runtime-scoped guarantee. | deterministic LIME integration evidence | MUST |
 | AC-06 | LIME Regression local explanation satisfies the same local/provenance contract. | deterministic LIME integration evidence | MUST |
-| AC-07 | If global LIME is not supported by the frozen contract, requesting it is rejected/not-applicable explicitly and no pseudo-global fallback is emitted. | negative capability test | MUST |
+| AC-07 | Global LIME is unsupported: requesting it is explicitly rejected with `EXPLANATION_SCOPE_NOT_SUPPORTED`; no pseudo-global fallback is emitted. | negative capability test | MUST |
 | AC-08 | Missing SHAP/LIME dependency does not break core/model flow; selecting unavailable method returns explicit capability error with package availability/version evidence. | dependency-absence tests | MUST |
 | AC-09 | Explanation result/artifact/model-card preserve model identity, method identity/version, feature/sample identity, background/reference, output scale, seed and package/runtime provenance required by the frozen contract. | artifact/result/model-card audit | MUST |
 | AC-10 | Explanation uses isolated explanation data and does not alter model selection/training or violate TEST isolation. | lineage/isolation audit | MUST |

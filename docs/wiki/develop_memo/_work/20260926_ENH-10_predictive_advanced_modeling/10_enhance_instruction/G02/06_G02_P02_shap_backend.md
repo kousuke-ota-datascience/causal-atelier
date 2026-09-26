@@ -13,9 +13,18 @@
 
 SHAP global/local adapter、classification/regression normalization、output scale/base/background semanticsを成立させ、P03へ引き渡す。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-SHAP supported model/task set、output scale、background/reference selection、base/expected value、additivity/tolerance、dependency versionを06/07と一致させる。
+- method = `SHAP_TREE`.
+- supported models = `lightgbm_classifier.v1`, `lightgbm_regressor.v1`.
+- `TreeExplainer(feature_perturbation="tree_path_dependent", model_output="raw")`.
+- no explicit background matrix; reference semantics come from tree training path counts.
+- classification model-output scale = `LOG_ODDS`; prediction scale = `PROBABILITY`.
+- regression model-output/prediction scale = `PREDICTION`.
+- global = mean absolute contribution + signed mean across all immutable TEST explanation rows.
+- local = FIRST_N rows from current explanation sampling contract.
+- mandatory additivity verification with `atol=1e-6, rtol=1e-5`.
+- SHAP version bound = `>=0.52.0,<0.53`.
 
 ## 3. Required behavior
 

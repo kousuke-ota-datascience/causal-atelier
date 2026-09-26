@@ -44,21 +44,22 @@ baseline facts:
 - ENH-E9 accepted baseline/protected regression evidence
 - Architecture Reviewでfreezeされたmodel/artifact/dependency contract
 
-## 5. Architecture decisions required before freeze
+## 5. Architecture Review values to verify
 
-FROZENへ変更する前に最低限以下を06/07/Pxxへ具体値として反映する。
+Before FROZEN, this 07 and P01-P03 must contain the same effective values:
 
-- LightGBM model IDs
-- parameter schema/defaults
-- optional dependency group/version bounds
-- categorical/missing-value policy
-- deterministic settings
-- fitted-model artifact schema/serialization/load contract
-- package/runtime provenance schema
-- feature mismatch/error taxonomy
-- predictive spec/schema revision decision
+- model IDs: `lightgbm_classifier.v1`, `lightgbm_regressor.v1`
+- optional extra: `predictive-advanced` with LightGBM `>=4.7.0,<4.8`
+- exposed LightGBM parameter subset/defaults defined in G01 06 §3
+- existing preprocessing remains authoritative; no native categorical/missing and no early stopping
+- deterministic CPU settings: deterministic=true, force_col_wise=true, num_threads=1
+- new-write artifact: `fitted-model/2`; old `fitted-model/1` remains readable
+- LightGBM payload: `lightgbm-model-string/1`; linear payload: `ariadne-linear-json/1`
+- same-runtime/config reproducibility only
+- explicit model dependency/task/parameter/artifact/load/feature mismatch taxonomy
+- `predictive-analysis-spec/1` retained and no DB migration required
 
-未解決のままfreezeしてはならない。現時点のexecution statusは `BLOCKED_CONTRACT_NOT_FROZEN`。
+Architecture decisions are technically resolved; Human approval is the remaining freeze authorization.
 
 ## 6. Acceptance Criteria
 
@@ -67,8 +68,8 @@ FROZENへ変更する前に最低限以下を06/07/Pxxへ具体値として反�
 | AC-01 | Existing `logistic_regression.v1` / `linear_regression.v1` remain task-compatible and behaviorally usable under the new registry contract. | protected unit/contract/integration regression | MUST |
 | AC-02 | LightGBM classifier is registry-selectable only for Binary Classification and LightGBM regressor only for Regression; incompatible task/model combinations fail explicitly. | registry + validation tests | MUST |
 | AC-03 | LightGBM absent environment still imports/starts Ariadne core and preserves existing flows; selecting LightGBM returns explicit capability-unavailable error with no silent fallback. | isolated dependency-absence test | MUST |
-| AC-04 | Binary LightGBM train → serialize → load → predict preserves model/task/feature/preprocessor identity and prediction parity on deterministic fixture. | integration + artifact round-trip evidence | MUST |
-| AC-05 | Regression LightGBM train → serialize → load → predict preserves the same identity/parity guarantees. | integration + artifact round-trip evidence | MUST |
+| AC-04 | Binary LightGBM train → `fitted-model/2` serialize → fresh load → predict preserves model/task/feature/preprocessor identity and prediction parity on deterministic fixture. | integration + artifact round-trip evidence | MUST |
+| AC-05 | Regression LightGBM train → `fitted-model/2` serialize → fresh load → predict preserves the same identity/parity guarantees. | integration + artifact round-trip evidence | MUST |
 | AC-06 | Invalid parameters, feature order/name mismatch, preprocessor mismatch and unsupported model/task requests are rejected with distinguishable failure semantics. | negative contract tests | MUST |
 | AC-07 | Artifact/Model Card/runtime evidence records the frozen provenance set: Ariadne model identity, task, effective parameters, seed/determinism, feature identity, preprocessor identity and analytical package availability/version. | artifact/result inspection | MUST |
 | AC-08 | TEST isolation and TRAIN-only preprocessing fit remain intact; LightGBM integration does not use TEST for selection/fitting. | leakage/isolation regression | MUST |

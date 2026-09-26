@@ -69,7 +69,7 @@ Formal `APPROVED` へ変更する前に、少なくとも以下をreviewする�
 
 ## 4. Explicit non-approval
 
-現時点で以下は承認済みとみなしてはならない。
+Architecture Review technical decision record now proposes exact values for the items below, but **technical selection is not Human approval**. 現時点で以下は承認済みとみなしてはならない。
 
 - exact LightGBM / SHAP / LIME package version bounds
 - exact optional dependency group composition
@@ -93,6 +93,6 @@ Human enhancement owner / architecture ownerは、01/03/04/05をreviewし、次�
 - `CONDITIONAL` with concrete conditions
 - `REJECTED`
 
-APPROVED/CONDITIONALになった場合のみ、Architecture Reviewのfinal decisionsを反映し、Gate 06/07を`FROZEN`へre-materializeする。
+Architecture Reviewのtechnical decisionsはreview用draftとして04/05およびGate 06/07/Pxxへmaterializeしてよい。ただし、Humanが`APPROVED`または条件を満たした`CONDITIONAL`を明示するまで、canonical requirement/designへのapproved applicationおよびGate 06/07/Pxxの`FROZEN`化を行ってはならない。
 
 本書が `PENDING` の間は、G01/G02/G03 implementationを開始しない。

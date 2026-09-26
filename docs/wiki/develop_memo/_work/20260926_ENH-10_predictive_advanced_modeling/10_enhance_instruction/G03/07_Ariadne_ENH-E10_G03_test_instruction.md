@@ -37,18 +37,22 @@ advanced predictive model/explanation capabilitiesが、existing Predictive Navi
 - current frontend/API/backend source
 - current test estate discovered from repository
 
-## 5. Architecture decisions required before freeze
+## 5. Architecture Review values to verify
 
-- capabilities API fields/schema
-- parameter rendering contract
-- unavailable capability presentation
-- default model selection
-- compatibility validation boundary
-- Model Management provenance set
-- Browser command/environment/fixture/routes/synchronization/assertions
-- accessibility/error semantics
+Before FROZEN, G03 06/07/P01-P03 must embody:
 
-未解決のままfreezeしてはならない。現時点のexecution statusは `BLOCKED_CONTRACT_NOT_FROZEN`。
+- additive `predictive-capabilities/1` contract from G03 06 §3
+- logistic/linear task defaults retained
+- visible-disabled unavailable state with reason
+- backend-declared task default used only when current selection is incompatible
+- linear default explanation = coefficient; LightGBM default = SHAP_TREE; LIME is explicit local alternate
+- Setup remains feature-edit authority; Train/Predict remain read-only for feature identity
+- Model Management remains read-only with model/provider/artifact/model-card/lineage/runtime provenance
+- advanced runtime = `Dockerfile.predictive-advanced` + `compose.enh_e10.yaml`
+- canonical runner = `tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`
+- clean compose project = `ariadne-enh-e10`
+
+Architecture decisions are technically resolved; Human approval remains the freeze authorization.
 
 ## 6. Acceptance Criteria
 
@@ -82,23 +86,95 @@ advanced predictive model/explanation capabilitiesが、existing Predictive Navi
 | 120 | non_predictive_smoke | AC-12 | FRONTEND / API smoke | YES | targeted Project/Causal/Graph surface checks |
 | 999 | gate_decision | ALL | META | YES | independent synthesis |
 
-## 8. Browser E2E frozen contract fields
+## 8. Browser E2E contract
 
-FROZEN版ではTest Item 100/110ごとに次を具体化する。
+### 8.1 Canonical command lifecycle
 
-- canonical command
-- browser/runtime image and current-source build rule
-- service prerequisites
-- deterministic dataset/fixture
-- starting route
-- exact user actions
-- semantic synchronization point
-- expected Result/Artifact/Model Management observable state
-- trace/screenshot/video/network/API/worker log evidence
-- teardown
-- failure classification
+```bash
+docker compose \
+  -f compose.yaml \
+  -f compose.e1a.yaml \
+  -f compose.enh_e10.yaml \
+  -p ariadne-enh-e10 \
+  down -v --remove-orphans
 
-Browser command/environmentを07/P03へ具体化しFROZENへ変更するまではBrowser E2Eを実行してGate判定してはならず、`BLOCKED_CONTRACT_NOT_FROZEN` とする。
+docker compose \
+  -f compose.yaml \
+  -f compose.e1a.yaml \
+  -f compose.enh_e10.yaml \
+  -p ariadne-enh-e10 \
+  --profile e2e run --build --rm --entrypoint python browser-e2e \
+  tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py
+
+docker compose \
+  -f compose.yaml \
+  -f compose.e1a.yaml \
+  -f compose.enh_e10.yaml \
+  -p ariadne-enh-e10 \
+  down -v --remove-orphans
+```
+
+The runner MUST execute cleanup in a finally-equivalent operator/test path when the scenario fails.
+
+### 8.2 Runtime / fixture
+
+- API and worker use `Dockerfile.predictive-advanced`.
+- browser uses Playwright Chromium 1.62.0.
+- database/migrations/API/worker/frontend are created from the clean compose project and current source.
+- fixture is generated deterministically by the runner, not loaded from prior persistent state.
+- each scenario creates its own Project/Dataset/Research Context identity.
+- dataset contains deterministic numeric + categorical predictors and task-specific target; feature selection is performed through the product UI.
+
+### 8.3 Scenario 100 — Binary + LightGBM + SHAP
+
+Starting route: `/projects/{project_id}/predictive`.
+
+Required observable sequence:
+
+1. Setup selects Binary Classification dataset/target/features and preserves Setup-owned feature editing.
+2. Train selects `lightgbm_classifier.v1` from capabilities and submits model parameters.
+3. execution reaches `SUCCEEDED`.
+4. Predict/Metrics expose persisted prediction/evaluation result.
+5. Explainability selects `SHAP_TREE` global+local and exposes `LOG_ODDS` model-output semantics while prediction remains probability.
+6. Model Management exposes fitted-model/2 identity, LightGBM provider/version, parameters, seed/determinism, feature/preprocessor identity and Model Card.
+7. no causal wording or silent fallback appears.
+
+### 8.4 Scenario 110 — Regression + LightGBM + LIME
+
+Required observable sequence:
+
+1. Setup selects Regression dataset/target/features.
+2. Train selects `lightgbm_regressor.v1`.
+3. execution reaches `SUCCEEDED`.
+4. Predict/Metrics expose persisted regression outputs.
+5. Explainability explicitly selects `LIME_TABULAR` local explanation and exposes PREDICTION scale, row identity/reference provenance and limitation.
+6. global LIME is unavailable/disabled; no pseudo-global result is emitted.
+7. Model Management exposes the same model/artifact/runtime provenance contract.
+
+### 8.5 Synchronization and evidence
+
+Primary synchronization:
+
+- API execution reaches terminal status
+- required Result/Artifact types are retrievable
+- corresponding UI elements become visible
+
+Fixed sleep is not primary synchronization.
+
+Evidence path:
+
+`test-results/browser_e2e/enh_e10/`
+
+Required evidence on PASS/FAIL/BLOCKED:
+
+- scenario status and IDs
+- trace zip
+- screenshots at final observable states or failure point
+- browser console
+- relevant network request/response metadata
+- API/worker failure observation where applicable
+- exact command/runtime versions
+- failed synchronization point/assertion when not PASS
 
 ## 9. Browser failure classification
 

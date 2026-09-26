@@ -13,9 +13,19 @@
 
 LIME local adapter、sampling/seed/feature representation、unsupported global behavior、artifact/model-card provenance、G01/coefficient protected regressionを統合し、Candidate Assembly可能なG02 stateへ到達する。
 
-## 2. Architecture values required before freeze
+## 2. Effective architecture values
 
-LIME local/global policy、discretization/kernel/sample size/features、classification target、feature representation、seed/reproducibility、dependency versionを06/07と一致させる。
+- method = `LIME_TABULAR`; local-only.
+- supported models = existing logistic/linear and new LightGBM classifier/regressor.
+- representation = preprocessed feature space matching model `feature_order`.
+- binary explains positive-class probability; regression explains numeric prediction.
+- TRAIN-derived `predictive-explanation-reference/1`: deterministic sample without replacement, max 500 rows, seed = explanation sampling seed.
+- persist reference hash/count/seed/provenance only; raw reference rows remain runtime bindings.
+- defaults: num_samples=2000, num_features=min(10,n_features), feature_selection=auto, discretize_continuous=false, distance_metric=euclidean, kernel_width=0.75*sqrt(n_features), sample_around_instance=false.
+- one-hot outputs are categorical binary features; record perturbation-validity limitation.
+- derive independent deterministic effective seed per explained row from sampling seed + row identity.
+- global request or local_explanations=false => `EXPLANATION_SCOPE_NOT_SUPPORTED`.
+- LIME version = `0.2.0.1`.
 
 ## 3. Required behavior
 

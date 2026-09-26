@@ -25,7 +25,16 @@ G03のみBrowser E2EをGate-blockingとし、Binary + LightGBM + SHAP、Regressi
 
 ## Freeze prerequisites
 
-capabilities API、parameter rendering、unavailable state、compatibility UX、Model Management provenance、Browser command/environment/fixture/synchronization/assertionをArchitecture Reviewで確定する。
+Architecture Review technical decisions are complete and recorded in `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`.
+
+Remaining prerequisites:
+
+- Human Architecture Review / enhancement approval
+- approved requirement/design delta application and snapshot
+- final traceability review
+- 06/07/P01-P03 consistency check
+- explicit FROZEN transition
+
 
 ## Work Package decision
 

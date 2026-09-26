@@ -21,11 +21,11 @@ WPはGate semantic boundaryを変更しない。Pxx completionはGate PASSを意
 | P02 | LightGBM Model Adapters | P01 PACKAGE_COMPLETE |
 | P03 | Artifact / Load / Provenance Integration | P02 PACKAGE_COMPLETE |
 
-## 3. Freeze blockers
+## 3. Architecture Review resolution
 
-model IDs/parameter schema、optional dependency group/version bounds、categorical/missing/early-stopping policy、deterministic settings、artifact schema/serialization/load contract、failure taxonomy、predictive spec revision decision。
+Technical decisions are resolved in `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md` and materialized into 06/07/P01-P03.
 
-上記をArchitecture Reviewで一意に決定し、06/07および各Pxxへ反映するまでPxxをCoding Agentへ渡してはならない。
+Remaining freeze blocker: **Human Architecture Review approval** and required requirement/design application. Pxx stays NOT_EXECUTABLE until the Gate set is explicitly FROZEN.
 
 ## 4. Package execution rule
 

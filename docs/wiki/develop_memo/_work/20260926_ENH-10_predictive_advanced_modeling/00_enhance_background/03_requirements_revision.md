@@ -144,13 +144,22 @@ Primary proof: Unit / Contract / Integration. Browser E2Eはblockingにしない
 
 Primary proof: Frontend Contract / API Integration + two critical Browser E2E journeys.
 
-## 6. Open requirement decisions before approval
+## 6. Architecture Review resolution / approval boundary
 
-1. named LightGBM/SHAP/LIMEをcanonical FRへ直接MUSTとして書くか、general capability FR + ENH-E10 acceptanceとして分離するか
-2. LIME global capabilityを明示的unsupportedと固定するか
-3. `predictive-analysis-spec/1` を維持するかversion revisionするか
-4. categorical feature support / native missing handlingをE10 acceptanceへ含めるか
-5. early stoppingをE10 acceptanceへ含めるか
-6. reproducibility guaranteeのexact strength
+Architecture Review technical decisions are recorded in:
 
-これらが未決のため、本書は `PROPOSED_REQUIREMENT_DELTA` でありcanonical sourceへの適用はまだ行わない。
+- `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`
+
+The previously open technical requirement questions are resolved for the proposed delta:
+
+1. LIME global capability = explicitly unsupported; LIME is local-only.
+2. `predictive-analysis-spec/1` is retained.
+3. categorical/native missing handling is not added; existing TRAIN-fitted one-hot + mean-imputation remains authoritative.
+4. early stopping is out of scope.
+5. reproducibility guarantee = same-runtime/config stability with effective seed/library/runtime/determinism provenance; no cross-platform bitwise claim.
+6. model artifact evolution = provider-neutral `fitted-model/2` new-write envelope with `fitted-model/1` read compatibility.
+7. optional external engines remain optional and unavailable capability never silently falls back.
+
+The remaining requirement-level decision is governance rather than technical ambiguity: whether proposed new IDs FR-178–FR-184 / NFR-028 / AR-027 are applied as written or folded into existing canonical requirement IDs during approved canonical update. Requirement ID collision must be rechecked at apply time.
+
+本書は引き続き `PROPOSED_REQUIREMENT_DELTA / NOT_APPLIED` であり、Human approval前にcanonical requirement sourceを書き換えない。

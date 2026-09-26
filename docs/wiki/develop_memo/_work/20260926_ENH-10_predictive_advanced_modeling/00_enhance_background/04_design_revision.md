@@ -1,7 +1,7 @@
 # ENH-E10 設計書改定 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / ARCHITECTURE_REVIEW_DRAFT / NOT_FROZEN`  
+> **Status:** `MATERIALIZED / ARCHITECTURE_REVIEW_COMPLETE / PENDING_HUMAN_APPROVAL / NOT_FROZEN`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -11,7 +11,7 @@
   - `docs/wiki/requirement_definition/23_api_interface_design.md`
   - `docs/wiki/requirement_definition/30_detailed_design.md`
 - Requirement delta: `00_enhance_background/03_requirements_revision.md`
-- Freeze state: **NOT FROZEN**
+- Freeze state: **NOT FROZEN — technical decisions resolved; Human approval pending**
 
 ## 1. Current design constraints to preserve
 
@@ -352,21 +352,73 @@ Freeze:
 - Model Management provenance display
 - two canonical Browser E2E journeys/environment
 
-## 9. Architecture decisions still open
+## 9. Architecture Review resolution
 
-The following are **blocking before FROZEN 06/07**:
+Technical Architecture Review is complete. The canonical review artifacts are:
 
-1. optional dependency group name/version bounds
-2. exact LightGBM model IDs
-3. LightGBM parameter/default subset
-4. categorical feature scope
-5. native missing-value handling
-6. early stopping
-7. fitted-model artifact version/format
-8. SHAP output scale/background/additivity
-9. LIME local-only decision and defaults
-10. predictive spec schema version
-11. capabilities API schema/version
-12. Browser E2E canonical command/environment
+- `40_operator_workflows/architecture_review/01_architecture_discovery.md`
+- `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md`
+- `40_operator_workflows/architecture_review/03_gate_decomposition.md`
 
-本書はArchitecture Review入力であり、これらをCoding Agentへ暗黙決定させない。
+The former blocking design questions are technically resolved as follows.
+
+| Concern | Architecture decision |
+|---|---|
+| Optional dependency | `predictive-advanced` extra; LightGBM `>=4.7.0,<4.8`, SHAP `>=0.52.0,<0.53`, LIME `==0.2.0.1`; lazy discovery/import |
+| Model IDs | `lightgbm_classifier.v1`, `lightgbm_regressor.v1`; existing linear IDs remain defaults |
+| LightGBM parameters | bounded E10 subset: num_boost_round, learning_rate, num_leaves, max_depth, min_data_in_leaf, lambda_l2 |
+| Categorical / missing | keep existing TRAIN-fitted one-hot + mean-imputation; no LightGBM native categorical/missing semantics in E10 |
+| Early stopping | out of scope |
+| Determinism | CPU, deterministic=true, force_col_wise=true, num_threads=1; same-runtime/config stability only |
+| Model Artifact | new provider-neutral `fitted-model/2` envelope; linear JSON payload and LightGBM model-string payload; `fitted-model/1` read compatibility |
+| SHAP | `SHAP_TREE`; LightGBM only; tree_path_dependent; raw LOG_ODDS for binary / PREDICTION for regression; global mean-absolute contribution over TEST; local FIRST_N |
+| LIME | `LIME_TABULAR`; local-only; preprocessed feature space; deterministic TRAIN reference sample; explicit global unsupported |
+| Explanation schemas | keep v1 result/artifact/model-card schemas and extend additively |
+| Predictive spec | keep `predictive-analysis-spec/1` |
+| Capabilities API | keep `predictive-capabilities/1` and extend additively from backend capability authorities |
+| UI unavailable state | visible + disabled + reason; no silent fallback |
+| Browser E2E | G03 only; dedicated advanced API/worker image/compose override; 2 blocking critical journeys |
+
+### 9.1 Model artifact decision
+
+Architecture Review selects the provider-neutral envelope option.
+
+New writes use `fitted-model/2` so provider identity, loader identity, feature/preprocessor identity, determinism and provenance share one canonical envelope. Existing `fitted-model/1` remains readable for backward compatibility. Python pickle/joblib is not the canonical portable representation.
+
+### 9.2 SHAP decision
+
+Binary LightGBM explanation is frozen on raw model output (`LOG_ODDS`), not probability-space SHAP. This preserves a stable additive contract without requiring interventional background data. Regression uses raw `PREDICTION` scale.
+
+### 9.3 LIME decision
+
+LIME is local-only. It operates on the same preprocessed feature space consumed by the model and uses a deterministic TRAIN-derived explanation reference sample. Global LIME is explicitly unsupported; no pseudo-global aggregation is generated.
+
+### 9.4 Schema / persistence decision
+
+No DB migration is required by ENH-E10 architecture. Existing Product Result/Artifact persistence is reused.
+
+`predictive-analysis-spec/1` and `predictive-capabilities/1` remain version 1 because the required E10 additions are additive within the existing extensibility points.
+
+### 9.5 Gate / Work Package decision
+
+Semantic Gate decomposition remains:
+
+```text
+G01 Predictive Model Backend Contract
+  -> G02 Predictive Explanation Backend Contract
+  -> G03 Predictive Product Integration Contract
+```
+
+Each Gate uses three Work Packages for execution/failure localization only. Work Package completion is not a Gate acceptance boundary.
+
+## 10. Remaining approval boundary
+
+Architecture questions are no longer technically open. Remaining blockers before Gate freeze are governance/application steps:
+
+1. Human approval of the Architecture Review decision record.
+2. Human concept/scope approval record remains to be finalized.
+3. approved requirement delta must be applied to canonical requirement/design documents as required by the enhancement workflow.
+4. 05 traceability review must be finalized against the approved canonical snapshot.
+5. G01–G03 06/07/Pxx must be frozen in one internally consistent batch.
+
+Until those steps complete, implementation remains NOT EXECUTABLE.

@@ -19,9 +19,11 @@
 | P02 | SHAP Backend | P01 PACKAGE_COMPLETE |
 | P03 | LIME Backend / Explanation Integration | P02 PACKAGE_COMPLETE |
 
-## 3. Freeze blockers
+## 3. Architecture Review resolution
 
-method IDs/compatibility matrix、SHAP scale/background/additivity、LIME local/global/defaults/reproducibility、SHAP/LIME dependency versions、canonical explanation schema、failure taxonomy。
+Technical decisions are resolved and materialized into 06/07/P01-P03: method IDs/compatibility, SHAP raw-output semantics and additivity, LIME local-only defaults/reference strategy, optional dependency bounds, v1 additive explanation schemas, and failure taxonomy.
+
+Remaining freeze blocker: **Human Architecture Review approval** plus required requirement/design application.
 
 ## 4. Package execution rule
 
