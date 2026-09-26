@@ -1,7 +1,7 @@
 # ENH-E10 Target Architecture Decision Record — Predictive Advanced Modeling / XAI
 
 > **Document class:** Architecture Review / Target Decision Record  
-> **Status:** `CONDITIONAL` — technical review complete; Human approval required before Gate freeze  
+> **Status:** `APPROVED` — technical review complete and Human-approved  
 > **Enhancement:** `ENH-E10`  
 > **Decision date:** `2026-09-26`
 
@@ -413,7 +413,7 @@ Reviewed on 2026-09-26:
 ## 12. Approval
 
 - Technical review: **COMPLETE**
-- Status: **CONDITIONAL**
-- Human architecture approval: **PENDING**
-- Gate freeze authorization: **NOT YET GRANTED**
-- Timestamp: `2026-09-26`
+- Status: **APPROVED**
+- Human architecture approval: **APPROVED**
+- Gate freeze authorization: **GRANTED AFTER canonical requirement/design application and final traceability review**
+- Timestamp: `2026-09-26T14:58:00+09:00`

@@ -1,7 +1,7 @@
 # ENH-E10 要件・設計整合性およびトレーサビリティ確認
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / POST_ARCHITECTURE_REVIEW / NOT_READY_FOR_IMPLEMENTATION`  
+> **Status:** `MATERIALIZED / APPROVED_ARCHITECTURE / NOT_READY_FOR_IMPLEMENTATION`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -9,7 +9,7 @@
 - Design proposal: `04_design_revision.md`
 - Gate drafts: `10_enhance_instruction/G01..G03`
 - Approval record: `02_enhancement_concept_approval_record.md`
-- Current approval state: `PENDING`
+- Current approval state: `APPROVED`
 
 ## 1. Traceability matrix
 
@@ -81,7 +81,7 @@ dependencyは `G01 -> G02 -> G03` で一方向。G03がG01/G02のscientific sema
 
 - 02 concept approval = PENDING
 - requirement delta = NOT APPLIED
-- architecture technical decisions = COMPLETE / Human approval PENDING
+- architecture technical decisions = COMPLETE / Human approval APPROVED
 - Gate 06/07 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
 - P00/P01-P03 = MATERIALIZED_DRAFT / NOT_EXECUTABLE
 
@@ -99,12 +99,10 @@ Resolved technical decisions include optional dependency versions, LightGBM mode
 
 Remaining blocking items are governance/materialization steps rather than unresolved technical architecture:
 
-1. Human Architecture Review approval.
-2. Enhancement concept/scope approval record remains `PENDING`.
-3. Proposed requirement delta remains `NOT_APPLIED` to canonical requirement documents.
-4. Approved revised requirement/design snapshot has not yet been recorded.
-5. Gate 06/07/P01-P03 remain `MATERIALIZED_DRAFT / NOT_EXECUTABLE`.
-6. Agent Execution Readiness therefore MUST remain not-ready.
+1. Approved requirement delta remains `NOT_APPLIED` to canonical requirement/design documents.
+2. Approved revised requirement/design snapshot has not yet been recorded.
+3. Gate 06/07/P01-P03 remain `MATERIALIZED_DRAFT / NOT_EXECUTABLE`.
+4. Agent Execution Readiness therefore MUST remain not-ready.
 
 ## 4. Contradiction / risk review
 
@@ -140,13 +138,12 @@ Problem, requirement proposal, target architecture, Gate boundaries and Work Pac
 
 ### Implementation readiness
 
-**NOT READY — BLOCKED_BY_HUMAN_APPROVAL_REQUIREMENT_APPLICATION_AND_GATE_FREEZE**
+**NOT READY — BLOCKED_BY_REQUIREMENT_APPLICATION_AND_GATE_FREEZE**
 
 Required sequence:
 
-1. Human approves the Architecture Review decision record and enhancement concept/scope.
-2. Apply the approved requirement/design delta to canonical requirement/design documents and save the approved snapshot.
-3. Finalize this traceability review against that snapshot.
-4. Materialize the Architecture Review decisions into G01/G02/G03 06/07/P01-P03 and freeze each Gate contract set consistently.
-5. Run Agent Execution Readiness.
-6. Start G01 P01 Coding Agent only after readiness reports READY.
+1. Apply the approved requirement/design delta to canonical requirement/design documents and save the approved snapshot.
+2. Finalize this traceability review against that snapshot.
+3. Freeze G01/G02/G03 06/07/P01-P03 consistently.
+4. Run Agent Execution Readiness.
+5. Start G01 P01 Coding Agent only after readiness reports READY.

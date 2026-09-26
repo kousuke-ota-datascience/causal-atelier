@@ -1,7 +1,7 @@
 # ENH-E10 Enhance構想・要件改定計画 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / PROPOSAL_READY_FOR_REVIEW`  
+> **Status:** `MATERIALIZED / APPROVED / PRE_IMPLEMENTATION`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -10,7 +10,7 @@
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
 - Primary handoff: `00_enhance_background/_handoff/ENH-E10 Handoff — Predictive Advanced Modeling - XAI.md`
 - Upstream protected enhancements: ENH-E8, ENH-E9
-- Implementation status: **NOT STARTED / architecture freeze required**
+- Implementation status: **NOT STARTED / approved architecture pending canonical application and Gate freeze**
 
 ## 1. Problem statement
 

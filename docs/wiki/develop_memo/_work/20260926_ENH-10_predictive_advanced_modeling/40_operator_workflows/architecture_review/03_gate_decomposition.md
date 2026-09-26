@@ -1,7 +1,7 @@
 # ENH-E10 Gate Decomposition — Post Architecture Review
 
 > **Document class:** Architecture Review / Gate Decomposition  
-> **Status:** `REVIEW_COMPLETE / PENDING_HUMAN_APPROVAL`  
+> **Status:** `APPROVED`  
 > **Enhancement:** `ENH-E10`
 
 ## 1. Decomposition principle
@@ -100,7 +100,6 @@ Architecture decisions required by 06/07/Pxx are technically resolved by `02_tar
 
 Remaining pre-freeze work:
 
-1. Human architecture approval
-2. reflect decisions into 04/05 and all G01-G03 06/07/Pxx
-3. apply approved requirement delta to canonical requirement/design documents as required
-4. freeze 06/07/Pxx in one consistent batch
+1. apply approved requirement delta to canonical requirement/design documents
+2. finalize the approved revised requirement/design snapshot and traceability review
+3. freeze 06/07/Pxx in one consistent batch

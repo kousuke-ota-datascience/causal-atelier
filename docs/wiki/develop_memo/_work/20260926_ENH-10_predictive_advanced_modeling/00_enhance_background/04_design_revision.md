@@ -1,7 +1,7 @@
 # ENH-E10 設計書改定 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / ARCHITECTURE_REVIEW_COMPLETE / PENDING_HUMAN_APPROVAL / NOT_FROZEN`  
+> **Status:** `MATERIALIZED / ARCHITECTURE_APPROVED / NOT_FROZEN`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
@@ -11,7 +11,7 @@
   - `docs/wiki/requirement_definition/23_api_interface_design.md`
   - `docs/wiki/requirement_definition/30_detailed_design.md`
 - Requirement delta: `00_enhance_background/03_requirements_revision.md`
-- Freeze state: **NOT FROZEN — technical decisions resolved; Human approval pending**
+- Freeze state: **NOT FROZEN — Architecture Review approved; canonical application/final traceability/Gate freeze remain**
 
 ## 1. Current design constraints to preserve
 
@@ -411,14 +411,13 @@ G01 Predictive Model Backend Contract
 
 Each Gate uses three Work Packages for execution/failure localization only. Work Package completion is not a Gate acceptance boundary.
 
-## 10. Remaining approval boundary
+## 10. Remaining pre-freeze workflow
 
 Architecture questions are no longer technically open. Remaining blockers before Gate freeze are governance/application steps:
 
-1. Human approval of the Architecture Review decision record.
-2. Human concept/scope approval record remains to be finalized.
-3. approved requirement delta must be applied to canonical requirement/design documents as required by the enhancement workflow.
-4. 05 traceability review must be finalized against the approved canonical snapshot.
-5. G01–G03 06/07/Pxx must be frozen in one internally consistent batch.
+1. apply the approved requirement delta to canonical requirement/design documents.
+2. save the approved revised requirement/design snapshot.
+3. finalize 05 traceability review against that canonical snapshot.
+4. freeze G01–G03 06/07/Pxx in one internally consistent batch.
 
 Until those steps complete, implementation remains NOT EXECUTABLE.

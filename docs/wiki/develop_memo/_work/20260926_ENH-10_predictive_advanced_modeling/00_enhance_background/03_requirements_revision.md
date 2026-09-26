@@ -1,13 +1,13 @@
 # ENH-E10 要件定義書改定 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / PROPOSED_REQUIREMENT_DELTA / NOT_APPLIED`  
+> **Status:** `MATERIALIZED / APPROVED_REQUIREMENT_DELTA / NOT_APPLIED`  
 > **Self-containment:** MUST for own subject
 
 - Enhancement: `ENH-E10`
 - Accepted pre-E10 code baseline: `c56a8809dea688380b113210bef12c30b50ca7f6`
 - Canonical requirement source: `docs/wiki/requirement_definition/10_requirements_definition.md`
-- Application state: **proposal only; canonical requirements have not yet been rewritten**
+- Application state: **APPROVED delta; canonical requirements have not yet been rewritten**
 - Approval dependency: `02_enhancement_concept_approval_record.md`
 
 ## 1. Source requirements

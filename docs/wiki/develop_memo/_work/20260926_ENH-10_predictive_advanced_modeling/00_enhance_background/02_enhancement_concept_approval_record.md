@@ -1,23 +1,21 @@
 # ENH-E10 Enhance構想承認記録 — Predictive Advanced Modeling / XAI
 
 > **Document class:** Planning / Decision Artifact  
-> **Status:** `MATERIALIZED / PENDING_HUMAN_APPROVAL`  
+> **Status:** `MATERIALIZED / APPROVED`  
 > **Self-containment:** MUST for own subject
 
-- Decision: **PENDING**
-- Decision timestamp: **N/A — formal concept approval has not been recorded**
+- Decision: **APPROVED**
+- Decision timestamp: **2026-09-26T14:58:00+09:00**
 - Decision authority: **Human enhancement owner / architecture owner**
 - Reviewed proposal: `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md`
 - Primary handoff: `00_enhance_background/_handoff/ENH-E10 Handoff — Predictive Advanced Modeling - XAI.md`
-- Implementation authorization: **NO**
+- Implementation authorization: **CONDITIONAL — canonical requirement/design application, final traceability review, Gate freeze, and execution readiness are still required**
 
 ## 1. Approval state
 
-本artifactの目的は、未承認状態を曖昧にしないことである。
+本artifactはENH-E10 concept / scope / requirement delta / Architecture Reviewに対するHuman approvalを記録する。
 
-ENH-E10 working directoryのmaterializationとGate draft作成は進行しているが、それ自体をconcept / requirement / architectureのHuman approvalとして扱わない。
-
-現時点では次のproposalがreview対象である。
+2026-09-26T14:58:00+09:00 にHuman enhancement / architecture authorityから明示的な `approved` が与えられた。以下をapproved scopeとして扱う。
 
 - LightGBM Binary Classification / Regression
 - SHAP
@@ -28,9 +26,9 @@ ENH-E10 working directoryのmaterializationとGate draft作成は進行してい
 - capability-driven Predictive UI integration
 - G01 / G02 / G03 decomposition
 
-## 2. Proposed scope awaiting approval
+## 2. Approved scope
 
-### Proposed in-scope
+### Approved in-scope
 
 - LightGBM classifier/regressor
 - model registry/capability generalization
@@ -43,7 +41,7 @@ ENH-E10 working directoryのmaterializationとGate draft作成は進行してい
 - Train / Explainability / Model Management integration
 - ENH-E10 scoped deterministic tests and final critical Browser E2E
 
-### Proposed protected scope
+### Approved protected scope
 
 - ENH-E8 Predictive six-stage navigation
 - Setup-owned feature editing
@@ -54,9 +52,9 @@ ENH-E10 working directoryのmaterializationとGate draft作成は進行してい
 - predictive-not-causal terminology
 - ENH-E9 stabilized Project/Causal/Graph workflows
 
-## 3. Conditions required for APPROVED
+## 3. Approval basis
 
-Formal `APPROVED` へ変更する前に、少なくとも以下をreviewする。
+APPROVED decisionは以下のreview対象を含む。
 
 1. `03_requirements_revision.md` のrequirement delta
 2. `04_design_revision.md` のarchitecture decisions / unresolved decisions
@@ -67,9 +65,9 @@ Formal `APPROVED` へ変更する前に、少なくとも以下をreviewする�
 7. G01/G02/G03のacceptance boundary
 8. E10 non-goalsがupstream scopeを侵食しないこと
 
-## 4. Explicit non-approval
+## 4. Approved Architecture Review decisions
 
-Architecture Review technical decision record now proposes exact values for the items below, but **technical selection is not Human approval**. 現時点で以下は承認済みとみなしてはならない。
+以下は `40_operator_workflows/architecture_review/02_target_architecture_decision_record.md` のtechnical decisionsとしてHuman approval対象に含まれる。
 
 - exact LightGBM / SHAP / LIME package version bounds
 - exact optional dependency group composition
@@ -83,16 +81,17 @@ Architecture Review technical decision record now proposes exact values for the 
 - final capabilities API schema
 - predictive spec version revision
 - Browser E2E canonical environment/command
-- G01/G02/G03 Coding execution
+- G01/G02/G03 Coding execution contract values; actual coding start still requires Gate FROZEN + execution readiness
 
 ## 5. Required follow-up
 
-Human enhancement owner / architecture ownerは、01/03/04/05をreviewし、次のいずれかを明示する。
+Approval後のremaining workflow:
 
-- `APPROVED`
-- `CONDITIONAL` with concrete conditions
-- `REJECTED`
+1. approved requirement deltaをcanonical requirement/design documentsへapplyする。
+2. approved revised requirement/design snapshotを保存する。
+3. 05 traceability reviewをfinalizeする。
+4. G01/G02/G03の06/07/P01-P03をapproved architectureと一致させてFROZENにする。
+5. Agent Execution Readinessを実行する。
+6. READY後にG01 P01 Coding Agentを開始する。
 
-Architecture Reviewのtechnical decisionsはreview用draftとして04/05およびGate 06/07/Pxxへmaterializeしてよい。ただし、Humanが`APPROVED`または条件を満たした`CONDITIONAL`を明示するまで、canonical requirement/designへのapproved applicationおよびGate 06/07/Pxxの`FROZEN`化を行ってはならない。
-
-本書が `PENDING` の間は、G01/G02/G03 implementationを開始しない。
+このAPPROVED記録だけではCoding開始条件は成立しない。
