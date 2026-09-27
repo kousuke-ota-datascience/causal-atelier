@@ -233,6 +233,8 @@ class PredictiveTrainRunner:
             "feature_order": bundle["feature_order"],
             "preprocessor_hash": preprocessor["canonical_hash"],
         }
+        if "runtime" in model:
+            descriptor["runtime"] = model["runtime"]
         result = ResultDraft(
             result_type="TRAINING_RESULT",
             schema_version="predictive-training-result/1",

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import importlib
 from importlib import metadata as importlib_metadata
 from importlib import util as importlib_util
 from collections.abc import Mapping
@@ -48,11 +49,14 @@ MODEL_REGISTRY = (
         "provider_id": "lightgbm",
         "supported_tasks": ["BINARY_CLASSIFICATION"],
         "parameter_schema": {
-            "n_estimators": {"type": "integer", "minimum": 1, "default": 100},
-            "learning_rate": {"type": "number", "exclusive_minimum": 0, "default": 0.1},
-            "num_leaves": {"type": "integer", "minimum": 2, "default": 31},
+            "num_boost_round": {"type": "integer", "minimum": 1, "maximum": 2000, "default": 100},
+            "learning_rate": {"type": "number", "exclusive_minimum": 0, "maximum": 1, "default": 0.1},
+            "num_leaves": {"type": "integer", "minimum": 2, "maximum": 256, "default": 31},
+            "max_depth": {"type": "integer", "minimum": -1, "maximum": 64, "default": -1},
+            "min_data_in_leaf": {"type": "integer", "minimum": 1, "maximum": 10000, "default": 20},
+            "lambda_l2": {"type": "number", "minimum": 0, "default": 0.0},
         },
-        "deterministic_seed": False,
+        "deterministic_seed": True,
         "serializer_id": "lightgbm.booster/1",
         "loader_id": "lightgbm.booster/1",
         "task_default": False,
@@ -63,11 +67,14 @@ MODEL_REGISTRY = (
         "provider_id": "lightgbm",
         "supported_tasks": ["REGRESSION"],
         "parameter_schema": {
-            "n_estimators": {"type": "integer", "minimum": 1, "default": 100},
-            "learning_rate": {"type": "number", "exclusive_minimum": 0, "default": 0.1},
-            "num_leaves": {"type": "integer", "minimum": 2, "default": 31},
+            "num_boost_round": {"type": "integer", "minimum": 1, "maximum": 2000, "default": 100},
+            "learning_rate": {"type": "number", "exclusive_minimum": 0, "maximum": 1, "default": 0.1},
+            "num_leaves": {"type": "integer", "minimum": 2, "maximum": 256, "default": 31},
+            "max_depth": {"type": "integer", "minimum": -1, "maximum": 64, "default": -1},
+            "min_data_in_leaf": {"type": "integer", "minimum": 1, "maximum": 10000, "default": 20},
+            "lambda_l2": {"type": "number", "minimum": 0, "default": 0.0},
         },
-        "deterministic_seed": False,
+        "deterministic_seed": True,
         "serializer_id": "lightgbm.booster/1",
         "loader_id": "lightgbm.booster/1",
         "task_default": False,
@@ -168,18 +175,30 @@ def resolve_model_spec(task_type: str, spec: dict[str, Any]) -> tuple[str, dict[
 
 
 def _resolve_lightgbm_parameters(parameters: dict[str, Any]) -> dict[str, Any]:
-    _reject_unknown_model_parameters(parameters, {"n_estimators", "learning_rate", "num_leaves"})
+    _reject_unknown_model_parameters(
+        parameters,
+        {"num_boost_round", "learning_rate", "num_leaves", "max_depth", "min_data_in_leaf", "lambda_l2"},
+    )
     resolved = {
-        "n_estimators": parameters.get("n_estimators", 100),
+        "num_boost_round": parameters.get("num_boost_round", 100),
         "learning_rate": parameters.get("learning_rate", 0.1),
         "num_leaves": parameters.get("num_leaves", 31),
+        "max_depth": parameters.get("max_depth", -1),
+        "min_data_in_leaf": parameters.get("min_data_in_leaf", 20),
+        "lambda_l2": parameters.get("lambda_l2", 0.0),
     }
-    if isinstance(resolved["n_estimators"], bool) or not isinstance(resolved["n_estimators"], int) or resolved["n_estimators"] < 1:
-        raise _parameter_error("lightgbm n_estimators must be an integer >= 1")
-    if not _finite_in_range(resolved["learning_rate"], lower=0, lower_exclusive=True):
-        raise _parameter_error("lightgbm learning_rate must be a finite number > 0")
-    if isinstance(resolved["num_leaves"], bool) or not isinstance(resolved["num_leaves"], int) or resolved["num_leaves"] < 2:
-        raise _parameter_error("lightgbm num_leaves must be an integer >= 2")
+    if not _integer_in_range(resolved["num_boost_round"], 1, 2000):
+        raise _parameter_error("lightgbm num_boost_round must be an integer in [1, 2000]")
+    if not _finite_in_range(resolved["learning_rate"], lower=0, upper=1, lower_exclusive=True):
+        raise _parameter_error("lightgbm learning_rate must be in (0, 1]")
+    if not _integer_in_range(resolved["num_leaves"], 2, 256):
+        raise _parameter_error("lightgbm num_leaves must be an integer in [2, 256]")
+    if resolved["max_depth"] != -1 and not _integer_in_range(resolved["max_depth"], 1, 64):
+        raise _parameter_error("lightgbm max_depth must be -1 or an integer in [1, 64]")
+    if not _integer_in_range(resolved["min_data_in_leaf"], 1, 10000):
+        raise _parameter_error("lightgbm min_data_in_leaf must be an integer in [1, 10000]")
+    if not _finite_in_range(resolved["lambda_l2"], lower=0):
+        raise _parameter_error("lightgbm lambda_l2 must be finite and non-negative")
     return resolved
 
 
@@ -203,6 +222,10 @@ def _finite_in_range(
     )
 
 
+def _integer_in_range(value: Any, lower: int, upper: int) -> bool:
+    return not isinstance(value, bool) and isinstance(value, int) and lower <= value <= upper
+
+
 def fit_model(
     task_type: str,
     model_id: str,
@@ -212,8 +235,10 @@ def fit_model(
     *,
     seed: int,
 ) -> dict[str, Any]:
-    del seed  # Registry contract accepts and records seed; selected algorithms are deterministic.
     matrix = _matrix(features)
+    if model_id.startswith("lightgbm_"):
+        return _fit_lightgbm_model(task_type, model_id, parameters, matrix, target, seed=seed)
+    del seed  # Selected native algorithms are deterministic.
     if task_type == "BINARY_CLASSIFICATION":
         classes = sorted(set(target), key=str)
         if len(classes) != 2:
@@ -259,11 +284,93 @@ def fit_model(
 
 def predict(model: dict[str, Any], features: list[list[float]]) -> list[float]:
     matrix = _matrix(features)
+    if str(model["model_id"]).startswith("lightgbm_"):
+        lightgbm = _load_lightgbm()
+        booster = lightgbm.Booster(model_str=str(model["booster_model"]))
+        return [float(value) for value in booster.predict(matrix)]
     weights = np.asarray(model["coefficients"], dtype=float)
     values = matrix @ weights + float(model["intercept"])
     if model["task_type"] == "BINARY_CLASSIFICATION":
         values = 1 / (1 + np.exp(-np.clip(values, -35, 35)))
     return [float(value) for value in values]
+
+
+def _fit_lightgbm_model(
+    task_type: str,
+    model_id: str,
+    parameters: dict[str, Any],
+    matrix: np.ndarray,
+    target: list[Any],
+    *,
+    seed: int,
+) -> dict[str, Any]:
+    lightgbm = _load_lightgbm()
+    runtime = {
+        "objective": "binary" if task_type == "BINARY_CLASSIFICATION" else "regression",
+        "metric": None,
+        "device_type": "cpu",
+        "deterministic": True,
+        "force_col_wise": True,
+        "num_threads": 1,
+        "seed": seed,
+        "verbosity": -1,
+        "use_missing": False,
+    }
+    if task_type == "BINARY_CLASSIFICATION":
+        classes = sorted(set(target), key=str)
+        if len(classes) != 2:
+            raise PredictiveValidationError(
+                "BINARY_TARGET_REQUIRED",
+                "Binary training requires two classes",
+                path="prediction_question.target",
+            )
+        labels = np.asarray([int(value == classes[1]) for value in target], dtype=float)
+    else:
+        classes = None
+        labels = np.asarray([float(value) for value in target], dtype=float)
+    train_parameters = {
+        "objective": runtime["objective"],
+        "metric": "None",
+        "device_type": runtime["device_type"],
+        "deterministic": runtime["deterministic"],
+        "force_col_wise": runtime["force_col_wise"],
+        "num_threads": runtime["num_threads"],
+        "seed": runtime["seed"],
+        "verbosity": runtime["verbosity"],
+        "use_missing": runtime["use_missing"],
+        "learning_rate": parameters["learning_rate"],
+        "num_leaves": parameters["num_leaves"],
+        "max_depth": parameters["max_depth"],
+        "min_data_in_leaf": parameters["min_data_in_leaf"],
+        "lambda_l2": parameters["lambda_l2"],
+    }
+    booster = lightgbm.train(
+        train_parameters,
+        lightgbm.Dataset(matrix, label=labels, free_raw_data=False),
+        num_boost_round=parameters["num_boost_round"],
+    )
+    model = {
+        "schema_version": "fitted-model/1",
+        "model_id": model_id,
+        "task_type": task_type,
+        "parameters": parameters,
+        "runtime": runtime,
+        "booster_model": booster.model_to_string(),
+    }
+    if classes is not None:
+        model["classes"] = [_json_scalar(value) for value in classes]
+    return model
+
+
+def _load_lightgbm() -> Any:
+    try:
+        return importlib.import_module("lightgbm")
+    except ImportError as exc:
+        raise PredictiveValidationError(
+            "MODEL_DEPENDENCY_UNAVAILABLE",
+            "LightGBM could not be imported; install extra predictive-advanced",
+            path="model_spec.model_id",
+        ) from exc
 
 
 def encode_binary_target(model: dict[str, Any], target: list[Any]) -> list[int]:
