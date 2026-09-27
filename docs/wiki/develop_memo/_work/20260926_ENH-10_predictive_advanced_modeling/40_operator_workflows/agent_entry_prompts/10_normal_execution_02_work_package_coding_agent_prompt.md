@@ -17,7 +17,7 @@ PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E10
 ENHANCE_SHORT_ID=E10
 BRANCH_NAME=feature/ariadne_mvp_e10
-REMOTE_NAME=origin
+REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 ```
 
@@ -60,11 +60,13 @@ WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_model
 git branch --show-current
 git status --porcelain
 git rev-parse HEAD
+git remote get-url causal-atelier
 ```
 
 以下を確認する。
 
 * current branch が `feature/ariadne_mvp_e10` であること
+* `causal-atelier` remote が存在し、push先として解決できること
 * working tree が clean であること
 * 実行開始時 HEAD を `START_SHA` として記録すること
 
@@ -267,7 +269,7 @@ git diff --cached
 
 ```bash
 git commit -m "ENH-E10 Gate {{GATE_ID}} Trial {{TRIAL_NO}} {{PACKAGE_ID}} implementation evidence"
-git push -u origin feature/ariadne_mvp_e10
+git push -u causal-atelier feature/ariadne_mvp_e10
 git log -2 --oneline
 git status
 ```
@@ -368,7 +370,7 @@ PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E10
 ENHANCE_SHORT_ID=E10
 BRANCH_NAME=feature/ariadne_mvp_e10
-REMOTE_NAME=origin
+REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```

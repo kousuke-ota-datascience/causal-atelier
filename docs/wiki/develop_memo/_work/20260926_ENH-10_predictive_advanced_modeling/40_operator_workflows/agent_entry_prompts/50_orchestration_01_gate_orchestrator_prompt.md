@@ -104,7 +104,7 @@ PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E10
 ENHANCE_SHORT_ID=E10
 BRANCH_NAME=feature/ariadne_mvp_e10
-REMOTE_NAME=origin
+REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling
 WORK_DIR_NAME=20260926_ENH-10_predictive_advanced_modeling
 ```
