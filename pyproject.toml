@@ -24,6 +24,7 @@ dependencies = [
 [project.optional-dependencies]
 predictive-advanced = [
     "lightgbm>=4.7.0,<4.8",
+    "shap>=0.52.0,<0.53",
 ]
 
 [project.scripts]
