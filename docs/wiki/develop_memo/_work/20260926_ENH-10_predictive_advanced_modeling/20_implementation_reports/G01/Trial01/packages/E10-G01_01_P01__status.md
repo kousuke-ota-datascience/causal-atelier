@@ -11,7 +11,8 @@
 | TRIAL_NO | 01 |
 | State | PACKAGE_COMPLETE |
 | Package implementation state | PACKAGE_COMPLETE |
-| Delivery status | BLOCKED_REPOSITORY_STATE |
+| Delivery status | PUBLISHED |
+| Published remote | `causal-atelier` |
 | Normative contract | `docs/wiki/develop_memo/_work/20260926_ENH-10_predictive_advanced_modeling/10_enhance_instruction/G01/06_G01_P01_model_capability_and_optional_dependency.md` |
 | START_SHA | `3d88516217691d62c34c30dc154cbbdcca1b2847` |
 | PACKAGE_CHECKPOINT_SHA | `488ba81d5d8d6177f0f0ac80b9dc43364fc32a06` |
@@ -44,4 +45,4 @@ Changed files in checkpoint:
 
 P01 implementation itself has no blocker. LightGBM fitting, artifact loading, and provenance handling remain explicitly outside this package's scope.
 
-Evidence publication is blocked by repository configuration: the mandated command `git push -u origin feature/ariadne_mvp_e10` was attempted after evidence commit `19a4e707402b40d99d2c40c6c7126a9cdf28ff32` and failed because `origin` is not a configured remote. The only configured remote is `causal-atelier`; it was not used because the frozen execution contract names `origin`. No uncommitted implementation changes remain.
+The initially mandated command `git push -u origin feature/ariadne_mvp_e10` failed because `origin` is not configured. Following explicit authorization to use the configured `causal-atelier` remote, `git push -u causal-atelier feature/ariadne_mvp_e10` succeeded and published commits through `fc60dc30647f1f643707996c089e583c4a1107cf`. No uncommitted implementation changes remain.
