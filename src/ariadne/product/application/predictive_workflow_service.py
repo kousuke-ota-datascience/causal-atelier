@@ -19,7 +19,7 @@ from ariadne.capabilities.predictive import (
     register_predictive_split_runner,
     register_predictive_training_runners,
 )
-from ariadne.capabilities.predictive.modeling import MODEL_REGISTRY
+from ariadne.capabilities.predictive.modeling import model_capabilities
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
 from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.domain.analysis_specification import AnalysisSpecification
@@ -942,7 +942,7 @@ class PredictiveWorkflowService:
             "task_types": ["BINARY_CLASSIFICATION", "REGRESSION"],
             "split_strategies": ["RANDOM", "STRATIFIED", "GROUP", "TIME_BASED"],
             "preprocessing_steps": ["MEAN_IMPUTATION", "STANDARDIZATION", "ONE_HOT"],
-            "model_registry": list(MODEL_REGISTRY),
+            "model_registry": list(model_capabilities()),
             "metrics": {
                 "BINARY_CLASSIFICATION": [
                     "ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1",
@@ -950,7 +950,7 @@ class PredictiveWorkflowService:
                 "REGRESSION": ["MAE", "RMSE", "R2"],
             },
             "compatibility": {
-                entry["model_id"]: entry["supported_tasks"] for entry in MODEL_REGISTRY
+                entry["model_id"]: entry["supported_tasks"] for entry in model_capabilities()
             },
             "explanation_methods": [{
                 "method": "LINEAR_COEFFICIENT_CONTRIBUTION",

@@ -21,6 +21,11 @@ dependencies = [
     "uvicorn>=0.30.0",
 ]
 
+[project.optional-dependencies]
+predictive-advanced = [
+    "lightgbm>=4.7.0,<4.8",
+]
+
 [project.scripts]
 # New product CLI
 ariadne-discover = "ariadne.interfaces.cli.discovery:main"
