@@ -43,3 +43,14 @@ def test_model_identity_mismatches_are_rejected() -> None:
 def test_legacy_linear_model_remains_readable() -> None:
     legacy = {"schema_version": "fitted-model/1", "model_id": "linear_regression.v1", "task_type": "REGRESSION", "parameters": {"l2": 0.0}, "coefficients": [2.0], "intercept": 1.0, "feature_order": ["x"], "preprocessor_hash": "p"}
     assert predict(load_model_artifact(legacy), [[3.0]]) == [7.0]
+
+
+def test_in_memory_lightgbm_model_predicts_before_runner_binds_artifact_identity() -> None:
+    features = [[float(index)] for index in range(40)]
+    target = [int(index >= 20) for index in range(40)]
+    model_id, parameters = resolve_model_spec(
+        "BINARY_CLASSIFICATION",
+        {"model_id": "lightgbm_classifier.v1", "parameters": {"num_boost_round": 4}},
+    )
+    model = fit_model("BINARY_CLASSIFICATION", model_id, parameters, features, target, seed=7)
+    assert len(predict(model, features)) == len(features)

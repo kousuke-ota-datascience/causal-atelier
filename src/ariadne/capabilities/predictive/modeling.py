@@ -285,7 +285,12 @@ def fit_model(
 
 
 def predict(model: dict[str, Any], features: list[list[float]]) -> list[float]:
-    model = load_model_artifact(model)
+    # ``fit_model`` returns an in-memory v1-compatible model. Durable artifacts
+    # are validated on load, after the runner has bound feature/preprocessor identity.
+    if model.get("schema_version") == "fitted-model/2" or {
+        "feature_order", "preprocessor_hash"
+    }.issubset(model):
+        model = load_model_artifact(model)
     matrix = _matrix(features)
     if str(model["model_id"]).startswith("lightgbm_"):
         lightgbm = _load_lightgbm()
