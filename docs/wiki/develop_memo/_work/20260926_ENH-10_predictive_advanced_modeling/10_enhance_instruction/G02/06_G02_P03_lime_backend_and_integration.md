@@ -1,13 +1,13 @@
 # ENH-E10 G02 P03 — LIME Backend / Explanation Integration
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G02`  
 **Package:** `P03`  
-**Depends on:** `G02 P02 canonical package report = PACKAGE_COMPLETE`  
-**Self-containment:** MUST when FROZEN  
+**Depends on:** `P02`
+**Self-containment:** MUST
 **Information isolation:** MUST  
-**Execution eligibility:** `BLOCKED_CONTRACT_NOT_FROZEN`
+**Execution eligibility:** `SUBJECT_TO_P02_PACKAGE_COMPLETE`
 
 ## 1. Package objective
 

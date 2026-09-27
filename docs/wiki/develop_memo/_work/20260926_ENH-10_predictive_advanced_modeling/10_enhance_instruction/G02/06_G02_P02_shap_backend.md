@@ -1,13 +1,13 @@
 # ENH-E10 G02 P02 — SHAP Backend
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G02`  
 **Package:** `P02`  
-**Depends on:** `G02 P01 canonical package report = PACKAGE_COMPLETE`  
-**Self-containment:** MUST when FROZEN  
+**Depends on:** `P01`
+**Self-containment:** MUST
 **Information isolation:** MUST  
-**Execution eligibility:** `BLOCKED_CONTRACT_NOT_FROZEN`
+**Execution eligibility:** `SUBJECT_TO_P01_PACKAGE_COMPLETE`
 
 ## 1. Package objective
 

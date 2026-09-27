@@ -1,13 +1,13 @@
 # ENH-E10 G02 P01 — Explanation Capability / Canonical Contract
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G02`  
 **Package:** `P01`  
-**Depends on:** `G01 PASS`  
-**Self-containment:** MUST when FROZEN  
+**Depends on:** G01 PASS
+**Self-containment:** MUST
 **Information isolation:** MUST  
-**Execution eligibility:** `BLOCKED_CONTRACT_NOT_FROZEN`
+**Execution eligibility:** `READY_FOR_AGENT_EXECUTION`
 
 ## 1. Package objective
 

@@ -1,13 +1,14 @@
 # Ariadne ENH-E10 G02 実装指示書 — Predictive Explanation Backend Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
-**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
-**Required packages:** `P01, P02, P03`
+**Gate:** `G02`
+**Contract status:** `FROZEN`
+**Execution mode:** `WORK_PACKAGE`
+**Required packages:** P01, P02, P03
 **First executable package:** `P01`
-**Depends on:** `G01 PASS`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01 PASS exists, and 06/07/P01-P03 are explicitly FROZEN.
+**Depends on:** G01 PASS
+**Self-containment:** MUST
+**Execution eligibility:** `READY_FOR_AGENT_EXECUTION`
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -100,6 +101,4 @@ Source decision record: `40_operator_workflows/architecture_review/02_target_arc
 9. **Predictive-not-causal**
    - existing semantic limitation remains mandatory.
 
-Human approval remains required before this Gate set is changed to FROZEN.
-
-
+G01 Trial 01 PASS is recorded by the canonical `999_gate_decision`; the approved/materialized semantics above are frozen without modification.

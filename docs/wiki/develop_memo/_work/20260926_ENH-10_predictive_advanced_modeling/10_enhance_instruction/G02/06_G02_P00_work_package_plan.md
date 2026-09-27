@@ -23,7 +23,7 @@
 
 Technical decisions are resolved and materialized into 06/07/P01-P03: method IDs/compatibility, SHAP raw-output semantics and additivity, LIME local-only defaults/reference strategy, optional dependency bounds, v1 additive explanation schemas, and failure taxonomy.
 
-Remaining freeze blocker: **Human Architecture Review approval** plus required requirement/design application.
+No execution blocker remains: the approved/materialized 06/07/P01-P03 contract batch is frozen.
 
 ## 4. Package execution rule
 
@@ -31,4 +31,4 @@ P01 → P02 → P03。各PxxはFROZEN後にassigned Coding Agentへ渡す。Pxx 
 
 ## 5. Current state
 
-`MATERIALIZED_DRAFT`。06/07/P01-P03と同一batchでfreezeする。
+`FROZEN / PLANNING_ONLY / NON_EXECUTABLE`。P00 is planning/audit authority only; execution starts from P01.

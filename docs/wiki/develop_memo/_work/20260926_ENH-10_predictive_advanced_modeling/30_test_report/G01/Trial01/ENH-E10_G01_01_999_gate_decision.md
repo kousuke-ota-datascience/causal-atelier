@@ -4,6 +4,8 @@
 
 **PASS**
 
+**Gate decision:** PASS
+
 - GATE_ID: `G01`
 - TRIAL_NO: `01`
 - Fixed Trial Candidate SHA: `936aebc9ac773cd9621ec8bf9b34fcc1b7f6324c`

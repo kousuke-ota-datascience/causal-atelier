@@ -1,10 +1,10 @@
 # Ariadne ENH-E10 G02 テスト指示書 — Predictive Explanation Backend Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Verification contract status:** `FROZEN`
 **Depends on:** `G01 PASS`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01 PASS and a G02 Fixed Trial Candidate exist, and 06/07/P01-P03 are FROZEN.
+**Self-containment:** MUST
+**Execution eligibility:** Test execution follows G02 Fixed Trial Candidate assembly; implementation packages are executable under frozen 06/P01-P03.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -56,7 +56,7 @@ Before FROZEN, 07 and P01-P03 must embody the following:
 - explicit dependency/scope/applicability/computation failure codes
 - predictive-not-causal limitation retained
 
-Architecture decisions are technically resolved; Human approval remains the freeze authorization.
+Architecture decisions are technically resolved and frozen as the verification authority.
 
 ## 6. Acceptance Criteria
 
