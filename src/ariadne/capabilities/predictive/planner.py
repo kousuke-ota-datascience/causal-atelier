@@ -100,7 +100,7 @@ class PredictivePlanner:
                 "fitted_preprocessor": "fitted-preprocessor/1",
             },
             output_contract={
-                "frozen_model": "fitted-model/1",
+                "frozen_model": "fitted-model/2",
                 "training_summary": "predictive-training-summary/1",
             },
             parameters=family_spec,
@@ -109,7 +109,7 @@ class PredictivePlanner:
             stage_key="evaluate",
             stage_type=StageType("predictive", "evaluate", "1"),
             input_contract={
-                "frozen_model": "fitted-model/1",
+                "frozen_model": "fitted-model/2",
                 "evaluation_bundle": "predictive-evaluation-bundle/1",
                 "fitted_preprocessor": "fitted-preprocessor/1",
             },
@@ -136,7 +136,7 @@ class PredictivePlanner:
                 stage_key="explain",
                 stage_type=StageType("predictive", "explain", "1"),
                 input_contract={
-                    "frozen_model": "fitted-model/1",
+                    "frozen_model": "fitted-model/2",
                     "fitted_preprocessor": "fitted-preprocessor/1",
                     "explanation_dataset": "predictive-explanation-dataset/1",
                     "explanation_specification": (

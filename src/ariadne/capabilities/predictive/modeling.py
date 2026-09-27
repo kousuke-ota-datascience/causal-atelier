@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import math
 import importlib
+import json
+import platform
 from importlib import metadata as importlib_metadata
 from importlib import util as importlib_util
 from collections.abc import Mapping
@@ -283,6 +285,7 @@ def fit_model(
 
 
 def predict(model: dict[str, Any], features: list[list[float]]) -> list[float]:
+    model = load_model_artifact(model)
     matrix = _matrix(features)
     if str(model["model_id"]).startswith("lightgbm_"):
         lightgbm = _load_lightgbm()
@@ -293,6 +296,61 @@ def predict(model: dict[str, Any], features: list[list[float]]) -> list[float]:
     if model["task_type"] == "BINARY_CLASSIFICATION":
         values = 1 / (1 + np.exp(-np.clip(values, -35, 35)))
     return [float(value) for value in values]
+
+
+def serialize_model_artifact(model: dict[str, Any]) -> dict[str, Any]:
+    """Produce the durable fitted-model/2 representation without pickle/joblib."""
+    serialized = dict(model)
+    is_lightgbm = str(model["model_id"]).startswith("lightgbm_")
+    serialized.update({
+        "schema_version": "fitted-model/2",
+        "provider": "lightgbm" if is_lightgbm else "ariadne.native",
+        "payload_format": "lightgbm-model-string/1" if is_lightgbm else "ariadne-linear-json/1",
+        "library": "lightgbm" if is_lightgbm else "ariadne",
+        "library_version": _library_version("lightgbm" if is_lightgbm else "ariadne"),
+        "provenance": {
+            "python_version": platform.python_version(),
+            "ariadne_version": _library_version("ariadne"),
+            "lightgbm_version": _library_version("lightgbm") if is_lightgbm else None,
+            "determinism": model.get("runtime", {"deterministic": True}),
+        },
+    })
+    return serialized
+
+
+def load_model_artifact(
+    artifact: dict[str, Any] | bytes | str,
+    *,
+    feature_order: list[str] | None = None,
+    preprocessor_hash: str | None = None,
+) -> dict[str, Any]:
+    """Load v1/v2 JSON model payloads and enforce optional identity expectations."""
+    try:
+        model = json.loads(artifact) if isinstance(artifact, (bytes, str)) else dict(artifact)
+    except (TypeError, ValueError, UnicodeDecodeError) as exc:
+        raise PredictiveValidationError("MODEL_ARTIFACT_LOAD_FAILED", "Model artifact is not valid JSON") from exc
+    if model.get("schema_version") not in {"fitted-model/1", "fitted-model/2"}:
+        raise PredictiveValidationError("MODEL_ARTIFACT_UNSUPPORTED", "Unsupported fitted model schema")
+    is_lightgbm = str(model.get("model_id", "")).startswith("lightgbm_")
+    if model["schema_version"] == "fitted-model/2":
+        required_format = "lightgbm-model-string/1" if is_lightgbm else "ariadne-linear-json/1"
+        if model.get("payload_format") != required_format:
+            raise PredictiveValidationError("MODEL_ARTIFACT_UNSUPPORTED", "Model payload format does not match provider")
+    required = {"model_id", "task_type", "parameters", "preprocessor_hash", "feature_order"}
+    if not required.issubset(model):
+        raise PredictiveValidationError("MODEL_ARTIFACT_LOAD_FAILED", "Model artifact is missing required identity fields")
+    if feature_order is not None and model["feature_order"] != feature_order:
+        raise PredictiveValidationError("MODEL_FEATURE_MISMATCH", "Model feature order does not match", path="feature_order")
+    if preprocessor_hash is not None and model["preprocessor_hash"] != preprocessor_hash:
+        raise PredictiveValidationError("PREPROCESSOR_MODEL_MISMATCH", "Model preprocessor identity does not match", path="preprocessor_hash")
+    return model
+
+
+def _library_version(distribution: str) -> str | None:
+    try:
+        return importlib_metadata.version(distribution)
+    except importlib_metadata.PackageNotFoundError:
+        return None
 
 
 def _fit_lightgbm_model(

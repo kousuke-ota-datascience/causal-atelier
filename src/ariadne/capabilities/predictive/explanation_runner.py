@@ -44,8 +44,8 @@ class PredictiveExplainRunner:
         training = context.inputs.get("training_summary")
         evaluation = context.inputs.get("evaluation_summary")
         partition = context.inputs.get("partition_manifest")
-        if not isinstance(model, dict) or model.get("schema_version") != "fitted-model/1":
-            raise InvalidSchema("EXPLAIN requires fitted-model/1")
+        if not isinstance(model, dict) or model.get("schema_version") not in {"fitted-model/1", "fitted-model/2"}:
+            raise InvalidSchema("EXPLAIN requires fitted-model/1 or fitted-model/2")
         if (
             not isinstance(preprocessor, dict)
             or preprocessor.get("schema_version") != "fitted-preprocessor/1"
@@ -209,6 +209,14 @@ class PredictiveExplainRunner:
                 "partition_counts": partition["partition_counts"],
             },
             "model_descriptor": training["model_descriptor"],
+            "model_artifact_provenance": {
+                "schema_version": model["schema_version"],
+                "provider": model.get("provider", "ariadne.native"),
+                "payload_format": model.get("payload_format", "ariadne-linear-json/1"),
+                "library": model.get("library", "ariadne"),
+                "library_version": model.get("library_version"),
+                "provenance": model.get("provenance", {}),
+            },
             "selected_hyperparameters": training["selected_hyperparameters"],
             "validation_metrics": training["validation_metrics"],
             "test_metrics": evaluation["metrics"],

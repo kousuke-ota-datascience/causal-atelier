@@ -19,6 +19,7 @@ from ariadne.capabilities.predictive.modeling import (
     fit_model,
     predict,
     resolve_model_spec,
+    serialize_model_artifact,
 )
 from ariadne.capabilities.predictive.preprocessing import fit_preprocessor, transform_frame
 from ariadne.capabilities.predictive.validation import (
@@ -205,6 +206,7 @@ class PredictiveTrainRunner:
         model["preprocessor_hash"] = preprocessor["canonical_hash"]
         model["feature_order"] = bundle["feature_order"]
         model["seed"] = seed
+        model = serialize_model_artifact(model)
         validation_prediction = predict(model, bundle["validation"]["features"])
         if task_type == "BINARY_CLASSIFICATION":
             validation_actual = encode_binary_target(model, bundle["validation"]["target"])
@@ -280,7 +282,7 @@ class PredictiveTrainRunner:
             results=(result,),
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_MODEL",
-                schema_version="fitted-model/1",
+                schema_version="fitted-model/2",
                 media_type="application/json",
                 content=_json_bytes(model),
                 metadata={"model_descriptor": descriptor},
@@ -298,8 +300,8 @@ class PredictiveEvaluateRunner:
         model = context.inputs.get("frozen_model")
         bundle = context.inputs.get("evaluation_bundle")
         preprocessor = context.inputs.get("fitted_preprocessor")
-        if not isinstance(model, dict) or model.get("schema_version") != "fitted-model/1":
-            raise InvalidSchema("EVALUATE requires fitted-model/1")
+        if not isinstance(model, dict) or model.get("schema_version") not in {"fitted-model/1", "fitted-model/2"}:
+            raise InvalidSchema("EVALUATE requires fitted-model/1 or fitted-model/2")
         if not isinstance(bundle, dict) or bundle.get("schema_version") != "predictive-evaluation-bundle/1":
             raise InvalidSchema("EVALUATE requires predictive-evaluation-bundle/1")
         if bundle.get("selection_allowed") is not False or bundle.get("final_evaluation_only") is not True:

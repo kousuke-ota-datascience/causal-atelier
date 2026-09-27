@@ -269,6 +269,7 @@ def test_model_card_is_complete_and_unsupported_method_returns_not_applicable(
         "feature_set",
         "split_strategy",
         "model_descriptor",
+        "model_artifact_provenance",
         "selected_hyperparameters",
         "validation_metrics",
         "test_metrics",
