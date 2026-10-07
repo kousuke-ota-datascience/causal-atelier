@@ -2,18 +2,20 @@
 
 ## Decision
 
-**BLOCKED — BLOCKED_CANDIDATE_IDENTITY**
+**FAIL**
 
 - GATE_ID: `G02`
 - TRIAL_NO: `01`
-- TEST_START_SHA: `27d964a745cf9f960b7bd807609dd8b39c9b524c`
-- FIXED_TRIAL_CANDIDATE_SHA: unavailable
+- TEST_START_SHA: `b5fa47c8e3e299445a3efd4ef791242fc040ea50`
+- FIXED_TRIAL_CANDIDATE_SHA: `67f1c4ef1281700a14b5a9acd0eacf00b5c904e0`
 - Promotion eligibility: **PROMOTION_NOT_ALLOWED**
 
 ## Basis
 
-The frozen G02 07 contract is present and FROZEN. Repository preflight passed. However, the required Trial 01 Implementation Completion Report is absent from its contractual path, so Fixed Trial Candidate identity cannot be established or audited. In accordance with the independent-verification prompt and G02 07 candidate-identity rule, no Acceptance Criteria/product tests were run.
+Candidate identity audit passed. Independent tests confirmed SHAP adapter behavior, optional dependency boundaries, and G01 protected regression. However, LIME is not implemented as an explanation provider: the candidate returns static metadata without invoking LIME or accepting model/data/prediction/reference inputs. Binary and regression LIME acceptance requirements, plus required explanation result/artifact/model-card provenance and isolation integration, are therefore violated.
 
-Completed Test Items: `001_candidate_identity` (BLOCKED).
+Failed Test Items: `050_lime_binary_local` (AC-05), `060_lime_regression_local` (AC-06), `080_provenance_and_model_card` (AC-09; also prevents AC-10 verification for LIME).
 
-See `ENH-E10_G02_01_001_candidate_identity.md` for raw evidence and the required resolution.
+Passing Test Items: `001`, `010`, `020`, `030`, `040`, `070`, `090`.
+
+See individual Test Item reports for raw evidence. This is a product implementation defect; no test-side repair was made.
