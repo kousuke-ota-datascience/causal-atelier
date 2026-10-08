@@ -136,6 +136,7 @@ class PredictivePrepareRunner:
                 }),
             },
         }
+        reference_features = train_features[: min(500, len(train_features))]
         explanation_specification = dict(spec["explanation_spec"])
         content = _json_bytes(fitted)
         return StageRunResult(
@@ -144,6 +145,7 @@ class PredictivePrepareRunner:
                 "evaluation_bundle": evaluation_bundle,
                 "fitted_preprocessor": fitted,
                 "explanation_dataset": explanation_dataset,
+                "explanation_reference": {"schema_version": "predictive-explanation-reference/1", "features": reference_features, "seed": explanation_specification["sampling"]["seed"], "partition": "TRAIN"},
                 "explanation_specification": explanation_specification,
                 "sampling_definition": dict(
                     explanation_specification.get("sampling", {})

@@ -87,6 +87,7 @@ class PredictivePlanner:
                 "evaluation_bundle": "predictive-evaluation-bundle/1",
                 "fitted_preprocessor": "fitted-preprocessor/1",
                 "explanation_dataset": "predictive-explanation-dataset/1",
+                "explanation_reference": "predictive-explanation-reference/1",
                 "explanation_specification": "predictive-explanation-specification/1",
                 "sampling_definition": "predictive-explanation-sampling/1",
             },
@@ -139,6 +140,7 @@ class PredictivePlanner:
                     "frozen_model": "fitted-model/2",
                     "fitted_preprocessor": "fitted-preprocessor/1",
                     "explanation_dataset": "predictive-explanation-dataset/1",
+                    "explanation_reference": "predictive-explanation-reference/1",
                     "explanation_specification": (
                         "predictive-explanation-specification/1"
                     ),
@@ -168,6 +170,7 @@ class PredictivePlanner:
                     "explain",
                     "explanation_dataset",
                 ),
+                StageBinding("prepare", "explanation_reference", "explain", "explanation_reference"),
                 StageBinding(
                     "prepare",
                     "explanation_specification",

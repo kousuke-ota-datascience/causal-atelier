@@ -176,7 +176,8 @@ def test_registered_explain_stage_generates_deterministic_global_and_local_expla
     assert set(explain.input_contract) == {
         "frozen_model",
         "fitted_preprocessor",
-        "explanation_dataset",
+            "explanation_dataset",
+            "explanation_reference",
         "explanation_specification",
         "sampling_definition",
         "training_summary",

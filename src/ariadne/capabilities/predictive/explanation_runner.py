@@ -39,6 +39,7 @@ class PredictiveExplainRunner:
         model = context.inputs.get("frozen_model")
         preprocessor = context.inputs.get("fitted_preprocessor")
         dataset = context.inputs.get("explanation_dataset")
+        reference = context.inputs.get("explanation_reference")
         explanation = context.inputs.get("explanation_specification")
         sampling = context.inputs.get("sampling_definition")
         training = context.inputs.get("training_summary")
@@ -76,6 +77,8 @@ class PredictiveExplainRunner:
                 "Explanation features do not match the frozen model",
                 path="explanation_dataset.feature_order",
             )
+        if not isinstance(reference, dict) or reference.get("schema_version") != "predictive-explanation-reference/1" or reference.get("partition") != "TRAIN":
+            raise InvalidSchema("EXPLAIN requires a TRAIN explanation reference")
         if not isinstance(explanation, dict) or not explanation:
             raise InvalidSchema("EXPLAIN requires an explicit explanation specification")
         if explanation != context.stage.parameters.get("explanation_spec"):
@@ -102,6 +105,7 @@ class PredictiveExplainRunner:
         model: dict[str, Any] = context.inputs["frozen_model"]
         preprocessor: dict[str, Any] = context.inputs["fitted_preprocessor"]
         dataset: dict[str, Any] = context.inputs["explanation_dataset"]
+        reference: dict[str, Any] = context.inputs["explanation_reference"]
         explanation: dict[str, Any] = context.inputs["explanation_specification"]
         sampling: dict[str, Any] = context.inputs["sampling_definition"]
         training: dict[str, Any] = context.inputs["training_summary"]
@@ -121,7 +125,15 @@ class PredictiveExplainRunner:
             else "PREDICTION"
         )
         supported = method == SUPPORTED_EXPLANATION_METHOD
-        if supported:
+        if method == "LIME_TABULAR":
+            from ariadne.capabilities.predictive.lime_backend import explain_lime_local, reject_lime_global
+            if not explanation["local_explanations"]:
+                reject_lime_global()
+            global_explanation = None
+            local_explanation = [explain_lime_local(model, reference["features"], row, ordinal, sampling["seed"]) for ordinal, row in zip(dataset["row_ordinals"][:sampling["size"]], dataset["features"][:sampling["size"]], strict=True)]
+            status = "GENERATED"
+            supported = False
+        elif supported:
             if (
                 explanation["local_explanations"]
                 and sampling["size"] > len(dataset["row_ordinals"])
