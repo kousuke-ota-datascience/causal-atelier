@@ -16,3 +16,9 @@ exit code: 0
 Exit code was 0. Residuals are within frozen `atol=1e-6, rtol=1e-5`; the largest is approximately `1.1e-14`.
 
 **Interpretation:** regression SHAP produces raw PREDICTION-scale values, mapped features, TEST-row identity, and tree-path-dependent reference semantics. Target/candidate identities are in item 001. **Result: PASS.**
+
+## 判定境界・再現条件
+
+PASS 条件は、regression task で `PREDICTION` scale を返し、feature mapping と row identity を維持し、base value + contributions が model output と frozen tolerance 内で一致することである。単に `shap_values` が返ることは PASS 条件ではない。
+
+再現は本 report の fixture 条件で `explain_shap_tree` を呼び、local row 0/1 の residual を算出する。`1.0658e-14` は `1e-6` より小さく、runtime numeric evidence として additivity を支持する。Fixed Candidate / tested state は item 001 の audit を使用する。

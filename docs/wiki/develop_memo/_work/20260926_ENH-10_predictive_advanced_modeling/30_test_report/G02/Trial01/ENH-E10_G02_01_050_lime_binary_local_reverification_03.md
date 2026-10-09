@@ -20,3 +20,9 @@ The implementation records per-row effective seed, frozen parameters (`num_sampl
 The binary provider/local-output criterion is satisfied in this runtime. Target/candidate identities are in item 001. **Result: PASS.**
 
 This item does not establish Model Card provenance; that distinct AC-09 failure is recorded in item 080.
+
+## 判定境界・再現条件
+
+binary LIME の PASS は metadata helper が値を返すことではなく、provider-backed local explanation が positive-class probability に結び付くこと、contribution が非空であること、preprocessed feature order と TEST instance / TRAIN reference が追跡可能なことである。
+
+本 item の suite はこの runtime behavior を assertion した。`reference.partition == TRAIN` は background/reference が TEST から作られていないことの観測であり、`output_scale == PROBABILITY` は binary output scale の観測である。exact command と raw suite result は item 010 に記録した。Model Card artifact の欠落をこの item の PASS と矛盾しないよう item 080 で分離している。

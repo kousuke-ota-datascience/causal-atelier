@@ -17,3 +17,9 @@ exit code: 0
 ```
 
 **Interpretation:** absence does not prevent core import; selecting either unavailable provider is explicit and has no fallback. Target/candidate identities are in item 001. **Result: PASS.**
+
+## 隔離方法・再現条件
+
+これは monkeypatch だけの確認ではない。`python -S` により通常の site-package discovery を無効化し、temporary site layer から `shap`/`lime` と各 distribution metadata を明示的に除外した runtime を用いた。したがって availability の `False` と distribution version の `None` は provider 不在環境の実測値である。
+
+core capability module import が成功した後、各 method selection が同じ `EXPLANATION_DEPENDENCY_UNAVAILABLE` taxonomy を返すことを確認した。linear/coefficient fallback、silent NOT_APPLICABLE、import-time core failure は観測されない。上記の isolated runtime command と raw output が再現条件である。

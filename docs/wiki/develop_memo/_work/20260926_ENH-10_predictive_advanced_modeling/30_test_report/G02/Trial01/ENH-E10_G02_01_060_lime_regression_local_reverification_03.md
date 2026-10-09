@@ -24,4 +24,10 @@ exit code: 0
 
 **Interpretation:** regression LIME consumes a TRAIN reference and returns local TEST explanations on PREDICTION scale. Target/candidate identities are in item 001. **Result: PASS.**
 
+## 入力、isolation、再現条件
+
+probe は `REGRESSION` task、`linear_regression.v1`、120-row numeric frame、non-stratified RANDOM split、`FIRST_N` sampling size 5/seed 17 を使用した。TEST row を explanation instance とし、PREPARE output の TRAIN partition 72 rows を reference として渡した。
+
+したがって `reference.partition=TRAIN` と `local_count=5` は、reference/instance identity が method output に含まれることを示す。一方、Model Card がそれらを保存するかは AC-09 の別判定であり、item 080 の FAIL を参照する。本 report の command 相当の probe が全 five stages `SUCCEEDED` を返すことが再現条件である。
+
 Target/candidate identities are in item 001.

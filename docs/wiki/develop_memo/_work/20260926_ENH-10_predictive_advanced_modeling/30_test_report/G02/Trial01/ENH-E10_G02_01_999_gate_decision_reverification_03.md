@@ -1,6 +1,6 @@
-# G02 Trial 01 — 999 gate_decision (reverification 03)
+# ENH-E10 G02 Trial 01 — Test Item 999: Gate Decision（reverification 03）
 
-## Decision
+## 実行 identity と最終判定
 
 **FAIL**
 
@@ -8,7 +8,9 @@
 - Tested Repository State: `7de36e443e193fd0fdf1ba6ce00b71f8ba0551eb`
 - Promotion eligibility: **PROMOTION_NOT_ALLOWED**
 
-## Test Item summary
+candidate identity は item 001 で PASS した。従って本 decision は candidate ambiguity や environment blocker ではなく、Fixed Trial Candidate の executable product behavior に基づく。
+
+## Test Item 別の判定一覧
 
 | Test Item | AC | Result | Independent evidence |
 | --- | --- | --- | --- |
@@ -23,17 +25,17 @@
 | 080 provenance and Model Card | 09, 11 | FAIL | Model Card omits LIME method-specific provenance |
 | 090 G01 protected regression | 12 | FAIL | baseline PREPARE raises `KeyError: 'sampling'` |
 
-## Basis
+## FAIL 根拠
 
 Candidate identity passed. SHAP, binary/regression LIME provider execution, capability boundaries, dependency absence, and several protected tests passed. However, two mandatory product contracts fail:
 
 1. AC-09 / item 080: Model Card does not retain required LIME explanation/provenance fields.
 2. AC-12 / item 090: baseline G01 predictive flows fail in PREPARE with `KeyError: 'sampling'` when `explanation_spec` is empty.
 
-The failures are independent: either one prevents PASS. They are executable candidate product failures, not test-orchestration or environment defects. All G02 blocking items were assessed; the frozen contract defines zero G02 Browser E2E blocking items. No production/test/frozen-contract change was made by the independent verifier.
+二つの failure は独立しており、いずれか一つでも G02 PASS を禁止する。いずれも executable candidate の product failure であり、test orchestration / environment defect ではない。全 G02 blocking item を評価済みであり、frozen contract は G02 Browser E2E blocking item を `0` 件と定義する。Independent Test Agent は production code、test code、frozen contract を変更していない。
 
-## Reproduction boundary
+## 再現条件と remediation boundary
 
-Use item 080's regression LIME probe to inspect result/Model Card payloads and item 090's isolated G01 command to reproduce the protected regression. A remediation candidate must repair both conditions, retain prior passing boundaries, and be submitted with a distinct Fixed Trial Candidate SHA before a new independent verification can decide promotion.
+item 080 の regression LIME probe で result / Model Card payload を取得し、item 090 の isolated G01 command で protected regression を再現する。remediation candidate は両方の condition を修正し、同時に item 001–070 の PASS boundary を保持しなければならない。distinct Fixed Trial Candidate SHA と canonical completion report を作成した後に限り、新しい independent verification が promotion eligibility を判定できる。
 
 詳細な command、raw output、fixture、identity audit、PASS/FAIL classification は `ENH-E10_G02_01_reverification_03_execution_detail.md` を参照すること。

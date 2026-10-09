@@ -28,3 +28,9 @@ evaluate=SKIPPED_DUE_TO_PREREQUISITE
 Candidate diff inspection locates the failure in `PredictivePrepareRunner`: the remediation unconditionally indexes `explanation_specification["sampling"]`. Existing baseline flows legitimately use an empty `explanation_spec`; their PREPARE stage now fails before model train/evaluate.
 
 Other isolated G01 registry/adapter/artifact/leakage tests passed (`25 passed in 5.39s`), but they do not negate this protected integration regression. This is a verified product defect. Target/candidate identities are in item 001. **Result: FAIL.**
+
+## failure classification・修正前提
+
+分類は `PRODUCT_INTEGRATION_DEFECT` である。failure は baseline test を単独実行しても再現し、stage execution record に `prepare=FAILED` と exact `KeyError: 'sampling'` が残る。従って SHAP import order、LIME package availability、pytest suite ordering は root cause ではない。
+
+修正候補は、explanation を使わない既存 flow では空 `explanation_spec` を許容し、LIME-specific TRAIN reference / sampling binding を explicit explanation flow に限定すること。ただしこれは remediation direction であり、本 Test Agent は product code を変更していない。再提出 candidate は G01 full predictive DAG と regression flow の両方を `SUCCEEDED` に戻した独立 evidence を要する。
