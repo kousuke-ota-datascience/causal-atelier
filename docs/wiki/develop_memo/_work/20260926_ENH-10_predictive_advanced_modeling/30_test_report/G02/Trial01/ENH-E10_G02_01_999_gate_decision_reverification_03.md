@@ -35,3 +35,5 @@ The failures are independent: either one prevents PASS. They are executable cand
 ## Reproduction boundary
 
 Use item 080's regression LIME probe to inspect result/Model Card payloads and item 090's isolated G01 command to reproduce the protected regression. A remediation candidate must repair both conditions, retain prior passing boundaries, and be submitted with a distinct Fixed Trial Candidate SHA before a new independent verification can decide promotion.
+
+詳細な command、raw output、fixture、identity audit、PASS/FAIL classification は `ENH-E10_G02_01_reverification_03_execution_detail.md` を参照すること。
