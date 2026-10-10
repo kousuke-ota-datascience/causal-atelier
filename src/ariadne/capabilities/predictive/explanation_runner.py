@@ -77,7 +77,11 @@ class PredictiveExplainRunner:
                 "Explanation features do not match the frozen model",
                 path="explanation_dataset.feature_order",
             )
-        if not isinstance(reference, dict) or reference.get("schema_version") != "predictive-explanation-reference/1" or reference.get("partition") != "TRAIN":
+        if explanation and explanation.get("method") == "LIME_TABULAR" and (
+            not isinstance(reference, dict)
+            or reference.get("schema_version") != "predictive-explanation-reference/1"
+            or reference.get("partition") != "TRAIN"
+        ):
             raise InvalidSchema("EXPLAIN requires a TRAIN explanation reference")
         if not isinstance(explanation, dict) or not explanation:
             raise InvalidSchema("EXPLAIN requires an explicit explanation specification")
@@ -105,7 +109,7 @@ class PredictiveExplainRunner:
         model: dict[str, Any] = context.inputs["frozen_model"]
         preprocessor: dict[str, Any] = context.inputs["fitted_preprocessor"]
         dataset: dict[str, Any] = context.inputs["explanation_dataset"]
-        reference: dict[str, Any] = context.inputs["explanation_reference"]
+        reference: dict[str, Any] | None = context.inputs.get("explanation_reference")
         explanation: dict[str, Any] = context.inputs["explanation_specification"]
         sampling: dict[str, Any] = context.inputs["sampling_definition"]
         training: dict[str, Any] = context.inputs["training_summary"]
@@ -130,7 +134,10 @@ class PredictiveExplainRunner:
             if not explanation["local_explanations"]:
                 reject_lime_global()
             global_explanation = None
+            assert reference is not None  # validated above for LIME only
             local_explanation = [explain_lime_local(model, reference["features"], row, ordinal, sampling["seed"]) for ordinal, row in zip(dataset["row_ordinals"][:sampling["size"]], dataset["features"][:sampling["size"]], strict=True)]
+            if local_explanation:
+                output_scale = local_explanation[0]["output_scale"]
             status = "GENERATED"
             supported = False
         elif supported:
@@ -164,6 +171,16 @@ class PredictiveExplainRunner:
                 ),
             })
 
+        method_provenance = _method_provenance(
+            method=method,
+            model=model,
+            preprocessor=preprocessor,
+            dataset=dataset,
+            sampling=sampling,
+            local_explanation=local_explanation,
+            output_scale=output_scale,
+            runtime_versions=context.snapshots.get("versions", {}),
+        )
         explanation_document = {
             "schema_version": "predictive-explanation-result/1",
             "explanation_method": method,
@@ -191,6 +208,8 @@ class PredictiveExplainRunner:
             "warnings": warnings,
             "limitations": limitations,
         }
+        if method_provenance is not None:
+            explanation_document["method_provenance"] = method_provenance
         model_card_warnings = [
             *training.get("warnings", []),
             *evaluation.get("warnings", []),
@@ -239,6 +258,8 @@ class PredictiveExplainRunner:
             "warnings": model_card_warnings,
             "code_runtime_metadata": context.snapshots.get("versions", {}),
         }
+        if method_provenance is not None:
+            model_card_document["explanation_provenance"] = method_provenance
         explanation_result = ResultDraft(
             result_type="PREDICTIVE_EXPLANATION_RESULT",
             schema_version="predictive-explanation-result/1",
@@ -374,6 +395,66 @@ def _local_explanations(
             "feature_contributions": contributions,
         })
     return values
+
+
+def _method_provenance(
+    *,
+    method: str,
+    model: dict[str, Any],
+    preprocessor: dict[str, Any],
+    dataset: dict[str, Any],
+    sampling: dict[str, Any],
+    local_explanation: list[dict[str, Any]],
+    output_scale: str,
+    runtime_versions: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Return additive, public provenance without retaining TRAIN rows.
+
+    LIME is the provider that needs a runtime TRAIN reference.  Its local
+    records already carry the provider facts; this projection makes the same
+    immutable facts available at result, artifact, and Model Card level.
+    """
+    if method != "LIME_TABULAR" or not local_explanation:
+        return None
+    first = local_explanation[0]
+    return {
+        "method_id": first["method"],
+        "method_version": first["method_version"],
+        "model_identity": {
+            "model_id": model["model_id"],
+            "task_type": model["task_type"],
+            "model_schema_version": model["schema_version"],
+            "preprocessor_hash": model["preprocessor_hash"],
+        },
+        "preprocessor_identity": {
+            "schema_version": preprocessor["schema_version"],
+            "canonical_hash": preprocessor["canonical_hash"],
+        },
+        "feature_representation": {
+            "name": first["feature_representation"],
+            "feature_order": first["feature_order"],
+            "feature_order_hash": first["feature_order_hash"],
+            "categorical_feature_indices": first["categorical_feature_indices"],
+        },
+        "test_instances": [
+            {
+                "row_ordinal": entry["row_ordinal"],
+                "feature_order_hash": entry["feature_order_hash"],
+            }
+            for entry in local_explanation
+        ],
+        "train_reference": first["reference"],
+        "output_scale": output_scale,
+        "sampling": dict(sampling),
+        "effective_seeds": [entry["effective_seed"] for entry in local_explanation],
+        "parameters": first["parameters"],
+        "provider": first["provider"],
+        "runtime_versions": runtime_versions,
+        "limitations": [
+            TERMINOLOGY_LIMITATION,
+            first["limitation"],
+        ],
+    }
 
 
 def _json_bytes(value: dict[str, Any]) -> bytes:

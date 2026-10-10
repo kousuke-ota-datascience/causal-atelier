@@ -136,8 +136,29 @@ class PredictivePrepareRunner:
                 }),
             },
         }
-        reference_features = train_features[: min(500, len(train_features))]
         explanation_specification = dict(spec["explanation_spec"])
+        # A reference is an implementation detail of an explicitly requested
+        # explanation.  In particular, normal G01 training must not acquire a
+        # sampling requirement merely because G02 support is installed.
+        explanation_bindings: dict[str, Any] = {}
+        if explanation_specification:
+            sampling = explanation_specification["sampling"]
+            reference_count = min(500, len(train_features))
+            reference_indices = sorted(
+                random.Random(sampling["seed"]).sample(
+                    range(len(train_features)), reference_count
+                )
+            )
+            explanation_bindings = {
+                "explanation_reference": {
+                    "schema_version": "predictive-explanation-reference/1",
+                    "features": [train_features[index] for index in reference_indices],
+                    "seed": sampling["seed"],
+                    "partition": "TRAIN",
+                },
+                "explanation_specification": explanation_specification,
+                "sampling_definition": dict(sampling),
+            }
         content = _json_bytes(fitted)
         return StageRunResult(
             output_bindings={
@@ -145,11 +166,7 @@ class PredictivePrepareRunner:
                 "evaluation_bundle": evaluation_bundle,
                 "fitted_preprocessor": fitted,
                 "explanation_dataset": explanation_dataset,
-                "explanation_reference": {"schema_version": "predictive-explanation-reference/1", "features": reference_features, "seed": explanation_specification["sampling"]["seed"], "partition": "TRAIN"},
-                "explanation_specification": explanation_specification,
-                "sampling_definition": dict(
-                    explanation_specification.get("sampling", {})
-                ),
+                **explanation_bindings,
             },
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_PREPROCESSOR",
