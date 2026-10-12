@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from ariadne.capabilities.predictive.modeling import predict
+from ariadne.capabilities.predictive.explanation_capabilities import (
+    resolve_explanation_method,
+)
 from ariadne.capabilities.predictive.validation import (
     validate_predictive_specification,
 )
@@ -129,6 +132,7 @@ class PredictiveExplainRunner:
             else "PREDICTION"
         )
         supported = method == SUPPORTED_EXPLANATION_METHOD
+        shap_explanation: dict[str, Any] | None = None
         if method == "LIME_TABULAR":
             from ariadne.capabilities.predictive.lime_backend import explain_lime_local, reject_lime_global
             if not explanation["local_explanations"]:
@@ -138,6 +142,25 @@ class PredictiveExplainRunner:
             local_explanation = [explain_lime_local(model, reference["features"], row, ordinal, sampling["seed"]) for ordinal, row in zip(dataset["row_ordinals"][:sampling["size"]], dataset["features"][:sampling["size"]], strict=True)]
             if local_explanation:
                 output_scale = local_explanation[0]["output_scale"]
+            status = "GENERATED"
+            supported = False
+        elif method == "SHAP_TREE":
+            # Resolve capability before execution so an incompatible model or
+            # unavailable optional package retains the frozen explicit error.
+            resolve_explanation_method(method, model["model_id"], scope="GLOBAL")
+            if explanation["local_explanations"]:
+                resolve_explanation_method(method, model["model_id"], scope="LOCAL")
+            from ariadne.capabilities.predictive.shap_backend import explain_shap_tree
+
+            shap_explanation = explain_shap_tree(
+                model,
+                dataset["features"],
+                dataset["row_ordinals"],
+                local_size=(sampling["size"] if explanation["local_explanations"] else 0),
+            )
+            global_explanation = shap_explanation["global"]
+            local_explanation = shap_explanation["local"]
+            output_scale = shap_explanation["output_scale"]
             status = "GENERATED"
             supported = False
         elif supported:
@@ -180,6 +203,7 @@ class PredictiveExplainRunner:
             local_explanation=local_explanation,
             output_scale=output_scale,
             runtime_versions=context.snapshots.get("versions", {}),
+            shap_explanation=shap_explanation,
         )
         explanation_document = {
             "schema_version": "predictive-explanation-result/1",
@@ -407,6 +431,7 @@ def _method_provenance(
     local_explanation: list[dict[str, Any]],
     output_scale: str,
     runtime_versions: dict[str, Any],
+    shap_explanation: dict[str, Any] | None,
 ) -> dict[str, Any] | None:
     """Return additive, public provenance without retaining TRAIN rows.
 
@@ -414,6 +439,47 @@ def _method_provenance(
     records already carry the provider facts; this projection makes the same
     immutable facts available at result, artifact, and Model Card level.
     """
+    if method == "SHAP_TREE" and shap_explanation is not None:
+        return {
+            "method_id": shap_explanation["method"],
+            "method_version": shap_explanation["method_version"],
+            "model_identity": {
+                "model_id": model["model_id"],
+                "task_type": model["task_type"],
+                "model_schema_version": model["schema_version"],
+                "preprocessor_hash": model["preprocessor_hash"],
+            },
+            "preprocessor_identity": {
+                "schema_version": preprocessor["schema_version"],
+                "canonical_hash": preprocessor["canonical_hash"],
+            },
+            "feature_representation": {
+                "name": shap_explanation["feature_representation"],
+                "feature_order": shap_explanation["feature_order"],
+                "feature_order_hash": shap_explanation["feature_order_hash"],
+            },
+            "global_explanation_identity": {
+                "feature_count": len(shap_explanation["global"]),
+                "test_sample_count": len(dataset["row_ordinals"]),
+                "test_row_ordinals_hash": canonical_hash({
+                    "row_ordinals": dataset["row_ordinals"],
+                }),
+            },
+            "test_instances": [
+                {
+                    "row_ordinal": entry["row_ordinal"],
+                    "feature_order_hash": entry["feature_order_hash"],
+                }
+                for entry in local_explanation
+            ],
+            "background": shap_explanation["background"],
+            "output_scale": output_scale,
+            "sampling": dict(sampling),
+            "parameters": shap_explanation["parameters"],
+            "provider": shap_explanation["provider"],
+            "runtime_versions": runtime_versions,
+            "limitations": [TERMINOLOGY_LIMITATION],
+        }
     if method != "LIME_TABULAR" or not local_explanation:
         return None
     first = local_explanation[0]

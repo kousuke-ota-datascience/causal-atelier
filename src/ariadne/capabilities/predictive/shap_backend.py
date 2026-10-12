@@ -1,6 +1,7 @@
 """Canonical SHAP Tree backend for G02 P02."""
 from __future__ import annotations
 import importlib
+import hashlib
 from typing import Any
 import numpy as np
 from ariadne.product.domain.errors import PredictiveValidationError
@@ -26,6 +27,7 @@ def explain_shap_tree(model: dict[str, Any], features: list[list[float]], row_or
     if not np.allclose(expected + values.sum(axis=1), raw, atol=1e-6, rtol=1e-5):
         raise PredictiveValidationError("EXPLANATION_COMPUTATION_FAILED", "SHAP additivity check failed")
     names = model["feature_order"]
+    feature_order_hash = hashlib.sha256("\u001f".join(names).encode("utf-8")).hexdigest()
     global_values = [{"feature": name, "mean_absolute_contribution": float(np.abs(values[:, i]).mean()), "signed_mean_contribution": float(values[:, i].mean())} for i, name in enumerate(names)]
-    local = [{"row_ordinal": row, "base_value": expected, "model_output": float(raw[i]), "feature_contributions": [{"feature": name, "contribution": float(values[i, j])} for j, name in enumerate(names)]} for i, row in enumerate(row_ordinals[:local_size])]
-    return {"method": "SHAP_TREE", "output_scale": "LOG_ODDS" if model["task_type"] == "BINARY_CLASSIFICATION" else "PREDICTION", "background": {"kind": "TREE_PATH_DEPENDENT"}, "global": global_values, "local": local}
+    local = [{"row_ordinal": row, "base_value": expected, "model_output": float(raw[i]), "feature_order_hash": feature_order_hash, "feature_contributions": [{"feature_index": index, "feature": name, "contribution": float(values[i, index])} for index, name in enumerate(names)]} for i, row in enumerate(row_ordinals[:local_size])]
+    return {"method": "SHAP_TREE", "method_version": "1", "provider": {"name": "shap", "version": getattr(shap, "__version__", None)}, "feature_representation": "PREPROCESSED_FEATURE_SPACE", "feature_order": names, "feature_order_hash": feature_order_hash, "output_scale": "LOG_ODDS" if model["task_type"] == "BINARY_CLASSIFICATION" else "PREDICTION", "background": {"kind": "TREE_PATH_DEPENDENT", "source": "TREE_TRAINING_PATH_COUNTS"}, "parameters": {"feature_perturbation": "tree_path_dependent", "model_output": "raw", "additivity_atol": 1e-6, "additivity_rtol": 1e-5}, "global": global_values, "local": local}
