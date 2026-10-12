@@ -20,6 +20,7 @@ from ariadne.capabilities.predictive import (
     register_predictive_training_runners,
 )
 from ariadne.capabilities.predictive.modeling import model_capabilities
+from ariadne.capabilities.predictive.explanation_capabilities import explanation_capabilities
 from ariadne.product.application.analysis_frame_service import AnalysisFrameProvider
 from ariadne.product.application.execution_service import ExecutionService
 from ariadne.product.domain.analysis_specification import AnalysisSpecification
@@ -936,13 +937,35 @@ class PredictiveWorkflowService:
     def capabilities(self, project_id: str) -> dict[str, Any]:
         with self._session_factory() as session:
             self._project(session, project_id)
+        models = list(model_capabilities())
+        methods = list(explanation_capabilities())
+        task_defaults = {
+            task: next(
+                entry["model_id"] for entry in models
+                if task in entry["supported_tasks"] and entry["task_default"]
+            )
+            for task in ("BINARY_CLASSIFICATION", "REGRESSION")
+        }
         return {
             "schema_version": "predictive-capabilities/1",
             "gate": "G5_EXPLAIN_UI",
             "task_types": ["BINARY_CLASSIFICATION", "REGRESSION"],
             "split_strategies": ["RANDOM", "STRATIFIED", "GROUP", "TIME_BASED"],
             "preprocessing_steps": ["MEAN_IMPUTATION", "STANDARDIZATION", "ONE_HOT"],
-            "model_registry": list(model_capabilities()),
+            "task_defaults": task_defaults,
+            "model_registry": [{
+                **entry,
+                "contract_version": "1",
+                "provider": entry["provider_id"],
+                "parameters": [
+                    {"name": name, **definition}
+                    for name, definition in entry["parameter_schema"].items()
+                ],
+                "default_for_tasks": [
+                    task for task, model_id in task_defaults.items()
+                    if model_id == entry["model_id"]
+                ],
+            } for entry in models],
             "metrics": {
                 "BINARY_CLASSIFICATION": [
                     "ROC_AUC", "PR_AUC", "LOG_LOSS", "BRIER", "ACCURACY", "F1",
@@ -950,18 +973,32 @@ class PredictiveWorkflowService:
                 "REGRESSION": ["MAE", "RMSE", "R2"],
             },
             "compatibility": {
-                entry["model_id"]: entry["supported_tasks"] for entry in model_capabilities()
+                entry["model_id"]: entry["supported_tasks"] for entry in models
+            },
+            "model_explanation_compatibility": {
+                entry["model_id"]: [
+                    method["method_id"] for method in methods
+                    if entry["model_id"] in method["supported_models"]
+                ] for entry in models
             },
             "explanation_methods": [{
-                "method": "LINEAR_COEFFICIENT_CONTRIBUTION",
-                "supported_models": [
-                    "logistic_regression.v1",
-                    "linear_regression.v1",
+                **method,
+                "method": method["method_id"],
+                "contract_version": method["version"],
+                "model_output_scales": (
+                    ["LOG_ODDS", "PREDICTION"]
+                    if method["method_id"] in {"LINEAR_COEFFICIENT_CONTRIBUTION", "SHAP_TREE"}
+                    else ["PROBABILITY", "PREDICTION"]
+                ),
+                "default_for_models": [
+                    model_id for model_id, default_method in {
+                        "logistic_regression.v1": "LINEAR_COEFFICIENT_CONTRIBUTION",
+                        "linear_regression.v1": "LINEAR_COEFFICIENT_CONTRIBUTION",
+                        "lightgbm_classifier.v1": "SHAP_TREE",
+                        "lightgbm_regressor.v1": "SHAP_TREE",
+                    }.items() if default_method == method["method_id"]
                 ],
-                "supports_global": True,
-                "supports_local": True,
-                "model_output_scales": ["LOG_ODDS", "PREDICTION"],
-            }],
+            } for method in methods],
             "training_available": True,
             "evaluation_available": True,
             "explanation_available": True,

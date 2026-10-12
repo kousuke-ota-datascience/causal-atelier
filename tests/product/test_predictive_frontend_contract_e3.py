@@ -44,6 +44,9 @@ def test_predictive_family_exposes_complete_g5_backend_vertical_slice_in_analysi
     assert "backendAvailable=state.predictiveCapabilities?.training_available===true" in javascript
     assert "state.predictiveCapabilities?.explanation_available===true" in javascript
     assert "state.predictiveCapabilities?.model_card_available===true" in javascript
+    assert "renderPredictiveModelControls" in javascript
+    assert "model_parameter_" in javascript
+    assert "model_explanation_compatibility" in javascript
 
 
 def test_predictive_terminology_is_explicitly_non_causal() -> None:

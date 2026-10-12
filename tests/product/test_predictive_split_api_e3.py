@@ -78,15 +78,18 @@ async def test_g5_capabilities_advertise_explanation_and_model_card(
     assert response.json()["evaluation_available"] is True
     assert response.json()["explanation_available"] is True
     assert response.json()["model_card_available"] is True
-    assert response.json()["model_registry"]
-    assert response.json()["explanation_methods"] == [{
-        "method": "LINEAR_COEFFICIENT_CONTRIBUTION",
-        "supported_models": [
-            "logistic_regression.v1",
-            "linear_regression.v1",
-        ],
-        "supports_global": True,
-        "supports_local": True,
-        "model_output_scales": ["LOG_ODDS", "PREDICTION"],
-    }]
-    assert "PR_AUC" in response.json()["metrics"]["BINARY_CLASSIFICATION"]
+    body = response.json()
+    assert body["task_defaults"] == {
+        "BINARY_CLASSIFICATION": "logistic_regression.v1",
+        "REGRESSION": "linear_regression.v1",
+    }
+    models = {item["model_id"]: item for item in body["model_registry"]}
+    assert models["lightgbm_classifier.v1"]["supported_tasks"] == ["BINARY_CLASSIFICATION"]
+    assert models["lightgbm_classifier.v1"]["parameters"]
+    assert models["lightgbm_classifier.v1"]["contract_version"] == "1"
+    assert models["lightgbm_classifier.v1"]["availability"]["version"] is not None
+    methods = {item["method"]: item for item in body["explanation_methods"]}
+    assert methods["SHAP_TREE"]["default_for_models"] == ["lightgbm_classifier.v1", "lightgbm_regressor.v1"]
+    assert methods["LIME_TABULAR"]["availability"]["available"] is True
+    assert body["model_explanation_compatibility"]["lightgbm_classifier.v1"] == ["SHAP_TREE", "LIME_TABULAR"]
+    assert "PR_AUC" in body["metrics"]["BINARY_CLASSIFICATION"]
