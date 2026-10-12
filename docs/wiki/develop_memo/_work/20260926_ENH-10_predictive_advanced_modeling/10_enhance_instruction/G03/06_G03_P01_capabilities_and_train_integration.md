@@ -1,7 +1,7 @@
 # ENH-E10 G03 P01 — Capabilities / Train Integration
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G03`  
 **Package:** `P01`  
 **Depends on:** `G01 PASS + G02 PASS`  

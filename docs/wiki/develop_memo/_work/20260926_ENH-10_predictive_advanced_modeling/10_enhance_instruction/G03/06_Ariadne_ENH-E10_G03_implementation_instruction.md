@@ -1,7 +1,7 @@
 # Ariadne ENH-E10 G03 実装指示書 — Predictive Product Integration Contract
 
 **Document class:** Primary Execution Contract
-**Contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Contract status:** `FROZEN`
 **Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
 **Required packages:** `P01, P02, P03`
 **First executable package:** `P01`

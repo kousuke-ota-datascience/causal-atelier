@@ -1,7 +1,7 @@
 # ENH-E10 G03 P03 — Browser E2E / Product Regression
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G03`  
 **Package:** `P03`  
 **Depends on:** `G03 P02 canonical package report = PACKAGE_COMPLETE`  

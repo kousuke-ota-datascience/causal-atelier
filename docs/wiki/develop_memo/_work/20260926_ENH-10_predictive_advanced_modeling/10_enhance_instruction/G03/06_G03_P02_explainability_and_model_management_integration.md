@@ -1,7 +1,7 @@
 # ENH-E10 G03 P02 — Explainability / Model Management Integration
 
 **Document class:** Work Package Execution Contract  
-**Status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`  
+**Status:** `FROZEN`
 **Gate:** `G03`  
 **Package:** `P02`  
 **Depends on:** `G03 P01 canonical package report = PACKAGE_COMPLETE`  
