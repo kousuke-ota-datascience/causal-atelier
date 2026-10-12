@@ -5,7 +5,7 @@ from ariadne.capabilities.predictive.lime_backend import lime_local_contract, re
 from ariadne.product.domain.errors import PredictiveValidationError
 from ariadne.capabilities.predictive.modeling import fit_model, resolve_model_spec
 from ariadne.capabilities.predictive.lime_backend import explain_lime_local
-from test_predictive_explanation_e3 import _execute, _spec
+from .predictive_execution import build_explanation_spec, execute_predictive
 
 
 def test_lime_local_contract_and_global_rejection() -> None:
@@ -45,8 +45,8 @@ def test_lime_executes_lightgbm_regression_provider() -> None:
 
 
 def test_lime_runner_uses_train_reference_and_test_rows(predictive_spec_factory) -> None:
-    specification = _spec(predictive_spec_factory, "LIME_TABULAR")
-    outcome = _execute(specification)
+    specification = build_explanation_spec(predictive_spec_factory, "LIME_TABULAR")
+    outcome = execute_predictive(specification)
     explanation = next(item for item in outcome.results if item.result_type == "PREDICTIVE_EXPLANATION_RESULT")
     model_card = next(item for item in outcome.results if item.result_type == "MODEL_CARD_RESULT")
     assert explanation.analytical_status == "GENERATED"
@@ -83,11 +83,15 @@ def test_lime_train_reference_sampling_is_seeded_without_replacement(
         "score": list(range(-600, 600)),
         "converted": [int(score >= 0) for score in range(-600, 600)],
     })
-    first = _execute(_spec(predictive_spec_factory, "LIME_TABULAR"), frame)
-    second = _execute(_spec(predictive_spec_factory, "LIME_TABULAR"), frame)
-    changed_seed = _spec(predictive_spec_factory, "LIME_TABULAR")
+    first = execute_predictive(
+        build_explanation_spec(predictive_spec_factory, "LIME_TABULAR"), frame,
+    )
+    second = execute_predictive(
+        build_explanation_spec(predictive_spec_factory, "LIME_TABULAR"), frame,
+    )
+    changed_seed = build_explanation_spec(predictive_spec_factory, "LIME_TABULAR")
     changed_seed["explanation_spec"]["sampling"]["seed"] = 19
-    third = _execute(changed_seed, frame)
+    third = execute_predictive(changed_seed, frame)
     first_explanation = next(item for item in first.results if item.result_type == "PREDICTIVE_EXPLANATION_RESULT")
     second_explanation = next(item for item in second.results if item.result_type == "PREDICTIVE_EXPLANATION_RESULT")
     third_explanation = next(item for item in third.results if item.result_type == "PREDICTIVE_EXPLANATION_RESULT")

@@ -7,7 +7,7 @@ import pytest
 
 from ariadne.capabilities.predictive.modeling import fit_model, resolve_model_spec
 from ariadne.capabilities.predictive.shap_backend import explain_shap_tree
-from test_predictive_explanation_e3 import _execute
+from .predictive_execution import execute_predictive
 
 
 def test_shap_tree_binary_global_local_contract() -> None:
@@ -62,7 +62,7 @@ def test_shap_tree_full_dag_persists_canonical_provenance(
             else [float(3 * value - 2) for value in range(-60, 60)]
         ),
     })
-    outcome = _execute(_shap_spec(predictive_spec_factory, task_type), frame)
+    outcome = execute_predictive(_shap_spec(predictive_spec_factory, task_type), frame)
     assert outcome.status == "SUCCEEDED"
     assert [stage.stage_key for stage in outcome.stages] == [
         "split", "prepare", "train", "evaluate", "explain",
