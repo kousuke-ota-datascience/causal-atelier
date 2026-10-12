@@ -34,3 +34,23 @@ complete suite raw output: `43 passed, 2 warnings in 18.97s`、exit `0`。runtim
 ## 観測事実と解釈
 
 empty `explanation_spec` の baseline G01 flow は `sampling` binding を要求せず、full DAG が成功した。previous `KeyError('sampling')` は再現しない。deterministic model behavior、artifact save/load/predict compatibility、model registry、TRAIN/TEST isolation assertions も成功した。よって SHAP/LIME integration は G01 artifact/load/predict contract を破壊せず、AC-12 は **PASS**。
+
+## 分離 process を用いた理由
+
+G01 P01 の `lightgbm` lazy-import assertion は、SHAP test が同一 pytest process で LightGBM を import した後に実行すると test-order-dependent に失敗し得る。これは product behavior ではなく当該 test の import-isolation contractである。したがって P01 を provider import 前の独立 process として 7/7 PASS と確認し、他の G01 regression を G02 suite で確認した。test-order failure を product PASS/FAIL へ恣意的に読み替えていない。
+
+## protected contract coverage
+
+| protected behavior | verification evidence |
+| --- | --- |
+| no explanation request | empty `explanation_spec` で sampling binding を作らず DAG succeeds |
+| original regression | prior `KeyError('sampling')` が再現しない |
+| registry / optional model capability | P01 isolated suite `7 passed` |
+| LightGBM adapter | G01 P02 tests in complete suite |
+| artifact persistence | G01 P03 save/load/predict tests in complete suite |
+| deterministic / leakage boundary | predictive training + leakage tests in complete suite |
+| data isolation | TEST explanation が training selection を変更しない assertions |
+
+## 限界
+
+本 item は G01 frozen contract の protected regression であり、G02 explanation semantic correctnessの代用にはならない。SHAP/LIME method-specific conditions は item 030–080 の証跡によって別に PASS している。

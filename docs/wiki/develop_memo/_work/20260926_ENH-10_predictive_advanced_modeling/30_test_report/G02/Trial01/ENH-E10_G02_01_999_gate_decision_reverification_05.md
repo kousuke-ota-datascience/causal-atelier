@@ -37,3 +37,22 @@ candidate identity (001) は object existence、previous-failed ancestry、non-e
 SHAP binary provider warning 2 件は LightGBM array-shape の upstream notification であり、test exit は 0、frozen scale / additivity / output / provenance assertion に失敗はない。したがって product contract violation ではない。
 
 全 MUST criterion と protected regression が独立実行で PASS したため Gate Decision は **PASS**。ただしユーザー指示に従い、本報告は G02 promotion を自動実行せず、G03 も開始しない。過去の FAIL / BLOCKED evidence は保存されている。
+
+## 判定手順
+
+Gate PASS は test count の多さではなく、frozen Test Item の blocking coverage と MUST AC の全充足によって決めた。以下の順に判断した。
+
+1. item 001 が candidate identity を確立し、以降の実行対象が canonical candidate の意味状態であることを確認した。
+2. item 010 / 020 で baseline と capability failure boundary を確認した。
+3. item 030 / 040 は前回の failure point だった actual SHAP EXPLAIN stage を、binary と regression で別々に検証した。
+4. item 050 / 060 / 070 で LIME、reference sampling、provider absence を検証した。
+5. item 080 / 090 で durable provenance と G01 protected contract を検証した。
+6. 一つでも MUST failure なら FAIL、実行不能なら BLOCKED とする frozen decision rule を適用した。該当はない。
+
+## 前回 FAIL との差分
+
+reverification 04 は backend unit success に対して stage output が `NOT_APPLICABLE`、global/local null、SHAP provenance null であり、AC-03 / AC-04 を FAIL とした。reverification 05 では同じ full-DAG boundaryで `GENERATED`、非空 global/local、raw scales、frozen additivity、Result/Artifact/Model Card equality を binary と regression で確認した。従って過去 FAIL を上書き・削除せず、修正 candidate に対する新しい独立 evidence として PASS を記録する。
+
+## 検証後の状態
+
+evidence-only commit は `51ece275a683df3fde3b679e9a640bcbfeefe625`。production source、test source、dependency、frozen instruction は変更していない。Gate の promotion state を変更する操作、および G03 着手は行っていない。

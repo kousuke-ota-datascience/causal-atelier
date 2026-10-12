@@ -34,3 +34,20 @@ working tree at test start: clean
 事実: candidate object は存在し、直前の独立 FAIL candidate `e9a5b41` の descendant であり、さらに tested SHA の ancestor である。remediation diff は production 2 ファイルと test 1 ファイル、合計 173 additions / 2 deletions で空ではない。candidate 後の差分は 09 remediation instruction と completion report の文書のみであり、`src/`、`tests/`、依存 lock、migration、frontend に意味的変更はない。
 
 解釈: completion report からのみ取得した candidate を、HEAD に置換せずに同一の製品意味状態として検証できる。previous-failed guard、非空 remediation、post-candidate semantic-state guard、clean-tree guard をすべて満たす。AC 対象外の META 項目だが、以降の Test Item の有効な前提として **PASS**。
+
+## 監査手順の内訳
+
+1. completion report の `FIXED_TRIAL_CANDIDATE_SHA` フィールドを唯一の candidate 入力として読んだ。依頼本文・HEAD・過去 report の SHA を candidate 値として採用していない。
+2. `cat-file` により commit object であることを確認した。tag/blob/tree を candidate と誤認していない。
+3. `merge-base --is-ancestor` の exit `0` を、previous-failed candidate からの remediation lineage の根拠とした。SHA 文字列の一致や commit date は ancestry の代用にしていない。
+4. semantic path に限定した `numstat` により、説明用文書だけでない product/test remediation を確認した。
+5. candidate と tested HEAD の semantic path diff が空であることを確認した。したがって documentation-only HEAD を実行環境として用いても candidate 製品状態を変更していない。
+6. evidence 作成前の `git status --short` が空であることを確認した。後続の report 作成で発生した untracked files はこの clean-tree 観測に含めていない。
+
+## remediation diff の意味
+
+`explanation_runner.py` は `SHAP_TREE` を actual EXPLAIN stage へ dispatch する経路、`shap_backend.py` は provider value の shape 正規化、P02 test は binary/regression full DAG と canonical provenance を追加している。これは前回 04 で実証された `NOT_APPLICABLE` stage failure に直接関係する semantic diff である。
+
+## 非対象と限界
+
+本 item は candidate の正当性を検証する META item であり、SHAP/LIME の数値正しさ・provenance・G01 compatibility を判定しない。それらは item 030–090 の実行 evidence を要する。candidate identity が PASS であることは Gate PASS を単独では意味しない。

@@ -26,3 +26,40 @@ Python `3.12.3`、LIME `0.2.0.1`、LightGBM `4.7.0`。raw output は broader ind
 ## 解釈
 
 frozen LIME binary local semantics、one-hot categorical configuration、reference / instance / parameter provenance、TEST isolation を実行時に満たす。AC-05 と関連 AC-09/10/11 は **PASS**。
+
+## 実行証跡と coverage
+
+LIME assertions は次の focused command を含む complete independent suite の一部として実行した。
+
+```bash
+MPLCONFIGDIR=/tmp/ariadne-mpl UV_CACHE_DIR=/tmp/ariadne-uv-cache \
+uv run --extra predictive-advanced pytest -q \
+ tests/product/test_enh_e10_g02_p01_explanation_capabilities.py \
+ tests/product/test_enh_e10_g02_p02_shap_backend.py \
+ tests/product/test_enh_e10_g02_p03_lime_backend.py \
+ tests/product/test_predictive_training_e3.py tests/product/test_predictive_evaluation_e3.py \
+ tests/product/test_predictive_explanation_e3.py tests/product/test_predictive_leakage_e3.py \
+ tests/product/test_enh_e10_g01_p02_lightgbm_adapters.py \
+ tests/product/test_enh_e10_g01_p03_model_artifacts.py tests/product/test_predictive_api_worker_e2e_e3.py
+```
+
+```text
+...........................................                              [100%]
+43 passed, 2 warnings in 18.97s
+```
+
+## frozen parameters / identity assertions
+
+| 項目 | 確認内容 |
+| --- | --- |
+| scope | local-only。global request は item 020 の explicit reject |
+| target | binary positive-class probability |
+| representation | fitted preprocessor 後の numeric / one-hot feature space |
+| categorical handling | one-hot output columns を binary categorical index として provider に渡す |
+| reference | transformed TRAIN、`predictive-explanation-reference/1`、without replacement、max 500 |
+| reproducibility | sampling seed と TEST row identity から rowごとの effective seed を導出 |
+| persistence | Result / artifact / Model Card に同じ identity / parameters / versions を保存 |
+
+## 限界の明示
+
+LIME local perturbation は transformed one-hot features を独立に変化させ得るため、元の categorical combination が無効になる可能性がある。この provider limitation は output を causal effect と表示しない limitation と共に残す。これは既知の frozen limitation であり、silent fallback や missing provenance ではない。

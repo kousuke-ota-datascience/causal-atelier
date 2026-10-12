@@ -26,3 +26,23 @@ runtime は Python `3.12.3`、LIME `0.2.0.1`、LightGBM `4.7.0`。該当 test �
 ## 解釈
 
 回帰 LIME local output とその provenance / isolation contract は実行時に満たされた。AC-06 と関連 AC-09/10/11 は **PASS**。
+
+## 検証設計
+
+regression case は binary LIME と provider class / prediction semantics を区別して実行する。PASS 条件は単に local list が生成されることではなく、regression `PREDICTION` scale、TEST instance identity、TRAIN reference identity、effective seeds、frozen parameters、artifact/model-card persistence が同時に成立することである。
+
+## assertion の内訳
+
+| contract element | 観測した runtime assertion |
+| --- | --- |
+| local value | non-empty signed feature contributions と `PREDICTION` output scale |
+| TEST identity | local row ordinal と feature-order hash を Result provenance に記録 |
+| TRAIN reference | schema `predictive-explanation-reference/1`、partition `TRAIN`、count/hash/seed を記録 |
+| bounded sampling | `min(500, TRAIN row count)`、without replacement。同一 seed は同 hash、seed `19` は異 hash |
+| method parameters | 2000 samples、`min(10,n_features)`、euclidean、kernel width、discretize false、sample-around false |
+| durable consistency | Result、PREDICTIVE_EXPLANATION artifact、MODEL_CARD_RESULT、MODEL_CARD artifact の provenance を比較 |
+| isolation | training selection に explanation TEST rows を混入させない |
+
+## 実行範囲と非対象
+
+実行 command と raw output は item 050 に全文記録した 43-test command と同一であり、exit `0`。LIME の global behavior はこの local regression test で推測せず item 020 で explicit reject を確認する。SHAP tree-path background は LIME に適用しないため item 030/040 の対象である。

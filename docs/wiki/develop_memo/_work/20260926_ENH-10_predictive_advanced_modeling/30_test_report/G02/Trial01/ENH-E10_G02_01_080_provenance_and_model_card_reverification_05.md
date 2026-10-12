@@ -26,3 +26,23 @@ runtime: Python `3.12.3` / SHAP `0.52.0` / LIME `0.2.0.1` / LightGBM `4.7.0`。r
 ## 解釈
 
 Result / Artifact / Model Card に同一の再構成可能な provenance が到達しており、SHAP と LIME のいずれについても前回の SHAP stage gap は再現しない。AC-09 / AC-11 は **PASS**。
+
+## provenance audit matrix
+
+| frozen required fact | SHAP | LIME | persistence comparison |
+| --- | --- | --- | --- |
+| method identity / version | `SHAP_TREE` / `1` | `LIME_TABULAR` / `1` | Result = Explanation Artifact = Model Card |
+| model / task / preprocessor | model id, task, schema, preprocessor hash | 同左 | canonical JSON equality |
+| feature / TEST identity | feature order/hash, global TEST hash, local ordinals | feature order/hash, local ordinals | Result payload と artifact を比較 |
+| background / reference | `TREE_PATH_DEPENDENT`; no fabricated TRAIN reference | TRAIN reference schema/count/hash/seed/partition | method-specific field を保持 |
+| numeric meaning | raw LOG_ODDS or PREDICTION | binary PROBABILITY / regression PREDICTION | model output scale を保存 |
+| execution facts | sampling, additivity params, provider/runtime version | sampling, effective seeds, LIME params, provider/runtime version | Model Card まで投影 |
+| user wording | predictive-not-causal limitation | 同左 | Result / Model Card 共通 |
+
+## 検証根拠の詳細
+
+P02 full-DAG test は classification と regression を parametrize し、`json.loads(PREDICTIVE_EXPLANATION.content)["method_provenance"] == Result.method_provenance` と `json.loads(MODEL_CARD.content)["explanation_provenance"] == Result.method_provenance` を assert する。P03 と API/worker tests は LIME field projection、TRAIN raw row 非永続化、artifact association を確認する。従って「field が source に存在する」だけではなく、actual serialized artifact に到達することを検証した。
+
+## 除外した不当な推論
+
+implementation completion report の self-test は独立 PASS の根拠にしていない。また SHAP backend の direct return value だけから Model Card provenance を推論していない。いずれも actual stage outcome と serialized artifact equality により検証した。

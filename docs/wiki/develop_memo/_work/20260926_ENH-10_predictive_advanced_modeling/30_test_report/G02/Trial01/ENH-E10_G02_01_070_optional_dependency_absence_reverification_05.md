@@ -26,3 +26,19 @@ exit code: 0
 ## 解釈
 
 core capability module は optional providers が無くても import でき、選択された unavailable method に package availability / version evidence と明示 error code を返す。silent fallback、core import failure、`NOT_APPLICABLE` への誤変換はない。AC-08 は **PASS**。
+
+## 隔離方法の妥当性
+
+この probe は current `.venv` を削除・変更しない。temporary site layer をコピーして `shap/`、`lime/` と各 `*.dist-info` だけを除外し、`python -S` で通常の site-packages 自動追加を停止した。従って installed provider を import 可能な通常 runtime を誤って参照して PASS にしていない。NumPy 等の core runtime dependency は layer に残して、欠落 provider 以外の import failure を避けた。
+
+## probe の判定順序
+
+1. `explanation_capabilities()` で package availability、version、reason を読む。
+2. compatible model/method/scope を指定して `resolve_explanation_method()` を呼ぶ。
+3. `PredictiveValidationError.code` が dependency-specific `EXPLANATION_DEPENDENCY_UNAVAILABLE` であることを確認する。
+
+この順序により、unknown method や scope mismatch の error を dependency absence と誤分類しない。SHAP / LIME の双方を独立に確認した。
+
+## 判定の限界
+
+absence runtime は provider execution の数値 correctness を検証するものではない。その点は installed runtime の item 030–060 が担う。また package が存在しても version range outside の場合の operational policyは registry の availability contract に従うが、今回の absence evidence は package not installed case に限定される。
