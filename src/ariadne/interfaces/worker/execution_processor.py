@@ -325,7 +325,7 @@ class ExecutionProcessor:
         if outcome.status == "CANCELLED":
             return []
         if outcome.status != "SUCCEEDED":
-            error = outcome.stages[-1].last_error or {"message": "Causal Stage failed"}
+            error = _actual_failed_stage_error(outcome.stages)
             raise RuntimeError(str(error.get("message", error)))
         if execution.analysis_family is AnalysisFamily.CAUSAL:
             return list(outcome.stages[-1].output_binding["scientific_descriptors"])
@@ -595,3 +595,16 @@ def _inherit_scientific_context(
         "causal_question": current.get("causal_question") or upstream.get("causal_question", {}),
         "causal_design": current.get("causal_design") or upstream.get("causal_design", {}),
     }
+
+
+def _actual_failed_stage_error(stages: tuple[Any, ...]) -> dict[str, Any]:
+    """Return the persisted error from the stage which actually failed.
+
+    GenericExecutor marks unstarted downstream stages as
+    ``SKIPPED_DUE_TO_PREREQUISITE``.  Consequently the final stage is not a
+    reliable source of a terminal error for any analysis family.
+    """
+    for stage in stages:
+        if getattr(stage.status, "value", stage.status) == "FAILED":
+            return stage.last_error or {"message": "Stage execution failed"}
+    return {"message": "Stage execution failed"}
