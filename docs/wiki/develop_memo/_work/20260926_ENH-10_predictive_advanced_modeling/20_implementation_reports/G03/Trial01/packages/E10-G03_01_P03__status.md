@@ -16,7 +16,7 @@ State=BLOCKED
 - START_SHA: `5bab0d305612dea67ef63393a876867405fb1929`
 - PACKAGE_CHECKPOINT_SHA: none (incomplete implementation must not be checkpointed)
 
-## Changed, uncommitted P03 files
+## Preserved P03 implementation files
 
 - `.dockerignore`
 - `Dockerfile.browser-e2e`
@@ -25,7 +25,7 @@ State=BLOCKED
 - `tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`
 - `tests/enhancement/enh_e10/g03/integration/test_predictive_advanced_browser_readiness.py`
 
-These files add the hermetic predictive-advanced runtime, Compose overlay, browser runner, evidence capture, and static integration coverage required for P03. They remain uncommitted because the required browser journeys do not complete.
+These files add the hermetic predictive-advanced runtime, Compose overlay, browser runner, evidence capture, and static integration coverage required for P03. They are preserved in `785e73b9e8d3c01d9f6130247654cae922b576a7` (`Preserve G03 P03 blocked implementation`), which is explicitly not a `PACKAGE_CHECKPOINT_SHA` and does not change the BLOCKED state.
 
 ## Verification performed
 

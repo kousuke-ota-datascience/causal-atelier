@@ -47,7 +47,7 @@ P03 の browser runner、Compose lifecycle、frontend Idempotency header の障�
 
 scenario 100 が FAILED のため、scenario 110（`REGRESSION` + `lightgbm_regressor.v1` + `LIME_TABULAR`）は実行していない。P03 checkpoint は存在しない。
 
-## 保持中の未コミット P03 変更
+## 保全済み P03 実装
 
 - `.dockerignore`
 - `Dockerfile.browser-e2e`
@@ -55,6 +55,8 @@ scenario 100 が FAILED のため、scenario 110（`REGRESSION` + `lightgbm_regr
 - `compose.enh_e10.yaml`
 - `tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`
 - `tests/enhancement/enh_e10/g03/integration/test_predictive_advanced_browser_readiness.py`
+
+上記は `785e73b9e8d3c01d9f6130247654cae922b576a7` に保全済みである。この commit は working tree を保護するための記録であり、P03 `PACKAGE_CHECKPOINT_SHA`、`PACKAGE_COMPLETE`、または Gate 判定を意味しない。
 
 ## 再開条件
 
