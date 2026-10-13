@@ -463,6 +463,20 @@ function renderPredictiveModelControls(){
   parameters.innerHTML=(model?.parameters||[]).map(parameter=>`<label>${escapeHtml(parameter.name)}<input name="model_parameter_${escapeHtml(parameter.name)}" type="number" value="${escapeHtml(parameter.default)}" ${parameter.minimum!==undefined?`min="${escapeHtml(parameter.minimum)}"`:''} ${parameter.maximum!==undefined?`max="${escapeHtml(parameter.maximum)}"`:''} ${parameter.exclusive_minimum!==undefined?`min="${escapeHtml(parameter.exclusive_minimum)}" step="any"`:''} required></label>`).join('');
 }
 
+function renderPredictiveExplanationControls(){
+  const form=$('#predictive-form'),capabilities=state.predictiveCapabilities;if(!form||!capabilities)return;
+  const modelId=form.elements.model_id.value,compatible=capabilities.model_explanation_compatibility?.[modelId]||[];
+  const select=form.elements.explanation_method,previous=select.value;
+  const methods=capabilities.explanation_methods.filter(method=>compatible.includes(method.method));
+  select.innerHTML=methods.map(method=>`<option value="${escapeHtml(method.method)}" ${method.availability?.available?'':'disabled'}>${escapeHtml(method.method)}${method.availability?.available?'':` — unavailable: ${escapeHtml(method.availability?.reason||'')}`}</option>`).join('');
+  const defaultMethod=methods.find(method=>(method.default_for_models||[]).includes(modelId)&&method.availability?.available)?.method;
+  select.value=methods.some(method=>method.method===previous&&method.availability?.available)?previous:defaultMethod;
+  const method=methods.find(item=>item.method===select.value),local=form.elements.local_explanations,status=$('#predictive-explanation-status');
+  local.disabled=!method?.supports_local;
+  if(!method?.supports_local)local.checked=false;
+  status.textContent=!method?'選択modelに互換性のあるExplanation methodがありません。':(!method.availability?.available?(method.availability?.reason||'このmethodは現在利用できません。'):`Scope: ${method.supports_global?'GLOBAL':''}${method.supports_global&&method.supports_local?' + ':''}${method.supports_local?'LOCAL':''} / Output scale: ${(method.model_output_scales||[]).join(', ')}`);
+}
+
 function capturePredictiveDraft(){
   const form=$('#predictive-form');if(!form)return;
   state.predictiveDraft=Object.fromEntries([...form.elements].filter(element=>element.name).map(element=>[element.name,element.type==='checkbox'?element.checked:element.value]));
@@ -507,6 +521,16 @@ function renderPredictiveExecutions(){
   target.innerHTML=state.predictiveExecutions.length?`<table><thead><tr><th>Execution</th><th>Technical status</th><th>Specification</th><th>Requested</th><th></th></tr></thead><tbody>${state.predictiveExecutions.map(execution=>`<tr><td>${execution.execution_id.slice(0,8)}</td><td><span class="status ${execution.status}">${execution.status}</span></td><td>${escapeHtml((execution.analysis_specification_id||'').slice(0,8))}</td><td>${escapeHtml(execution.requested_at)}</td><td><button type="button" onclick="showPredictiveExecution('${execution.execution_id}')">Result / Artifact</button></td></tr>`).join('')}</tbody></table>`:'Executionはありません。';
 }
 
+function predictiveExplanationReadView(result){
+  const payload=result.payload||{},provenance=payload.method_provenance||{};
+  return `<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><h3>Predictive Explanation</h3><p>Method: ${escapeHtml(payload.explanation_method||result.summary?.method||'—')} / Output scale: ${escapeHtml(payload.model_output_scale||'—')} / Prediction scale: ${escapeHtml(payload.prediction_output_scale||'—')}</p><p>Scope: ${payload.global_explanation?'GLOBAL':''}${payload.global_explanation&&payload.local_explanation?.length?' + ':''}${payload.local_explanation?.length?'LOCAL':''} / TEST samples: ${escapeHtml(payload.sampling?.selected_sample_count??'—')}</p><p>Background / reference: ${escapeHtml(JSON.stringify(provenance.background||provenance.train_reference||payload.background_reference_data||{}))}</p><p>Limitations: ${escapeHtml((payload.limitations||[]).join(' '))}</p><pre>${escapeHtml(JSON.stringify({provenance,global_explanation:payload.global_explanation,local_explanation:payload.local_explanation},null,2))}</pre></article>`;
+}
+
+function predictiveModelManagementReadView(result,artifacts){
+  const payload=result.payload||{},descriptor=payload.model_descriptor||{},provenance=payload.model_artifact_provenance||{};
+  return `<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><h3>Model Card (read-only)</h3><p>Model: ${escapeHtml(descriptor.model_id||'—')} / Task: ${escapeHtml(descriptor.task_type||'—')} / Seed: ${escapeHtml(descriptor.seed??'—')}</p><p>Provider / runtime: ${escapeHtml(provenance.provider||'—')} / ${escapeHtml(provenance.library||'—')} ${escapeHtml(provenance.library_version||'—')}</p><p>Feature / preprocessor identity: ${escapeHtml(JSON.stringify({feature_order:descriptor.feature_order,preprocessor_hash:descriptor.preprocessor_hash}))}</p><p>Artifacts: ${escapeHtml(artifacts.map(artifact=>`${artifact.artifact_type} (${artifact.schema_version} / ${artifact.artifact_id})`).join(', ')||'—')}</p><pre>${escapeHtml(JSON.stringify({parameters:descriptor.parameters,model_card:payload,explanation_provenance:payload.explanation_provenance},null,2))}</pre></article>`;
+}
+
 function renderPredictiveDetails(){
   const targets=['#predictive-results','#predictive-predict-results','#predictive-explainability-results','#predictive-model-results','#predictive-artifacts'];
   const details=state.predictiveDetails;
@@ -516,7 +540,7 @@ function renderPredictiveDetails(){
   const stage=state.navigationContext?.familySlug==='predictive'?state.navigationContext.stageSlug:null,resultTypes=PREDICTIVE_STAGE_RESULT_TYPES[stage],artifactTypes=PREDICTIVE_STAGE_ARTIFACT_TYPES[stage];
   const resultTarget=({predict:'#predictive-predict-results',metrics:'#predictive-results',explainability:'#predictive-explainability-results','model-management':'#predictive-model-results'})[stage];
   const orderedResults=[...details.results].filter(result=>!resultTypes||resultTypes.includes(result.result_type)).sort((left,right)=>PREDICTIVE_RESULT_ORDER.indexOf(left.result_type)-PREDICTIVE_RESULT_ORDER.indexOf(right.result_type));
-  if(resultTarget){const target=$(resultTarget);target.innerHTML=`<p><b>Execution ${details.execution.execution_id.slice(0,8)}</b> <span class="status ${details.execution.status}">${details.execution.status}</span></p>`+(orderedResults.length?orderedResults.map(result=>`<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><h3>${escapeHtml(result.result_type)}</h3><pre>${escapeHtml(JSON.stringify({summary:result.summary,payload:result.payload,diagnostics:result.diagnostics,warnings:result.warnings},null,2))}</pre></article>`).join(''):stage==='predict'?'Prediction outputはありません。':'このStageに対応する既存Resultはありません。')}
+  if(resultTarget){const target=$(resultTarget),modelArtifacts=details.artifacts.filter(artifact=>['FITTED_MODEL','MODEL_CARD'].includes(artifact.artifact_type));const view=result=>stage==='explainability'?predictiveExplanationReadView(result):stage==='model-management'?predictiveModelManagementReadView(result,modelArtifacts):`<article class="predictive-result" data-result-type="${escapeHtml(result.result_type)}"><h3>${escapeHtml(result.result_type)}</h3><pre>${escapeHtml(JSON.stringify({summary:result.summary,payload:result.payload,diagnostics:result.diagnostics,warnings:result.warnings},null,2))}</pre></article>`;target.innerHTML=`<p><b>Execution ${details.execution.execution_id.slice(0,8)}</b> <span class="status ${details.execution.status}">${details.execution.status}</span></p>`+(orderedResults.length?orderedResults.map(view).join(''):stage==='predict'?'Prediction outputはありません。':'このStageに対応する既存Resultはありません。')}
   const context=$('#predictive-predict-context');if(context)context.innerHTML='<p>このExecution specificationに記録されたFeature columns（read-only）です。</p>'+specificationSummary;
   const artifacts=details.artifacts.filter(artifact=>!artifactTypes||artifactTypes.includes(artifact.artifact_type));
   const artifactTarget=stage==='predict'?$('#predictive-predict-artifacts'):$('#predictive-artifacts');artifactTarget.innerHTML=artifacts.length?artifacts.map(artifact=>`<article><b>${escapeHtml(artifact.artifact_type)}</b><p>Artifact ${artifact.artifact_id}</p><p>Result ${escapeHtml(artifact.result_id||'—')}</p><small>${escapeHtml(artifact.schema_version)} / ${escapeHtml(artifact.media_type)} / ${artifact.size_bytes} bytes / ${artifact.content_hash}</small></article>`).join(''):stage==='predict'?'Prediction outputはありません。':'Artifactはありません。';
@@ -530,14 +554,15 @@ async function loadPredictiveWorkspace(){
   state.predictiveCapabilities=capabilities;state.researchContexts=contexts.items;state.predictiveSpecifications=specifications.items.filter(specification=>specification.analysis_family==='PREDICTIVE');state.predictiveExecutions=executions.items.filter(execution=>execution.analysis_family==='PREDICTIVE'&&execution.analysis_specification_id);
   $('#predictive-capabilities').innerHTML=`<p><b>${escapeHtml(capabilities.gate)}</b> — Training ${capabilities.training_available?'available':'unavailable'} / Evaluation ${capabilities.evaluation_available?'available':'unavailable'} / Explanation ${capabilities.explanation_available?'available':'unavailable'} / Model Card ${capabilities.model_card_available?'available':'unavailable'}</p><p>Models: ${capabilities.model_registry.map(model=>escapeHtml(model.model_id)).join(', ')}</p>`;
   renderPredictiveModelControls();
-  const method=$('#predictive-explanation-method'),selected=method.value;method.innerHTML=capabilities.explanation_methods.map(item=>`<option value="${escapeHtml(item.method)}">${escapeHtml(item.method)}</option>`).join('');if(capabilities.explanation_methods.some(item=>item.method===selected))method.value=selected;
+  renderPredictiveExplanationControls();
   restorePredictiveDraft();reconcilePredictiveFeatures();
   renderResearchContexts();renderPredictiveExecutions();updatePredictiveAvailability();
   if(state.predictiveExecutions.length)await loadPredictiveDetails(state.predictiveExecutions[0].execution_id);else{state.predictiveDetails=null;renderPredictiveDetails()}
 }
 
-$('#predictive-form').elements.task_type.onchange=event=>{const form=$('#predictive-form');if(event.target.value==='REGRESSION'){if(form.elements.split_strategy.value==='STRATIFIED')form.elements.split_strategy.value='RANDOM';form.elements.primary_metric.innerHTML='<option>RMSE</option><option>MAE</option><option>R2</option>';form.elements.primary_metric.value='RMSE'}else{form.elements.primary_metric.innerHTML='<option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option>';form.elements.primary_metric.value='ROC_AUC'}renderPredictiveModelControls()};
-$('#predictive-form').elements.model_id.onchange=()=>renderPredictiveModelControls();
+$('#predictive-form').elements.task_type.onchange=event=>{const form=$('#predictive-form');if(event.target.value==='REGRESSION'){if(form.elements.split_strategy.value==='STRATIFIED')form.elements.split_strategy.value='RANDOM';form.elements.primary_metric.innerHTML='<option>RMSE</option><option>MAE</option><option>R2</option>';form.elements.primary_metric.value='RMSE'}else{form.elements.primary_metric.innerHTML='<option>ROC_AUC</option><option>PR_AUC</option><option>LOG_LOSS</option><option>BRIER</option><option>ACCURACY</option><option>F1</option>';form.elements.primary_metric.value='ROC_AUC'}renderPredictiveModelControls();renderPredictiveExplanationControls()};
+$('#predictive-form').elements.model_id.onchange=()=>{renderPredictiveModelControls();renderPredictiveExplanationControls()};
+$('#predictive-form').elements.explanation_method.onchange=()=>renderPredictiveExplanationControls();
 $('#predictive-form').onsubmit=async event=>{
   event.preventDefault();if(!state.project)return notice('Projectを選択してください');
   const button=$('#run-predictive'),form=new FormData(event.target),projectId=state.project.project_id;button.disabled=true;
