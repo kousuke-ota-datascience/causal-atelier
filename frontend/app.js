@@ -574,7 +574,7 @@ $('#predictive-form').onsubmit=async event=>{
     const plan=await api(`/projects/${projectId}/execution-plans`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id})});
     await api(`/projects/${projectId}/execution-plans/${plan.execution_plan_id}/validate`,{method:'POST'});
     $('#predictive-split-validation').innerHTML=`<p><span class="status VALID">VALID</span> Execution Plan validated</p><pre>${escapeHtml(JSON.stringify({execution_plan_id:plan.execution_plan_id,analysis_specification_id:specification.analysis_specification_id},null,2))}</pre>`;
-    const execution=await api(`/projects/${projectId}/executions`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id,execution_plan_id:plan.execution_plan_id,seed:familySpec.split_spec.seed})});
+    const execution=await api(`/projects/${projectId}/executions`,{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':idempotencyKey()},body:JSON.stringify({analysis_specification_id:specification.analysis_specification_id,execution_plan_id:plan.execution_plan_id,seed:familySpec.split_spec.seed})});
     notice('Predictive Executionをキューへ登録しました');await waitForPredictive(execution.execution_id);await loadPredictiveWorkspace();await loadPredictiveDetails(execution.execution_id);notice('Evaluation、Predictive Explanation、Model Cardを保存しました');
   }catch(error){notice(error.message)}finally{updatePredictiveAvailability()}
 };

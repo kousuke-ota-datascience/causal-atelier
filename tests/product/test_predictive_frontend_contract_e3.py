@@ -61,6 +61,14 @@ def test_predictive_terminology_is_explicitly_non_causal() -> None:
     assert "rank against causal" not in predictive.lower()
 
 
+def test_predictive_execution_submission_supplies_an_idempotency_key() -> None:
+    _, javascript = _sources()
+    handler = javascript[javascript.index("$('#predictive-form').onsubmit") : javascript.index("$('#discovery-form').onsubmit")]
+
+    assert "`/projects/${projectId}/executions`" in handler
+    assert "'Idempotency-Key':idempotencyKey()" in handler
+
+
 def test_project_shell_normalizes_legacy_routes_and_restores_predictive_canonical_deep_links() -> None:
     html, javascript = _sources()
     navigation = _navigation_source()
