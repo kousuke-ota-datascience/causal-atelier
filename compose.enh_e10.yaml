@@ -1,0 +1,13 @@
+services:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.predictive-advanced
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.predictive-advanced
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.predictive-advanced
