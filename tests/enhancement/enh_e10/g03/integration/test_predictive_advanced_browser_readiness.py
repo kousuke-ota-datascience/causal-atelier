@@ -14,6 +14,7 @@ def test_advanced_browser_runner_materializes_both_frozen_journeys() -> None:
         "LIME_TABULAR", "PREDICTIVE_EXPLANATION_RESULT", "MODEL_CARD_RESULT",
         "PREDICTIVE_EXPLANATION", "MODEL_CARD", "FITTED_MODEL",
         "context.tracing.start", "failure.png", "evidence.json", "def _wait(",
+        "def _stage_failure_evidence(", "attempt_history", "last_error",
     ):
         assert required in source
 
@@ -25,5 +26,6 @@ def test_advanced_compose_and_browser_image_are_hermetic() -> None:
     dockerignore = (ROOT / ".dockerignore").read_text(encoding="utf-8")
     assert "Dockerfile.predictive-advanced" in compose
     assert "predictive-advanced" in advanced
+    assert "libgomp1" in advanced
     assert "run_predictive_advanced.py" in dockerfile
     assert "!tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py" in dockerignore

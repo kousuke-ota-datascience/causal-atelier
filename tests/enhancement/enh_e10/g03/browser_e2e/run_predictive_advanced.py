@@ -69,6 +69,19 @@ def _terminal_execution(project_id: str) -> dict[str, Any] | None:
     return next((item for item in items if item.get("analysis_family") == "PREDICTIVE" and item["status"] in {"SUCCEEDED", "FAILED"}), None)
 
 
+def _stage_failure_evidence(project_id: str, execution_id: str) -> list[dict[str, Any]]:
+    stages = _request("GET", f"/projects/{project_id}/executions/{execution_id}/stages")["items"]
+    return [
+        {
+            "stage_key": stage["stage_key"],
+            "status": stage["status"],
+            "last_error": stage.get("last_error"),
+            "attempt_history": stage.get("attempt_history", []),
+        }
+        for stage in stages
+    ]
+
+
 def _stage(page: Page, stage: str) -> None:
     page.locator(f'#analysis-stage-sidebar button[data-stage="{stage}"]').click()
     page.locator(f'[data-predictive-stage-surface~="{stage}"]:visible').first.wait_for(timeout=30_000)
@@ -93,7 +106,17 @@ def _journey(page: Page, *, regression: bool, evidence: dict[str, Any]) -> None:
     _stage(page, "train")
     page.locator('#run-predictive:visible').click()
     execution = _wait(lambda: _terminal_execution(project_id))
-    assert execution["status"] == "SUCCEEDED", execution.get("last_error_summary")
+    scenario = "110" if regression else "100"
+    stages = _stage_failure_evidence(project_id, execution["execution_id"])
+    evidence["scenarios"][scenario] = {
+        "status": execution["status"],
+        "execution_id": execution["execution_id"],
+        "stages": stages,
+    }
+    assert execution["status"] == "SUCCEEDED", {
+        "terminal_error": execution.get("last_error_summary"),
+        "stages": stages,
+    }
     page.locator("#notice").filter(has_text="Model Cardを保存しました").wait_for(timeout=30_000)
     results = _request("GET", f"/projects/{project_id}/executions/{execution['execution_id']}/results")["items"]
     artifacts = _request("GET", f"/projects/{project_id}/executions/{execution['execution_id']}/artifacts")["items"]
@@ -102,7 +125,11 @@ def _journey(page: Page, *, regression: bool, evidence: dict[str, Any]) -> None:
     assert by_type["MODEL_CARD_RESULT"]["payload"].get("model_descriptor", {}).get("model_id")
     assert {"PREDICTIVE_EXPLANATION", "MODEL_CARD", "FITTED_MODEL"} <= {item["artifact_type"] for item in artifacts}
     assert "Predictive Explanation ≠ Causal Explanation" in page.locator(".predictive-terminology").inner_text()
-    evidence["scenarios"]["110" if regression else "100"] = {"status": "PASS", "execution_id": execution["execution_id"], "result_types": list(by_type), "artifact_types": [item["artifact_type"] for item in artifacts]}
+    evidence["scenarios"][scenario].update({
+        "status": "PASS",
+        "result_types": list(by_type),
+        "artifact_types": [item["artifact_type"] for item in artifacts],
+    })
 
 
 def main() -> int:
