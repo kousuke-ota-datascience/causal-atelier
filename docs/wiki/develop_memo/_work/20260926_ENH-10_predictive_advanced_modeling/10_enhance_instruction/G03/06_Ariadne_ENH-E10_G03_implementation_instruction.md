@@ -2,12 +2,13 @@
 
 **Document class:** Primary Execution Contract
 **Contract status:** `FROZEN`
-**Execution mode:** `WORK_PACKAGE` — decision materialized; execution remains blocked until contract freeze
+**Execution mode:** `WORK_PACKAGE`
 **Required packages:** `P01, P02, P03`
 **First executable package:** `P01`
 **Depends on:** `G01 PASS + G02 PASS`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01/G02 PASS exist, and 06/07/P01-P03 are explicitly FROZEN.
+**Self-containment:** MUST
+**Freeze approval:** Architecture Review §12 — Human architecture approval `APPROVED`; Gate freeze authorization `GRANTED` (`2026-09-26T14:58:00+09:00`)
+**Execution eligibility:** Runtime readiness is determined by the normal dependency and repository preflight for the assigned Work Package.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -98,6 +99,6 @@ Source decision record: `40_operator_workflows/architecture_review/02_target_arc
    - one runner contains exactly two required advanced predictive scenarios: Binary+LightGBM+SHAP and Regression+LightGBM+LIME.
    - detailed numeric correctness remains G01/G02 responsibility.
 
-Human approval remains required before changing this Gate set to FROZEN.
+Architecture Review §12 approval is recorded; this Gate set is FROZEN.
 
 

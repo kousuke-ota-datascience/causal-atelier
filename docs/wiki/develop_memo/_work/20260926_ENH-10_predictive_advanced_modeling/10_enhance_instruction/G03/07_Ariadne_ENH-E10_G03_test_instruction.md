@@ -1,10 +1,11 @@
 # Ariadne ENH-E10 G03 テスト指示書 — Predictive Product Integration Contract
 
 **Document class:** Primary Execution Contract
-**Verification contract status:** `MATERIALIZED_DRAFT / NOT_EXECUTABLE`
+**Verification contract status:** `FROZEN`
 **Depends on:** `G01 PASS + G02 PASS`
-**Self-containment:** MUST when FROZEN; current artifact is a materialized authoring draft
-**Execution eligibility:** **NOT EXECUTABLE** until Human approval is recorded, G01/G02 PASS and a G03 Fixed Trial Candidate exist, and 06/07/P01-P03 are FROZEN.
+**Self-containment:** MUST
+**Freeze approval:** Architecture Review §12 — Human architecture approval `APPROVED`; Gate freeze authorization `GRANTED` (`2026-09-26T14:58:00+09:00`)
+**Execution eligibility:** Independent Verification requires G01/G02 PASS, a G03 Fixed Trial Candidate / Completion Report, and normal verification preflight.
 
 - Project: Ariadne
 - Enhancement: ENH-E10
@@ -39,7 +40,7 @@ advanced predictive model/explanation capabilitiesが、existing Predictive Navi
 
 ## 5. Architecture Review values to verify
 
-Before FROZEN, G03 06/07/P01-P03 must embody:
+Frozen G03 06/07/P01-P03 embody:
 
 - additive `predictive-capabilities/1` contract from G03 06 §3
 - logistic/linear task defaults retained
@@ -52,7 +53,7 @@ Before FROZEN, G03 06/07/P01-P03 must embody:
 - canonical runner = `tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py`
 - clean compose project = `ariadne-enh-e10`
 
-Architecture decisions are technically resolved; Human approval remains the freeze authorization.
+Architecture decisions are technically resolved. Architecture Review §12 records Human approval and grants the Gate freeze authorization.
 
 ## 6. Acceptance Criteria
 
