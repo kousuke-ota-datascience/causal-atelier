@@ -17,3 +17,11 @@ The 58-test independent command includes G01 artifact/load/predict tests and G02
 ## Interpretation
 
 Model Management’s read-oriented provenance contract is present across API persistence and the user-visible critical journey. AC-06/07 are **PASS**。
+
+## Reproduction / source mutation audit / criterion evaluation
+
+```bash
+MPLCONFIGDIR=/tmp/ariadne-mpl UV_CACHE_DIR=/tmp/ariadne-uv-cache uv run --extra predictive-advanced pytest -q tests/enhancement/enh_e10/g01/integration tests/enhancement/enh_e10/g02/integration tests/product/test_predictive_api_worker_e2e_e3.py
+```
+
+Observed exit code: `0` within the 58-test suite. Browser reproduction uses the frozen command in item 100/110 and requires `MODEL_CARD_RESULT`, `FITTED_MODEL`, `MODEL_CARD`, and `PREDICTIVE_EXPLANATION`. Candidate mutation audit found no Model Management frontend/API semantic change after candidate; post-candidate state is documentation-only. Result/artifact/model-card equality establishes AC-06 and provenance/terminology establishes AC-07. **PASS**。

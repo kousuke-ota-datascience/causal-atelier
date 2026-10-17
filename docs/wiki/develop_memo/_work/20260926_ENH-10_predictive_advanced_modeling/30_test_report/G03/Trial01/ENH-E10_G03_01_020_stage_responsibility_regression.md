@@ -17,3 +17,14 @@ The 58-test command and output are recorded in item 010. It includes `test_enh_e
 ## Interpretation
 
 The protected ownership and canonical-output regressions pass, and the candidate has no semantic change capable of regressing ENH-E8/E9 stabilized surfaces. AC-03 and AC-05 pass; the no-candidate-caused portion of AC-12 passes. **PASS**。
+
+## Reproduction procedure
+
+```bash
+MPLCONFIGDIR=/tmp/ariadne-mpl UV_CACHE_DIR=/tmp/ariadne-uv-cache uv run --extra predictive-advanced pytest -q \
+ tests/product/test_enh_e8_g02_p02_causal_stage_surface_separation.py \
+ tests/product/test_enh_e8_g02_p03_predictive_stage_feature_selector.py \
+ tests/product/test_predictive_training_e3.py tests/product/test_predictive_evaluation_e3.py
+```
+
+Observed exit code: `0` as part of the independent `58 passed, 2 warnings` suite. Source mutation audit: candidate changes no frontend/navigation/API source; post-candidate changes are documentation only. Criterion evaluation: Setup ownership/read-only downstream context and canonical backend output consumption remain protected; targeted non-predictive regression is clean. Result rationale: AC-03/05/12 conditions covered by this item are **PASS**。

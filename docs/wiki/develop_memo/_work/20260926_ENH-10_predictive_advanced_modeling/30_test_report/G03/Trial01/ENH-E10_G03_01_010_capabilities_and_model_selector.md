@@ -27,3 +27,7 @@ Browser scenario 100 additionally selected `lightgbm_classifier.v1`; scenario 11
 ## Facts / interpretation
 
 G01 capability and parameter validation tests protect logistic/linear defaults, LightGBM model task compatibility, deterministic model parameters and explicit error taxonomy. Browser journeys demonstrate that LightGBM options are selected through UI-to-API request construction rather than an inferred backend-only path. The two warnings are SHAP provider binary-array notifications, not selector/request failures. These observations satisfy capability-driven compatible selection, parameter serialization, and advanced-runtime availability for AC-01/02/08. **PASS**。
+
+## Criterion evaluation / source mutation audit / reproduction
+
+AC-01 requires compatible selector options; AC-02 requires capability-contract parameter serialization; AC-08 requires explicit availability behavior. The automated suite exit code is `0`; the browser command in item 100/110 also exits `0`. Candidate mutation is runtime/browser-test scoped and does not alter selector production source after candidate assembly. Reproduce by executing the exact command above, then the frozen browser command in item 100; require `58 passed` and both selected LightGBM journeys `SUCCEEDED`. Result rationale: all three MUST criteria have automated plus runtime evidence, therefore **PASS**。

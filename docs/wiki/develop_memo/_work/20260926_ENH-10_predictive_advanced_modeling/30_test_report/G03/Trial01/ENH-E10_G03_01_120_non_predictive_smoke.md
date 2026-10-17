@@ -17,3 +17,11 @@ The independent 58-test command in item 010 included `tests/product/test_enh_e8_
 ## Interpretation
 
 Targeted protected surface tests plus candidate-diff audit establish no candidate-caused ENH-E8/ENH-E9 non-predictive semantic regression. This item does not falsely claim a full product regression suite; it meets the frozen targeted smoke requirement. **PASS**。
+
+## Reproduction / source mutation audit / criterion evaluation
+
+```bash
+MPLCONFIGDIR=/tmp/ariadne-mpl UV_CACHE_DIR=/tmp/ariadne-uv-cache uv run --extra predictive-advanced pytest -q tests/product/test_enh_e8_g02_p02_causal_stage_surface_separation.py tests/product/test_enh_e8_g02_p03_predictive_stage_feature_selector.py
+```
+
+Exit code was `0` in the complete 58-test independent run. Candidate source mutation is Docker advanced runtime plus G03 runner/readiness test only; post-candidate mutation is documentation/evidence only. The scope does not claim an exhaustive ENH-E9 suite: it evaluates the frozen “no candidate-caused semantic regression” condition using targeted protected tests and diff audit. Result rationale: AC-12 is **PASS**。

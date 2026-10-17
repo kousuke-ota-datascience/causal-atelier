@@ -65,16 +65,16 @@ Browser runtime は clean compose project `ariadne-enh-e10`、API/worker `Docker
 
 独立検証 evidence:
 
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__001_candidate_identity.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__010_capabilities_and_model_selector.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__020_stage_responsibility_regression.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__030_explainability_capability_ui.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__040_model_management_provenance.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__050_g01_g02_protected_regression.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__100_browser_binary_lightgbm_shap.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__110_browser_regression_lightgbm_lime.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__120_non_predictive_smoke.md`
-- `30_test_report/G03/Trial01/ENH-E10-G03_01__999_gate_decision.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_001_candidate_identity.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_010_capabilities_and_model_selector.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_020_stage_responsibility_regression.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_030_explainability_capability_ui.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_040_model_management_provenance.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_050_g01_g02_protected_regression.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_100_browser_binary_lightgbm_shap.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_110_browser_regression_lightgbm_lime.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_120_non_predictive_smoke.md`
+- `30_test_report/G03/Trial01/ENH-E10_G03_01_999_gate_decision.md`
 
 本状況報告:
 

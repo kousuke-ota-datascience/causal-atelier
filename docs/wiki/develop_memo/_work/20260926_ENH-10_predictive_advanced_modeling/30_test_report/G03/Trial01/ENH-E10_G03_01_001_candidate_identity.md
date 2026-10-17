@@ -5,6 +5,7 @@
 | Fixed Trial Candidate | `64bd2a18dd583349283cd5745edf63d9b28d61ad` |
 | TEST_START_SHA / actual tested state | `df278f76ff476143545d73037fe55f96664dae28` |
 | Branch | `feature/ariadne_mvp_e10` |
+| AC mapping | META — mandatory candidate identity precondition |
 | Result | **PASS** |
 
 ## Method / command
@@ -30,3 +31,7 @@ git diff --name-status 64bd2a18dd583349283cd5745edf63d9b28d61ad HEAD
 ## Interpretation / AC mapping
 
 candidate と actual test target は同一の semantic implementation state である。candidate identity audit は META mandatory precondition を満たす。post-candidate frozen-document edits は current frozen 07 を normative contract として読むことを妨げず、product semantic change ではない。**PASS**。
+
+## Source mutation audit / reproduction
+
+全 audit command は exit `0`。candidate後の source mutation は `PRODUCT_SEMANTIC_CHANGE=NONE`、`TEST_IMPLEMENTATION_CHANGE=NONE`、`TEST_INFRASTRUCTURE_CHANGE=NONE`、`DOCUMENTATION_ONLY` である。reproduction は clean tree の `feature/ariadne_mvp_e10` で上記 command を順に実行し、candidate→HEAD の semantic paths が空であることを確認する。Result rationale: valid Fixed Trial Candidateを後続 item の唯一の対象にできるため **PASS**。

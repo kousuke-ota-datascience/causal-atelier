@@ -15,3 +15,13 @@ Executed by the same frozen clean-compose command and Playwright Chromium `1.62.
 ## Facts / interpretation
 
 The browser selected Regression, `lightgbm_regressor.v1`, and explicit local `LIME_TABULAR`; the runner awaited API terminal status and Result/Artifact availability, then asserted generated explanation, Model Card model identity, artifact presence, and predictive-not-causal UI wording. G02 protected tests separately verify LIME PREDICTION scale, TRAIN reference/row provenance, and global-LIME explicit unavailability. Together these satisfy the frozen regression critical journey without pseudo-global fallback. **PASS**。
+
+## Exact reproduction / environment / diagnostics
+
+```bash
+docker compose -f compose.yaml -f compose.e1a.yaml -f compose.enh_e10.yaml -p ariadne-enh-e10 down -v --remove-orphans
+docker compose -f compose.yaml -f compose.e1a.yaml -f compose.enh_e10.yaml -p ariadne-enh-e10 --profile e2e run --build --rm --entrypoint python browser-e2e tests/enhancement/enh_e10/g03/browser_e2e/run_predictive_advanced.py
+docker compose -f compose.yaml -f compose.e1a.yaml -f compose.enh_e10.yaml -p ariadne-enh-e10 down -v --remove-orphans
+```
+
+Browser image is Playwright Chromium `1.62.0`; API/worker use `Dockerfile.predictive-advanced`. Runner and final teardown exit codes were `0`. Trace/video, terminal execution polling, `/results`, and `/artifacts` evidence are retained under `test-results/browser_e2e/enh_e10/`. No failure classification applies because no synchronization, page, console, network, API, or worker failure occurred. Candidate/post-candidate mutation audit is as item 001. Criterion evaluation: all AC-10 observable journey requirements are satisfied. **PASS**。

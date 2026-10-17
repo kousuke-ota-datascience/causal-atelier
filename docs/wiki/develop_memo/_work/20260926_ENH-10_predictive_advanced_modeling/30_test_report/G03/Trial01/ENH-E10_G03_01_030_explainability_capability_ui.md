@@ -18,3 +18,11 @@ The 58-test command in item 010 includes ENH-E10 G02 capability and explanation 
 ## Interpretation
 
 method compatibility, global/local boundaries, explicit unavailable behavior and predictive terminology remain intact from UI selection to persisted result. AC-04/07/08 are **PASS**。
+
+## Reproduction / mutation audit / result rationale
+
+```bash
+MPLCONFIGDIR=/tmp/ariadne-mpl UV_CACHE_DIR=/tmp/ariadne-uv-cache uv run --extra predictive-advanced pytest -q tests/enhancement/enh_e10/g02/contract tests/enhancement/enh_e10/g02/integration
+```
+
+Exit code was `0` within the 58-test independent suite. Reproduce browser selection with the frozen compose command in item 100; require generated explanation result and predictive-not-causal UI text. Candidate and post-candidate diff audits show no unreviewed frontend/API semantic mutation beyond the verified candidate state. Criterion evaluation: explicit incompatible/scope/dependency boundaries and compatible SHAP/LIME selection have evidence; no fallback was observed. **PASS**。

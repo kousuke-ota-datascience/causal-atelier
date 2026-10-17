@@ -23,3 +23,7 @@ Runtime: clean compose project `ariadne-enh-e10`; API/worker `Dockerfile.predict
 ## Facts / interpretation
 
 The browser selected Binary Classification, `lightgbm_classifier.v1`, and `SHAP_TREE`; runner synchronization waited for API terminal execution, persisted result/artifact retrieval, and final UI visibility. It required generated explanation output, Model Card model identity, and predictive-not-causal text. This proves the frozen cross-layer binary journey rather than merely direct SHAP backend success. **PASS**。
+
+## Environment / diagnostics / reproduction
+
+Service state before runner execution: database and API healthy; migrate exited `0`; worker and frontend started. Runner exit code was `0`; final compose teardown exit code was `0`. PASS produces trace/video under `test-results/browser_e2e/enh_e10/`; no failed synchronization point, page error, console failure, or failure classification applies. Relevant network evidence is the runner’s API terminal-status polling and `/results` / `/artifacts` retrieval for the recorded execution ID. Reproduce from a clean project by executing all three frozen lifecycle commands in 07 §8.1. Source mutation audit: candidate changes advanced runtime and runner only; no unreviewed product mutation after candidate. Criterion evaluation: all observable sequence and persistence requirements of AC-09 are met. **PASS**。
