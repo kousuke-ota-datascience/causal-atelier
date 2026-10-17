@@ -10,6 +10,7 @@
 | Normative contract | `10_enhance_instruction/G03/06_G03_P02_explainability_and_model_management_integration.md` |
 | START_SHA | `7b77b5136926f2b663121633c729c0548f82ca88` |
 | Package status | `PACKAGE_READY` |
+| State | `PACKAGE_COMPLETE` |
 | PACKAGE_CHECKPOINT_SHA | `14b3d3064723356227c08c42ee1d3fdc935f199d` |
 
 ## 実装内容

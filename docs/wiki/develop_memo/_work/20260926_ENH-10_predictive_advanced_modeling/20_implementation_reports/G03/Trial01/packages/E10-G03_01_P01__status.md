@@ -10,6 +10,7 @@
 | Normative contract | `10_enhance_instruction/G03/06_G03_P01_capabilities_and_train_integration.md` |
 | START_SHA | `faadcb38bee7d3fea963cf1a7092dc3b0aa28c2f` |
 | Package status | `PACKAGE_READY` |
+| State | `PACKAGE_COMPLETE` |
 | PACKAGE_CHECKPOINT_SHA | `db1b15259d27134d6d6754524a77ca777e16c94e` |
 
 ## 実装内容
