@@ -129,6 +129,8 @@ def test_full_predictive_dag_is_deterministic_and_keeps_test_out_of_training(
     assert second_fitted_preprocessor["output_features"] == feature_order
     assert train.input_binding["training_bundle"]["feature_order"] == feature_order
     assert prepare.output_binding["evaluation_bundle"]["selection_allowed"] is False
+    assert "explanation_reference" not in prepare.output_binding
+    assert "sampling_definition" not in prepare.output_binding
     assert "evaluation_bundle" not in train.input_binding
     assert "test" not in train.input_binding["training_bundle"]
     assert train.input_binding["training_bundle"]["selection_partitions"] == [

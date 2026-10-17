@@ -1410,6 +1410,174 @@ state authorityはroute-independent parent/application form store等へ一意化
 
 valid confirmed feature selectionも同じdraft-state contractで保持する。
 
+### 15.9 Model Capability registry
+
+Predictive model registryはdescriptor + backend adapter resolverとして構成する。
+
+Required descriptor fields:
+
+```text
+model_id
+contract_version
+supported_tasks
+parameters
+provider
+dependency
+available
+unavailable_reason
+provider_version
+determinism
+serializer_id
+loader_id
+default_for_tasks
+```
+
+Current IDs:
+
+- `logistic_regression.v1`
+- `linear_regression.v1`
+- `lightgbm_classifier.v1`
+- `lightgbm_regressor.v1`
+
+Existing logistic/linear are task defaults. Registry/capability response and execution resolver must use the same source of truth.
+
+Optional dependency discovery uses lazy module/version inspection. Importing Ariadne core modules must not import LightGBM/SHAP/LIME eagerly.
+
+### 15.10 LightGBM backend / fitted-model/2
+
+LightGBM backend uses low-level `lightgbm.train` / `Booster`.
+
+Exposed parameter validation:
+
+| Parameter | Contract |
+|---|---|
+| `num_boost_round` | integer 1..2000, default 100 |
+| `learning_rate` | 0 < x <= 1, default 0.1 |
+| `num_leaves` | integer 2..256, default 31 |
+| `max_depth` | -1 or integer 1..64, default -1 |
+| `min_data_in_leaf` | integer 1..10000, default 20 |
+| `lambda_l2` | finite >= 0, default 0 |
+
+Fixed runtime parameters include objective by task, CPU, `metric=None`, `deterministic=true`, `force_col_wise=true`, `num_threads=1`, immutable execution/spec seed, `verbosity=-1`, `use_missing=false`.
+
+Existing PREPARE output remains authoritative. LightGBM receives the TRAIN-fitted transformed numeric matrix; native categorical/missing handling and early stopping are not part of ENH-E10.
+
+New training writes use:
+
+```text
+schema_version = fitted-model/2
+model_id
+model_contract_version
+task_type
+parameters
+seed
+feature_order
+preprocessor_hash
+provider { id, library, library_version }
+determinism { mode, deterministic, force_col_wise, num_threads, device_type }
+payload { format, ... }
+classes? 
+```
+
+Payload:
+
+- linear: `ariadne-linear-json/1`
+- LightGBM: `lightgbm-model-string/1` using provider-supported model string serialization
+
+Loader dispatch is by provider/payload format. Existing `fitted-model/1` loader remains supported. Serialize→load→predict parity is required on deterministic fixtures.
+
+Reproducibility claim is same-runtime/config stability. Cross-platform/compiler/library-version bitwise equality is not promised.
+
+### 15.11 Explanation Method Capability registry
+
+Methods:
+
+- `LINEAR_COEFFICIENT_CONTRIBUTION`
+- `SHAP_TREE`
+- `LIME_TABULAR`
+
+Compatibility:
+
+| Model | Coefficient | SHAP_TREE | LIME_TABULAR |
+|---|---|---|---|
+| logistic_regression.v1 | global + local | unsupported | local |
+| linear_regression.v1 | global + local | unsupported | local |
+| lightgbm_classifier.v1 | unsupported | global + local | local |
+| lightgbm_regressor.v1 | unsupported | global + local | local |
+
+No method fallback is performed.
+
+Canonical explanation Result/Artifact/Model Card schemas remain version 1 and receive additive method/provider/model/reference fields. Unsupported fields are not fabricated.
+
+### 15.12 SHAP_TREE
+
+Use `shap.TreeExplainer` for LightGBM.
+
+- `feature_perturbation="tree_path_dependent"`
+- no external background matrix
+- binary `model_output="raw"` => model-output scale `LOG_ODDS`
+- regression raw output => `PREDICTION`
+- binary prediction output shown elsewhere remains `PROBABILITY`
+- global importance = mean absolute SHAP value over the complete immutable TEST explanation dataset; signed mean is also recorded
+- local rows follow deterministic FIRST_N sampling
+- record TEST row identity/hash and tree-path reference semantics
+- verify additivity with `atol=1e-6`, `rtol=1e-5`
+
+Additivity failure is an explanation computation/scientific contract failure and is not silently disabled.
+
+### 15.13 LIME_TABULAR / explanation reference
+
+LIME is local-only.
+
+Model representation is the same preprocessed feature space referenced by fitted model `feature_order`.
+
+PREPARE produces internal `predictive-explanation-reference/1` from transformed TRAIN features:
+
+- role = `EXPLANATION_REFERENCE_ONLY`
+- seeded sample without replacement
+- max rows = 500
+- seed = explanation sampling seed
+- raw reference rows are runtime binding only
+- persisted explanation provenance contains hash/count/seed/reference role, not raw reference rows
+
+LIME defaults:
+
+- `num_samples=2000`
+- `num_features=min(10, n_features)`
+- `feature_selection="auto"`
+- `discretize_continuous=false`
+- `distance_metric="euclidean"`
+- `kernel_width=0.75*sqrt(n_features)`
+- `sample_around_instance=false`
+
+One-hot transformed columns are supplied as categorical binary features. Limitation metadata must state that independent perturbation can form combinations that are not one valid original categorical row.
+
+Binary local explanation targets positive-class probability. Regression targets numeric prediction. Per-row effective random seed is deterministically derived from explanation sampling seed + row identity.
+
+A global LIME request, or a LIME request with local explanations disabled, returns `EXPLANATION_SCOPE_NOT_SUPPORTED`.
+
+### 15.14 Capability-driven presentation
+
+Train:
+
+- obtains compatible models and structured parameter controls from `predictive-capabilities/1`
+- retains current selection when task-compatible
+- otherwise switches to backend-declared task default
+- shows unavailable advanced option disabled with reason
+- does not edit feature set
+
+Explainability:
+
+- derives valid methods/scope from model-method compatibility metadata
+- linear default = coefficient
+- LightGBM default = SHAP_TREE
+- LIME is explicit local alternate
+- unavailable/incompatible selection never silently falls back
+- preserves Predictive-not-causal warning
+
+Model Management remains read-only and renders persisted model/provider/artifact/model-card/explanation/lineage/runtime provenance.
+
+
 ---
 
 ## 16. Result Type / Scientific Status
@@ -2009,7 +2177,23 @@ Dataset Version変更によりselected featureが無効になった場合は、�
 - Trainはfeature setをread-only表示しeditable selectorを持たない。
 - Predictはrelevant execution specificationのfeature setをread-only表示しeditable selectorを持たない。
 - ExplainabilityはPredictive Explanationをcausal effectとして表現しない。
+- task-compatible model option / task default / structured parameter controlsをbackend capability metadataから構築する。
+- LightGBM dependency unavailable時はoptionをreason付きでunavailable表示し、logistic/linearへsilent fallbackしない。
+- `SHAP_TREE`はLightGBMでglobal/local、`LIME_TABULAR`はcompatible modelでlocal-onlyとしてscopeを表現する。
+- global LIMEを選択可能にせず、pseudo-global resultを生成しない。
+- Model Managementは`fitted-model/2` schema、provider/version、effective parameters、seed/determinism、feature/preprocessor identity、Model Card/explanation provenanceをread-only表示する。
 - column-selector helperをFamily間で共有する場合、Causal Discovery等のcurrent selector/request validationをprotected regressionとする。
+
+### 23.8.1 ENH-E10 predictive advanced model / XAI tests
+
+- core-only environmentでAriadne import/startおよびexisting logistic/linear + coefficient flowがadvanced packagesなしで成立する。
+- LightGBM classifier/regressorのtask/parameter validation、fixed deterministic settings、fit/predictをunit/contract testで検証する。
+- `fitted-model/2` serialize→fresh load→predict parity、feature/preprocessor mismatch rejection、v1 read compatibilityをintegration testで検証する。
+- SHAP binary/regression global/local、raw output scale、base/additivity、TEST identityをdeterministic testで検証する。
+- LIME binary/regression local、TRAIN reference provenance、per-row seed、global unsupportedをdeterministic testで検証する。
+- capability APIとFrontend model/method option、availability、parameter rendering、Model Management provenanceをcontract/integration testで検証する。
+- Browser E2EはBinary + LightGBM + SHAP、Regression + LightGBM + LIMEの2 critical journeyに限定し、numeric/scientific correctnessのprimary proofにしない。
+- new/materially rebuilt ENH-E10 testsは`tests/enhancement/enh_e10/<gate>/<layer>/`へ配置する。
 
 ### 23.9 Layout / accessibility tests
 
@@ -2130,3 +2314,11 @@ Causal / Exploratory / Predictiveのanalytical semanticsをNavigation Stage Cont
 Selected ProjectからProject Listへの明示的parent navigation、current Navigation Stageをprimary identityとするStage presentation、Causal Stage responsibility separation、Predictive Stage responsibility separation、Dataset-schema-backed Predictive feature selector、vertical layout/accessibility/history/test seamをcurrent effective detailed design本文へ統合した。
 
 この変更はUI/IA/presentation designの具体化であり、canonical Navigation Stage catalog、API、persistence schema、backend analytical semantics、runtime execution lifecycleを変更しない。
+
+### 30.5 ENH-E10 Predictive Advanced Modeling / XAI
+
+- Model Capability / Explanation Method Capability registry、optional dependency isolation、LightGBM adapterを追加設計した。
+- provider-neutral `fitted-model/2`、v1 read compatibility、same-runtime/config reproducibility contractを定義した。
+- SHAP_TREE raw-output semantics、LIME_TABULAR local-only + TRAIN explanation referenceを定義した。
+- `predictive-capabilities/1`をbackend authorityからadditiveに拡張し、Train / Explainability / Model Managementのconsumer contractを具体化した。
+- G01/G02はdeterministic lower-level correctness、G03 Browser E2Eは2 critical product journeyをprimary scopeとする。

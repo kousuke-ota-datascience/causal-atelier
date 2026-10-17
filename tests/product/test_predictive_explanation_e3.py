@@ -93,7 +93,8 @@ def _spec(predictive_spec_factory, method: str) -> dict:  # type: ignore[no-unty
     return spec
 
 
-def _execute(spec: dict) -> object:  # type: ignore[type-arg]
+def _execute(spec: dict, frame: pd.DataFrame | None = None) -> object:  # type: ignore[type-arg]
+    frame = _frame() if frame is None else frame
     plan = PredictivePlanner().build_full_plan(
         project_id="project",
         specification_id="fixed-specification",
@@ -105,7 +106,7 @@ def _execute(spec: dict) -> object:  # type: ignore[type-arg]
         plan,
         external_inputs={
             "split": {
-                "frame": _frame(),
+                "frame": frame,
                 "source_snapshot": {
                     "schema_version": "predictive-source-snapshot/1",
                     "dataset_version_id": "dataset",
@@ -115,7 +116,7 @@ def _execute(spec: dict) -> object:  # type: ignore[type-arg]
                     "materialized_hash": "a" * 64,
                 },
             },
-            "prepare": {"frame": _frame()},
+            "prepare": {"frame": frame},
         },
         snapshots={
             "versions": {
@@ -176,7 +177,8 @@ def test_registered_explain_stage_generates_deterministic_global_and_local_expla
     assert set(explain.input_contract) == {
         "frozen_model",
         "fitted_preprocessor",
-        "explanation_dataset",
+            "explanation_dataset",
+            "explanation_reference",
         "explanation_specification",
         "sampling_definition",
         "training_summary",
@@ -269,6 +271,7 @@ def test_model_card_is_complete_and_unsupported_method_returns_not_applicable(
         "feature_set",
         "split_strategy",
         "model_descriptor",
+        "model_artifact_provenance",
         "selected_hyperparameters",
         "validation_metrics",
         "test_metrics",

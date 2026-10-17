@@ -36,7 +36,7 @@ RUNTIME_BY_MODE = {
     "package": ("GATE_ID", "PACKAGE_ID", "TRIAL_NO"),
     "assembly": ("GATE_ID", "TRIAL_NO"),
     "test": ("GATE_ID", "TRIAL_NO"),
-    "remediation": ("GATE_ID", "REMEDIATION_PACKAGE_ID", "TRIAL_NO"),
+    "remediation": ("GATE_ID", "TRIAL_NO"),
     "orchestrator": ("GATE_ID", "TRIAL_NO"),
 }
 FIXED = ("PROJECT_NAME", "ENHANCE_ID", "ENHANCE_SHORT_ID", "BRANCH_NAME", "REMOTE_NAME", "WORK_ROOT", "WORK_DIR_NAME")
@@ -154,7 +154,6 @@ def main():
     p.add_argument("--gate-id")
     p.add_argument("--package-id")
     p.add_argument("--trial-no")
-    p.add_argument("--remediation-package-id")
     args = p.parse_args()
 
     work_root = args.work_root.resolve()
@@ -178,7 +177,7 @@ def main():
     else:
         failures.append(("ARTIFACT_COMPLETENESS", f"missing prompt directory: {prompts}"))
 
-    supplied = {"GATE_ID": args.gate_id, "PACKAGE_ID": args.package_id, "TRIAL_NO": args.trial_no, "REMEDIATION_PACKAGE_ID": args.remediation_package_id}
+    supplied = {"GATE_ID": args.gate_id, "PACKAGE_ID": args.package_id, "TRIAL_NO": args.trial_no}
     missing_runtime = [key for key in RUNTIME_BY_MODE[args.mode] if not supplied.get(key)]
     if missing_runtime:
         failures.append(("EXECUTION_RESOLVABILITY", "missing runtime values: " + ", ".join(missing_runtime)))

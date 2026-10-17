@@ -19,6 +19,7 @@ from ariadne.capabilities.predictive.modeling import (
     fit_model,
     predict,
     resolve_model_spec,
+    serialize_model_artifact,
 )
 from ariadne.capabilities.predictive.preprocessing import fit_preprocessor, transform_frame
 from ariadne.capabilities.predictive.validation import (
@@ -136,6 +137,28 @@ class PredictivePrepareRunner:
             },
         }
         explanation_specification = dict(spec["explanation_spec"])
+        # A reference is an implementation detail of an explicitly requested
+        # explanation.  In particular, normal G01 training must not acquire a
+        # sampling requirement merely because G02 support is installed.
+        explanation_bindings: dict[str, Any] = {}
+        if explanation_specification:
+            sampling = explanation_specification["sampling"]
+            reference_count = min(500, len(train_features))
+            reference_indices = sorted(
+                random.Random(sampling["seed"]).sample(
+                    range(len(train_features)), reference_count
+                )
+            )
+            explanation_bindings = {
+                "explanation_reference": {
+                    "schema_version": "predictive-explanation-reference/1",
+                    "features": [train_features[index] for index in reference_indices],
+                    "seed": sampling["seed"],
+                    "partition": "TRAIN",
+                },
+                "explanation_specification": explanation_specification,
+                "sampling_definition": dict(sampling),
+            }
         content = _json_bytes(fitted)
         return StageRunResult(
             output_bindings={
@@ -143,10 +166,7 @@ class PredictivePrepareRunner:
                 "evaluation_bundle": evaluation_bundle,
                 "fitted_preprocessor": fitted,
                 "explanation_dataset": explanation_dataset,
-                "explanation_specification": explanation_specification,
-                "sampling_definition": dict(
-                    explanation_specification.get("sampling", {})
-                ),
+                **explanation_bindings,
             },
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_PREPROCESSOR",
@@ -205,6 +225,7 @@ class PredictiveTrainRunner:
         model["preprocessor_hash"] = preprocessor["canonical_hash"]
         model["feature_order"] = bundle["feature_order"]
         model["seed"] = seed
+        model = serialize_model_artifact(model)
         validation_prediction = predict(model, bundle["validation"]["features"])
         if task_type == "BINARY_CLASSIFICATION":
             validation_actual = encode_binary_target(model, bundle["validation"]["target"])
@@ -233,6 +254,8 @@ class PredictiveTrainRunner:
             "feature_order": bundle["feature_order"],
             "preprocessor_hash": preprocessor["canonical_hash"],
         }
+        if "runtime" in model:
+            descriptor["runtime"] = model["runtime"]
         result = ResultDraft(
             result_type="TRAINING_RESULT",
             schema_version="predictive-training-result/1",
@@ -278,7 +301,7 @@ class PredictiveTrainRunner:
             results=(result,),
             artifacts=(ArtifactDraft(
                 artifact_type="FITTED_MODEL",
-                schema_version="fitted-model/1",
+                schema_version="fitted-model/2",
                 media_type="application/json",
                 content=_json_bytes(model),
                 metadata={"model_descriptor": descriptor},
@@ -296,8 +319,8 @@ class PredictiveEvaluateRunner:
         model = context.inputs.get("frozen_model")
         bundle = context.inputs.get("evaluation_bundle")
         preprocessor = context.inputs.get("fitted_preprocessor")
-        if not isinstance(model, dict) or model.get("schema_version") != "fitted-model/1":
-            raise InvalidSchema("EVALUATE requires fitted-model/1")
+        if not isinstance(model, dict) or model.get("schema_version") not in {"fitted-model/1", "fitted-model/2"}:
+            raise InvalidSchema("EVALUATE requires fitted-model/1 or fitted-model/2")
         if not isinstance(bundle, dict) or bundle.get("schema_version") != "predictive-evaluation-bundle/1":
             raise InvalidSchema("EVALUATE requires predictive-evaluation-bundle/1")
         if bundle.get("selection_allowed") is not False or bundle.get("final_evaluation_only") is not True:

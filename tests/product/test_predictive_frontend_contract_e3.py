@@ -44,6 +44,9 @@ def test_predictive_family_exposes_complete_g5_backend_vertical_slice_in_analysi
     assert "backendAvailable=state.predictiveCapabilities?.training_available===true" in javascript
     assert "state.predictiveCapabilities?.explanation_available===true" in javascript
     assert "state.predictiveCapabilities?.model_card_available===true" in javascript
+    assert "renderPredictiveModelControls" in javascript
+    assert "model_parameter_" in javascript
+    assert "model_explanation_compatibility" in javascript
 
 
 def test_predictive_terminology_is_explicitly_non_causal() -> None:
@@ -56,6 +59,14 @@ def test_predictive_terminology_is_explicitly_non_causal() -> None:
     assert "Predictive Explanation、Model Cardを保存しました" in javascript
     assert "single score" not in predictive.lower()
     assert "rank against causal" not in predictive.lower()
+
+
+def test_predictive_execution_submission_supplies_an_idempotency_key() -> None:
+    _, javascript = _sources()
+    handler = javascript[javascript.index("$('#predictive-form').onsubmit") : javascript.index("$('#discovery-form').onsubmit")]
+
+    assert "`/projects/${projectId}/executions`" in handler
+    assert "'Idempotency-Key':idempotencyKey()" in handler
 
 
 def test_project_shell_normalizes_legacy_routes_and_restores_predictive_canonical_deep_links() -> None:

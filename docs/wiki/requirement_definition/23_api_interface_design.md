@@ -619,6 +619,90 @@ Predictive evaluation outputは指定subgroupごとにrecord listを返す。gro
 - `n < 2`またはvalid resamples < 200では`uncertainty=null` + warning。
 - metric計算不能は`value=null`、`uncertainty=null`、status/warningを返す。値を捏造しない。
 
+### 5.6.2 Predictive advanced capabilities contract
+
+`GET /projects/{project_id}/predictive/capabilities` remains the canonical Predictive capability metadata endpoint.
+
+Response schema remains:
+
+```text
+predictive-capabilities/1
+```
+
+Existing fields/types remain backward-compatible. ENH-E10 adds the following metadata from the same backend model/explanation capability authorities.
+
+```json
+{
+  "schema_version": "predictive-capabilities/1",
+  "task_defaults": {
+    "BINARY_CLASSIFICATION": {"model_id": "logistic_regression.v1"},
+    "REGRESSION": {"model_id": "linear_regression.v1"}
+  },
+  "model_registry": [
+    {
+      "model_id": "lightgbm_classifier.v1",
+      "contract_version": "1",
+      "supported_tasks": ["BINARY_CLASSIFICATION"],
+      "parameter_schema": ["num_boost_round", "learning_rate", "num_leaves", "max_depth", "min_data_in_leaf", "lambda_l2"],
+      "parameters": {
+        "num_boost_round": {"type": "integer", "minimum": 1, "maximum": 2000, "default": 100},
+        "learning_rate": {"type": "number", "exclusive_minimum": 0, "maximum": 1, "default": 0.1}
+      },
+      "provider": "lightgbm",
+      "dependency": "lightgbm",
+      "available": true,
+      "unavailable_reason": null,
+      "provider_version": "4.7.x",
+      "deterministic_seed": true,
+      "determinism": {"mode": "same-runtime-config", "num_threads": 1, "device_type": "cpu"},
+      "serializer_id": "lightgbm-model-string/1",
+      "loader_id": "lightgbm-booster/1",
+      "default_for_tasks": []
+    }
+  ],
+  "explanation_methods": [
+    {
+      "method": "SHAP_TREE",
+      "contract_version": "1",
+      "supported_models": ["lightgbm_classifier.v1", "lightgbm_regressor.v1"],
+      "supports_global": true,
+      "supports_local": true,
+      "model_output_scales": ["LOG_ODDS", "PREDICTION"],
+      "dependency": "shap",
+      "available": true,
+      "unavailable_reason": null,
+      "provider_version": "0.52.x",
+      "default_for_models": ["lightgbm_classifier.v1", "lightgbm_regressor.v1"]
+    }
+  ],
+  "model_explanation_compatibility": {}
+}
+```
+
+The example is illustrative; exact ordering is not semantic. Existing `parameter_schema`, `deterministic_seed`, `compatibility`, and existing explanation fields remain compatibility projections. Structured model controls consume `parameters`.
+
+Backend validation is final authority. A client-provided model/method that is unregistered, task-incompatible, dependency-unavailable, parameter-invalid or scope-incompatible must be rejected explicitly; the server does not substitute a different model/method.
+
+Stable Predictive validation/failure codes include:
+
+- `MODEL_NOT_REGISTERED`
+- `MODEL_TASK_MISMATCH`
+- `MODEL_PARAMETER_INVALID`
+- `MODEL_DEPENDENCY_UNAVAILABLE`
+- `MODEL_ARTIFACT_UNSUPPORTED`
+- `MODEL_ARTIFACT_LOAD_FAILED`
+- `MODEL_FEATURE_MISMATCH`
+- `PREPROCESSOR_MODEL_MISMATCH`
+- `EXPLANATION_METHOD_NOT_REGISTERED`
+- `EXPLANATION_METHOD_NOT_APPLICABLE`
+- `EXPLANATION_DEPENDENCY_UNAVAILABLE`
+- `EXPLANATION_SCOPE_NOT_SUPPORTED`
+- `EXPLANATION_COMPUTATION_FAILED`
+
+Synchronous request/domain validation uses the canonical 422 validation envelope. Provider runtime failures are persisted as execution/stage failure evidence rather than silently converted to another capability.
+
+Model artifacts continue to use existing Artifact resources. New model writes carry `fitted-model/2` in Artifact content/metadata; existing `fitted-model/1` remains readable. No new Model Registry API or persistence aggregate is introduced.
+
 ### 5.7 Execution Interface
 
 現行branchには、canonical/common Execution APIとPredictive workflow向けProject-scoped APIが併存する。current snapshotはNavigation再構成を理由にこれらを暗黙統合・削除しない。
@@ -933,7 +1017,7 @@ Canonical `ArtifactType`はfixed enumであり、Predictive関連では`PARTITIO
 
 `Findings`はcanonical Result、simple AnnotationまたはWorkspaceAnnotation、Artifact、Lineage projectionを組み合わせて構成する。decision/next actionが必要な場合はWorkspaceAnnotationの既存責務を利用する。
 
-`Model Management`は`TRAINING_RESULT / EVALUATION_RESULT / MODEL_CARD_RESULT`と`FITTED_PREPROCESSOR / FITTED_MODEL / MODEL_CARD`等をreadするsurfaceとして構成できる。
+`Model Management`は`TRAINING_RESULT / EVALUATION_RESULT / MODEL_CARD_RESULT`と`FITTED_PREPROCESSOR / FITTED_MODEL / MODEL_CARD`等をreadするsurfaceとして構成できる。ENH-E10ではmodel/task/effective parameters、provider/library version、seed/determinism、feature/preprocessor identity、fitted-model schema/artifact identity、explanation method metadata、lineage/runtime provenanceを同じread surfaceから提示する。
 
 これらのNavigation Stageのために重複Result/Annotation/Artifact Resourceを新設しない。
 
@@ -1480,3 +1564,10 @@ Worker interfaceについては、Execution repositoryのlease ownership contrac
 ### 20.7 ENH-E7 Project / Analysis Browser Interface Contract
 
 Project routesとAnalysis routesを別navigation authorityとして定義し、Project short-route normalization、Analysis Context composition、direct link / reload / Back / Forward、legacy analytical entry normalizationをcurrent browser interface contractへ統合した。Backend API/persistence contractはUI再配置だけを理由に変更しない。
+
+### 20.8 ENH-E10 Predictive Advanced Modeling / XAI Interface
+
+- `predictive-capabilities/1`をversion-upせずadditive extensionした。
+- task defaults、structured model parameter definitions、provider/dependency availability/version、model-method compatibility、global/local supportをbackend authorityから公開する。
+- advanced capability unavailable / incompatible / unsupported scopeをstable Predictive validation errorで表現し、silent fallbackしない。
+- existing Artifact APIで`fitted-model/2`を扱い、新しいModel Registry APIを追加しない。

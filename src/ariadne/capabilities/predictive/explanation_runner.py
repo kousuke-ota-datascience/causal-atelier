@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from ariadne.capabilities.predictive.modeling import predict
+from ariadne.capabilities.predictive.explanation_capabilities import (
+    resolve_explanation_method,
+)
 from ariadne.capabilities.predictive.validation import (
     validate_predictive_specification,
 )
@@ -39,13 +42,14 @@ class PredictiveExplainRunner:
         model = context.inputs.get("frozen_model")
         preprocessor = context.inputs.get("fitted_preprocessor")
         dataset = context.inputs.get("explanation_dataset")
+        reference = context.inputs.get("explanation_reference")
         explanation = context.inputs.get("explanation_specification")
         sampling = context.inputs.get("sampling_definition")
         training = context.inputs.get("training_summary")
         evaluation = context.inputs.get("evaluation_summary")
         partition = context.inputs.get("partition_manifest")
-        if not isinstance(model, dict) or model.get("schema_version") != "fitted-model/1":
-            raise InvalidSchema("EXPLAIN requires fitted-model/1")
+        if not isinstance(model, dict) or model.get("schema_version") not in {"fitted-model/1", "fitted-model/2"}:
+            raise InvalidSchema("EXPLAIN requires fitted-model/1 or fitted-model/2")
         if (
             not isinstance(preprocessor, dict)
             or preprocessor.get("schema_version") != "fitted-preprocessor/1"
@@ -76,6 +80,12 @@ class PredictiveExplainRunner:
                 "Explanation features do not match the frozen model",
                 path="explanation_dataset.feature_order",
             )
+        if explanation and explanation.get("method") == "LIME_TABULAR" and (
+            not isinstance(reference, dict)
+            or reference.get("schema_version") != "predictive-explanation-reference/1"
+            or reference.get("partition") != "TRAIN"
+        ):
+            raise InvalidSchema("EXPLAIN requires a TRAIN explanation reference")
         if not isinstance(explanation, dict) or not explanation:
             raise InvalidSchema("EXPLAIN requires an explicit explanation specification")
         if explanation != context.stage.parameters.get("explanation_spec"):
@@ -102,6 +112,7 @@ class PredictiveExplainRunner:
         model: dict[str, Any] = context.inputs["frozen_model"]
         preprocessor: dict[str, Any] = context.inputs["fitted_preprocessor"]
         dataset: dict[str, Any] = context.inputs["explanation_dataset"]
+        reference: dict[str, Any] | None = context.inputs.get("explanation_reference")
         explanation: dict[str, Any] = context.inputs["explanation_specification"]
         sampling: dict[str, Any] = context.inputs["sampling_definition"]
         training: dict[str, Any] = context.inputs["training_summary"]
@@ -121,7 +132,38 @@ class PredictiveExplainRunner:
             else "PREDICTION"
         )
         supported = method == SUPPORTED_EXPLANATION_METHOD
-        if supported:
+        shap_explanation: dict[str, Any] | None = None
+        if method == "LIME_TABULAR":
+            from ariadne.capabilities.predictive.lime_backend import explain_lime_local, reject_lime_global
+            if not explanation["local_explanations"]:
+                reject_lime_global()
+            global_explanation = None
+            assert reference is not None  # validated above for LIME only
+            local_explanation = [explain_lime_local(model, reference["features"], row, ordinal, sampling["seed"]) for ordinal, row in zip(dataset["row_ordinals"][:sampling["size"]], dataset["features"][:sampling["size"]], strict=True)]
+            if local_explanation:
+                output_scale = local_explanation[0]["output_scale"]
+            status = "GENERATED"
+            supported = False
+        elif method == "SHAP_TREE":
+            # Resolve capability before execution so an incompatible model or
+            # unavailable optional package retains the frozen explicit error.
+            resolve_explanation_method(method, model["model_id"], scope="GLOBAL")
+            if explanation["local_explanations"]:
+                resolve_explanation_method(method, model["model_id"], scope="LOCAL")
+            from ariadne.capabilities.predictive.shap_backend import explain_shap_tree
+
+            shap_explanation = explain_shap_tree(
+                model,
+                dataset["features"],
+                dataset["row_ordinals"],
+                local_size=(sampling["size"] if explanation["local_explanations"] else 0),
+            )
+            global_explanation = shap_explanation["global"]
+            local_explanation = shap_explanation["local"]
+            output_scale = shap_explanation["output_scale"]
+            status = "GENERATED"
+            supported = False
+        elif supported:
             if (
                 explanation["local_explanations"]
                 and sampling["size"] > len(dataset["row_ordinals"])
@@ -152,6 +194,17 @@ class PredictiveExplainRunner:
                 ),
             })
 
+        method_provenance = _method_provenance(
+            method=method,
+            model=model,
+            preprocessor=preprocessor,
+            dataset=dataset,
+            sampling=sampling,
+            local_explanation=local_explanation,
+            output_scale=output_scale,
+            runtime_versions=context.snapshots.get("versions", {}),
+            shap_explanation=shap_explanation,
+        )
         explanation_document = {
             "schema_version": "predictive-explanation-result/1",
             "explanation_method": method,
@@ -179,6 +232,8 @@ class PredictiveExplainRunner:
             "warnings": warnings,
             "limitations": limitations,
         }
+        if method_provenance is not None:
+            explanation_document["method_provenance"] = method_provenance
         model_card_warnings = [
             *training.get("warnings", []),
             *evaluation.get("warnings", []),
@@ -209,6 +264,14 @@ class PredictiveExplainRunner:
                 "partition_counts": partition["partition_counts"],
             },
             "model_descriptor": training["model_descriptor"],
+            "model_artifact_provenance": {
+                "schema_version": model["schema_version"],
+                "provider": model.get("provider", "ariadne.native"),
+                "payload_format": model.get("payload_format", "ariadne-linear-json/1"),
+                "library": model.get("library", "ariadne"),
+                "library_version": model.get("library_version"),
+                "provenance": model.get("provenance", {}),
+            },
             "selected_hyperparameters": training["selected_hyperparameters"],
             "validation_metrics": training["validation_metrics"],
             "test_metrics": evaluation["metrics"],
@@ -219,6 +282,8 @@ class PredictiveExplainRunner:
             "warnings": model_card_warnings,
             "code_runtime_metadata": context.snapshots.get("versions", {}),
         }
+        if method_provenance is not None:
+            model_card_document["explanation_provenance"] = method_provenance
         explanation_result = ResultDraft(
             result_type="PREDICTIVE_EXPLANATION_RESULT",
             schema_version="predictive-explanation-result/1",
@@ -354,6 +419,108 @@ def _local_explanations(
             "feature_contributions": contributions,
         })
     return values
+
+
+def _method_provenance(
+    *,
+    method: str,
+    model: dict[str, Any],
+    preprocessor: dict[str, Any],
+    dataset: dict[str, Any],
+    sampling: dict[str, Any],
+    local_explanation: list[dict[str, Any]],
+    output_scale: str,
+    runtime_versions: dict[str, Any],
+    shap_explanation: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Return additive, public provenance without retaining TRAIN rows.
+
+    LIME is the provider that needs a runtime TRAIN reference.  Its local
+    records already carry the provider facts; this projection makes the same
+    immutable facts available at result, artifact, and Model Card level.
+    """
+    if method == "SHAP_TREE" and shap_explanation is not None:
+        return {
+            "method_id": shap_explanation["method"],
+            "method_version": shap_explanation["method_version"],
+            "model_identity": {
+                "model_id": model["model_id"],
+                "task_type": model["task_type"],
+                "model_schema_version": model["schema_version"],
+                "preprocessor_hash": model["preprocessor_hash"],
+            },
+            "preprocessor_identity": {
+                "schema_version": preprocessor["schema_version"],
+                "canonical_hash": preprocessor["canonical_hash"],
+            },
+            "feature_representation": {
+                "name": shap_explanation["feature_representation"],
+                "feature_order": shap_explanation["feature_order"],
+                "feature_order_hash": shap_explanation["feature_order_hash"],
+            },
+            "global_explanation_identity": {
+                "feature_count": len(shap_explanation["global"]),
+                "test_sample_count": len(dataset["row_ordinals"]),
+                "test_row_ordinals_hash": canonical_hash({
+                    "row_ordinals": dataset["row_ordinals"],
+                }),
+            },
+            "test_instances": [
+                {
+                    "row_ordinal": entry["row_ordinal"],
+                    "feature_order_hash": entry["feature_order_hash"],
+                }
+                for entry in local_explanation
+            ],
+            "background": shap_explanation["background"],
+            "output_scale": output_scale,
+            "sampling": dict(sampling),
+            "parameters": shap_explanation["parameters"],
+            "provider": shap_explanation["provider"],
+            "runtime_versions": runtime_versions,
+            "limitations": [TERMINOLOGY_LIMITATION],
+        }
+    if method != "LIME_TABULAR" or not local_explanation:
+        return None
+    first = local_explanation[0]
+    return {
+        "method_id": first["method"],
+        "method_version": first["method_version"],
+        "model_identity": {
+            "model_id": model["model_id"],
+            "task_type": model["task_type"],
+            "model_schema_version": model["schema_version"],
+            "preprocessor_hash": model["preprocessor_hash"],
+        },
+        "preprocessor_identity": {
+            "schema_version": preprocessor["schema_version"],
+            "canonical_hash": preprocessor["canonical_hash"],
+        },
+        "feature_representation": {
+            "name": first["feature_representation"],
+            "feature_order": first["feature_order"],
+            "feature_order_hash": first["feature_order_hash"],
+            "categorical_feature_indices": first["categorical_feature_indices"],
+        },
+        "test_instances": [
+            {
+                "row_ordinal": entry["row_ordinal"],
+                "feature_order_hash": entry["feature_order_hash"],
+            }
+            for entry in local_explanation
+        ],
+        "train_reference": first["reference"],
+        "output_scale": output_scale,
+        "sampling": dict(sampling),
+        "effective_seeds": [entry["effective_seed"] for entry in local_explanation],
+        "parameters": first["parameters"],
+        "provider": first["provider"],
+        "runtime_versions": runtime_versions,
+        "limitations": [
+            TERMINOLOGY_LIMITATION,
+            first["limitation"],
+        ],
+    }
 
 
 def _json_bytes(value: dict[str, Any]) -> bytes:

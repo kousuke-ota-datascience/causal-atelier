@@ -205,7 +205,7 @@ async def test_predictive_execution_plan_async_worker_results_artifacts_and_line
     artifact_schema_versions = {
         "PARTITION_INDEX": "partition-artifact/1",
         "FITTED_PREPROCESSOR": "fitted-preprocessor/1",
-        "FITTED_MODEL": "fitted-model/1",
+            "FITTED_MODEL": "fitted-model/2",
         "PREDICTION": "prediction-artifact/1",
     }
     for artifact_type, artifact in artifacts_by_type.items():
