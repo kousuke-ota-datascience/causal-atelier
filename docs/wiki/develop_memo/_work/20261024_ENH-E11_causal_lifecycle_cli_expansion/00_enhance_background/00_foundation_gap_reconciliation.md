@@ -9,11 +9,50 @@
 **対象:** 9月末Notion §5 の13項目と、そこに直接関係する現行FR/NFR/AR、現行ソース、既存テスト、過去のcanonical 999。  
 **対象外:** 8月4日Phase 2/3の新規スコープ確定、今後のCLI-onlyスコープに基づく作業分解、FR/NFR/AR改定、Gate 06/07、実装。
 
+## 0. INTRODUCTION
+
+### 0.1. 本文書の目的
+
+本書は、**ENH-E11の構想・要件改定計画を策定する前に、2026年9月末の「Causal Lifecycle Foundation Gap Completion」構想と現行実装との事実関係を確定するための事前調査資料**である。9月末に解消対象とされた基盤的な不足が現時点で残っているかを検証し、既存機能の再実装や、未承認の新機能を「既存要件の未実装」と誤認することを防ぐ。
+
+本書はWorkflowテンプレートに存在しない補助資料である。ただし、正規の`01_enhancement_concept_and_requirement_revision_plan.md`を作るための判断根拠として**01より先に作成・参照する必要がある**。本書自体は要件変更の承認、実装指示、Gate判定を行わない。
+
+### 0.2. 本文書を作成するに至った背景
+
+ENH-E11の9月末申し送りは、2026年8月4日の広い因果推論構想をそのまま採用せず、ENH-E5〜E10までに実現された機能を踏まえて**残存するFoundation Gapのみを特定する**方針を示していた。一方、現行の要件定義書ではImplementation Statusの是正が行われ、Graph、Identification、Estimation、Diagnosticsなどの実装状況は9月末の当初認識と異なる可能性があった。
+
+この照合を省略して8月4日のPhase 1〜3実装計画やGitHub Issueの作業分解へ進むと、①既存機能の二重実装、②現行要件の未充足と新Capability候補の混同、③過去のGate PASSと現在の再検証の混同、④正式承認前のスコープ確定を招く。そのため、**第一工程を「9月末構想 × 現行実装」に限定**して事実を整理することとした。
+
+### 0.3. 本文書で実施している内容
+
+9月末のENH-E11申し送り§5に掲げられた**13項目（S01〜S13）を漏れなく照合**する。項目ごとに、(1)現行FR/NFR/ARのImplementation Status、(2)実装コード、(3)既存自動テスト、(4)過去のcanonical 999 Gate受入記録、(5)固定SHAでの新規再実行の有無を分けて記録し、残差をA〜Eに分類する。
+
+さらに、13項目に直結する横断課題として、探索データ再利用warning、Navigationの責務分離、再現性・Provenanceを確認する。証拠不足と実際の要件未充足を混同せず、残存課題の追加検証条件を示す。**2026年8月4日のPhase 2・3追加スコープおよびCLI-onlyの実装計画確定は本書の対象外**であり、後続の三資料照合・構想検討で扱う。
+
+### 0.4. 結論サマリ
+
+| 判定対象 | 照合結果 | ENH-E11の構想策定に与える意味 |
+|---|---|---|
+| 既存Causal Foundation | Graph表現、Randomized/Backdoor Identification、Data Eligibility、ATE/ATT・IPW/AIPW、既存Diagnostics・Refutation・Sensitivity、既存API/Worker/CLI実行経路をコード・既存検証資料で確認 | **現行の契約範囲では再利用を原則**とし、歴史的な不足をそのまま新規実装対象にしない |
+| 現行要件上の未充足 | FR-051/AR-004の同一Dataset再利用警告、FR-008/054/095・NFR-002のcanonical lineage、NFR-001bの実効version/seed等の証跡は部分充足 | **現行Requirement Gap（A）として残す**。解消範囲と必要な検証を明確化する |
+| 旧構想にある追加技術 | DoWhyおよびFCIは現行の必須FRとしては規定されていない | **新Capability候補（B）**。必要な場合は要件・設計の正式承認を得る |
+| 将来送りの機能 | 汎用Product CLI（FR-118）はDEFERRED | 既存Scientific CLIと区別し、現行MUSTの未実装としない |
+
+**結論:** 9月末が想定したFoundation Gapの大部分は、現行の基本機能として存在する。一方、lineage・探索データの再利用warning・再現性metadataには明確な残差がある。DoWhy/FCIは既存要件の修正ではなく新機能として採否を判断する。
+
+**検証上の制限:** 今回の結論は現行ソース、既存テスト、歴史的Gate記録の照合に基づく。**今回の固定SHAで全件pytestやScientific Benchmarkを新たに実行した結果ではない**ため、全機能の最新環境における動作保証・科学的妥当性認定は行っていない。
+
 ## 1. 出典と判定方法
+
+### 1.1. 一次資料とその位置付け
 
 一次資料は[2026年9月末ENH-E11申し送り](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)の§1/§5/§6/§7/§9/§10/§11/§15/§19、[req](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/docs/wiki/requirement_definition/10_requirements_definition.md)、本SHAの実装である。**9月末の原案は承認済み要件ではなくHANDOFF_DRAFT**。これを実装済み・未実装の定義に転用しない。
 
+### 1.2. 事実と検証証拠の区別
+
 以下を**別の列**で判定する：（a）現行要件のImplementation Status、（b）ソースの実装、（c）自動テストの存在、（d）過去のcanonical 999 PASS、（e）このSHAでの新規再実行。**(e)は今回未実施**。テスト名・過去のGate PASSのみで現行全経路の正当性を断定しない。
+
+### 1.3. 未充足事項の分類と適用ルール
 
 Notion §6の分類を適用する。
 - **A_CURRENT_REQUIREMENT_GAP:** 現行要件に明記されているが部分充足・未充足。
@@ -25,6 +64,8 @@ Notion §6の分類を適用する。
 1項目に既存基盤と新規機能が混在する場合、**能力を分割してそれぞれ分類**する。残差なしとするのは現行要件に限定し、歴史的な無制限の機能充足を意味しない。
 
 ## 2. 9月末 §5 全13項目：要件 × コード × 検証証跡
+
+### 2.1. 13項目の照合結果
 
 | ID / 9月末項目 | 現行要件上の状態 | 現行実装の具体的証跡 | 自動テスト / 過去の受入 | 現在も残るGapと分類 |
 |---|---|---|---|---|
@@ -42,7 +83,7 @@ Notion §6の分類を適用する。
 | S12 DoWhy | 現行FRにDoWhy必須要件なし。正本§11は未承認外部engineを対象外とする。 | [identify](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/scientific/identification/adapter.py)はnative、[clispec](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/config_schema.py)にDoWhy method選択なし。 | DoWhy adapterのコード/テスト/999は**NOT_LOCATED**。 | **B**：導入可否をRequirement改訂で判断する候補。現行実装が欠けている事実と、現行Requirement Gapであることは別。 |
 | S13 FCI | FR-035/037は一般Discovery/Graph表現でありFCI固有要件なし。 | [discovery](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/scientific/discovery/adapter.py)のregistryはPC/GES/LiNGAM/NOTEARS、[clispec](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/config_schema.py)も同様。PAG表現（S03）は存在。 | FCI専用テスト/999は**NOT_LOCATED**。 | **B**：FCI discovery、PAG endpointsの忠実な保存・潜在交絡warningを新規Capabilityとして承認判断。PAGをDAGへ強制変換しない。 |
 
-### 判定境界の確認
+### 2.2. 判定境界と解釈上の注意
 
 上記の「C」は**記載した現在のmethod/contractの範囲に限る**。例えばFR-047=IMPLEMENTEDを根拠にCATEやLATEを実装済みとは扱わない。上記「NOT_LOCATED」は今回参照した証跡で特定できなかった意味であり、全履歴に存在しないという断定ではない。
 
@@ -56,13 +97,15 @@ Notion §6の分類を適用する。
 
 ## 4. 確認方法と未検証範囲（重要）
 
-**今回実施したこと**
+### 4.1. 実施した確認
+
 1. Notion `HANDOFF_DRAFT` §5の13項目を逐語単位で起点に固定。
 2. 正本 `10_requirements_definition.md` のFR/NFR/AR Implementation StatusをSHA付きで照合。
 3. Scientific/Domain/Application/CLI/API/Worker/lineageの該当実装とテスト**ソースを閲覧**。
 4. E8 G02、E9 G04、E9 G05のcanonical 999 Gate decision本文を読取り、対応する受入の主張範囲を確認。
 
-**今回実施していないこと**
+### 4.2. 実施していない確認
+
 - 固定SHAでの新規pytest再実行、全Scientific Benchmark再実行、Browser E2E再実行。
 - 各FRについて「対象となる全テスト/Gate」との厳密な全件一対一追跡。
 - 任意の実データでのscience-validity certification / ライブラリ依存version行列。
@@ -84,8 +127,14 @@ Notion §6の分類を適用する。
 
 ## 6. この照合が認める結論／認めない結論
 
+### 6.1. 今回の証拠から支持できる結論
+
 **認める**：9月末の13項目について、基礎Graph・Identification・Eligibility・ATE/ATT・Diagnostics・既存Refutation/Sensitivityおよび既存API/Worker/CLIは現行実装で確認可能。再実装する前に現在の実装を継承する。正式なfoundation残差の候補はlineage / reuse warning / runtime provenanceが中心。DoWhy/FCIは新Requirement候補。
 
+### 6.2. 今回の証拠から支持できない結論
+
 **認めない**：13項目がすべて科学的に再検証済みという主張、DoWhy/FCIが現行MUST要件の未実装であるという主張、9月末の将来Phase除外が現時点のowner決定に優越するという主張、Phase 1–3の実装Gate/G01–G10が既に正式承認されたという主張。
+
+### 6.3. 後続工程への引継ぎ
 
 **次の判断点**：この9月末スコープでのSource Reconciliationと残差をレビューした後にのみ、8月4日Phase 1–3案および現在のCLI-only方針との追加差分を別工程で扱う。ここでは新Issueの実装作業や要件・設計の改訂を実施していない。

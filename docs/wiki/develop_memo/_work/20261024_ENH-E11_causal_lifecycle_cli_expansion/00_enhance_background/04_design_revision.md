@@ -11,7 +11,7 @@
 
 ## 2. 設計差分（案）
 
-### Scientific CoreとDomainの責務
+### 2.1. Scientific CoreとDomainの責務
 
 - **Question/Design/Graph:** 現行schemaを可能な限り再利用する。DB不要のlocal executionでProduct versionを直接使用できなければ、版管理されたlocal identity/provenanceを用意する。
 - **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。
@@ -20,7 +20,7 @@
 - **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。
 - **Temporal/Quasi-experimental:** Panel、時刻、running variable、IV、donor poolの妥当性を、横断データの既存入力契約とは分けて検証する。
 
-### ローカル成果物の流れ
+### 2.2. ローカル成果物の流れ
 
 `検証済みCLI設定 → 科学メソッドAdapter → Result/Diagnostics → 永続ローカルファイル → Manifest`。
 

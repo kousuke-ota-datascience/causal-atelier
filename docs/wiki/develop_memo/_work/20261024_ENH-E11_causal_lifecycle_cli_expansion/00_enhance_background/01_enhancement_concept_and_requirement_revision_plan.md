@@ -37,14 +37,14 @@
 
 ## 5. 対象範囲
 
-### 対象
+### 5.1. 対象
 
 - **Phase 1:** Question/Design/Graph/version/Eligibility残差、optional DoWhy、FCI/PAG fidelity、Refutation・Sensitivity追加、既存ATE/ATT・IPTW/AIPWの科学的品質と診断。
 - **Phase 2:** LinearDML、CausalForestDML、DRLearner、ForestDRLearner、S/T/X-Learner、DRIVまたは科学的に同等なIV+ML、第一級CATE/HTE、cross-fitting、推論・support・calibration、policy-ready**ファイル**成果物。
 - **Phase 3:** Tigramite PCMCI/PCMCI+/LPCMCI、CI-test registry、DiD、Event Study、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control、Synthetic DiD、Interrupted Time Series。それぞれのデザイン固有の仮定・診断・既知真値検証を含む。
 - **横断:** ローカルCLI仕様、Manifest/Hash/Version/Seed/Split、依存分離、科学的結果と技術失敗の区別、科学ベンチマーク。
 
-### 対象外
+### 5.2. 対象外
 
 - **新機能**のWeb UI、Web API、Worker、DB統合、およびCLI機能の科学的妥当性を証明するためのBrowser E2E。
 - Phase 4：Policy Evaluation/自動意思決定、capacity/cost最適化、drift監視、運用承認。
