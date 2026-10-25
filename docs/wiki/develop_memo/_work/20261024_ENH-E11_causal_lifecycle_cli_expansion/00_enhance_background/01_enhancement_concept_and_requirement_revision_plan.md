@@ -11,7 +11,9 @@
 
 2026年8月4日の因果推論ライフサイクル構想は、Identification、Refutation、Sensitivityに加えて、CATE/HTE、時系列因果探索、準実験デザインを対象としていた。9月末のENH-E11申し送り（`HANDOFF_DRAFT`）では、後続の実装を考慮し、対象を**現行実装に対する基盤の残存Gap**へ縮小した。その後のオーナー方針では、8月案Phase 1〜3の必須機能をENH-E11に再度含める一方、新機能の提供面をScientific Core・ローカルCLI・永続ファイル成果物に限定することとなった。
 
-**事前照合による確定範囲:** 既存Graph、Randomized/Backdoor Identification、Data Eligibility、ATE/ATT・IPW/AIPW、構造化Diagnostics、既存Refutation/Sensitivityは実装・テストの存在が確認されている。FR-051/AR-004の探索データ再利用警告、FR-054/FR-008/FR-095/NFR-002のlineage、NFR-001bの再現性metadataには未充足が残る。DoWhy/FCIは現行必須要件の未実装ではなく**新規Capability候補**である。詳細・証拠・検証限界は先行資料00に記載した。
+**事前照合による確定範囲:** 既存Graph、Randomized/Backdoor Identification、Data Eligibility、ATE/ATT・IPW/AIPW、構造化Diagnostics、既存Refutation/Sensitivityは実装・テストの存在が確認されている。未解消の現行Foundation Gapは**①FR-051/AR-004の探索データ再利用警告、②FR-008/054/095・NFR-002のcanonical lineage、③FR-086a/087b・NFR-001bの再現性metadata、④FR-132/133/144/145・NFR-023のNavigation Capability所有権**の4領域である。①と③のseed網羅性は完全な未実装ではなく検証不足を伴う。DoWhy/FCIは現行必須要件の未実装ではなく**新規Capability候補**。詳細・証拠・閉鎖条件は`00_foundation_gap_closure_assessment.md`へ記録した。
+
+**実装への帰属に関する留保:** この4領域は現行正本との残差だが、既存Product API/DB/Navigationを変更する項目までENH-E11のCLI-only実装に自動採用するものではない。後続のスコープ決定により帰属・取扱いを承認する。
 
 この区別を行わず8月案を実装すると、既存実装の重複、未承認外部ライブラリの導入、正本要件§11との不整合を生む。
 
@@ -105,7 +107,8 @@
 
 ## 12. 出典
 
-- **先行調査:** [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md)
+- **先行照合:** [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md)
+- **残差の確定:** [00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md)
 - **歴史的構想:** `20260804_causal_lifecycle_enhancement/03_01〜03_03`（要件正本ではない）。
 - **9月末申し送り:** https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5 （`HANDOFF_DRAFT`）。
 - **正本の参照SHA:** `84c5a624389b233fcb97c656f1c94d177f459c5a`。

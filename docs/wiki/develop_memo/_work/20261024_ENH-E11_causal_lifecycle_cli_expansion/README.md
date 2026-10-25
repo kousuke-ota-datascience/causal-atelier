@@ -12,7 +12,7 @@
 - **新機能**の提供範囲はScientific Core／ローカルCLI／永続的なローカルファイル成果物までとし、Web UI・Web API・Worker・DBとの新規統合は後続へ送る。
 - Phase 4のPolicy Evaluation、意思決定自動化、運用監視、driftは対象外。
 - [全体追跡Issue #13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)を使用する。ただしIssueの完了はGate PASSではない。
-- **先行照合の結果:** 9月末のFoundation Gapは、現行Graph／Identification／Eligibility／推定／Diagnostics等で多くが解消済み。Lineage、同一Dataset再利用警告、再現性metadataには一部未充足が残る。DoWhy/FCIは現行要件の未実装ではなく新規Capability候補。
+- **先行照合の結果:** 9月末のFoundation Gapは、現行Graph／Identification／Eligibility／推定／Diagnostics等で多くが解消済み。Lineage、同一Dataset再利用警告、再現性metadata、Family別NavigationのCapability所有権に未充足が残る。DoWhy/FCIは現行要件の未実装ではなく新規Capability候補。
 
 ## 2. 文書の配置と実施順序
 
@@ -20,13 +20,14 @@
 
 | 文書 | 役割と状態 |
 |---|---|
-| **`00_enhance_background/00_foundation_gap_reconciliation.md`** | **出発点。** 9月末のENH-E11 Foundation Gap 13項目と現行FR/NFR/AR・コード・テスト・過去Gateを照合。ソース照合は完了、現行SHAでの全件テスト再実行は未実施 |
+| **`00_enhance_background/00_foundation_gap_reconciliation.md`** | **第1調査。** 9月末Foundation Gapの13項目を現行FR/NFR/AR・コード・テスト・過去Gateと照合 |
+| **`00_enhance_background/00_foundation_gap_closure_assessment.md`** | **第2調査。** 第1調査に基づき現行要件の残存Gap4領域と証拠水準・閉鎖条件・E11への帰属未決事項を確定。固定SHAでの全件再実行は未実施 |
 
 ### 2.2. 第2段階：Workflow所定の正式な計画・承認・要件設計
 
 | 文書 | 役割と状態 |
 |---|---|
-| `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md` | 00の証拠を入力とする構想・対象範囲・リスク・暫定Gate案（DRAFT） |
+| `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md` | 第1・第2の事前調査を入力とする構想・対象範囲・リスク・暫定Gate案（DRAFT） |
 | `00_enhance_background/02_enhancement_concept_approval_record.md` | Human ownerの正式承認記録。**承認待ち** |
 | `00_enhance_background/03_requirements_revision.md` | FR/NFR/ARの意味上の変更案。正本未改定 |
 | `00_enhance_background/04_design_revision.md` | 目標Architectureの改定案。未承認 |
@@ -46,7 +47,7 @@
 
 ## 3. 今後の進め方
 
-1. **00の事前照合をレビュー**し、残る未充足・証拠不足を把握する。
+1. **2つの00事前調査をレビュー**し、13項目の照合結果と4領域の残差・証拠不足を把握する。
 2. 8月案との三資料比較を詰め、既存再利用・修正・新規Capability・後続送りを分離する。
 3. 構想の正式承認とArchitecture Reviewを得る。必要な要件・設計改定を正本に反映する。
 4. 承認済みSnapshot、基準SHA、semantic Gate/Work Packageを確定し、Gate別06/07をfreezeする。

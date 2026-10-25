@@ -34,11 +34,11 @@ ENH-E11の9月末申し送りは、2026年8月4日の広い因果推論構想を
 | 判定対象 | 照合結果 | ENH-E11の構想策定に与える意味 |
 |---|---|---|
 | 既存Causal Foundation | Graph表現、Randomized/Backdoor Identification、Data Eligibility、ATE/ATT・IPW/AIPW、既存Diagnostics・Refutation・Sensitivity、既存API/Worker/CLI実行経路をコード・既存検証資料で確認 | **現行の契約範囲では再利用を原則**とし、歴史的な不足をそのまま新規実装対象にしない |
-| 現行要件上の未充足 | FR-051/AR-004の同一Dataset再利用警告、FR-008/054/095・NFR-002のcanonical lineage、NFR-001bの実効version/seed等の証跡は部分充足 | **現行Requirement Gap（A）として残す**。解消範囲と必要な検証を明確化する |
+| 現行要件上の未充足 | FR-051/AR-004の同一Dataset再利用警告、FR-008/054/095・NFR-002のcanonical lineage、FR-086a/087b・NFR-001bの実効version/seed等はPARTIAL。加えてFR-132/133/144はPARTIAL、FR-145/NFR-023はNOT_IMPLEMENTED（Family-specific CapabilityによるNavigation catalog所有権） | **現行Requirement Gap（A）として残す**。4領域への整理・証拠水準・閉鎖条件は後続の`00_foundation_gap_closure_assessment.md`に記録 |
 | 旧構想にある追加技術 | DoWhyおよびFCIは現行の必須FRとしては規定されていない | **新Capability候補（B）**。必要な場合は要件・設計の正式承認を得る |
 | 将来送りの機能 | 汎用Product CLI（FR-118）はDEFERRED | 既存Scientific CLIと区別し、現行MUSTの未実装としない |
 
-**結論:** 9月末が想定したFoundation Gapの大部分は、現行の基本機能として存在する。一方、lineage・探索データの再利用warning・再現性metadataには明確な残差がある。DoWhy/FCIは既存要件の修正ではなく新機能として採否を判断する。
+**結論:** 9月末が想定したFoundation Gapの大部分は、現行の基本機能として存在する。一方、lineage・探索データの再利用warning・再現性metadata・Navigation catalogのCapability所有権には残差がある。DoWhy/FCIは既存要件の修正ではなく新機能として採否を判断する。
 
 **検証上の制限:** 今回の結論は現行ソース、既存テスト、歴史的Gate記録の照合に基づく。**今回の固定SHAで全件pytestやScientific Benchmarkを新たに実行した結果ではない**ため、全機能の最新環境における動作保証・科学的妥当性認定は行っていない。
 
@@ -93,6 +93,7 @@ Notion §6の分類を適用する。
 |---|---|---|
 | X01 Exploratory reuse warning | FR-051 / AR-004 **PARTIAL**。[explore](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/product/application/exploratory_service.py)のExploratory Result→Causal/Predictive DRAFT handoffでは `EXPLORATORY_REUSE_SAME_DATA` とsource Result IDが生成される。一方[execution](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/product/application/execution_service.py)の同一Dataset Discovery後のconfirmatory Estimation warningは`POST_SELECTION_INFERENCE_RISK`であり別条件・別code。一般的な同一Dataset reuseの検出網羅は示されない。 | **A**：現行要件の明確な部分充足。2つのwarningを同一とみなさない。 |
 | X02 Navigationの分離 | FR-153～156とAR-023/024は正本で **IMPLEMENTED**、[E8 G02 999 PASS](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/docs/wiki/develop_memo/_work/20260820_ENH-E8_analysis_stage_content_redesign/30_test_report/G02/Trial02/999_GATE_DECISION.md)、[E9 G05 999 PASS](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/30_test_report/G05/Trial01/ENH-E9-G05_01__999_gate_decision.md)。 | **C**：9月末に想定したNavigationの基礎Gapは現在の受入範囲で解消。 |
+| X04 Navigation catalog ownership | FR-132/133/144 **PARTIAL**、FR-145/NFR-023 **NOT_IMPLEMENTED**。`src/ariadne/product/application/navigation_catalog.py`が3 Familyの具体的Stage ID/slug/defaultを集中宣言。Stage表示と科学的Stage責務の分離（X02）とは別の所有権制約である。 | **A**：現行正本とコードの設計上の不一致。実装対応をE11 CLI-only範囲へ自動算入しない。 |
 | X03 Reproducibility / provenance | NFR-001b **PARTIAL**。[climan](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/manifest.py)は`backend_version`項目を持つが[clistage](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/scientific_stage.py)は`ariadne/0.1.0`固定、runtime_versionsはPython中心。Product [execution](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/product/application/execution_service.py)の`_runtime_manifest`は固定列挙のlibrary versionsを記録する。 | **A**：実効依存versionとeffective seedの全stage完全性は未立証。CLIのversion placeholderを真のbackend package versionと誤認しない。 |
 
 ## 4. 確認方法と未検証範囲（重要）
@@ -121,6 +122,7 @@ Notion §6の分類を適用する。
 | P0 | FR-051 / AR-004 | 明示的handoff以外のsame immutable Dataset explorative→confirmatory reuseを検知する条件とResult evidence連結 | same-dataset、有/無handoff、別Dataset、cross-project、同一/異なる分析操作のcase matrix |
 | P1 | NFR-001b | effective package/python/version、実効seed、retry/stage attempt、CLI vs Product manifestの意味の違い | manifest contract、multiple stage attempt、optional backend absent、fixed-seed replay |
 | P1 | FR-040/041 / FR-054 | Question/Designの独立resource version要否（現行要件には明記なし）。もし要件拡張するならResource authorityを先に定義 | 既存AnalysisSpecification Versionとのmapping、hashとGraph/Result関係 |
+| P1 | FR-132/133/144/145・NFR-023 | Family固有StageのCapability所有権がgeneric applicationに集中している。UI挙動がPASSでもArchitecture要件は未充足 | ownershipをCapabilityへ移すか承認された要件改訂。API/historyの回帰を保護 |
 | P2 | FR-046/047/048 | 既存IPW/AIPWの分散・区間推定、診断結果の科学的妥当性（現行IMPLEMENTEDを否定する直接証拠は未提示） | known-truth bias/CI coverageとpoor overlapを独立試験で評価 |
 
 **S12 DoWhy、S13 FCI** はこの残存現行Requirement Gapの表へ混入させない。別枠の **B_NEW_CAPABILITY_CANDIDATE**。FR-118もcurrent MUST GapではなくDEFERRED。
@@ -129,7 +131,7 @@ Notion §6の分類を適用する。
 
 ### 6.1. 今回の証拠から支持できる結論
 
-**認める**：9月末の13項目について、基礎Graph・Identification・Eligibility・ATE/ATT・Diagnostics・既存Refutation/Sensitivityおよび既存API/Worker/CLIは現行実装で確認可能。再実装する前に現在の実装を継承する。正式なfoundation残差の候補はlineage / reuse warning / runtime provenanceが中心。DoWhy/FCIは新Requirement候補。
+**認める**：9月末の13項目について、基礎Graph・Identification・Eligibility・ATE/ATT・Diagnostics・既存Refutation/Sensitivityおよび既存API/Worker/CLIは現行実装で確認可能。再実装する前に現在の実装を継承する。現行要件上の残差はlineage / reuse warning / runtime provenance / Capability所有権の4領域。詳細な閉鎖条件は`00_foundation_gap_closure_assessment.md`で扱う。DoWhy/FCIは新Requirement候補。
 
 ### 6.2. 今回の証拠から支持できない結論
 

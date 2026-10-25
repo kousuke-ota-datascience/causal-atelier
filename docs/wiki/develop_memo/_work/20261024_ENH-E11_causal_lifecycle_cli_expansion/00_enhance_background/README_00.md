@@ -10,7 +10,9 @@
 
 2026年9月末のENH-E11申し送り（`Causal Lifecycle Foundation Gap Completion`）と2026年10月の現行要件・実装を13項目で照合する。各行についてRequirement Status、ソース、テストの存在、過去の999判定、未充足・新Capability候補を区別する。
 
-この資料は**`01_enhancement_concept_and_requirement_revision_plan.md`より前に読むべき根拠資料**である。設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
+続いて**`00_foundation_gap_closure_assessment.md`**を読む。前者は9月末構想の13項目を照合する**第1調査**、後者は現行要件に残る4領域について証拠水準・閉鎖条件・E11への帰属未決事項を明示する**第2調査**である。
+
+両資料は**`01_enhancement_concept_and_requirement_revision_plan.md`より前に読むべき根拠資料**である。設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
 
 ## 2. Workflow所定の正式文書の順序
 
@@ -31,6 +33,7 @@
 | 対象 | 状態 |
 |---|---|
 | 9月末案 × 現行実装のSource Reconciliation | **完了（ソース照合）／新規全件テスト未実施** |
+| Foundation Gapの残差確定 | **4領域を登録・証拠水準確定／閉鎖テスト・実装帰属は未決** |
 | CLI-only Phase 1〜3のオーナー方針 | 計画上の方向性を確認済み |
 | 正式な構想・要件・設計承認 | **PENDING** |
 | Architecture Review | **未完了** |
