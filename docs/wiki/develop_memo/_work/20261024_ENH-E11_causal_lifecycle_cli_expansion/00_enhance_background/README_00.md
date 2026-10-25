@@ -6,13 +6,15 @@
 
 ## 1. 最初に読む文書
 
-**`00_foundation_gap_reconciliation.md` — 構想の出発点。**
+**`00_01_foundation_gap_reconciliation.md` — 構想の出発点。**
 
 2026年9月末のENH-E11申し送り（`Causal Lifecycle Foundation Gap Completion`）と2026年10月の現行要件・実装を13項目で照合する。各行についてRequirement Status、ソース、テストの存在、過去の999判定、未充足・新Capability候補を区別する。
 
-続いて**`00_foundation_gap_closure_assessment.md`**を読む。前者は9月末構想の13項目を照合する**第1調査**、後者は現行要件に残る4領域について証拠水準・閉鎖条件・E11への帰属未決事項を明示する**第2調査**である。
+続いて**`00_02_foundation_gap_closure_assessment.md`**を読む。前者は9月末構想の13項目を照合する**第1調査**、後者は現行要件に残る4領域について証拠水準・閉鎖条件・E11への帰属未決事項を明示する**第2調査**である。
 
-両資料は**`01_enhancement_concept_and_requirement_revision_plan.md`より前に読むべき根拠資料**である。設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
+さらに**`00_03_phase1_to_phase3_reconciliation.md`**で、8月4日Phase 1〜3・上位構想と9月末の判断、現行実装を68項目で照合する（**第3調査**）。
+
+**3つの事前調査文書は、この順序で`01_enhancement_concept_and_requirement_revision_plan.md`より前に読む。**設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
 
 ## 2. Workflow所定の正式文書の順序
 
@@ -22,11 +24,10 @@
 
 ## 3. 後続の補助資料
 
-- `06_three_source_reconciliation_matrix.md`：**00の二資料の後に使用**。ステップ3として8月4日Phase 1〜3＋A0上位構想を9月末と現行正本・ソースへ68行で照合済み。**技術採用・CLI-only実装Scopeの正式承認は未実施。**
 - `07_github_issue_register.md`：Issue #13〜#24の追跡と、暫定Gate・要件の対応。
 - `40_operator_workflows/architecture_review/`：source-of-truth、Scientific/Local CLI所有権、Gate境界に関する未承認の判断案。
 
-補助資料は01〜05、承認済み正本、Gate 06/07の正式なauthorityを**代替しない**。
+事前調査00_01〜00_03とIssue・Operatorの補助資料は、01〜05、承認済み正本、Gate 06/07の正式なauthorityを**代替しない**。
 
 ## 4. 現在の承認状態
 

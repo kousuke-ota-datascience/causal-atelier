@@ -4,7 +4,7 @@
 **状態:** Issue登録済み／要件・Gate対応は未承認の案  
 **Repository:** https://github.com/kousuke-ota-datascience/causal-atelier  
 **記載粒度の基準:** [Issue #11](https://github.com/kousuke-ota-datascience/causal-atelier/issues/11)と同様の`Problem / Goal / Proposed Design / Acceptance Criteria / Related / Result / Memo`。  
-**作業順序:** `00_foundation_gap_reconciliation.md`により9月末案と現行実装を**先に**照合する。この台帳のIssue分類は実装承認ではない。
+**作業順序:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を01構想策定より**先に**確認する。この台帳のIssue分類は実装承認ではない。
 
 ## 1. 登録済みIssue一覧
 

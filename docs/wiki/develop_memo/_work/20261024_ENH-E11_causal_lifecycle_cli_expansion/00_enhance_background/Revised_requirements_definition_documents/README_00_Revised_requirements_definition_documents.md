@@ -8,6 +8,6 @@
 
 承認前の草案や歴史資料をここへ置き、承認済みと表示してはならない。
 
-現行正本の計画参照点は`84c5a624389b233fcb97c656f1c94d177f459c5a`。先行する事前調査は`../00_foundation_gap_reconciliation.md`。正式承認時には、その時点の受入基準SHAを再取得し、承認済み正本をchecksumとともに保存する。
+現行正本の計画参照点は`84c5a624389b233fcb97c656f1c94d177f459c5a`。先行する事前調査は`../00_01_foundation_gap_reconciliation.md`→`../00_02_foundation_gap_closure_assessment.md`→`../00_03_phase1_to_phase3_reconciliation.md`。正式承認時には、その時点の受入基準SHAを再取得し、承認済み正本をchecksumとともに保存する。
 
 適用Workflow：`agentic_enhancement_workflow_template/00_enhance_background/README_00.md`。

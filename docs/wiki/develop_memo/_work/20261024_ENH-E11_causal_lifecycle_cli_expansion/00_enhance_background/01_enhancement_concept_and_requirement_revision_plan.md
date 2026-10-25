@@ -16,14 +16,15 @@
 
 ### 0.2. 先行資料との役割分担と重複排除
 
-現行正本・コード・テストの逐次照合は、先行する次の**二つの00資料を根拠資料**とし、本書へ全文を再掲しない。
+現行正本・コード・テストの逐次照合と8月案との比較は、先行する次の**3件の事前調査資料を根拠**とし、本書へ全文を再掲しない。
 
 | 先行資料 | 記録する事実・責務 | 本書に引き継ぐ内容 |
 |---|---|---|
-| [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md) | 9月末構想13項目と現行FR/NFR/AR・コード・テスト・過去999の対応。P0/P1等は**追加調査の優先順位** | 実装済み能力と新Capability候補の境界 |
-| [00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
+| [00_01_foundation_gap_reconciliation.md](00_01_foundation_gap_reconciliation.md) | 9月末構想13項目と現行FR/NFR/AR・コード・テスト・過去999の対応。P0/P1等は**追加調査の優先順位** | 実装済み能力と新Capability候補の境界 |
+| [00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
+| [00_03_phase1_to_phase3_reconciliation.md](00_03_phase1_to_phase3_reconciliation.md) | 8月4日Phase 1〜3・A0上位構想、9月末の扱い、現行実装の68項目を照合 | 既存再利用・新規候補・後続扱い・採否未決事項 |
 
-**8月4日とのPhase別差分は[06_three_source_reconciliation_matrix.md](06_three_source_reconciliation_matrix.md)の68行を正とする。** ここではステップ3の完了をもって新Capabilityの採否・要件改定を承認したとは扱わない。上位A0だけにあるATC、mediation、matching/g-computation、negative control等の帰属はステップ4で明示的に決定する。
+**00_03のソース照合完了は、新Capabilityの採否・要件改定の承認を意味しない。**上位A0だけにあるATC、mediation、matching/g-computation、negative control等の帰属はステップ4で明示的に決定する。
 
 本書の第1章は**分析上の課題とFoundation Gapの関係**、第2章は**手法の選定理由**、第3章は**現行の分析能力と適用限界（As-Is）**、第4章は**分析者の状況・問い・利用方法で表す目標状態（To-Be）**、第10章は**目標状態を検証するための暫定完了基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
 
@@ -79,7 +80,7 @@ AriadneにはPCを含む複数の因果探索法、Graph、Randomized/Backdoor�
 | **③ GAP-C03：再現性・Provenance** | **P1** | FR-086a/087b、NFR-001b：**PARTIAL** | Scientific Library実効versionの網羅性不足。StageAttempt seed/retryの全経路は未立証 | E11のlocal CLIには必要なversion/seedを独立に要求。既存Product側の残差は別判断 |
 | **④ GAP-C04：Capability所有権** | **P1** | FR-132/133/144：**PARTIAL**、FR-145/NFR-023：**NOT_IMPLEMENTED** | Family固有の具体Navigation Stage catalogをgeneric applicationが集中所有 | 全Family横断のArchitecture Gap。CLI科学手法の実装前提とは断定せず、所管を別途判断 |
 
-**優先度の意味:** P0/P1は[00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md)第5章の**追加調査・閉鎖確認の優先順位**であって、「ENH-E11で必ずP0から実装する」という実装優先度ではない。第2調査[00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md)は各Gapの証拠水準・閉鎖条件を詳述する。なお現行正本にはこのほかにもPARTIAL/NOT_IMPLEMENTEDがあるため、**上表は全リポジトリの未実装要件の網羅一覧ではない**。
+**優先度の意味:** P0/P1は[00_01_foundation_gap_reconciliation.md](00_01_foundation_gap_reconciliation.md)第5章の**追加調査・閉鎖確認の優先順位**であって、「ENH-E11で必ずP0から実装する」という実装優先度ではない。第2調査[00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md)は各Gapの証拠水準・閉鎖条件を詳述する。なお現行正本にはこのほかにもPARTIAL/NOT_IMPLEMENTEDがあるため、**上表は全リポジトリの未実装要件の網羅一覧ではない**。
 
 ## 2. 実施する理由
 
@@ -139,7 +140,7 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 | 既存Scientific CLIとローカルManifest | `interfaces/cli/config_schema.py`、`scientific_stage.py`等、`config_version=2.0` | 新手法の入力・結果schema、完全な実効Library version／seed／split |
 | 既存Product実行・Result/Artifact・Navigation | 現行Product API／Worker／DBとNavigation catalog | 新手法のProduct統合。既存Productには別途Foundation Gapが残る |
 
-実装・テスト・過去999判定の具体的な根拠は、[9月末構想との照合](00_foundation_gap_reconciliation.md)を参照する。**この調査用SHAで全件Scientific Benchmarkを再実行したわけではなく**、上表は科学的な全条件の合格認定ではない。
+実装・テスト・過去999判定の具体的な根拠は、[9月末構想との照合](00_01_foundation_gap_reconciliation.md)を参照する。**この調査用SHAで全件Scientific Benchmarkを再実行したわけではなく**、上表は科学的な全条件の合格認定ではない。
 
 ### 3.2. 現行能力では対応できない分析条件
 
@@ -159,7 +160,7 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 
 ### 3.3. 既存Foundation Gapと新規Capabilityを区別する
 
-第1.4節の**GAP-C01〜C04は既存のFR/NFR/ARに対する残存要件Gap**であり、FCI等の追加機能そのものではない。個別の実装証拠、P0/P1の調査優先順位、閉鎖条件は[00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md)を参照する。
+第1.4節の**GAP-C01〜C04は既存のFR/NFR/ARに対する残存要件Gap**であり、FCI等の追加機能そのものではない。個別の実装証拠、P0/P1の調査優先順位、閉鎖条件は[00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md)を参照する。
 
 **実装帰属は未決定である。** CLI-onlyのENH-E11でProduct側のGAP-C01・C02・C04を修正しない場合、それらを`IMPLEMENTED`へ変更してはならない。正式なスコープ審査時に、各Gapについて(a) E11内で閉鎖、(b) 別Issue／別Enhancementへ移管、(c) 承認済み要件変更で期待値を更新、のいずれかと責任者を記録する。GAP-C03の新規CLIへの実効version・seed要件は、第10章に受入条件を定めるが、Product側の部分充足を自動的に閉鎖しない。
 
@@ -389,10 +390,10 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 
 ## 12. 出典・補足資料
 
-- **9月末構想と現行実装の照合:** [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md)。13項目とP0/P1の調査優先度。
-- **未解消Gapの確定:** [00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md)。GAP-C01〜C04、関連FR/NFR/ARと閉鎖条件。
+- **9月末構想と現行実装の照合:** [00_01_foundation_gap_reconciliation.md](00_01_foundation_gap_reconciliation.md)。13項目とP0/P1の調査優先度。
+- **未解消Gapの確定:** [00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md)。GAP-C01〜C04、関連FR/NFR/ARと閉鎖条件。
 - **歴史的な手法候補:** `docs/wiki/develop_memo/_work/20260804_causal_lifecycle_enhancement/03_01_coding_instruction_Phase1.md`、`03_02_coding_instruction_Phase2.md`、`03_03_coding_instruction_Phase3.md`。**現行の承認済み要件ではない**。
 - **9月末申し送り:** [ENH-E11 Causal Lifecycle Foundation Gap Completion](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)（`HANDOFF_DRAFT`）。
 - **現行要件正本:** `docs/wiki/requirement_definition/10_requirements_definition.md`（Status是正コミット`84c5a624389b233fcb97c656f1c94d177f459c5a`）。
-- **8月4日のPhase 1〜3との差分照合（ステップ3完了）:** [06_three_source_reconciliation_matrix.md](06_three_source_reconciliation_matrix.md)。**68行のソース照合完了／最終採否・実装Scopeは未承認。** Issue台帳：`07_github_issue_register.md`。
+- **8月4日のPhase 1〜3との差分照合（ステップ3完了）:** [00_03_phase1_to_phase3_reconciliation.md](00_03_phase1_to_phase3_reconciliation.md)。**68行のソース照合完了／最終採否・実装Scopeは未承認。** Issue台帳：`07_github_issue_register.md`。
 - **方法の適用前提についての公開参考資料:** [causal-learn PC](https://causal-learn.readthedocs.io/en/latest/search_methods_index/Constraint-based%20causal%20discovery%20methods/PC.html)、[causal-learn FCI](https://causal-learn.readthedocs.io/en/latest/search_methods_index/Constraint-based%20causal%20discovery%20methods/FCI.html)、[EconML DML](https://econml.azurewebsites.net/spec/estimation/dml.html)、[Tigramite PCMCI](https://jakobrunge.github.io/tigramite/)。

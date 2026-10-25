@@ -4,7 +4,7 @@
 
 本Enhancementは新たなScientific runtime入口、第一級Design/Result契約、optional backend、永続ローカルArtifact、version・provenanceの所有権を伴うため、Workflowに従いArchitecture Reviewが必要となる。
 
-**作業順序:** まず`../../00_enhance_background/00_foundation_gap_reconciliation.md`を確認する。9月末Foundation Gapの現状を把握せず、歴史資料の全項目をそのまま新実装対象にしてはならない。
+**作業順序:** 先に事前調査`../../00_enhance_background/00_01_foundation_gap_reconciliation.md`→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`を確認する。9月末Foundation Gapを把握し、8月構想との差分を確認する前に、新実装対象やArchitectureを確定してはならない。
 
 1. `01_architecture_discovery.md` — コード上の事実、推論、未確認事項、ソース。
 2. `02_target_architecture_decision_record.md` — 所有権、不変条件、目標案。**未承認**。

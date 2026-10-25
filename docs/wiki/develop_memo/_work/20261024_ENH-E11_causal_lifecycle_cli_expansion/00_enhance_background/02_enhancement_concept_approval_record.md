@@ -5,7 +5,7 @@
 **承認日時:** 未発行  
 **承認権限:** Human owner  
 **審査対象:** `01_enhancement_concept_and_requirement_revision_plan.md`  
-**事前照合:** `00_foundation_gap_reconciliation.md`  
+**事前調査:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md`  
 **追跡:** [GitHub Issue #13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)
 
 ## 1. 計画の前提として確認されたオーナー方針（Gate承認ではない）
@@ -38,8 +38,8 @@
 
 ## 5. 承認のための残作業
 
-1. 先行照合`00_foundation_gap_reconciliation.md`の証拠と未検証事項を確認する。
-2. `06_three_source_reconciliation_matrix.md`、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
+1. 先行調査の`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を順に確認し、残存Gap、歴史構想の差分、証拠と未決事項を把握する。
+2. `00_03_phase1_to_phase3_reconciliation.md`、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
 3. Architecture Reviewを完了し、`05_requirements_design_consistency_and_traceability_review.md`を改訂する。
 4. Human ownerの正式判断を**実際の日時と根拠**付きで追記する。遡及的に承認済みとしない。
 5. 承認後に正本と承認Snapshotを固定し、Gate 06/07を作成する。

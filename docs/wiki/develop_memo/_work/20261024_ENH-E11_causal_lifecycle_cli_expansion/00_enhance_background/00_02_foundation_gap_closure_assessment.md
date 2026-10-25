@@ -4,7 +4,7 @@
 **判定状態:** 残差の候補と証拠水準を確定／固定SHAでの全件テスト未実施／実装計画・正式承認ではない  
 **判定日:** 2026-10-25（日本時間）  
 **対象基準:** `prototype/ariadne_mvp`、source SHA `e00b3e35be6adc536dffd270609b193669062dd3`。事実認定に用いるRequirementは[req](https://github.com/kousuke-ota-datascience/causal-atelier/blob/e00b3e35be6adc536dffd270609b193669062dd3/docs/wiki/requirement_definition/10_requirements_definition.md)。  
-**先行資料:** [reconcile](https://github.com/kousuke-ota-datascience/causal-atelier/blob/e00b3e35be6adc536dffd270609b193669062dd3/docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/00_foundation_gap_reconciliation.md)。9月末のNotion `HANDOFF_DRAFT`（[ENH-E11構想](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)）と現行基準を13項目で照合した結果を引き継ぐ。  
+**先行資料:** [reconcile](00_01_foundation_gap_reconciliation.md)。9月末のNotion `HANDOFF_DRAFT`（[ENH-E11構想](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)）と現行基準を13項目で照合した結果を引き継ぐ。  
 **利用先:** `01_enhancement_concept_and_requirement_revision_plan.md` の要件・実装差分の入力。8月案Phase 2/3の新規実装判断はこの資料の対象外。
 
 ## 0. INTRODUCTION
@@ -17,7 +17,7 @@
 
 ### 0.2. 本文書を作成するに至った背景
 
-先行`00_foundation_gap_reconciliation.md`では、Graph・Identification・Eligibility・ATE/ATT・既存Diagnostics等の基盤が概ね現行コードに存在する一方、lineage、探索データ再利用warning、実行環境provenanceの部分充足を確認した。ただしこの三領域のみでは、現行正本で`NOT_IMPLEMENTED`として残る**Family-specific NavigationのCapability所有権（FR-145/NFR-023）**を取りこぼす。
+先行`00_01_foundation_gap_reconciliation.md`では、Graph・Identification・Eligibility・ATE/ATT・既存Diagnostics等の基盤が概ね現行コードに存在する一方、lineage、探索データ再利用warning、実行環境provenanceの部分充足を確認した。ただしこの三領域のみでは、現行正本で`NOT_IMPLEMENTED`として残る**Family-specific NavigationのCapability所有権（FR-145/NFR-023）**を取りこぼす。
 
 さらに、実装の存在を確認しても網羅的な経路の証明がないものと、コード自体が正本の全構造を提供していないものを同じ「未実装」にすると、実装対象と検証作業の境界が不明確になる。そこで正本の原文・実装・テストで残差を再点検し、根拠と未決事項を保存する。
 

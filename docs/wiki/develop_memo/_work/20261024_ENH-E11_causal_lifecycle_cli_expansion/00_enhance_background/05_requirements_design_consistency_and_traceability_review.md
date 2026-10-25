@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・判断記録  
 **状態:** DRAFT／照合・承認待ち／Gate未承認  
-**前提:** `00_foundation_gap_reconciliation.md`の9月末案対現行実装の照合を先に行う。
+**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を構想・要件・設計策定前に照合する。
 
 ## 1. 要件→設計→Gate→受入条件→Issueの対応
 
@@ -32,7 +32,7 @@
 | 設計案とGate分割 | **PENDING** | Architecture ReviewがauthorityとGate境界を未確定 |
 | Gate間の依存 | **PENDING** | G01〜G10は草案であり06/07契約ではない |
 | Transition Debtの終了条件 | **PARTIAL/PENDING** | API/DBの将来境界は記載したが正式な承認なし |
-| 現行要件と実装の照合 | **PARTIAL COVERAGE** | `00_foundation_gap_reconciliation.md`で9月末13項目のSource照合を完了。現行SHAでのテスト再実行と厳密なFR単位の全件確認は未実施 |
+| 現行要件と実装の照合 | **PARTIAL COVERAGE** | `00_01_foundation_gap_reconciliation.md`で9月末13項目のSource照合を完了。現行SHAでのテスト再実行と厳密なFR単位の全件確認は未実施 |
 
 ## 3. 残る判断・承認の阻害要因
 

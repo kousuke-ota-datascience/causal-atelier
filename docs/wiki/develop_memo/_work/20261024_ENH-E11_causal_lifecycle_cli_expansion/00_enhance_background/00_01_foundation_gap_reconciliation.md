@@ -3,7 +3,7 @@
 **文書区分:** 事前調査・証跡資料（構想文書01の入力）  
 **状態:** ソース照合済み／現行SHAでの全件テスト未実施／未承認  
 **調査日:** 2026-10-25  
-**作成順序:** 本資料（00）→ 構想・要件改定計画（01）→ 承認記録（02）→ 要件・設計改定（03〜05）。本資料はWorkflowの規定文書を代替しない。  
+**参照順序:** 本資料（00_01）→ 未解消Gap確定（00_02）→ 8月Phase 1〜3差分照合（00_03）→ 構想・要件改定計画（01）→ 承認記録（02）→ 要件・設計改定（03〜05）。事前調査はWorkflowの規定文書を代替しない。  
 **比較基準:** 2026年9月末 `ENH-E11 Causal Lifecycle Foundation Gap Completion`（Notion `HANDOFF_DRAFT`、最終閲覧版）  
 **現行基準:** `prototype/ariadne_mvp` at `4c0129146a59e7a294f13f41a2e27a4b0d820a6f`。要件実装状態是正コミット `84c5a624389b233fcb97c656f1c94d177f459c5a` を継承。  
 **対象:** 9月末Notion §5 の13項目と、そこに直接関係する現行FR/NFR/AR、現行ソース、既存テスト、過去のcanonical 999。  
@@ -34,7 +34,7 @@ ENH-E11の9月末申し送りは、2026年8月4日の広い因果推論構想を
 | 判定対象 | 照合結果 | ENH-E11の構想策定に与える意味 |
 |---|---|---|
 | 既存Causal Foundation | Graph表現、Randomized/Backdoor Identification、Data Eligibility、ATE/ATT・IPW/AIPW、既存Diagnostics・Refutation・Sensitivity、既存API/Worker/CLI実行経路をコード・既存検証資料で確認 | **現行の契約範囲では再利用を原則**とし、歴史的な不足をそのまま新規実装対象にしない |
-| 現行要件上の未充足 | FR-051/AR-004の同一Dataset再利用警告、FR-008/054/095・NFR-002のcanonical lineage、FR-086a/087b・NFR-001bの実効version/seed等はPARTIAL。加えてFR-132/133/144はPARTIAL、FR-145/NFR-023はNOT_IMPLEMENTED（Family-specific CapabilityによるNavigation catalog所有権） | **現行Requirement Gap（A）として残す**。4領域への整理・証拠水準・閉鎖条件は後続の`00_foundation_gap_closure_assessment.md`に記録 |
+| 現行要件上の未充足 | FR-051/AR-004の同一Dataset再利用警告、FR-008/054/095・NFR-002のcanonical lineage、FR-086a/087b・NFR-001bの実効version/seed等はPARTIAL。加えてFR-132/133/144はPARTIAL、FR-145/NFR-023はNOT_IMPLEMENTED（Family-specific CapabilityによるNavigation catalog所有権） | **現行Requirement Gap（A）として残す**。4領域への整理・証拠水準・閉鎖条件は後続の`00_02_foundation_gap_closure_assessment.md`に記録 |
 | 旧構想にある追加技術 | DoWhyおよびFCIは現行の必須FRとしては規定されていない | **新Capability候補（B）**。必要な場合は要件・設計の正式承認を得る |
 | 将来送りの機能 | 汎用Product CLI（FR-118）はDEFERRED | 既存Scientific CLIと区別し、現行MUSTの未実装としない |
 
@@ -131,7 +131,7 @@ Notion §6の分類を適用する。
 
 ### 6.1. 今回の証拠から支持できる結論
 
-**認める**：9月末の13項目について、基礎Graph・Identification・Eligibility・ATE/ATT・Diagnostics・既存Refutation/Sensitivityおよび既存API/Worker/CLIは現行実装で確認可能。再実装する前に現在の実装を継承する。現行要件上の残差はlineage / reuse warning / runtime provenance / Capability所有権の4領域。詳細な閉鎖条件は`00_foundation_gap_closure_assessment.md`で扱う。DoWhy/FCIは新Requirement候補。
+**認める**：9月末の13項目について、基礎Graph・Identification・Eligibility・ATE/ATT・Diagnostics・既存Refutation/Sensitivityおよび既存API/Worker/CLIは現行実装で確認可能。再実装する前に現在の実装を継承する。現行要件上の残差はlineage / reuse warning / runtime provenance / Capability所有権の4領域。詳細な閉鎖条件は`00_02_foundation_gap_closure_assessment.md`で扱う。DoWhy/FCIは新Requirement候補。
 
 ### 6.2. 今回の証拠から支持できない結論
 

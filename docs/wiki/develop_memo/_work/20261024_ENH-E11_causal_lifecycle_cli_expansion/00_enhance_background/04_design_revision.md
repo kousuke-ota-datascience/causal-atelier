@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・設計判断案  
 **状態:** DRAFT／Architecture Review未完了  
-**前提:** `00_foundation_gap_reconciliation.md`の既存機能・残差分類、`03_requirements_revision.md`の要件改定案。
+**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`に基づく既存機能・残差・追加候補の分類、および`03_requirements_revision.md`の要件改定案。
 
 ## 1. 参照設計
 

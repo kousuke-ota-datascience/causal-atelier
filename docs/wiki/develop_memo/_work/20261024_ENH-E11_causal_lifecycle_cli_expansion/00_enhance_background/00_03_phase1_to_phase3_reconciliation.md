@@ -4,7 +4,7 @@
 **判定状態:** **SOURCE_RECONCILED（Phase別歴史要求の差分照合完了）**／実装スコープ・採否の正式承認前／固定SHAでの全件テスト未実施  
 **調査日:** 2026-10-25（日本時間）  
 **照合対象の現行Snapshot:** `prototype/ariadne_mvp` at `1d67b2a56f97bf16d953e4a6b6ce76ee37102bfb`。正本要件：[10_requirements_definition.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/1d67b2a56f97bf16d953e4a6b6ce76ee37102bfb/docs/wiki/requirement_definition/10_requirements_definition.md)。  
-**先行する工程1・2:** [9月末案の13項目照合](https://github.com/kousuke-ota-datascience/causal-atelier/blob/1d67b2a56f97bf16d953e4a6b6ce76ee37102bfb/docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/00_foundation_gap_reconciliation.md)／[残存Foundation Gap4領域](https://github.com/kousuke-ota-datascience/causal-atelier/blob/1d67b2a56f97bf16d953e4a6b6ce76ee37102bfb/docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/00_foundation_gap_closure_assessment.md)。  
+**先行する工程1・2:** [9月末案の13項目照合](00_01_foundation_gap_reconciliation.md)／[残存Foundation Gap4領域](00_02_foundation_gap_closure_assessment.md)。  
 **後続:** ステップ4での正式なCLI-only実装スコープ**案の確定**。本資料だけで新FR/NFR/ARを承認・改定しない。
 
 ## 0. INTRODUCTION
@@ -220,7 +220,7 @@
 | X-06 | A0§2.8/2.9/2.15：cluster SE/bootstrap/multiple tests、Discovery stability・agreement | 上位構想＋一部現行 | E9 diagnostics、DISC bootstrap設定、BENCH1Aは部分対応 | C部分＋B? | 選定手法別に必要な科学的品質要件を次工程で固定 |
 | X-07 | A0§2.13：Policy Evaluation／Decision、off-policy/cost/capacity | 9月末Phase4扱い | 新CLI Policy Executionの実装なし | D Phase4 | policy-ready fileはPhase2で候補、Policy自動実行とは異なる |
 | X-08 | A0§2.17：Monitoring／Drift／automated re-analysis | 9月末Phase4扱い | 当該因果運用Capability未定義 | D Phase4 | 今回のPhase1〜3 CLI-only対象に含めない |
-| X-09 | A0§2.16：Product canonical lineageと科学的provenance | Foundation残差 | GAP-C01〜C04。LINEAGE/CLOSURE/MANIFESTに部分機能 | A 現行Gap | 詳細は00_foundation_gap_closure_assessment.mdへ参照。CLI ManifestでProduct要件を閉鎖しない |
+| X-09 | A0§2.16：Product canonical lineageと科学的provenance | Foundation残差 | GAP-C01〜C04。LINEAGE/CLOSURE/MANIFESTに部分機能 | A 現行Gap | 詳細は00_02_foundation_gap_closure_assessment.mdへ参照。CLI ManifestでProduct要件を閉鎖しない |
 | X-10 | A0§4：UI/API/CLI/Workerでの意味統一 | 9月末Foundation統合確認、今回はCLI-first | 既存API/Worker/CLIがある。新methodsは未統合 | C既存＋D新統合 | 新手法のCLI意味・Artifactを検証しProduct統合は別scope |
 
 ### 5.2. 必須範囲の確定で避けるべきこと

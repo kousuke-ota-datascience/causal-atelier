@@ -2,15 +2,15 @@
 
 **文書区分:** 計画・意思決定資料  
 **状態:** DRAFT／要件の意味上の差分案／未承認  
-**前提資料:** `00_foundation_gap_reconciliation.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
+**前提資料:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
 **採番規則:** `E11-REQ-*`は計画上の仮識別子であり、承認されたFR/NFR/AR番号ではない。
 
 ## 1. 参照元
 
 - 正本：`docs/wiki/requirement_definition/00_product_concept_memo.md`、`10_requirements_definition.md`（Implementation Status訂正SHA `84c5a624389b233fcb97c656f1c94d177f459c5a`）、`21/22/23/30`の設計文書。
-- **第一比較:** `00_foundation_gap_reconciliation.md`。9月末Foundation Gapの既解消・部分充足・新Capability候補を区別する。
+- **第一比較:** `00_01_foundation_gap_reconciliation.md`。9月末Foundation Gapの既解消・部分充足・新Capability候補を区別する。
 - 追加の歴史資料：`20260804_causal_lifecycle_enhancement/03_01〜03_03`、9月末[ENH-E11申し送り](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)（`HANDOFF_DRAFT`）。
-- 後段の三資料比較：`06_three_source_reconciliation_matrix.md`。追跡Issue：#13。
+- **構想に先行する第3調査:** `00_03_phase1_to_phase3_reconciliation.md`。Phase 1〜3とA0上位構想の68項目を照合。追跡Issue：#13。
 
 ## 2. 現行要件と変更後の意味（案）
 
