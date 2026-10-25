@@ -23,7 +23,7 @@
 | [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md) | 9月末構想13項目と現行FR/NFR/AR・コード・テスト・過去999の対応。P0/P1等は**追加調査の優先順位** | 実装済み能力と新Capability候補の境界 |
 | [00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
 
-本書の第1章は**利用者・分析上の課題とFoundation Gapの関係**、第2章は**追加手法の選定理由**、第3章は**現行能力と完了判定の基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
+本書の第1章は**分析上の課題とFoundation Gapの関係**、第2章は**手法の選定理由**、第3章は**現行の分析能力と適用限界（As-Is）**、第4章は**分析者の状況・問い・利用方法で表す目標状態（To-Be）**、第10章は**目標状態を検証するための暫定完了基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
 
 ### 0.3. 構想段階の結論
 
@@ -121,65 +121,167 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 
 これにより、現行ProductのFoundation Gap①②④が解消されるわけではない。既存Product側のGapと新規CLI側の品質要件は、閉鎖条件とIssueの帰属を分ける。
 
-## 3. 現状と基準
+## 3. 現状と比較基準（As-Is）
 
-### 3.1. 現行実装の基準と実際にできること
+### 3.1. 現行実装を判定するためのソース基準
 
-**コード参照:** `prototype/ariadne_mvp`、`827a6c3683e0fff0af342cb3aded45d9dde020c9`（当初の計画・調査文書を含む参照SHA）。**要件Statusの訂正**は`84c5a624389b233fcb97c656f1c94d177f459c5a`を継承する。これは**調査用Snapshotであり、ENH-E11の実装・受入をfreezeしたBaseline SHAではない**。
+**コード参照:** `prototype/ariadne_mvp`、`827a6c3683e0fff0af342cb3aded45d9dde020c9`（事前照合・構想草案を含む参照SHA）。正本のImplementation Status訂正は`84c5a624389b233fcb97c656f1c94d177f459c5a`を継承する。これらは**現状を調査した時点の根拠**であり、ENH-E11の完了判定や実装のBaseline SHAを確定するものではない。
 
-| 現行実装で可能なこと | 具体的な入口・表現 | 実行・検証済みと断定しない範囲 |
+| 現行実装で可能なこと | 具体的な入口・表現 | 現時点で適用範囲に含まれない事項 |
 |---|---|---|
-| PC/GES/LiNGAM/NOTEARSによるDiscovery | `scientific/discovery/adapter.py`のregistryとGraph JSON | FCI・PCMCI系のDiscovery、潜在交絡下の効果識別 |
-| DAG/CPDAG/PAGの保持 | `product/domain/graph_semantics.py`、graph/version関係 | FCI等が出力するPAGの全固有metadata |
-| Causal Question/Design、Randomized/BackdoorのIdentificationとData Eligibility | `product/domain/analysis_spec.py`、`scientific/identification/adapter.py`、Result status | Frontdoor/IV、CATE/時系列/準実験用Design |
-| ATE/ATTのDiff/OLS/IPW/AIPW、診断と区間 | `scientific/inference/adapter.py`、E9のweight/overlap/ESS | CATE・LATE・RDDのestimand、IPTWの全推論方式と被覆率の認定 |
-| Placebo/SubSet RefutationとAdjustment/Clipping Sensitivity | 既存Scientific Adapter群 | 追加方式、未観測交絡Sensitivityの一般的保証 |
-| Scientific CLIとローカルManifest | `interfaces/cli/config_schema.py`、`scientific_stage.py`等。既存`config_version=2.0` | 新手法の実効Library version・完全なseed/split・個票CATE/temporal file |
-| Product実行・Result/Artifact・Navigation | 現行Product API/Worker/DBとNavigation catalog | [00残差確定](00_foundation_gap_closure_assessment.md)の4領域。新手法のProduct全経路統合 |
+| PC／GES／LiNGAM／NOTEARSによるDiscovery | `scientific/discovery/adapter.py`のregistryとGraph JSON | FCI、PCMCI系の時系列Discovery |
+| DAG／CPDAG／PAGの表現と保持 | `product/domain/graph_semantics.py`、Graph Version | 潜在交絡に配慮したFCI探索、時間lag専用のGraph |
+| Causal Question/Design、Randomized／Backdoor Identification、Data Eligibility | `product/domain/analysis_spec.py`、`scientific/identification/adapter.py`とResult status | Frontdoor/IV、CATEや準実験に固有のDesign・識別 |
+| ATE／ATTのDiff／OLS／IPW／AIPW、既存Diagnostics | `scientific/inference/adapter.py`、E9のbalance／overlap／ESS | CATE、LATE、RDD局所効果、科学的CI被覆率の全条件に対する認定 |
+| Placebo／Data Subset Refutation、Adjustment Set／Clipping Sensitivity | Scientific Refutation／Sensitivity Adapter | 未観測交絡への感度分析を含む新規方式 |
+| 既存Scientific CLIとローカルManifest | `interfaces/cli/config_schema.py`、`scientific_stage.py`等、`config_version=2.0` | 新手法の入力・結果schema、完全な実効Library version／seed／split |
+| 既存Product実行・Result/Artifact・Navigation | 現行Product API／Worker／DBとNavigation catalog | 新手法のProduct統合。既存Productには別途Foundation Gapが残る |
 
-**証拠上の制限:** 以上は現行ソースと先行00調査の既存テスト・過去受入記録に基づく。**このSHAでの全件再実行は行っていない**。したがって現行機能の網羅的な科学的最終認定ではない。
+実装・テスト・過去999判定の具体的な根拠は、[9月末構想との照合](00_foundation_gap_reconciliation.md)を参照する。**この調査用SHAで全件Scientific Benchmarkを再実行したわけではなく**、上表は科学的な全条件の合格認定ではない。
 
-### 3.2. ENH-E11で到達したい状態と現状との差分
+### 3.2. 現行能力では対応できない分析条件
 
-| 分析上の要求 | 現状 | 必要な到達状態 |
+第1.1節の分析課題と現行実装を突き合わせると、特に次の条件が現行のScientific契約の外にある。
+
+| 分析条件 | 現行の制約 | 第4章の利用者ユースケース |
 |---|---|---|
-| 潜在交絡の可能性を考慮した探索 | CPDAG/DAGを生成する探索法はあるがFCIはない | FCIでPAG・未確定endpoint・潜在交絡warningを保存し、非識別を許容する |
-| Backdoor以外の識別と反証 | Randomized/Backdoor、既存2種のRefutationと2種のSensitivity | 承認されたFrontdoor/IV、追加Refutation/Sensitivityを入力・仮定・負結果付きで利用する |
-| 効果の異質性 | ATE/ATT中心 | CATE/HTEを第一級EstimandとしてEconML等の対応推定器・診断で推定する |
-| 時系列依存 | 一般の横断Graph | Lag/同時点/CI-test等を明示するPCMCI系・TemporalDesign |
-| 準実験条件 | 専用Design・Estimatorなし | DiD/Event/ITS、RDD、IV/LATE、Synthetic系を各仮定と固有診断付きで提供する |
-| 利用・監査 | 既存CLI/Manifestと一部のProduct lineage | E11新手法のCLI-only再現性を固定し、既存Productの未解消Gapは別に追跡する |
+| 観測されない共通原因の可能性がある | PC等は利用可能でも、FCIによる潜在交絡を考慮したPAG探索がない | UC-01 |
+| Backdoor以外の識別仮定を使いたい | Native識別はRandomized／Backdoor中心 | UC-02、UC-08 |
+| 平均効果の推定結果がoverlap等に敏感 | IPW/AIPWとE9診断はあるが、条件別の科学的品質の追加検証が必要 | UC-03 |
+| 処置効果が属性ごとに異なる | ATE/ATT中心でCATE/HTEの契約がない | UC-04 |
+| 時間lag・自己相関・制度導入時点を扱う | Temporal Discoveryと準実験固有の入力・仮定・Resultがない | UC-05、UC-06 |
+| 閾値、instrument、donorを用いる研究 | RDD、IV/LATE、Synthetic系の独立した推定契約がない | UC-07〜UC-09 |
+| 分析結果を再実行・第三者が監査する | 既存Manifestはあるが新手法・依存version等を未定義 | UC-10 |
 
-### 3.3. 完了判定の基準（構想段階のAcceptance Claims）
+これらは**現行機能との差分**であり、未来に達成すべき結果そのものは第4章で、合否の試験設計は第10章で扱う。
 
-| 仮ID | ENH-E11の完了時に証明すべき状態 | 検証可能な証拠・不成立条件 |
-|---|---|---|
-| **E11-AC-01：Coverage** | 正式承認されたPhase 1〜3の**必須機能ごと**に、既存再利用／追加実装／承認済み代替／明示的対象外の処遇があり、必要なものをCLIで実行できる | Requirement→Design→Issue→Gate→Test対応表。手法名が並ぶだけでは不足。未承認の省略は不可 |
-| **E11-AC-02：Identification/Graph** | GraphとDesignの仮定を保存し、FCI/PAG等の不確定性を失わず、識別できない場合は数値効果を無理に返さない | 既知DAG/PAG、潜在交絡、Backdoor/Frontdoor/IV、非識別・endpoint未確定のpositive/negative試験 |
-| **E11-AC-03：ATE/ATT/IPTW** | 既存IPW/AIPWを再利用し、正規化重み、推論、overlap・balance・ESS、Refutation/Sensitivityの意味を検証する | 既知真値bias・SE/CI coverage・極端重み・poor overlap・seed再実行とE9回帰 |
-| **E11-AC-04：CATE/HTE** | CATEと平均効果を分け、承認済みのDML/DR/Causal Forest/Meta/IV+ML手法で支持集合・不確実性を説明できる | 効果異質性の既知真値、条件不成立、cross-fitting、個票出力のprivacy、interval/calibration試験 |
-| **E11-AC-05：Temporal** | PCMCI系がlag、同時点関係、Graph uncertaintyを保持し、入力時系列の仮定を検査する | 既知lagと独立系列、time index欠損・重複、autocorrelation、CI検定不適合等の試験 |
-| **E11-AC-06：Quasi-experimental** | DiD/Event Study/ITS、RDD、IV/LATE、Synthetic系が方法固有estimand・仮定・negative resultを保持する | 並行トレンド違反、staggered adoption、cutoff操作、weak-IV、不良donor等の成功/失敗fixture |
-| **E11-AC-07：CLI/Reproducibility** | 承認済み全手法が新規DB/Web依存なしで動き、入力・設定・乱数・実効版・結果・checksumをローカル成果物から追跡できる | 有無双方のoptional backend、固定seed再実行、Manifest schema、artifact read-back、部分失敗、秘匿情報の保護 |
-| **E11-AC-08：Compatibility/Acceptance** | 既存のScientific CLIとProductの受入済み契約を保護し、新しい手法は独立した科学的受入を得る | 既存CLI契約・E9 Diagnostics回帰、承認済みRequirement/Design、Gate 06/07、独立30検証とcanonical 999判定 |
+### 3.3. 既存Foundation Gapと新規Capabilityを区別する
 
-**測定値のfreezeが必要:** Scientific Benchmarkのデータ生成機構、真値との許容誤差、CI被覆率・安定性の閾値、時間系列と準実験の診断許容値、対象Library version/platformは未確定である。**これらをGate 07に数値・fixture・methodの単位で明記し、独立検証でPASSしなければ「完了」と判定しない。** 単なるimport/endpoint成功は科学的受入に不十分。
+第1.4節の**GAP-C01〜C04は既存のFR/NFR/ARに対する残存要件Gap**であり、FCI等の追加機能そのものではない。個別の実装証拠、P0/P1の調査優先順位、閉鎖条件は[00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md)を参照する。
 
-### 3.4. 既存Foundation Gapの閉鎖とENH-E11の完了の関係
+**実装帰属は未決定である。** CLI-onlyのENH-E11でProduct側のGAP-C01・C02・C04を修正しない場合、それらを`IMPLEMENTED`へ変更してはならない。正式なスコープ審査時に、各Gapについて(a) E11内で閉鎖、(b) 別Issue／別Enhancementへ移管、(c) 承認済み要件変更で期待値を更新、のいずれかと責任者を記録する。GAP-C03の新規CLIへの実効version・seed要件は、第10章に受入条件を定めるが、Product側の部分充足を自動的に閉鎖しない。
 
-第1.4節の**GAP-C01〜C04は現行正本に対する未解消の登録簿**であり、新規Capabilityの完成条件と同一ではない。CLI-onlyのENH-E11で①②④を修正しない場合も、現行要件を満たしたかのようにImplementation Statusを`IMPLEMENTED`へ変更してはならない。
+### 3.4. 現状判定に使用する証拠と権限
 
-ENH-E11の正式スコープを承認する際、各Gapにつき**(a)ENH-E11内で閉鎖する、(b)別Issue/別Enhancementに移管する、(c)承認済み要件変更により期待値を改訂する**のいずれかを、責任者・理由・参照Issueとともに決定する。**P0/P1はこの実装帰属やGateの優先度を決めるものではない。** ③の新規CLIへの実効version・seed要件はE11-AC-07に必須とし、既存Product側のFR-086a/087b/NFR-001bが自動的に解消されたとは扱わない。
+現状把握の基準は**現行要件正本＋固定コードSHA＋既存テスト・過去の999の対応**である。実装の存在、テストの存在、過去の受入PASS、当該SHAでの新規再実行を混同しない。
 
-### 3.5. 基準の権限と凍結順序
+一方、ENH-E11の**将来の完了条件**は本章のSHAやImplementation Statusから導かれるものではない。**第4章の目標ユースケースから第10章の検証主張を設計**し、正式承認後に要件・設計・Gate 06/07の受入契約として固定する。
 
-調査SHAは現状確認の証拠であり、**完了条件の権限は正式承認された要件・設計とGate 06/07**にある。①第3.3節の基準を構想審査、②対応する新FR/NFR/ARと手法仕様を承認、③Architecture Reviewで所有権・依存・Local file schemaを決定、④固定SHA・Benchmark・閾値・Gateをfreeze、⑤実装・独立検証・canonical 999 PASSの順序を守る。
+## 4. 目標状態（To-Be）：分析者のユースケース
 
-## 4. 目標状態
+### 4.1. 目標状態の記述方法と適用上の前提
 
-Ariadneの利用者は、**分析対象のデータ構造・識別仮定・効果の問い**に応じて、PC等のGraph探索、潜在交絡を考慮した探索、観察研究の識別、平均/異質効果、時系列・準実験から適切な方法を選べる。方法が成立しない場合にも非識別・要レビュー・不適格を正しい科学的Resultとして受け取る。
+本章は、**「どのような状況で、どの分析トピックについて、どんな因果的な問いを持つ分析者が、Ariadneをどのように使える状態を目指すか」**を記す。分析手法の名前や関数の提供を目標とするのではなく、**判断可能になること・判断できないことの両方**を記載する。
 
-その結果はCLIによる再実行と永続ファイルで監査でき、既存のATE/ATTやE9 Diagnosticsは壊れない。**目標の達成判定は第3.3節のE11-AC-01〜08に集約**し、本章に同じ受入条件を重複記載しない。
+各ユースケースは**想定利用例**であり、実データで当該効果が実証されたことを意味しない。分析者がCausal Question・Design・仮定・対象データを明示し、**ローカルCLIから**適切な手法を選んで実行する。手法を自動選定して適用可能性を保証する機能や、新規Web UI／API／Worker／DB統合は今回の到達状態に含めない。
+
+以下は「**状況／分析トピック／問い／利用方法／得られる結果と限界**」を共通の記載粒度とする。目標の検証内容は第10.1節でUC-IDと受入条件を対応付ける。
+
+### 4.2. UC-01：潜在交絡が疑われる設備トラブルの因果探索
+
+**状況・分析トピック：** 工場の温度・振動・圧力・設備停止の時系列でない観測記録から、停止に関連する原因候補を調べている。作業者の判断や外部環境など、一部の共通原因がデータに記録されていない可能性がある。
+
+**分析の問い：** 「設備停止に関係する変数の方向について、観測データからどこまで判断できるか。潜在交絡の可能性によって、どの方向が未確定のまま残るか。」
+
+**想定する利用方法：** 分析者は対象列と前提知識を設定し、既存PCなどと並んで**FCI**によるDiscoveryをScientific Core／CLIで実行する。結果をPAGとして保存し、circle endpoint、潜在交絡の可能性、アルゴリズム・独立性検定・入力hashを確認する。
+
+**得られる結果・判断の限界：** 候補となる因果構造と**方向が確定できない部分を区別して**検討できる。PAGから任意のDAGを作って効果推定を確定したり、FCIによって真の因果構造が必ず識別されたと主張したりしない。
+
+### 4.3. UC-02：観察研究で介入効果の識別条件を検討する
+
+**状況・分析トピック：** 健康支援プログラムへの参加が本人の意思や中間的な行動に左右される観察研究を扱う。既存のBackdoor調整だけでは、分析者が置きたい仮定を表現しきれない。
+
+**分析の問い：** 「この介入が健康指標へ与える効果は、現在のGraph・観測変数・Frontdoor／IV等の仮定の下で識別可能か。」
+
+**想定する利用方法：** 分析者は介入、outcome、estimandと仮定を宣言し、既存Native Identificationまたは**optional DoWhy等**を選択する。識別戦略、利用する変数、根拠、識別式・理由を保存し、条件が成立した場合にのみ対応するEstimationへ進む。
+
+**得られる結果・判断の限界：** 識別可能な条件と`NOT_IDENTIFIED`／`REQUIRES_REVIEW`を区別できる。Libraryが識別式を出したことと、その仮定が現実に成り立つことは別であり、**識別できない研究で効果の数値を捏造しない**。
+
+### 4.4. UC-03：店舗施策の平均効果を診断付きで評価する
+
+**状況・分析トピック：** 過去にクーポンを配布した店舗と配布しなかった店舗の売上を比較する。配布対象が店舗特性によって偏っており、極端なPropensity Scoreが含まれる可能性がある。
+
+**分析の問い：** 「観測された交絡を調整すると、配布施策のATEまたはATTはどの程度か。その数値はoverlap不足や極端重みにどれだけ依存するか。」
+
+**想定する利用方法：** 分析者は既存`ipw`（IPTW）／`aipw`等を再利用し、Estimationとともにweight、balance、overlap、ESS、Clipping、Refutation、Sensitivityの結果をCLI成果物として確認する。
+
+**得られる結果・判断の限界：** 効果推定値、推論の不確実性、適用上の警告、頑健性を並べて評価できる。overlap不足や妥当でないAdjustmentの際は適切な警告・負結果を返す。**重み付けだけで未観測交絡が解消されたとは解釈しない**。
+
+### 4.5. UC-04：顧客属性によって異なる支援施策の効果を調べる
+
+**状況・分析トピック：** 同じ顧客支援策でも、利用歴や地域によって継続率への影響が違うと考えられる。全体ATEだけでは対象者ごとの効果の違いを説明できない。
+
+**分析の問い：** 「条件付き処置効果（CATE）は属性・集団ごとにどう異なるか。どの領域ではデータのsupportが足りず、不確実性が大きいか。」
+
+**想定する利用方法：** 分析者はeffect modifier、適格性、Treatment/Outcome型、cross-fittingと推論法を指定し、承認済みの**EconML DML／DR／Causal Forest／S・T・X Learner等**の中から適切な推定器を実行する。群別要約や個票CATEの安全なファイルを取得し、support・overlap・uncertaintyを確認する。
+
+**得られる結果・判断の限界：** 平均効果と異なる**条件付き効果**を区別し、どの群で推定の根拠が弱いか判断できる。単なる予測scoreやsubgroupの結果差をCATEに読み替えず、個票CATEの利用を理由にPolicyの自動最適化・配布を行わない。
+
+### 4.6. UC-05：センサデータの時間lagを考慮した因果探索
+
+**状況・分析トピック：** 複数設備のセンサ値が時間を追って影響し合う生産ラインで、単なる同時刻の相関だけでは異常の伝播順を説明できない。自己相関や同時点関係がある。
+
+**分析の問い：** 「圧力の変化が何ステップ後に温度や停止リスクの変化と関連するか。時間順序を考慮した因果構造のうち、何が未確定か。」
+
+**想定する利用方法：** 分析者は時間軸、系列、lag範囲、stationarity等の仮定、CI-testを指定し、**PCMCI／PCMCI+／LPCMCI**から方法条件に合うものをCLIで実行する。Temporal Graphとlag・CI検定・実効parameterを保存する。
+
+**得られる結果・判断の限界：** 時間差のある候補関係と未確定の方向・潜在交絡の注意を確認できる。欠損時刻、重複したunit-time、短すぎる系列、仮定違反では分析を拒否・要レビューとし、**lag関係の発見を介入効果と同一視しない**。
+
+### 4.7. UC-06：段階導入された施策の効果を評価する
+
+**状況・分析トピック：** 自治体が支援制度を地域ごとに異なる月から導入し、対象地域・対照地域の月次成果が観測されている。一部の地域は未導入で、時期ごとの影響も異なる。
+
+**分析の問い：** 「制度導入による処置効果は、導入前の傾向・地域差・導入時期を考慮して推定できるか。効果は導入後どの時点から現れるか。」
+
+**想定する利用方法：** 分析者は処置群・比較群・導入時刻・パネル構造と平行トレンド等の仮定を宣言し、**DiDとEvent Study**を実行する。比較群の条件、pretrend、event-time、cluster、staggered adoptionへの対応を記録する。比較群が構成できない単一系列では、**Interrupted Time Series**を別Designとして検討する。
+
+**得られる結果・判断の限界：** 介入時点に関連する効果と不確実性、仮定違反・比較群不足を確認できる。**ITSの前後変化とDiDの比較設計を同じ識別根拠とは扱わず**、平行トレンドの成否を検定一つで証明したと主張しない。
+
+### 4.8. UC-07：支援対象の点数閾値を利用して局所効果を推定する
+
+**状況・分析トピック：** 一定の審査点数を超えると補助金の対象となる制度がある。閾値付近の申請者は比較的似ている一方、得点の操作や実際の受給率の差が疑われる。
+
+**分析の問い：** 「閾値の直前と直後で成果に差があるか。その差は閾値付近の局所的な処置効果と解釈できるか。」
+
+**想定する利用方法：** 分析者はrunning variable、cutoff、bandwidth、Sharp/Fuzzyの区別を指定し、**RDD**をCLIで実行する。local effect、bandwidth感度、密度・共変量の不連続性、first-stage等の診断を保存する。
+
+**得られる結果・判断の限界：** 閾値付近の効果と、その解釈を制限する操作・support不足を確認できる。**局所効果を全申請者のATEとして一般化しない**。
+
+### 4.9. UC-08：奨励の割当をInstrumentとして介入効果を調べる
+
+**状況・分析トピック：** 研修への参加は自己選択だが、研修案内の送付対象は外生的に割り当てられている。参加者と非参加者を直接比較すると交絡が疑われる。
+
+**分析の問い：** 「案内の割当が研修参加を十分に変化させ、適切なIV仮定が置ける場合、効果はどの対象集団の何を表すか。」
+
+**想定する利用方法：** 分析者はinstrument、処置、outcome、exclusion restriction等の仮定を指定し、**IV／LATE**（必要に応じて承認済みIV+ML方法）を選択する。first-stage、weak-IV、識別対象集団、推論結果を保存する。
+
+**得られる結果・判断の限界：** Instrumentに関する条件が成立する場合に限り、LATE等を明確に区別して解釈できる。弱いInstrumentや妥当性が疑われる場合は科学的なwarning／不成立結果を返し、**LATEを全母集団ATEと誤認しない**。
+
+### 4.10. UC-09：介入地域の反事実を複数地域から構成する
+
+**状況・分析トピック：** 一つの地域で環境施策を実施し、同じ条件の未実施地域が存在しない。過去の推移が類似する複数の地域が観測されている。
+
+**分析の問い：** 「未実施だった場合の成果をどの程度再構成できるか。推定した施策効果はdonorの選定や介入前の当てはまりにどれだけ敏感か。」
+
+**想定する利用方法：** 分析者は介入時点、対象地域、donor候補、pre/post期間を宣言し、**Synthetic Control／Synthetic DiD**を実行する。donor weights、pre-fit、placebo、感度診断と反事実系列のファイルを確認する。
+
+**得られる結果・判断の限界：** 推定反事実と観測系列の差、合成の妥当性を説明できる。donor contaminationやpre-fit不良がある場合は警告・要レビューとし、**donor weightをIPTWの処置重みと混同しない**。
+
+### 4.11. UC-10：第三者が分析結果を再現・監査する
+
+**状況・分析トピック：** 分析者が複数手法の結果を研究報告として引き渡し、別担当者が後から同じ入力・設定と計算環境で再計算したい。結果が利用不能や非識別だった実行も経緯として残す必要がある。
+
+**分析の問い：** 「この結果はどのデータ・Graph・Design・手法・乱数・Library versionから生じたか。再実行すると一致するか。どの科学的仮定が成立しなかったか。」
+
+**想定する利用方法：** 分析者は各手法のローカルCLI設定を実行し、**入力hash、検証済みspec、実効seed/split、backend version、Result、Diagnostics、Artifact checksum**をManifestで受け渡す。別担当者はManifestと保存ファイルを使って再実行・差分確認する。
+
+**得られる結果・判断の限界：** 数値結果と負結果の**来歴・再現条件を追跡**できる。optional依存が欠落する場合は明示的に利用不可とし、個票CATEなど機微情報は適切に制限する。ただし、このローカルManifestによって**既存Product DBのCanonical Lineage Gap-C02が閉鎖したとは主張しない**。
+
+### 4.12. ユースケース全体に共通する目標
+
+すべてのユースケースで、分析者が**問い・estimand・Design・識別仮定・データ適格性**を把握し、適用可能な手法を明示的に選択できることを目指す。成立する条件では数値と不確実性を、成立しない条件では非識別・前提不足・要レビュー等の**科学的な負結果**を受け取れる。
+
+本章の研究例は目標を具体化するための説明であり、全業界への適用保証や自動的なPolicy意思決定を約束するものではない。**第10章はこのユースケースの能力を検証する手段**であり、テスト可能な部分だけを取り出して目標を縮小してはならない。
 
 ## 5. 対象範囲
 
@@ -189,7 +291,7 @@ Ariadneの利用者は、**分析対象のデータ構造・識別仮定・効�
 - **Phase 2：** CATE/HTE、EconMLのLinearDML／CausalForestDML／DRLearner／ForestDRLearner／S・T・X Learner／DRIV又は科学的に同等なIV+ML、support/overlap/calibration/uncertainty、永続ファイル成果物。
 - **Phase 3：** TigramiteのPCMCI／PCMCI+／LPCMCI、CI-test registry、TemporalDesign、DiD、Event Study、Interrupted Time Series、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control／Synthetic DiDと各固有診断。
 - **横断：** CLI契約、データ・結果の版管理、local Manifest/Checksum/Seed/Library version、negative result、Known-truth Benchmark、後方互換性。
-- **既存Gap：** GAP-C01〜C04の**帰属判断を行う**。何を実装するかは第3.4節の個別決定による。全件が自動的に実装対象になるものではない。
+- **既存Gap：** GAP-C01〜C04の**帰属判断を行う**。何を実装するかは第3.3節の帰属判断による。全件が自動的に実装対象になるものではない。
 
 上記はオーナーの方針を反映した**構想段階の候補**であり、正式なFR/NFR/ARとGate 06/07の承認を待つ。手法ごとの科学的選定理由は第2.1節を正とし、ここには名称・提供境界のみを置く。
 
@@ -231,22 +333,49 @@ Ariadneの利用者は、**分析対象のデータ構造・識別仮定・効�
 
 承認前の設計・Gate案は`04_design_revision.md`および`40_operator_workflows/architecture_review/`で管理する。
 
-## 10. 暫定Gate構成（承認前）
+## 10. 完了基準と暫定Gate構成（承認前）
 
-| Gate案 | 主な受入境界（第3.3節E11-ACとの関係） | 対応Issue |
-|---|---|---|
-| G01 | Local causal context、FCI/PAGの不確定性（AC-02/07） | #15、#17 |
-| G02 | Identification/Eligibility、optional backend（AC-02/07） | #15、#16 |
-| G03 | IPTW/AIPW、Refutation/Sensitivity（AC-03） | #16、#19 |
-| G04 | CATE/HTE estimandとEconML推定器（AC-04） | #18 |
-| G05 | CATE診断・privacy配慮済みファイル（AC-04/07） | #18、#24 |
-| G06 | Temporal Graph・PCMCI系（AC-05） | #20 |
-| G07 | DiD/Event Study/ITS（AC-06） | #21 |
-| G08 | RDD/IV/LATE（AC-06） | #22 |
-| G09 | Synthetic Control/SDID（AC-06） | #23 |
-| G10 | Manifest、再現性、既存回帰・科学検証（AC-07/08） | #24 |
+### 10.1. ユースケースから導く受入条件（案）
 
-**Gate数・順序は未確定**であり、Architecture Reviewで意味上の受入単位に統合・分割する。Issueは作業追跡、Work Packageは実装作業単位、Gate 06/07は受入契約であって相互に代替しない。第3.3節のAC番号も仮番号である。
+**完了基準は第4章の目標状態を判定するための手段**であり、逆に本表から実現したい分析能力を縮小しない。各UCについて、「意図した分析が可能な事例」だけでなく、**仮定不成立・識別不可・データ不適格・依存不足の事例**が扱えることを確認する。
+
+| 仮の受入ID | 関連UC | 完了時に示すべき状態 | 検証可能な証拠・否定例 |
+|---|---|---|---|
+| **E11-AC-01：Coverage** | UC-01〜10 | 正式承認したPhase 1〜3の必須Capabilityが、既存再利用／新規実装／承認済み代替／明示的対象外のいずれかに追跡され、必要なものはCLIで利用できる | Requirement→Design→UC→Issue→Gate→Testの対応。未承認の手法省略や成功例のみの検証は不可 |
+| **E11-AC-02：Identification/Graph** | UC-01、02、08 | Graph・Designの仮定、不確定endpoint、識別可否を保持し、非識別の効果数値を強制生成しない | 既知DAG/PAG、潜在交絡、Backdoor／Frontdoor／IV、未確定edgeの成功・負例 |
+| **E11-AC-03：ATE/ATT/IPTW** | UC-03 | 既存IPW／AIPWを再利用し、推論・重み・overlap・balance・ESS・Refutation/Sensitivityを区別して評価する | 既知真値bias、CI被覆率、極端重み、poor overlap、seed再実行、E9回帰 |
+| **E11-AC-04：CATE/HTE** | UC-04 | CATE/HTEのestimandとsupport・不確実性を、承認済みDML/DR/Causal Forest/Meta/IV+MLで適切に扱う | 異質性既知真値、条件不成立、cross-fitting、privacy、interval・calibration |
+| **E11-AC-05：Temporal** | UC-05 | PCMCI系がlag・同時点・不確定性を保持し、入力時系列の前提を検査する | 既知lag、独立系列、欠損/重複time index、autocorrelation、CI検定不適合 |
+| **E11-AC-06：Quasi-experimental** | UC-06〜09 | DiD/Event/ITS、RDD、IV/LATE、Synthetic系で各Design固有のestimand・仮定・負結果を明示する | 平行トレンド違反、staggered adoption、cutoff操作、weak-IV、donor不良等の成功・失敗fixture |
+| **E11-AC-07：CLI/Reproducibility** | UC-01〜10（特にUC-10） | 承認済み全手法を新規Web/DB統合なしで実行し、実効版・入力・seed/split・Result・checksumを追跡する | optional backend有無、固定seed再実行、Manifest schema、artifact read-back、partial failure、機微情報保護 |
+| **E11-AC-08：Compatibility/Acceptance** | UC-01〜10 | 既存Scientific CLIとProductの受入済み契約を保護し、各新手法に独立した科学的受入証拠がある | 旧CLI契約、E9 Diagnostics回帰、承認済みRequirement／Design、Gate 06/07、独立30検証とcanonical 999 |
+
+**測定基準は未確定:** Scientific Benchmarkのデータ生成方法、既知真値との許容誤差、区間推定の被覆率、CI test・準実験診断閾値、依存Library version／platform等は**正式Gate 07で数値・fixture・method単位でfreeze**する。Library importや関数の正常終了だけでは科学的に受入済みとしない。
+
+### 10.2. 暫定Gateとユースケースの対応
+
+| Gate案 | 主な受入境界 | 主なUC／受入条件 | 対応Issue |
+|---|---|---|---|
+| G01 | Local causal context、FCI/PAGの不確定性 | UC-01／AC-02、AC-07 | #15、#17 |
+| G02 | Identification/Eligibility、optional backend | UC-02／AC-02、AC-07 | #15、#16 |
+| G03 | IPTW/AIPW、Refutation/Sensitivity | UC-03／AC-03 | #16、#19 |
+| G04 | CATE/HTEとEconML推定器 | UC-04／AC-04 | #18 |
+| G05 | CATE診断・秘匿性を考慮したファイル | UC-04、10／AC-04、AC-07 | #18、#24 |
+| G06 | Temporal GraphとPCMCI系 | UC-05／AC-05 | #20 |
+| G07 | DiD/Event Study/ITS | UC-06／AC-06 | #21 |
+| G08 | RDDとIV/LATE | UC-07、08／AC-06 | #22 |
+| G09 | Synthetic Control/SDID | UC-09／AC-06 | #23 |
+| G10 | Local Manifest／再現性／既存回帰・科学検証 | UC-10と全UC／AC-07、08 | #24 |
+
+**Gate数・順序は未確定。** Architecture Reviewで意味上の受入単位に統合・分割する。Issueは作業追跡、Work Packageは実装単位、Gate 06/07は受入契約であり、相互の代替にならない。E11-ACも仮番号である。
+
+### 10.3. 完了判定を形式的なPASSへ縮退させないための原則
+
+1. **ユースケースの問いを基準にする。** その手法が実際に何を識別・推定できるのかを説明できない場合、APIの正常応答だけで完了としない。
+2. **適用限界も達成対象とする。** 非識別、weak-IV、poor overlap、PAGの未確定端点、違反したデザイン仮定を捏造・隠蔽して成功扱いしない。
+3. **手法固有の科学Benchmarkを用いる。** 既知真値・再現性・負例を独立検証し、事前に凍結された閾値で判定する。
+4. **UCが不足している場合は目標を削るのではなく、受入条件を追加する。** 要件変更・構想縮小を要するときはオーナーの明示承認を得る。
+5. **既存ProductのGapは別管理する。** 第3.3節のGAP-C01〜C04を、局所CLIの科学的PASSで自動閉鎖しない。
 
 ## 11. 実装前に必要な承認
 
