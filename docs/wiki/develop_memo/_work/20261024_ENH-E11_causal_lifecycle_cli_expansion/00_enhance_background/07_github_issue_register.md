@@ -11,7 +11,7 @@
 | Issue | 対象 | 内容 | 暫定Gate | 扱い |
 |---|---|---|---|---|
 | [#13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13) | 全体 | Phase 1〜3、CLI-first範囲、承認と子Issueの管理 | 全体／Gate前 | 計画 |
-| [#14](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14) | 事前調査 | **先行:** 9月末Foundation Gap×現行実装。**後続:** 8月案との照合、Architecture Review | Gate前 | A/B/C/D/E分類 |
+| [#14](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14) | 事前調査 | **完了:** 9月末13項目照合、現行Gap4領域、8月案Phase1〜3＋A0上位68行照合。**未完了:** Scope採否、Architecture Review、承認 | Gate前 | A/B/C/D/E分類・B?未決 |
 | [#15](https://github.com/kousuke-ota-datascience/causal-atelier/issues/15) | Phase 1 | Question/Design version、識別・適格性の残差 | G01、G02 | 既存再利用／残差の確認 |
 | [#16](https://github.com/kousuke-ota-datascience/causal-atelier/issues/16) | Phase 1 | DoWhy、Frontdoor/IV、Refutation、Sensitivity拡張 | G02、G03 | Optional backend候補 |
 | [#17](https://github.com/kousuke-ota-datascience/causal-atelier/issues/17) | Phase 1 | FCI/PAGの端点保持、潜在交絡 | G01 | 新規Discovery候補 |
@@ -25,7 +25,7 @@
 
 ## 2. 作業の依存順序（案）
 
-1. **#14:** 9月末Foundation Gapとの照合を先に完了。その後に8月案との三資料比較・Architecture Review・正式構想承認を扱う。IssueはGateそのものではない。
+1. **#14:** 9月末Foundation Gap照合、未解消Gap判定、8月案との68行三資料比較は**ソース照合として完了**。次にB/B?の採否・CLI-only Scopeを審議し、Architecture Review・正式承認へ進む。IssueはGateそのものではない。
 2. **#15、#17:** Causal Context/Graphのversion、endpointの不確実性を定義する。
 3. **#16、#19:** 承認済みDesignに基づきPhase 1のIdentification/Refutation/推論を検証・拡張する。
 4. **#18:** CATE/HTEを独立のestimandとして導入し、EconMLのoptional機能を追加する。

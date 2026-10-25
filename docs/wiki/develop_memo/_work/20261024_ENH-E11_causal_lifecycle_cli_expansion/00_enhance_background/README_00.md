@@ -22,7 +22,7 @@
 
 ## 3. 後続の補助資料
 
-- `06_three_source_reconciliation_matrix.md`：**00の照合後に使用**。8月4日案・9月末案・現行基準と、今後のCLI-only候補を比較する。現時点では暫定案。
+- `06_three_source_reconciliation_matrix.md`：**00の二資料の後に使用**。ステップ3として8月4日Phase 1〜3＋A0上位構想を9月末と現行正本・ソースへ68行で照合済み。**技術採用・CLI-only実装Scopeの正式承認は未実施。**
 - `07_github_issue_register.md`：Issue #13〜#24の追跡と、暫定Gate・要件の対応。
 - `40_operator_workflows/architecture_review/`：source-of-truth、Scientific/Local CLI所有権、Gate境界に関する未承認の判断案。
 
@@ -34,6 +34,7 @@
 |---|---|
 | 9月末案 × 現行実装のSource Reconciliation | **完了（ソース照合）／新規全件テスト未実施** |
 | Foundation Gapの残差確定 | **4領域を登録・証拠水準確定／閉鎖テスト・実装帰属は未決** |
+| 8月4日Phase 1〜3構想との三資料照合 | **完了（68行のソース照合）／採否・実装Scopeの承認は未実施** |
 | CLI-only Phase 1〜3のオーナー方針 | 計画上の方向性を確認済み |
 | 正式な構想・要件・設計承認 | **PENDING** |
 | Architecture Review | **未完了** |

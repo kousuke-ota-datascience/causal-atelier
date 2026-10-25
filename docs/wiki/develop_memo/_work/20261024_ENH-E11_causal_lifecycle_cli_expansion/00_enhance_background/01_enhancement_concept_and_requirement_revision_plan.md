@@ -23,6 +23,8 @@
 | [00_foundation_gap_reconciliation.md](00_foundation_gap_reconciliation.md) | 9月末構想13項目と現行FR/NFR/AR・コード・テスト・過去999の対応。P0/P1等は**追加調査の優先順位** | 実装済み能力と新Capability候補の境界 |
 | [00_foundation_gap_closure_assessment.md](00_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
 
+**8月4日とのPhase別差分は[06_three_source_reconciliation_matrix.md](06_three_source_reconciliation_matrix.md)の68行を正とする。** ここではステップ3の完了をもって新Capabilityの採否・要件改定を承認したとは扱わない。上位A0だけにあるATC、mediation、matching/g-computation、negative control等の帰属はステップ4で明示的に決定する。
+
 本書の第1章は**分析上の課題とFoundation Gapの関係**、第2章は**手法の選定理由**、第3章は**現行の分析能力と適用限界（As-Is）**、第4章は**分析者の状況・問い・利用方法で表す目標状態（To-Be）**、第10章は**目標状態を検証するための暫定完了基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
 
 ### 0.3. 構想段階の結論
@@ -392,5 +394,5 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 - **歴史的な手法候補:** `docs/wiki/develop_memo/_work/20260804_causal_lifecycle_enhancement/03_01_coding_instruction_Phase1.md`、`03_02_coding_instruction_Phase2.md`、`03_03_coding_instruction_Phase3.md`。**現行の承認済み要件ではない**。
 - **9月末申し送り:** [ENH-E11 Causal Lifecycle Foundation Gap Completion](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)（`HANDOFF_DRAFT`）。
 - **現行要件正本:** `docs/wiki/requirement_definition/10_requirements_definition.md`（Status是正コミット`84c5a624389b233fcb97c656f1c94d177f459c5a`）。
-- **後段の比較:** `06_three_source_reconciliation_matrix.md`（暫定）。Issue台帳：`07_github_issue_register.md`。
+- **8月4日のPhase 1〜3との差分照合（ステップ3完了）:** [06_three_source_reconciliation_matrix.md](06_three_source_reconciliation_matrix.md)。**68行のソース照合完了／最終採否・実装Scopeは未承認。** Issue台帳：`07_github_issue_register.md`。
 - **方法の適用前提についての公開参考資料:** [causal-learn PC](https://causal-learn.readthedocs.io/en/latest/search_methods_index/Constraint-based%20causal%20discovery%20methods/PC.html)、[causal-learn FCI](https://causal-learn.readthedocs.io/en/latest/search_methods_index/Constraint-based%20causal%20discovery%20methods/FCI.html)、[EconML DML](https://econml.azurewebsites.net/spec/estimation/dml.html)、[Tigramite PCMCI](https://jakobrunge.github.io/tigramite/)。

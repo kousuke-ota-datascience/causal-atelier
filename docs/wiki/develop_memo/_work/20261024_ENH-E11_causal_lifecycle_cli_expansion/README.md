@@ -39,7 +39,7 @@
 
 | 文書 | 役割と状態 |
 |---|---|
-| `00_enhance_background/06_three_source_reconciliation_matrix.md` | **00を読んだ後**、8月案・9月末案・現行実装・新スコープを比較する草案 |
+| `00_enhance_background/06_three_source_reconciliation_matrix.md` | **ステップ3・ソース照合完了。** 8月4日Phase 1〜3とA0上位構想、9月末の除外判断、現行正本・コード・テストを68行で照合。採否とCLI-only実装Scopeは未承認 |
 | `00_enhance_background/07_github_issue_register.md` | GitHub Issue #13〜#24と要件・暫定Gateの対応 |
 | `40_operator_workflows/architecture_review/` | Architecture Discovery、目標設計ADR、暫定Gate分割。未承認 |
 
@@ -48,7 +48,7 @@
 ## 3. 今後の進め方
 
 1. **2つの00事前調査をレビュー**し、13項目の照合結果と4領域の残差・証拠不足を把握する。
-2. 8月案との三資料比較を詰め、既存再利用・修正・新規Capability・後続送りを分離する。
+2. **完了した8月案との三資料比較（06）を基準に、ステップ4のCLI-only実装スコープ案を確定する。** 既存再利用・品質強化・新規候補・後続送りに加え、A0上位構想だけの未決候補を明示審議する。
 3. 構想の正式承認とArchitecture Reviewを得る。必要な要件・設計改定を正本に反映する。
 4. 承認済みSnapshot、基準SHA、semantic Gate/Work Packageを確定し、Gate別06/07をfreezeする。
 5. 実装時に20報告、30独立検証、canonical 999 Decisionを保存する。
