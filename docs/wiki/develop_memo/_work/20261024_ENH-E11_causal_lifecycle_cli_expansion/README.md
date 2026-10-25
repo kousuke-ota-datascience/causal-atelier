@@ -29,7 +29,8 @@ any Gate 06/07 is frozen, any coding has started, or any canonical 999 Gate Deci
 | `00_enhance_background/03_requirements_revision.md` | Draft semantic changes, no new FR/NFR/AR IDs assigned yet |
 | `00_enhance_background/04_design_revision.md` | Draft architecture deltas, review decisions pending |
 | `00_enhance_background/05_requirements_design_consistency_and_traceability_review.md` | Provisional requirement→Gate→AC coverage, not PASS |
-| `00_enhance_background/06_three_source_reconciliation_matrix.md` | Aug 4 × Sep handoff × current code/requirement reconciliation |
+| `00_enhance_background/06_three_source_reconciliation_matrix.md` | Aug 4 × Sep handoff × current code/requirement reconciliation (**later-stage draft; do not use before September-only reconciliation**) |
+| `00_enhance_background/08_september_foundation_gap_reconciliation.md` | **FIRST reconciliation:** September ENH-E11 handoff's 13 foundation items × current requirements/code/tests/999 (source-reviewed; full rerun outstanding) |
 | `00_enhance_background/07_github_issue_register.md` | Registered GitHub issues, coverage and execution boundaries |
 | `00_enhance_background/80_contract_amendment_log.md` | Empty append-only ledger; no approved contract amended |
 | `00_enhance_background/Revised_requirements_definition_documents/README_00_Revised_requirements_definition_documents.md` | Approved-snapshot gate; snapshot **not yet frozen** |
