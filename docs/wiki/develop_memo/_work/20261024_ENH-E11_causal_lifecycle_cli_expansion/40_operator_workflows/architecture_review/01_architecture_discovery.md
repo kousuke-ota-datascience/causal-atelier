@@ -1,57 +1,44 @@
-# ENH-E11 Architecture Discovery
+# ENH-E11 — 現行アーキテクチャの調査
 
-**Document class:** Planning / Operator Artifact  
-**Status:** INITIAL READ-ONLY INVENTORY / COMPLETENESS REVIEW PENDING  
-**Planning source SHA:** `84c5a624389b233fcb97c656f1c94d177f459c5a` for canonical requirement repair; scientific code content unchanged by that document-only commit.
+**文書区分:** 計画・Operator調査資料  
+**状態:** 読取り調査の初版／網羅性の審査待ち  
+**事前の必須入力:** `../../00_enhance_background/00_foundation_gap_reconciliation.md`（9月末Foundation Gapと現行実装の照合）。  
+**正本の参照点:** 要件訂正SHA `84c5a624389b233fcb97c656f1c94d177f459c5a`。現行実装の一次照合は先行00資料に記録済み。
 
-## 1. Facts observed in source
+## 1. コードから確認した事実
 
-| Concern | Existing source / observed fact |
+| 調査対象 | コード上の確認事項 |
 |---|---|
-| Scientific estimation | `src/ariadne/scientific/inference/adapter.py` selects diff/OLS/IPW/AIPW and emits Result/Diagnostics JSON |
-| Estimator algorithms | `src/ariadne/causal/inference/estimators/treatment_effect.py` contains IPW/AIPW and ATE/ATT outcome methods |
-| PS nuisance | `src/ariadne/causal/inference/nuisance/propensity.py` has logistic propensity fitting |
-| Graph discovery | `src/ariadne/scientific/discovery/adapter.py` supports PC/GES/LiNGAM/NOTEARS; no FCI in active registry |
-| Identification | `src/ariadne/scientific/identification/adapter.py` has native graph identification and cautious CPDAG/PAG handling |
-| Refutation and sensitivity | `src/ariadne/scientific/refutation/adapter.py` and `sensitivity/adapter.py` cover two baseline methods each |
-| CLI contract | `src/ariadne/interfaces/cli/config_schema.py` has strict local schemas for discover/identify/estimate/refute/sensitivity |
-| CLI manifest | `src/ariadne/interfaces/cli/manifest.py` writes local reproducibility metadata; effective external backend version detail requires review |
-| Product spec | `src/ariadne/product/domain/analysis_spec.py` currently limits baseline estimands/identification methods |
-| Requirements | `docs/wiki/requirement_definition/10_requirements_definition.md` records FR-035–054 and NFR/AR statuses; §11 excludes unapproved DoWhy/EconML additions |
-| E9 tests | `tests/enhancement/enh_e9/g04/scientific/` includes weight applicability, ESS/persistence and before/after balance tests |
+| Scientific Estimation | `src/ariadne/scientific/inference/adapter.py`はDiff/OLS/IPW/AIPWを選び、Result/Diagnosticsを返す |
+| 推定器 | `src/ariadne/causal/inference/estimators/treatment_effect.py`にATE/ATT、IPW/AIPWの実装がある |
+| Propensity Score | `src/ariadne/causal/inference/nuisance/propensity.py`にlogistic fittingがある |
+| Graph Discovery | `src/ariadne/scientific/discovery/adapter.py`はPC/GES/LiNGAM/NOTEARSを提供。FCIは現行registryにない |
+| Identification | `src/ariadne/scientific/identification/adapter.py`はnative識別とCPDAG/PAGの慎重な扱いを実装 |
+| Refutation/Sensitivity | 各`scientific/refutation/adapter.py`・`scientific/sensitivity/adapter.py`は正本にある2方式ずつに対応 |
+| CLI入力 | `src/ariadne/interfaces/cli/config_schema.py`はDiscovery/Identification/Estimation/Refutation/Sensitivityの厳格なlocal schemaを持つ |
+| CLI Manifest | `src/ariadne/interfaces/cli/manifest.py`は再現性metadataを定義。ただし実効backend版の記録は要確認 |
+| Product Specification | `src/ariadne/product/domain/analysis_spec.py`は既存ATE/ATT・識別手法に限定 |
+| 正本 | `docs/wiki/requirement_definition/10_requirements_definition.md`のFR-035〜054等。§11に未承認engineの除外規定 |
+| E9の検証 | `tests/enhancement/enh_e9/g04/scientific/`にweight適用性、ESS、保存、balanceなどのテスト |
 
-The present summary is source-inventory evidence, **not** a fresh test run.
-No code, migration, schema or server path was changed by this discovery.
+上記は**ソース調査による存在確認**であり、現行SHAでの新規pytest合格を意味しない。今回の作業でコード・DB・schema・server経路は変更しない。
 
-## 2. Inferences requiring validation
+## 2. 検証を要する推論
 
-1. Domain-native portable types and optional backend adapters can allow new
-   method execution without new API/Worker/DB dependencies, provided local
-   Question/Design/Graph identity is fully specified.
-2. Current E9 weighting diagnostics can be reused by IPTW and only applicable
-   Phase2 estimators; not all EconML methods have meaningful final IPW weights.
-3. Temporal and quasi-experimental methods require additional typed designs
-   rather than overloading existing binary-treatment ATE-only estimation input.
-4. Versioned manifests + checksums might bridge to later Product integration,
-   but they do **not** establish canonical Product DB resource lineage now.
+1. Domainを外部ライブラリ型から独立させ、optional Adapterを使えば、新規API/Worker/DBなしでCLI実行できる可能性がある。ただしQuestion/Design/Graphのlocal identityを定義する必要がある。
+2. E9の既存Weighting DiagnosticsはIPTWと**適用可能な**Phase 2推定器で再利用できる。一方、すべてのEconML EstimatorにIPW最終重みが存在するわけではない。
+3. 時系列・準実験は横断データ向けATE推定器の入力に項目を足すだけでなく、独立した型付きDesignが必要と考えられる。
+4. Versioned Manifestとchecksumは将来のProduct統合に利用できる可能性があるが、現時点のcanonical DB lineageを完成させる根拠にはならない。
 
-## 3. Unknowns / required further source verification
+## 3. 未確認事項と追加の調査
 
-- Full Product API/Worker/DB write/read path and migration owners; unchanged in
-  E11, but future integration boundaries must be documented.
-- Whether existing Product causal Question/Design version objects can be reused
-  via local serialization without hidden DB dependencies.
-- Which external library versions/platforms support required Phase1–3 APIs and
-  their statistical inference methods.
-- Exact CLI manifest schema, partial-file atomicity and privacy policy.
-- Which historical Gate 999 acceptance artifacts cover each existing behavior
-  and which tests must be rerun on fixed SHA.
-- Whether a shared CATE/Temporal/Quasi estimation result abstraction preserves
-  scientific distinctions rather than hiding method-specific assumptions.
+- 既存Product API/Worker/DBの書込・読取経路とMigration owner。ENH-E11では変更しないが将来の境界を記録する。
+- 既存Question/Design version resourceをDBに依存せずlocal serializeできるか。
+- 外部Library version/platformごとのPhase 1〜3のAPIと統計推論の提供状況。
+- Local Manifest schema、partial writeのatomicity、個票CATEのprivacy policy。
+- 現行動作に対応する過去の999と、固定SHAで再実行すべきテスト。
+- CATE/Temporal/Quasi-experimentalで共通のResult envelopeが方法別仮定を隠さず表現できるか。
 
-## 4. Decision queue
+## 4. 判断待ち事項
 
-Target ADR must decide: authority/type/version, optional engine compatibility,
-method-specific scientific statuses, local file artifact/read-back contract,
-privacy, inferential rigor, and Gate semantic boundaries. Unknowns remain
-**OPEN**; no affirmative approval can be inferred from this inventory.
+Architecture Decision Recordでは、authority・version・optional engine、方法別科学的status、ファイル書込とread-back、privacy、推論の品質、semantic Gate境界を決定する。**未承認であり、コード調査から承認を推定しない。**

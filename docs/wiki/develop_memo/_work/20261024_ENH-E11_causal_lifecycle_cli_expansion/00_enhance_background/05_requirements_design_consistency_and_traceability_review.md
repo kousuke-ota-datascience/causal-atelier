@@ -1,54 +1,49 @@
-# ENH-E11 — 要件・設計整合性およびトレーサビリティ確認（計画版）
+# ENH-E11 — 要件・設計整合性とトレーサビリティ確認（計画案）
 
-**Document class:** Planning / Decision Artifact  
-**Status:** DRAFT / CHECKS PENDING / NO GATE APPROVAL
+**文書区分:** 計画・判断記録  
+**状態:** DRAFT／照合・承認待ち／Gate未承認  
+**前提:** `00_foundation_gap_reconciliation.md`の9月末案対現行実装の照合を先に行う。
 
-## 1. Traceability matrix
+## 1. 要件→設計→Gate→受入条件→Issueの対応
 
-`E11-REQ-*` and AC IDs below are **temporary planning aliases**, not approved
-FR/NFR/AR or frozen 07 Test Items. Issue closure is not Gate PASS.
+`E11-REQ-*`と`AC-*`は**計画上の仮識別子**。承認済みFR/NFR/ARや固定済みGate 07を表さない。IssueのcloseはGate PASSではない。
 
-| Requirement / invariant (draft) | Design realization | Proposed Gate | Proposed AC | GitHub Issue |
+| 要件案・不変条件 | 設計への反映（案） | 暫定Gate | 受入条件（案） | Issue |
 |---|---|---|---|---|
-| E11-REQ-P1Q; FR-040/041/054, NFR-002 | Versioned local Question/Design/Graph + eligibility and lineage | G01/G02 | AC-01 identity, invalid-design rejection | #15 |
-| E11-REQ-P1G; FR-035/037 | FCI registry, PAG circle endpoints, latent warning | G01 | AC-02 endpoint roundtrip / known latent synthetic | #17 |
-| E11-REQ-P1I; FR-042/046, AR-023 | Optional DoWhy normalization, separated identification | G02 | AC-03 backdoor/frontdoor/IV identifiable vs nonidentified | #16 |
-| E11-REQ-P1R/P1S; FR-049/050 | Additional refuters and sensitivity result protocol | G03 | AC-04 refutation/sensitivity known-truth and seed replay | #16 |
-| E11-REQ-P1W; FR-047/048, NFR-016 | IPW/AIPW weighting/inference + existing E9 diagnostic reuse | G03 | AC-05 effect accuracy, coverage, overlap/balance/ESS | #19 |
-| E11-REQ-P2 | CATE/HTE protocol, capability-aware EconML estimators | G04 | AC-06 CATE known-truth/compatibility | #18 |
-| E11-REQ-P2A | Per-unit Parquet + subgroup/uncertainty/artifact diagnostics | G05 | AC-07 local artifact, support, calibration, privacy | #18, #24 |
-| E11-REQ-P3T | TemporalDesign + PCMCI/PCMCI+/LPCMCI | G06 | AC-08 known lags and orientation/CI assumptions | #20 |
-| E11-REQ-P3D | QuasiExperimentalDesign + DiD/Event Study/ITS | G07 | AC-09 pretrend, timing, cluster and known effect | #21 |
-| E11-REQ-P3I | RD sharp/fuzzy and IV/LATE method-specific estimands | G08 | AC-10 cutoff/manipulation and first-stage/weak-IV | #22 |
-| E11-REQ-P3S | Synthetic Control/SDID donor pool and placebo | G09 | AC-11 known effect, RMSPE, donor/contamination | #23 |
-| E11-REQ-CLI; NFR-001b/002/025/028 | CLI schema, file manifest, checksum and dependency isolation | G10 (and local all Gate ACs) | AC-12 replay/version/dependency/negative outcomes | #24 |
-| 8/4/9月末/current baseline reconciliation | No redundant work; A/B/C/D/E classification and approved delta | Pre-Gate | AC-00 item-level decision/evidence completeness | #14 |
+| E11-REQ-P1Q；FR-040/041/054、NFR-002 | Versioned local Question/Design/Graph、適格性・lineage | G01/G02 | AC-01 Identity、不正Design拒否 | #15 |
+| E11-REQ-P1G；FR-035/037 | FCI registry、PAG CIRCLE、潜在交絡warning | G01 | AC-02 endpoint往復、潜在交絡の既知例 | #17 |
+| E11-REQ-P1I；FR-042/046、AR-023 | optional DoWhy、Identificationの分離 | G02 | AC-03 Backdoor/Frontdoor/IVの識別・非識別 | #16 |
+| E11-REQ-P1R/P1S；FR-049/050 | Refutation/Sensitivityの方法別Result | G03 | AC-04 既知真値、seed再実行 | #16 |
+| E11-REQ-P1W；FR-047/048 | IPW/AIPWの推論、E9 Diagnosticsの再利用 | G03 | AC-05 Effect精度、coverage、overlap/balance/ESS | #19 |
+| E11-REQ-P2 | CATE/HTE、Capability指定EconML | G04 | AC-06 異質効果の既知真値と互換性 | #18 |
+| E11-REQ-P2A | 個票Parquet、群別診断、privacy | G05 | AC-07 Artifact/support/calibration | #18、#24 |
+| E11-REQ-P3T | TemporalDesign、PCMCI系 | G06 | AC-08 既知Lag、GraphとCI仮定 | #20 |
+| E11-REQ-P3D | QuasiExperimentalDesign、DiD/Event/ITS | G07 | AC-09 pretrend、timing、cluster、既知効果 | #21 |
+| E11-REQ-P3I | Sharp/Fuzzy RD、IV/LATE | G08 | AC-10 cutoff操作とfirst-stage/weak-IV | #22 |
+| E11-REQ-P3S | Synthetic Control/SDID | G09 | AC-11 既知効果、RMSPE、donor選択 | #23 |
+| E11-REQ-CLI；NFR-001b/002/025/028 | CLI schema、manifest、checksum、依存分離 | G10／各Gate | AC-12 再実行・version・欠落依存・科学的負結果 | #24 |
+| 9月末案／8月案／現行基準 | 既存再利用とA/B/C/D/Eの分類 | Gate前 | AC-00 項目ごとの証拠と未確定事項 | #14 |
 
-## 2. Current consistency checks
+## 2. 現時点での整合性評価
 
-| Check | Current result | Reason |
+| 確認事項 | 判定 | 理由 |
 |---|---|---|
-| Requirement vs design | **PENDING** | New FR/NFR/AR semantics, CLI schema and versioning not approved |
-| Design vs Gate decomposition | **PENDING** | Architecture Review has not fixed authority or Gate semantics |
-| Gate boundaries mutually coherent | **PENDING** | G01–G10 are proposed claims, not 06/07 contracts |
-| Transition Debt exits defined | **PARTIAL / PENDING** | Draft future API/DB boundary is explicit, but owner/change plan unapproved |
-| Current implementation vs canonical requirements | **PARTIAL COVERAGE** | Previous source audit exists; full item-by-item evidence and fixed-SHA reruns incomplete |
+| 要件案と設計案 | **PENDING** | 新FR/NFR/AR、local CLI schema、versioningが未承認 |
+| 設計案とGate分割 | **PENDING** | Architecture ReviewがauthorityとGate境界を未確定 |
+| Gate間の依存 | **PENDING** | G01〜G10は草案であり06/07契約ではない |
+| Transition Debtの終了条件 | **PARTIAL/PENDING** | API/DBの将来境界は記載したが正式な承認なし |
+| 現行要件と実装の照合 | **PARTIAL COVERAGE** | `00_foundation_gap_reconciliation.md`で9月末13項目のSource照合を完了。現行SHAでのテスト再実行と厳密なFR単位の全件確認は未実施 |
 
-## 3. Unresolved issues and decision blockers
+## 3. 残る判断・承認の阻害要因
 
-1. Confirm 8/4 mandatory Phase 1–3 algorithms and acceptable replacements
-   when a library version does not provide a historical named estimator.
-2. Resolve canonical §11 engine exclusion via approved semantic change.
-3. Decide question/design/graph identity and versions for DB-free CLI runs.
-4. Freeze method-specific inference/coverage benchmark protocols and tolerances.
-5. Resolve privacy/default storage and atomic write behavior for CATE Parquet.
-6. Review proposed G01–G10 boundaries; dependency and Issue→Gate mappings
-   must be regenerated if claims are merged/split.
-7. Formal owner approval and later independent fixed-SHA scientific acceptance
-   evidence remain absent.
+1. 8月案Phase 1〜3の必須手法と、Library versionが該当classを提供しない場合の同等手法を決める。
+2. 正本§11の外部engine除外を承認付きの要件差分で改定する。
+3. DB-free local runのQuestion/Design/Graph identity・versionを確定する。
+4. 手法固有の分散推定・coverage・科学ベンチマークの許容閾値を固定する。
+5. 個票CATEの保存・privacy・atomic writeを決める。
+6. 暫定G01〜G10とIssue→Gateの対応をArchitecture Review後に見直す。
+7. 正式オーナー承認、固定SHAでの独立科学的検証はいずれも未了。
 
-## 4. Conclusion
+## 4. 結論
 
-**NOT READY FOR 06/07 FREEZE OR CODING.** The traceability structure is present,
-but unknowns are explicit. Proceed with #14 Architecture Review and owner
-approval, then revise 03/04/05 and populate the approved canonical snapshots.
+**現時点では06/07のfreezeやCodingに進めない。** トレーサビリティの構造は草案として存在するが、重要な判断は保留中。先行照合資料を踏まえ、Issue #14のArchitecture Reviewとオーナー承認を経て03/04/05を改訂し、承認済み正本Snapshotを作成する。

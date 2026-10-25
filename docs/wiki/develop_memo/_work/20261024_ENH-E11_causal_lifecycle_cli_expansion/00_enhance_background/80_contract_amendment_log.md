@@ -1,25 +1,18 @@
-# ENH-E11 Contract Amendment Log — append-only
+# ENH-E11 — 契約変更履歴（追記専用）
 
-**Document class:** Planning / Evidence / Governance Artifact  
-**Status:** NO APPROVED AMENDMENTS YET
+**文書区分:** 計画・証跡・ガバナンス資料  
+**状態:** 承認済み契約の変更なし
 
-## 1. Purpose
+## 1. 目的
 
-Record contract changes **after** human approval or Gate 06/07 freeze.
-Preserve previous BLOCKED/FAIL/evidence and capture human decision, affected
-FR/NFR/AR/Design/Gate, before/after semantics, SHA, re-baseline and next Trial.
+正式承認後、またはGate 06/07のfreeze後に発生した契約変更を追記する。従前のBLOCKED/FAILと検証証拠を保持し、変更理由、影響するFR/NFR/AR・設計・Gate、変更前後の意味、SHA、再基準化、次Trialを記録する。
 
-## 2. Current entries
+## 2. 現在の記録
 
-None. The difference between the 2026-09 Notion `HANDOFF_DRAFT` and the
-2026-10-24 owner's new Phase 1–3 CLI-first planning direction is a **preapproval
-scope revision**, recorded in 01/02/03/06 and Issue #13, not a retrospective
-amendment to any frozen Gate contract.
+**該当なし。** 2026年9月のNotion `HANDOFF_DRAFT`と2026年10月24日のオーナー方針におけるPhase 1〜3 CLI-firstへの対象拡大は、**承認前の計画変更**である。凍結済みGate契約の修正として遡及記録しない。事前調査`00_foundation_gap_reconciliation.md`、構想`01`、承認記録`02`、要件改定案`03`、三資料照合`06`、Issue #13で扱う。
 
-## 3. Future entry schema
+## 3. 今後の記録必須項目
 
-Each entry must include: unique Amendment ID, status, trigger/evidence, affected
-Gate/Trial, type (REQUIREMENT_CHANGE/DESIGN_CHANGE/CONTRACT_DEFECT/OTHER),
-applicable Gate 09, owner approval, before/after normative semantics, affected
-06/07/Pxx/Rxx, re-baseline SHA and preservation of historical test evidence.
-Never weaken scientific acceptance solely to pass a failing test.
+Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
+
+**テストをPASSさせるためだけに科学的受入条件を緩めない。**

@@ -1,31 +1,41 @@
-# ENH-E11 00_enhance_background
+# ENH-E11 — 00_enhance_background：文書の位置付け
 
-Planning and audit authority only; **not** a runtime coding contract.
+**文書区分:** 計画・監査資料の案内  
+**状態:** 計画段階／正式承認待ち  
+**言語方針:** 本文・見出しは日本語を基本とし、専門用語と識別子は必要に応じて英語を維持する。canonicalファイル名はWorkflow規則に従いASCIIとする。
 
-## Creation and approval order
+## 1. 最初に読む文書
 
-`01 Concept → 02 Human Approval → 03 Requirements Revision → 04 Design Revision →
-05 Consistency/Traceability → Revised Approved Requirements Snapshot → 80 Amendment Log`.
+**`00_foundation_gap_reconciliation.md` — 構想の出発点。**
 
-The **first** reconciliation result is `08_september_foundation_gap_reconciliation.md`:
-9月末ENH-E11 Foundation Gap 13項目 × 現行正本/コード/テスト/過去999の照合。
-It is SOURCE_RECONCILED, not freshly test-certified. Review it **before**
-using the broader August/September/current `06_three_source_reconciliation_matrix.md`.
+2026年9月末のENH-E11申し送り（`Causal Lifecycle Foundation Gap Completion`）と2026年10月の現行要件・実装を13項目で照合する。各行についてRequirement Status、ソース、テストの存在、過去の999判定、未充足・新Capability候補を区別する。
 
-The supplementary `06_three_source_reconciliation_matrix.md`,
-`07_github_issue_register.md`, and `08_september_foundation_gap_reconciliation.md`
-are authoring/audit aids to substantiate the 01–05 decisions. They do **not** replace the workflow's required artifacts.
+この資料は**`01_enhancement_concept_and_requirement_revision_plan.md`より前に読むべき根拠資料**である。設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
 
-## Current review state
+## 2. Workflow所定の正式文書の順序
 
-- Scope boundary chosen by owner: historical Phase 1–3 mandatory causal methods,
-  Scientific Core / local CLI / durable file artifacts only.
-- Formal concept/document approval: **PENDING**.
-- Architecture review: **REQUIRED / PENDING**.
-- Requirement/design consistency verdict: **PENDING**.
-- Approved requirements snapshot and Gate 06/07 freeze: **NOT YET AVAILABLE**.
-- Test or implementation commencement: **NOT AUTHORIZED BY THESE DRAFTS**.
+`01 構想・要件改定計画 → 02 オーナー承認 → 03 要件改定 → 04 設計改定 → 05 要件・設計整合性 → 承認済み正本Snapshot → 80 契約変更履歴`。
 
-All canonical filenames are ASCII and follow template naming rules. Source URLs,
-GitHub Issues, SHA and scientific tests are provenance; normative decision contents
-must remain self-contained in each applicable 00 artifact.
+**00の事前調査資料を追加しても、Workflow所定の01〜05のファイル名や承認順序は変更しない。**
+
+## 3. 後続の補助資料
+
+- `06_three_source_reconciliation_matrix.md`：**00の照合後に使用**。8月4日案・9月末案・現行基準と、今後のCLI-only候補を比較する。現時点では暫定案。
+- `07_github_issue_register.md`：Issue #13〜#24の追跡と、暫定Gate・要件の対応。
+- `40_operator_workflows/architecture_review/`：source-of-truth、Scientific/Local CLI所有権、Gate境界に関する未承認の判断案。
+
+補助資料は01〜05、承認済み正本、Gate 06/07の正式なauthorityを**代替しない**。
+
+## 4. 現在の承認状態
+
+| 対象 | 状態 |
+|---|---|
+| 9月末案 × 現行実装のSource Reconciliation | **完了（ソース照合）／新規全件テスト未実施** |
+| CLI-only Phase 1〜3のオーナー方針 | 計画上の方向性を確認済み |
+| 正式な構想・要件・設計承認 | **PENDING** |
+| Architecture Review | **未完了** |
+| 承認済み正本Snapshot | **未作成** |
+| Gate 06/07のfreeze | **未実施** |
+| 今回の計画に基づくCoding・独立999 PASS | **未実施** |
+
+外部URL、Issue、SHA、過去のGateは根拠の参照先であり、各文書の結論や設計判断そのものを外部参照だけに委ねない。

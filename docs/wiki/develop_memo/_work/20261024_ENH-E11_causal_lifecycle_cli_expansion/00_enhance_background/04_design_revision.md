@@ -1,121 +1,80 @@
 # ENH-E11 — 設計書改定案
 
-**Document class:** Planning / Decision Artifact  
-**Status:** DRAFT TARGET DESIGN / ARCHITECTURE REVIEW PENDING
+**文書区分:** 計画・設計判断案  
+**状態:** DRAFT／Architecture Review未完了  
+**前提:** `00_foundation_gap_reconciliation.md`の既存機能・残差分類、`03_requirements_revision.md`の要件改定案。
 
-## 1. Source design documents
+## 1. 参照設計
 
-- `docs/wiki/requirement_definition/21_logical_data_design.md`
-- `docs/wiki/requirement_definition/22_product_basic_design.md`
-- `docs/wiki/requirement_definition/23_api_interface_design.md`
-- `docs/wiki/requirement_definition/30_detailed_design.md`
-- Existing standalone CLI: `src/ariadne/interfaces/cli/`, Scientific Core:
-  `src/ariadne/scientific/`, inference engine: `src/ariadne/causal/inference/`.
-- Product domain current `analysis_spec.py` and scientific core ports.
+正本：`docs/wiki/requirement_definition/21_logical_data_design.md`、`22_product_basic_design.md`、`23_api_interface_design.md`、`30_detailed_design.md`。
+既存実装：`src/ariadne/interfaces/cli/`、`src/ariadne/scientific/`、`src/ariadne/causal/inference/`、`src/ariadne/product/domain/analysis_spec.py`、Scientific Core ports。
 
-## 2. Proposed design delta
+## 2. 設計差分（案）
 
-### Scientific Core boundaries
+### Scientific CoreとDomainの責務
 
-- **Causal context:** reuse current Causal Question/Design/Graph schemas where
-  compatible; add a local versioned identity/provenance document when Product DB
-  owner cannot be reused without Worker/DB integration.
-- **Identification:** normalize native/DoWhy backend result to Ariadne-native
-  identified/requires-review/not-identified/unsupported taxonomy; assumptions
-  and source graph must be attached. No library objects in canonical payload.
-- **Graph discovery:** FCI, PCMCI families register algorithm ID, CI test,
-  parameters and backend metadata; ensure typed edge endpoints, lag metadata and
-  exact round-trip serialization. No forced DAG conversion.
-- **Estimation:** preserve existing `ipw` / `aipw`; introduce capability-oriented
-  estimator interface for CATE and design-specific estimators without forcing
-  all results into binary-treatment ATE/ATT fields.
-- **Refutation/sensitivity:** method-specific, provenance-rich scientific result
-  with upstream effect identity. Keep existing baseline method codes.
-- **Temporal/quasi-experimental:** distinct validated design contract for panel,
-  time, running variable, instrument and donor pool instead of extending all
-  cross-sectional estimator input fields indiscriminately.
+- **Question/Design/Graph:** 現行schemaを可能な限り再利用する。DB不要のlocal executionでProduct versionを直接使用できなければ、版管理されたlocal identity/provenanceを用意する。
+- **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。
+- **Discovery:** FCI/PCMCI系にalgorithm ID、CI test、parameter、backend versionを持たせる。endpoint・lagと不確実性を失わない往復serializeを保証する。
+- **Estimation:** 既存`ipw`/`aipw`を維持し、CATEと準実験固有estimandを一律ATE/ATTのフィールドに押し込めない。
+- **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。
+- **Temporal/Quasi-experimental:** Panel、時刻、running variable、IV、donor poolの妥当性を、横断データの既存入力契約とは分けて検証する。
 
-### Local output model
+### ローカル成果物の流れ
 
-- Validated CLI config → scientific method adapter → result/diagnostics →
-  durable local files → manifest (inputs, hashes, parameters, versions, seed,
-  split identity, statuses, artifact hashes). No DB identity requirement.
-- Use existing CLI adapter/manifest helpers where suitable. New schema versions
-  must preserve legacy `config_version=2.0` readers; version-bump semantics
-  subject to Architecture Review.
-- Large per-unit CATE results as Parquet, concise summary as JSON, readable
-  design-specific scientific audit as Markdown/JSON; do not expose all rows in
-  a single control-plane response.
+`検証済みCLI設定 → 科学メソッドAdapter → Result/Diagnostics → 永続ローカルファイル → Manifest`。
 
-## 3. Authority / ownership changes
+Manifestに入力hash、parameter、実効dependency version、seed、split、科学的status、artifact checksumを記録する。Product DBのIDを必須としない。既存CLI helperを再利用し、従来`config_version=2.0`読取との互換性・schema version境界はArchitecture Reviewで判断する。
 
-**Proposed, not frozen:**
+大規模な個票CATEはParquet、要約はJSON、手法別科学監査はMarkdown/JSONとし、個票全件を小さな制御応答へ格納しない。
 
-- Domain owns portable scientific question/design/estimand/invariant types;
-  Scientific Core adapters own optional backend calls, validation and numeric
-  method results; CLI owns local path resolution and file writing.
-- Library objects/pickles are not domain/result authority; baseline current
-  Product Graph/Result resources remain authoritative for existing Web path.
-- Method-specific design identities must be capable of being recreated from
-  local spec+manifest without relying on Product DB.
+## 3. 所有権（未承認の案）
 
-## 4. Runtime / data-flow changes
+- Domainが外部ライブラリ非依存のQuestion/Design/Estimand/invariantを定義する。
+- Scientific Core Adapterがoptional backendを呼び出し、数値推定と手法固有検証を担当する。
+- CLIがlocal path・ファイル入出力・Manifest生成を担当する。
+- 現行Web経路ではProductのGraph/Resultが引き続き権威を持つ。Local spec/manifestはこれと同一DB authorityではない。
+- 将来のProduct統合に向け、local identityから再構成可能なDesign契約を検討する。
 
-- **Added:** local CLI method selections and validated operation spec for
-  DoWhy/FCI/EconML/Tigramite and quasi-experimental estimators.
-- **Preserved:** current Product API → Worker → DB orchestration for existing
-  functionality; no addition to these paths during ENH-E11.
-- **Preserved:** navigation state is independent from CLI/runtime execution;
-  Navigation Stages are not 1:1 with scientific execution stages.
-- **Error taxonomy:** `NOT_IDENTIFIED`, `REQUIRES_REVIEW`, poor support and
-  violated eligibility produce scientific results; missing dependency/invalid
-  config remains a typed technical/configuration error.
+## 4. 実行経路とデータフロー
 
-## 5. Persistence / migration changes
+- **追加候補:** DoWhy、FCI、EconML、Tigramite、準実験手法のlocal CLI入口とversioned operation spec。
+- **維持:** 既存のProduct API→Worker→DBのExecution/Result経路。ENH-E11で新機能を統合しない。
+- **維持:** Navigation StageとScientific実行Stageは1対1対応せず、CLIはNavigation状態を要求しない。
+- **エラー分類:** 非識別、要レビュー、適格性不足等は科学的Result。依存の欠落、不正設定は型付きの技術・設定errorとする。
 
-- No new E11 database migrations or new server-side persisted resources.
-- Introduce/add versioned **local** file schemas and checksums with atomic
-  write expectations. Before approval decide handling partial write/retry and
-  confidentiality of row-level CATE artifacts.
-- Existing `ArtifactStore` abstractions and persisted Product reads remain
-  unchanged; portable mapping into future API/DB is a subsequent Enhancement.
+## 5. 永続性とMigration
 
-## 6. Compatibility / rollout strategy
+ENH-E11では新規DB migrationやサーバ側Resourceは追加しない。Versioned local file schema、checksum、atomic writeを検討し、部分書込み・retry・個票CATEの秘密保持を事前に決める。既存ArtifactStoreとProduct persisted readは変更しない。将来API/DBへ接続する処理は別Enhancementとする。
 
-- Retain `ipw`, `aipw`, existing `GraphType` semantics, and existing CLI
-  config contracts; use explicit new option names to prevent ambiguous
-  stabilized/normalized weight interpretation.
-- Backend imports are lazy/optional, with named extras and precise unavailable
-  messages. Record effective package/python versions in the manifest.
-- Deterministic lower-layer scientific validation is the primary test proof;
-  don't add Browser E2E for standalone CLI functions.
-- If existing E9/E10 test behavior is altered intentionally, record exact
-  semantic change and preserve current invariant coverage (do not simply skip).
+## 6. 互換性・導入方法
 
-## 7. Temporary architecture / Transition Debt candidates
+- `ipw`/`aipw`、GraphType、既存CLI設定を保護し、normalizedとstabilizedの混同を避ける引数にする。
+- optional dependencyは遅延importとし、対象Capabilityだけunavailable状態を返す。実効package/Python versionを記録する。
+- 正確性の第一証拠はUnit/Contract/Scientific Benchmark。CLI-onlyのためにBrowser E2Eを追加しない。
+- 意図してE9/E10の契約を変える場合、差分と理由を明記し、protected regressionを単純に省略しない。
 
-| Debt candidate | Why acceptable for CLI-first E11 | Closure condition |
+## 7. 暫定的なTransition Debt
+
+| 候補 | CLI-firstで許容する理由 | 解消条件 |
 |---|---|---|
-| No API/Worker/DB integration for new methods | Explicit owner scope boundary | Follow-on enhancement defines Product authority, design and integration tests |
-| Local-file identity vs Product version resources | No new DB migration permitted | Approved mapping/linkage policy before future persistence integration |
-| Method-specific artifact schemas | Heterogeneous design outputs differ scientifically | Stable versioned schema and future adapters, not a fictitious universal scalar estimate |
-| Full library backend portability | Engine versions/platform constraints | Optional dependency/support matrix and reproducible benchmark evidence |
+| 新手法のAPI/Worker/DB統合なし | オーナーが明示した対象境界 | 後続EnhancementでProduct authorityと統合テストを規定 |
+| Local-file identityとProduct versionの差 | DB migrationをしない | 将来の永続統合前に変換・関連付け方針を承認 |
+| 手法ごとのArtifact schema | 科学的に異質な結果を無理に同じ数値へ変換できない | versioned schemaと将来のadapterを設計 |
+| 全backend/platform互換性の未確定 | 外部Engineの依存制約がある | optional dependency support matrixと再現性試験 |
 
-## 8. Gate implications
+## 8. Gateとの対応
 
-The draft G01–G10 semantic claims in `01` and the Issue→Gate matrix in `05`
-require Architecture Review to decide stable source-of-truth, graph ownership,
-estimator result typing, local artifact identity, privacy and dependency order.
-No Gate contracts are currently frozen.
+`01`の暫定G01〜G10と`05`の対応表は、Graph/Design/Resultのauthority、local-file identity、privacy、optional dependencyの決定後に改訂する。**Gate 06/07はいずれも未固定。**
 
-## 9. Mandatory Architecture Review decisions
+## 9. Architecture Reviewで決める事項
 
-1. Graph/Question/Design ownership and versions in a DB-free local run.
-2. Scientific result vs diagnostic vs artifact boundaries.
-3. Identification gating and nonidentifiable-result semantics.
-4. `TIME_SERIES_GRAPH` / endpoint/lag compatibility.
-5. CATE and local design-specific estimand representations.
-6. Method-specific inference and benchmark contract selection.
-7. Dependency version matrix and installation isolation.
-8. CLI versioning, filename/path safety, artifact atomicity and privacy.
-9. Future API/Worker/DB migration path with no premature implementation.
+1. DB-freeでのGraph/Question/Designの版管理と所有者。
+2. Result／Diagnostics／Artifactの境界。
+3. IdentificationのGateと非識別状態。
+4. TIME_SERIES_GRAPHのendpoint/lag互換性。
+5. CATE/準実験Design固有estimand。
+6. 方法別推論方式と科学ベンチマーク。
+7. 外部依存version matrix・インストール分離。
+8. CLI versioning、path安全性、atomic write、privacy。
+9. 将来API/Worker/DBへの移行方針。ただしE11では実装しない。

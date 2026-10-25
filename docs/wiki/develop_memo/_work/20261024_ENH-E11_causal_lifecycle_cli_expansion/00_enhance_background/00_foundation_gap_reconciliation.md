@@ -1,8 +1,9 @@
-# ENH-E11 — 2026年9月末 Foundation Gap と現行実装の照合
+# ENH-E11 — 事前調査：2026年9月末のFoundation Gapと現行実装の照合
 
-**Document class:** Planning / Evidence Artifact（00層の第1照合成果物）  
-**Status:** SOURCE_RECONCILED / FRESH_FULL_SUITE_NOT_RUN / NOT AN APPROVAL  
+**文書区分:** 事前調査・証跡資料（構想文書01の入力）  
+**状態:** ソース照合済み／現行SHAでの全件テスト未実施／未承認  
 **調査日:** 2026-10-25  
+**作成順序:** 本資料（00）→ 構想・要件改定計画（01）→ 承認記録（02）→ 要件・設計改定（03〜05）。本資料はWorkflowの規定文書を代替しない。  
 **比較基準:** 2026年9月末 `ENH-E11 Causal Lifecycle Foundation Gap Completion`（Notion `HANDOFF_DRAFT`、最終閲覧版）  
 **現行基準:** `prototype/ariadne_mvp` at `4c0129146a59e7a294f13f41a2e27a4b0d820a6f`。要件実装状態是正コミット `84c5a624389b233fcb97c656f1c94d177f459c5a` を継承。  
 **対象:** 9月末Notion §5 の13項目と、そこに直接関係する現行FR/NFR/AR、現行ソース、既存テスト、過去のcanonical 999。  
@@ -53,7 +54,7 @@ Notion §6の分類を適用する。
 | X02 Navigationの分離 | FR-153～156とAR-023/024は正本で **IMPLEMENTED**、[E8 G02 999 PASS](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/docs/wiki/develop_memo/_work/20260820_ENH-E8_analysis_stage_content_redesign/30_test_report/G02/Trial02/999_GATE_DECISION.md)、[E9 G05 999 PASS](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/docs/wiki/develop_memo/_work/20260905_ENH-E9_workflow_stabilization/30_test_report/G05/Trial01/ENH-E9-G05_01__999_gate_decision.md)。 | **C**：9月末に想定したNavigationの基礎Gapは現在の受入範囲で解消。 |
 | X03 Reproducibility / provenance | NFR-001b **PARTIAL**。[climan](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/manifest.py)は`backend_version`項目を持つが[clistage](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/interfaces/cli/scientific_stage.py)は`ariadne/0.1.0`固定、runtime_versionsはPython中心。Product [execution](https://github.com/kousuke-ota-datascience/causal-atelier/blob/4c0129146a59e7a294f13f41a2e27a4b0d820a6f/src/ariadne/product/application/execution_service.py)の`_runtime_manifest`は固定列挙のlibrary versionsを記録する。 | **A**：実効依存versionとeffective seedの全stage完全性は未立証。CLIのversion placeholderを真のbackend package versionと誤認しない。 |
 
-## 4. 検証方法と未検証範囲（重要）
+## 4. 確認方法と未検証範囲（重要）
 
 **今回実施したこと**
 1. Notion `HANDOFF_DRAFT` §5の13項目を逐語単位で起点に固定。
@@ -69,7 +70,7 @@ Notion §6の分類を適用する。
 
 したがって**Source Reconciliationとして13/13項目を分類した**が、runtime最終認定ではない。前会話の別SHAに関するテスト報告値をこのSHAの再実行値として転記しない。
 
-## 5. 残存Foundation Gap — 追加調査の優先順位（スコープ決定ではない）
+## 5. 残存する基盤的課題：追加調査の優先順位（スコープ決定ではない）
 
 | 優先 | 現行要件 | 調査・受入で詰める残差 | 必要な主たる検証 |
 |---|---|---|---|

@@ -1,52 +1,45 @@
-# ENH-E11 — Enhance構想承認記録
+# ENH-E11 — 構想承認記録
 
-**Document class:** Planning / Decision Artifact  
-**Decision:** PENDING_FULL_CONCEPT_APPROVAL  
-**Decision timestamp:** Not yet issued  
-**Decision authority:** Human owner (not inferred from draft documents)  
-**Reviewed proposal:** `01_enhancement_concept_and_requirement_revision_plan.md`  
-**Evidence:** 2026-10-24 owner conversation; [tracking Issue #13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)
+**文書区分:** 計画・意思決定記録  
+**承認状態:** **正式な構想承認は未実施**（`PENDING_FULL_CONCEPT_APPROVAL`）  
+**承認日時:** 未発行  
+**承認権限:** Human owner  
+**審査対象:** `01_enhancement_concept_and_requirement_revision_plan.md`  
+**事前照合:** `00_foundation_gap_reconciliation.md`  
+**追跡:** [GitHub Issue #13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)
 
-## Owner direction established for planning (not a Gate approval)
+## 1. 計画の前提として確認されたオーナー方針（Gate承認ではない）
 
-1. ENH-E11 implementation target is **all mandatory 2026-08-04 Phase 1–3
-   causal inference capabilities** (with existing implementations reused).
-2. Scope of **new** functions: Scientific Core, local CLI execution and
-   persistent local file artifacts. New Web UI, Web API, Worker and DB integration
-   are deferred to other enhancements.
-3. Reconcile current canonical requirements and implementation, the historical
-   August blueprint, and the September Notion ENH-E11 handoff before coding.
-4. Manage enhancement implementation scope with GitHub Issues **in addition to**
-   required workflow documents, with explicit Issue-to-Gate/AC traceability.
+1. ENH-E11では2026年8月4日のPhase 1〜3の必須因果推論Capabilityを実装対象候補とし、既存実装は再利用する。
+2. **新機能**の提供範囲はScientific Core、ローカルCLI、永続ローカルファイル成果物に限定する。Web UI/API、Worker、DB統合は後続へ送る。
+3. まず9月末のFoundation Gap案と現行実装を照合し、その結果を踏まえて8月構想との差分・正式要件を整理する。
+4. Workflowの必須文書に加えてGitHub Issueを使い、Issue→Requirement→Gate→Acceptance Criterionの対応を示す。
 
-## Approval still needed
+## 2. まだ承認されていない事項
 
-- Final concept/title and version of the expanded mandatory method list.
-- Requirement additions/deletions and treatment of canonical §11 external-engine
-  exclusion; new FR/NFR/AR semantics.
-- Architecture/ownership of method specifications, optional libraries,
-  CLI-file contracts and scientific verification thresholds.
-- Gate decomposition, 06/07 contract freeze and fixed baseline SHA.
+- 拡大後の構想名称、必須手法一覧および例外・同等手法。
+- 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
+- Design/Resultの所有権、optional dependency、CLIファイル契約、科学的許容基準。
+- Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
-## Conditions and constraints
+## 3. 遵守条件
 
-- No new Web API, Worker, DB or UI integration for E11 scientific enhancements.
-- Do not silently turn exploratory/temporal graphs into identified DAGs.
-- Unverifiable scientific results must expose review/warning/negative statuses.
-- Preserve FR/NFR/AR existing baseline semantics and independent Gate evidence.
-- GitHub Issue completion **does not** equal formal Gate PASS.
+- 新機能のWeb UI/API/Worker/DB統合をENH-E11内で行わない。
+- CPDAG/PAG等の不確定性を黙ってDAGへ変換しない。
+- 非識別、仮定違反、適格性不足等は科学的statusとして記録し、技術失敗と区別する。
+- 既存FR/NFR/ARの意味、現行実装、独立Gate証跡を保護する。
+- Issue完了はcanonical 999 PASSを意味しない。
 
-## Explicit non-approval
+## 4. 明示的な非承認
 
-- No implementation agent launch, Gate 06/07 freeze or claim of accepted software.
-- No change to canonical requirement documents without reviewed semantic delta.
-- No Phase 4 policy automation, monitoring or automated decision authority.
+- 実装Agentの起動、Gate 06/07の固定、受入済みソフトウェアの宣言。
+- 審査済みの要件差分がないままの正本書換え。
+- Phase 4のPolicy automation、監視、意思決定権限の付与。
 
-## Required follow-up
+## 5. 承認のための残作業
 
-1. Review `06_three_source_reconciliation_matrix.md`, `03_requirements_revision.md`
-   and `04_design_revision.md` against fixed source SHA and tests.
-2. Complete Architecture Review and update `05...traceability_review.md`.
-3. Request and record an explicit human full-concept / requirement/design decision
-   here, with actual date and decision evidence; do not backdate it.
-4. Only after approval, populate approved canonical snapshots and Gate 06/07.
+1. 先行照合`00_foundation_gap_reconciliation.md`の証拠と未検証事項を確認する。
+2. `06_three_source_reconciliation_matrix.md`、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
+3. Architecture Reviewを完了し、`05_requirements_design_consistency_and_traceability_review.md`を改訂する。
+4. Human ownerの正式判断を**実際の日時と根拠**付きで追記する。遡及的に承認済みとしない。
+5. 承認後に正本と承認Snapshotを固定し、Gate 06/07を作成する。
