@@ -4,7 +4,7 @@
 **判断状態:** **PROPOSED／未承認**  
 **判断権限:** Human architecture owner（保留中）  
 **判断日時:** 未発行  
-**前提調査:** `../../00_enhance_background/00_01_foundation_gap_reconciliation.md`、`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`、`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`、`01_architecture_discovery.md`
+**前提調査:** `../../00_enhance_background/00_01_foundation_gap_reconciliation.md`、`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`、`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`→`../../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md`、`01_architecture_discovery.md`
 
 ## 1. 背景
 

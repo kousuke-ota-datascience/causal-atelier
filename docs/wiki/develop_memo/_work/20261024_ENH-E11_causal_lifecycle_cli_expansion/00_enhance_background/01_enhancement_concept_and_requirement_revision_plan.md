@@ -1,7 +1,7 @@
 # ENH-E11 — 構想・要件改定計画（案）
 
 **文書区分:** Workflow所定の構想・要件改定計画（01）  
-**状態:** DRAFT／対象範囲の方向性を検討中／構想・要件・設計・Gateは正式未承認  
+**状態:** DRAFT／ステップ4のCLI-only実装スコープ案作成済み／構想・要件・設計・Gateは正式未承認  
 **起案日:** 2026-10-24（日本時間）／**改訂日:** 2026-10-25（日本時間）  
 **追跡Issue:** [#13（ENH-E11全体）](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)、[#14（事前照合とArchitecture Review）](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14)  
 **実装現状の参照SHA:** `827a6c3683e0fff0af342cb3aded45d9dde020c9`。**正式な受入Baselineではない。**
@@ -16,15 +16,16 @@
 
 ### 0.2. 先行資料との役割分担と重複排除
 
-現行正本・コード・テストの逐次照合と8月案との比較は、先行する次の**3件の事前調査資料を根拠**とし、本書へ全文を再掲しない。
+現行正本・コード・テストの逐次照合と8月案との比較は**3件の事前調査資料**を根拠とし、その結果の**スコープ案00_04**とともに本書へ入力する。詳細の68行は再掲しない。
 
 | 先行資料 | 記録する事実・責務 | 本書に引き継ぐ内容 |
 |---|---|---|
 | [00_01_foundation_gap_reconciliation.md](00_01_foundation_gap_reconciliation.md) | 9月末構想13項目と現行FR/NFR/AR・コード・テスト・過去999の対応。P0/P1等は**追加調査の優先順位** | 実装済み能力と新Capability候補の境界 |
 | [00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
 | [00_03_phase1_to_phase3_reconciliation.md](00_03_phase1_to_phase3_reconciliation.md) | 8月4日Phase 1〜3・A0上位構想、9月末の扱い、現行実装の68項目を照合 | 既存再利用・新規候補・後続扱い・採否未決事項 |
+| [00_04_phase1_to_phase3_cli_scope_proposal.md](00_04_phase1_to_phase3_cli_scope_proposal.md) | 68項目にCLI-only実装の候補Disposition・提供範囲・後続送りとGap別帰属を提案 | 01第5章へ反映する実装スコープ案（未承認） |
 
-**00_03のソース照合完了は、新Capabilityの採否・要件改定の承認を意味しない。**上位A0だけにあるATC、mediation、matching/g-computation、negative control等の帰属はステップ4で明示的に決定する。
+**00_03の照合完了も00_04の採否案作成も、新Capabilityの正式承認を意味しない。** A0上位構想にあるATC、matching/g-computation等の後続送り、Negative Control／未観測交絡Sensitivityの最小方式は00_04で**具体的な処遇案**を示した。承認は02で判断する。
 
 本書の第1章は**分析上の課題とFoundation Gapの関係**、第2章は**手法の選定理由**、第3章は**現行の分析能力と適用限界（As-Is）**、第4章は**分析者の状況・問い・利用方法で表す目標状態（To-Be）**、第10章は**目標状態を検証するための暫定完了基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
 
@@ -286,30 +287,42 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 
 本章の研究例は目標を具体化するための説明であり、全業界への適用保証や自動的なPolicy意思決定を約束するものではない。**第10章はこのユースケースの能力を検証する手段**であり、テスト可能な部分だけを取り出して目標を縮小してはならない。
 
-## 5. 対象範囲
+## 5. 対象範囲（ステップ4のCLI-only実装スコープ案）
 
-### 5.1. 対象候補
+### 5.1. 判定済みスコープ案の読み方
 
-- **Phase 1：** 既存Question/Design/Graph/Identification/Eligibilityの再利用、FCI/PAG、DoWhy等のoptional識別（Backdoor/Frontdoor/IV）、追加Refutation/Sensitivity、IPTW/AIPWの推論・診断の品質強化。
-- **Phase 2：** CATE/HTE、EconMLのLinearDML／CausalForestDML／DRLearner／ForestDRLearner／S・T・X Learner／DRIV又は科学的に同等なIV+ML、support/overlap/calibration/uncertainty、永続ファイル成果物。
-- **Phase 3：** TigramiteのPCMCI／PCMCI+／LPCMCI、CI-test registry、TemporalDesign、DiD、Event Study、Interrupted Time Series、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control／Synthetic DiDと各固有診断。
-- **横断：** CLI契約、データ・結果の版管理、local Manifest/Checksum/Seed/Library version、negative result、Known-truth Benchmark、後方互換性。
-- **既存Gap：** GAP-C01〜C04の**帰属判断を行う**。何を実装するかは第3.3節の帰属判断による。全件が自動的に実装対象になるものではない。
+第1〜4章で明らかにした**分析上の必要性とユースケース**を、[00_04_phase1_to_phase3_cli_scope_proposal.md](00_04_phase1_to_phase3_cli_scope_proposal.md)の**68項目**へ対応付けた。各行を **R=既存再利用、Q=品質強化、N=新規Scientific Core／local CLI／local file、D=後続対応**として分類し、混合項目はR+N等で分けた。**00_03は事実の照合、00_04は今回何を提供するかの案**であり、正式な採否承認はまだ受けていない。
 
-上記はオーナーの方針を反映した**構想段階の候補**であり、正式なFR/NFR/ARとGate 06/07の承認を待つ。手法ごとの科学的選定理由は第2.1節を正とし、ここには名称・提供境界のみを置く。
+**提供面はScientific Core＋ローカルCLI＋永続ローカルファイル（Versioned Spec、JSON/Parquet、Manifest、checksum、実効version・seed/split）に限定**する。新機能のWeb UI/API/Worker/DB・migrationは実装しない。既存Product契約と既存CLIを維持する。
 
-### 5.2. 対象外・後続送り
+### 5.2. Phase 1〜3の対象Method群
 
-- E11**新機能**のWeb UI、Web API、Worker、DBへの新規統合、科学的受入のためだけのBrowser E2E追加。
-- Phase 4のPolicy Evaluation、capacity/cost最適化、監視/drift、意思決定の自動執行。
-- 初期必須範囲外のRPCMCI/J-PCMCI+や、すべての外部分析Libraryを網羅すること。
-- [Issue #11](https://github.com/kousuke-ota-datascience/causal-atelier/issues/11)のリポジトリ全体のテスト基盤移行。
-- 既存ProductのNavigation/DB要件残差を、オーナー承認なしにCLI実装作業へ取り込むこと。
+| Phase | 再利用（R）・品質強化（Q） | 新規Scientific Core／CLI／Local file候補（N） | 00_04で追跡する項目 |
+|---|---|---|---|
+| **Phase 1** | Question/Design、DAG/CPDAG/PAG、PC/GES/LiNGAM/NOTEARS、Randomized/Backdoor、Data Eligibility、ATE/ATT・IPW/AIPW、既存E9 diagnostics／Refutation／Sensitivity。IPTW推論はQ | FCI/PAG、optional DoWhy Backdoor/Frontdoor/IV、Random Common Cause/Bootstrap Refutation、Negative Control・未観測交絡Sensitivityの最小方式（採用境界は要審査）、方法別Eligibility、Local result/manifest | `P1-01〜21` |
+| **Phase 2** | 既存AIPW/cross-fittingとoptional依存分離の原則 | CATE/HTE、LinearDML、CausalForestDML、DRLearner、ForestDRLearner、S/T/X Learner、DRIVまたは承認済み同等IV+ML、support/calibration/CI、機微情報を制限したCATE Parquetと群別JSON | `P2-01〜18` |
+| **Phase 3** | 既存Graph/CLI/Manifestの汎用基盤 | TemporalDesign、PCMCI/PCMCI+/LPCMCI、CI-test registry、DiD/Event Study/ITS、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control/Synthetic DiD、method別Estimand／適格性／診断・結果 | `P3-01〜19` |
+| **共通** | 既存Scientific CLI/E9回帰 | Versioned input・データ/Graph/Design参照、依存環境/seed/split/Manifest、科学的負結果、Known-truth Benchmark、atomic file／機微情報制御 | `X-01〜10` |
+
+列挙したMethodは**必須候補としてすべて保持**する。Phase 2の「4 estimator family以上」を口実に他の列挙手法を無断で除外しない。外部Libraryに希望するclassが存在しない場合は、科学的同等性・要件差分・Human owner承認を条件とし、現時点で対応済みとはしない。
+
+### 5.3. 後続送りと既存Foundation Gapの取り扱い
+
+- **D（今回提供しない）:** 旧Phase文書の新規Web UI/API/Worker/DB、Product migration/RBAC統合、Phase4 Policy Evaluation／Monitoring／Mediation、RPCMCI/J-PCMCI+、上位A0にのみ挙がるATC・matching/g-computation・汎用Graph perturbation等の独立方式。
+- **要審査の提案:** A0とPhase実装指示の強度差があるNegative ControlとUnobserved-confounding Sensitivityについては、Phase1に最小限の**実行可能な科学的方式（N）**を提案する。具体的なmethod、前提と結果の意味は03/04改定案・Architecture Reviewで審査する。上位A0の全方式を無条件採用するものではない。
+- **既存Gap-C01/C02/C04:** Product探索再利用warning、canonical DB lineage、Navigation Capability所有権はCLI-onlyのコード作業対象外の案とする。要件は**未解消のまま**であり、#14を窓口として別Enhancementの担当・Issue・閉鎖条件を承認時に決める。
+- **既存Gap-C03:** 新CLIに実効Library versionとseed/split・環境provenanceを独立した受入契約として課す。これで既存Product StageAttempt／Executionの`PARTIAL`を閉鎖したことにはならない。
+
+### 5.4. ステップ4と正式な承認の境界
+
+**成果物としてのステップ4は、68項目のScope案・Method一覧・後続送り・Gap帰属案を整備した状態まで到達した。** ただし、**スコープの人間承認は未実施**である。02の承認記録で次を確認すること：①A0上位要求のD案、②Negative Control/未観測交絡Sensitivityの方法、③EconML・Tigramite等のLibrary versionと同等代替、④Product Gapの責任移管、⑤科学的な受入値・Scopeに見合う費用と実施順序。
+
+上記を承認後、03/04/05およびArchitecture Reviewへ反映して、Gate 06/07・Work Packageを確定する。**この段階では実装やGate凍結を許可しない。**
 
 ## 6. 要件改定の見込み
 
-- 既存FR-035〜050・FR-153〜156の実装済み契約は維持する。**FR-051・FR-054等の現行PARTIAL/NOT_IMPLEMENTEDを、新Capabilityの追加だけで解消としない**。詳細は00の2資料に委ねる。
-- FCI/DoWhy、CATE/HTE、Temporal/Quasi-experimental Design、追加Refutation/Sensitivity、Local CLI artifactを独立した意味の新FRにする。各手法に適格性、識別・推定対象、科学的負結果、provenanceを定義する。
+- 既存FR-035〜050・FR-153〜156の実装済み契約は維持する。**FR-051・FR-054等の現行PARTIAL/NOT_IMPLEMENTEDを、新Capabilityの追加だけで解消としない**。詳細は00_01・00_02に委ねる。スコープ案は00_04を参照する。
+- FCI/DoWhy、CATE/HTE、Temporal/Quasi-experimental Design、追加Refutation/Sensitivity（Negative Control・未観測交絡の最小方式は要審査）、Local CLI artifactを独立した意味の新FRにする。各手法に適格性、識別・推定対象、科学的負結果、provenanceを定義する。
 - FR-086a/087b、NFR-001b/002/025/028等の既存再現性・追跡・依存分離要件を新手法へ適用する一方、既存Productへの適用とlocal CLIへの適用を区別する。
 - 現行要件§11の未承認DoWhy/EconML除外規定は、正式採用に必要な範囲だけ承認を得て改定する。Tigramiteその他も同じ採否判断をする。
 - 新FR/NFR/ARの正式採番は承認後に実施する。`03_requirements_revision.md`は現時点で**semantic deltaの案**であり、正本更新済みではない。
@@ -392,6 +405,7 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 
 - **9月末構想と現行実装の照合:** [00_01_foundation_gap_reconciliation.md](00_01_foundation_gap_reconciliation.md)。13項目とP0/P1の調査優先度。
 - **未解消Gapの確定:** [00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md)。GAP-C01〜C04、関連FR/NFR/ARと閉鎖条件。
+- **実装スコープ案（ステップ4準備済み・未承認）:** [00_04_phase1_to_phase3_cli_scope_proposal.md](00_04_phase1_to_phase3_cli_scope_proposal.md)。Phase1〜3のCLI-only 68行と上位A0の採否留保。
 - **歴史的な手法候補:** `docs/wiki/develop_memo/_work/20260804_causal_lifecycle_enhancement/03_01_coding_instruction_Phase1.md`、`03_02_coding_instruction_Phase2.md`、`03_03_coding_instruction_Phase3.md`。**現行の承認済み要件ではない**。
 - **9月末申し送り:** [ENH-E11 Causal Lifecycle Foundation Gap Completion](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)（`HANDOFF_DRAFT`）。
 - **現行要件正本:** `docs/wiki/requirement_definition/10_requirements_definition.md`（Status是正コミット`84c5a624389b233fcb97c656f1c94d177f459c5a`）。

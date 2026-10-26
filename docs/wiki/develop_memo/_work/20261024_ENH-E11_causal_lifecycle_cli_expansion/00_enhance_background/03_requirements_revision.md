@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・意思決定資料  
 **状態:** DRAFT／要件の意味上の差分案／未承認  
-**前提資料:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
+**前提資料:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `00_04_phase1_to_phase3_cli_scope_proposal.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
 **採番規則:** `E11-REQ-*`は計画上の仮識別子であり、承認されたFR/NFR/AR番号ではない。
 
 ## 1. 参照元
@@ -10,7 +10,7 @@
 - 正本：`docs/wiki/requirement_definition/00_product_concept_memo.md`、`10_requirements_definition.md`（Implementation Status訂正SHA `84c5a624389b233fcb97c656f1c94d177f459c5a`）、`21/22/23/30`の設計文書。
 - **第一比較:** `00_01_foundation_gap_reconciliation.md`。9月末Foundation Gapの既解消・部分充足・新Capability候補を区別する。
 - 追加の歴史資料：`20260804_causal_lifecycle_enhancement/03_01〜03_03`、9月末[ENH-E11申し送り](https://app.notion.com/p/403e5855be3980c186c3f778a7bfaac5)（`HANDOFF_DRAFT`）。
-- **構想に先行する第3調査:** `00_03_phase1_to_phase3_reconciliation.md`。Phase 1〜3とA0上位構想の68項目を照合。追跡Issue：#13。
+- **第3調査とスコープ案:** `00_03_phase1_to_phase3_reconciliation.md`で68項目を照合、`00_04_phase1_to_phase3_cli_scope_proposal.md`で既存再利用・品質・新規CLI科学機能・後続対応の案を明記。人間承認前。追跡Issue：#13。
 
 ## 2. 現行要件と変更後の意味（案）
 
@@ -20,7 +20,8 @@
 | E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと`NOT_IDENTIFIED`等の明示的結果を追加 | DoWhy候補 #16 |
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
-| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 採用が認められた未観測交絡Sensitivity等を追加し、既存2方式を維持 | 拡張 #16 |
+| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持し、最小Unobserved-confounding Sensitivity方式をPhase1採用案として追加。方式・仮定・負結果は承認待ち | 拡張 #16 |
+| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | Negative Control exposure/outcomeの実行可能な科学的方式・ResultをPhase1の新Capability案に含む。最小Methodの採否はHuman owner/Architecture Reviewで審査 | 新規候補 #16 |
 | E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | Hájek型正規化、IPTWの分散・区間推定の品質、Balance/ESS/Overlapの適用性を明文化 | 品質強化 #19 |
 | E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifier、推論・supportと承認済みEstimatorを規定 | 新規Phase 2 #18 |
 | E11-REQ-P2A | CATEファイル成果物の現行要件なし | privacy制限付きParquet/JSON、seed/split/versionと群別要約を規定 | #18、#24 |
@@ -64,7 +65,7 @@
 
 ## 6. 未決定事項
 
-- 新規FR/NFR/ARの正式採番とProductコンセプト改定。
+- 新規FR/NFR/ARの正式採番とProductコンセプト改定。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
 - IPTW推論・Trimmingの科学的に適切なdefault。
 - Phase 2のIV+MLとしてDRIVまたは同等手法をどう認めるか。
 - 個票CATEファイルの最小化・アクセス制限。

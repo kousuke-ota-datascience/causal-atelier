@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・判断記録  
 **状態:** DRAFT／照合・承認待ち／Gate未承認  
-**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を構想・要件・設計策定前に照合する。
+**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`と、68行の実装スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`を構想・要件・設計策定前に参照する。
 
 ## 1. 要件→設計→Gate→受入条件→Issueの対応
 
@@ -36,7 +36,7 @@
 
 ## 3. 残る判断・承認の阻害要因
 
-1. 8月案Phase 1〜3の必須手法と、Library versionが該当classを提供しない場合の同等手法を決める。
+1. `00_04_phase1_to_phase3_cli_scope_proposal.md`におけるPhase 1〜3の全必須候補と、A0上位要求の後続送り・最小Negative Control/Sensitivity方式、および利用するLibrary版で該当classが存在しない場合の科学的同等代替をHuman ownerが決める。
 2. 正本§11の外部engine除外を承認付きの要件差分で改定する。
 3. DB-free local runのQuestion/Design/Graph identity・versionを確定する。
 4. 手法固有の分散推定・coverage・科学ベンチマークの許容閾値を固定する。

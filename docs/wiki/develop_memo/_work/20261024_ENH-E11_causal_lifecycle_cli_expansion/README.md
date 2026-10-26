@@ -16,19 +16,20 @@
 
 ## 2. 文書の配置と実施順序
 
-### 2.1. 第1段階：構想に先行する調査
+### 2.1. 第1段階：構想に先行する調査・スコープ案
 
 | 文書 | 役割と状態 |
 |---|---|
 | **`00_enhance_background/00_01_foundation_gap_reconciliation.md`** | **第1調査。** 9月末Foundation Gapの13項目を現行FR/NFR/AR・コード・テスト・過去Gateと照合 |
 | **`00_enhance_background/00_02_foundation_gap_closure_assessment.md`** | **第2調査。** 第1調査に基づき現行要件の残存Gap4領域と証拠水準・閉鎖条件・E11への帰属未決事項を確定。固定SHAでの全件再実行は未実施 |
 | **`00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`** | **第3調査。** 8月4日のPhase 1〜3・A0上位構想、9月末の扱い、現行要件・実装を68行で照合済み。正式な採否とCLI-only実装Scopeは未承認 |
+| **`00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md`** | **ステップ4成果物。** 68行に対し再利用・品質検証・新規CLI科学機能・後続送りのスコープ案を整理。**Human ownerの正式承認待ち** |
 
 ### 2.2. 第2段階：Workflow所定の正式な計画・承認・要件設計
 
 | 文書 | 役割と状態 |
 |---|---|
-| `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md` | **00_01〜00_03の3件の事前調査を入力**とする構想・対象範囲・リスク・暫定Gate案（DRAFT） |
+| `00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md` | **00_01〜00_03の3件の調査と00_04のスコープ案**を入力とする構想・ユースケース・対象範囲・暫定Gate案（DRAFT） |
 | `00_enhance_background/02_enhancement_concept_approval_record.md` | Human ownerの正式承認記録。**承認待ち** |
 | `00_enhance_background/03_requirements_revision.md` | FR/NFR/ARの意味上の変更案。正本未改定 |
 | `00_enhance_background/04_design_revision.md` | 目標Architectureの改定案。未承認 |
@@ -43,12 +44,12 @@
 | `00_enhance_background/07_github_issue_register.md` | GitHub Issue #13〜#24と要件・暫定Gateの対応 |
 | `40_operator_workflows/architecture_review/` | Architecture Discovery、目標設計ADR、暫定Gate分割。未承認 |
 
-**00_01〜00_03は01より前の事前調査**であり、Workflowの正式文書01〜05を置き換えない。07はIssue台帳、80は契約変更履歴であり、これらも承認済み要件やGateを代替しない。
+**00_01〜00_03の事前調査と00_04のスコープ案は01より前の根拠・提案資料**であり、Workflowの正式文書01〜05を置き換えない。07はIssue台帳、80は契約変更履歴であり、これらも承認済み要件やGateを代替しない。
 
 ## 3. 今後の進め方
 
-1. **事前調査00_01→00_02→00_03を順にレビュー**し、9月末13項目の照合、4領域の残差、8月Phase 1〜3の68項目の差分・採否未決事項を把握する。
-2. **完了した8月案との三資料比較（00_03）を基準に、ステップ4のCLI-only実装スコープ案を検討する。** 既存再利用・品質強化・新規候補・後続送りに加え、A0上位構想だけの未決候補を明示審議する。
+1. **00_01→00_02→00_03→00_04をレビュー**し、13項目照合、Gap4領域、8月68項目の差分とCLI-onlyの実装スコープ案を確認する。
+2. **00_04のスコープ案の採否・例外をHuman ownerが審査する。** Phase1〜3のMethod群、Negative Control/未観測交絡Sensitivity、A0上位構想だけのATC等、既存Product Gapの別案件帰属を明示して01構想を確定する。
 3. 構想の正式承認とArchitecture Reviewを得る。必要な要件・設計改定を正本に反映する。
 4. 承認済みSnapshot、基準SHA、semantic Gate/Work Packageを確定し、Gate別06/07をfreezeする。
 5. 実装時に20報告、30独立検証、canonical 999 Decisionを保存する。

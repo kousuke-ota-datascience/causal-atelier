@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・設計判断案  
 **状態:** DRAFT／Architecture Review未完了  
-**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`に基づく既存機能・残差・追加候補の分類、および`03_requirements_revision.md`の要件改定案。
+**前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`、スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`のR/Q/N/D、ならびに`03_requirements_revision.md`の要件改定案。
 
 ## 1. 参照設計
 
@@ -17,7 +17,7 @@
 - **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。
 - **Discovery:** FCI/PCMCI系にalgorithm ID、CI test、parameter、backend versionを持たせる。endpoint・lagと不確実性を失わない往復serializeを保証する。
 - **Estimation:** 既存`ipw`/`aipw`を維持し、CATEと準実験固有estimandを一律ATE/ATTのフィールドに押し込めない。
-- **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。
+- **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。Negative Control exposure/outcome、Unobserved-confoundingの最小実行方式は`00_04_phase1_to_phase3_cli_scope_proposal.md`の**採用案・承認待ち**として、適用仮定・negative result・独立検証方法を別途決定する。
 - **Temporal/Quasi-experimental:** Panel、時刻、running variable、IV、donor poolの妥当性を、横断データの既存入力契約とは分けて検証する。
 
 ### 2.2. ローカル成果物の流れ

@@ -4,14 +4,14 @@
 **状態:** Issue登録済み／要件・Gate対応は未承認の案  
 **Repository:** https://github.com/kousuke-ota-datascience/causal-atelier  
 **記載粒度の基準:** [Issue #11](https://github.com/kousuke-ota-datascience/causal-atelier/issues/11)と同様の`Problem / Goal / Proposed Design / Acceptance Criteria / Related / Result / Memo`。  
-**作業順序:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を01構想策定より**先に**確認する。この台帳のIssue分類は実装承認ではない。
+**作業順序:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`→スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`を01構想策定より**先に**確認する。この台帳のIssue分類は実装承認ではない。
 
 ## 1. 登録済みIssue一覧
 
 | Issue | 対象 | 内容 | 暫定Gate | 扱い |
 |---|---|---|---|---|
 | [#13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13) | 全体 | Phase 1〜3、CLI-first範囲、承認と子Issueの管理 | 全体／Gate前 | 計画 |
-| [#14](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14) | 事前調査 | **完了:** 9月末13項目照合、現行Gap4領域、8月案Phase1〜3＋A0上位68行照合。**未完了:** Scope採否、Architecture Review、承認 | Gate前 | A/B/C/D/E分類・B?未決 |
+| [#14](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14) | 事前調査 | **完了:** 9月末13項目照合、現行Gap4領域、8月案Phase1〜3＋A0上位68行照合。**スコープ案作成済み・Human承認待ち:** 00_04の68行のR/Q/N/D、Architecture Reviewと正式承認は未完了 | Gate前 | A/B/C/D/E分類・B?未決 |
 | [#15](https://github.com/kousuke-ota-datascience/causal-atelier/issues/15) | Phase 1 | Question/Design version、識別・適格性の残差 | G01、G02 | 既存再利用／残差の確認 |
 | [#16](https://github.com/kousuke-ota-datascience/causal-atelier/issues/16) | Phase 1 | DoWhy、Frontdoor/IV、Refutation、Sensitivity拡張 | G02、G03 | Optional backend候補 |
 | [#17](https://github.com/kousuke-ota-datascience/causal-atelier/issues/17) | Phase 1 | FCI/PAGの端点保持、潜在交絡 | G01 | 新規Discovery候補 |

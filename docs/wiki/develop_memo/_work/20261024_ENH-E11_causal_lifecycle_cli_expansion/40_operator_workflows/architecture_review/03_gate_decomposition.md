@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・Operator資料  
 **状態:** DRAFT／Architecture Review・Human承認待ち  
-**前提資料:** 事前調査`../../00_enhance_background/00_01_foundation_gap_reconciliation.md`→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`。残存Foundation Gapと8月Phase 1〜3候補を照合してから、承認後のGate境界を判断する。
+**前提資料:** 事前調査`../../00_enhance_background/00_01_foundation_gap_reconciliation.md`→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`→`../../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md`。残存Foundation Gapと8月Phase 1〜3候補を照合してから、承認後のGate境界を判断する。
 
 ## 1. 分割原則
 

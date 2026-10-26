@@ -2,7 +2,7 @@
 
 **文書区分:** 計画・Operator調査資料  
 **状態:** 読取り調査の初版／網羅性の審査待ち  
-**事前の必須入力:** `../../00_enhance_background/00_01_foundation_gap_reconciliation.md`（9月末の照合）→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`（残存Gap）→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`（Phase 1〜3差分）。  
+**事前の必須入力:** `../../00_enhance_background/00_01_foundation_gap_reconciliation.md`（9月末の照合）→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`（残存Gap）→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`→`../../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md`（Phase 1〜3差分）。  
 **正本の参照点:** 要件訂正SHA `84c5a624389b233fcb97c656f1c94d177f459c5a`。現行実装の一次照合は先行00資料に記録済み。
 
 ## 1. コードから確認した事実
