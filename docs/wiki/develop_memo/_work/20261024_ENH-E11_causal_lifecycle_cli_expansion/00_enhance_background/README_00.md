@@ -14,9 +14,9 @@
 
 さらに**`00_03_phase1_to_phase3_reconciliation.md`**で、8月4日Phase 1〜3・上位構想と9月末の判断、現行実装を68項目で照合する（**第3調査**）。
 
-3調査の結果から**`00_04_phase1_to_phase3_cli_scope_proposal.md`**（ステップ4の68項目スコープ案）を策定した。さらに**`00_05_phase1_to_phase3_cli_scope_review.md`**で技術審査を実施し、**68行の追跡性PASS・BLOCKER 5件／MAJOR 7件・CHANGES_REQUIRED**を記録した。科学的契約・外部依存・採否例外の修正と再審査が必要。
+3調査の結果から**`00_04_phase1_to_phase3_cli_scope_proposal.md`**（ステップ4の68項目スコープ案）を策定した。技術審査の**途中経過**は[作業メモ](../working_notes/20261029_cli_scope_review.md)に記録した（68行追跡性PASS、BLOCKER 5件／MAJOR 7件、**CHANGES_REQUIRED**）。作業メモは00層の正式文書ではない。修正と再審査が必要。
 
-**00_01→00_02→00_03→00_04→00_05の順で`01_enhancement_concept_and_requirement_revision_plan.md`より前に読む。**設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
+**00_01→00_02→00_03→00_04の順で`01_enhancement_concept_and_requirement_revision_plan.md`より前に読む。** 作業メモは指摘事項を確認する際に参照する。設計・実装の承認ではなく、固定SHAでの全テスト再実行もまだ完了していない。
 
 ## 2. Workflow所定の正式文書の順序
 
@@ -29,7 +29,7 @@
 - `07_github_issue_register.md`：Issue #13〜#24の追跡と、暫定Gate・要件の対応。
 - `40_operator_workflows/architecture_review/`：source-of-truth、Scientific/Local CLI所有権、Gate境界に関する未承認の判断案。
 
-事前調査00_01〜00_03・スコープ案00_04・技術審査00_05とIssue・Operatorの補助資料は、01〜05、承認済み正本、Gate 06/07の正式なauthorityを**代替しない**。
+事前調査00_01〜00_03・スコープ案00_04と、別配置の作業メモ・Issue・Operatorの補助資料は、01〜05、承認済み正本、Gate 06/07の正式なauthorityを**代替しない**。
 
 ## 4. 現在の承認状態
 
@@ -39,7 +39,7 @@
 | Foundation Gapの残差確定 | **4領域を登録・証拠水準確定／閉鎖テスト・実装帰属は未決** |
 | 8月4日Phase 1〜3構想との三資料照合 | **完了（68行のソース照合）／採否・実装Scopeの承認は未実施** |
 | ステップ4：Phase 1〜3・CLI-only実装スコープ案 | **作成完了（68行の採否案・Product Gap境界）／Human owner未承認** |
-| ステップ4の技術審査（00_05） | **CHANGES_REQUIRED（BLOCKER 5・MAJOR 7）／正式承認・Gate freeze未実施** |
+| ステップ4の技術審査（別配置の作業メモ） | **CHANGES_REQUIRED（BLOCKER 5・MAJOR 7）／正式承認・Gate freeze未実施** |
 | CLI-only Phase 1〜3のオーナー方針 | 計画上の方向性を確認済み |
 | 正式な構想・要件・設計承認 | **PENDING** |
 | Architecture Review | **未完了** |

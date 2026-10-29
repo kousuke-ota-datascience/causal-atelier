@@ -5,7 +5,7 @@
 **策定日:** 2026-10-26（日本時間）  
 **調査・判断の基準:** `prototype/ariadne_mvp`、`07874a6b1475aa6535265f0c95ae1f062bd1b306`。新しい科学的pytest／外部Library互換性確認は未実施。  
 **根拠:** [00_01（9月末照合）](00_01_foundation_gap_reconciliation.md) → [00_02（既存Gap4領域）](00_02_foundation_gap_closure_assessment.md) → [00_03（8月Phase1〜3との68行照合）](00_03_phase1_to_phase3_reconciliation.md)。  
-**反映先:** [01_enhancement_concept_and_requirement_revision_plan.md](01_enhancement_concept_and_requirement_revision_plan.md) 第5章。**2026-10-29技術審査:** [00_05_phase1_to_phase3_cli_scope_review.md](00_05_phase1_to_phase3_cli_scope_review.md)＝**CHANGES_REQUIRED**（BLOCKER SR-01〜05、MAJOR SR-06〜12）。このスコープ案の行IDと候補Dispositionは**承認前・未改定**。承認記録02・正本FR/NFR/AR・Gate 06/07は未更新。
+**反映先:** [01_enhancement_concept_and_requirement_revision_plan.md](01_enhancement_concept_and_requirement_revision_plan.md) 第5章。**2026-10-29技術審査:** [20261029_cli_scope_review.md](../working_notes/20261029_cli_scope_review.md)＝**CHANGES_REQUIRED**（BLOCKER SR-01〜05、MAJOR SR-06〜12）。このスコープ案の行IDと候補Dispositionは**承認前・未改定**。承認記録02・正本FR/NFR/AR・Gate 06/07は未更新。
 
 ## 0. INTRODUCTION
 

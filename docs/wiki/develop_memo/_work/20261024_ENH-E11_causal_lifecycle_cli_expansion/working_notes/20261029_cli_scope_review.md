@@ -1,12 +1,13 @@
 # ENH-E11 — 00_04 CLI-only実装スコープ案の技術審査記録
 
-**文書区分:** 事前調査の審査記録／構想01・承認記録02への入力  
+**文書区分:** 作業メモ／スコープ案の途中技術レビュー証跡（Workflowの正式文書ではない）  
 **審査日:** 2026-10-29（日本時間）  
-**審査対象:** [00_04_phase1_to_phase3_cli_scope_proposal.md](00_04_phase1_to_phase3_cli_scope_proposal.md)（68項目、承認前）  
+**審査対象:** [00_04_phase1_to_phase3_cli_scope_proposal.md](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)（68項目、承認前）  
 **根拠Snapshot:** `prototype/ariadne_mvp`、`e5ab0b25666f166ac836e24164bb5b32797057a9`（**審査時のコード・文書参照**。実装受入Baselineとしてfreezeしていない）  
 **技術審査結論:** **CHANGES_REQUIRED（修正要求）**。追跡性・CLI-only境界は**適切**だが、必須Method・科学的方式・依存互換性・例外・Product Gap移管を**このまま正式実装契約として承認できる状態ではない**。  
 **承認権限:** Human owner／Architecture owner。**本書は審査指摘であり、オーナーによる承認・不承認の代行ではない。**  
-**実施しなかったもの:** 新規コード・正本FR/NFR/AR修正、外部Library install、実環境API probe、fresh pytest／Scientific Benchmark、Gate 06/07 freeze、canonical 999。
+**実施しなかったもの:** 新規コード・正本FR/NFR/AR修正、外部Library install、実環境API probe、fresh pytest／Scientific Benchmark、Gate 06/07 freeze、canonical 999。  
+**証跡の扱い:** 本文の審査指摘は00_04の修正・再審査と正式な02承認判断への入力であり、この作業メモ自身を正規の00文書、承認済み要件、Gate契約として扱わない。
 
 ## 0. INTRODUCTION
 
