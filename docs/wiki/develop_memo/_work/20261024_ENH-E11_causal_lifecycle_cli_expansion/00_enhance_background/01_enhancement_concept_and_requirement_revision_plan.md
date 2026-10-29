@@ -24,8 +24,9 @@
 | [00_02_foundation_gap_closure_assessment.md](00_02_foundation_gap_closure_assessment.md) | 現行要件の未解消4領域（GAP-C01〜C04）の証拠水準、残差、閉鎖条件、実装帰属の留保 | 未充足の要件群と未解消の判断事項 |
 | [00_03_phase1_to_phase3_reconciliation.md](00_03_phase1_to_phase3_reconciliation.md) | 8月4日Phase 1〜3・A0上位構想、9月末の扱い、現行実装の68項目を照合 | 既存再利用・新規候補・後続扱い・採否未決事項 |
 | [00_04_phase1_to_phase3_cli_scope_proposal.md](00_04_phase1_to_phase3_cli_scope_proposal.md) | 68項目にCLI-only実装の候補Disposition・提供範囲・後続送りとGap別帰属を提案 | 01第5章へ反映する実装スコープ案（未承認） |
+| [00_05_phase1_to_phase3_cli_scope_review.md](00_05_phase1_to_phase3_cli_scope_review.md) | 00_04の技術審査。行IDの一致と、科学的・依存・Scope例外の修正要求SR-01〜12を記録 | **CHANGES_REQUIRED／修正・再審査を要する** |
 
-**00_03の照合完了も00_04の採否案作成も、新Capabilityの正式承認を意味しない。** A0上位構想にあるATC、matching/g-computation等の後続送り、Negative Control／未観測交絡Sensitivityの最小方式は00_04で**具体的な処遇案**を示した。承認は02で判断する。
+**00_03の照合完了・00_04の採否案作成・00_05の技術審査実施は、いずれも新Capabilityの正式承認を意味しない。** 技術審査はCHANGES_REQUIREDであり、00_04の修正・再審査を経ずに02で承認済み扱いにしない。 A0上位構想にあるATC、matching/g-computation等の後続送り、Negative Control／未観測交絡Sensitivityの最小方式は00_04で**具体的な処遇案**を示した。承認は02で判断する。
 
 本書の第1章は**分析上の課題とFoundation Gapの関係**、第2章は**手法の選定理由**、第3章は**現行の分析能力と適用限界（As-Is）**、第4章は**分析者の状況・問い・利用方法で表す目標状態（To-Be）**、第10章は**目標状態を検証するための暫定完了基準**を記す。8月4日のPhase 1〜3案と9月末のENH-E11申し送りは選定の来歴として第12章に記録し、現行要件や実装事実の代わりにしない。
 
