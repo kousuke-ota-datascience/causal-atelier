@@ -31,7 +31,7 @@
 | E11-REQ-P3S | Synthetic Control/SDID専用FRなし | donor適格性、pre-fit、timing、placebo、重みと負結果を規定 | #23 |
 | E11-REQ-CLI | NFR-001b/002はPARTIAL、NFR-025/028は既存範囲でIMPLEMENTED | ローカルversioned spec、hash/manifest、実効dependency version・seed/split、永続artifact、科学的status | #24 |
 
-**正本との衝突:** 正本§11で未承認のDoWhy/EconMLが対象外とされている。ENH-E11で導入する場合、承認済みoptional Capabilityへ切り替える意味上の変更を明記する。Tigramiteその他Libraryにも同じ採用審査を適用する。
+**正本との衝突:** 正本§11で未承認のDoWhy/EconMLが対象外とされている。**2026-11-01のオーナー方針はPython3.12/Linux基準、DoWhy/EconML/Tigramiteの機能別optional依存、列挙Method維持、lock＋Benchmark、個別SI（SaaS非想定）での配布前ライセンス審査を採用**。しかしこれは§11の正式改定やライセンス適合判断ではない。導入する場合は承認済みoptional Capabilityへの意味上の変更を正本に明記する。Tigramiteその他Libraryにも同じ採用審査を適用する。
 
 ## 3. 必須不変条件（案）
 

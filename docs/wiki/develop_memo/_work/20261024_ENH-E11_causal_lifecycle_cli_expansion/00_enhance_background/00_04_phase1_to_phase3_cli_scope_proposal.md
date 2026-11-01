@@ -167,10 +167,26 @@
 
 ### 4.2. Phase 3の必須Methodと科学的条件
 
-- **Temporal:** PCMCI、PCMCI+、LPCMCI、各CI-test registry、TemporalDesign、lag/同時点/潜在交絡の不確実性を表現する結果。使えるTigramite版でのmethod/config対応はGate設計前に確認する。
+- **Temporal:** PCMCI、PCMCI+、LPCMCIの**3方式すべてをPhase3の追跡対象として維持**。Methodごとにlag／同時点／潜在交絡の仮定、CI-test、TemporalDesign、Graphの不確定endpointを区別する。2026-11-01オーナー方針はPython3.12＋Linux基準、機能別optional依存、科学検証後のversion lock。**Tigramiteの実効動作・個別SI納入におけるGPLv3適合性は未検証／未承認**。
 - **Quasi:** DiD、Event Study、Interrupted Time Series、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control、Synthetic Difference-in-Differences。各Designが異なるEstimand・必要データ構造・適格性を持つことを要件化する。
 - **Scientific negative cases:** 不適切なtime index、staggered adoptionの不適合、pretrend、RD manipulation、weak/invalid IV、donor汚染/pre-fit不良では、無理に数値を返さず`NOT_IDENTIFIED`／`REQUIRES_REVIEW`／科学的警告等を出力する。
 - **Phase3自身の拡張候補:** RPCMCI/J-PCMCI+はD。新Productサーバ経路もD。
+
+### 4.3. PCMCI系の利用場面とSR-02方針（2026-11-01）
+
+**詳細な適用条件・SIライセンス審査前提・検証項目:** [20261101_external_backend_policy_temporal_scenarios.md](../working_notes/20261101_external_backend_policy_temporal_scenarios.md)。
+
+| Method | 分析者が選択する場面 | 重要な仮定・結果 |
+|---|---|---|
+| `PCMCI`（P3-02） | 観測変数間の**時間遅れの因果的候補**を調べる | 同時点直接因果リンクなし／潜在共通原因なし／causal stationarity。lag付きGraphの仮定と統計量を保存 |
+| `PCMCI+`（P3-03） | **同時点と遅延**の関係を共に探索する | 潜在共通原因なし／causal stationarity。time-series CPDAGの向き未確定を保持 |
+| `LPCMCI`（P3-04） | **潜在交絡を排除できない**多変量時系列を調べる | causal stationarityなど。time-series PAGのcircle／arrowhead／tailを保持。公式のexperimental設定に注意 |
+
+**Eligibility:** 時刻・sampling interval・lag・欠測・CI-testの適用性を確認し、仮定の正当性は研究者の申告と機械検査を区別する。仮定不足や非定常が疑われるデータで自動的な因果効果の断定をしない。
+
+**SI配布の留保:** 配布形態は個別SIによる顧客環境への構築・納入（SaaS非想定）。TigramiteはGPLv3系であり、**optional import／直接pip install／顧客環境への導入という形式だけでGPLv3適合が自動成立するとは扱わない**。実際に納入するコピー、結合方法、ソース・ライセンス通知等を審査するまで顧客配布を承認しない。
+
+**SR-02判定:** A/B/C/D/Eの方針は採用済み。ただし依存解決・install・Method別fit／Graph出力・科学Benchmark・SI GPL適合確認は未実施のため**OPEN**。
 
 ## 5. A0上位構想・横断事項の採否案
 

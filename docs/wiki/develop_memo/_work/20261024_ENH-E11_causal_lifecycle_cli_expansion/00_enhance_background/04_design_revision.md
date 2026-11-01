@@ -50,7 +50,8 @@ ENH-E11では新規DB migrationやサーバ側Resourceは追加しない。Versi
 ## 6. 互換性・導入方法
 
 - `ipw`/`aipw`、GraphType、既存CLI設定を保護し、normalizedとstabilizedの混同を避ける引数にする。
-- optional dependencyは遅延importとし、対象Capabilityだけunavailable状態を返す。実効package/Python versionを記録する。
+- **オーナー採用方針（2026-11-01）:** Python3.12／Linux基準、DoWhy・EconML・Tigramiteを**機能別optional依存**として遅延importし、対象Capabilityだけunavailable状態を返す。実効package/Python versionを記録する。採用版・lock・科学Benchmarkは検証後に確定。
+- **個別SIで顧客環境へ構築・納入（SaaS非想定）:** TigramiteのGPLv3対応は実際の納入物・結合形態・コピー提供者・対応ソース／通知等の**配布前審査**を要する。optional構成を自動免責扱いしない。[調査メモ](../working_notes/20261101_external_backend_policy_temporal_scenarios.md)を参照。
 - 正確性の第一証拠はUnit/Contract/Scientific Benchmark。CLI-onlyのためにBrowser E2Eを追加しない。
 - 意図してE9/E10の契約を変える場合、差分と理由を明記し、protected regressionを単純に省略しない。
 

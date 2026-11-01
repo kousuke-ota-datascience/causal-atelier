@@ -17,11 +17,15 @@
 4. Workflowの必須文書に加えてGitHub Issueを使い、Issue→Requirement→Gate→Acceptance Criterionの対応を示す。
 5. **Negative Controlの機能原則（2026-11-01の明示方針）:** 「適切なNegative Controlを指定できる研究に対し、科学的に解釈可能な反証分析を提供する」。全分析にNegative Controlの実行を義務付けない。方法実装案は[作業メモ](../working_notes/20261101_negative_control_implementation_plan.md)に記録し、**Method・正本FR/AC・Gateの正式承認と区別する**。
 
+6. **SR-02外部Backendのオーナー方針（2026-11-01）:** **A採用＝Python 3.12／Linux基準**、**B採用＝DoWhy・EconML・Tigramiteを機能別optional依存**、**C採用＝Phase1〜3の列挙Methodを維持し、実装不能な場合は根拠付きで再審議**、**E採用＝実証された採用versionをlock＋科学Benchmarkで固定**。
+7. **D採用＝個別SIで顧客環境へ構築・納入、現時点でSaaSは想定しない。** Tigramiteを使用する場合、実際の納入物と結合・提供形態に即してGPLv3適合性を**顧客納入前に審査する方針**を採用。PCMCI／PCMCI+／LPCMCIの利用場面は[SR-02技術メモ](../working_notes/20261101_external_backend_policy_temporal_scenarios.md)で精査。**D方針の採用は個別納入の法的適合性を認定するものではない**。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
-- Design/Resultの所有権、optional dependency、CLIファイル契約、科学的許容基準。
+- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針は採用済み。
+- **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
 - Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
 ## 3. 遵守条件
