@@ -24,6 +24,8 @@
 
 9. **SR03-D03 LATE（2026-11-01の明示判断）:** **Phase3初期提供はA＝二値Z・二値AのWald比を基準、B＝2SLSにも対応する構成を採用**。**C＝条件付きIV向けDR／効率的LATEは追加審議**であり今回の採用範囲ではない。LATEの対象は独立性・除外制約・関連性・単調性等を仮定した**complier**であり、一般ATEや連続TのIV heterogeneous effectと混同しない。2SLSの共変量・複数IV拡張はEstimandと仮定の適合を別審査。**弱IV時のFirst Stage診断・通常CIの限界・Anderson–Rubin等の頑健推論の設計は必須検討だが、具体的推論アルゴリズム／閾値／科学Gateの採用は未完了**（[科学契約・検討メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 
+10. **SR03-D01 IV異質効果（2026-11-01の明示判断）:** **A案を採用**。`IV_HETEROGENEOUS_EFFECT`を`ATE/ATT/CATE/LATE`と区別した**独立Estimand family**として導入する。family名だけでは科学的なEstimandを定義したことにならないため、Method別の数学的対象・識別モーメント・対象集団・conditioning・処置コントラスト・追加仮定を契約で要求する。DRIVの実行成功だけから通常CATE／complier LATE／CLATEへの自動同一視を禁止する。**分類方針のみ個別採用済み**であり、具体schema/enum、DRIVのMethod別契約、科学Benchmark・Gateおよび全体構想は未承認（[SR-03技術メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
