@@ -2,14 +2,14 @@
 
 **作成日:** 2026-11-01（JST）  
 **文書区分:** `working_notes`。オーナーの個別決定と未決事項を切り分けた技術検討。正本FR/AR・Gate承認を代替しない。  
-**判断状況:** `FRONTDOOR_NUMERIC_PHASE1_ACCEPTED / LATE_ESTIMATOR_OPTIONS_PREPARED / ECONML_ROOT_CAUSE_IDENTIFIED / INTERVAL_BOOTSTRAP_API_PASS`。
+**判断状況:** `FRONTDOOR_NUMERIC_PHASE1_ACCEPTED / LATE_A_PLUS_B_OWNER_ACCEPTED / ECONML_ROOT_CAUSE_IDENTIFIED / INTERVAL_BOOTSTRAP_API_PASS`。
 
 ## 0. INTRODUCTION
 
 ### 0.1. オーナーが明示した判断
 
 - **SR03-D02／Frontdoor:** 「Phase 1に数値推定まで含める」を**採用**。DoWhy Frontdoorの**識別だけで完了させず、対応する数値Estimatorと科学的受入**をPhase1で実装する。識別結果と推定結果は別契約。
-- **SR03-D03／LATE:** 初期推定器は未採用。選択肢を比較して提示するよう要求された。本メモは候補・推奨案であり決定記録ではない。
+- **SR03-D03／LATE（2026-11-01の明示採用）:** **Phase3初期提供＝A（Wald比をReference）＋B（2SLSにも対応）**。**C（条件付きIV向けDR／効率的LATE）は追加審議**。方式選択の個別判断は完了したが、弱IV頑健推論の具体方式、2SLS追加設計、科学Benchmark・Gate受入は未承認。
 - **SR03-D05／EconMLの区間推定:** 0.17.0で未取得だった理由と、Ariadne連携による機能劣化かを検証するよう要求された。**前回試験はEconMLを独立スクリプトから直接呼んでおり、Ariadneへの新CATE Adapter組込みを経由していない。よって「Ariadneが機能をspoiledした」という因果的解釈には証拠がない。**
 
 ### 0.2. 証拠資料
@@ -33,7 +33,7 @@
 4. **数値推定の既知真値・負例・CI可用性を受入までに科学Benchmarkへ**。Frontdoor identificationのみをPhase1完了と報告しない。
 5. 現在のSR-02はFrontdoor識別API成功のみ。DoWhy 0.14の**数値推定実行・数値パリティは未試験**であり、「Phase1に含める」という判断と「既に動作」は別。
 
-## 2. LATE初期推定器の候補（オーナー未決）
+## 2. LATE初期推定器の比較・採用判断（A＋B採用、C追加審議）
 
 | 選択肢 | 学術的Estimand／実装 | 長所 | 制約・推論 |
 |---|---|---|---|
@@ -43,13 +43,23 @@
 
 **重要:** 二値Z・二値A・共変量なしのJust-identifiedな場合、**Wald比と2SLSの点推定値は代数的に一致**する。BがAと無条件に独立した科学方式ではない。**CはDRIVと同じではない**。EconML DRIVの連続Treatmentに対するIV heterogeneous effectを、二値Z/Aのcomplier LATEへ自動同定しない。
 
-**技術側の推奨（未採用）:** **AをPhase3のLATE最小Reference、BをIV拡張・パリティ実装として採用する案**。Cは追加審議し、Phase2のDRIVは既存必須候補のまま別契約で維持する。
+**オーナー採用（2026-11-01）:** **AをPhase3の二値Z/A・complier LATEの基準推定器、Bを線形IVの追加推定器として初期提供**。Cは**採用ではなく追加審議**。Phase2のDRIVは既存の必須候補のまま**IV異質効果の別契約**で維持する。2SLSでの一般の共変量・複数IV対応が同じLATEを推定するとの自動保証はしない。
 
-**弱IV推論の必須検討:** Reduced form、First-stage効果とSE、Instrument support、通常の比のCIに加え、弱識別下でのAnderson–Rubin等の**頑健なconfidence set**を検討する。単一の`F>10`規則でvalidityを認定しない。推論方式、非有界な区間・confidence setの扱い、シミュレーション許容基準はGate07で固定する。
+**弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**Anderson–Rubin型検定反転等の弱IV頑健なconfidence setは提案・未承認**であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
 
 ### 2.1. オーナーに求める判断
 
-`SR03-D03`：**A＋BをPhase3初期提供方式にするか**、Aのみを初期提供とするか、条件付きIV向けのCまで同じPhase3スコープに含めるか。提案の採否とCの次のowner/Issueは未確定。
+`SR03-D03`：**A＋B採用済み**。残る判断は**(i) 2SLSで最初に保証する共変量・IV構成と対応Estimand、(ii) 弱IVの診断・推論方法、(iii) CIの非有界／非連結等の型と受入基準、(iv) Cの追加審議時期・責任者**。Cの採否は未決。
+
+### 2.2. 識別対象・適格性・拒否条件（個別採用に伴う明確化）
+
+- **基本Estimand:** 二値Instrument Zと二値Treatment Aについて、`A(1)>A(0)`のcomplier集団における`E[Y(1)-Y(0)|complier]`。基本の無調整Wald比は**Instrument independenceが無条件に成立するDesign**を対象とする。Assumptionの`relevance/independence/exclusion/monotonicity/consistency`を研究者の根拠として保存する。これらは観測データで自動証明できない。
+- **2SLSパリティの基本Fixture:** 切片あり・単一二値Z・二値A・共変量なし・just-identifiedで**Wald比＝2SLSの点推定値**。2SLS拡張時の共変量、複数Z、連続Aには別のEstimand／支持仮定・明示的な対象ラベルを設け、complier LATE／ATEへの黙示変換を禁じる。
+- **First Stageの数値的・科学的境界:** `Δ_Z E[A]`が0の比は定義できない。小さい場合も通常の比／2SLSのWald型区間のカバレッジは保証されない。Instrumentationの弱さと、独立性・除外制約等の違反は別種の不確実性として記録する。
+- **弱IVへの推論:** First-stage効果・SE・Instrument support・弱識別warningを必須検討し、**弱IV頑健な推論（例：Anderson–Rubin反転）は方式・条件・区間形状を別審議**する。有限区間しか表現できないResult契約に、非有界・非連結confidence setを無理に押し込まない。
+- **負結果:** invalid instrument、first stage 0、推定対象不一致、弱識別下の通常CI不適格、仮定根拠不足に、それぞれ異なる理由codeを付与する案。**原著で導かれる識別仮定とソフトウェア上の機械検証を混同しない**。
+
+**詳細契約・fixture:** [SR-03科学契約 §3.1](20261101_sr03_identification_estimand_estimator_contract_review.md)。
 
 ## 3. EconML「区間推定不可」の原因（一次ソースと直接呼出しによる切り分け）
 
@@ -66,7 +76,8 @@
 ## 4. 適用範囲と未完了事項
 
 - **オーナー判断済み:** Frontdoor数値推定までPhase1のNとして提供。
-- **オーナー判断待ち:** LATEの初期推定器（A/B/C）と、EconMLのCI必須水準・Method別採用推論。
+- **オーナー判断済み:** Phase3 LATE初期は**A＝Wald比＋B＝2SLS**。Cは追加審議とし、初期採用Methodには含めない。
+- **未確定:** 弱IV頑健推論方式（Anderson–Rubin等）、2SLS拡張の対象Estimand、Cの後続審議・責任者、EconMLのCI必須水準・Method別採用推論。
 - **追加実証:** EconML 0.17.0の4方式でBootstrap区間の有限数値出力を確認（API smoke）。同時導入環境で既存回帰27件PASS。
 - **未実証:** DoWhy Frontdoorの数値推定／CI、IV/LATEの数値真値・弱IV推論、EconML Bootstrap CIの**被覆率・校正・適切な反復数**。
 - **全体承認ではない:** `00_04`の68行と`02`の`PENDING_FULL_CONCEPT_APPROVAL`、SR-03全体の方法判定待ちは維持。

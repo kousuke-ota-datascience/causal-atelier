@@ -27,9 +27,9 @@
 | E11-REQ-P2A | CATEファイル成果物の現行要件なし | privacy制限付きParquet/JSON、seed/split/versionと群別要約を規定 | #18、#24 |
 | E11-REQ-P3T | 時系列Graph/Discovery専用FRなし | TemporalDesign、TIME_SERIES_GRAPH、PCMCI/PCMCI+/LPCMCI、CI test、lagの忠実な保存 | #20 |
 | E11-REQ-P3D | DiD/Event Study/ITS専用FRなし | QuasiExperimentalDesign、event-time、pretrend、cluster等の検証 | #21 |
-| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDD、**二値Z/Aのcomplier LATEとその他IV効果を区別**、first-stage/weak-IV、独立性・除外制約・単調性を規定（SR-03） | #22 |
+| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDDとIV/LATEを規定。**SR03-D03オーナー採用：Phase3初期に二値Z/Aのcomplier LATEをWald比（Reference）＋2SLS（線形IV）で提供**。relevance／independence／exclusion／monotonicity、First Stage、weak-IVの通常CI制約を明示。共変量・複数IVの2SLSを同一LATEに自動変換しない。**C＝条件付きIVのDR／効率的LATEは追加審議** | #22（Method A＋B方針採用、正本・Gate未承認） |
 | E11-REQ-P3S | Synthetic Control/SDID専用FRなし | donor適格性、pre-fit、timing、placebo、重みと負結果を規定 | #23 |
-| E11-REQ-SR03 | 現行SpecはATE/ATT・RANDOMIZED/BACKDOORのみ。Estimation CLIは識別`REQUIRES_REVIEW`を受け入れる経路を持つ | **識別状態・Estimand・推定器・Eligibility・CI availabilityを分離したversioned contractを提案**。未解決Graph/非識別からの自動数値推定を禁止し、原Question/Graph/dataset/hashを上流Resultに固定。Frontdoor数値推定、LATE推定器、DRIVの解釈、CIの必須水準は未承認（[SR-03メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)） | #16,#18,#22,#24（未承認） |
+| E11-REQ-SR03 | 現行SpecはATE/ATT・RANDOMIZED/BACKDOORのみ。Estimation CLIは識別`REQUIRES_REVIEW`を受け入れる経路を持つ | **識別状態・Estimand・推定器・Eligibility・CI availabilityを分離したversioned contractを提案**。未解決Graph/非識別からの自動数値推定を禁止し、Question/Graph/dataset/hashを上流Resultに固定。**Frontdoor数値推定とLATEのA＋Bは個別オーナー採用済み**。C・DRIV解釈・CI必須水準・弱IV頑健推論の実装詳細は未承認（[SR-03メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)） | #16,#18,#22,#24（正本・Gate未承認） |
 | E11-REQ-CLI | NFR-001b/002はPARTIAL、NFR-025/028は既存範囲でIMPLEMENTED | ローカルversioned spec、hash/manifest、実効dependency version・seed/split、永続artifact、科学的status | #24 |
 
 **正本との衝突:** 正本§11で未承認のDoWhy/EconMLが対象外とされている。**2026-11-01のオーナー方針はPython3.12/Linux基準、DoWhy/EconML/Tigramiteの機能別optional依存、列挙Method維持、lock＋Benchmark、個別SI（SaaS非想定）での配布前ライセンス審査を採用**。しかしこれは§11の正式改定やライセンス適合判断ではない。導入する場合は承認済みoptional Capabilityへの意味上の変更を正本に明記する。Tigramiteその他Libraryにも同じ採用審査を適用する。
@@ -68,7 +68,7 @@
 
 - 新規FR/NFR/ARの正式採番とProductコンセプト改定。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
 - IPTW推論・Trimmingの科学的に適切なdefault。
-- **SR-03**：Frontdoor識別のみか数値推定まで含めるか、IVのcomplier LATEと他のIV効果をどう区分するか、DRIVの条件付きEstimand、`REQUIRES_REVIEW`の推定ゲート、Method別CIの必須水準（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
+- **SR-03の未決事項:** **Frontdoor Phase1数値推定とLATE初期Wald比＋2SLSは個別採用済み**。残るのは2SLS拡張時の対象Estimand、C＝条件付きIV DR／効率的LATEの追加審議、弱IV頑健推論の方式・confidence set、DRIVの条件付きEstimand、`REQUIRES_REVIEW`の推定ゲート、Method別CI必須水準（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 - Phase 2のIV+MLとしてDRIVまたは同等手法をどう認めるか。
 - 個票CATEファイルの最小化・アクセス制限。
 - Local spec/manifestのschema versionと既存readerの互換性。

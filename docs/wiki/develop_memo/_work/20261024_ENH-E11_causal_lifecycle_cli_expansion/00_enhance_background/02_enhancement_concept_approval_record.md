@@ -20,7 +20,9 @@
 6. **SR-02外部Backendのオーナー方針（2026-11-01）:** **A採用＝Python 3.12／Linux基準**、**B採用＝DoWhy・EconML・Tigramiteを機能別optional依存**、**C採用＝Phase1〜3の列挙Methodを維持し、実装不能な場合は根拠付きで再審議**、**E採用＝実証された採用versionをlock＋科学Benchmarkで固定**。
 7. **D採用＝個別SIで顧客環境へ構築・納入、現時点でSaaSは想定しない。** Tigramiteを使用する場合、実際の納入物と結合・提供形態に即してGPLv3適合性を**顧客納入前に審査する方針**を採用。PCMCI／PCMCI+／LPCMCIの利用場面は[SR-02技術メモ](../working_notes/20261101_external_backend_policy_temporal_scenarios.md)で精査。**D方針の採用は個別納入の法的適合性を認定するものではない**。
 
-8. **SR03-D02 Frontdoor（2026-11-01の明示判断）:** **Phase1では識別だけでなく数値推定Capabilityも含める**。識別だけを完了条件としない。ただし推定器の線形性等の追加仮定、数値的実行可能性、CI、科学Benchmarkは未承認・未検証。LATE初期推定器は[選択肢メモ](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)で比較中であり**採用未決**。
+8. **SR03-D02 Frontdoor（2026-11-01の明示判断）:** **Phase1では識別だけでなく数値推定Capabilityも含める**。識別だけを完了条件としない。ただし推定器の線形性等の追加仮定、数値的実行可能性、CI、科学Benchmarkは未承認・未検証。LATE初期推定器については次項の個別判断で**A＋Bを採用**。[選択肢・科学的制約](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)を参照。
+
+9. **SR03-D03 LATE（2026-11-01の明示判断）:** **Phase3初期提供はA＝二値Z・二値AのWald比を基準、B＝2SLSにも対応する構成を採用**。**C＝条件付きIV向けDR／効率的LATEは追加審議**であり今回の採用範囲ではない。LATEの対象は独立性・除外制約・関連性・単調性等を仮定した**complier**であり、一般ATEや連続TのIV heterogeneous effectと混同しない。2SLSの共変量・複数IV拡張はEstimandと仮定の適合を別審査。**弱IV時のFirst Stage診断・通常CIの限界・Anderson–Rubin等の頑健推論の設計は必須検討だが、具体的推論アルゴリズム／閾値／科学Gateの採用は未完了**（[科学契約・検討メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 
 ## 2. まだ承認されていない事項
 

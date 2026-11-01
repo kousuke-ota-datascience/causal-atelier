@@ -156,7 +156,7 @@
 | `P3-09` | **N** | Interrupted Time Series。介入時点、季節性、自己相関 | #21 |
 | `P3-10` | **N** | Sharp RDD。cutoff、bandwidth、局所estimand、density | #22 |
 | `P3-11` | **N** | Fuzzy RDD。first-stageとcompliance/局所効果 | #22 |
-| `P3-12` | **N** | **二値Z/Aのcomplier LATEとその他のIV効果を区別**。relevance、exclusion、independence、monotonicity、weak-IVを明示。推定器・対象・適格性はSR-03契約案へ | #22 |
+| `P3-12` | **N（初期推定器A＋Bをオーナー採用）** | Phase3のLATE初期提供は**A＝二値Z/AのWald比をReference、B＝2SLS**（2026-11-01判断）。基本EstimandはIV独立性・除外制約・関連性・単調性下のcomplier LATE。共変量／複数IVの2SLS係数を一般ATEや同一LATEに自動変換しない。First Stage／弱IVの診断と推論制限を記録し、**C＝条件付きIV向けDR／効率的LATEは追加審議** | #22 |
 | `P3-13` | **N** | Synthetic Control。donor、pre-fit、placebo、RMSPE | #23 |
 | `P3-14` | **N** | Synthetic DiD。panel、donor重みと処置重みの区別 | #23 |
 | `P3-15` | **N** | QuasiExperimentalDesignと各method固有のEstimand・Eligibility | #21,#22,#23 |
@@ -168,7 +168,7 @@
 ### 4.2. Phase 3の必須Methodと科学的条件
 
 - **Temporal:** PCMCI、PCMCI+、LPCMCIの**3方式すべてをPhase3の追跡対象として維持**。Methodごとにlag／同時点／潜在交絡の仮定、CI-test、TemporalDesign、Graphの不確定endpointを区別する。2026-11-01オーナー方針はPython3.12＋Linux基準、機能別optional依存、科学検証後のversion lock。**Tigramiteの実効動作・個別SI納入におけるGPLv3適合性は未検証／未承認**。
-- **Quasi:** DiD、Event Study、Interrupted Time Series、Sharp/Fuzzy RDD、IV/LATE、Synthetic Control、Synthetic Difference-in-Differences。各Designが異なるEstimand・必要データ構造・適格性を持つことを要件化する。
+- **Quasi:** DiD、Event Study、Interrupted Time Series、Sharp/Fuzzy RDD、**IV/LATE（Wald比＋2SLS採用、Cは追加審議）**、Synthetic Control、Synthetic Difference-in-Differences。各Designが異なるEstimand・必要データ構造・適格性を持ち、weak IV時の通常CIの限界を記録することを要件化する。
 - **Scientific negative cases:** 不適切なtime index、staggered adoptionの不適合、pretrend、RD manipulation、weak/invalid IV、donor汚染/pre-fit不良では、無理に数値を返さず`NOT_IDENTIFIED`／`REQUIRES_REVIEW`／科学的警告等を出力する。
 - **Phase3自身の拡張候補:** RPCMCI/J-PCMCI+はD。新Productサーバ経路もD。
 
@@ -257,10 +257,10 @@
 **詳細の科学的定義・互換性行列・状態機械・12 fixture:** [20261101_sr03_identification_estimand_estimator_contract_review.md](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)（**非正規の設計検討メモ／正式承認待ち**）。
 
 - **前提:** Questionが先に\`Estimand\`とTarget population／Treatment contrastを固定し、Graph／Designと仮定により**そのEstimandが識別されるか**を判定し、対応可能なEstimatorだけを実行する。
-- **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋単調性→complier LATE、DRIV→**条件付きIV効果（CLATE等を主張するには追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
+- **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋独立性・除外制約・関連性・単調性→complier LATE（**Wald比＋2SLSがPhase3初期採用**）、DRIV→**条件付きIV効果（CLATE等には追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
 - **現行との差:** 現行\`analysis_spec\`はATE/ATT・Randomized/Backdoorのみを許し、CLIが上流\`REQUIRES_REVIEW\`を受け入れる経路がある。新Methodでは**未解決PAG/CPDAGや未承認Identificationを数値推定に直結しない**。
 - **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証。**初回構成でCIを取得できなかったDRLearner・S/T/X-Learnerも、Bootstrap明示指定の追試で有限CIを取得**。区間の可用性と統計的被覆率を区別し、未検証のCI精度を保証しない。
-- **個別オーナー判断（2026-11-01）:** **Frontdoor数値推定をPhase1に含めることは採用済み**。一方、**LATEの初期推定器A：Wald、B：2SLS、C：条件付きIVのDR/効率的推定**は選択待ち。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。Bootstrap CIのAPI再probeは4方式PASSだが、**CI被覆率と適切な反復数、DRIVのEstimand、schema/Graph reviewは未承認・未検証**。
+- **個別オーナー判断（2026-11-01）:** **Frontdoor数値推定をPhase1に含めることは採用済み**。**LATEの初期推定器はA：Wald比＋B：2SLSを個別採用済み**。C：条件付きIVのDR／効率的LATEは追加審議で初期提供には含めない。弱IVのFirst Stage・信頼区間／非有界信頼集合の仕様は未確定。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。Bootstrap CIのAPI再probeは4方式PASSだが、**CI被覆率と適切な反復数、DRIVのEstimand、schema/Graph reviewは未承認・未検証**。
 
 ## 8. ステップ4の到達点・残存する承認事項
 

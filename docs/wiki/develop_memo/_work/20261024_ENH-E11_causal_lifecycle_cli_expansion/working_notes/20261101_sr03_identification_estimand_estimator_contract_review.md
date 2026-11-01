@@ -79,13 +79,33 @@
 | \`BACKDOOR\`／DAG | CATE | LinearDML・CausalForestDML・DRLearner・ForestDRLearner・S/T/X-Learner（Phase2） | X(effect modifier)／W(confounders)、support、実効treatment type、cross-fitting／nuisance（Method別） | 8候補中上記7を\`EST_API_PROBED\`、**科学Benchmark未実施** |
 | \`FRONTDOOR\`／因果DAG | ATE | DoWhy \`frontdoor.two_stage_regression\`（候補） | Frontdoor criterion、M/列、support、2段階モデル仕様による追加仮定 | **\`ID_ONLY\`**。式の識別と、2段階回帰による**モデル依存の数値推定**は別 |
 | \`FRONTDOOR\` | CATE／ATT | Method別追加計画 | 条件付き効果／対象集団の識別式と推定法を**独立に導出** | **\`NOT_EQUIVALENT\`**：Frontdoor ATE識別が直ちにCATE/ATT対応とはならない |
-| \`IV\`／明示したvalid Instrument | LATE（二値Z/A） | Wald ratio／2SLS（条件付きの推定契約として候補） | relevance、independence、exclusion、monotonicity、complier population | **\`ID_ONLY\`**。数値推定・first stage・weak IV診断は未実行 |
+| \`IV\`／明示したvalid Instrument | LATE（二値Z/A） | **Phase3の採用初期Method＝Wald ratio＋2SLS** | relevance、independence、exclusion、monotonicity、complier population、first-stageとweak-IV診断 | **方式はオーナー採用／API数値・Science未実証**。共変量付き等の2SLSを無条件に同一LATEと解釈しない |
 | \`IV\`／明示したvalid Instrument | ATE | 2SLS等は**追加構造仮定付き**に限る | Constant treatment effect等の識別根拠・分布条件 | **\`CONDITIONAL\`**。通常のLATEをATEとlabelしない |
 | \`IV\`／IV識別仮定＋X | IV_HETEROGENEOUS_EFFECT（CLATE等は別契約） | EconML DRIV（Phase2） | Instrument／Treatment型、条件付きfirst-stage、conditional moment、crossfit | \`EST_API_PROBED\`（連続T）だが**CLATEの証拠なし** |
 | \`CPDAG/PAG\`（未解決） | ATE／ATT／CATE／LATE | 数値推定へ**直結禁止** | Effectの識別が方向未確定でも成立すると別途証明する、または研究者が版付きGraphを確定する | \`REQUIRES_REVIEW\`（FCI PAGが出たから推定可能とはしない） |
 | その他の準実験（RDD/DiD/SCM） | RD local effect／ATT等 | Phase3専用Design/Estimator | 局所性・cutoff・parallel trends・donor support等 | **別契約**、IV/ATE/CATEへ自動正規化しない |
 
 **注:** 「API probe PASS」は適切なEstimandの推定精度やCI coverage、識別仮定を検証したという意味ではない。DRIVを本表の\`CATE\`行へ黙って含めず、IV異質効果として独立行にした。
+
+### 3.1. SR03-D03：Phase3初期Wald／2SLSの識別・推論契約（2026-11-01個別採用）
+
+**採用決定:** **A＝二値Z・二値AのWald比（LATE Reference）＋B＝2SLS（線形IV推定器）**。**C＝共変量調整付きDR／効率的LATEは追加審議**であり、Phase3初期提供の採用済みMethodとして実装しない。この判断はEstimatorの提供範囲に関するもので、数値精度・弱IV推論・Gateを承認したことではない。
+
+**基本対象と必要条件:** 基本`Estimand=LATE`は、二値Z、二値処置A、complier定義`A(1)>A(0)`、well-defined treatment、consistency/SUTVA、Instrument independence（無条件Waldなら無条件）、exclusion restriction、relevance（First stage非ゼロ）、monotonicity（defierなし）に依存する。これらの条件を**明示宣言・根拠付け**し、`instrument_variable`、`first_stage_contrast`、`population=compliers`、`identification_assumptions`を識別Resultへ保持する。観測データだけでexclusion／単調性を証明しない。
+
+**A＝Waldの計算対象:** `ITT_Y = E[Y|Z=1]-E[Y|Z=0]`、`ITT_A = E[A|Z=1]-E[A|Z=0]`として`LATE=ITT_Y/ITT_A`（有効な上記識別仮定下）。`ITT_A`が0又は弱識別時は普通の比の有限CIを**科学的に信頼できる結果として自動出力しない**。点推定値の計算可否と、信頼できる推論を別軸で評価する。
+
+**B＝2SLSの解釈境界:** 単一の二値Z・二値A、共変量なし、切片を含むjust-identifiedモデルではWald比と2SLS点推定は一致し、**数値パリティfixture**とする。共変量付き、連続処置、複数IV、異質効果、別のInstrument assignmentでは、2SLS係数の識別対象や重み付けが変化し得る。**同一complier LATE／一般ATEとの自動同一視は禁止**し、追加の`Design/Estimand/Eligibility`と真値Benchmarkを要する。2SLSのSEは**第一段階の予測値を通常OLSに単純代入したSEを再利用せず**、IV推定全体に対応する正しい共分散推定を使う。
+
+**弱IVと区間推論の不変条件案:**
+1. Instrumentの支持（群nと分布）、`ITT_A`／First-stage係数・SE・対象サンプル、条件付きならpartial first-stageなどを記録する。**一律の`F>10`のみでIVの妥当性を認定しない**。First Stage強度とInstrumentのexclusion／independence／monotonicityの真偽は別。
+2. 弱識別が疑われる場合、通常の正規近似・デルタ法・2SLS Wald型CIの被覆を前提とした「FINITE CI＝科学的PASS」は禁止。`weak_instrument_diagnostic`、`inference_validity`、`reason_codes`を別保存する。**強弱の判断閾値は未承認**。
+3. **Anderson–Rubin型検定の反転等の弱IV頑健推論を設計・検証候補**とする。区間は非有界・非連結・空集合等になり得るので、`[lower,upper]`の有限2数値だけを要求しない。提案の`confidence_set`は`components / boundedness / method / assumptions`を型付けする。**AR採用・実装範囲・coverage基準は未承認**。
+4. 無効IV・仮定根拠不足・推論不適格では`REQUIRES_REVIEW`／`ESTIMATION_UNRELIABLE`等の科学的理由を返す。**弱いIVであることと、除外制約違反とを同じ原因に分類しない**。
+
+**最小Fixture:** (i) 二値Z/A・単調なcomplier効果の既知真値、(ii) just-identifiedでWald/2SLSの点推定一致、(iii) First stageほぼ0又は0、(iv) exclusion違反とdefier、(v) 異質性のある共変量付き2SLSで対象の誤表示拒否、(vi) AR型信頼集合のunbounded/disconnected保存。Methodごとの数値許容値・CI被覆・反復数・versionはGate 07で事前固定。**これらのFixtureは未実行**。
+
+**一次根拠:** [Imbens & Angrist (1994)](https://www.gsb.stanford.edu/faculty-research/publications/identification-estimation-local-average-treatment-effects)／[Abadie, *Semiparametric Estimation of Instrumental Variable Models for Causal Effects*](https://www.nber.org/papers/t0260)。
 
 ## 4. Proposed Versioned Scientific Contracts（設計案）
 
@@ -172,7 +192,7 @@
 |---|---|---|
 | \`SR03-D01\` | Questionの\`ATE/ATT/CATE/LATE/IV_HETEROGENEOUS_EFFECT\`を区別。最後はIV用別IDとする | IV heterogeneous effectを当初から独立Estimandとして要件化するか |
 | `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
-| `SR03-D03` | 二値Z/Aのcomplier LATEは**A：Wald比**を最小Reference、**B：2SLS**を拡張／数値パリティ、**C：条件付きIVのDR/効率的LATE**を追加候補とする提案（[比較メモ](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **オーナー選択待ち**。弱IV頑健推論とCIの非有界な集合の表現も要審査 |
+| `SR03-D03` | **オーナー採用（2026-11-01）：Phase3初期はA＝二値Z/AのWald比＋B＝2SLS**。complier LATEを基準対象とし、一般の2SLS拡張のEstimandは別に定義する。**C＝条件付きIVのDR／効率的LATEは追加審議**（[比較記録](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **方式選択は完了**。弱IV頑健推論の実装範囲、CI／非有界・非連結集合の表現、数値閾値・Benchmarkは未承認 |
 | \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |
 | \`SR03-D05\` | CATEの非IV 7手法・DRIVを別経路にし、CI availabilityをMethod/構成別に保持 | 推定MethodごとにCI必須か、点推定のみのCapabilityを承認できるか |
 | \`SR03-D06\` | PAG/CPDAGは保留し、別の識別証拠がない場合数値推定を禁止 | \`PARTIALLY_IDENTIFIED\`・Graph refixの将来受入範囲とowner override |
