@@ -74,7 +74,7 @@
 | `P1-12` | **R+Q** | E9 Weight/Balance/ESS/Overlapを再利用。IPTW推論品質・SE/CI被覆を追加検証 | #19 |
 | `P1-13` | **R** | Placebo Treatment/Data Subset Refutationを維持 | #16 |
 | `P1-14` | **N** | Random Common Cause／Bootstrap Refutation、再推定・seed・再現性 | #16 |
-| `P1-15` | **N（要審査）** | 観測済みNegative-Control Exposure／Outcomeを用いた**事前指定の条件付き関連nullの反証検査**2方式を候補とする。対照変数・共有バイアス構造・DAG/時間根拠が無い場合は非適用。Placebo／Random Common Causeとは区別（科学的定義：2.3節） | #16 |
+| `P1-15` | **N（方法・設計は要審査）** | **適切な観測Negative Controlを指定できる研究に限り、研究者が明示的に要求して実行できる反証分析**を提供する方針を採用。NCO/NCEの2方式を科学的Method候補とし、未指定時に自動実行しない。不適格時は理由付きの負結果、非有意時も無交絡と解釈しない（2.3節・実装計画メモ）。 | #16 |
 | `P1-16` | **R** | Adjustment Set/Propensity Clipping Sensitivityを維持 | #16 |
 | `P1-17` | **N（要審査）／D** | 最小Nは**Cinelli–Hazlett partial R²／Robustness Value**のOLS係数に限定する案。現行のHC3を古典OLS公式へ無断適用しない。IPW/AIPW等の全面対応や追加A0方式は後続の個別判断（2.3節） | #16 |
 | `P1-18` | **R+N／D** | 既存Lineage/Manifestを再利用しlocal manifest増強。Product canonical DB Gapは別Issue審議 | #15,#24,#14 |
@@ -91,7 +91,9 @@
 
 ### 2.3. Negative Control／未観測交絡Sensitivityの科学的方式（2026-11-01技術案）
 
-**方法検討の根拠・fixture・負結果:** [20261101_negative_control_unobserved_confounding_method_review.md](../working_notes/20261101_negative_control_unobserved_confounding_method_review.md)。本節の内容は**SR-06への科学的方法の具体化**であり、Human ownerの採用承認ではない。現行Scientific CLI・Domain enumには下記の新Methodを実装していない。
+**方法検討の根拠・fixture・負結果:** [20261101_negative_control_unobserved_confounding_method_review.md](../working_notes/20261101_negative_control_unobserved_confounding_method_review.md)。**Negative Control実装計画案:** [20261101_negative_control_implementation_plan.md](../working_notes/20261101_negative_control_implementation_plan.md)。
+
+**オーナー確認済みの機能原則（2026-11-01）:** 「適切なNegative Controlを指定できる研究に対し、科学的に解釈可能な反証分析を提供する」。**全研究への実行義務ではない**。分析者の明示的opt-in、対照nullの科学的根拠、適格性確認を要し、不適格・未指定・シグナル未検出を区別する。本節はSR-06の具体化であり、**NCO/NCEのMethod、結果enum、正式FR/AC・Gateの承認は未実施**。現行Scientific CLI・Domain enumには下記新Methodを実装していない。
 
 | 候補Method ID | 必要なDesignと計算 | 出力・拒否条件 |
 |---|---|---|
@@ -103,7 +105,7 @@
 
 **依存・品質の前提:** 初期実装は外部DoWhyへの依存を必須とせず、現行Scientific Coreで利用可能な回帰機構を評価する。ただしOLS refitの係数・完全ケース・古典SE/dfと元Resultとの同一性、およびsensemakr参照計算とのパリティを**科学Benchmarkで検証する必要**がある。現行`robust_se="HC3"`の結果を感度分析の古典SEとして誤用しない。固定した閾値・seed・Reference version・CLI schemaは要件03／設計04／Gate 07で決定する。
 
-**留保:** NC-E/NC-Oの2方式すべてをPhase1必須とするか、OLS限定方式でA0の要求を満たすか、より一般のIPW/AIPW/CATE等へのSensitivityとSimulated Confounder／Graph Perturbationを後続に送るかは、Human ownerが個別判断し承認記録02へ記す。
+**留保:** **『NCO/NCEを利用できるCapability』と『全分析での実行必須』は別**。NCO/NCE双方をPhase1で提供するか、Null検査のモデル・受入条件、OLS限定SensitivityでA0の要求を満たすか、より一般のIPW/AIPW/CATE等へのSensitivityやSimulated Confounder／Graph Perturbationを後続に送るかは、Human ownerが個別判断し承認記録02へ記す。
 
 ## 3. Phase 2の実装スコープ案
 

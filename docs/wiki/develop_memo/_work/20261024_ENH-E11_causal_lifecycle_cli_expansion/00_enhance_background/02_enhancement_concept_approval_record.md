@@ -15,6 +15,7 @@
 2. **新機能**の提供範囲はScientific Core、ローカルCLI、永続ローカルファイル成果物に限定する。Web UI/API、Worker、DB統合は後続へ送る。
 3. まず9月末のFoundation Gap案と現行実装を照合し、その結果を踏まえて8月構想との差分・正式要件を整理する。
 4. Workflowの必須文書に加えてGitHub Issueを使い、Issue→Requirement→Gate→Acceptance Criterionの対応を示す。
+5. **Negative Controlの機能原則（2026-11-01の明示方針）:** 「適切なNegative Controlを指定できる研究に対し、科学的に解釈可能な反証分析を提供する」。全分析にNegative Controlの実行を義務付けない。方法実装案は[作業メモ](../working_notes/20261101_negative_control_implementation_plan.md)に記録し、**Method・正本FR/AC・Gateの正式承認と区別する**。
 
 ## 2. まだ承認されていない事項
 
