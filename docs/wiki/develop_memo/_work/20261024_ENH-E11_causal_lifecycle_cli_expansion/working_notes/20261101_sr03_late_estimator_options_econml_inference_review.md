@@ -51,6 +51,8 @@
 
 `SR03-D03`：**A＋B採用済み**。残る判断は**(i) 2SLSで最初に保証する共変量・IV構成と対応Estimand、(ii) 弱IVの診断・推論方法、(iii) CIの非有界／非連結等の型と受入基準、(iv) Cの追加審議時期・責任者**。Cの採否は未決。
 
+**D03残余の審議責務:** 2SLSの初期保証範囲、弱IV頑健推論、confidence setの型、Cの再審議責任については[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を**唯一の詳細推奨案**とする。本書の当初A/B/C比較・採用事実・EconML CI実測は維持し、D03残余をここでは二重に改訂しない。**残余案はオーナー採否待ち**であり、既存のA＋B採用以外を承認済みとしない。
+
 ### 2.2. 識別対象・適格性・拒否条件（個別採用に伴う明確化）
 
 - **基本Estimand:** 二値Instrument Zと二値Treatment Aについて、`A(1)>A(0)`のcomplier集団における`E[Y(1)-Y(0)|complier]`。基本の無調整Wald比は**Instrument independenceが無条件に成立するDesign**を対象とする。Assumptionの`relevance/independence/exclusion/monotonicity/consistency`を研究者の根拠として保存する。これらは観測データで自動証明できない。

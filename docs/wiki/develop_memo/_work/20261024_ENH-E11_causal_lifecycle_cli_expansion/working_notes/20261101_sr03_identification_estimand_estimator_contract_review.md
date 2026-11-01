@@ -201,6 +201,8 @@
 
 **本メモの判断の性質:** 科学的な互換性・禁止変換はレビュー上の**推奨不変条件**。個々のMethodの採否、FR/NFR/AR正本、Result schema、CLI config version、GateとWork Packageの**オーナー承認は別**。SR-03は\`DESIGN_PROPOSAL_PREPARED\`であり\`APPROVED\`でも\`SCIENCE_PASS\`でもない。
 
+**D03残余審議の参照先:** 2SLS初期保証範囲、弱IV頑健推論、信頼集合の形状、Cの後続責任については[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)が比較・技術推奨・残余検証を管理する。本書は横断契約・Fixture一覧・判断一覧のみ管理し、**S2/I2/G2/C1はオーナー未承認**のままとする。
+
 ## 8. 変更先・実施順序
 
 1. 00_04のP1-08・P2-09・P3-12／§7に「識別→対象→推定」の参照と条件を加える。68行のDispositionは維持。
