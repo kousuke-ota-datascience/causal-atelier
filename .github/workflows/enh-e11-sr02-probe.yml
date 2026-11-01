@@ -1,0 +1,73 @@
+name: ENH-E11 SR-02 Dependency and Backend API Probes
+on:
+  push:
+    branches: [prototype/ariadne_mvp]
+    paths:
+      - .github/workflows/enh-e11-sr02-probe.yml
+      - scripts/verification/enh_e11_sr02_probe.py
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  sr02:
+    name: SR-02 (${{ matrix.group }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [dowhy, econml, tigramite, combined]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - name: Create isolated Python 3.12 environment
+        run: uv venv --python 3.12 .sr02venv
+      - name: Resolve and install Ariadne plus optional backend
+        id: install
+        shell: bash
+        run: |
+          set +e
+          case "${{ matrix.group }}" in
+            dowhy) packages=("dowhy==0.14");;
+            econml) packages=("econml==0.17.0");;
+            tigramite) packages=("tigramite==5.2.10.1");;
+            combined) packages=("dowhy==0.14" "econml==0.17.0" "tigramite==5.2.10.1");;
+          esac
+          uv pip install --python .sr02venv/bin/python -e . "${packages[@]}" > sr02-install.log 2>&1
+          status=$?
+          echo "result=$status" >> "$GITHUB_OUTPUT"
+          echo "Install exit code: $status"
+          tail -60 sr02-install.log
+          exit 0
+      - name: Method-level API probes
+        if: always()
+        env:
+          PYTHONUNBUFFERED: "1"
+          OMP_NUM_THREADS: "1"
+          OPENBLAS_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+        run: |
+          .sr02venv/bin/python scripts/verification/enh_e11_sr02_probe.py \
+            --group "${{ matrix.group }}" --install-rc "${{ steps.install.outputs.result || '99' }}" \
+            --output "sr02-${{ matrix.group }}.json" --summary "sr02-${{ matrix.group }}.md"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sr02-${{ matrix.group }}
+          path: |
+            sr02-${{ matrix.group }}.json
+            sr02-${{ matrix.group }}.md
+            sr02-install.log
+          retention-days: 30
+      - name: Report evidence to tracking issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ -f "sr02-${{ matrix.group }}.md" ]]; then
+            gh issue comment 14 --repo "$GITHUB_REPOSITORY" --body-file "sr02-${{ matrix.group }}.md"
+          fi
