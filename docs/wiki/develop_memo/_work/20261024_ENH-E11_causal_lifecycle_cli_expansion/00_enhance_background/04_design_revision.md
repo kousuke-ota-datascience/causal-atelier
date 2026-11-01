@@ -33,7 +33,7 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 **設計入力:** [20261101_sr03_identification_estimand_estimator_contract_review.md](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)（SR-02実測を参照した**未承認の設計案**）。
 
 1. Domainが\`CausalQuestion\`の\`Estimand/Population/Contrast\`、\`CausalDesign\`の\`Strategy/Assumption\`を外部依存なしに型付けする。現行\`causal-analysis-spec/2\`の読み取りを破壊せず、CATE／LATE／IV heterogeneous effectは**新しい版付きvariant**に追加する案。
-**SR03-D01個別採用（2026-11-01）：** `IV_HETEROGENEOUS_EFFECT`を`ATE/ATT/CATE/LATE`とは独立したEstimand familyとする。family名だけで科学的対象を保証せず、Method別の数式・識別モーメント・母集団／conditioning・処置コントラスト・追加仮定を必須とする。DRIVから通常CATE／complier LATEへの無根拠な変換は禁止。具体schema/enum、Method別科学Benchmarkは未承認。
+**SR03-D01個別採用（2026-11-01）：** IV異質効果を独立Estimand familyとする。科学的定義・選択肢比較・必須不変条件は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)に一元化する。本書はDomain/IdentificationResult/EstimatorSpec/CLIの**設計責務と実装互換性**を管理し、正式schema・Method別Science/Gateは未承認とする。
 2. \`IdentificationResult\`が対象Estimand・Graph／Question／dataset hash、推定根拠、制限・原因codeを保持する。DoWhyの内部\`nonparametric-ate\`は**IVによるLATE推定の対象を保証しない**ため、そのまま科学的estimand labelに転用しない。
 3. \`EstimatorSpec\`で識別結果とMethod適格性を照合し、数値推定の前に\`REQUIRES_REVIEW\`／\`NOT_IDENTIFIED\`の新Method自動通過を禁止。現行CLIのREQUIRES_REVIEW入力許容は**回帰保護対象であると同時に安全性の審査対象**。
 4. \`EffectResult\`は**識別状態・点推定状態・推論区間可用性**を別軸で保持。EconMLで実証された点推定のみのケースではCI=\`null\`と理由を保存し、架空のCIを作らない。

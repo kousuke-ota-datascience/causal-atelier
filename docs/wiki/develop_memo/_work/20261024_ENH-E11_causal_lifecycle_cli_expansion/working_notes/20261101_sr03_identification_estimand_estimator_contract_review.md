@@ -55,11 +55,11 @@
 | \`ATT\` | \(E[Y(1)-Y(0)\mid A=1]\) | 実際にTreatmentを受けた部分集団の平均 |
 | \`CATE\` | \(\tau(x)=E[Y(1)-Y(0)\mid X=x]\) | 事前指定したeffect-modifierの値\`x\`の条件付き平均。ここで\`X\`と交絡調整\`W\`の役割を分離する |
 | \`LATE\` | \(E[Y(1)-Y(0)\mid A(1)>A(0)]\) | **二値Z／二値A**の標準的monotonicity IV設定におけるcomplier集団 |
-| \`IV_HETEROGENEOUS_EFFECT\`（**別ID案**） | \(\theta_{\mathrm{IV}}(x)\) を識別モーメントと処置コントラストで明記 | DRIV等。追加仮定によってconditional LATEやstructural effectに対応し得るが、無条件にCATE/LATEと改名しない |
+| \`IV_HETEROGENEOUS_EFFECT\`（**D01分類方針採用**） | \(\theta_{\mathrm{IV}}(x)\) を識別モーメントと処置コントラストで明記 | DRIV等。追加仮定によってconditional LATEやstructural effectに対応し得るが、無条件にCATE/LATEと改名しない |
 
 **重要:** \`CATE\`と\`LATE\`は対象集団・conditioningが異なる。\`E[Y(1)-Y(0)|X=x]\`と\`E[Y(1)-Y(0)|X=x,\mathrm{complier}]\`は原則別物。連続Treatment／連続Instrumentの線形IV係数は、**二値IVのcomplier LATEを意味しない**。Treatment contrast（T0/T1、dose increment）、comparator、Xの定義、対象集団・観測単位・時間をすべてResultの一部とする。
 
-#**SR03-D01オーナー判断（2026-11-01）：A案採用。** `IV_HETEROGENEOUS_EFFECT`を`ATE/ATT/CATE/LATE`とは別の**Estimand family**とする。family IDのみでは科学的なEstimandは確定しない。Method別の数式・識別モーメント・母集団／principal stratum・conditioning・処置コントラスト・Instrument assignment・識別仮定を明示し、通常CATE、complier LATE、conditional LATE等との等価性は追加の根拠を個別に検証する。Phase2のDRIV候補は維持する。具体schema/enum、Method個別の科学的対象、Benchmark・Gateは未承認。
+**SR03-D01（分類方針はオーナー採用済み）:** 独立familyの科学的意味、A/B/C比較・非採用理由、Method固有の必要条件とD01固有fixtureは[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)に責務を移譲する。本書は他Estimandとの横断互換表とSR-03全体の接続契約のみ管理する。
 
 ## 2.2. 必須の科学的仮定
 
@@ -192,7 +192,7 @@
 
 | Decision | 推奨する設計案 | 明示的な承認が必要な点 |
 |---|---|---|
-| `SR03-D01` | **オーナー採用（2026-11-01）：A案＝独立した`IV_HETEROGENEOUS_EFFECT` family**。Method別の対象・識別モーメント・母集団・conditioning・contrast・追加仮定を必須とし、CATE/LATEへの自動変換を禁止 | **分類方針は採用済み**。具体schema/enum、DRIV固有の対象・数値検証、Gateは未承認 |
+| `SR03-D01` | **A案の独立IV異質効果familyをオーナー採用済み**（[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)） | family分類の判断は完了。Method別識別対象・schema・Science/Gate未承認。D01固有の根拠・比較・検証条件はファイルD01が管理 |
 | `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
 | `SR03-D03` | **オーナー採用（2026-11-01）：Phase3初期はA＝二値Z/AのWald比＋B＝2SLS**。complier LATEを基準対象とし、一般の2SLS拡張のEstimandは別に定義する。**C＝条件付きIVのDR／効率的LATEは追加審議**（[比較記録](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **方式選択は完了**。弱IV頑健推論の実装範囲、CI／非有界・非連結集合の表現、数値閾値・Benchmarkは未承認 |
 | \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |

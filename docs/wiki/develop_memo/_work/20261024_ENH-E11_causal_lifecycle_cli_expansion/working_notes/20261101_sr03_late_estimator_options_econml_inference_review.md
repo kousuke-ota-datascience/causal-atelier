@@ -43,7 +43,7 @@
 
 **重要:** 二値Z・二値A・共変量なしのJust-identifiedな場合、**Wald比と2SLSの点推定値は代数的に一致**する。BがAと無条件に独立した科学方式ではない。**CはDRIVと同じではない**。EconML DRIVの連続Treatmentに対するIV heterogeneous effectを、二値Z/Aのcomplier LATEへ自動同定しない。
 
-**オーナー採用（2026-11-01）:** **AをPhase3の二値Z/A・complier LATEの基準推定器、Bを線形IVの追加推定器として初期提供**。Cは**採用ではなく追加審議**。Phase2のDRIVは既存の必須候補のまま**IV異質効果の別契約**で維持する。2SLSでの一般の共変量・複数IV対応が同じLATEを推定するとの自動保証はしない。
+**オーナー採用（2026-11-01）:** **AをPhase3の二値Z/A・complier LATEの基準推定器、Bを線形IVの追加推定器として初期提供**。Cは**採用ではなく追加審議**。Phase2のDRIVは既存の必須候補のまま**IV異質効果の別契約**で維持する。独立familyの採否・比較・科学的定義の管理先は[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)とし、本書はLATE A＋BおよびEconML推論の比較・証拠を管理する。2SLSでの一般の共変量・複数IV対応が同じLATEを推定するとの自動保証はしない。
 
 **弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**Anderson–Rubin型検定反転等の弱IV頑健なconfidence setは提案・未承認**であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
 
