@@ -17,18 +17,19 @@
 | 仮ID | 変更前：現行の正本 | 変更後：ENH-E11案 | 理由・Issue |
 |---|---|---|---|
 | E11-REQ-P1Q | FR-040/041はQuestion/Designを固定。FR-054・NFR-002のlineageはPARTIAL | ローカルCLIでQuestion/Design/Graphをversion/hash付きで識別する。既存Product資源を再利用できるか検証 | 残差確認 #15 |
-| E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと`NOT_IDENTIFIED`等の明示的結果を追加 | DoWhy候補 #16 |
+| E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと`NOT_IDENTIFIED`等の明示的結果を追加。**識別結果と各Estimatorの数値出力は別の受入**（SR-03） | DoWhy候補 #16 |
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
 | E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。追加案は**古典OLS係数へのCinelli–Hazlett partial R²／RV**（2軸強度・非適用・既存HC3との差異を明示）。IPW/AIPWなどへの一般化は未承認。00_04§2.3の技術案に基づく | 拡張候補 #16（未承認） |
 | E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | **適切な観測Negative Controlを指定できる研究に、明示的opt-inの科学的反証分析を提供**する方針（2026-11-01確認）。NCE/NCOの条件付きnull検査を方法候補とし、未指定では自動実行しない。null／共有バイアス／DAG/時間根拠を要求し、不適格を科学的負結果とする。既存推定の成功を阻害せず、主効果の因果的PASSとは区別（00_04§2.3、[計画メモ](../working_notes/20261101_negative_control_implementation_plan.md)）。Method細部・正本改定は未承認 | 新規候補 #16（Method／Gate未承認） |
 | E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | Hájek型正規化、IPTWの分散・区間推定の品質、Balance/ESS/Overlapの適用性を明文化 | 品質強化 #19 |
-| E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifier、推論・supportと承認済みEstimatorを規定 | 新規Phase 2 #18 |
+| E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifierとconfounderの区別、点推定と推論区間のavailability、supportと承認済みEstimatorを規定。**IV異質効果を一般CATEと混同しない**（SR-03） | 新規Phase 2 #18 |
 | E11-REQ-P2A | CATEファイル成果物の現行要件なし | privacy制限付きParquet/JSON、seed/split/versionと群別要約を規定 | #18、#24 |
 | E11-REQ-P3T | 時系列Graph/Discovery専用FRなし | TemporalDesign、TIME_SERIES_GRAPH、PCMCI/PCMCI+/LPCMCI、CI test、lagの忠実な保存 | #20 |
 | E11-REQ-P3D | DiD/Event Study/ITS専用FRなし | QuasiExperimentalDesign、event-time、pretrend、cluster等の検証 | #21 |
-| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDD、IV/LATE、first-stage/weak-IVと関連する仮定を規定 | #22 |
+| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDD、**二値Z/Aのcomplier LATEとその他IV効果を区別**、first-stage/weak-IV、独立性・除外制約・単調性を規定（SR-03） | #22 |
 | E11-REQ-P3S | Synthetic Control/SDID専用FRなし | donor適格性、pre-fit、timing、placebo、重みと負結果を規定 | #23 |
+| E11-REQ-SR03 | 現行SpecはATE/ATT・RANDOMIZED/BACKDOORのみ。Estimation CLIは識別`REQUIRES_REVIEW`を受け入れる経路を持つ | **識別状態・Estimand・推定器・Eligibility・CI availabilityを分離したversioned contractを提案**。未解決Graph/非識別からの自動数値推定を禁止し、原Question/Graph/dataset/hashを上流Resultに固定。Frontdoor数値推定、LATE推定器、DRIVの解釈、CIの必須水準は未承認（[SR-03メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)） | #16,#18,#22,#24（未承認） |
 | E11-REQ-CLI | NFR-001b/002はPARTIAL、NFR-025/028は既存範囲でIMPLEMENTED | ローカルversioned spec、hash/manifest、実効dependency version・seed/split、永続artifact、科学的status | #24 |
 
 **正本との衝突:** 正本§11で未承認のDoWhy/EconMLが対象外とされている。**2026-11-01のオーナー方針はPython3.12/Linux基準、DoWhy/EconML/Tigramiteの機能別optional依存、列挙Method維持、lock＋Benchmark、個別SI（SaaS非想定）での配布前ライセンス審査を採用**。しかしこれは§11の正式改定やライセンス適合判断ではない。導入する場合は承認済みoptional Capabilityへの意味上の変更を正本に明記する。Tigramiteその他Libraryにも同じ採用審査を適用する。
@@ -67,6 +68,7 @@
 
 - 新規FR/NFR/ARの正式採番とProductコンセプト改定。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
 - IPTW推論・Trimmingの科学的に適切なdefault。
+- **SR-03**：Frontdoor識別のみか数値推定まで含めるか、IVのcomplier LATEと他のIV効果をどう区分するか、DRIVの条件付きEstimand、`REQUIRES_REVIEW`の推定ゲート、Method別CIの必須水準（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 - Phase 2のIV+MLとしてDRIVまたは同等手法をどう認めるか。
 - 個票CATEファイルの最小化・アクセス制限。
 - Local spec/manifestのschema versionと既存readerの互換性。

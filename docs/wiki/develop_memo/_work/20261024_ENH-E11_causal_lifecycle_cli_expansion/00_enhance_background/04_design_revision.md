@@ -28,6 +28,17 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 
 大規模な個票CATEはParquet、要約はJSON、手法別科学監査はMarkdown/JSONとし、個票全件を小さな制御応答へ格納しない。
 
+### 2.3. SR-03識別→Estimand→推定器の責務境界（技術案）
+
+**設計入力:** [20261101_sr03_identification_estimand_estimator_contract_review.md](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)（SR-02実測を参照した**未承認の設計案**）。
+
+1. Domainが\`CausalQuestion\`の\`Estimand/Population/Contrast\`、\`CausalDesign\`の\`Strategy/Assumption\`を外部依存なしに型付けする。現行\`causal-analysis-spec/2\`の読み取りを破壊せず、CATE／LATE／IV heterogeneous effectは**新しい版付きvariant**に追加する案。
+2. \`IdentificationResult\`が対象Estimand・Graph／Question／dataset hash、推定根拠、制限・原因codeを保持する。DoWhyの内部\`nonparametric-ate\`は**IVによるLATE推定の対象を保証しない**ため、そのまま科学的estimand labelに転用しない。
+3. \`EstimatorSpec\`で識別結果とMethod適格性を照合し、数値推定の前に\`REQUIRES_REVIEW\`／\`NOT_IDENTIFIED\`の新Method自動通過を禁止。現行CLIのREQUIRES_REVIEW入力許容は**回帰保護対象であると同時に安全性の審査対象**。
+4. \`EffectResult\`は**識別状態・点推定状態・推論区間可用性**を別軸で保持。EconMLで実証された点推定のみのケースではCI=\`null\`と理由を保存し、架空のCIを作らない。
+5. IVでは二値Z/AのLATE、連続処置のDRIV heterogeneous effectを区別。FrontdoorはATE識別と**モデル依存の二段階推定**を別受入とする。
+6. CLIはResult間のhash一致、effective backend version、seed/split、optional dependency欠落を検査する。Product DBに新規統合せず、local manifestでトレースする。
+
 ## 3. 所有権（未承認の案）
 
 - Domainが外部ライブラリ非依存のQuestion/Design/Estimand/invariantを定義する。

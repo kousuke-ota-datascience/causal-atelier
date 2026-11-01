@@ -67,7 +67,7 @@
 | `P1-05` | **R／D** | 既存Graph revision/provenanceを再利用。Consensus Graph等の独立新方式は後続 | #17 |
 | `P1-06` | **R** | Native Randomized/Backdoor、nonidentified/review statusを保護 | #15,#16 |
 | `P1-07` | **R** | Imported/User-defined GraphからIdentificationを開始する既存経路を保護 | #15 |
-| `P1-08` | **N** | optional DoWhy識別：Backdoor/Frontdoor/IV、識別式・仮定・負結果 | #16 |
+| `P1-08` | **N** | optional DoWhy識別：Backdoor/Frontdoor/IV、識別式・仮定・負結果。**識別のみと数値推定を別Capability**とし、Frontdoor/IVのEstimand・対象・推定器接続をSR-03契約案で審査 | #16 |
 | `P1-09` | **N** | FCI/PAG Discovery：circle等のendpoint、背景知識、警告、CI test | #17 |
 | `P1-10` | **R+N** | 既存Data Eligibility/Validation再利用＋新方式固有の適格性 | #15,#16 |
 | `P1-11` | **R** | 既存ATE/ATTの差・OLS/IPW/AIPWを維持 | #19 |
@@ -121,7 +121,7 @@
 | `P2-06` | **N** | S-Learner、効果と予測の意味の分離 | #18 |
 | `P2-07` | **N** | T-Learner、処置群別support診断 | #18 |
 | `P2-08` | **N** | X-Learner、arm非対称とpseudo-outcome対応 | #18 |
-| `P2-09` | **N** | DRIVまたは承認済み科学的同等IV+ML。代替を黙認しない | #18,#22 |
+| `P2-09` | **N** | DRIVまたは承認済み科学的同等IV+ML。**連続TでのIV heterogeneous effectを二値Z/Aのcomplier LATEと自動同一視しない**。条件付き識別対象・推論可用性はSR-03契約案へ | #18,#22 |
 | `P2-10` | **N** | EstimationSpecification/HeterogeneityResult、nuisance/final/CI/subgroup | #18 |
 | `P2-11` | **R+N** | 既存optional依存隔離原則を再利用しEconML能力・version・unavailableを追加 | #18,#24 |
 | `P2-12` | **R+N** | 既存AIPW cross-fitting再利用＋CATE専用fold/seed/split/漏洩防止 | #18,#24 |
@@ -156,7 +156,7 @@
 | `P3-09` | **N** | Interrupted Time Series。介入時点、季節性、自己相関 | #21 |
 | `P3-10` | **N** | Sharp RDD。cutoff、bandwidth、局所estimand、density | #22 |
 | `P3-11` | **N** | Fuzzy RDD。first-stageとcompliance/局所効果 | #22 |
-| `P3-12` | **N** | IV/LATE。weak-IV、exclusion、monotonicity等の仮定 | #22 |
+| `P3-12` | **N** | **二値Z/Aのcomplier LATEとその他のIV効果を区別**。relevance、exclusion、independence、monotonicity、weak-IVを明示。推定器・対象・適格性はSR-03契約案へ | #22 |
 | `P3-13` | **N** | Synthetic Control。donor、pre-fit、placebo、RMSPE | #23 |
 | `P3-14` | **N** | Synthetic DiD。panel、donor重みと処置重みの区別 | #23 |
 | `P3-15` | **N** | QuasiExperimentalDesignと各method固有のEstimand・Eligibility | #21,#22,#23 |
@@ -251,6 +251,16 @@
 - **科学的検証:** 各必須Methodの適格／不適格とKnown-truth、bias/coverage/support/temporal/quasiの閾値をGate 07で固定し、独立検証に回す。
 - **Work Package:** **今回割当てない**。#15〜#24のIssueと方法別受入条件から、設計承認後に切り出す。G01〜G10は未固定。
 - **実装許可:** Human ownerによる01/02の承認、03/04/05とArchitecture Review、Gate 06/07のfreeze前には発行しない。
+
+### 7.3. SR-03：Identification × Estimand × Estimator 契約（2026-11-01技術案）
+
+**詳細の科学的定義・互換性行列・状態機械・12 fixture:** [20261101_sr03_identification_estimand_estimator_contract_review.md](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)（**非正規の設計検討メモ／正式承認待ち**）。
+
+- **前提:** Questionが先に\`Estimand\`とTarget population／Treatment contrastを固定し、Graph／Designと仮定により**そのEstimandが識別されるか**を判定し、対応可能なEstimatorだけを実行する。
+- **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋単調性→complier LATE、DRIV→**条件付きIV効果（CLATE等を主張するには追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
+- **現行との差:** 現行\`analysis_spec\`はATE/ATT・Randomized/Backdoorのみを許し、CLIが上流\`REQUIRES_REVIEW\`を受け入れる経路がある。新Methodでは**未解決PAG/CPDAGや未承認Identificationを数値推定に直結しない**。
+- **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証したが、**DRLearner・S/T/X-LearnerのCIは今回の構成では取得不可**。区間を捏造せずCapabilityを分離する。
+- **承認境界:** 本節は68行の提案Dispositionを変えない。Frontdoor数値推定のPhase1への包含、IV/LATEの初期推定器、DRIVのEstimand定義、CI必須水準、schema/Graph reviewはHuman ownerとArchitecture Reviewで決定する。
 
 ## 8. ステップ4の到達点・残存する承認事項
 
