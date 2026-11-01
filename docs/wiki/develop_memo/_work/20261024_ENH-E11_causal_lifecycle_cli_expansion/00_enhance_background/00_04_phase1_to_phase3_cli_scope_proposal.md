@@ -74,9 +74,9 @@
 | `P1-12` | **R+Q** | E9 Weight/Balance/ESS/Overlapを再利用。IPTW推論品質・SE/CI被覆を追加検証 | #19 |
 | `P1-13` | **R** | Placebo Treatment/Data Subset Refutationを維持 | #16 |
 | `P1-14` | **N** | Random Common Cause／Bootstrap Refutation、再推定・seed・再現性 | #16 |
-| `P1-15` | **N（要審査）** | Negative Control exposure/outcomeの科学的契約と実行方式を必須候補に追加。A0/A1の強度差を承認時に解消 | #16 |
+| `P1-15` | **N（要審査）** | 観測済みNegative-Control Exposure／Outcomeを用いた**事前指定の条件付き関連nullの反証検査**2方式を候補とする。対照変数・共有バイアス構造・DAG/時間根拠が無い場合は非適用。Placebo／Random Common Causeとは区別（科学的定義：2.3節） | #16 |
 | `P1-16` | **R** | Adjustment Set/Propensity Clipping Sensitivityを維持 | #16 |
-| `P1-17` | **N（要審査）／D** | 未観測交絡Sensitivityの最小実行方式を必須候補。仕様曲線など広範な上位追加方式は後続 | #16 |
+| `P1-17` | **N（要審査）／D** | 最小Nは**Cinelli–Hazlett partial R²／Robustness Value**のOLS係数に限定する案。現行のHC3を古典OLS公式へ無断適用しない。IPW/AIPW等の全面対応や追加A0方式は後続の個別判断（2.3節） | #16 |
 | `P1-18` | **R+N／D** | 既存Lineage/Manifestを再利用しlocal manifest増強。Product canonical DB Gapは別Issue審議 | #15,#24,#14 |
 | `P1-19` | **D** | 新しいProduct API/Worker/DB migration/RBACは後続。現行経路を変更しない | #14 |
 | `P1-20` | **R+N** | 既存Scientific CLI再利用。新Identify/Refute/Sensitivity引数と版付き成果物を追加 | #16,#24 |
@@ -86,8 +86,24 @@
 
 - **必須候補として列挙:** FCI（PAG）、optional DoWhy Backdoor/Frontdoor/IV、Random Common Cause／Bootstrapを含むRefutation、既存Placebo/Data Subset、Adjustment Set／Propensity Clippingと追加Unobserved-confounding Sensitivity、Negative Control exposure/outcomeの方法契約。既存Native識別・ATE/ATT・IPW/AIPWはRとして保護する。
 - **Quality:** IPTWの推定Propensity下のSE/CI、overlap・extreme weight・ESS、correct estimandの判定は実装済みと断定せず、E9回帰を含めて科学的に評価する。
-- **要審査:** Negative Control/Unobserved-confoundingはA0に上位要求がありA1との境界に曖昧さがある。今回採用する最小方式の科学的定義、特にどのnegative controlが実行できるか、sensitivityの識別仮定、結果のinterpretationは正式要件で決める。A0全方式の無条件実装を意味しない。
+- **要審査:** NCE／NCOの2方式とOLS係数へのpartial R²を**科学的な最小候補として具体化**した。ただし観測対照のvalidity、HC3／古典OLSの分離、IPW/AIPWへの非適用、Human ownerによるPhase1採否は未決であり、方法の存在だけで科学的受入を主張しない。A0全方式の無条件実装も意味しない。
 - **旧Product媒体:** 独立CausalQuestionVersion DB、API/RBAC/Worker/DB migrationの部分はD。Local identity／manifestが今回Nであり、この二者を混同しない。
+
+### 2.3. Negative Control／未観測交絡Sensitivityの科学的方式（2026-11-01技術案）
+
+**方法検討の根拠・fixture・負結果:** [20261101_negative_control_unobserved_confounding_method_review.md](../working_notes/20261101_negative_control_unobserved_confounding_method_review.md)。本節の内容は**SR-06への科学的方法の具体化**であり、Human ownerの採用承認ではない。現行Scientific CLI・Domain enumには下記の新Methodを実装していない。
+
+| 候補Method ID | 必要なDesignと計算 | 出力・拒否条件 |
+|---|---|---|
+| `NEGATIVE_CONTROL_EXPOSURE`（P1-15） | 観測されたZがYへ因果的に影響せず、対象A–Yと検出したいバイアス構造を共有する根拠を分析者が指定する。事前指定した`Y ~ Z + C_Z`などの**条件付き関連null**を検査。Aの条件付けはDAG上妥当な場合のみ | 係数・区間・P値・対照選択理由・警告。妥当なZ／null／conditioning setがない場合は`NOT_APPLICABLE`／要レビュー |
+| `NEGATIVE_CONTROL_OUTCOME`（P1-15） | 観測されたWがAから因果的影響を受けず、懸念するバイアス構造を共有する根拠を指定する。事前指定した`W ~ A + C_W`などの**条件付き関連null**を検査 | 同上。Wが後処置・対照nullに反する、設計根拠がない場合は拒否・要レビュー |
+| `UNOBSERVED_CONFOUNDING_PARTIAL_R2`（P1-17） | 事前指定した**連続Yの古典的OLS係数**について、仮想Uと処置A・結果Yの**条件付きpartial R²（2軸）**のgridを設定し、OVB感度曲線・係数0へのRobustness Valueを計算 | OLS係数/古典SE/残差df、grid、RV、仮定・Reference。既存HC3 SEを古典公式へ流用しない。IPW/AIPW、非線形・CATE等には**最小方式を適用しない** |
+
+**解釈上の不変条件:** Negative ControlのNull非棄却もpartial R²上の高いRVも「未観測交絡の不存在」を証明しない。Negative ControlはPlacebo変換・Random Common Causeと区別する。両方式でnull自体が不当なら、効果数値や「PASS」を生成しない。
+
+**依存・品質の前提:** 初期実装は外部DoWhyへの依存を必須とせず、現行Scientific Coreで利用可能な回帰機構を評価する。ただしOLS refitの係数・完全ケース・古典SE/dfと元Resultとの同一性、およびsensemakr参照計算とのパリティを**科学Benchmarkで検証する必要**がある。現行`robust_se="HC3"`の結果を感度分析の古典SEとして誤用しない。固定した閾値・seed・Reference version・CLI schemaは要件03／設計04／Gate 07で決定する。
+
+**留保:** NC-E/NC-Oの2方式すべてをPhase1必須とするか、OLS限定方式でA0の要求を満たすか、より一般のIPW/AIPW/CATE等へのSensitivityとSimulated Confounder／Graph Perturbationを後続に送るかは、Human ownerが個別判断し承認記録02へ記す。
 
 ## 3. Phase 2の実装スコープ案
 
@@ -163,8 +179,8 @@
 | `X-01` | **D（要承認）** | ATCはPhase別必須リストに独立指定なし。controlled direct effectはPhase4側 | #14 |
 | `X-02` | **D** | MediationはPhase4のextension pointへ。Phase1〜3の必須には算入しない | #14 |
 | `X-03` | **D（要承認）** | Matching/汎用g-computationはA0上位のみ。既存OLS等を同等扱いしない | #14 |
-| `X-04` | **N一部／D** | Negative ControlはP1-15で包含。Simulated Confounder/Graph Perturbationは後続提案 | #16,#14 |
-| `X-05` | **N一部／D** | 未観測交絡Sensitivityの最小方式はP1-17。その他の仕様/欠測/Graph Sensitivityは後続 | #16,#14 |
+| `X-04` | **N一部／D** | 観測NCE/NCOの**対照null検査2方式をP1-15で候補化**。DoWhyのrandom/placeboとは異なる。Simulated Confounder/Graph Perturbationは後続提案（オーナー未承認） | #16,#14 |
+| `X-05` | **N一部／D** | 未観測交絡の最小方式はP1-17の**OLS partial R²**候補。IPW/AIPW/CATEへの一般化、その他のモデル・欠測・Graph Sensitivityは対象外案（正式採否保留） | #16,#14 |
 | `X-06` | **Q一部／D** | 採用手法のCI/cluster/bootstrap/stabilityは必要条件として品質検証。一般的多重検定・全Graph consensusは後続 | #19,#20,#21,#24 |
 | `X-07` | **D** | Policy Value、cost/capacity、off-policy/自動配信はPhase4 | #14 |
 | `X-08` | **D** | Monitoring/drift/再分析triggerはPhase4 | #14 |
@@ -175,7 +191,7 @@
 
 1. **ATC／matching／g-computation:** A0上位要求だがA1〜A3の独立必須Methodに指定がないため**今回のScope案ではD**とする。一般g-computationを現行OLSと同一視しない。採否・別Issue・科学的必要性について02の承認者判断を要する。
 2. **Mediation／controlled direct effect:** A4 Phase4のExtensionに属するためD。後続で具体的なmediation識別や自然直接効果等を検討する。今回のPhase1〜3の必須には黙示的に算入しない。
-3. **Negative ControlとUnobserved-confounding Sensitivity:** A0・A1の強度差はあるが、Phase1の科学的信頼性を高める方法として**最小科学実行方式Nを提案**する。もし不採用とするなら、なぜA0の目的を満たす必要がないか／どの同等の検証手段があるかを明示承認する。
+3. **Negative ControlとUnobserved-confounding Sensitivity:** A0・A1の強度差に対し、第2.3節の**観測NCE／NCOの2つのnull診断**と**OLS限定partial R²／RV**を最小Nとして提案する。これは全推定器に適用可能なSensitivityやNCでの交絡不存在証明ではない。方式の採否・限定範囲・後続拡張は02で個別判断し、異なる方式への代替も科学的根拠を示す。
 4. **Method内の品質要件:** DiDのcluster、CATEのcross-fitting、FCIのstability、RDDのdensity等、採用Methodに不可欠な品質検証はスコープのQ/Nに含む。一般的多重比較や全Discovery consensusの独立システムはDとする。
 
 ## 6. 既存Foundation GapとCLI-only実装の境界
@@ -228,7 +244,7 @@
 
 次の承認を得るまでは**STEP4_SCOPE_PROPOSAL_PREPARED**とする。
 
-1. **必須Methodと同等代替:** DoWhy/FCI、EconML全候補、Tigramiteと準実験、Negative Control/Unobserved-confoundingの最小方式とLibrary版・scientific equivalence。
+1. **必須Methodと同等代替:** DoWhy/FCI、EconML全候補、Tigramiteと準実験、**第2.3節のNCE/NCO／OLS partial R²の採否と適用対象・代替条件**、Library版・scientific equivalence。
 2. **A0上位要求のScope例外:** ATC、matching/g-computation、多重比較、追加graph perturbation等を今回Dにする案の明示承認。
 3. **既存Gapの別案件帰属:** GAP-C01〜C04の責任者・Issue・Closure Gateを別途決定（ここでは未閉鎖）。
 4. **既存CLIと成果物の境界:** config version、ファイル入出力の安全性、個票CATEのprivacy、optional dependency、seed/split、Method-specific negative status。

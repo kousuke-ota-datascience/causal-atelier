@@ -46,7 +46,8 @@
 
 ### 2.4. 作業メモ（任意参照・非正規の途中レビュー記録）
 
-- [`working_notes/20261029_cli_scope_review.md`](working_notes/20261029_cli_scope_review.md)：00_04の技術審査記録（68行照合PASS、BLOCKER 5件・MAJOR 7件、**CHANGES_REQUIRED**）。スコープ採否や承認を代行しない。指摘の正式な処遇は00_04改訂と02承認記録へ反映する。
+- [`working_notes/20261029_cli_scope_review.md`](working_notes/20261029_cli_scope_review.md)：00_04の技術審査記録（68行照合PASS、BLOCKER 5件・MAJOR 7件、**CHANGES_REQUIRED**）。スコープ採否や承認を代行しない。
+- [`working_notes/20261101_negative_control_unobserved_confounding_method_review.md`](working_notes/20261101_negative_control_unobserved_confounding_method_review.md)：SR-06／P1-15・P1-17に対し**観測NCE/NCOとOLS partial R²／RV**の方法・適用条件・科学fixtureを具体化した**未承認の技術検討メモ**。00_04§2.3へ要点を反映。
 
 **00_01〜00_03の事前調査と00_04のスコープ案は01より前の根拠・提案資料**であり、Workflowの正式文書01〜05を置き換えない。作業メモ・07 Issue台帳・80契約変更履歴も承認済み要件やGateを代替しない。
 

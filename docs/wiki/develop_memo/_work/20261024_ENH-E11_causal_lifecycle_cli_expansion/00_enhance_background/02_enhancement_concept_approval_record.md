@@ -40,7 +40,7 @@
 ## 5. 承認のための残作業
 
 1. 先行調査の`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を確認し、`00_04_phase1_to_phase3_cli_scope_proposal.md`の68行と[作業メモ](../working_notes/20261029_cli_scope_review.md)の**SR-01〜12を是正・再審査**した結果を確認する。
-2. `00_04_phase1_to_phase3_cli_scope_proposal.md`にあるATC/matching等の後続送り、Negative Control/未観測交絡Sensitivityの最小方式、外部Libraryの同等代替、Product GAP-C01〜04の帰属を**項目単位で明示承認または差戻し**したうえで、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
+2. `00_04_phase1_to_phase3_cli_scope_proposal.md`にあるATC/matching等の後続送り、**§2.3の観測NCE/NCO・OLS partial R²候補の採否・適用限界（[方法検討メモ](../working_notes/20261101_negative_control_unobserved_confounding_method_review.md)）**、外部Libraryの同等代替、Product GAP-C01〜04の帰属を**項目単位で明示承認または差戻し**したうえで、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
 3. Architecture Reviewを完了し、`05_requirements_design_consistency_and_traceability_review.md`を改訂する。
 4. Human ownerの正式判断を**実際の日時と根拠**付きで追記する。遡及的に承認済みとしない。
 5. 承認後に正本と承認Snapshotを固定し、Gate 06/07を作成する。

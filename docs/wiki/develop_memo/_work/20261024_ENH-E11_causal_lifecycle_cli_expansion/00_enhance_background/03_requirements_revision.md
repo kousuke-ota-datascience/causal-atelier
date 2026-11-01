@@ -20,8 +20,8 @@
 | E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと`NOT_IDENTIFIED`等の明示的結果を追加 | DoWhy候補 #16 |
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
-| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持し、最小Unobserved-confounding Sensitivity方式をPhase1採用案として追加。方式・仮定・負結果は承認待ち | 拡張 #16 |
-| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | Negative Control exposure/outcomeの実行可能な科学的方式・ResultをPhase1の新Capability案に含む。最小Methodの採否はHuman owner/Architecture Reviewで審査 | 新規候補 #16 |
+| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。追加案は**古典OLS係数へのCinelli–Hazlett partial R²／RV**（2軸強度・非適用・既存HC3との差異を明示）。IPW/AIPWなどへの一般化は未承認。00_04§2.3の技術案に基づく | 拡張候補 #16（未承認） |
+| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | 観測済み**NCE/NCO**を用いた、事前指定のconditional-null検査2方式を追加候補に含む。対照のnull/共有バイアス/DAG根拠が不当なら拒否・要レビューとし、Placebo生成と区別（00_04§2.3）。採否はHuman owner/Architecture Reviewで審査 | 新規候補 #16（未承認） |
 | E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | Hájek型正規化、IPTWの分散・区間推定の品質、Balance/ESS/Overlapの適用性を明文化 | 品質強化 #19 |
 | E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifier、推論・supportと承認済みEstimatorを規定 | 新規Phase 2 #18 |
 | E11-REQ-P2A | CATEファイル成果物の現行要件なし | privacy制限付きParquet/JSON、seed/split/versionと群別要約を規定 | #18、#24 |
