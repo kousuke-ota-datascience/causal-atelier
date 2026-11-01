@@ -63,7 +63,7 @@ jobs:
           MKL_NUM_THREADS: "1"
         run: |
           set +e
-          uv pip install --python .sr02venv/bin/python "pytest>=9,<10" > sr02-regression-install.log 2>&1
+          uv pip install --python .sr02venv/bin/python "pytest>=9,<10" "httpx>=0.28" > sr02-regression-install.log 2>&1
           install_rc=$?
           if [[ "$install_rc" -eq 0 ]]; then
             .sr02venv/bin/python -m pytest -q \
