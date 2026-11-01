@@ -54,6 +54,39 @@ jobs:
           .sr02venv/bin/python scripts/verification/enh_e11_sr02_probe.py \
             --group "${{ matrix.group }}" --install-rc "${{ steps.install.outputs.result || '99' }}" \
             --output "sr02-${{ matrix.group }}.json" --summary "sr02-${{ matrix.group }}.md"
+      - name: Existing Ariadne scientific and CLI regression (combined)
+        if: matrix.group == 'combined' && steps.install.outputs.result == '0'
+        shell: bash
+        env:
+          OMP_NUM_THREADS: "1"
+          OPENBLAS_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+        run: |
+          set +e
+          uv pip install --python .sr02venv/bin/python "pytest>=9,<10" > sr02-regression-install.log 2>&1
+          install_rc=$?
+          if [[ "$install_rc" -eq 0 ]]; then
+            .sr02venv/bin/python -m pytest -q \
+              tests/product/test_cli_contract.py \
+              tests/scientific/test_product_adapters.py \
+              tests/scientific_benchmarks/test_enh_e1a_acceptance.py \
+              > sr02-regression.log 2>&1
+            test_rc=$?
+          else
+            echo "pytest installation failed" > sr02-regression.log
+            test_rc=97
+          fi
+          {
+            echo "### ENH-E11 SR-02 existing-regression check (combined)"
+            echo "Commit: $GITHUB_SHA"
+            echo "pytest setup exit: $install_rc; pytest exit: $test_rc"
+            echo '~~~'
+            tail -28 sr02-regression.log
+            echo '~~~'
+            echo "**Note: existing tests are regression evidence, not new-method scientific acceptance.**"
+          } > sr02-regression.md
+          cat sr02-regression.md
+          exit "$test_rc"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -62,6 +95,9 @@ jobs:
             sr02-${{ matrix.group }}.json
             sr02-${{ matrix.group }}.md
             sr02-install.log
+            sr02-regression-install.log
+            sr02-regression.log
+            sr02-regression.md
           retention-days: 30
       - name: Report evidence to tracking issue
         if: always()
@@ -70,4 +106,12 @@ jobs:
         run: |
           if [[ -f "sr02-${{ matrix.group }}.md" ]]; then
             gh issue comment 14 --repo "$GITHUB_REPOSITORY" --body-file "sr02-${{ matrix.group }}.md"
+          fi
+      - name: Report existing-regression evidence
+        if: always() && matrix.group == 'combined'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ -f sr02-regression.md ]]; then
+            gh issue comment 14 --repo "$GITHUB_REPOSITORY" --body-file sr02-regression.md
           fi
