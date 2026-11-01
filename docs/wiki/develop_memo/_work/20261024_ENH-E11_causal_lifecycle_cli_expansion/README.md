@@ -49,7 +49,8 @@
 - [`working_notes/20261029_cli_scope_review.md`](working_notes/20261029_cli_scope_review.md)：00_04の技術審査記録（68行照合PASS、BLOCKER 5件・MAJOR 7件、**CHANGES_REQUIRED**）。スコープ採否や承認を代行しない。
 - [`working_notes/20261101_negative_control_unobserved_confounding_method_review.md`](working_notes/20261101_negative_control_unobserved_confounding_method_review.md)：SR-06／P1-15・P1-17に対し**観測NCE/NCOとOLS partial R²／RV**の方法・適用条件・科学fixtureを具体化した**未承認の技術検討メモ**。00_04§2.3へ要点を反映。
 - [`working_notes/20261101_negative_control_implementation_plan.md`](working_notes/20261101_negative_control_implementation_plan.md)：**確認済みのNegative Control任意提供方針**をCLI-onlyのScientific Design・適格性・Result・WP候補・独立Benchmarkへ展開した**未承認の実装計画案**。全研究への自動実行はしない。
-- [`working_notes/20261101_external_backend_policy_temporal_scenarios.md`](working_notes/20261101_external_backend_policy_temporal_scenarios.md)：**SR-02 A/B/C/D/E採用方針**、PCMCI/PCMCI+/LPCMCIの利用場面、個別SI納入におけるGPLv3審査前提、依存・科学probe計画。**実行可能version・配布適合性は未認定**。
+- [`working_notes/20261101_external_backend_policy_temporal_scenarios.md`](working_notes/20261101_external_backend_policy_temporal_scenarios.md)：**SR-02 A/B/C/D/E採用方針**、PCMCI/PCMCI+/LPCMCIの利用場面、個別SI納入におけるGPLv3審査前提、依存・科学probe計画。採用lock・GPL適合性は未認定。
+- [`working_notes/20261101_sr02_backend_runtime_probe_results.md`](working_notes/20261101_sr02_backend_runtime_probe_results.md)：**Ubuntu／Python3.12で依存導入4構成とMethod API smoke15項目を実行**した一次結果。Graph／effect／intervalの実際のCapability差異と未解決事項を記録。**科学受入ではない**。
 
 **00_01〜00_03の事前調査と00_04のスコープ案は01より前の根拠・提案資料**であり、Workflowの正式文書01〜05を置き換えない。作業メモ・07 Issue台帳・80契約変更履歴も承認済み要件やGateを代替しない。
 

@@ -186,7 +186,7 @@
 
 **SI配布の留保:** 配布形態は個別SIによる顧客環境への構築・納入（SaaS非想定）。TigramiteはGPLv3系であり、**optional import／直接pip install／顧客環境への導入という形式だけでGPLv3適合が自動成立するとは扱わない**。実際に納入するコピー、結合方法、ソース・ライセンス通知等を審査するまで顧客配布を承認しない。
 
-**SR-02判定:** A/B/C/D/Eの方針は採用済み。ただし依存解決・install・Method別fit／Graph出力・科学Benchmark・SI GPL適合確認は未実施のため**OPEN**。
+**SR-02追試結果（2026-11-01）:** [実行試験記録](../working_notes/20261101_sr02_backend_runtime_probe_results.md)。Ubuntu 24.04／Python 3.12.15でAriadne＋DoWhy 0.14／EconML 0.17.0／Tigramite 5.2.10.1の**単独・同時依存install、依存check、15のMethod別API smokeが成功**。EconML DRLearner・S/T/X-Learnerは今回の構成では**点推定可・区間推定不可**。**科学Benchmark、既存回帰、実際のextras/lock、SI GPL適合は未実施**のためSR-02は**OPEN（一部検証済み）**。
 
 ## 5. A0上位構想・横断事項の採否案
 

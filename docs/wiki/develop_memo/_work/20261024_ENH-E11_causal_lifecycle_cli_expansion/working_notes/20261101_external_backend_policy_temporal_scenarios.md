@@ -4,7 +4,7 @@
 **文書区分:** `working_notes`／オーナー方針の記録と技術的精査。**正本FR/NFR/AR・Architecture Review・Gateの承認ではない**。  
 **対象:** SR-02・SR-04・SR-08、00_04 P1-08／P2-02〜09・11／P3-01〜06、Issue #16／#18／#20／#24。  
 **判断状態:** `A/B/C/D/E = OWNER_POLICY_ACCEPTED`、`D_USE_CASES_REVIEWED`、`SI_DELIVERY_PREMISE_RECORDED`、`GPL_COMPLIANCE_REVIEW_PENDING`、`VERSION_INSTALL_SCIENCE_VERIFICATION_PENDING`。  
-**調査対象ブランチ・事前HEAD:** `prototype/ariadne_mvp`／`78c56c4bb0525125d7967bf7ea0e68b7f06c61ef`。実環境への外部Backend install、fit、科学Benchmarkは今回**実行していない**。
+**調査対象ブランチ・事前HEAD:** `prototype/ariadne_mvp`／`78c56c4bb0525125d7967bf7ea0e68b7f06c61ef`。**本メモ策定時点**では実環境への外部Backend install、fit、科学Benchmarkを実行していなかった。**後続追試：** [20261101_sr02_backend_runtime_probe_results.md](20261101_sr02_backend_runtime_probe_results.md)（Ubuntu／Python3.12でInstall/API smoke成功、Scientific Benchmark未実施）。
 
 ## 0. INTRODUCTION
 
