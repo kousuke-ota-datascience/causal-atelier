@@ -186,7 +186,7 @@
 
 **SI配布の留保:** 配布形態は個別SIによる顧客環境への構築・納入（SaaS非想定）。TigramiteはGPLv3系であり、**optional import／直接pip install／顧客環境への導入という形式だけでGPLv3適合が自動成立するとは扱わない**。実際に納入するコピー、結合方法、ソース・ライセンス通知等を審査するまで顧客配布を承認しない。
 
-**SR-02追試結果（2026-11-01）:** [実行試験記録](../working_notes/20261101_sr02_backend_runtime_probe_results.md)。Ubuntu 24.04／Python 3.12.15でAriadne＋DoWhy 0.14／EconML 0.17.0／Tigramite 5.2.10.1の**単独・同時依存install、依存check、15のMethod別API smokeが成功**。EconML DRLearner・S/T/X-Learnerは今回の構成では**点推定可・区間推定不可**。**科学Benchmark、既存回帰、実際のextras/lock、SI GPL適合は未実施**のためSR-02は**OPEN（一部検証済み）**。
+**SR-02追試結果（2026-11-01）:** [実行試験記録](../working_notes/20261101_sr02_backend_runtime_probe_results.md)。Ubuntu 24.04／Python 3.12.15でAriadne＋DoWhy 0.14／EconML 0.17.0／Tigramite 5.2.10.1の**単独・同時依存install、依存check、15のMethod別API smokeが成功**。EconML DRLearner・S/T/X-Learnerは**初回の推論設定では点推定のみ**だったが、[追加probe](https://github.com/kousuke-ota-datascience/causal-atelier/actions/runs/41272111463)でBootstrap指定後の**4方式すべてで有限CI取得を確認**。**科学Benchmark、既存回帰、実際のextras/lock、SI GPL適合は未実施**のためSR-02は**OPEN（一部検証済み）**。
 
 ## 5. A0上位構想・横断事項の採否案
 
@@ -259,8 +259,8 @@
 - **前提:** Questionが先に\`Estimand\`とTarget population／Treatment contrastを固定し、Graph／Designと仮定により**そのEstimandが識別されるか**を判定し、対応可能なEstimatorだけを実行する。
 - **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋単調性→complier LATE、DRIV→**条件付きIV効果（CLATE等を主張するには追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
 - **現行との差:** 現行\`analysis_spec\`はATE/ATT・Randomized/Backdoorのみを許し、CLIが上流\`REQUIRES_REVIEW\`を受け入れる経路がある。新Methodでは**未解決PAG/CPDAGや未承認Identificationを数値推定に直結しない**。
-- **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証したが、**DRLearner・S/T/X-LearnerのCIは今回の構成では取得不可**。区間を捏造せずCapabilityを分離する。
-- **個別オーナー判断（2026-11-01）:** **Frontdoor数値推定をPhase1に含めることは採用済み**。一方、**LATEの初期推定器A：Wald、B：2SLS、C：条件付きIVのDR/効率的推定**は選択待ち。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。CIの再probe・被覆率、DRIVのEstimand、schema/Graph reviewは未承認・未検証。
+- **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証。**初回構成でCIを取得できなかったDRLearner・S/T/X-Learnerも、Bootstrap明示指定の追試で有限CIを取得**。区間の可用性と統計的被覆率を区別し、未検証のCI精度を保証しない。
+- **個別オーナー判断（2026-11-01）:** **Frontdoor数値推定をPhase1に含めることは採用済み**。一方、**LATEの初期推定器A：Wald、B：2SLS、C：条件付きIVのDR/効率的推定**は選択待ち。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。Bootstrap CIのAPI再probeは4方式PASSだが、**CI被覆率と適切な反復数、DRIVのEstimand、schema/Graph reviewは未承認・未検証**。
 
 ## 8. ステップ4の到達点・残存する承認事項
 

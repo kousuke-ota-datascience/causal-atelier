@@ -2,7 +2,7 @@
 
 **作成日:** 2026-11-01（JST）  
 **文書区分:** `working_notes`。オーナーの個別決定と未決事項を切り分けた技術検討。正本FR/AR・Gate承認を代替しない。  
-**判断状況:** `FRONTDOOR_NUMERIC_PHASE1_ACCEPTED / LATE_ESTIMATOR_OPTIONS_PREPARED / ECONML_ROOT_CAUSE_IDENTIFIED / INTERVAL_BOOTSTRAP_PROBE_PENDING`。
+**判断状況:** `FRONTDOOR_NUMERIC_PHASE1_ACCEPTED / LATE_ESTIMATOR_OPTIONS_PREPARED / ECONML_ROOT_CAUSE_IDENTIFIED / INTERVAL_BOOTSTRAP_API_PASS`。
 
 ## 0. INTRODUCTION
 
@@ -61,11 +61,12 @@
 
 **重要な切分け:** SR-02では`scripts/verification/enh_e11_sr02_probe.py`が`from econml...`したインスタンスの`fit/effect/effect_interval`を直接呼んだ。Ariadneの新規CATE実装はまだ無く、**Ariadneによる区間推論機能の劣化・損失と評価できる証拠が存在しない**。
 
-**次の実験:** 上記4構成を`BootstrapInference(n_bootstrap_samples=12)`（**API smoke専用の低回数、CI品質の科学受入には使えない**）で再実行し、`effect_interval`が有限かを確認。すでに元スクリプトとGitHub Actionsに追加する差分を用意した。実行結果の確認前にPASSと書かない。成功してもBootstrap反復数・seed・サンプル構造・CATE区間被覆の科学Benchmarkは別工程。
+**実証結果（2026-11-01）:** [GitHub Actions Run #41272111463](https://github.com/kousuke-ota-datascience/causal-atelier/actions/runs/41272111463)／[EconML単独のMethod別証拠](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14#issuecomment-6553260358)／[3ライブラリ同時環境の証拠](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14#issuecomment-6553261944)。EconML 0.17.0／Python 3.12.15で`BootstrapInference(n_bootstrap_samples=12,n_jobs=1)`を明示した場合、**DRLearner・SLearner・TLearner・XLearnerの4方式すべてで`effect_interval`がFINITEとなり、API smokeにPASS**。初回の`inference=None/auto`構成では取得できなかった区間が、**推論方式を明示することで取得可能**と実証された。Ariadneの新規CATE Adapterは使っていない。**12反復はCI計算経路の確認専用であり、被覆率・interval calibration・必要bootstrap反復数の科学受入を意味しない。**
 
 ## 4. 適用範囲と未完了事項
 
 - **オーナー判断済み:** Frontdoor数値推定までPhase1のNとして提供。
 - **オーナー判断待ち:** LATEの初期推定器（A/B/C）と、EconMLのCI必須水準・Method別採用推論。
-- **未実証:** DoWhy Frontdoorの数値推定／CI、IV/LATEの数値真値・弱IV推論、EconML bootstrapの実行結果とCI被覆。
+- **追加実証:** EconML 0.17.0の4方式でBootstrap区間の有限数値出力を確認（API smoke）。同時導入環境で既存回帰27件PASS。
+- **未実証:** DoWhy Frontdoorの数値推定／CI、IV/LATEの数値真値・弱IV推論、EconML Bootstrap CIの**被覆率・校正・適切な反復数**。
 - **全体承認ではない:** `00_04`の68行と`02`の`PENDING_FULL_CONCEPT_APPROVAL`、SR-03全体の方法判定待ちは維持。

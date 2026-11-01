@@ -42,7 +42,7 @@
 
 - DoWhy：Backdoor／Frontdoor／IVの識別API、Backdoorの数値推定が合成データでPASS。**Frontdoor/IV数値推定は未検証**。
 - EconML：LinearDML、CausalForestDML、DRLearner、ForestDRLearner、S/T/X-Learner、DRIVの**8種類でfit/effectを実行**。今回の構成で有限な区間が出たのはLinearDML、CausalForestDML、ForestDRLearner、DRIV。
-- DRLearnerは今回のforest final modelに`prediction_stderr`がなく`Only point estimates are available!`、S/T/X-Learnerは**EconML 0.17.0の`inference=None`既定設定でBootstrapを指定していない**。独立スクリプトで直接実行しており**Ariadneが区間推定を失わせた証拠はない**。0.17.0の公式ソースはS/T/XのBootstrapとDRLearnerの`auto`の最終モデル依存を示す（[追加メモ](20261101_sr03_late_estimator_options_econml_inference_review.md)）。
+- **初回probe:** DRLearnerはforest final modelに`prediction_stderr`がなく`Only point estimates are available!`、S/T/X-LearnerはEconML 0.17.0の`inference=None`既定設定で区間取得不可。**追加probe:** `BootstrapInference(n_bootstrap_samples=12)`を明示すると**4方式とも有限CIをAPI取得できた**（[Run #41272111463](https://github.com/kousuke-ota-datascience/causal-atelier/actions/runs/41272111463)、[詳細](20261101_sr03_late_estimator_options_econml_inference_review.md)）。Ariadneの新規CATE Adapterは未使用。**これは区間の科学的被覆率の検証ではない**。
 - DRIV smokeは**連続Treatment・Instrument Z**を使用した\`fit/effect\`の実行証拠。**complier LATE/CLATEを識別・回復したという証拠ではない**。
 
 ## 2. Estimand定義と区別すべき対象

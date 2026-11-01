@@ -59,7 +59,9 @@
 | XLearner | **PASS** | **利用不可**：`inference is None` |
 | DRIV | **PASS** | **FINITE** |
 
-**判定上の重要点:** `fit/effect PASS`は`CI PASS`を意味しない。今回のDRLearnerはforestのfinal modelを使っており、その推論用の`prediction_stderr`が無い旨のWarningも出ている。S/T/X-Learnerは`inference=None`の設定であり、**この構成では区間が使えなかった**ことを意味する。Methodそのものに区間が存在しないと一般化しない。AriadneはMethod別`point estimate`と`interval availability`をResult／Scientific statusに分ける必要がある。
+**初回probeでの重要点:** `fit/effect PASS`は`CI PASS`を意味しない。DRLearnerはforestのfinal modelに`prediction_stderr`が無く、S/T/X-Learnerは`inference=None`の設定だったため**この初回構成では区間を取得できなかった**。Method自体にCI機能が無いとは一般化しない。AriadneはMethod別`point estimate`と`interval availability`をResult／Scientific statusに分ける。
+
+**後続の追加API probe（2026-11-01）:** [Run #41272111463](https://github.com/kousuke-ota-datascience/causal-atelier/actions/runs/41272111463)／[EconML Method証跡](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14#issuecomment-6553260358)。EconML 0.17.0のDRLearner／S/T/X-Learnerで**BootstrapInference（12反復）を明示指定すると4方式すべてで有限なeffect_interval取得にPASS**。Ariadneの新規CATE Adapterを通さない独立scriptであり、Ariadne連携でCIを失った事実はない。**12反復はAPI smokeにすぎず、科学的CI coverageの検証ではない**。同時依存環境での既存CLI/Scientific testは[Run内で27 PASS](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14#issuecomment-6553262148)。
 
 ### 1.3. Tigramite（Phase3）
 
