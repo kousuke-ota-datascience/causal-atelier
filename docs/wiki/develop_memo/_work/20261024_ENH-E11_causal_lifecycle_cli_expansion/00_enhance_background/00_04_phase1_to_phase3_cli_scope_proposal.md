@@ -67,7 +67,7 @@
 | `P1-05` | **R／D** | 既存Graph revision/provenanceを再利用。Consensus Graph等の独立新方式は後続 | #17 |
 | `P1-06` | **R** | Native Randomized/Backdoor、nonidentified/review statusを保護 | #15,#16 |
 | `P1-07` | **R** | Imported/User-defined GraphからIdentificationを開始する既存経路を保護 | #15 |
-| `P1-08` | **N** | optional DoWhy識別：Backdoor/Frontdoor/IV、識別式・仮定・負結果。**識別のみと数値推定を別Capability**とし、Frontdoor/IVのEstimand・対象・推定器接続をSR-03契約案で審査 | #16 |
+| `P1-08` | **N（Frontdoor数値推定をPhase1に含む方針採用）** | optional DoWhy Backdoor/Frontdoor/IVの識別と負結果に加え、**Frontdoorで識別したATEの数値推定をPhase1に必須包含**（2026-11-01オーナー判断）。最初のDoWhy二段階回帰は追加モデル仮定・科学Benchmarkを別検証し、識別API成功を推定成功とみなさない。IV/LATEは別契約 | #16 |
 | `P1-09` | **N** | FCI/PAG Discovery：circle等のendpoint、背景知識、警告、CI test | #17 |
 | `P1-10` | **R+N** | 既存Data Eligibility/Validation再利用＋新方式固有の適格性 | #15,#16 |
 | `P1-11` | **R** | 既存ATE/ATTの差・OLS/IPW/AIPWを維持 | #19 |
@@ -260,7 +260,7 @@
 - **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋単調性→complier LATE、DRIV→**条件付きIV効果（CLATE等を主張するには追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
 - **現行との差:** 現行\`analysis_spec\`はATE/ATT・Randomized/Backdoorのみを許し、CLIが上流\`REQUIRES_REVIEW\`を受け入れる経路がある。新Methodでは**未解決PAG/CPDAGや未承認Identificationを数値推定に直結しない**。
 - **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証したが、**DRLearner・S/T/X-LearnerのCIは今回の構成では取得不可**。区間を捏造せずCapabilityを分離する。
-- **承認境界:** 本節は68行の提案Dispositionを変えない。Frontdoor数値推定のPhase1への包含、IV/LATEの初期推定器、DRIVのEstimand定義、CI必須水準、schema/Graph reviewはHuman ownerとArchitecture Reviewで決定する。
+- **個別オーナー判断（2026-11-01）:** **Frontdoor数値推定をPhase1に含めることは採用済み**。一方、**LATEの初期推定器A：Wald、B：2SLS、C：条件付きIVのDR/効率的推定**は選択待ち。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。CIの再probe・被覆率、DRIVのEstimand、schema/Graph reviewは未承認・未検証。
 
 ## 8. ステップ4の到達点・残存する承認事項
 

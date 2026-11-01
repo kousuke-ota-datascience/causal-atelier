@@ -14,7 +14,7 @@
 ### 2.1. Scientific CoreとDomainの責務
 
 - **Question/Design/Graph:** 現行schemaを可能な限り再利用する。DB不要のlocal executionでProduct versionを直接使用できなければ、版管理されたlocal identity/provenanceを用意する。
-- **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。
+- **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。**Frontdoorの数値推定もPhase1に必須包含するオーナー判断（2026-11-01）**は識別成功とは別Estimator契約・科学Benchmarkで受け入れる（[SR-03追加メモ](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。
 - **Discovery:** FCI/PCMCI系にalgorithm ID、CI test、parameter、backend versionを持たせる。endpoint・lagと不確実性を失わない往復serializeを保証する。
 - **Estimation:** 既存`ipw`/`aipw`を維持し、CATEと準実験固有estimandを一律ATE/ATTのフィールドに押し込めない。
 - **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。Negative Control exposure/outcome、Unobserved-confoundingの最小実行方式は`00_04_phase1_to_phase3_cli_scope_proposal.md`の**採用案・承認待ち**として、適用仮定・negative result・独立検証方法を別途決定する。

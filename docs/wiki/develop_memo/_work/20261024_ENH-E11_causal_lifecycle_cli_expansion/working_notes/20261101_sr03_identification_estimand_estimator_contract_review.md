@@ -42,7 +42,7 @@
 
 - DoWhy：Backdoor／Frontdoor／IVの識別API、Backdoorの数値推定が合成データでPASS。**Frontdoor/IV数値推定は未検証**。
 - EconML：LinearDML、CausalForestDML、DRLearner、ForestDRLearner、S/T/X-Learner、DRIVの**8種類でfit/effectを実行**。今回の構成で有限な区間が出たのはLinearDML、CausalForestDML、ForestDRLearner、DRIV。
-- DRLearnerは今回のforest final modelで\`Only point estimates are available!\`、S/T/X-Learnerは\`inference is None\`。これを「永久にCI不可」と一般化しない。
+- DRLearnerは今回のforest final modelに`prediction_stderr`がなく`Only point estimates are available!`、S/T/X-Learnerは**EconML 0.17.0の`inference=None`既定設定でBootstrapを指定していない**。独立スクリプトで直接実行しており**Ariadneが区間推定を失わせた証拠はない**。0.17.0の公式ソースはS/T/XのBootstrapとDRLearnerの`auto`の最終モデル依存を示す（[追加メモ](20261101_sr03_late_estimator_options_econml_inference_review.md)）。
 - DRIV smokeは**連続Treatment・Instrument Z**を使用した\`fit/effect\`の実行証拠。**complier LATE/CLATEを識別・回復したという証拠ではない**。
 
 ## 2. Estimand定義と区別すべき対象
@@ -171,8 +171,8 @@
 | Decision | 推奨する設計案 | 明示的な承認が必要な点 |
 |---|---|---|
 | \`SR03-D01\` | Questionの\`ATE/ATT/CATE/LATE/IV_HETEROGENEOUS_EFFECT\`を区別。最後はIV用別IDとする | IV heterogeneous effectを当初から独立Estimandとして要件化するか |
-| \`SR03-D02\` | DoWhy FrontdoorはATE識別とモデル依存の2段階推定を別Capabilityにする | Phase1でFrontdoor**数値推定まで必須**とするか、識別のみを第1段階とするか |
-| \`SR03-D03\` | LATEは二値Z/Aのcomplier対象を基本仕様とし、連続IV/2SLSは別効果とする | Phase3で必要なIV/LATE推定器とinferential requirement |
+| `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
+| `SR03-D03` | 二値Z/Aのcomplier LATEは**A：Wald比**を最小Reference、**B：2SLS**を拡張／数値パリティ、**C：条件付きIVのDR/効率的LATE**を追加候補とする提案（[比較メモ](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **オーナー選択待ち**。弱IV頑健推論とCIの非有界な集合の表現も要審査 |
 | \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |
 | \`SR03-D05\` | CATEの非IV 7手法・DRIVを別経路にし、CI availabilityをMethod/構成別に保持 | 推定MethodごとにCI必須か、点推定のみのCapabilityを承認できるか |
 | \`SR03-D06\` | PAG/CPDAGは保留し、別の識別証拠がない場合数値推定を禁止 | \`PARTIALLY_IDENTIFIED\`・Graph refixの将来受入範囲とowner override |

@@ -17,7 +17,7 @@
 | 仮ID | 変更前：現行の正本 | 変更後：ENH-E11案 | 理由・Issue |
 |---|---|---|---|
 | E11-REQ-P1Q | FR-040/041はQuestion/Designを固定。FR-054・NFR-002のlineageはPARTIAL | ローカルCLIでQuestion/Design/Graphをversion/hash付きで識別する。既存Product資源を再利用できるか検証 | 残差確認 #15 |
-| E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと`NOT_IDENTIFIED`等の明示的結果を追加。**識別結果と各Estimatorの数値出力は別の受入**（SR-03） | DoWhy候補 #16 |
+| E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと負結果を追加。**2026-11-01オーナー判断でFrontdoor ATEの数値推定もPhase1に必須包含**（識別・推定は別受入）。二段階推定のモデル仮定・区間・真値科学試験は未確定（SR-03） | DoWhy候補 #16 |
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
 | E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。追加案は**古典OLS係数へのCinelli–Hazlett partial R²／RV**（2軸強度・非適用・既存HC3との差異を明示）。IPW/AIPWなどへの一般化は未承認。00_04§2.3の技術案に基づく | 拡張候補 #16（未承認） |

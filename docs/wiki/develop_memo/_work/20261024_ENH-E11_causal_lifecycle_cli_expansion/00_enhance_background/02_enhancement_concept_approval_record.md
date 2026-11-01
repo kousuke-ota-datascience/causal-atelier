@@ -20,6 +20,8 @@
 6. **SR-02外部Backendのオーナー方針（2026-11-01）:** **A採用＝Python 3.12／Linux基準**、**B採用＝DoWhy・EconML・Tigramiteを機能別optional依存**、**C採用＝Phase1〜3の列挙Methodを維持し、実装不能な場合は根拠付きで再審議**、**E採用＝実証された採用versionをlock＋科学Benchmarkで固定**。
 7. **D採用＝個別SIで顧客環境へ構築・納入、現時点でSaaSは想定しない。** Tigramiteを使用する場合、実際の納入物と結合・提供形態に即してGPLv3適合性を**顧客納入前に審査する方針**を採用。PCMCI／PCMCI+／LPCMCIの利用場面は[SR-02技術メモ](../working_notes/20261101_external_backend_policy_temporal_scenarios.md)で精査。**D方針の採用は個別納入の法的適合性を認定するものではない**。
 
+8. **SR03-D02 Frontdoor（2026-11-01の明示判断）:** **Phase1では識別だけでなく数値推定Capabilityも含める**。識別だけを完了条件としない。ただし推定器の線形性等の追加仮定、数値的実行可能性、CI、科学Benchmarkは未承認・未検証。LATE初期推定器は[選択肢メモ](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)で比較中であり**採用未決**。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。

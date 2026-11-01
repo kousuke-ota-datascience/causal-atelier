@@ -52,6 +52,7 @@
 - [`working_notes/20261101_external_backend_policy_temporal_scenarios.md`](working_notes/20261101_external_backend_policy_temporal_scenarios.md)：**SR-02 A/B/C/D/E採用方針**、PCMCI/PCMCI+/LPCMCIの利用場面、個別SI納入におけるGPLv3審査前提、依存・科学probe計画。採用lock・GPL適合性は未認定。
 - [`working_notes/20261101_sr02_backend_runtime_probe_results.md`](working_notes/20261101_sr02_backend_runtime_probe_results.md)：**Ubuntu／Python3.12で依存導入4構成とMethod API smoke15項目を実行**した一次結果。Graph／effect／intervalの実際のCapability差異と未解決事項を記録。**科学受入ではない**。
 - [`working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md`](working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)：**SR-03の科学的意味・互換性を検討した設計案**。Backdoor／Frontdoor／IVとATE・ATT・CATE・LATE・DRIVの対応、識別からの実行許可、CIの区別、負結果と12 fixtureを記録。**正式承認・実装前**。
+- [`working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md`](working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)：**Frontdoor数値推定のPhase1包含（個別オーナー採用）**、LATEのWald／2SLS／DR-LATE未決選択肢、EconML CI未取得の原因とBootstrap再検証。
 
 **00_01〜00_03の事前調査と00_04のスコープ案は01より前の根拠・提案資料**であり、Workflowの正式文書01〜05を置き換えない。作業メモ・07 Issue台帳・80契約変更履歴も承認済み要件やGateを代替しない。
 

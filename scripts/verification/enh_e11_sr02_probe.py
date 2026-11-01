@@ -66,6 +66,8 @@ def econml(rows):
     from econml.dr import DRLearner,ForestDRLearner
     from econml.metalearners import SLearner,TLearner,XLearner
     from econml.iv.dr import DRIV
+    from econml.inference import BootstrapInference
+    np.random.seed(11)  # Deterministic API smoke only; NOT CI coverage evidence.
     rng=np.random.default_rng(11);n=220
     X=rng.normal(size=(n,2));W=rng.normal(size=(n,2));Z=rng.normal(size=n)
     p=1/(1+np.exp(-(.5*X[:,0]+.4*W[:,0]+.7*Z)))
@@ -75,10 +77,12 @@ def econml(rows):
     Yi=(1.4+.25*X[:,0])*Ti+W[:,0]+rng.normal(size=n)
     rf=lambda:RandomForestRegressor(n_estimators=12,min_samples_leaf=5,
                                    random_state=11,n_jobs=1)
-    def fit(e,iv=False,meta=False):
+    def fit(e,iv=False,meta=False,inference=None,require_ci=False):
         kwargs={"X":X,"W":W}
         if iv:kwargs["Z"]=Z
         if meta:kwargs.pop("W")
+        if inference is not None:
+            kwargs['inference']=inference
         e.fit(Yi if iv else Y,Ti if iv else T,**kwargs)
         effect=np.asarray(e.effect(X[:5]),dtype=float)
         if not effect.size or not np.isfinite(effect).all():
@@ -89,6 +93,8 @@ def econml(rows):
             out["interval"]="FINITE" if np.isfinite(a).all() and np.isfinite(b).all() else "NONFINITE"
         except Exception as exc:
             out["interval"]="UNAVAILABLE_OR_FAILED:"+type(exc).__name__+":"+str(exc)[:110]
+        if require_ci and out['interval'] != 'FINITE':
+            raise AssertionError('Bootstrap CI was not finite: '+str(out['interval']))
         return out
     methods=[
        ("LinearDML",lambda:LinearDML(model_y=rf(),model_t=rf(),cv=2,random_state=11),False,False),
@@ -102,6 +108,15 @@ def econml(rows):
        ("DRIV",lambda:DRIV(cv=2,prel_cv=2),True,False)]
     for name,ctor,iv,meta in methods:
         probe(rows,"EconML "+name,lambda ctor=ctor,iv=iv,meta=meta:fit(ctor(),iv,meta))
+    # Bootstrap capability probe, not CI coverage test (12 resamples only).
+    for name,ctor,iv,meta in methods:
+        if name not in {"DRLearner","SLearner","TLearner","XLearner"}:
+            continue
+        probe(rows,"EconML "+name+" bootstrap_interval",
+              lambda ctor=ctor,iv=iv,meta=meta:fit(
+                  ctor(),iv,meta,
+                  inference=BootstrapInference(n_bootstrap_samples=12,n_jobs=1),
+                  require_ci=True))
 
 def tigramite(rows):
     import numpy as np
