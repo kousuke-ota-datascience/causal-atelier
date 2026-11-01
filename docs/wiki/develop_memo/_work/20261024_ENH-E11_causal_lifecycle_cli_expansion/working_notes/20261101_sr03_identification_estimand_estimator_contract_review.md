@@ -59,7 +59,9 @@
 
 **重要:** \`CATE\`と\`LATE\`は対象集団・conditioningが異なる。\`E[Y(1)-Y(0)|X=x]\`と\`E[Y(1)-Y(0)|X=x,\mathrm{complier}]\`は原則別物。連続Treatment／連続Instrumentの線形IV係数は、**二値IVのcomplier LATEを意味しない**。Treatment contrast（T0/T1、dose increment）、comparator、Xの定義、対象集団・観測単位・時間をすべてResultの一部とする。
 
-### 2.2. 必須の科学的仮定
+#**SR03-D01オーナー判断（2026-11-01）：A案採用。** `IV_HETEROGENEOUS_EFFECT`を`ATE/ATT/CATE/LATE`とは別の**Estimand family**とする。family IDのみでは科学的なEstimandは確定しない。Method別の数式・識別モーメント・母集団／principal stratum・conditioning・処置コントラスト・Instrument assignment・識別仮定を明示し、通常CATE、complier LATE、conditional LATE等との等価性は追加の根拠を個別に検証する。Phase2のDRIV候補は維持する。具体schema/enum、Method個別の科学的対象、Benchmark・Gateは未承認。
+
+## 2.2. 必須の科学的仮定
 
 - **Backdoor（ATE/ATT/CATE）:** SUTVA/consistency、対象介入の明確化、条件付きExchangeability（測定済み共変量による無交絡）、対象でのPositivity、調整変数の時間先行と禁止経路非調整。CATEはmodifier値でのsupportと学習・評価分割を要する。
 - **Frontdoor（代表的ATE）:** すべてのA→Y有向因果経路を観測Mediator Mが横切ること、A→Mの未遮断Backdoor経路なし、Aで条件付けるとM→Yの全Backdoor経路が遮断されること、適切なsupport／consistency。**Mは中間変数であり、P1-15のNegative Controlではない。** データだけで各仮定は証明できない。
@@ -190,7 +192,7 @@
 
 | Decision | 推奨する設計案 | 明示的な承認が必要な点 |
 |---|---|---|
-| \`SR03-D01\` | Questionの\`ATE/ATT/CATE/LATE/IV_HETEROGENEOUS_EFFECT\`を区別。最後はIV用別IDとする | IV heterogeneous effectを当初から独立Estimandとして要件化するか |
+| `SR03-D01` | **オーナー採用（2026-11-01）：A案＝独立した`IV_HETEROGENEOUS_EFFECT` family**。Method別の対象・識別モーメント・母集団・conditioning・contrast・追加仮定を必須とし、CATE/LATEへの自動変換を禁止 | **分類方針は採用済み**。具体schema/enum、DRIV固有の対象・数値検証、Gateは未承認 |
 | `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
 | `SR03-D03` | **オーナー採用（2026-11-01）：Phase3初期はA＝二値Z/AのWald比＋B＝2SLS**。complier LATEを基準対象とし、一般の2SLS拡張のEstimandは別に定義する。**C＝条件付きIVのDR／効率的LATEは追加審議**（[比較記録](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **方式選択は完了**。弱IV頑健推論の実装範囲、CI／非有界・非連結集合の表現、数値閾値・Benchmarkは未承認 |
 | \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |
