@@ -22,11 +22,13 @@
 
 8. **SR03-D02 Frontdoor（2026-11-01の明示判断）:** **Phase1では識別だけでなく数値推定Capabilityも含める**。識別だけを完了条件としない。ただし推定器の線形性等の追加仮定、数値的実行可能性、CI、科学Benchmarkは未承認・未検証。LATE初期推定器については次項の個別判断で**A＋Bを採用**。[選択肢・科学的制約](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)を参照。
 
-9. **SR03-D03 LATE（2026-11-01の明示判断）:** **Phase3初期提供はA＝二値Z・二値AのWald比を基準、B＝2SLSにも対応する構成を採用**。**C＝条件付きIV向けDR／効率的LATEは追加審議**であり今回の採用範囲ではない。LATEの対象は独立性・除外制約・関連性・単調性等を仮定した**complier**であり、一般ATEや連続TのIV heterogeneous effectと混同しない。2SLSの共変量・複数IV拡張はEstimandと仮定の適合を別審査（**2026-11-05のD03-1 S2採用については下記11項参照**）。**弱IV時のFirst Stage診断・通常CIの限界・Anderson–Rubin等の頑健推論の設計は必須検討だが、具体的推論アルゴリズム／閾値／科学Gateの採用は未完了**（[科学契約・検討メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
+9. **SR03-D03 LATE（2026-11-01の明示判断）:** **Phase3初期提供はA＝二値Z・二値AのWald比を基準、B＝2SLSにも対応する構成を採用**。**C＝条件付きIV向けDR／効率的LATEは追加審議**であり今回の採用範囲ではない。LATEの対象は独立性・除外制約・関連性・単調性等を仮定した**complier**であり、一般ATEや連続TのIV heterogeneous effectと混同しない。2SLSの共変量・複数IV拡張はEstimandと仮定の適合を別審査（**2026-11-05のD03-1 S2採用については下記11項参照**）。**2026-11-05のD03-2 I2個別採用によりAR反転を弱IV推論の初期基準方式とする**。具体的実装／G2 schema／閾値／科学Gateは未承認（[科学契約・検討メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 
 10. **SR03-D01 IV異質効果（2026-11-01の明示判断）:** **A案＝`IV_HETEROGENEOUS_EFFECT`を独立Estimand familyとする方針を採用**。これはD01の個別判断であり、Method別識別対象・schema・BenchmarkおよびENH-E11全体承認を含まない。**本書はオーナー判断の記録を管理し、選択肢比較・科学的根拠・非採用理由・詳細な検証条件は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)に一元化する。**
 
-11. **SR03-D03-1／S2（2026-11-05の明示判断）:** **2SLSのPhase3初期保証範囲としてS2＝B0＋B1を採用**。B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identifiedモデル（Wald比と点推定一致）。B1は二値Z/A・事前指定の処置前共変量C・切片・単一内生処置／単一excluded IVの加法線形構造モデル。B1はモデル固有の線形IV構造係数であり、一般のATE・LATE・CLATEへ自動変換しない。複数IV、連続処置、複数内生変数等は初期保証の対象外。**本書は個別判断を記録し、比較・識別仮定・数値検証条件は[残余D03審議ファイル](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に一元化する。D03-2／D03-3／D03-4のI2・G2・C1、正式要件・設計・Gate・実装は未承認。**
+11. **SR03-D03-1／S2（2026-11-05の明示判断）:** **2SLSのPhase3初期保証範囲としてS2＝B0＋B1を採用**。B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identifiedモデル（Wald比と点推定一致）。B1は二値Z/A・事前指定の処置前共変量C・切片・単一内生処置／単一excluded IVの加法線形構造モデル。B1はモデル固有の線形IV構造係数であり、一般のATE・LATE・CLATEへ自動変換しない。複数IV、連続処置、複数内生変数等は初期保証の対象外。**本書は個別判断を記録し、比較・識別仮定・数値検証条件は[残余D03審議ファイル](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に一元化する。D03-2のI2は下記12項で採用済み。D03-3／D03-4のG2・C1、正式要件・設計・Gate・実装は未承認。**
+
+12. **SR03-D03-2／I2（2026-11-05の明示判断）:** **S2のB0/B1に対し、Anderson–Rubin（AR）検定反転を初期基準の弱IV頑健な信頼集合推論方式として採用**。単一excluded IV・単一内生処置・独立観測・異分散頑健漸近推論に限定し、First-stage効果・SE・supportと適切なIV共分散を記録する。通常Wald CIを弱IV頑健と表示しない。ARはInstrumentの妥当性を証明しない。Cluster/HAC等は初期保証外。**技術根拠・比較・検証条件は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に責務を移譲**。G2・C1、AR実装、科学Benchmark/Gateおよび全体構想は未承認。
 
 ## 2. まだ承認されていない事項
 

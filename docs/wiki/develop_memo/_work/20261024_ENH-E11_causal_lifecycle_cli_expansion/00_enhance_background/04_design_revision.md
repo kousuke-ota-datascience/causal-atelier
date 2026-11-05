@@ -38,7 +38,7 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 3. \`EstimatorSpec\`で識別結果とMethod適格性を照合し、数値推定の前に\`REQUIRES_REVIEW\`／\`NOT_IDENTIFIED\`の新Method自動通過を禁止。現行CLIのREQUIRES_REVIEW入力許容は**回帰保護対象であると同時に安全性の審査対象**。
 4. \`EffectResult\`は**識別状態・点推定状態・推論区間可用性**を別軸で保持。EconMLで実証された点推定のみのケースではCI=\`null\`と理由を保存し、架空のCIを作らない。
 5. **オーナー採用：Phase3 IV/LATEの初期EstimatorはWald比（Reference）＋2SLS。2026-11-05にはD03-1 S2＝B0（無調整just-ID）＋B1（単一二値Z/A・事前指定C・加法線形構造）を追加採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。B1のEstimandはモデル依存の線形IV構造係数として区別する。基本Estimandは二値Z/Aのcomplier LATE（relevance/independence/exclusion/monotonicity）であり、共変量付き・複数IVの2SLSを同一LATEに黙って変換しない。連続処置のDRIV heterogeneous effectは別契約。**条件付きIV向けDR／効率的LATE（C）は追加審議**。FrontdoorはATE識別とモデル依存の二段階推定を別受入とする。
-7. **弱IV推論境界（要設計・未承認）:** First-stageの効果・SE・Instrument supportとweak-IV warning、正しいIV推定のSE、通常Wald型CIの適用制限を明記。Anderson–Rubin等の弱IV頑健推論と非有界／非連結confidence setの型は個別審査し、有限なCIを捏造しない（[科学契約§3.1](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
+7. **弱IV推論境界（D03-2 I2を2026-11-05に個別採用、詳細実装未承認）:** B0/B1の単一excluded Z・単一内生A、独立観測・異分散頑健漸近推論の範囲でAR検定反転を弱IV頑健な初期基準信頼集合推論とする（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。First-stage効果・SE・Instrument support・IV推定全体の共分散、通常Wald CIの制約を記録する。ARはIVの妥当性を証明せずcluster/HAC等へ無検証で拡張しない。**G2の信頼集合schema、実装アルゴリズム、coverage、Gateは未承認**であり、非有界集合を有限CIへ捏造しない。
 6. CLIはResult間のhash一致、effective backend version、seed/split、optional dependency欠落を検査する。Product DBに新規統合せず、local manifestでトレースする。
 
 ## 3. 所有権（未承認の案）

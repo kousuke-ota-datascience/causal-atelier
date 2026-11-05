@@ -156,7 +156,7 @@
 | `P3-09` | **N** | Interrupted Time Series。介入時点、季節性、自己相関 | #21 |
 | `P3-10` | **N** | Sharp RDD。cutoff、bandwidth、局所estimand、density | #22 |
 | `P3-11` | **N** | Fuzzy RDD。first-stageとcompliance/局所効果 | #22 |
-| `P3-12` | **N（初期推定器A＋Bをオーナー採用）** | Phase3のLATE初期提供は**A＝二値Z/AのWald比をReference、B＝2SLS**（2026-11-01判断）。**D03-1でS2＝B0（無調整just-ID）＋B1（単一二値Z/A・事前指定Cの加法線形構造2SLS）を2026-11-05に採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。基本EstimandはIV独立性・除外制約・関連性・単調性下のcomplier LATE。共変量／複数IVの2SLS係数を一般ATEや同一LATEに自動変換しない。First Stage／弱IVの診断と推論制限を記録し、**C＝条件付きIV向けDR／効率的LATEは追加審議** | #22 |
+| `P3-12` | **N（初期推定器A＋Bをオーナー採用）** | Phase3のLATE初期提供は**A＝二値Z/AのWald比をReference、B＝2SLS**（2026-11-01判断）。**D03-1でS2＝B0（無調整just-ID）＋B1（単一二値Z/A・事前指定Cの加法線形構造2SLS）を2026-11-05に採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。基本EstimandはIV独立性・除外制約・関連性・単調性下のcomplier LATE。共変量／複数IVの2SLS係数を一般ATEや同一LATEに自動変換しない。**D03-2 I2＝B0/B1でAR反転を初期基準の弱IV頑健推論として2026-11-05に採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。First Stage／弱IVの診断と推論制限を記録し、**C＝条件付きIV向けDR／効率的LATEは追加審議** | #22 |
 | `P3-13` | **N** | Synthetic Control。donor、pre-fit、placebo、RMSPE | #23 |
 | `P3-14` | **N** | Synthetic DiD。panel、donor重みと処置重みの区別 | #23 |
 | `P3-15` | **N** | QuasiExperimentalDesignと各method固有のEstimand・Eligibility | #21,#22,#23 |
@@ -260,7 +260,7 @@
 - **別対象:** Backdoor→ATE/ATT/CATE、Frontdoor→ATE、二値Instrument・二値Treatment＋独立性・除外制約・関連性・単調性→complier LATE（**Wald比＋2SLSがPhase3初期採用**）、DRIV→**条件付きIV効果（CLATE等には追加仮定）**。ATE、LATE、一般CATEを単に同じ\`effect\`に正規化しない。
 - **現行との差:** 現行\`analysis_spec\`はATE/ATT・Randomized/Backdoorのみを許し、CLIが上流\`REQUIRES_REVIEW\`を受け入れる経路がある。新Methodでは**未解決PAG/CPDAGや未承認Identificationを数値推定に直結しない**。
 - **SR-02実測:** DoWhyはBackdoor数値推定とFrontdoor/IVの識別のみ実証。EconMLは列挙8方式のfit/effectを実証。**初回構成でCIを取得できなかったDRLearner・S/T/X-Learnerも、Bootstrap明示指定の追試で有限CIを取得**。区間の可用性と統計的被覆率を区別し、未検証のCI精度を保証しない。
-- **個別オーナー判断（2026-11-01）:** **SR03-D01：IV異質効果を独立familyとするA案を個別採用済み**。詳細な科学的根拠・比較・不変条件は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)に一元化し、本書はPhase別スコープ境界とDispositionを管理する。**Frontdoor数値推定をPhase1に含めることは採用済み**。**LATEの初期推定器はA：Wald比＋B：2SLSを個別採用済み**。C：条件付きIVのDR／効率的LATEは追加審議で初期提供には含めない。**D03-1のS2（B0＋B1）範囲は2026-11-05に採用済み**（詳細は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。D03-2〜D03-4の弱IV推論方式・集合表現・C後続管理は未確定。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。Bootstrap CIのAPI再probeは4方式PASSだが、**CI被覆率と適切な反復数、DRIVのEstimand、schema/Graph reviewは未承認・未検証**。
+- **個別オーナー判断（2026-11-01）:** **SR03-D01：IV異質効果を独立familyとするA案を個別採用済み**。詳細な科学的根拠・比較・不変条件は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)に一元化し、本書はPhase別スコープ境界とDispositionを管理する。**Frontdoor数値推定をPhase1に含めることは採用済み**。**LATEの初期推定器はA：Wald比＋B：2SLSを個別採用済み**。C：条件付きIVのDR／効率的LATEは追加審議で初期提供には含めない。**D03-1のS2（B0＋B1）範囲は2026-11-05に採用済み**（詳細は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。**D03-2 I2（AR反転）は2026-11-05に採用済み**。D03-3 G2の信頼集合表現・D03-4 C1のC後続管理は未確定。EconMLのDRLearner・S/T/X-LearnerのCI未取得は**Ariadne組込みの劣化ではなく、独立probeで選んだ推論設定／最終モデルに起因**（[方法選択・原因分析](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。Bootstrap CIのAPI再probeは4方式PASSだが、**CI被覆率と適切な反復数、DRIVのEstimand、schema/Graph reviewは未承認・未検証**。
 
 ## 8. ステップ4の到達点・残存する承認事項
 

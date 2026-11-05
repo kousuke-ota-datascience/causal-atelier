@@ -45,20 +45,20 @@
 
 **オーナー採用（2026-11-01）:** **AをPhase3の二値Z/A・complier LATEの基準推定器、Bを線形IVの追加推定器として初期提供**。Cは**採用ではなく追加審議**。Phase2のDRIVは既存の必須候補のまま**IV異質効果の別契約**で維持する。独立familyの採否・比較・科学的定義の管理先は[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)とし、本書はLATE A＋BおよびEconML推論の比較・証拠を管理する。2SLSでの一般の共変量・複数IV対応が同じLATEを推定するとの自動保証はしない。
 
-**弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**Anderson–Rubin型検定反転等の弱IV頑健なconfidence setは提案・未承認**であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
+**弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**D03-2 I2によりAR反転を初期基準の弱IV頑健推論として2026-11-05に採用済み**（[詳細](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、G2 schema・coverageは未承認）であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
 
 ### 2.1. オーナーに求める判断
 
-`SR03-D03`：**A＋B採用済み**。**D03-1の初期2SLS範囲はS2（B0＋B1）として2026-11-05に追加採用済み**。残る判断は**(ii) 弱IVの診断・推論方法、(iii) CIの非有界／非連結等の型と受入基準、(iv) Cの追加審議時期・責任者**。S2の正確な保証条件・非採用案・実証条件は[残余D03審議ファイル](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)で一元管理し、ここに重複記載しない。Cの採否は未決。
+`SR03-D03`：**A＋B採用済み**。**D03-1の初期2SLS範囲はS2（B0＋B1）として2026-11-05に追加採用済み**。**D03-2 I2（AR反転）も2026-11-05に採用済み**。残る判断は**(iii) CIの非有界／非連結等の型と受入基準、(iv) Cの追加審議時期・責任者**。S2の正確な保証条件・非採用案・実証条件は[残余D03審議ファイル](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)で一元管理し、ここに重複記載しない。Cの採否は未決。
 
-**D03残余の審議責務:** 2SLS初期保証範囲（**S2採用済み**）、弱IV頑健推論、confidence setの型、Cの再審議責任は[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を詳細根拠・選択肢比較の唯一の管理先とする。本書の当初A/B/C比較・採用事実・EconML CI実測は維持する。**I2/G2/C1はオーナー採否待ち**であり、科学Benchmarkも未実施。
+**D03残余の審議責務:** 2SLS初期保証範囲（**S2採用済み**）、弱IV頑健推論、confidence setの型、Cの再審議責任は[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を詳細根拠・選択肢比較の唯一の管理先とする。本書の当初A/B/C比較・採用事実・EconML CI実測は維持する。**I2は採用済み、G2/C1はオーナー採否待ち**であり、科学Benchmarkも未実施。
 
 ### 2.2. 識別対象・適格性・拒否条件（個別採用に伴う明確化）
 
 - **基本Estimand:** 二値Instrument Zと二値Treatment Aについて、`A(1)>A(0)`のcomplier集団における`E[Y(1)-Y(0)|complier]`。基本の無調整Wald比は**Instrument independenceが無条件に成立するDesign**を対象とする。Assumptionの`relevance/independence/exclusion/monotonicity/consistency`を研究者の根拠として保存する。これらは観測データで自動証明できない。
 - **2SLSパリティの基本Fixture:** 切片あり・単一二値Z・二値A・共変量なし・just-identifiedで**Wald比＝2SLSの点推定値**。2SLS拡張時の共変量、複数Z、連続Aには別のEstimand／支持仮定・明示的な対象ラベルを設け、complier LATE／ATEへの黙示変換を禁じる。
 - **First Stageの数値的・科学的境界:** `Δ_Z E[A]`が0の比は定義できない。小さい場合も通常の比／2SLSのWald型区間のカバレッジは保証されない。Instrumentationの弱さと、独立性・除外制約等の違反は別種の不確実性として記録する。
-- **弱IVへの推論:** First-stage効果・SE・Instrument support・弱識別warningを必須検討し、**弱IV頑健な推論（例：Anderson–Rubin反転）は方式・条件・区間形状を別審議**する。有限区間しか表現できないResult契約に、非有界・非連結confidence setを無理に押し込まない。
+- **弱IVへの推論:** First-stage効果・SE・Instrument support・弱識別warningを必須検討し、**AR反転方式はD03-2 I2として採用済み**。具体的な数値実装、科学的検証、区間形状のschemaは別審査する。有限区間しか表現できないResult契約に、非有界・非連結confidence setを無理に押し込まない。
 - **負結果:** invalid instrument、first stage 0、推定対象不一致、弱識別下の通常CI不適格、仮定根拠不足に、それぞれ異なる理由codeを付与する案。**原著で導かれる識別仮定とソフトウェア上の機械検証を混同しない**。
 
 **詳細契約・fixture:** [SR-03科学契約 §3.1](20261101_sr03_identification_estimand_estimator_contract_review.md)。
@@ -79,7 +79,7 @@
 
 - **オーナー判断済み:** Frontdoor数値推定までPhase1のNとして提供。
 - **オーナー判断済み:** Phase3 LATE初期は**A＝Wald比＋B＝2SLS**。Cは追加審議とし、初期採用Methodには含めない。
-- **未確定:** 弱IV頑健推論方式（Anderson–Rubin等）、B1の具体的な識別・推論実装と科学検証、Cの後続審議・責任者、EconMLのCI必須水準・Method別採用推論。**D03-1のS2（B0＋B1）という初期提供範囲の判断自体は完了。**
+- **未確定:** **I2 AR方式は採用済み**。B1の具体的な識別・AR実装と科学検証、Cの後続審議・責任者、EconMLのCI必須水準・Method別採用推論。**D03-1のS2（B0＋B1）という初期提供範囲の判断自体は完了。**
 - **追加実証:** EconML 0.17.0の4方式でBootstrap区間の有限数値出力を確認（API smoke）。同時導入環境で既存回帰27件PASS。
 - **未実証:** DoWhy Frontdoorの数値推定／CI、IV/LATEの数値真値・弱IV推論、EconML Bootstrap CIの**被覆率・校正・適切な反復数**。
 - **全体承認ではない:** `00_04`の68行と`02`の`PENDING_FULL_CONCEPT_APPROVAL`、SR-03全体の方法判定待ちは維持。
