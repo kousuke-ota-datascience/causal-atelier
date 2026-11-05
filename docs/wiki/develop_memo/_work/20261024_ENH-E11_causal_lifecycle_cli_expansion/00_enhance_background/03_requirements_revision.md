@@ -27,7 +27,7 @@
 | E11-REQ-P2A | CATEファイル成果物の現行要件なし | privacy制限付きParquet/JSON、seed/split/versionと群別要約を規定 | #18、#24 |
 | E11-REQ-P3T | 時系列Graph/Discovery専用FRなし | TemporalDesign、TIME_SERIES_GRAPH、PCMCI/PCMCI+/LPCMCI、CI test、lagの忠実な保存 | #20 |
 | E11-REQ-P3D | DiD/Event Study/ITS専用FRなし | QuasiExperimentalDesign、event-time、pretrend、cluster等の検証 | #21 |
-| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDDとIV/LATEを規定。**SR03-D03オーナー採用：Phase3初期に二値Z/Aのcomplier LATEをWald比（Reference）＋2SLS（線形IV）で提供**。relevance／independence／exclusion／monotonicity、First Stage、weak-IVの通常CI制約を明示。共変量・複数IVの2SLSを同一LATEに自動変換しない。**C＝条件付きIVのDR／効率的LATEは追加審議** | #22（Method A＋B方針採用、正本・Gate未承認） |
+| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | Sharp/Fuzzy RDDとIV/LATEを規定。**SR03-D03オーナー採用：Phase3初期に二値Z/Aのcomplier LATEをWald比（Reference）＋2SLSで提供。D03-1 S2＝B0（共変量なし）＋B1（単一二値Z/A・事前指定C・加法線形構造）を2026-11-05に採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。B1は線形IV構造係数であり、ATE/LATE/CLATEの自動保証はしない。relevance／independence／exclusion／monotonicity、First Stage、weak-IVの通常CI制約を明示。共変量・複数IVの2SLSを同一LATEに自動変換しない。**C＝条件付きIVのDR／効率的LATEは追加審議** | #22（Method A＋B方針採用、正本・Gate未承認） |
 | E11-REQ-P3S | Synthetic Control/SDID専用FRなし | donor適格性、pre-fit、timing、placebo、重みと負結果を規定 | #23 |
 | E11-REQ-SR03 | 現行SpecはATE/ATT・RANDOMIZED/BACKDOORのみ。Estimation CLIは識別`REQUIRES_REVIEW`を受け入れる経路を持つ | **識別状態・Estimand・推定器・Eligibility・CI availabilityを分離したversioned contractを提案**。未解決Graph/非識別からの自動数値推定を禁止し、Question/Graph/dataset/hashを上流Resultに固定。**D01独立IV異質効果family・D02 Frontdoor数値推定・D03 LATE A＋Bは個別採用済み**。D01の科学的分類・非同等性と選択肢比較は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)が管理し、本書は要件差分（識別対象の明示、別family、誤変換禁止）を管理する。C・DRIV解釈・CI必須水準・弱IV頑健推論の実装詳細は未承認（[SR-03メモ](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)） | #16,#18,#22,#24（正本・Gate未承認） |
 | E11-REQ-CLI | NFR-001b/002はPARTIAL、NFR-025/028は既存範囲でIMPLEMENTED | ローカルversioned spec、hash/manifest、実効dependency version・seed/split、永続artifact、科学的status | #24 |
@@ -68,7 +68,7 @@
 
 - 新規FR/NFR/ARの正式採番とProductコンセプト改定。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
 - IPTW推論・Trimmingの科学的に適切なdefault。
-- **SR-03の未決事項:** **Frontdoor Phase1数値推定とLATE初期Wald比＋2SLSは個別採用済み**。残るのは2SLS拡張時の対象Estimand、C＝条件付きIV DR／効率的LATEの追加審議、弱IV頑健推論の方式・confidence set、DRIVの条件付きEstimand、`REQUIRES_REVIEW`の推定ゲート、Method別CI必須水準（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
+- **SR-03の未決事項:** **Frontdoor Phase1数値推定、LATE初期Wald比＋2SLS、D03-1 S2（B0＋B1）は個別採用済み**。B1の対象・追加モデル仮定は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を参照。残るのはB1の科学的実証、C＝条件付きIV DR／効率的LATEの追加審議、弱IV頑健推論の方式・confidence set、DRIVの条件付きEstimand、`REQUIRES_REVIEW`の推定ゲート、Method別CI必須水準（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 - Phase 2のIV+MLとしてDRIVまたは同等手法をどう認めるか。
 - 個票CATEファイルの最小化・アクセス制限。
 - Local spec/manifestのschema versionと既存readerの互換性。

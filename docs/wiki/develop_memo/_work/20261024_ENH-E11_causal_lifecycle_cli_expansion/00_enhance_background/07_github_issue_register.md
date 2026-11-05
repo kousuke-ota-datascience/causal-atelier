@@ -19,7 +19,7 @@
 | [#18](https://github.com/kousuke-ota-datascience/causal-atelier/issues/18) | Phase 2 | EconML、CATE/HTE、DML/DR/meta/IV+MLと成果物 | G04、G05 | 9月末案では除外、現在の追加候補 |
 | [#20](https://github.com/kousuke-ota-datascience/causal-atelier/issues/20) | Phase 3 | Tigramite、PCMCI系、Temporal Graph | G06 | 9月末案では除外 |
 | [#21](https://github.com/kousuke-ota-datascience/causal-atelier/issues/21) | Phase 3 | DiD、Event Study、ITS | G07 | 9月末案では除外 |
-| [#22](https://github.com/kousuke-ota-datascience/causal-atelier/issues/22) | Phase 3 | Sharp/Fuzzy RDD、IV/LATE。**SR03-D03採用：初期EstimatorはWald比＋2SLS、Cは追加審議**。弱IV頑健推論／CIと対象Estimandの最終設計は未承認 | G08 | 9月末案では除外。Method方針のみ採用 |
+| [#22](https://github.com/kousuke-ota-datascience/causal-atelier/issues/22) | Phase 3 | Sharp/Fuzzy RDD、IV/LATE。**SR03-D03採用：初期EstimatorはWald比＋2SLS、2026-11-05 D03-1 S2（B0＋B1）を追加採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。Cは追加審議。初期2SLS範囲は個別採用済み。弱IV頑健推論／CI、B1の科学Benchmark・正式schemaは未承認 | G08 | 9月末案では除外。Method方針のみ採用 |
 | [#23](https://github.com/kousuke-ota-datascience/causal-atelier/issues/23) | Phase 3 | Synthetic Control、Synthetic DiD | G09 | 9月末案では除外 |
 | [#24](https://github.com/kousuke-ota-datascience/causal-atelier/issues/24) | 横断 | CLI schema、Manifest、local artifact、科学的受入 | G05/G10ほか | 共通契約・検証 |
 

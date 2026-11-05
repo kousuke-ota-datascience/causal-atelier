@@ -1,8 +1,9 @@
 # ENH-E11 — SR03-D03残余論点：2SLS対象・弱IV推論・Confidence Set・C案の技術審議
 
-**文書区分:** `working_notes`／SR03-D03-1〜D03-4の**技術審査・推奨案（オーナー採否待ち）**。正式要件／設計／科学Gate／実装許可ではない。  
+**文書区分:** `working_notes`／SR03-D03-1の**個別オーナー採用記録**とD03-2〜D03-4の技術審査・推奨案（残余はオーナー採否待ち）。正式要件／設計／科学Gate／実装許可ではない。  
 **審議日:** 2026-11-01（JST）  
-**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03_REMAINING_TECH_REVIEW_PREPARED / OWNER_DECISIONS_PENDING / SCIENCE_NOT_RUN`  
+**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03-1_S2_OWNER_ACCEPTED_2026-11-05 / D03-2_TO_4_OWNER_PENDING / SCIENCE_NOT_RUN`  
+**D03-1個別採用日:** 2026-11-05（JST）。上記の2026-11-01は技術審議作成日であり、採用日ではない。  
 **確認Baseline:** `prototype/ariadne_mvp`、本レビュー着手時HEAD `a18af8c7916a4919fdd27bf2ff54b2cc4d780300`。検討は現行コード・既存SR-02 API smokeの記録と外部一次根拠に基づく。新たなIV実装、numerical parity、弱IV coverageの実測は実施していない。  
 **関連:** 00_04 P3-12／P3-16、UC-08、Issue #22（Phase3 IV/LATE）、SR-03／SR-04、Gate 07候補。
 
@@ -10,7 +11,7 @@
 
 **変更しない既決事項:** Phase3の初期EstimatorはA＝二値Z/AのWald比（complier LATE Reference）＋B＝2SLS、C＝条件付きIVのDR／効率的LATEは**追加審議**とする（オーナー採用2026-11-01）。D01の独立 `IV_HETEROGENEOUS_EFFECT` family採用を維持し、DRIVを自動的にcomplier LATEへ置換しない。
 
-**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は正式採用前の本提案を決定済みの要件・設計に格上げしない。
+**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は**D03-1の個別採用だけ**を候補スコープ・要件・設計差分に反映し、D03-2〜D03-4の推奨を採用済みとして扱わない。正式なFR/NFR/AR・Gate・実装は引き続き未承認。
 
 ## 1. 一次根拠と判断のための事実
 
@@ -25,10 +26,12 @@
 
 ## 2. D03-1：2SLS初期保証範囲と推定対象
 
+**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2・集合表現G2・C案C1はまだ採用していない。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
+
 | 案 | 初期保証範囲 | 利点 | 費用・危険 | 技術判断 |
 |---|---|---|---|---|
 | **S1（最小）** | B0＝二値Z・二値A／単一excluded IV／共変量なし／切片あり／just-identified | Waldとの厳密な点推定パリティが可能。モデル・推論が明確 | BがAと数値的に同じとなり追加2SLS能力が限定される | 採用可能だが初期Bとして狭い |
-| **S2（段階拡張）** | **B0＋B1**：B1＝二値Z・二値A・1内生処置・1 excluded IV・事前指定のpre-treatment共変量C・切片・additive linear structural model | 初期の2SLSとして調整共変量を扱える。数値パリティとモデル依存拡張を区別できる | Cの正しい指定と構造効果の不変性を仮定しなければ因果的解釈が崩れる | **推奨（未承認）** |
+| **S2（段階拡張）** | **B0＋B1**：B1＝二値Z・二値A・1内生処置・1 excluded IV・事前指定のpre-treatment共変量C・切片・additive linear structural model | 初期の2SLSとして調整共変量を扱える。数値パリティとモデル依存拡張を区別できる | Cの正しい指定と構造効果の不変性を仮定しなければ因果的解釈が崩れる | **オーナー採用（2026-11-05）** |
 | **S3（一般化）** | 複数IV・複数内生変数・連続処置・相互作用・異質効果・非線形設計を初期から保証 | 広い用途 | Momentのランク、対象、弱IVの多変量推論・CI topologyが拡大。科学受入の未確定が多い | 初期には非推奨 |
 
 **S2のB0:** 切片付き just-identified `Z∈{0,1}, A∈{0,1}`、共変量なし。`Δ_Z E[Y]/Δ_Z E[A]` と2SLS点推定は同じ標本・定義のもとで代数的に一致する。有効なIV仮定、nonzero first stage、monotonicity等を前提としてcomplier LATEを対象とする。標本の割当群がない場合やFirst Stageがゼロなら比は定義できない。
@@ -36,7 +39,7 @@
 **S2のB1:** 一つの内生処置A、一つのexcluded Instrument Z、事前定義されたpre-treatment C、線形構造式
 `Y = alpha + beta*A + gamma^T*C + epsilon`、`E[epsilon|Z,C]=0` を**追加の科学仮定**として宣言する。正しいベースライン関数（この提案ではadditive linear）、exogeneity、rank、overlapが必要。betaはまず**条件付きモーメントに基づく線形IV構造係数**として記録し、ATE／LATE／CLATEと自動的にlabel同一視しない。潜在的に全対象でconstant additive treatment effectという強い実質仮定が成立する場合の因果効果との対応は、個別のDesign根拠を必要とする。Treatment異質性やCへの非線形依存がある場合、一般2SLS係数を平均complier LATEと表示しない。
 
-B1では未調整Waldとの点推定一致を要求しない。**このレビューではS2を推奨するが、B1の因果的対象、Cの指定とCI可用性をオーナーが承認するまで保証しない。** 連続A・複数Z・multiple endogenous／cluster/HAC等の一般化を初期提供に含めるかは別審議。
+B1では未調整Waldとの点推定一致を要求しない。**S2の提供対象は採用済みだが、B1の因果的解釈はモデル・識別仮定に条件付きであり、Cの適格性、first stage、CIの実現性・被覆率は未検証である。** 連続A・複数Z・multiple endogenous／cluster/HAC等の一般化は今回の初期保証に含めず、別審議とする。
 
 ## 3. D03-2：弱IV診断・推論方式
 
@@ -106,11 +109,11 @@ B1では未調整Waldとの点推定一致を要求しない。**このレビュ
 
 ## 7. 決定票：Human ownerに残す採否
 
-| ID | 技術推奨（全て**未承認**） | オーナーが明示すべき事項 |
+| ID | 判断・推奨 | 今後の審査・実証 |
 |---|---|---|
-| **D03-1** | **S2**：B0 just-ID＋B1 単一Z/A・共変量Cの線形構造2SLS | B1まで初期保証するか。構造constant-effect仮定と対象label。連続A/複数Zを後続にするか |
+| **D03-1** | **S2採用（2026-11-05）**：B0 just-ID＋B1 単一Z/A・事前指定Cの加法線形構造2SLS | 対象は採用済み。構造仮定の適格性・Estimandの誤表示防止・数値/推論Benchmark・受入Gateは別途検証 |
 | **D03-2** | **I2**：B0/B1にAR反転の弱IV頑健な主信頼集合（独立標本・漸近heteroskedasticity-robust） | ARを初期必須とするか。cluster/HAC等の対象外と通常CIの扱い |
 | **D03-3** | **G2**：非有界・非連結・ALL_REAL・EMPTYを型付き集合として表現 | 具体schema/旧ResultのcompatibilityはD04へ委譲すること |
 | **D03-4** | **C1**：Cは初期非採用を維持し、科学的使用場面に基づく後続審議trigger/責任を確定 | C専用Issue/Owner、正式な再審議契機、初期除外の承認理由 |
 
-**今回の記録の判定:** `TECHNICAL_RECOMMENDATION_PREPARED`。オーナーのS2/I2/G2/C1採否、実装方法、正式schema、依存lock、科学Benchmark/Gate 07は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更していない。
+**更新判定（2026-11-05）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_PENDING / D03-3_G2_PENDING / D03-4_C1_PENDING`。S2の**初期保証範囲のみ**オーナー採用済み。推論方式I2、信頼集合G2、Cの後続管理C1、正式schema、依存lock、科学Benchmark/Gate 07、コード実装は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更しない。

@@ -194,14 +194,14 @@
 |---|---|---|
 | `SR03-D01` | **A案の独立IV異質効果familyをオーナー採用済み**（[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)） | family分類の判断は完了。Method別識別対象・schema・Science/Gate未承認。D01固有の根拠・比較・検証条件はファイルD01が管理 |
 | `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
-| `SR03-D03` | **オーナー採用（2026-11-01）：Phase3初期はA＝二値Z/AのWald比＋B＝2SLS**。complier LATEを基準対象とし、一般の2SLS拡張のEstimandは別に定義する。**C＝条件付きIVのDR／効率的LATEは追加審議**（[比較記録](20261101_sr03_late_estimator_options_econml_inference_review.md)） | **方式選択は完了**。弱IV頑健推論の実装範囲、CI／非有界・非連結集合の表現、数値閾値・Benchmarkは未承認 |
+| `SR03-D03` | **A＝二値Z/A Wald比＋B＝2SLSを採用済み（2026-11-01）**。**D03-1 S2＝B0＋B1を追加採用（2026-11-05）**（[残余判断・詳細条件](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。Cは追加審議 | **2SLS初期対象の決定は完了**。I2の弱IV推論、G2の信頼集合、C1の管理方式、数値Benchmark・Gateは未承認 |
 | \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |
 | \`SR03-D05\` | CATEの非IV 7手法・DRIVを別経路にし、CI availabilityをMethod/構成別に保持 | 推定MethodごとにCI必須か、点推定のみのCapabilityを承認できるか |
 | \`SR03-D06\` | PAG/CPDAGは保留し、別の識別証拠がない場合数値推定を禁止 | \`PARTIALLY_IDENTIFIED\`・Graph refixの将来受入範囲とowner override |
 
 **本メモの判断の性質:** 科学的な互換性・禁止変換はレビュー上の**推奨不変条件**。個々のMethodの採否、FR/NFR/AR正本、Result schema、CLI config version、GateとWork Packageの**オーナー承認は別**。SR-03は\`DESIGN_PROPOSAL_PREPARED\`であり\`APPROVED\`でも\`SCIENCE_PASS\`でもない。
 
-**D03残余審議の参照先:** 2SLS初期保証範囲、弱IV頑健推論、信頼集合の形状、Cの後続責任については[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)が比較・技術推奨・残余検証を管理する。本書は横断契約・Fixture一覧・判断一覧のみ管理し、**S2/I2/G2/C1はオーナー未承認**のままとする。
+**D03残余審議の参照先:** 2SLS初期保証範囲、弱IV頑健推論、信頼集合の形状、Cの後続責任については[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)が比較・技術推奨・残余検証を管理する。本書は横断契約・Fixture一覧・判断一覧のみ管理する。**S2は2026-11-05にオーナー採用済み、I2/G2/C1はオーナー未承認**と区別する。
 
 ## 8. 変更先・実施順序
 
