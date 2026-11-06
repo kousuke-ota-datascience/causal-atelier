@@ -45,13 +45,13 @@
 
 **オーナー採用（2026-11-01）:** **AをPhase3の二値Z/A・complier LATEの基準推定器、Bを線形IVの追加推定器として初期提供**。Cは**採用ではなく追加審議**。Phase2のDRIVは既存の必須候補のまま**IV異質効果の別契約**で維持する。独立familyの採否・比較・科学的定義の管理先は[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)とし、本書はLATE A＋BおよびEconML推論の比較・証拠を管理する。2SLSでの一般の共変量・複数IV対応が同じLATEを推定するとの自動保証はしない。
 
-**弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**D03-2 I2によりAR反転を初期基準の弱IV頑健推論として2026-11-05に採用済み**（[詳細](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、G2 schema・coverageは未承認）であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
+**弱IV推論の必須検討（採用Method A/B共通）:** Reduced formとFirst-stage効果・SE・Instrument supportを報告し、**通常の比／2SLS正規近似CIが弱IV下で妥当とは限らない**ことを結果に表す。**D03-2 I2によりAR反転を初期基準の弱IV頑健推論として2026-11-05に採用済み**（[詳細](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、G2改訂の意味契約は2026-11-06に採用済み。具体schema・coverageは未承認）であり、非有界／非連結集合を有限な上下限へ偽装しない。単一の`F>10`規則でexclusion・independence・monotonicityを証明しない。正しいIV用SEと通常OLSの二段階SEを区別する。具体Method・閾値・科学的被覆率はGate07で決定する。
 
 ### 2.1. オーナーに求める判断
 
-`SR03-D03`：**A＋B採用済み**。**D03-1の初期2SLS範囲はS2（B0＋B1）として2026-11-05に追加採用済み**。**D03-2 I2（AR反転）も2026-11-05に採用済み**。残る判断は**(iii) CIの非有界／非連結等の型と受入基準、(iv) Cの追加審議時期・責任者**。S2の正確な保証条件・非採用案・実証条件は[残余D03審議ファイル](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)で一元管理し、ここに重複記載しない。Cの採否は未決。
+`SR03-D03`：**A＋B採用済み**。**D03-1の初期2SLS範囲はS2（B0＋B1）として2026-11-05に追加採用済み**。**D03-2 I2（AR反転）も2026-11-05に採用済み**。**D03-3 G2改訂の集合意味契約も2026-11-06に採用済み**。残る判断は**(iv) Cの追加審議時期・責任者**。具体schema・定量受入基準はD04／SR-04へ委譲する。S2の正確な保証条件・非採用案・実証条件は[残余D03審議ファイル](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)で一元管理し、ここに重複記載しない。Cの採否は未決。
 
-**D03残余の審議責務:** 2SLS初期保証範囲（**S2採用済み**）、弱IV頑健推論、confidence setの型、Cの再審議責任は[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を詳細根拠・選択肢比較の唯一の管理先とする。本書の当初A/B/C比較・採用事実・EconML CI実測は維持する。**I2は採用済み、G2/C1はオーナー採否待ち**であり、科学Benchmarkも未実施。
+**D03残余の審議責務:** 2SLS初期保証範囲（**S2採用済み**）、弱IV頑健推論、confidence setの型、Cの再審議責任は[SR03-D03残余技術審議](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を詳細根拠・選択肢比較の唯一の管理先とする。本書の当初A/B/C比較・採用事実・EconML CI実測は維持する。**I2とG2改訂は採用済み、C1はオーナー採否待ち**であり、科学Benchmarkも未実施。
 
 ### 2.2. 識別対象・適格性・拒否条件（個別採用に伴う明確化）
 

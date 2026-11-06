@@ -1,9 +1,9 @@
 # ENH-E11 — SR03-D03残余論点：2SLS対象・弱IV推論・Confidence Set・C案の技術審議
 
-**文書区分:** `working_notes`／SR03-D03-1・D03-2の**個別オーナー採用に対応する技術判断記録**とD03-3・D03-4の技術審査・推奨案。正式要件／設計／科学Gate／実装許可ではない。  
+**文書区分:** `working_notes`／SR03-D03-1〜D03-3の**個別オーナー採用に対応する技術判断記録**とD03-4の技術審査・推奨案。正式要件／設計／科学Gate／実装許可ではない。  
 **審議日:** 2026-11-01（JST）  
-**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03-1_S2_OWNER_ACCEPTED_2026-11-05 / D03-2_I2_OWNER_ACCEPTED_2026-11-05 / D03-3_G2_PENDING / D03-4_C1_PENDING / SCIENCE_NOT_RUN`  
-**D03-1・D03-2個別採用日:** 2026-11-05（JST）。上記の2026-11-01は技術審議作成日であり、採用日ではない。  
+**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03-1_S2_OWNER_ACCEPTED_2026-11-05 / D03-2_I2_OWNER_ACCEPTED_2026-11-05 / D03-3_G2_REVISED_OWNER_ACCEPTED_2026-11-06 / D03-4_C1_PENDING / SCIENCE_NOT_RUN`  
+**個別採用日:** D03-1・D03-2＝2026-11-05（JST）、D03-3＝2026-11-06（JST）。2026-11-01は元の技術審議作成日である。  
 **確認Baseline:** `prototype/ariadne_mvp`、本レビュー着手時HEAD `a18af8c7916a4919fdd27bf2ff54b2cc4d780300`。検討は現行コード・既存SR-02 API smokeの記録と外部一次根拠に基づく。新たなIV実装、numerical parity、弱IV coverageの実測は実施していない。  
 **関連:** 00_04 P3-12／P3-16、UC-08、Issue #22（Phase3 IV/LATE）、SR-03／SR-04、Gate 07候補。
 
@@ -11,7 +11,7 @@
 
 **変更しない既決事項:** Phase3の初期EstimatorはA＝二値Z/AのWald比（complier LATE Reference）＋B＝2SLS、C＝条件付きIVのDR／効率的LATEは**追加審議**とする（オーナー採用2026-11-01）。D01の独立 `IV_HETEROGENEOUS_EFFECT` family採用を維持し、DRIVを自動的にcomplier LATEへ置換しない。
 
-**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は**D03-1 S2・D03-2 I2の個別採用**を候補スコープ・要件・設計差分に反映し、D03-3 G2／D03-4 C1の推奨を採用済みとして扱わない。正式なFR/NFR/AR・Gate・実装は引き続き未承認。
+**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は**D03-1 S2・D03-2 I2・D03-3 G2改訂の個別採用**を候補スコープ・要件・設計差分に反映し、D03-4 C1の推奨を採用済みとして扱わない。正式なFR/NFR/AR・Gate・実装は引き続き未承認。
 
 ## 1. 一次根拠と判断のための事実
 
@@ -26,7 +26,7 @@
 
 ## 2. D03-1：2SLS初期保証範囲と推定対象
 
-**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2は2026-11-05に採用済み。集合表現G2およびC案C1は未採用。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
+**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2は2026-11-05に採用済み。G2改訂の集合意味は2026-11-06に採用済み。C案C1は未採用。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
 
 | 案 | 初期保証範囲 | 利点 | 費用・危険 | 技術判断 |
 |---|---|---|---|---|
@@ -63,9 +63,9 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 
 **数値実装注意:** just-identified B0のAR反転は、`rY-beta*rA`とその共分散からFieller型の二次不等式として解析可能な場合がある。B1の検定反転・heteroskedasticity-robust covarianceも`beta`依存を持つため、**有限grid探索で左右端を恣意的に切断しない**。必要なら数式による全域解または同等の厳密な形状検査を独立検証する。
 
-## 4. D03-3：弱IV信頼集合のResult表現（G2改訂技術審議、2026-11-06）
+## 4. D03-3：弱IV信頼集合のResult表現（G2改訂採用、2026-11-06）
 
-**判定：`G2_REVISED_TECHNICAL_RECOMMENDATION / OWNER_DECISION_PENDING / SCHEMA_NOT_APPROVED`。** G2の基本目的（有限単一区間へ押し込まない）を維持し、**just-identified B0/B1での`EMPTY`の扱いを修正**する。Human ownerはまだG2を採用していない。具体的なfield名・版・migrationはD04／Architecture Reviewに引き渡す。
+**オーナー採用（2026-11-06）：`D03-3_G2_REVISED_OWNER_ACCEPTED / FORMAL_SCHEMA_PENDING / SCIENCE_NOT_RUN`。** 有界・非有界・非連結・全実数を型付き区間集合として損失なく保存し、推論状態・点推定状態・科学的適格性を分離する**意味契約**を採用。汎用集合型には将来の`EMPTY`を表現する余地を残すが、初期just-identified B0/B1 ARで**正常な`AVAILABLE/EMPTY`を禁止**する。具体的field名・enum/JSON schema版・旧Result migrationはD04／Architecture Reviewへ委譲する。
 
 ### 4.1. 一次根拠・現在の既存仕様
 
@@ -80,7 +80,7 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 |---|---|---|---|
 | G0：有限CIのみ | `confidence_interval:[low,high]`のみ | 非有界・非連結の情報を喪失、ARの初期基準推論I2と不整合 | 不採用推奨 |
 | G1：有限CI＋`unbounded`一個 | 1組の端点とflag | 二つの半無限区間の和集合や複数成分を表せない | 不採用推奨 |
-| **G2改訂** | 集合形状＋**順序付けられた区間components**＋各端点のboundedness／推論状態 | 科学的集合を忠実に保存。既存有限CIと分離でき、Method別の許容集合を検証可能 | **推奨（オーナー未承認）** |
+| **G2改訂** | 集合形状＋**順序付けられた区間components**＋各端点のboundedness／推論状態 | 科学的集合を忠実に保存。既存有限CIと分離でき、Method別の許容集合を検証可能 | **オーナー採用（2026-11-06）** |
 | G3：任意関数・predicate・高次元形状まで記述 | 将来Methodへ一般化可能 | 初期の1次元ARには過剰。監査とmigrationが重くなる | 初期非推奨 |
 
 ### 4.3. G2改訂案の型・不変条件
@@ -138,7 +138,7 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 4. **独立した状態:** First stageがゼロ等で`effect_point`なしでも信頼集合を保存可能か、失敗と未請求と不適用を区別可能か、旧Resultを回帰保護できるかを評価。
 5. **科学的検証:** Monte Carloで弱・無・強First stageの無条件被覆率とType-I errorを測り、採用するARの統計量・漸近条件・標本サイズ・仮定違反の負例を区別。信頼水準・replicate数・許容差はSR-04／Gate 07で**事前固定**。
 
-**判定の範囲:** これは**G2改訂案の科学・データ契約上の推奨**。D03-2 I2の採用に伴う必要条件を明確化したものであり、**G2のオーナー採用、正式schema/enum、D04のmigration仕様、数値実装、科学Benchmark PASSを意味しない**。
+**採用の範囲:** **G2改訂の集合意味・表現原則をオーナー採用**した。AR反転の信頼集合を有限単一区間に偽装しない。**正式JSON schema/enum、D04互換仕様、具体実装、数値・coverage検証、科学Gate PASSを意味しない**。
 
 ## 5. D03-4：C案（条件付きIVのDR／効率的LATE）
 
@@ -173,9 +173,9 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 |---|---|---|
 | **D03-1** | **S2採用（2026-11-05）**：B0 just-ID＋B1 単一Z/A・事前指定Cの加法線形構造2SLS | 対象は採用済み。構造仮定の適格性・Estimandの誤表示防止・数値/推論Benchmark・受入Gateは別途検証 |
 | **D03-2** | **I2採用（2026-11-05）**：B0/B1でAR検定反転を弱IV頑健な基準推論とする（独立観測・異分散頑健漸近推論） | 具体的AR実装・coverage・G2 schema・Gateは未承認 |
-| **D03-3** | **G2改訂技術推奨（2026-11-06、採用待ち）**：有界／非有界／非連結／ALL_REALを型付き区間成分として保存。EMPTYは汎用schemaで表現可能としつつ、just-identified B0/B1の正常AR結果から除外 | オーナー採否、正式schema・legacy互換はD04、coverage/実装はSR-04/Gate07で別審査 |
+| **D03-3** | **G2改訂オーナー採用（2026-11-06）**：有界・非有界・非連結・ALL_REALを型付き区間集合で保存。汎用EMPTYは将来用に残すが、初期just-identified B0/B1の正常AR結果では禁止 | 集合意味の採否は完了。正式schema・legacy互換はD04、数値・coverage・GateはSR-04/Gate07へ引渡し |
 | **D03-4** | **C1**：Cは初期非採用を維持し、科学的使用場面に基づく後続審議trigger/責任を確定 | C専用Issue/Owner、正式な再審議契機、初期除外の承認理由 |
 
-**D03-3科学審議更新（2026-11-06）：** G2は改訂案を技術推奨として準備したが、**オーナー採用待ち**。EMPTYの初期B0/B1での扱いを修正し、method-specific validatorを必要条件とした。G2の採否・正式schema・D04互換・SR-04 Science Acceptanceは未完了。
+**D03-3オーナー判断（2026-11-06）：** **G2改訂の集合意味契約を採用**。EMPTYの初期B0/B1での扱いを修正し、Method別validatorを必要条件とした。**正式schema・D04互換・SR-04 Science Acceptanceは未完了**。
 
-**更新判定（2026-11-05）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_PENDING / D03-4_C1_PENDING`。S2の**初期保証範囲**とI2の**AR反転方式・初期適用境界**はオーナー採用済み。信頼集合G2、Cの後続管理C1、具体的AR実装・正式schema・依存lock・科学Benchmark/Gate 07・コード実装は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更しない。
+**更新判定（2026-11-05）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_REVISED_OWNER_ACCEPTED_2026-11-06 / D03-4_C1_PENDING`。S2の**初期保証範囲**とI2の**AR反転方式・初期適用境界**はオーナー採用済み。**G2改訂の集合意味契約は採用済み**。Cの後続管理C1、具体的AR実装・正式schema・依存lock・科学Benchmark/Gate 07・コード実装は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更しない。
