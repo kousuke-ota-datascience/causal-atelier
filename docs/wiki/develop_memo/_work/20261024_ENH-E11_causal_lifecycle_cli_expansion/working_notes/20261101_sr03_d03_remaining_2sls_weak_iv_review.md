@@ -26,7 +26,7 @@
 
 ## 2. D03-1：2SLS初期保証範囲と推定対象
 
-**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2・集合表現G2・C案C1はまだ採用していない。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
+**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2は2026-11-05に採用済み。集合表現G2およびC案C1は未採用。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
 
 | 案 | 初期保証範囲 | 利点 | 費用・危険 | 技術判断 |
 |---|---|---|---|---|
@@ -63,24 +63,82 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 
 **数値実装注意:** just-identified B0のAR反転は、`rY-beta*rA`とその共分散からFieller型の二次不等式として解析可能な場合がある。B1の検定反転・heteroskedasticity-robust covarianceも`beta`依存を持つため、**有限grid探索で左右端を恣意的に切断しない**。必要なら数式による全域解または同等の厳密な形状検査を独立検証する。
 
-## 4. D03-3：弱IV信頼集合のResult表現
+## 4. D03-3：弱IV信頼集合のResult表現（G2改訂技術審議、2026-11-06）
 
-**提案:** 一般の `confidence_interval = [finite_lower,finite_upper]` のみでは受入不能。IV推論の別オブジェクト `confidence_set`（名称未承認）に以下を持たせる。
+**判定：`G2_REVISED_TECHNICAL_RECOMMENDATION / OWNER_DECISION_PENDING / SCHEMA_NOT_APPROVED`。** G2の基本目的（有限単一区間へ押し込まない）を維持し、**just-identified B0/B1での`EMPTY`の扱いを修正**する。Human ownerはまだG2を採用していない。具体的なfield名・版・migrationはD04／Architecture Reviewに引き渡す。
 
-| Field案 | 科学的意味・不変条件 |
+### 4.1. 一次根拠・現在の既存仕様
+
+- **弱IV頑健推論の集合形状：** Mikusheva (2010), [*Robust confidence sets in the presence of weak instruments*](https://dspace.mit.edu/entities/publication/702ee950-3381-435d-8a9e-b2f7d9eb7fed) は有限区間以外の集合が生じることを示す。[Stata公式解説](https://www.stata.com/stata-news/news39-3/weak-instruments-wacky-confidence-intervals/)も全実数・複数区間等を記載する。
+- **重要な反証／G2原案の修正：** [Davidson & MacKinnon (2014), *Confidence sets based on inverting Anderson–Rubin tests*](https://academic.oup.com/ectj/article/17/2/S39/5056440) は**just-identified ARの信頼集合は空にならない**ことを導く。Stata公式解説もAR反転の空集合をoveridentifiedの場合と区別する。したがって、今回のB0/B1（1 excluded IV／1 endogenous treatment）は、**適格で非退化なAR反転が`EMPTY`を正常に返すMethodではない**。空集合を「モデル棄却」として無条件採用せず、有限gridの打切り／数値不具合／検定定義やrankの不適格を優先検証する。
+- **標準JSON：** [RFC 8259 §6](https://www.rfc-editor.org/rfc/rfc8259.html#section-6) でJSON数値の`Infinity`／`-Infinity`／`NaN`は不許可。非有界端点は数値として捏造せず、nullable端点＋明示的な無界flagで型付けする。
+- **既存Ariadneコード（参照HEAD：`83f94ff`）：** `src/ariadne/scientific/inference/adapter.py`はNative推定のpayloadに`confidence_interval: [ci_low, ci_high]`または`null`を保存し、`json.dumps`でartifact化する（同ファイル197〜213行）。現行`causal-analysis-spec/2`（`product/domain/analysis_spec.py`）の読み取りを保護する。これは**新規IV Result schemaが実装済みである証拠ではない**。旧Resultを破壊せず、新版で別集合契約を設ける方向をD04で審議する。
+
+### 4.2. 比較した表現案
+
+| 案 | 表現 | 科学的・互換上の評価 | 今回の推奨 |
+|---|---|---|---|
+| G0：有限CIのみ | `confidence_interval:[low,high]`のみ | 非有界・非連結の情報を喪失、ARの初期基準推論I2と不整合 | 不採用推奨 |
+| G1：有限CI＋`unbounded`一個 | 1組の端点とflag | 二つの半無限区間の和集合や複数成分を表せない | 不採用推奨 |
+| **G2改訂** | 集合形状＋**順序付けられた区間components**＋各端点のboundedness／推論状態 | 科学的集合を忠実に保存。既存有限CIと分離でき、Method別の許容集合を検証可能 | **推奨（オーナー未承認）** |
+| G3：任意関数・predicate・高次元形状まで記述 | 将来Methodへ一般化可能 | 初期の1次元ARには過剰。監査とmigrationが重くなる | 初期非推奨 |
+
+### 4.3. G2改訂案の型・不変条件
+
+| Field群（設計案） | 不変条件 |
 |---|---|
-| `method`, `confidence_level`, `test_distribution`, `covariance_type` | AR反転か等、名目水準と近似前提を明記 |
-| `set_kind` | `BOUNDED_INTERVAL / UNBOUNDED_CONNECTED / DISCONNECTED / ALL_REAL / EMPTY`等。Methodに適用できない形状は安易に生成しない |
-| `components[]` | 閉区間の和集合を境界順で格納。各成分はlower/upperとそれぞれの`unbounded` flagを持つ。JSONで `Infinity/-Infinity/NaN` を数値と偽装しない |
-| `inference_status`, `validity_scope`, `reason_codes` | `AVAILABLE/NOT_REQUESTED/NOT_APPLICABLE/FAILED/UNAVAILABLE`候補と仮定・標本条件を分ける |
-| `point_estimate`, `point_estimate_status` | 別axis。点推定が未定義でも、定義された信頼集合を保持できる |
-| `diagnostics`／`backend_version`／`lineage_hash` | First-stage・AR検定構成・データ/Graph/Question/Designの再現性 |
+| `inference_method`, `confidence_level`, `covariance_type`, `test_distribution` | AR反転方式、名目水準、採用したcovarianceと漸近近似条件を記録。信頼水準の具体defaultは未承認 |
+| `inference_status`, `reason_codes`, `validity_scope` | `AVAILABLE/UNAVAILABLE/NOT_REQUESTED/NOT_APPLICABLE/FAILED`等の区別（enum名は未確定）。科学的適格性と数値計算成否を混同しない |
+| `confidence_set.set_kind` | 候補：`BOUNDED_INTERVAL / UNBOUNDED_CONNECTED / DISCONNECTED / ALL_REAL / EMPTY`。**Method別の結果形状制約を検証**し、B0/B1の正常AR結果では`EMPTY`を拒否 |
+| `confidence_set.components[]` | 各要素は数直線上の区間（端点を昇順に列挙）。重複区間や接続する区間は正規化して結合し、`set_kind`との整合を検査する。AR反転の初期候補はclosed boundaries |
+| `lower`, `upper`, `lower_unbounded`, `upper_unbounded` | 端点が有限なら数値かつunbounded=false、無界なら数値nullかつunbounded=trueとし、`Infinity/NaN`を書かない。下端・上端の方向は区間ごとに意味を固定 |
+| `point_estimate_status`, `effect_point` | 点推定と集合の結果を独立保持。First stageゼロで点推定不能でも、AR信頼集合が利用可能な場合はその事実を失わない |
+| `diagnostics`, `lineage_hash`, `backend_version`, `estimand_kind` | First stage、Question/Design/Graph/dataset、対象Estimand、再現性を追跡。B1の線形IV構造係数を無断でLATE表示しない |
 
-- `EMPTY`は計算失敗ではなく、**採用した検定族のすべての候補値を棄却したという統計的結果**であり得る。失敗は別statusへ。
-- `ALL_REAL`は情報が弱い等の結果として生じることがあり、効果ゼロ・無効果を意味しない。
-- `DISCONNECTED`は複数成分を失わず保持し、有限区間一つへ丸めない。
-- schema表現では非有界側の数値境界は`null`とunbounded flagを併記する。**CI取得不能のnullと、上端が非有界なnullを明確に区別**する。
-- これは科学的なtopologyの保存契約であり、CLI JSONの正式field名・Versionや旧Resultとの共存はD04／Architecture Reviewで確定する。
+**集合形状の一貫性（初期候補）：** `BOUNDED_INTERVAL`は有限1成分、`UNBOUNDED_CONNECTED`は無界の1成分（`ALL_REAL`を除く）、`DISCONNECTED`は2成分以上、`ALL_REAL`は両端無界の1成分として正規化する。`EMPTY`は汎用schema将来拡張用の0成分だが、**B0/B1の初期just-identified ARでは正常な`AVAILABLE/EMPTY`を禁止**する。単一点・半直線の境界上の退化ケースを表すため、端点の同値や接続形状も正規化規則・テストで定義する。
+
+**Statusの意味:** (i) 統計的に得られた集合の形状、(ii) 計算できたか、(iii) 科学的に適格なDesignか、(iv) 点推定が定義されるかは独立する。`FAILED`と`EMPTY`を同一視しない。`ALL_REAL`は「効果なし」ではなく「この水準では実質的に範囲を限定できない」を意味する。`confidence_set=null`は未計算・不適用・失敗等のときにstatus/reasonと組み合わせて使い、非有界集合の代用にしない。
+
+### 4.4. JSON表現例（**架空の数値／説明用、実測結果ではない**）
+
+この例は、二つの半無限区間からなるAR信頼集合を表す。値`-1`と`2`、水準`0.95`は**説明のための任意の例**であり、Ariadneの実行結果やGateのdefaultではない。
+
+```json
+{
+  "inference_status": "AVAILABLE",
+  "inference_method": "ANDERSON_RUBIN_INVERSION",
+  "confidence_level": 0.95,
+  "confidence_set": {
+    "set_kind": "DISCONNECTED",
+    "components": [
+      {
+        "lower": null,
+        "upper": -1,
+        "lower_unbounded": true,
+        "upper_unbounded": false
+      },
+      {
+        "lower": 2,
+        "upper": null,
+        "lower_unbounded": false,
+        "upper_unbounded": true
+      }
+    ]
+  }
+}
+```
+
+**旧Resultの互換性境界（D04へ引渡し）：** 既存Native `confidence_interval` の2数値/nullを変更したり、非有界集合をそこに縮約したりしない。新しいversioned Result/Artifactは`confidence_set`を第一級に持ち、既存`confidence_interval`は互換性上必要なら**集合が正確に一つの有限閉区間の場合に限って**導出可能なviewとする（是否・名称はD04で採決）。`confidence_interval=null`単独では推論不能か無界かを表せないため、必ず型付きstatus／`confidence_set`と一緒に解釈する。新規readerと既存readerの差はcontract/migration testで保護する。
+
+### 4.5. 受入の反証・テスト境界（未実行）
+
+1. **正例B0/B1:** 既知のAR反転referenceと比較し、有限単一区間・二つの半無限区間の和集合・全実数など、**実際に構成可能な形状をMethod別に**検証する。境界端点、区間順序、inclusive、集合の全域性を確認。
+2. **`EMPTY`負例:** just-identified B0/B1から`EMPTY`が出たら、有限grid truncation／退化covariance・rank／数式実装エラーの可能性を優先して`FAILED/REQUIRES_REVIEW`等に分類。**正常なEMPTYを受入fixtureに設定しない**。将来overidentified等の異なる方法では、空集合の意味をMethodごとに再審査する。
+3. **数値不変条件:** JSON schema validatorでNaN/Infinity禁止、端点有限性・無界flagの整合、区間の非交差・昇順、`set_kind`とcomponentsの整合、無限遠でのテスト反転の見落としを拒否。
+4. **独立した状態:** First stageがゼロ等で`effect_point`なしでも信頼集合を保存可能か、失敗と未請求と不適用を区別可能か、旧Resultを回帰保護できるかを評価。
+5. **科学的検証:** Monte Carloで弱・無・強First stageの無条件被覆率とType-I errorを測り、採用するARの統計量・漸近条件・標本サイズ・仮定違反の負例を区別。信頼水準・replicate数・許容差はSR-04／Gate 07で**事前固定**。
+
+**判定の範囲:** これは**G2改訂案の科学・データ契約上の推奨**。D03-2 I2の採用に伴う必要条件を明確化したものであり、**G2のオーナー採用、正式schema/enum、D04のmigration仕様、数値実装、科学Benchmark PASSを意味しない**。
 
 ## 5. D03-4：C案（条件付きIVのDR／効率的LATE）
 
@@ -101,7 +159,7 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 | `D03R-T01` | 二値Z/A・共変量なしのjust-identifiedでWald/2SLS点推定の標本代数的パリティ、complier LATE既知真値 |
 | `D03R-T02` | B1で正しいadditive constant-effect構造と有効なconditional IVの既知真値パリティ、共変量誤指定で不当なLATE/ATEラベルを付与しない |
 | `D03R-T03` | `first_stage=0`、local-to-zero、強いfirst stageを分離。点推定undefinedとAR信頼集合availableを区別 |
-| `D03R-T04` | AR反転と独立reference手法の集合一致、正しい群分散・共分散、有限／非有界／非連結／全実数／空集合の構造試験 |
+| `D03R-T04` | B0/B1のjust-identified AR反転に対する独立referenceの集合一致、有限／非有界／非連結／全実数の構造試験。EMPTYは初期B0/B1で正常なAR集合とせず、誤実装・grid truncation等の負例として検査 |
 | `D03R-T05` | Instrument invalid（exclusion・independence・monotonicity違反）ではAR実行結果を「valid IV証明」としない |
 | `D03R-T06` | cluster/time依存、複数IV、連続Treatment等を初期契約では明示非適用。無警告のrobust CI出力を禁止 |
 | `D03R-T07` | 適格・不適格Design別のcoverage/type-I error・数値精度、ランダムseed・反復数、被覆誤差の不確実性を測定 |
@@ -115,7 +173,9 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 |---|---|---|
 | **D03-1** | **S2採用（2026-11-05）**：B0 just-ID＋B1 単一Z/A・事前指定Cの加法線形構造2SLS | 対象は採用済み。構造仮定の適格性・Estimandの誤表示防止・数値/推論Benchmark・受入Gateは別途検証 |
 | **D03-2** | **I2採用（2026-11-05）**：B0/B1でAR検定反転を弱IV頑健な基準推論とする（独立観測・異分散頑健漸近推論） | 具体的AR実装・coverage・G2 schema・Gateは未承認 |
-| **D03-3** | **G2**：非有界・非連結・ALL_REAL・EMPTYを型付き集合として表現 | 具体schema/旧ResultのcompatibilityはD04へ委譲すること |
+| **D03-3** | **G2改訂技術推奨（2026-11-06、採用待ち）**：有界／非有界／非連結／ALL_REALを型付き区間成分として保存。EMPTYは汎用schemaで表現可能としつつ、just-identified B0/B1の正常AR結果から除外 | オーナー採否、正式schema・legacy互換はD04、coverage/実装はSR-04/Gate07で別審査 |
 | **D03-4** | **C1**：Cは初期非採用を維持し、科学的使用場面に基づく後続審議trigger/責任を確定 | C専用Issue/Owner、正式な再審議契機、初期除外の承認理由 |
+
+**D03-3科学審議更新（2026-11-06）：** G2は改訂案を技術推奨として準備したが、**オーナー採用待ち**。EMPTYの初期B0/B1での扱いを修正し、method-specific validatorを必要条件とした。G2の採否・正式schema・D04互換・SR-04 Science Acceptanceは未完了。
 
 **更新判定（2026-11-05）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_PENDING / D03-4_C1_PENDING`。S2の**初期保証範囲**とI2の**AR反転方式・初期適用境界**はオーナー採用済み。信頼集合G2、Cの後続管理C1、具体的AR実装・正式schema・依存lock・科学Benchmark/Gate 07・コード実装は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更しない。
