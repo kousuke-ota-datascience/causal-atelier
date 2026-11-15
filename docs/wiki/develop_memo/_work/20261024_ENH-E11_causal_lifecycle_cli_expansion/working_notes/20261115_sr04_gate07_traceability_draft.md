@@ -53,8 +53,8 @@
 | P3-M07 Sharp RDD／cutoff局所効果 | SCOPE:P3-10 | DGP-015; NEG-023 | REF-Q03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
 | P3-M08 Fuzzy RDD／cutoff局所complier効果 | SCOPE:P3-11 | DGP-016; NEG-006, NEG-023 | REF-Q03, REF-I03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
 | P3-M09 Wald ratio／binary Z/A complier LAT | SCOPE:P3-12 | DGP-006; NEG-006, NEG-007 | REF-I03, REF-E07, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-D07 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P3-M10 B0 just-identified 2SLS／binary Z/A | SCOPE:P3-12 | DGP-006; NEG-006, NEG-025 | REF-E07, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P3-M11 B1 additive linear 2SLS／線形IV構造係数（正 | SCOPE:P3-12 | DGP-007; NEG-008, NEG-025 | REF-E08, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
+| P3-M10 B0 just-identified 2SLS／binary Z/A | SCOPE:P3-12 | DGP-006, DGP-024; NEG-006, NEG-025 | REF-E07, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
+| P3-M11 B1 additive linear 2SLS／線形IV構造係数（正 | SCOPE:P3-12 | DGP-007, DGP-024; NEG-008, NEG-025 | REF-E08, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
 | P3-M12 Synthetic Control／処置単位の時点別反実仮想ギャップ | SCOPE:P3-13 | DGP-017; NEG-024 | REF-Q04 | AC-D03, AC-P01, AC-P03, AC-Q04 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M13 Synthetic DiD／panel平均介入効果 | SCOPE:P3-14 | DGP-018; NEG-024 | REF-Q05 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q05 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / BLOCKED / NOT_GENERATED |
 
@@ -265,3 +265,66 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | ENV-AC07 | Manifest/lineage/artifact | SR04:X-01, SR04:X-02, SR04:X-03, SR04:X-04, SR04:X-05, SR04:X-06, SR04:X-08, SR04:X-09 | NOT_GENERATED |
 | ENV-AC08 | Privacy / legacy | SR04:X-01, SR04:X-06, SR04:X-08, SR04:X-09 | NOT_GENERATED |
 | ENV-AC09 | GPL/customer delivery | SR04:X-07 | NOT_GENERATED |
+
+
+## 7. E11-REQ仮IDと正本要件/Gateへの引渡し
+
+03のE11-REQ-*は計画上の仮識別子であり、正式FR/NFR/AR番号ではない。05の旧AC-01〜12案はSR04-Dの45件（AC-D01等）と別体系。正式Gate07 Evidenceも未採番・未生成。
+
+| E11-REQ仮ID | 現行要件・差分出典（03） | PLAN Gate | Method直接参照（代表） | Approval |
+|---|---|---|---|---|
+| E11-REQ-P1Q | FR-040/041はQuestion/Designを固定。FR-054・NFR-002のlineageはPARTIAL | PLAN:G01/G02 | 横断契約 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | PLAN:G02 | P1-M01, P1-M02, P1-M03, P1-M04, P1-M05, P1-M07 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | PLAN:G01 | P1-M06 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1R | FR-049はPlaceboとData Subset | PLAN:G03 | P1-M12, P1-M13, P1-M14, P1-M15 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | PLAN:G03 | P1-M16, P1-M17, P1-M20 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | PLAN:G03:05追補待ち | P1-M18, P1-M19 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | PLAN:G03 | P1-M08, P1-M09, P1-M10, P1-M11 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | PLAN:G04 | P2-M01, P2-M02, P2-M03, P2-M04, P2-M05, P2-M06, P2-M07, P2-M08 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-SR03D05 | 現行v2 EffectResultは非IV CATE／DRIV向けのMethod別CI検証と科学的推論可用性を一級には規定しない。EconML 0.17のAPI smokeは有限CIを一部設定で取得したが被覆率は未実証 | PLAN:G04/G05/G10 | P2-M01, P2-M02, P2-M03, P2-M04, P2-M05, P2-M06, P2-M07, P2-M08 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P2A | CATEファイル成果物の現行要件なし | PLAN:G05 | 横断契約 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P3T | 時系列Graph/Discovery専用FRなし | PLAN:G06 | P3-M01, P3-M02, P3-M03 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P3D | DiD/Event Study/ITS専用FRなし | PLAN:G07 | P3-M04, P3-M05, P3-M06 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P3I | 既存のRandomized/Backdoorは準実験IVやRDDではない | PLAN:G08 | P3-M07, P3-M08, P3-M09, P3-M10, P3-M11 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-P3S | Synthetic Control/SDID専用FRなし | PLAN:G09 | P3-M12, P3-M13 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-SR03D06 | 現行Native IdentificationはCPDAG/PAGでREQUIRES_REVIEWを返し、方向不確定を保持する。GraphVersionは親子・origin・edit_rationaleを持つが、一般化識別や部分識別エンジンは未実装 | PLAN:G01/G02/G10 | P1-M06 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-SR03 | 現行SpecはATE/ATT・RANDOMIZED/BACKDOORのみ。Estimation CLIは識別REQUIRES_REVIEWを受け入れる経路を持つ | PLAN:G02/G04/G08/G10 | P1-M06, P2-M01, P2-M02, P2-M03, P2-M04, P2-M05, P2-M06, P2-M07, P2-M08 | DRAFT / FR-NFR-AR未承認 |
+| E11-REQ-CLI | NFR-001b/002はPARTIAL、NFR-025/028は既存範囲でIMPLEMENTED | PLAN:G10 | 横断契約 | DRAFT / FR-NFR-AR未承認 |
+
+## 8. Gate07 Evidence Bundle（未生成の仕様案）
+
+1評価セルはMethod ID、SCOPE ID、正式Estimand/contrast、DGP variant、n/T/R/K、inference mode、Environment、RNG streamを一意に固定する。以下はファイルの作成済み宣言ではない。
+
+| Evidence分類 | 必要な証拠 |
+|---|---|
+| Authority | 承認済みScope処遇、FR/NFR/AR、ADR、正式GateとIssue、Ownerの署名と固定commit |
+| Scientific | 独立Reference truth/導出、Graph/Design識別仮定、DGP・NEGと適用条件 |
+| Config | Reference/generator/backend/source SHA、Python/OS/dependency lock、data/Graph/Question hash、seed/split/parallel |
+| Quantitative | Rule/threshold version、sample n/T/R、familywise K、bias/RMSE/coverage/size/Graph metrics、MCSE、失敗分母 |
+| Typed result | point/inference/science/technical status、AR集合と通常CIの分離、PAG endpoint、reasons/negative |
+| Repro/Legal | manifest readback/atomic write/checksum、旧Product/v2回帰、個票privacy、顧客SI GPL確認 |
+| Review | 独立Science Review/失敗・修正履歴、正式Gate07承認者・日時・SHA |
+
+**証拠ファイルの候補配置:** evidence/sr04/<campaign>/<method>/<cell>/<replicate>/... は設計上の命名例であり実在pathではない。SR-02 ActionsによるAPI smokeは環境導入可能性だけを支持し、科学的Known-truth・95%CI coverage・PAG oracleの実証ではない。
+
+## 9. 残余Blocker・閉鎖条件・状態
+
+| Status candidate | 意味 |
+|---|---|
+| TRACE_DRAFT | ID接続の設計のみ。Science PASSやCoding許可ではない |
+| SCIENCE_CONTRACT_BLOCKED | B1/DRIV、Frontdoor、PAG/CPDAG、Quasi inference等の対象定義未確定 |
+| SCOPE_APPROVAL_BLOCKED | 68 Scope・NCE/NCO/RV・GAP-C01〜04・FR/NFR/AR/Architecture未承認 |
+| REFERENCE_ENV_BLOCKED | Oracle、数値閾値、dependency lock、seed/replay、n/R/K、資源/License未freeze |
+| EXECUTED_NOT_REVIEWED | 実測があっても独立ReviewとOwner Gateの承認待ち |
+| GATE_ACCEPTED | 承認済み科学契約、実測、独立Review、Owner正式Gateがそろったときのみ |
+
+### 9.1. Blockerから正式Gateへの順序
+
+1. SR03-R01 B1のformal estimand、SR03-R02 DRIVのconditional IV moment/射影を確定する。
+2. Frontdoor数値、FCI/LPCMCIの独立Graph oracle、DiD/Event/ITS/RDD/SCM/SDIDのMethod別推論を確定する。
+3. SR-01〜12を再審査し、68 Scope行・A0例外・NCE/NCO/RVとProduct Gap帰属をOwnerが項目別承認する。
+4. 03/04/05の仮RequirementとPLAN:G01〜G10を正式FR/NFR/AR・ADR・Gate07責務へ結合する。
+5. Reference/AC/Environment/lock・RNG/seed/n/R/K/計算予算・候補SHAを事前freezeし、承認されたCoding工程で実装/Science試験を行う。
+6. 正例・負例・旧v2回帰・推論・Graph/再現性を独立レビューし、正式Gate07を判定する。
+
+**現時点:** TRACE_DRAFT / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。今回変更するのはこのworking_notesのみ。コード、要件正本、Gate、Notion、Work Package、依存lockは変更しない。
