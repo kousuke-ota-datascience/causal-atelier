@@ -34,6 +34,8 @@
 
 14. **SR03-D03-4／C1（2026-11-15の明示判断）:** **Phase3初期はA（Wald比）＋B0＋B1（2SLS）のまま、条件付きIV向けDR／効率的LATE推定器Cを追加しない。** Cは**条件付きIVと処置効果の異質性が重要で、B1では必要なEstimandを扱えない具体的ユースケースが判明した場合**に後続の科学的方法審議を起動する。責任主体として**Scientific Methods owner／スコープ承認者の明示義務**を採用し、後続審議の成果物に**識別対象・仮定・推定方式・推論方法・科学Benchmarkおよび根拠付き採否判断**を要求する。**これはCのMethod採用・実装承認ではない。** 担当者の実名／固有識別子、C専用Issue／期限は未指定・未作成。**本書はオーナー判断を管理し、Triggerの科学的意味・比較・詳細要件は[残余D03判断](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)へ責務を委譲**する。正式なFR/NFR/AR、Science/Gate、ENH-E11全体構想の承認は未完了。
 
+15. **SR03-D04-1〜5（2026-11-15、Human owner明示判断）:** 「5案をそのまま採用する」の指示により、**D04-1＝V2（既存`causal-analysis-spec/2`・Product/v2 CLI/Resultを保護し、新E11新規Methodは別の版付きlocal契約に分岐）、D04-2＝E2（Ariadne normalized IdentificationResult→Method別EstimatorSpecによるfail-closed識別・Estimand・適格性審査）、D04-3＝M2（旧v2 Manifestの新Methodへの暗黙昇格を禁止、version dispatchとQuestion/Design/Graph/Dataset／upstream hash一致を保証）、D04-4＝G2-Bridge（採用済みG2の型付き信頼集合をEffectResultの独立推論軸で損失なく扱い、B0/B1正常ARのEMPTYを禁止）、D04-5＝R2（旧Product/v2のREQUIRES_REVIEW＋override契約を回帰保護し、新E11数値経路の未識別・要レビュー自動通過を禁止）を一括採用**する。技術的意味・代替案・Method境界・fixture・非採用理由は[独立D04審議記録](../working_notes/20261115_sr03_d04_identification_estimator_contract_options.md)に一元化。**個別方針の採用のみであり、正式な新schema/enum/version番号、migration実装、Science/Gate 07、D05/D06、全体構想、ADR、Gate freeze、Codingは未承認／未実施。**
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
