@@ -30,7 +30,7 @@ CPDAG/PAGには方向未確定や潜在交絡可能性があり、**Graphが未�
 - IDA等が返す「可能な効果の候補集合」と、一般の非パラメトリックな部分識別集合、及び信頼集合は無条件に同一ではない。
 - Graph・識別式を構成できたことは、識別仮定が現実に正しいことや点推定器が適切であることの証明ではない。
 
-**方法論の出典:** Perković et al., *Complete Generalized Adjustment Criterion*（CPDAG/PAGでの一般化調整条件）；Maathuis et al., *Estimating High-Dimensional Intervention Effects from Observational Data*（IDA）。原著による理論的存在は、Ariadneに当該Methodが実装・検証済みである証拠ではない。対象Graphクラス・介入の定義・潜在交絡と選択の条件をMethodごとに追跡する。
+**方法論の一次資料:** [Perković et al. (2015), *A Complete Generalized Adjustment Criterion*](https://proceedings.mlr.press/r13/perkovic15a.html) および [Perković et al. (2018), *Complete Graphical Characterization and Construction of Adjustment Sets in Markov Equivalence Classes of Ancestral Graphs*](https://jmlr.org/papers/v18/16-319.html) はDAG/MAG/CPDAG/PAGの共変量調整の必要十分条件を扱う。[Maathuis, Kalisch & Bühlmann (2009), *Estimating High-Dimensional Intervention Effects from Observational Data*](https://doi.org/10.1214/09-AOS685) は同値類のDAGごとの介入効果の候補集合（IDA）を扱う。**一般化調整で識別できないことは他のあらゆる方法による識別不能の証明ではない**し、候補集合は無条件に一般の部分識別集合・CIに等しくない。原著による理論的存在は、Ariadneに当該Methodが実装・検証済みである証拠ではない。対象Graphクラス・介入の定義・潜在交絡と選択の条件をMethodごとに追跡する。
 
 ## 2. D06-1：未確定Graphからの推定許可 — B採用
 
