@@ -1,8 +1,8 @@
 # ENH-E11 — SR03-D04 識別結果と推定器の接続・v2互換性：技術審議記録
 
-**文書区分:** working_notes／未承認の技術比較・推奨。正式FR/NFR/AR、Architecture Review、Gate 06/07、コーディング許可ではない。  
+**文書区分:** working_notes／技術比較・科学的根拠・個別オーナー採用の詳細記録。正式FR/NFR/AR、Architecture Review、Gate 06/07、コーディング許可ではない。  
 **記録日:** 2026-11-15（JST）  
-**判断状態:** SR03-D04_TECHNICAL_RECOMMENDATION_PREPARED / OWNER_DECISION_PENDING / SCIENCE_NOT_RUN  
+**判断状態:** SR03-D04_ALL_FIVE_OWNER_ACCEPTED / FORMAL_SCHEMA_PENDING / SCIENCE_NOT_RUN  
 **照合したHEAD（作成前）:** prototype/ariadne_mvp = 3c3e69148d0549eb9c2f693179fc4b4608359007  
 **既採用前提:** D01 IV_HETEROGENEOUS_EFFECT独立family、D02 Frontdoor数値推定、D03-1 S2（B0+B1）、D03-2 I2（AR反転）、D03-3 G2改訂（型付き集合）、D03-4 C1（推定器Cは後続審議）。全体構想の承認状態はPENDING_FULL_CONCEPT_APPROVAL。
 
@@ -121,9 +121,9 @@ V2の命名例はlocal analysis spec = causal-analysis-spec/3、config_version =
 
 これらは**試験設計候補**であり実測成功・科学Benchmark PASSではない。既知真値fixture、coverage、数値閾値、seed/replicateはSR-04/Gate 07の独立審査で固定する。
 
-## 7. Human ownerへ提示するD04判断票
+## 7. Human ownerのD04採用判断（2026-11-15）
 
-| 判断ID | 推奨候補 | 採用時に固定する方針 | 別審査へ残す事項 |
+| 判断ID | オーナー採用案 | 採用した方針 | 別審査へ残す事項 |
 |---|---|---|---|
 | D04-1 | **V2** | v2のProduct/CLI/Resultを保護し、新E11は版付きlocal input/result/manifestの並行経路 | 新版番号・schema fieldの正式定義とMigration実装 |
 | D04-2 | **E2** | Ariadne normalized IdentificationResult＋Method別EstimatorSpecでfail-closedし、DoWhy内部オブジェクトやIDENTIFIED単独では実行許可しない | Method固有の条件・識別式と数値Science Bench |
@@ -131,7 +131,7 @@ V2の命名例はlocal analysis spec = causal-analysis-spec/3、config_version =
 | D04-4 | **G2-Bridge** | 採用済みG2の型付き信頼集合を新EffectResultの独立uncertainty軸として保持。B0/B1正常ARのEMPTYは禁止 | 正式schema enum、AR数値反転・coverage |
 | D04-5 | **R2** | 既存Product/v2のREQUIRES_REVIEW＋override契約と新E11の自動実行禁止を区別し、旧経路回帰を必須にする | Product契約自体を変更すべきかの別判断、D06のowner refix/partial ID |
 
-**現時点の判断:** 上記はすべて**技術推奨のみ**。Human ownerの採否は未取得。D04のオーナー判断を02へ書き込まず、03/04/05・ADR・Gate 06/07の正式承認状態も変更しない。
+**Human owner採用（2026-11-15 JST）:** 「5案をそのまま採用する」との明示指示により、**D04-1 V2／D04-2 E2／D04-3 M2／D04-4 G2-Bridge／D04-5 R2をすべて個別採用**する。詳細な比較・非採用理由・科学的制約は本書を一元的な管理先とし、[02構想承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)は採用事実を管理する。採用対象は方針契約であり、表中「別審査へ残す事項」、新しい具体的version名・正式schema/enum/field、canonicalization、Method適格性/科学Benchmark、legacy migration実装、v2/Product回帰の実証、D05/D06、Architecture Review、Gate 06/07、全体構想・Codingを承認した意味ではない。
 
 ## 8. 依拠資料と次工程
 
@@ -143,4 +143,4 @@ V2の命名例はlocal analysis spec = causal-analysis-spec/3、config_version =
 - [DoWhy公式API](https://www.pywhy.org/dowhy/main/dowhy.html)：identify_effectは複数の識別経路を探索し、target estimandは別途解釈が必要。
 - [EconML公式IV methods](https://www.pywhy.org/EconML/spec/estimation_iv.html)：IV系異質効果はMethod/仮定ごとに解釈する。
 
-**次の順番:** （1）Human ownerにD04-1〜5を個別提示 →（2）採用された判断のみ02とSR-03総合メモへ反映 →（3）D05のCATE/DRIV CI推論審議 →（4）D06のGraph不確定性 →（5）SR-01〜12の是正・00_04再審査／承認。Architecture Review、正本Snapshot、Gate freezeが終わるまでCoding許可を出さない。
+**次の順番:** （1）D04-1〜5の採用を02・SR-03総合メモへ反映し、03/04/05のDraftと整合 →（2）D05のCATE/DRIV CI推論審議 →（3）D06のGraph不確定性 →（4）SR-01〜12の是正・00_04再審査／承認。Architecture Review、正本Snapshot、Gate freezeが終わるまでCoding許可を出さない。
