@@ -41,6 +41,18 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 7. **弱IV推論境界（D03-2 I2を2026-11-05に個別採用、詳細実装未承認）:** B0/B1の単一excluded Z・単一内生A、独立観測・異分散頑健漸近推論の範囲でAR検定反転を弱IV頑健な初期基準信頼集合推論とする（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。First-stage効果・SE・Instrument support・IV推定全体の共分散、通常Wald CIの制約を記録する。ARはIVの妥当性を証明せずcluster/HAC等へ無検証で拡張しない。**D03-3 G2改訂（2026-11-06）で有界・非有界・非連結・全実数の型付き集合／B0・B1での正常EMPTY禁止の意味契約を採用**（[詳細](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。**正式G2 schema・D04 migration・実装アルゴリズム・coverage・Gateは未承認**であり、非有界集合を有限CIへ捏造しない。
 6. CLIはResult間のhash一致、effective backend version、seed/split、optional dependency欠落を検査する。Product DBに新規統合せず、local manifestでトレースする。
 
+### 2.4. SR03-D04：新E11の識別→推定接続と旧v2共存（個別方針採用）
+
+**Human owner方針採用（2026-11-15）:** D04-1 **V2**、D04-2 **E2**、D04-3 **M2**、D04-4 **G2-Bridge**、D04-5 **R2**の5案をすべて採用。詳細選択肢比較・科学的制約と候補fixtureは[独立D04審議記録](../working_notes/20261115_sr03_d04_identification_estimator_contract_options.md)が一元管理する。以下は設計責務・差分の要約であり、本書全体と正式schema/ADR/Gateの承認ではない。
+
+1. **V2／version dispatch:** 現行`causal-analysis-spec/2`と既存Product/v2 CLI・Resultの入力/readerを変えず、新E11 Methodは独立の版付きlocal spec・Result/Manifestを使う。新version文字列・API/enumはArchitecture Reviewで確定する。
+2. **E2／scientific authority:** AriadneのDomainがCausalQuestion／Design／target estimandとMethod別の科学的適格性を定義し、DoWhy等の結果をportable IdentificationResultへ正規化する。EstimatorSpecで識別状態・Estimand・Design・Instrument/Mediator・必要仮定・データ条件を再照合し、条件不成立なら新Methodの数値推定へ通さない。DoWhy/EconMLの内部オブジェクト・ラベルをそのまま科学的Resultの権威としない。
+3. **M2／lineage:** Question/Design/Graph/Dataset/上流Manifestの識別子・hashとEstimatorSpecの適合を検証し、旧v2 Manifestを新Methodへ暗黙昇格させない。明示的な移行が必要な場合も、欠落した識別証拠を捏造せず再識別またはレビューを要求する。canonicalizationとatomic write/relative path/privacyはSR-10/ADRの未決に残す。
+4. **G2-Bridge／inference:** EffectResultは点推定・uncertainty availability・科学的statusを独立軸で保持し、D03採用のAR型付き信頼集合（bounded/unbounded/disconnected/ALL_REAL）を損失なく持つ。正常なB0/B1のAR信頼集合をEMPTYと記録しない。正式JSON Schemaと数値反転・coverageは未決。
+5. **R2／互換ゲート:** 既存Product/v2のREQUIRES_REVIEW＋overrideをD04だけを理由に改変しない。新E11の未識別・要レビュー・部分識別は自動的な点推定許可を得ない。将来のGraph再固定や別識別証拠の許可範囲はD06へ、旧経路の回帰実証は独立テストへ引き渡す。
+
+**未承認・未実証:** 新版番号、詳細schema/enum、Method別数値受入、旧reader migration・実測回帰、D05/D06、Architecture Review、Gate 06/07、全体Scope/Coding。既存Product API/Worker/DBへの新規統合は今回の対象外。
+
 ## 3. 所有権（未承認の案）
 
 - Domainが外部ライブラリ非依存のQuestion/Design/Estimand/invariantを定義する。
