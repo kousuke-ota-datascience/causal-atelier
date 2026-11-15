@@ -60,7 +60,7 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | DGP-016 | R~Unif[-1,1], Z=1[R≥0]、型S=(always,complier,never)をRと独立にP=(.2,.5,.3)で生成、A(Z)=(1,Z,0)、Y(a)=m_S(R)+τ_S a+ε、τ_complier=3 | Fuzzy RD cutoff=0: treatment jump=.5、outcome jump=1.5、局所complier効果=3。各m_Sはcutoffで連続 |
 | DGP-017 | Donor series D2,D3の十分に異なる無介入時系列を生成、treated Y1(0)=.6D2+.4D3、介入後のみ+2 | 理想的SCM。正しいdonor weights=(.6,.4)、処置後効果=2。noiseless基準とnoise付き別variant |
 | DGP-018 | Unit×Time panel、Y_it(0)=α_i+λ_t+ℓ_i f_t+ε_it、treated unitsに共通介入後+2。pre periodとcontrol supportを設計 | SDIDの真の対象ATT=2。識別しやすさは因子support・pre-fit・重みのcalibration依存。DGP指定のみで推定器の一致を保証しない |
-| DGP-019 | U~N、A~Bern(logit^-1(U))、Y=2A+γU+εY、観測NCE Z=U+εZ、NCO W=U+εW。ZはYに直接作用せず、AはWに作用しない | γ>0でUはA-Y未測定交絡。NCEのY~A+Z条件付き関連は候補診断。NCOのW~A関連は**γ=0でも生じる**ため、A-Y交絡の特異的証拠ではない |
+| DGP-019 | U~N、A~Bern(logit^-1(U))、Y=2A+γU+εY、観測NCE Z=U+εZ、NCO W=U+εW。ZはYに直接作用せず、AはWに作用しない | γ>0でUはA-Y未測定交絡。NCEのY~A+Z条件付き関連は候補診断。NCE帰無のγ=0と、NCO帰無のA~Bern(.5)独立U（Y=2A+γU+εY、W=U+εW）を**別variant**として指定する。元のA~Bern(logit^-1(U))ではNCOのW~A関連が**γ=0でも生じる**ため、A-Y交絡の特異的証拠ではない |
 | DGP-020 | 古典OLS係数と残差df、partial R² 2軸を独立referenceへ与える。例: se_classic=.2, df=100, R²_AU=.1, R²_YU=.15 | OVB感度の絶対bias例: .2 sqrt[100×.1×.15/(1-.1)] ≈.25819889。R²軸・df・SE定義はCinelli–Hazlett方式と照合。RVは独立実装/reference待ち |
 | DGP-021 | DAG grammar: fork X→A, X→Y, A→Y／mediator A→M→Y／collider A→K←Yの各独立Graph仕様 | Backdoor調整集合の可否／不正なconditioningをgraph-theoretic oracleで判定。Graph単位で混ぜず別variant |
 | DGP-022 | DGP-001の介入効果を0へ変更。placebo A*は仕様に従う独立再割付か事前指定shuffle | null効果=0。Placebo/Random CC/Subset/Bootstrapについて対象と再推定分布を別定義 |
@@ -121,7 +121,7 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | NEG-023 | DGP-014〜016で同時介入、cutoff manipulation、mass points、弱いRD first-stage、悪いbandwidth | Design診断＋局所効果・SEのstress。density-test無棄却を完全保証としない |
 | NEG-024 | DGP-017/018でpost donor汚染、poor prefit、donor support不足、unit/time weight混同 | SCM/SDID対象のbias、pre-fit/ESS、placebo診断、targetとCIの誤解釈防止 |
 | NEG-025 | DGP-024で有限grid切断、AR-Q2を単一区間化、AR-Q4をEMPTY化、非PSD共分散 | Lossless confidence set/typed failure。Wald通常CIを弱IV頑健と表示しない |
-| NEG-026 | DGP-019のγ=0だがU→A,Wは維持、又はNCE/NCO未指定 | NCO関連≠A-Y交絡の論理的証明。未指定のopt-in診断を自動実行しない |
+| NEG-026 | DGP-019のγ=0だがU→A,Wは維持（NCOの偽警告stress）、又はNCE/NCO未指定 | NCO関連≠A-Y交絡の論理的証明。NCO null-size評価はAがUと独立の別variantで行い、未指定のopt-in診断を自動実行しない |
 | NEG-027 | 未承認Identification、Question/Graph/Design/Dataset hash mismatch、旧v2 override | 新E11はREJECT_TYPED。旧Product/v2の独立回帰は現行挙動を保護 |
 | NEG-028 | GraphVersion再固定時に親を改変、編集根拠なし、又は旧PAG矢印を欠損 | REJECT_TYPED／レビュー。元Graphを不変保存し、新識別を要求 |
 
@@ -150,8 +150,8 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | P1-M15 Bootstrap refutation | DGP-001,002 / repeat-sample reference | NEG-016 | iid前提／resampling validity／run repeatability |
 | P1-M16 Adjustment set sensitivity | DGP-021,002 / graph-valid sets | NEG-002 | 候補集合は有効Graph上でのみ感度比較 |
 | P1-M17 PS clipping sensitivity | DGP-002,023 / known PS | NEG-010,018 | clipping/trim/target変化、ESSとbias |
-| P1-M18 NCE null diagnostic **scope pending** | DGP-019 / Y~A+Z conditional null | NEG-019,026 | 対照妥当性とnullのsize/powerを別判定 |
-| P1-M19 NCO null diagnostic **scope pending** | DGP-019 / W~A association | NEG-019,026 | A→W不存在、nullの意味、特異性欠如を明示 |
+| P1-M18 NCE null diagnostic **scope pending** | DGP-019 / γ=0帰無とγ>0対立のY~A+Z | NEG-019,026 | 対照妥当性とnullのsize/powerを別判定 |
+| P1-M19 NCO null diagnostic **scope pending** | DGP-019 / NCO帰無の無作為割付variantとW~A対立variant | NEG-019,026 | Null下sizeとU→A,W下power、A→W不存在、特異性欠如を別々に確認 |
 | P1-M20 partial R²/RV **scope pending** | DGP-020 / OVB closed-form | NEG-020 | partial-R² grid/parity、classic SEのみ |
 
 ### 3.2. Phase2（8 Method）
