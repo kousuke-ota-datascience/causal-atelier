@@ -2,7 +2,7 @@
 
 **文書区分:** `working_notes`／独立した技術比較・科学的制約・個別オーナー採用記録。正式なFR/NFR/AR、Architecture Review、Gate06/07、Coding許可ではない。  
 **判断日:** 2026-11-15（JST）  
-**判断状態:** `SR03-D05_BBBBB_OWNER_ACCEPTED / METHOD_SPECIFIC_SCIENCE_PENDING / FORMAL_SCHEMA_PENDING`  
+**判断状態:** `SR03-D05_BBBBB_OWNER_ACCEPTED / SCIENCE_NOT_RUN / FORMAL_SCHEMA_PENDING / GATE_NOT_FROZEN / FULL_CONCEPT_PENDING`  
 **基準:** `prototype/ariadne_mvp`、審議着手時のHEAD `1e8acfc5524bb67c3c8d50b36a8ba4744c3dd511`（科学受入用固定SHAではない）  
 **関連Scope:** 00_04 P2-01〜P2-17、とくにP2-02〜09、P2-10〜16；E11-REQ-P2／E11-REQ-SR03；Issue #18／#22／#24；SR-03、SR-04／SR-07。
 
@@ -42,7 +42,7 @@ Phase2に維持する**非IV CATEの7手法**（LinearDML、CausalForestDML、DR
 
 - 非IVの二値Treatment例：`CATE(x) = E[Y(1)-Y(0) | X=x]`。対象母集団、T0/T1、X(effect modifier)とW(confounder)を区別する。単なる予測モデルの`f_1(x)-f_0(x)`は識別仮定なしに因果効果とはならない。
 - DRIV：`IV_HETEROGENEOUS_EFFECT`というfamilyのみでは十分ではない。`theta_IV(x)`を、選択したmethodにおける条件付きモーメント・処置コントラスト・Instrument/Outcome/Treatmentの定義・対象集団と識別仮定によって具体化してから受け入れる。連続T/Zでのprobeを二値Z/Aのcomplier LATEやCLATEと黙って同一視しない。
-- Methodの提供可否はD04の`IdentificationResult → EstimatorSpec`適格性ゲートで検査。独立familiyを維持するD01採用の再確認であり、DRIVの具体的推定対象やMethodとしての科学受入まで確定したわけではない。
+- Methodの提供可否はD04の`IdentificationResult → EstimatorSpec`適格性ゲートで検査。独立familyを維持するD01採用の再確認であり、DRIVの具体的推定対象やMethodとしての科学受入まで確定したわけではない。
 
 ## 3. D05-2：CI必須範囲 — B案採用
 
