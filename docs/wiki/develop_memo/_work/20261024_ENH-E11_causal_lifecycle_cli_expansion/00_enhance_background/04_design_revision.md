@@ -51,7 +51,19 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 4. **G2-Bridge／inference:** EffectResultは点推定・uncertainty availability・科学的statusを独立軸で保持し、D03採用のAR型付き信頼集合（bounded/unbounded/disconnected/ALL_REAL）を損失なく持つ。正常なB0/B1のAR信頼集合をEMPTYと記録しない。正式JSON Schemaと数値反転・coverageは未決。
 5. **R2／互換ゲート:** 既存Product/v2のREQUIRES_REVIEW＋overrideをD04だけを理由に改変しない。新E11の未識別・要レビュー・部分識別は自動的な点推定許可を得ない。将来のGraph再固定や別識別証拠の許可範囲はD06へ、旧経路の回帰実証は独立テストへ引き渡す。
 
-**未承認・未実証:** 新版番号、詳細schema/enum、Method別数値受入、旧reader migration・実測回帰、D05/D06、Architecture Review、Gate 06/07、全体Scope/Coding。既存Product API/Worker/DBへの新規統合は今回の対象外。
+**未承認・未実証:** 新版番号、詳細schema/enum、Method別数値受入、旧reader migration・実測回帰、D05の具体的Method inference/科学実証とD06、Architecture Review、Gate 06/07、全体Scope/Coding。既存Product API/Worker/DBへの新規統合は今回の対象外。
+
+### 2.5. SR03-D05：CATE/DRIV推論・CI契約のMethod別設計責務（個別方針採用）
+
+**Human owner採用（2026-11-15）:** D05-1〜D05-5のB/B/B/B/Bをすべて個別採用。詳細な選択肢比較・科学的限界・方法候補・負例は[独立D05科学判断](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)が一元管理し、本節は設計上の責務を要約する。**正式schema/Method inference設定・coverage・Gate・全体構想は未承認**。
+
+1. **D05-1／B：Estimand contract:** `EstimatorSpec`は非IV CATEの7 Method（LinearDML、CausalForestDML、DRLearner、ForestDRLearner、S/T/X-Learner）とDRIVの`IV_HETEROGENEOUS_EFFECT`を分離。共通Result envelopeを使う場合も、target population、X/W、instrument/contrast、method-specific moment・assumptionsを混同しない。DRIVの具体的`theta_IV(x)`はSR-04のMethod別検証・D01の未解決項目に残す。
+2. **D05-2／B：Analysis mode:** 新E11の`EXPLORATORY`では科学的に適格な点推定のみの結果保存を許す（推論主張は不可）。`CONFIRMATORY`は事前指定の目的に沿う妥当なCI等の推論証拠を必須とし、欠落・未校正のfinite区間をScience PASSとしない。
+3. **D05-3／B：Inference registry:** Method/構成/Backend version別に使用推論方式・final model・nuisance/fold/seed・Bootstrap parameters等を明示する。Generic Bootstrapの全手法一律適用も、Native defaultの無条件有効性も禁止。方法候補と正式採用を区別する。
+4. **D05-4／B：EffectResult:** 上流識別状態、点推定可用性、CI・uncertainty可用性、科学的受入を別軸化し、未要求・利用不能・計算失敗・科学的不適格のreasonを区別。CIが取得不能ならnullを保存し、無根拠な区間・SEを作らない。D04のG2型付きconfidence setと衝突させない。
+5. **D05-5／B：Science Acceptance:** Method/estimandに適合した既知真値、support/overlap、bias/RMSE、反復simulationのpointwise coverageとMonte Carlo誤差、負例（CI unsupported、nuisance misspecification、DRIV weak/invalid IV等）を独立測定する。点ごとの区間をsimultaneous bandと誤称しない。CI level、Bootstrap反復、coverage許容差、seed／DGPはSR-04/Gate07で事前固定。
+
+**試験引渡し:** [D05技術記録 §8](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)のD05-T01〜T13をGate候補として保持するが、未実行・未freeze。旧v2 Product/CLIの回帰、8 Methodの提供範囲、個票CATEのprivacy、SR03-D06を保留せず明示追跡する。
 
 ## 3. 所有権（未承認の案）
 
