@@ -51,7 +51,7 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 4. **G2-Bridge／inference:** EffectResultは点推定・uncertainty availability・科学的statusを独立軸で保持し、D03採用のAR型付き信頼集合（bounded/unbounded/disconnected/ALL_REAL）を損失なく持つ。正常なB0/B1のAR信頼集合をEMPTYと記録しない。正式JSON Schemaと数値反転・coverageは未決。
 5. **R2／互換ゲート:** 既存Product/v2のREQUIRES_REVIEW＋overrideをD04だけを理由に改変しない。新E11の未識別・要レビュー・部分識別は自動的な点推定許可を得ない。将来のGraph再固定や別識別証拠の許可範囲はD06へ、旧経路の回帰実証は独立テストへ引き渡す。
 
-**未承認・未実証:** 新版番号、詳細schema/enum、Method別数値受入、旧reader migration・実測回帰、D05の具体的Method inference/科学実証とD06、Architecture Review、Gate 06/07、全体Scope/Coding。既存Product API/Worker/DBへの新規統合は今回の対象外。
+**未承認・未実証:** 新版番号、詳細schema/enum、Method別数値受入、旧reader migration・実測回帰、D05の具体的Method inference/科学実証・D06のGraph再固定/別証明の具体実装・検証、Architecture Review、Gate 06/07、全体Scope/Coding。既存Product API/Worker/DBへの新規統合は今回の対象外。
 
 ### 2.5. SR03-D05：CATE/DRIV推論・CI契約のMethod別設計責務（個別方針採用）
 
@@ -64,6 +64,19 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 5. **D05-5／B：Science Acceptance:** Method/estimandに適合した既知真値、support/overlap、bias/RMSE、反復simulationのpointwise coverageとMonte Carlo誤差、負例（CI unsupported、nuisance misspecification、DRIV weak/invalid IV等）を独立測定する。点ごとの区間をsimultaneous bandと誤称しない。CI level、Bootstrap反復、coverage許容差、seed／DGPはSR-04/Gate07で事前固定。
 
 **試験引渡し:** [D05技術記録 §8](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)のD05-T01〜T13をGate候補として保持するが、未実行・未freeze。旧v2 Product/CLIの回帰、8 Methodの提供範囲、個票CATEのprivacy、SR03-D06を保留せず明示追跡する。
+
+### 2.6. SR03-D06：Graph同値類・Graph再固定・識別証明の境界（個別方針採用）
+
+**Human owner採用（2026-11-15）:** D06-1〜6＝**B/B/B/B/B/A**をすべて採用。比較・非採用理由・科学的不変条件・テスト候補は[独立D06技術記録](../working_notes/20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)が一元管理する。以下はDraftの設計責務であり、正式schema/Method/Science/Gate/全体構想の承認ではない。
+
+1. **D06-1 B／未確定Graphの許可:** CPDAG/PAGのendpoint/不確定性を保持し、既存Nativeの`REQUIRES_REVIEW`を新E11点推定に自動通過させない。対象Estimandについて後続に認定済みの別識別証明がある場合のみ、その証明に基づく**新しいIdentificationResult**を発行し、D04 EstimatorSpec適格性とlineageを再判定する。元Graph/Resultのstatusを書き換えない。
+2. **D06-2 B／Proof boundary:** Theory/Method固有にEstimand・population/contrast、Graph/Design/Question hash、識別式/調整集合、仮定、Validation evidence・backend versionを保持する。成功フラグ・利用者の自己申告は識別証明の代替にならない。一般化識別の正式Method採否は将来審査。
+3. **D06-3 B／GraphVersion:** 元CPDAG/PAGを保持し、研究者が追加した方向仮定は新GraphVersionで`parent_graph_version_id`／`provenance_json`／`edit_rationale`／effective Graph hashを保管。FIXED＝編集固定、not `scientifically true`。PAGからDAGは潜在交絡不在等を仮定し得るため機械的等価変換とせず、元Graphとの整合・根拠を研究者レビューした後、新Graphで再識別する。
+4. **D06-4 B／Partial identification:** 適切な科学Methodが識別集合／境界を確定できた場合に専用Resultとして保持する将来の型方針を設ける。識別集合をpoint estimate／統計的CI／D03 AR confidence setに変換しない。**一般的な境界算出器、構成法・保存schemaは初期の追加実装対象外**。
+5. **D06-5 B／Override:** 新E11では根拠付きの緩和可能WARNだけoverride可能。未識別・要review・部分識別のpoint昇格、hash mismatch、unsupported estimator、Graph未確定の強制点推定は不可。現行Product/v2 REQUIRES_REVIEW+overrideをD04 R2により遡及変更しない。
+6. **D06-6 A／初期の追加範囲:** 新Graph保存→レビュー→研究者によるGraph再固定→新識別（既存の対応Method）を初期パスとし、**CPDAG/PAGの自動一般化識別・IDA/汎用集合効果・partial-ID統計推定器を初期に追加しない**。D06-1 Bの将来例外は方法/科学的受入/Scopeを別承認して初めて開く。
+
+**候補fixture:** [D06-T01〜T14](../working_notes/20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)。旧Graph不変性、未識別からの拒否、Graph再固定根拠、識別集合とCIの誤同一視、旧v2回帰、hash不整合、未対応Algorithm拒否を検証する。**未実行・未freeze**。Product/API/UI/Worker/DBの新規統合は非対象。
 
 ## 3. 所有権（未承認の案）
 
