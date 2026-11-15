@@ -15,6 +15,7 @@
 | E11-REQ-P1I；FR-042/046、AR-023 | optional DoWhy、Identificationの分離 | G02 | AC-03 Backdoor/Frontdoor/IVの識別・非識別 | #16 |
 | E11-REQ-P1R/P1S；FR-049/050 | Refutation/Sensitivityの方法別Result | G03 | AC-04 既知真値、seed再実行 | #16 |
 | E11-REQ-P1W；FR-047/048 | IPW/AIPWの推論、E9 Diagnosticsの再利用 | G03 | AC-05 Effect精度、coverage、overlap/balance/ESS | #19 |
+| E11-REQ-SR03（D04-1〜5） | 旧v2保護＋新local version dispatch、normalized IdentificationResult→Method別eligibility gate、hash整合、typed confidence_set、旧REQUIRES_REVIEW/override回帰保護。[D04独立記録](../working_notes/20261115_sr03_d04_identification_estimator_contract_options.md) | G02/G04/G08/G10の候補（未freeze） | D04-T01〜T12：識別→推定の正/負例、legacy read-back、hash mismatch拒否、集合round-trip（検証候補・未実行） | #16,#18,#22,#24 |
 | E11-REQ-P2 | CATE/HTE、Capability指定EconML | G04 | AC-06 異質効果の既知真値と互換性 | #18 |
 | E11-REQ-P2A | 個票Parquet、群別診断、privacy | G05 | AC-07 Artifact/support/calibration | #18、#24 |
 | E11-REQ-P3T | TemporalDesign、PCMCI系 | G06 | AC-08 既知Lag、GraphとCI仮定 | #20 |
@@ -28,7 +29,7 @@
 
 | 確認事項 | 判定 | 理由 |
 |---|---|---|
-| 要件案と設計案 | **PENDING** | 新FR/NFR/AR、local CLI schema、versioningが未承認 |
+| 要件案と設計案 | **PARTIAL/PENDING** | SR03-D04-1〜5の個別設計方針は2026-11-15オーナー採用済みで03/04 Draftにも反映。新FR/NFR/AR、具体的local CLI schema/version/enum、全体要件・Architecture ReviewとGateは未承認 |
 | 設計案とGate分割 | **PENDING** | Architecture ReviewがauthorityとGate境界を未確定 |
 | Gate間の依存 | **PENDING** | G01〜G10は草案であり06/07契約ではない |
 | Transition Debtの終了条件 | **PARTIAL/PENDING** | API/DBの将来境界は記載したが正式な承認なし |
