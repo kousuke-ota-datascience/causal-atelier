@@ -110,7 +110,7 @@ T02は効果サイズが弱ければ任意の適切な方法でも達成不能�
 |---|---|---|
 | AC-G01 | Graph serialization/readback | known ground-truth edge type、lag、circle/arrow/tail、GraphVersion hashのlossless保存 **100%**（AC-D02/05と同一） |
 | AC-G02 | CI-test null calibration | DGP指定のvalid nullでAC-T01を適用。serial dependence/conditional independenceの前提を別保持 |
-| AC-G03 | adjacency precision/recall、FPR、F1、SHD・lag recovery | **DGP・n/T・alpha・CI test・Graph oracleが承認された正例**に限る暫定候補：strong-signal DGPでreplicate平均のprecision/recallそれぞれ≥0.80、誤発見率FPR≤0.10 |
+| AC-G03 | adjacency precision/recall、FPR、F1、SHD・lag recovery | **DGP・n/T・alpha・CI test・Graph oracleが承認された正例**に限る暫定候補：strong-signal DGPでreplicate平均precision/recallの多重性補正済み下限が各≥0.80、FPRの上限が≤0.10。区間はreplicate単位の独立bootstrap等、方法を事前固定 |
 | AC-G04 | endpoint accuracy（PAG/CPDAG） | **Oracle強制端点のみ**で方向正解率を評価。未決のorientationの真DAG方向と一致させるHard Gateは禁止。Endpoint候補≥0.80は**Graph oracle導出後にのみ審査** |
 | AC-G05 | 複数edgeと時間seriesの依存 | edgeごとの数を独立repetitionとみなさず、DGP replicate単位で精度のMC intervalを作る。Graph metricの分母zero規則を固定 |
 | AC-G06 | 未知PAG oracle | DGP-011等で独立PAG導出がない場合、scientific orientation判定は**BLOCKED**。契約上のendpoint忠実性のみ評価可能 |
@@ -176,6 +176,10 @@ Methodが41行あっても「41個」だけが統計判定数ではない。独�
 
 ### 2.4. 判定状態（形式enumは未承認）
 
+**二値/割合閾値の三値判定（事前登録）:** coverage等の下側目標 p≥p_min に対して、Wilson L≥p_minならPASS候補、Wilson U<p_minならFAIL、それ以外はINCONCLUSIVE。failure/size等の上側目標 p≤p_max には、Wilson U≤p_maxならPASS候補、Wilson L>p_maxならFAIL、それ以外はINCONCLUSIVE。境界の数値丸め、K、片側/両側、比較の厳密な等号は事前定義する。
+
+**連続量の三値判定:** Bias上限δでは U_bias=|bias_hat|+z_K MCSE_bias≤δならPASS候補、L_bias=max(0,|bias_hat|−z_K MCSE_bias)>δならFAIL、その他INCONCLUSIVE。RMSE比やGraph accuracyに対しては、replicate単位の適切なsimultaneous confidence boundを事前指定し、同様に区間の全体が許容域内/外にあるかを判定する。各replicateのedge/固定xを擬似独立標本にしない。
+
 | 状態 | 条件 | Gate扱い |
 |---|---|---|
 | PASS_CANDIDATE | contractを満たし、独立Reference+pre-frozen全mandatory数値ACを満たす | ReviewerとOwnerのScience/Gate承認までは正式PASSではない |
@@ -240,7 +244,7 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 | P3-M06 | DGP-014 / REF-Q02 | D03,P01,P03,I01,I02,Q02 | ITS level=2/slope=.1、HAC/GLS CI Pending |
 | P3-M07 | DGP-015 / REF-Q03 | D03,P01,P03,I01,I02,Q03 | Sharp RD cutoff local effect=3、bandwidth/RBC CI Pending |
 | P3-M08 | DGP-016 / REF-Q03,I03 | D03,P01,P03,I01,I02,Q03 | Fuzzy RD cutoff local complier LATE=3、weak local IV推論別途 |
-| P3-M09 | DGP-006 / REF-I03,E07,U01 | D03,P01,P03,P05,A01,A05 | Wald ratioとcomplier LATE。通常ratio CIをweak-IV robustと誤称しない |
+| P3-M09 | DGP-006 / REF-I03,E07 | D03,P01,P03,P05,D07 | Wald ratioとcomplier LATE。B0/B1のAR集合をWald単独Methodに無断要求しない |
 | P3-M10 | DGP-006,024 / REF-E07,U01 | D03,P01,P03,P05,A01,A02,A03,A04,A05,I01,I02 | B0 Wald=2SLS sample parity、G2集合、AR coverage |
 | P3-M11 | DGP-007,024 / REF-E08,U01 | D03,P01,P03,P05,A01,A02,A03,A04,A05,I01,I02 | B1 linear-IV structural coefficient、formal estimand/HC Config Pending |
 | P3-M12 | DGP-017 / REF-Q04 | D03,P01,P03,Q04 | noiseless donor weights、post effect=2、noise variant別 |
