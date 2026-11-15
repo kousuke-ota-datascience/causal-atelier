@@ -197,7 +197,9 @@
 | `SR03-D03` | **Wald比＋2SLS（2026-11-01）、S2＝B0＋B1とI2＝AR反転（2026-11-05）、G2改訂＝型付き信頼集合意味（2026-11-06）、C1＝後続科学審議管理（2026-11-15）を個別採用済み**（[詳細](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。C推定器はPhase3初期非採用 | **D03-1〜4の方針判断は完了**。C自身のMethod採否、担当者割当、正式G2 schema/D04互換、AR実装・coverage、Gateは未承認／未実施 |
 | `SR03-D04` | **2026-11-15 Human ownerがD04-1 V2／D04-2 E2／D04-3 M2／D04-4 G2-Bridge／D04-5 R2をすべて個別採用**。[独立D04審議](20261115_sr03_d04_identification_estimator_contract_options.md)が比較・不変条件・詳細fixtureを管理。v2保護＋新CLI版付き契約、normalized IdentificationResult→Method別fail-closed eligibility、lineage/hash照合、typed confidence_set、旧Product/v2回帰保護の方針を確定 | **D04の方針採用完了**。正式schema/enum/version、migration実装、Product/v2回帰の実証、Method別科学Bench、D05/D06、Architecture Review/Gateは未承認・未実施 |
 | `SR03-D05` | **2026-11-15 Human ownerがD05-1〜5のB/B/B/B/Bをすべて個別採用**。非IV CATE7 MethodとDRIVを別Estimand/推論契約へ分離、Exploratory点推定のみ許容／Confirmatoryに妥当なCI等の推論証拠を要求、Method別Inference方式、point/uncertainty/science acceptanceの分離、Known-truth・pointwise coverage・負例の独立科学検証を方針採用。A/B/C比較・非採用理由・Method固有の制約は[独立D05科学記録](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)へ一元化 | **D05の5方針判断は完了**。Method別具体InferenceConfig、DRIVのtheta_IV(x)と識別モーメント、正式schema/enum、定量coverage閾値、科学Benchmark/Gate07は未承認・未実行 |
-| \`SR03-D06\` | PAG/CPDAGは保留し、別の識別証拠がない場合数値推定を禁止 | \`PARTIALLY_IDENTIFIED\`・Graph refixの将来受入範囲とowner override |
+| `SR03-D06` | **2026-11-15 Human ownerがD06-1〜6のB/B/B/B/B/Aをすべて個別採用**。CPDAG/PAGを自動DAG化せず、別の検証済み識別根拠がある場合の将来例外、Method固有の検証可能なProof、新GraphVersion/科学的根拠/再識別、部分識別集合の将来Result、緩和可能な警告のみoverride、初期実装はGraph保持・review・Graph再固定・再識別に限定を[独立D06判断](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)へ記録 | **D06の6方針判断完了**。一般化識別器・部分識別推定器は初期非採用。証明Methodの採用・実装、Graph/Result正式schema、科学検証、Gate、全体承認は未実施 |
+
+**個別方針判断の進捗（2026-11-15）:** D01〜D06のオーナー方針採用は完了。これをもってSR-03のMethod-specific scientific acceptance、正式FR/NFR/AR、schema/version、Architecture Review、Gate06/07、構想全体の承認や実装許可に格上げしない。
 
 **本メモの判断の性質:** 科学的な互換性・禁止変換はレビュー上の**推奨不変条件**。個々のMethodの採否、FR/NFR/AR正本、Result schema、CLI config version、GateとWork Packageの**オーナー承認は別**。SR-03は\`DESIGN_PROPOSAL_PREPARED\`であり\`APPROVED\`でも\`SCIENCE_PASS\`でもない。
 
