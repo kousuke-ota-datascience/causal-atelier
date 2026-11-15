@@ -101,7 +101,7 @@ DGP-005では A~Bern(logit⁻¹(U)), M=1.5A+εM, Y=2M+U+εY、UはAとYの共通
 
 1. DGP-021の**真のDAG**を保持し、潜在共通原因のあるDGP-011では観測変数への潜在射影MAGとその**Markov等価類PAG**を別のgraph truthとして導出する。Faithfulness/CI-test/powerを独立に審査。
 2. **DAGの矢印とPAGのarrowhead/tail/circleは同一の正解ではない。** 観測分布から一意に方向が定まらない場合、真の生成DAGが既知でも当該向きを強制的に正解orientとして採用しない。
-3. 小Graphの手計算・m-separation/CI表・潜在射影・Markov同値classの独立列挙を正本候補とする。FCI/LCPCMCI実装結果を自身のGraph oracleにしない。DGP-011は現状「潜在射影/PAG endpoint導出待ち」であり、方向AccuracyのScience PASSを禁止。
+3. 小Graphの手計算・m-separation/CI表・潜在射影・Markov同値classの独立列挙を正本候補とする。FCI/LPCMCI実装結果を自身のGraph oracleにしない。DGP-011は現状「潜在射影/PAG endpoint導出待ち」であり、方向AccuracyのScience PASSを禁止。
 4. Negative: circle等のendpoint・unoriented関係をDAGへ変換、GraphVersion/refixed parentの消失、未解決Graph→数値推定の自動許可を拒否する。
 
 ### 3.2. 時系列Graph PCMCI/PCMCI+/LPCMCI
@@ -178,7 +178,7 @@ DGP-024のsample moments \`dY,dA,vYY,vYA,vAA\` を固定した二次不等式：
 
 \`u_Y = M_F Y\`, \`u_A = M_F A\`, \`z̃=M_W Z\`、\`S_Y(b)=Σ_i z̃_i(Y_i-bA_i)\`、\`V_Y(b)=Σ_i z̃_i²(u_{Y,i}-b u_{A,i})²\`。
 
-\`AR_B1(b)=S_Y(b)²/V_Y(b)\`、\`C_α={b:S_Y(b)²−q V_Y(b)≤0}\`（V_Y(b)>0の領域）。**分子・分母の双方がbの二次多項式**なので、全実数に対する二次不等式の解析で集合を再構成できる。full OLS sandwichで算出したZ coefficient Waldの平方と同じsample値になることを別系統でcross-checkする。HC1等へ変更する場合、定数補正と臨界値・適用範囲を改めてfreezeする（この提案は正式採用ではない）。
+\`AR_B1(b)=S_Y(b)²/V_Y(b)\`、\`C_α={b:S_Y(b)²−q V_Y(b)≤0}\`（V_Y(b)>0の領域）。**検定不等式の左右辺がbの二次多項式**なので、全実数に対する二次不等式の解析で集合を再構成できる。full OLS sandwichで算出したZ coefficient Waldの平方と同じsample値になることを別系統でcross-checkする。HC1等へ変更する場合、定数補正と臨界値・適用範囲を改めてfreezeする（この提案は正式採用ではない）。
 
 **反証:** \`z̃'A\`が0のsampleでは2SLS pointが未定義でもARは集合を返し得る。V_Y(b)=0又はrank欠落、数値不安定で正しくtestを定義できない時はtyped inference failure。single sampleのAR数値正解とMonte Carlo coverageは別々に検証。
 
