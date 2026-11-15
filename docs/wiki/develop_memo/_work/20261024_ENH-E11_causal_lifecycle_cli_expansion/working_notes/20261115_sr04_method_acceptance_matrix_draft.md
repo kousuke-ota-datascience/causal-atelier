@@ -105,7 +105,7 @@
 
 ### 3.2. B1と弱IV・集合の特記事項
 
-- **未決:** B1の `estimand_kind` 正式enum/field。暂定「加法線形IV構造係数」として科学対象を記録。D03が採用したB0/B1範囲を変更せず、LATE/ATE/IV_HETEROGENEOUS_EFFECTとの形式的対応は別審査。Method名=Estimandとしない。
+- **未決:** B1の `estimand_kind` 正式enum/field。暫定「加法線形IV構造係数」として科学対象を記録。D03が採用したB0/B1範囲を変更せず、LATE/ATE/IV_HETEROGENEOUS_EFFECTとの形式的対応は別審査。Method名=Estimandとしない。
 - **採用済:** B0/B1の弱IV推論基準は独立観測＋異分散頑健漸近AR inversion（I2）、G2型付き集合：bounded/unbounded/disconnected/all-real、正常EMPTY不可。初期Confidence Setを通常finite CIへ損失変換しない。
 - **未決:** AR test statistic/covariance/critical value、端点計算法・小標本・covered truthのMonte Carlo、degenerate分岐とeffective null confidence setの参照実装。
 - **別物:** Fuzzy RDDの局所IVはcutoff付近の局所化・bias/SE構造を必要とする。B0/B1のAR保証を自動継承しない。
@@ -172,7 +172,7 @@
 - [Davidson & MacKinnon (2014), AR confidence sets](https://doi.org/10.1111/ectj.12015) — AR集合形状、just-identifiedの非空性。
 - [Callaway & Sant'Anna (2021), multiple-period DiD](https://doi.org/10.1016/j.jeconom.2020.12.001) — staggered導入とgroup-time効果。
 - [Sun & Abraham (2021), event study](https://doi.org/10.1016/j.jeconom.2020.09.006) — TWFE lead/lag汚染。
-- [Cattaneo, Idrobo & Titiunik, RD Foundations](https://www.cambridge.org/core/elements/practical-introduction-to-regression-discontinuity-designs/8E1AAB0E34C89E9C6C731A7FD8807C2F) — 局所推定・設計診断。
+- [Cattaneo, Idrobo & Titiunik, RD Extensions](https://www.cambridge.org/core/elements/abs/practical-introduction-to-regression-discontinuity-designs/C6A70A32359115510AAC370A7869AE2F) — 局所推定・設計診断。
 - [Abadie, Diamond & Hainmueller (2010), SCM](https://doi.org/10.1198/jasa.2009.ap08746) — donorとpre-period fit。
 - [Arkhangelsky et al. (2021), SDID](https://doi.org/10.1257/aer.20190159) — unit/time weighting。
 - [DoWhy TwoStageRegressionEstimator](https://www.pywhy.org/dowhy/v0.9.1/_modules/dowhy/causal_estimators/two_stage_regression_estimator.html) — 二段階線形推定の契約。採用候補0.14で追加probeが必要。
