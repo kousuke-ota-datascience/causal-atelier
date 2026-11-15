@@ -195,7 +195,7 @@
 | `SR03-D01` | **A案の独立IV異質効果familyをオーナー採用済み**（[ファイルD01](20261101_sr03_iv_heterogeneous_estimand_decision.md)） | family分類の判断は完了。Method別識別対象・schema・Science/Gate未承認。D01固有の根拠・比較・検証条件はファイルD01が管理 |
 | `SR03-D02` | **オーナー採用（2026-11-01）：Phase1にFrontdoor識別＋数値推定を必須包含**。両Capabilityは別契約。線形二段階推定は候補だが数値真値・追加仮定は要検証 | **包含の判断は完了**。個別Estimator設定・推論区間・科学Benchmark/ACは未承認 |
 | `SR03-D03` | **Wald比＋2SLS（2026-11-01）、S2＝B0＋B1とI2＝AR反転（2026-11-05）、G2改訂＝型付き信頼集合意味（2026-11-06）、C1＝後続科学審議管理（2026-11-15）を個別採用済み**（[詳細](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)）。C推定器はPhase3初期非採用 | **D03-1〜4の方針判断は完了**。C自身のMethod採否、担当者割当、正式G2 schema/D04互換、AR実装・coverage、Gateは未承認／未実施 |
-| \`SR03-D04\` | DoWhy識別→Ariadne normalised ID result→EconML estimatorを**明示Strategy/Estimand検査**で接続 | 新Methodのschema版、旧manifestの互換・\`REQUIRES_REVIEW\`扱い |
+| `SR03-D04` | **D04の技術推奨案作成（2026-11-15、Human owner採否待ち）**。v2保護＋新CLI版付き契約、Ariadne normalized IdentificationResult→Method別EstimatorSpecのfail-closed gate、lineage/hash照合、G2 confidence_set橋渡しを[独立D04審議](20261115_sr03_d04_identification_estimator_contract_options.md)に比較記録 | **D04-1〜5は未採用**。正式schema/enum/version、legacy migration、Product/v2回帰、Method別科学検証、Architecture Review/Gate未承認 |
 | \`SR03-D05\` | CATEの非IV 7手法・DRIVを別経路にし、CI availabilityをMethod/構成別に保持 | 推定MethodごとにCI必須か、点推定のみのCapabilityを承認できるか |
 | \`SR03-D06\` | PAG/CPDAGは保留し、別の識別証拠がない場合数値推定を禁止 | \`PARTIALLY_IDENTIFIED\`・Graph refixの将来受入範囲とowner override |
 
