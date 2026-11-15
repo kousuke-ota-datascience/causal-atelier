@@ -1,9 +1,9 @@
 # ENH-E11 — SR03-D03残余論点：2SLS対象・弱IV推論・Confidence Set・C案の技術審議
 
-**文書区分:** `working_notes`／SR03-D03-1〜D03-3の**個別オーナー採用に対応する技術判断記録**とD03-4の技術審査・推奨案。正式要件／設計／科学Gate／実装許可ではない。  
+**文書区分:** `working_notes`／SR03-D03-1〜D03-4の**個別オーナー採用に対応する技術判断記録**（C1は後続審議管理の採用であり推定器CのMethod採用ではない）。正式要件／設計／科学Gate／実装許可ではない。  
 **審議日:** 2026-11-01（JST）  
-**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03-1_S2_OWNER_ACCEPTED_2026-11-05 / D03-2_I2_OWNER_ACCEPTED_2026-11-05 / D03-3_G2_REVISED_OWNER_ACCEPTED_2026-11-06 / D03-4_C1_PENDING / SCIENCE_NOT_RUN`  
-**個別採用日:** D03-1・D03-2＝2026-11-05（JST）、D03-3＝2026-11-06（JST）。2026-11-01は元の技術審議作成日である。  
+**状態:** `D03_A_PLUS_B_PREVIOUSLY_OWNER_ACCEPTED / D03-1_S2_OWNER_ACCEPTED_2026-11-05 / D03-2_I2_OWNER_ACCEPTED_2026-11-05 / D03-3_G2_REVISED_OWNER_ACCEPTED_2026-11-06 / D03-4_C1_OWNER_ACCEPTED_2026-11-15 / SCIENCE_NOT_RUN`  
+**個別採用日:** D03-1・D03-2＝2026-11-05（JST）、D03-3＝2026-11-06（JST）、D03-4＝2026-11-15（JST）。2026-11-01は元の技術審議作成日である。  
 **確認Baseline:** `prototype/ariadne_mvp`、本レビュー着手時HEAD `a18af8c7916a4919fdd27bf2ff54b2cc4d780300`。検討は現行コード・既存SR-02 API smokeの記録と外部一次根拠に基づく。新たなIV実装、numerical parity、弱IV coverageの実測は実施していない。  
 **関連:** 00_04 P3-12／P3-16、UC-08、Issue #22（Phase3 IV/LATE）、SR-03／SR-04、Gate 07候補。
 
@@ -11,7 +11,7 @@
 
 **変更しない既決事項:** Phase3の初期EstimatorはA＝二値Z/AのWald比（complier LATE Reference）＋B＝2SLS、C＝条件付きIVのDR／効率的LATEは**追加審議**とする（オーナー採用2026-11-01）。D01の独立 `IV_HETEROGENEOUS_EFFECT` family採用を維持し、DRIVを自動的にcomplier LATEへ置換しない。
 
-**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は**D03-1 S2・D03-2 I2・D03-3 G2改訂の個別採用**を候補スコープ・要件・設計差分に反映し、D03-4 C1の推奨を採用済みとして扱わない。正式なFR/NFR/AR・Gate・実装は引き続き未承認。
+**判断の管理:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)がオーナーによる個別決定を保持。[D03初期比較・EconML probeメモ](20261101_sr03_late_estimator_options_econml_inference_review.md)はA/B/Cの当初比較・採用事実・EconML区間推論根拠を保持。**本ファイルがD03-1〜D03-4の新たな選択肢比較・推奨、Estimator/Inference/Confidence Setの詳細条件、未決・検証引渡しの唯一の詳細技術記録となる。** [SR-03総合メモ](20261101_sr03_identification_estimand_estimator_contract_review.md)は全Methodの横断契約・Fixture一覧を管理し、D03残余の詳細を重複管理しない。00_04／03／04は**D03-1 S2・D03-2 I2・D03-3 G2改訂の個別採用**を候補スコープ・要件・設計差分に反映し、**D03-4 C1の後続管理方針も2026-11-15に個別採用済み**と記録するが、推定器Cの採用・担当者実名割当・科学Gate完了は主張しない。正式なFR/NFR/AR・Gate・実装は引き続き未承認。
 
 ## 1. 一次根拠と判断のための事実
 
@@ -26,7 +26,7 @@
 
 ## 2. D03-1：2SLS初期保証範囲と推定対象
 
-**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2は2026-11-05に採用済み。G2改訂の集合意味は2026-11-06に採用済み。C案C1は未採用。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
+**オーナー採用（2026-11-05）：S2案＝B0＋B1をPhase3初期の2SLS保証対象とする。** B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identified設定で、Wald比と点推定パリティを確認する。B1は単一二値Z/A・事前に指定したpre-treatment C・切片・加法線形構造式に限定する。**B1の係数はモデル固有の線形IV構造係数として表し、complier LATE／ATE／CLATEとの同一性は追加の識別仮定なしに主張しない。** 複数IV・連続A・複数内生処置・任意の非線形／異質構造は初期保証外とする。**推論法I2は2026-11-05に採用済み。G2改訂の集合意味は2026-11-06に採用済み。C案の**後続審議管理C1は2026-11-15に採用済み**だが、推定器C自体は初期非採用。** 02は採用事実、本ファイルは詳細な科学的範囲・比較・検証条件を管理する。
 
 | 案 | 初期保証範囲 | 利点 | 費用・危険 | 技術判断 |
 |---|---|---|---|---|
@@ -142,15 +142,30 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 
 ## 5. D03-4：C案（条件付きIVのDR／効率的LATE）
 
+**オーナー採用（2026-11-15）：C1＝Cの後続科学的方法審議を追跡可能に管理する。** 採用した契約は次の4項目に限定する。
+
+| 管理項目 | 採用したC1の方針 | 状態・帰属 |
+|---|---|---|
+| ① 初期提供範囲 | Phase 3の初期提供は**A＝Wald比＋B0＋B1＝2SLS**を維持し、**C＝条件付きIVのDR／効率的LATEを追加しない** | **Scope方針採用済み**。CのMethod採否・実装権限は未承認 |
+| ② 再審議Trigger | **条件付きIVと処置効果の異質性が重要で、B1では必要なEstimandを扱えないユースケースが具体化した場合**にCの科学的採否を再審議 | **Trigger条件の採用済み**。該当ユースケースの具体化は未確認 |
+| ③ 責任主体 | 後続の**Scientific Methods owner**と**スコープ承認者**を明示する | **役割と明示義務は採用済み／具体的な担当者・承認者の人名または識別子は未割当**。担当者を推定で補わない |
+| ④ 再審議の成果物 | Cの**識別対象、仮定、推定方式、推論方法、科学Benchmark**を整理し、採用／非採用／保留を理由付きで判断 | **成果物要求は採用済み／科学審議・Benchmarkは未実施** |
+
+**責務の区分:** [02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)はC1オーナー判断の正本、本ファイルはC1の科学的背景・候補比較・再審議Trigger・成果物・未割当事項の詳細管理先とする。[00_04](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)はPhase境界、[03](../00_enhance_background/03_requirements_revision.md)は要件差分、[04](../00_enhance_background/04_design_revision.md)は設計責務のみ反映する。Cの識別対象を確定したと誤認させない。
+
+**後続追跡:** 既存[Issue #22](https://github.com/kousuke-ota-datascience/causal-atelier/issues/22)をPhase 3 IV/LATEの既存追跡先として参照する。**C専用Issueの作成／割当／期日は今回実施・確定していない。** Phase 3のP3-12スコープ確定時に役割の担当者と実際の追跡先を記録する必要があるが、これ自体を推定器Cの初期提供追加や科学的Trigger成立と混同しない。
+
+**技術的な境界:** DR／効率的LATEの「DR」は、具体的推定方式の識別式・nuisance機能・二重頑健性の条件が決まるまではMethod名の候補に留まる。Phase 2のEconML DRIVとの同等性や、B1からCへの機械的置換を認めない。Cを採用する場合は、条件付きIV識別、complier対象、positivity、first stage、propensity、cross-fitting、推論のcoverageと弱IVに関するMethod固有の科学Benchmarkを別途定義する。
+
 | 案 | 内容 | 判断 |
 |---|---|---|
-| **C1** | **初期A+Bを維持したまま、Cを明示的な後続科学的方法審議として管理**。レビュー起動条件・責任者・成果物を固定 | **推奨（未承認）** |
+| **C1** | **初期A+Bを維持したまま、Cを明示的な後続科学的方法審議として管理**。レビュー起動条件・責任者・成果物を固定 | **オーナー採用（2026-11-15：後続管理のみ）** |
 | **C2** | CをPhase3初期Methodに追加 | 既決の初期A+B範囲を拡大する変更判断と、新識別／推論科学Benchが必要 | 現時点で非推奨 |
 | **C3** | Cを期限・責任なしで無期限先送り | 過去の差戻し理由（暗黙のスコープ削減）を解消できない | 非推奨 |
 
-**C1に必要な責任・Trigger案:** 初期のPhase3 P3-12スコープ確定時に、Cが初期提供から除外される理由・対応Issue・後続のScientific Methods owner（実名は未指定）・Scope承認者（Human owner）を確定する。**conditional IVのみでInstrument independenceが成立し、処置効果が異質なUC-08が初期B1の線形一定効果仮定では科学的に扱えないことが要求として明らかになった場合**、または独立したPhase3後続Enhancementの開始前に再審議する。採用する場合にはconditional LATEの識別式、Instrument assignment/propensity、complier support、nuisance models・cross-fitting、推論／coverage、弱IV問題を別の科学的Contract・Benchmarkで定義する。CはEconML DRIVと同一Methodではない。
+**C1の後続運用詳細（技術記録）:** 科学的な再審議Triggerは**「条件付きIVと処置効果の異質性が重要で、B1では必要なEstimandを扱えない具体的ユースケースが判明した場合」**とする。P3-12のスコープ確定段階ではScientific Methods ownerおよびスコープ承認者を**実際に指名して記録する必要がある**が、これは管理上の宿題であり、Cの実装承認やTriggerの成立ではない。後続Enhancement開始時にはこの追跡状態を点検する。再審議成果物は対象Estimand・仮定・推定式・推論・科学Benchmarkと、根拠を伴うMethod採否判断とする。CはEconML DRIVと同一Methodではない。
 
-**未決のOwnerを捏造しない:** `#22` を既存IV/LATE追跡Issueとして参照するが、C専用後続Issueの番号・担当者・具体的期限はまだ決まっていない。正式にC1を採用する際にオーナーが明示してから記録する。
+**未割当・未確定事項:** C1の責任役割・再審議条件・成果物は採用済みだが、Scientific Methods ownerの実名、スコープ承認者の固有識別子、C専用後続Issue、着手期日は未確定であり、割当や期限の達成を主張しない。既存Issue #22への参照は専用タスクの作成と同義ではない。
 
 ## 6. 検証・SR-04/Gate 07引渡し（まだ実施しない）
 
@@ -174,8 +189,8 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 | **D03-1** | **S2採用（2026-11-05）**：B0 just-ID＋B1 単一Z/A・事前指定Cの加法線形構造2SLS | 対象は採用済み。構造仮定の適格性・Estimandの誤表示防止・数値/推論Benchmark・受入Gateは別途検証 |
 | **D03-2** | **I2採用（2026-11-05）**：B0/B1でAR検定反転を弱IV頑健な基準推論とする（独立観測・異分散頑健漸近推論） | 具体的AR実装・coverage・G2 schema・Gateは未承認 |
 | **D03-3** | **G2改訂オーナー採用（2026-11-06）**：有界・非有界・非連結・ALL_REALを型付き区間集合で保存。汎用EMPTYは将来用に残すが、初期just-identified B0/B1の正常AR結果では禁止 | 集合意味の採否は完了。正式schema・legacy互換はD04、数値・coverage・GateはSR-04/Gate07へ引渡し |
-| **D03-4** | **C1**：Cは初期非採用を維持し、科学的使用場面に基づく後続審議trigger/責任を確定 | C専用Issue/Owner、正式な再審議契機、初期除外の承認理由 |
+| **D03-4** | **C1オーナー採用（2026-11-15）**：初期Phase3はA＋B0＋B1、Cは非追加。条件付きIV＋効果異質性でB1が目的Estimandを扱えない具体ユースケースを再審議Triggerとし、責任役割・科学的成果物を固定 | C自身のMethod採否・担当者実名割当・追跡チケット・科学Benchmarkは未完了 |
 
 **D03-3オーナー判断（2026-11-06）：** **G2改訂の集合意味契約を採用**。EMPTYの初期B0/B1での扱いを修正し、Method別validatorを必要条件とした。**正式schema・D04互換・SR-04 Science Acceptanceは未完了**。
 
-**更新判定（2026-11-05）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_REVISED_OWNER_ACCEPTED_2026-11-06 / D03-4_C1_PENDING`。S2の**初期保証範囲**とI2の**AR反転方式・初期適用境界**はオーナー採用済み。**G2改訂の集合意味契約は採用済み**。Cの後続管理C1、具体的AR実装・正式schema・依存lock・科学Benchmark/Gate 07・コード実装は**未承認・未実施**。既存の`A＋B採用／C追加審議`は変更しない。
+**最新判断状態（2026-11-15）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_REVISED_OWNER_ACCEPTED / D03-4_C1_OWNER_ACCEPTED / C_METHOD_NOT_ADOPTED / SCIENCE_NOT_RUN`。S2の2SLS初期範囲、I2のAR基準推論、G2の型付き集合意味、C1の**後続管理4項目**はオーナー採用済み。**C推定器そのものは初期非採用**。具体的owner／承認者の割当、C専用Issue、C自身の科学的採否、具体的AR実装・正式schema、数値Benchmark/Gate 07、全体構想・コード実装は**未承認または未完了**。

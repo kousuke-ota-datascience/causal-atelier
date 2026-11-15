@@ -26,11 +26,13 @@
 
 10. **SR03-D01 IV異質効果（2026-11-01の明示判断）:** **A案＝`IV_HETEROGENEOUS_EFFECT`を独立Estimand familyとする方針を採用**。これはD01の個別判断であり、Method別識別対象・schema・BenchmarkおよびENH-E11全体承認を含まない。**本書はオーナー判断の記録を管理し、選択肢比較・科学的根拠・非採用理由・詳細な検証条件は[ファイルD01](../working_notes/20261101_sr03_iv_heterogeneous_estimand_decision.md)に一元化する。**
 
-11. **SR03-D03-1／S2（2026-11-05の明示判断）:** **2SLSのPhase3初期保証範囲としてS2＝B0＋B1を採用**。B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identifiedモデル（Wald比と点推定一致）。B1は二値Z/A・事前指定の処置前共変量C・切片・単一内生処置／単一excluded IVの加法線形構造モデル。B1はモデル固有の線形IV構造係数であり、一般のATE・LATE・CLATEへ自動変換しない。複数IV、連続処置、複数内生変数等は初期保証の対象外。**本書は個別判断を記録し、比較・識別仮定・数値検証条件は[残余D03審議ファイル](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に一元化する。D03-2のI2は下記12項で採用済み。D03-3 G2改訂の集合意味は下記13項で採用済み。D03-4 C1、正式要件・設計・Gate・実装は未承認。**
+11. **SR03-D03-1／S2（2026-11-05の明示判断）:** **2SLSのPhase3初期保証範囲としてS2＝B0＋B1を採用**。B0は二値Z/A・切片・単一excluded IV・共変量なしのjust-identifiedモデル（Wald比と点推定一致）。B1は二値Z/A・事前指定の処置前共変量C・切片・単一内生処置／単一excluded IVの加法線形構造モデル。B1はモデル固有の線形IV構造係数であり、一般のATE・LATE・CLATEへ自動変換しない。複数IV、連続処置、複数内生変数等は初期保証の対象外。**本書は個別判断を記録し、比較・識別仮定・数値検証条件は[残余D03審議ファイル](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に一元化する。D03-2のI2は下記12項で採用済み。D03-3 G2改訂の集合意味は下記13項で採用済み。D03-4 C1の後続管理方針は下記14項で採用済み。正式要件・設計・Gate・実装は未承認。**
 
-12. **SR03-D03-2／I2（2026-11-05の明示判断）:** **S2のB0/B1に対し、Anderson–Rubin（AR）検定反転を初期基準の弱IV頑健な信頼集合推論方式として採用**。単一excluded IV・単一内生処置・独立観測・異分散頑健漸近推論に限定し、First-stage効果・SE・supportと適切なIV共分散を記録する。通常Wald CIを弱IV頑健と表示しない。ARはInstrumentの妥当性を証明しない。Cluster/HAC等は初期保証外。**技術根拠・比較・検証条件は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に責務を移譲**。G2改訂の集合意味は下記13項で採用済み。C1、G2正式schema、AR実装、科学Benchmark/Gateおよび全体構想は未承認。
+12. **SR03-D03-2／I2（2026-11-05の明示判断）:** **S2のB0/B1に対し、Anderson–Rubin（AR）検定反転を初期基準の弱IV頑健な信頼集合推論方式として採用**。単一excluded IV・単一内生処置・独立観測・異分散頑健漸近推論に限定し、First-stage効果・SE・supportと適切なIV共分散を記録する。通常Wald CIを弱IV頑健と表示しない。ARはInstrumentの妥当性を証明しない。Cluster/HAC等は初期保証外。**技術根拠・比較・検証条件は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に責務を移譲**。G2改訂の集合意味は下記13項で採用済み。C1の後続管理方針は下記14項で採用済み。G2正式schema、AR実装、科学Benchmark/Gateおよび全体構想は未承認。
 
 13. **SR03-D03-3／G2改訂（2026-11-06の明示判断）:** **AR反転の信頼集合を有限単一区間に限定せず、型付き区間成分の和集合として損失なく保持する意味契約を採用**。有界・非有界・非連結・全実数を表現し、点推定・推論可用性・科学的適格性を分離する。汎用型には将来の`EMPTY`を表現する余地を残すが、初期just-identified B0/B1では`AVAILABLE/EMPTY`を**正常AR結果として許可しない**。JSON数値にInfinity/NaNを使わず、nullable端点と無界flagを区別する。**本書は採用事実を管理し、科学的根拠・比較・負例・検証条件は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)に一元化**。正式schema/enum・D04 migration・AR実装・coverage・Gate・全体構想は未承認。
+
+14. **SR03-D03-4／C1（2026-11-15の明示判断）:** **Phase3初期はA（Wald比）＋B0＋B1（2SLS）のまま、条件付きIV向けDR／効率的LATE推定器Cを追加しない。** Cは**条件付きIVと処置効果の異質性が重要で、B1では必要なEstimandを扱えない具体的ユースケースが判明した場合**に後続の科学的方法審議を起動する。責任主体として**Scientific Methods owner／スコープ承認者の明示義務**を採用し、後続審議の成果物に**識別対象・仮定・推定方式・推論方法・科学Benchmarkおよび根拠付き採否判断**を要求する。**これはCのMethod採用・実装承認ではない。** 担当者の実名／固有識別子、C専用Issue／期限は未指定・未作成。**本書はオーナー判断を管理し、Triggerの科学的意味・比較・詳細要件は[残余D03判断](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)へ責務を委譲**する。正式なFR/NFR/AR、Science/Gate、ENH-E11全体構想の承認は未完了。
 
 ## 2. まだ承認されていない事項
 
