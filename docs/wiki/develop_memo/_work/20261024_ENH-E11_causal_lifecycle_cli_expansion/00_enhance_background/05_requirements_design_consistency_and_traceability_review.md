@@ -33,22 +33,23 @@
 
 | 確認事項 | 判定 | 理由 |
 |---|---|---|
-| 要件案と設計案 | **PARTIAL/PENDING** | SR03-D04-1〜5、D05-1〜5、D06-1〜6の個別設計方針は2026-11-15オーナー採用済みで03/04 Draftにも反映。新FR/NFR/AR、具体的local CLI schema/version/enum、全体要件・Architecture ReviewとGateは未承認 |
-| 設計案とGate分割 | **PENDING** | Architecture ReviewがauthorityとGate境界を未確定 |
-| Gate間の依存 | **PENDING** | G01〜G10は草案であり06/07契約ではない |
-| Transition Debtの終了条件 | **PARTIAL/PENDING** | API/DBの将来境界は記載したが正式な承認なし |
+| 要件意味差分とArchitectureのOwner判断 | **DEC09_OWNER_POLICY_APPROVED / FORMAL_DETAILS_PENDING** | SR03-D01〜06＋DEC01〜08のOwner方針をDEC09で統合、68 Scope・E11-REQ意味差分・Architecture責務・Gate計画をOwnerが承認。FR/NFR/AR正文・具体local CLI schema/enum・独立Architecture Review／正式Gateは未発行 |
+| Architecture分割 | **OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING** | ARC09-01〜07（Domain/Adapter/CLI/Product権威・Graph/Result/Manifest/Extras）をDEC09で採用。正式ADR/Port/Schemaと独立レビューのSHAが未完 |
+| Gate計画と受入 | **GATE_PLAN_APPROVED / GATE06_07_NOT_FROZEN** | G01〜G10は暫定Workstreamとして採用。開発全体Gate06/07の事前条件と独立科学EvidenceをDEC09で承認したが、K/R/Method別AC・環境・独立ReviewとGate判定は未完 |
+| Transition Debtの責務 | **OWNER_SCOPE_APPROVED / PRODUCT_HANDOFF_OPEN** | E11はCLI-only／Local Result、Product API/DB Gap-C01〜04は実装対象外で追跡#14の引渡し候補。専任Product owner・別Enhancement/期限と閉鎖Evidenceは未確認 |
 | 現行要件と実装の照合 | **PARTIAL COVERAGE** | `00_01_foundation_gap_reconciliation.md`で9月末13項目のSource照合を完了。現行SHAでのテスト再実行と厳密なFR単位の全件確認は未実施 |
 
-## 3. 残る判断・承認の阻害要因
+## 3. DEC09統合Owner承認後の具体的残余Blocking Gate
 
-1. `00_04_phase1_to_phase3_cli_scope_proposal.md`におけるPhase 1〜3の全必須候補と、A0上位要求の後続送り・最小Negative Control/Sensitivity方式、および利用するLibrary版で該当classが存在しない場合の科学的同等代替をHuman ownerが決める。
-2. 正本§11の外部engine除外を承認付きの要件差分で改定する。
-3. DB-free local runのQuestion/Design/Graph identity・versionを確定する。
-4. 手法固有の分散推定・coverage・科学ベンチマークの許容閾値を固定する。
-5. 個票CATEの保存・privacy・atomic writeを決める。
-6. 暫定G01〜G10とIssue→Gateの対応をArchitecture Review後に見直す。
-7. 正式オーナー承認、固定SHAでの独立科学的検証はいずれも未了。
+**[DEC-SR04-09独立統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)の全68行／A0例外・01構想・03要件意味差分・04 Architecture方針・G01〜G10 WorkstreamはOwner採用済み**。この判断で残存するのは「何を初期提供するか」のOwner採否ではなく、以下のControlled Publication／独立Validationである。
+
+1. **Formal Requirements Delta:** 現行要件正本§11のE11 Optional Engine例外と新FR/NFR/ARの実際の条文・新規ID／Status・統合SHAを発行する。既存FR statusを無断でIMPLEMENTEDに変更しない。
+2. **Independent Architecture Review:** Domain／Adapter／CLI／Product authorityとLocal Version/Schema、Privacy／Atomic File、Graph/IV/Inference resultを具体ADR/Port/JSON Schemaへ落とし、独立レビューを通す。
+3. **Method Science and Gate07 Freeze:** Method41／Scope68／DGP24／NEG28／REF24／AC45／ENV9／X9の全mandatory評価Cell、実K、Method-specific R・CI/B・予算、独立Oracle/Backendの科学的適格性をfreezeする。DEC07/08のOwner方針採用だけでScience PASSにならない。
+4. **Environment/Legal:** `pyproject.toml`／`uv.lock`の承認済みWPでの改修、5 Profile＋条件付きRDのfresh isolated install/API・既存v2回帰、SBOM／GPL系顧客SI納入の法務承認を実施する。
+5. **Product gap handoff:** GAP-C01〜04はE11で閉鎖しない。Issue #14／Product側の別の実施責任者・期限・別Enhancement・Evidence確認が必要。
+6. **Coding authority:** GitHub Issue #15〜24のWork Packageごとのowner／rollback／受入基準と、承認済みFR/ADR/Gate entry snapshotを別途記録する。DEC09そのものをCoding許可に転用しない。
 
 ## 4. 結論
 
-**現時点では06/07のfreezeやCodingに進めない。** トレーサビリティの構造は草案として存在するが、重要な判断は保留中。先行照合資料を踏まえ、Issue #14のArchitecture Reviewとオーナー承認を経て03/04/05を改訂し、承認済み正本Snapshotを作成する。
+**DEC09統合Owner承認は完了。** 68 Scopeの処遇、E11-REQ意味差分、基本Architecture・Gate計画はOwnerが採用した。一方、正式FR/NFR/AR発行・具体ADR・独立Architecture Review・Gate06/07のfreeze・科学的受入・Coding着手条件は未完了のため、**実装／Science GateのAPPROVED/PASSは付与しない**。[DEC09](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)を承認した入力スナップショットとし、Controlled Publicationと実効Validationへ渡す。
