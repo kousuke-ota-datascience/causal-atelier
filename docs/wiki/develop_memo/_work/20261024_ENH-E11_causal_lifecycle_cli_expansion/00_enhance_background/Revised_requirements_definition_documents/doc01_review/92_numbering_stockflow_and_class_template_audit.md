@@ -47,6 +47,12 @@ GitHub上の退避Source Snapshotを照合した。
 
 移動時はRoot索引、各RD/BD/Review、Notion/Handoff等の**既存リンクとrelative pathを全面再配線**してから旧Pathを除去する。リンクを壊してまで物理移動したと見せかけない。後続Commitで移管・リンク全件確認を一体実施すること。
 
+## 2.1. 5文書群内部の99番台にもFlowが存在する
+
+追加照合で、`10_99_change_log.md`、`21_99_change_log.md`、`22_99_change_log.md`、`23_99_change_log.md`、`30_99_change_log.md`の**5件すべて**が過去Enhancementの変更履歴・Migration経緯を主に保持することを確認した。いずれも正本候補の現在有効な契約そのものではない。元文書の歴史を残すためFlow領域へ移すのが妥当である。
+
+このため索引にある`全110 numbered Stock files`という呼称は**現状を正確に表していない**。110件は5群直下の番号付きMarkdown総数であり、少なくとも5件のChange LogはFlowである。正本候補の確定件数は、90番台の規範的受入条件と文書本文の混在箇所を逐条再確認後に確定させる。単純に105件をStock PASSとするのもまだ早い。
+
 ## 3. 23系：Stock/Flow混在
 
 | Path | 修正すべき性質 | 判定 |
