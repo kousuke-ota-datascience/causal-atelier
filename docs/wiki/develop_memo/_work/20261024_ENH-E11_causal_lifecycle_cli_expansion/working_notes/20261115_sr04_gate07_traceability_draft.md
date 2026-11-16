@@ -1,7 +1,7 @@
 # ENH-E11 — SR-04 Gate07 Traceability（策定Draft）
 
 **区分:** working_notes／SR-04-Fの追跡設計案。正式Scope/FR/NFR/AR、Architecture Review、Gate06/07 freeze、Work Package、Science PASS、Coding許可ではない。  
-**策定日:** 2026-11-15 JST。**branch:** prototype/ariadne_mvp。**状態:** TRACE_DRAFT / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
+**策定日:** 2026-11-15 JST。**branch:** prototype/ariadne_mvp。**状態:** TRACE_DRAFT / DEC09_CONCEPT_SCOPE_OWNER_APPROVED / FORMAL_FR_ADR_GATE_FREEZE_PENDING / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN。  
 **先行資料:** [00_04 Scope案](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)／[03 Requirements](../00_enhance_background/03_requirements_revision.md)／[05 Gate候補](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md)／[SR04-A](20261115_sr04_method_acceptance_matrix_draft.md)／[SR04-B](20261115_sr04_scientific_fixture_catalog_draft.md)／[SR04-C](20261115_sr04_reference_specification_draft.md)／[SR04-D](20261115_sr04_quantitative_acceptance_criteria_draft.md)／[SR04-E](20261115_sr04_execution_environment_contract_draft.md)。
 
 > **2026-11-16個別判断更新:** [DEC-SR04-01（B1-A）／DEC-SR04-02（DRIV-A）](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)をHuman ownerのsemantic target判断として**採用済み**。P3-M11の加法線形IV係数とP2-M08の条件付きIV構造斜率について**Owner決裁待ちは解消**したが、`OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED`はBackend実効適格性・独立Inference/AR検証・定量AC・正式schema/FR/ADR/Gateが未完であることを表す。元のGate/Science証拠は一切生成されていない。
@@ -15,6 +15,8 @@
 > **DEC-SR04-07（2026-11-16）Owner正式個別採用:** [Quantitative Acceptance／Monte Carlo／Computeの独立判断記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)と02承認記録第24項により**DEC07-1〜7全A採用済み**。41 Method／68 Scope／45 Quant ACのレジストリ構成は維持。FWER=0.05、Hard統計比較Kの事前列挙、Wilson/連続MC bound、Method別R/Pass確率、T2 Pilot、実測予算・seed・中断/失敗分母とGate分離を**設計方針として採用**。**実効K/R/Cell/inner-bootstrap/CPU・Money予算、Method-specific閾値の本適用、正式Gate Evidenceは未freeze**。
 
 > **DEC-SR04-08正式Owner採用（2026-11-16）:** [uv.lock／Backend／Optional Dependency／License独立技術判断](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)と02承認記録第25項により、**DEC08-1〜8の全AをOwner個別採用済み**。既存5 Environment Profile＋条件付きRD候補、pyproject／universal uv.lock／Run Manifest、Method別Backend・実効API/Version・Combined、Fresh --locked、SBOM／GPL顧客SI Deliveryの法務Gate、Science／Computeの分離を設計方針として確定。**ENV-AC01〜09のMethod／Scope連結とEvidence NOT_GENERATEDは維持**。uv.lockはE11 Backendを未登録で、実効Lock・法務・Scienceは未受入。
+
+> **2026-11-16 DEC-SR04-09統合Owner承認:** [68 Scope・Requirements・Architecture・Gate独立統合承認記録](20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)を作成し、[02承認記録第26項](../00_enhance_background/02_enhancement_concept_approval_record.md)で**Concept+全68 ScopeのDisposition、E11-REQ意味差分、基本ArchitectureとG01〜G10暫定Workstream/Gate計画を正式Owner採用**。元FのScope行に残るDisposition候補は本決定の付録A・後続DEC01〜08の科学限定事項が優先。**FのMethod／DGP／Reference／AC／ENV登録はScientific Evidenceや実効FR/ADRの承認ではない**。独立Architecture Reviewと詳細Schema、正式FR/NFR/ARとGate06/07 freeze・Method別K/R/Compute・uv.lock/Legal・Coding/T3は未実施。
 
 ## 0. 名前空間・証拠の厳格な境界
 
@@ -132,16 +134,16 @@
 | SCOPE:P3-15 | N | — | SR04:X-01, SR04:X-02 | E11-REQ-CLI | #21,#22,#23 | CROSS_BOUND |
 | SCOPE:P3-16 | N | — | SR04:X-09 | E11-REQ-CLI | #20,#21,#22,#23,#24 | CROSS_BOUND |
 | SCOPE:P3-17 | R+N | — | SR04:X-05, SR04:X-06 | E11-REQ-CLI | #20,#24 | CROSS_BOUND |
-| SCOPE:P3-18 | D | — | 後続/例外案 | E11-REQ-P3T | #20 | DEFERRED_REQUIRES_OWNER |
+| SCOPE:P3-18 | D | — | 後続/例外案 | E11-REQ-P3T | #20 | DEFERRED_OWNER_APPROVED |
 | SCOPE:P3-19 | D／N | — | SR04:X-08 | E11-REQ-CLI | #21,#22,#23,#24 | CROSS_BOUND |
-| SCOPE:X-01 | D（要承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
-| SCOPE:X-02 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
-| SCOPE:X-03 | D（要承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
+| SCOPE:X-01 | D（DEC09承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_OWNER_APPROVED |
+| SCOPE:X-02 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_OWNER_APPROVED |
+| SCOPE:X-03 | D（DEC09承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_OWNER_APPROVED |
 | SCOPE:X-04 | N一部（NCE/NCO Owner個別採用）／D（simulated/Graph） | P1-M18, P1-M19 | 後続/例外案 | E11-REQ-P1NC | #16,#14 | METHOD_BOUND+PART_DEFERRED |
 | SCOPE:X-05 | N一部（OLS partial R²/RV Owner個別採用）／D（IPW/AIPW/CATE一般化） | P1-M20 | 後続/例外案 | E11-REQ-P1S | #16,#14 | METHOD_BOUND+PART_DEFERRED |
 | SCOPE:X-06 | Q一部／D | — | SR04:X-04, SR04:X-07 | E11-REQ-SR03D05 | #19,#20,#21,#24 | CROSS_BOUND |
-| SCOPE:X-07 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
-| SCOPE:X-08 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
+| SCOPE:X-07 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_OWNER_APPROVED |
+| SCOPE:X-08 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_OWNER_APPROVED |
 | SCOPE:X-09 | R+N／D | — | SR04:X-05, SR04:X-08, SR04:X-09 | E11-REQ-CLI | #14,#24 | CROSS_BOUND |
 | SCOPE:X-10 | R+N／D | — | SR04:X-01, SR04:X-06, SR04:X-08 | E11-REQ-CLI | #14,#24 | CROSS_BOUND |
 
@@ -408,6 +410,31 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | DEC08:MANIFEST/SBOM | Runごとの実効Backend、source/lock/wheel hash、seed/CPU/License inventory | Versioned Schema／RNG実装・Source/Reference独立検証 |
 | DEC08:LEGAL | Tigramite/RDD等GPL顧客SI納入を成果物・受領者・配布形態単位で審査 | 法務の実際の判定と対応Source・通知等。未承認なら当該DELIVERY_BLOCKED |
 | DEC08:GATE | Environment／Science／Compute Budget／Legal Gateを独立 | Ownerは科学・Lock・法務適格性を承認していない。E11 Coding/正式Gate未承認 |
+
+### 8.9. DEC09 Concept／Scope Owner承認と後続文書Revision照合
+
+**本項はOwnerの意思決定と、独立科学Benchmarkの証拠を意図的に別レイヤーに保持する。**
+
+| Approval対象 | 現時点の承認 | 対象Snapshotの現在Blob |
+|---|---|---|
+| Concept / Scope | **OWNER_APPROVED**：68行、DEC01〜08のMethod別科学限定事項、A0例外 | DEC09付録A、02第26項 |
+| Requirement semantic delta | **OWNER_APPROVED**：03のE11-REQ分類・8不変条件 | 正式新FR/NFR/ARの条文公開は未実施 |
+| Architecture policy | **OWNER_APPROVED**：Domain/Adapter/CLI/Product authority、versioned local、Graph/IV/CI/Privacy/Legal | 正式ADR、Interface/Schema、独立Architecture Reviewは未完 |
+| G01〜G10 / Gate plan | **OWNER_APPROVED**：実装Workstream配置とGate06/07の閉鎖要件 | Gate06/07 snapshotやScience PASSの承認ではない |
+| Gate runtime/science | **NOT_FROZEN**：実効K/R、45 ACのMethod別Hard適用、DEC08 Lock+Legal、Reference/Science | T2/T3・旧v2回帰／個別法務のEvidence未生成 |
+
+**DEC09の判断対象であった関連文書の反映後Git Blob SHA（保存時点）:**
+
+| 役割 | ファイル | Blob SHA |
+|---|---|---|
+| scope | [00_04_phase1_to_phase3_cli_scope_proposal.md](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md) | `86d413473c9d2b08ece98a16925b93248e15c9f7` |
+| concept | [01_enhancement_concept_and_requirement_revision_plan.md](../00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md) | `ab4750601d662b1f1300375d4bc04b877be6d848` |
+| owner | [02_enhancement_concept_approval_record.md](../00_enhance_background/02_enhancement_concept_approval_record.md) | `4148aeb41b4f012e3d10f55ffc44c1eacfc5a809` |
+| requirements | [03_requirements_revision.md](../00_enhance_background/03_requirements_revision.md) | `d73c07d65e001839033f7c9b1b0405112fe3a1b6` |
+| architecture | [04_design_revision.md](../00_enhance_background/04_design_revision.md) | `5be5e649b92d3d58084ee22701ff636c0cf4c877` |
+| review05 | [05_requirements_design_consistency_and_traceability_review.md](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | `9cd3ce0ce2b647424c135b2e2af5ddfff0dc1f7a` |
+
+**製品既存Gap:** GAP-C01〜04はProduct側に追跡移管、`CLOSED`への変更なし。#14のProduct実担当者・別Enhancement ID/期限は未割当。依存やScienceの失敗時に、Owner承認済みScopeを無断で削除しない。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
