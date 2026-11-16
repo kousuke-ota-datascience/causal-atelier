@@ -1,8 +1,10 @@
 # ENH-E11 — 要件・設計整合性とトレーサビリティ確認（計画案）
 
 **文書区分:** 計画・判断記録  
-**状態:** DRAFT／照合・承認待ち／Gate未承認  
+**状態:** **DEC09_SCOPE_REQUIREMENTS_ARCH_GATE_PLAN_OWNER_APPROVED / DETAILED_TRACE_SNAPSHOT_PENDING / GATE06_07_NOT_FROZEN**  
 **前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`と、68行の実装スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`を構想・要件・設計策定前に参照する。
+
+> **2026-11-16 DEC-SR04-09正式統合Owner承認追補:** [DEC09独立統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)と[02承認記録第26項](02_enhancement_concept_approval_record.md)で**Scope68、要件意味差分、Architecture Owner原則、G01〜G10暫定Workstream／受入Gate06/07の計画をOwner採用**。この表の`E11-REQ-*`と`AC-*`は引き続き**正本FR/NFR/AR／Gate07完成版の番号ではない**。正式条文・Schema/ADR・Method別適格性・実効Backend/Lock/法務・Quant K/R/Compute・独立DGP/Ref/Science Reviewのpre-freezeは未完で、実施GateをPASSと誤表示しない。
 
 ## 1. 要件→設計→Gate→受入条件→Issueの対応
 
