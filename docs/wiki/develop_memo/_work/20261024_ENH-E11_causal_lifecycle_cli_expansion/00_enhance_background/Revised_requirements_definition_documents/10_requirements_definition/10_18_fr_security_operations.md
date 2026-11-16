@@ -17,5 +17,5 @@
 | FR-126 | Security / Ops | Metadata、Artifact、logのconfigurable retention/deletion policyを提供する | SHOULD | DEFERRED | NOT_IMPLEMENTED | FUTURE |
 | FR-127a | Security / Ops | current basic health endpointを提供する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-127b | Security / Ops | API、DB、Worker、ArtifactStoreのcomponent readinessを提供する | MUST | DEFERRED | NOT_IMPLEMENTED | FUTURE |
-| FR-128a | Security / Ops | 【設計制約移管・Legacy Trace】FR-035／NFR-005の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-128a | Security / Ops | Algorithm/Runnerをregistry/capabilityから解決・管理するcurrent contractを維持する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-128b | Security / Ops | 運用上の処理規模と実行時間の上限を設定・適用できる | MUST | DEFERRED | NOT_IMPLEMENTED | FUTURE |

@@ -11,7 +11,7 @@
 | AR-006 | Scientific Integrity | 因果識別の成否は全ての不適格理由と不確実性を考慮して決定しなければならない | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-007 | Scientific Integrity | Collider判定はback-door path上のcolliderまたはその子孫を対象とする | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-008 | Scientific Integrity | 推定に必要な変数型が適格かを識別できなければならない | — | ACTIVE | IMPLEMENTED | BASELINE |
-| AR-009 | Scientific Integrity | 【設計制約移管・Legacy Trace】対応する既存上位要件に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する | — | ACTIVE | IMPLEMENTED | BASELINE |
+| AR-009 | Scientific Integrity | 外部libraryのdtype objectまたはmodel objectをJSON正本へ保存しない | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-010 | Scientific Integrity | Estimation前提不成立時は数値を無理に返さず分析状態を保存する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-023 | Scientific Integrity | Causal Identificationでは観測データと仮定からestimandが識別可能かをEstimationと分離して扱う | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-024 | Scientific Integrity | 因果効果の結果閲覧・利用と推定器の設定操作を混同せず、区別して利用できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |

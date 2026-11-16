@@ -21,21 +21,21 @@
 | FR-130 | Navigation | 現在の分析Familyと画面位置を識別・復元できる | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-131 | Navigation | Family-local navigationにはselected Familyが所有するNavigation Stageだけを表示する | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-132 | Navigation | Family切替後は、そのFamilyの初期画面へ遷移できる | MUST | ACTIVE | PARTIAL | ENH-E5 |
-| FR-133 | Navigation | 【設計制約移管・Legacy Trace】FR-131の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | PARTIAL | ENH-E5 |
+| FR-133 | Navigation | FamilyごとにCapability-owned immutable descriptorでStage ID、slug、label、order、default Stageを独立定義する | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-134 | Navigation | Family間でStage数・名称を揃える目的のdummy/common Stageを導入しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-135 | Navigation | Navigation Stageの表示順をwizard completion、runtime dependency、実行前提として強制しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-136 | Navigation | 分析ページのURLから対象Project・Family・画面位置を復元できる | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-137 | Navigation | reload、browser back、browser forwardでFamily / Stage stateをdeterministicに復元できる | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-138 | Navigation | unknown Family / Stageをsilent fallbackで意味変換せず明示errorと有効な遷移先を提示する | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-139 | Navigation | Overview / Research Context / Data / ResultsをProject Management local navigationとして扱い、Exploratory / Predictive / CausalのAnalytical Familyと同一taxonomyへ混在させない | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
-| FR-140 | Navigation / Runtime | 【設計制約移管・Legacy Trace】NFR-021の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
-| FR-141 | Navigation / Runtime | 【設計制約移管・Legacy Trace】NFR-021の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
-| FR-144 | Capability | 【設計制約移管・Legacy Trace】FR-131の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | PARTIAL | ENH-E5 |
-| FR-145 | Capability | 【設計制約移管・Legacy Trace】NFR-023の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST NOT | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
-| FR-157 | Domain / Compatibility | 【設計制約移管・Legacy Trace】FR-074の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
-| FR-158 | Domain / Compatibility | 【設計制約移管・Legacy Trace】NFR-021の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-140 | Navigation / Runtime | Navigation Stageをruntime `StageType` / `StageDefinition` / `StageExecution`として再利用・継承しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-141 | Navigation / Runtime | Navigation StageとExecution Stageの1:1 mappingを要求するcontractを導入しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-144 | Capability | concrete Navigation Stage catalogは各Family-specific Capabilityが所有し、application/interface aggregatorがread-only metadataとして集約する | MUST | ACTIVE | PARTIAL | ENH-E5 |
+| FR-145 | Capability | generic application layerはFamily-specific Stage semanticsを集中所有しない | MUST NOT | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
+| FR-157 | Domain / Compatibility | 既存`AnalysisSpecification.analysis_family`をFamily discriminatorとして再利用し、duplicate Family field/enumを追加しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-158 | Domain / Compatibility | AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-159 | Compatibility | 旧分析画面から正規の分析画面へ一意に遷移できる | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
-| FR-160 | Compatibility | 【設計制約移管・Legacy Trace】NFR-021／FR-177の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E7 |
+| FR-160 | Compatibility | Family / Navigation / application IAの変更だけを理由にDB schema migrationまたはnavigation-state persistenceを導入しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-162 | Scope | Overview / FlagshipをAnalytical Family peerとして追加しない | MUST NOT | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-163 | Project Navigation | Project一覧へ一意の正規画面からアクセスできる | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-164 | Project Navigation | Project作成後に対象Projectの概要画面へ遷移できる | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
