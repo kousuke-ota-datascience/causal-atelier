@@ -1,10 +1,10 @@
 # ENH-E11 — 構想承認記録
 
 **文書区分:** 計画・意思決定記録  
-**承認状態:** **正式な構想承認は未実施**（`PENDING_FULL_CONCEPT_APPROVAL`）  
-**承認日時:** 未発行  
+**承認状態:** **構想・68 Scope・要件意味差分・Architecture責務・Gate計画をHuman ownerが正式承認済み**（`DEC09_CONCEPT_SCOPE_POLICY_OWNER_APPROVED`）。**正式FR/NFR/AR発行・詳細ADR/Schema・Gate06/07 freeze、Codingと独立Science・法務受入は未承認**（`IMPLEMENTATION_PRECONDITIONS_PENDING`）  
+**承認日:** 2026-11-16 JST（時刻は記録していない）  
 **承認権限:** Human owner  
-**審査対象:** `01_enhancement_concept_and_requirement_revision_plan.md`  
+**審査対象:** `01_enhancement_concept_and_requirement_revision_plan.md`＋`00_04_phase1_to_phase3_cli_scope_proposal.md`全68行＋03/04/05の要件・Architecture・Gate計画。**採用されたDispositionの正本Snapshot:** [DEC-SR04-09統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)  
 **事前調査・スコープ案・技術審査:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `00_04_phase1_to_phase3_cli_scope_proposal.md`  
 **途中レビュー（非正規の作業メモ）:** [20261029_cli_scope_review.md](../working_notes/20261029_cli_scope_review.md)（**CHANGES_REQUIRED**）  
 **追跡:** [GitHub Issue #13](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)
@@ -56,6 +56,8 @@
 
 25. **DEC-SR04-08／DEC08-1〜8全A（2026-11-16、Human owner明示採用判断）:** **Backend／Optional Dependency／uv.lock／License・Deliveryの8つの設計A案をすべて個別採用**する。**DEC08-1=A:** `pyproject.toml`を依存・Extraの宣言、`uv.lock`を全依存の解決結果、Profile/Run Manifestを実効環境証跡として分離し、依存宣言とlock変更は同一PRで整合させる。**DEC08-2=A:** SR02のUbuntu 24.04／CPython 3.12系／x86_64／CPUを初期検証基準として既存5 Environment Profileを維持し、Sharp/Fuzzy RDは追加の条件付き`ENV-RD`候補とする。Python patchやその他OS/GPUの無検証保証はしない。**DEC08-3=A:** Method別DoWhy/EconML/Tigramite/rdrobust等のBackend・Estimator／Inference／実効版を登録し、SR02の観測版（DoWhy 0.14、EconML 0.17.0、Tigramite 5.2.10.1）は初期試験候補に留め、Science・互換性検証後に確定する。**DEC08-4=A:** E11 Optional Extrasを機能別に設け、uv universal resolutionと単独／Combined依存・適格性を検証し、競合時はOwner/Architectureへ差戻す。**DEC08-5=A:** Fresh独立環境の`uv lock --check`／`uv sync --locked`／`uv pip check`、有効／無効Method、既存E9/v2回帰を試験し、`--frozen`をlock整合の代用にしない。**DEC08-6=A:** Repo／`pyproject.toml`／`uv.lock`／wheel・Source SHA、Python/OS/BLAS、effective backend／Method・Inference・seed・実効runtimeとSBOM/LicenseをRun Manifestに記録する。**DEC08-7=A:** OSSのdirect/transitive依存と成果物・配布形態・顧客/受領者を特定してLicense／通知／ソース提供・結合性を個別法務審査し、**Tigramite（GPLv3-or-later）・rdrobust（GPL-3.0-only）等を含む顧客納入形態は法務承認までDELIVERY_BLOCKED**とする。Optional化によるGPL義務免責を推定しない。**DEC08-8=A:** Owner環境方針採用／lockとBackend API適格性／DEC07数値Budget・T2 Pilot／独立T3科学検証／個別法務納入許可／正式Gateを独立状態として追跡する。**採用したのはEnvironment・Lock・Delivery判定の設計方針であり、実際の`pyproject.toml`変更・`uv.lock`再生成、Extra名やBackend最終pin、Profile成功・Method科学適格性、顧客SI法務承認、FR/NFR/AR/ADR・全体Scope、Coding・Gate06/07の許可ではない。** 現行LockにはDoWhy/EconML/Tigramite/rdrobustが未登録で、SR02別環境API smokeの結果を現行lockの適格性証拠に置換しない。比較・条件・残余Blockerは[DEC-SR04-08独立技術判断](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)に記録する。
 
+26. **DEC-SR04-09／全体Scope・Requirements・Architecture・Gate統合Owner承認（2026-11-16、Human owner明示指示）:** **CONCEPT_AND_68_SCOPE_OWNER_APPROVED／REQUIREMENTS_SEMANTIC_DELTA_OWNER_APPROVED／ARCHITECTURE_POLICY_OWNER_APPROVED／GATE_PLAN_OWNER_APPROVED**。**(1) Scope:** 00_04のPhase1=21、Phase2=18、Phase3=19、A0横断=10の**68行を個別Disposition／対応Issueとともに採用**。X-01 ATC・X-03 Matching/g-computation・X-02汎用Mediation・X-07/08 Policy/Monitoring等は初期D。X-04＝実在NCE/NCO、X-05＝古典OLS partial R²＋point RVのみN、一般化D。X-06＝今回Method固有の科学的品質Q／汎用機能D、X-09/10＝CLI/Local R+N／既存Product統合D。**(2) Requirements:** 01のUC01〜10、03/05の`E11-REQ-*`と8不変条件、旧Product/v2保護、DoWhy/EconML等をE11の承認済みOptional Capabilityに限定して現行§11の除外を改定する方針を採用。**(3) Architecture:** Domain（Question/Design/Estimand/GraphVersion）を外部Backendに依存させないこと、Scientific Core Adapter分離、識別からEstimatorへのfail-closed、E11版付きLocal CLI/Result/Manifest、PAG/CPDAG/lag・AR集合・CI availabilityの忠実保存、privacy/atomic/lineage、DEC08 extras/lock/Delivery Legalの独立責務を採用。**(4) Gate:** 暫定G01〜G10をIssue/UC/Methodの実装Workstream区分としてOwner採用し、正式Gate06/07で審査するentry/exit／独立科学受入／否定例・legacy v2回帰の原則を承認。**(5) Product GAP:** GAP-C01〜C04は今回CLIのみで閉鎖せず、Product側の引継ぎ・管理候補#14とし、実際の担当者/期限/別Enhancement/閉鎖Evidenceの確認を残す。**(6) 本承認の非対象:** 新規FR/NFR/ARの正本への逐条発行・Status変更、正式ADR/JSON Schema/方法別ConfigのFreeze、`pyproject.toml`/`uv.lock`改修、DEC07の実K/R/CPU資源上限、DEC08の実効Backend/License適格性、Gate06/07 Freeze/PASS、Coding/Science/Delivery許可。**これらの未完了事項をCONCEPT_APPROVEDへ混入させない**。68行完全表・各判断と根拠・Architecture/Gate交差・SR01〜12の方針解消と科学的Blockerは[DEC09独立統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)を参照。**承認したのは実装する内容・差分・Gate計画のOwner権限上の判断であり、完成したソフトウェアや科学的Validationの承認ではない**。
+
 ## 2. まだ承認されていない事項
 
 - **DEC-SR04-08の実効Environment・依存・法務審査（2026-11-16、第25項でOwner設計方針を個別採用済み）:** [DEC08独立技術判断](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)のDEC08-1〜8全Aは採用済み。**残余**はE11 Extras具体名／Method対応BackendとVersion・Python patchの最終検証、`pyproject.toml`・`uv.lock`の承認済みWork Packageによる改修、5 Profile＋条件付きRDのfresh lock/install/API／legacy適格性、SBOM/Manifest・CPU/予算、Tigramite/RDDの顧客納入形態別Legal Review、独立Science・正式Gate。**これらをOwner方針採用で完了とみなさない。**
@@ -64,12 +66,12 @@
 - **DEC-SR04-07の数値freezeと科学的実施（2026-11-16、Owner方針は第24項で採用済み）:** [独立技術判断](../working_notes/20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)によりDEC07-1〜7の設計方針は個別採用した。**残余は実効mandatory cell/K、n/T/R/inner bootstrap、Method別数値閾値・CI/Oracle資格、T2 PilotのCPU秒・RSS・Wall、Owner資源・金額上限の取得、T3 Science・Gate批准である。** 未測定値を「承認済み数値」と扱わない。
 
 
-- 拡大後の構想名称、必須手法一覧および例外・同等手法。
-- 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
-- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。 DEC-SR04-06のP1-M18〜20とX-04/X-05 Deferredは個別承認済みだが、正式要件や実効契約の批准は未実施。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**、DEC-SR04-05-1〜7の**準実験Method別ベースライン推定・条件付き推論方針**は個別採用済み。ただし正式Schema enum/Methodの実効Config、科学的に認定されたInference algorithmとCoverage、数値受入は未承認。
-- **DEC-SR04-06の科学的実装・正式Scope引渡し（2026-11-16）：** 5件のOwner採否は**第23項で個別承認済み**。未解消なのは、新E11 Methodの正式schema/enum・backend・Null検定の有効性・CI・RV計算の独立Reference・実効データ契約・受入閾値・68 Scope全体批准であり、これらを採否未決と混同しない。
+- **DEC09で構想／68 Scope／A0例外のOwner判断は完了**。残るのは具体Backendが不適格な場合の科学的同等Method再審議、正本FR/ADRにおける条文・Scope labelの公開と実効検証。
+- **正本§11のDoWhy/EconML等除外に対するE11 Optional Capability例外の改定方針はOwner採用済み**。正本へ実際の条文改定／新FR/NFR/ARの正式採番・Status・Snapshotは未実施。
+- **Design/Resultの権限分離・Local CLI/ManifestのArchitecture原則はDEC09で採用済み**。残余は正式ADR・Local File/Schema/enum・Method別実効Backend/Inference・数値AC/Reference、独立Architecture/Science reviewとGate freeze。DEC01〜08のOwner科学的方針は個別採用済み。
+- **DEC-SR04-06の実装・科学的検証:** 初期Method範囲は第23項で採用、68 Scope全体は第26項で採用済み。残余は実効schema/enum・backend・Null test/CI/RVの独立Referenceと数値科学Benchmark。
 - **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
-- Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
+- **Architecture Owner方針とG01〜G10 Workstream分割はDEC09で採用済み**。独立Architecture Reviewの正式完了、ADR/Schema/FRの固定SHA、Gate06/07の受入ベースライン／Science Freeze／実行と判定は未実施。
 
 ## 3. 遵守条件
 
@@ -85,10 +87,13 @@
 - 審査済みの要件差分がないままの正本書換え。
 - Phase 4のPolicy automation、監視、意思決定権限の付与。
 
-## 5. 承認のための残作業
+## 5. 承認後に残る実装前・受入前作業（DEC09時点）
 
-1. 先行調査の`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`を確認し、`00_04_phase1_to_phase3_cli_scope_proposal.md`の68行と[作業メモ](../working_notes/20261029_cli_scope_review.md)の**SR-01〜12を是正・再審査**した結果を確認する。
-2. `00_04_phase1_to_phase3_cli_scope_proposal.md`にあるATC/matching等の後続送り、**§2.3の観測NCE/NCO・OLS partial R²候補の採否・適用限界（[方法検討メモ](../working_notes/20261101_negative_control_unobserved_confounding_method_review.md)）**、外部Libraryの同等代替、Product GAP-C01〜04の帰属を**項目単位で明示承認または差戻し**したうえで、`03_requirements_revision.md`、`04_design_revision.md`を固定SHAに照らして再確認する。
-3. Architecture Reviewを完了し、`05_requirements_design_consistency_and_traceability_review.md`を改訂する。
-4. Human ownerの正式判断を**実際の日時と根拠**付きで追記する。遡及的に承認済みとしない。
-5. 承認後に正本と承認Snapshotを固定し、Gate 06/07を作成する。
+**DEC09による全体Owner構想・68 Scope・要件差分・Architecture方針・Gate計画の承認は完了した。** これらと独立に、以下を実施する。
+
+1. **正本へのControlled Publication:** [DEC09独立統合承認](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)の68行をベースに、現行要件§11のE11限定Optional Engine例外と新FR/NFR/ARを逐条に定義し、現行Statusを誤ってIMPLEMENTEDへ変更せずに新旧差分を正式承認Snapshotで発行する。
+2. **Architecture detailsと独立Review:** 版付きLocal CLI/Result/Graph/ConfidenceSet、Schema/enum/atomic write/Privacy、Method-to-Backend/Config、旧v2互換性のADR・port/adapterを設計し、独立Reviewを記録する。
+3. **Gate Entry/Exitの数値Freeze:** SR04 A〜F、41 Method/68 Scope/24 DGP/28 NEG/24 Ref/45 Quant AC/9 ENV AC/9 Crossの実効Cell/K/RとSource SHA・科学的推論適格性、Backend/Lock、予算・環境を別レビューで固定。暫定G01〜G10を正式Gate06/07のPASSと混同しない。
+4. **Product Gapの帰属:** GAP-C01〜04のProduct側責務とIssue #14/別Enhancement、実担当者・期限・Evidence条件をProduct Ownerに引き継ぎ、既存Requirement Statusを保持する。
+5. **Work Package/Coding Entry:** Issue #15〜24ごとのWP・責務・受入条件を発行し、FR/ADR/Interface/Gate baselineを確認した承認済みCoding着手票を別途発行する。**本Owner構想承認だけでCodingを開始しない。**
+6. **実装後の独立受入／法務:** T2 Pilot、T3科学受入、独立Reviewer、既存v2回帰とcanonical 999、GPL系個別SI納入の法務適合をGate別に審査する。事後に失敗セルを削除したPASSを許可しない。
