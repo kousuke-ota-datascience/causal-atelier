@@ -62,3 +62,55 @@
 [96_rd03_formal_requirement_traceability.md](../96_rd03_formal_requirement_traceability.md)を参照。表の`PLAN:Gxx`は実装Workstreamであって正式なGate06/07受入ではない。SR04-FのDGP/REF/ACは検証計画の参照であり独立Evidenceを意味しない。
 
 旧E10のLightGBM／SHAP／LIME提供義務は[10_12_fr_predictive.md](10_12_fr_predictive.md)で継続する。
+
+## 98. RD-04：Method Scopeへの原文制約保持
+
+**Status:** `RD04_SCIENTIFIC_TRANSFER_RECORDED / OWNER_CONTENT_REVIEW_PENDING`。要件の抽象化で科学的に有効な方法・受入条件を落とさない。元条文・元IDは監査可能であり、科学的PASSやMethod互換性を意味しない。
+
+### 98.1. FR-069（SPLIT）
+
+- 元条文に含まれる条件：explanation method capabilityが宣言するsupported scopeに従いglobal / local Predictive Explanationを生成でき、unsupported scopeを擬似出力で補完しない
+- RDでの要求核：利用可能な範囲でモデル全体・個別予測の説明を生成でき、未対応の範囲を偽装しない
+- ID：`FR-069`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.2. FR-161（SPLIT）
+
+- 元条文に含まれる条件：LightGBM / SHAP / LIME等のexternal analytical engineはoptional capabilityとして導入し、未導入でもcore startupと既存supported flowを壊さず、unavailable capabilityから別model/methodへsilent fallbackしない
+- RDでの要求核：追加分析機能が未導入でも基本機能を使え、未対応手法へ勝手に切替えない
+- ID：`FR-161`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.3. FR-178（SPLIT）
+
+- 元条文に含まれる条件：Binary Classification / RegressionでLightGBM backend（`lightgbm_classifier.v1` / `lightgbm_regressor.v1`）をtask-compatible modelとして選択できる
+- RDでの要求核：表形式分類・回帰で承認済み追加学習方式を選択して学習・評価できる
+- ID：`FR-178`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.4. FR-181（SPLIT）
+
+- 元条文に含まれる条件：Predictive Explanationはmodel-method compatibilityをbackend authorityで検証し、`LINEAR_COEFFICIENT_CONTRIBUTION` / `SHAP_TREE` / `LIME_TABULAR`を明示methodとして解決する
+- RDでの要求核：利用可能なモデル説明方式を適合性に応じて選択し、予測への変数寄与を定量的に説明できる
+- ID：`FR-181`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.5. FR-182（SPLIT）
+
+- 元条文に含まれる条件：`SHAP_TREE`はapproved compatibility範囲でglobal/localを提供し、`LIME_TABULAR`はlocal-onlyを提供する。unsupported capabilityを別methodまたは擬似global出力で補完しない
+- RDでの要求核：個別予測・モデル全体への説明の提供範囲を明示し、未対応の説明を擬似出力しない
+- ID：`FR-182`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.6. FR-048（SPLIT）
+
+- 元条文に含まれる条件：estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない
+- RDでの要求核：推定手法に適合した診断を提示し、適用不能な診断を強制しない
+- ID：`FR-048`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.7. AR-016（SPLIT）
+
+- 元条文に含まれる条件：subgroup metricは`sample_count`を必須とし、0.95 percentile bootstrap（1000 resamples、deterministic seed）で計算可能な場合にuncertaintyを併記し、計算不能値を捏造しない
+- RDでの要求核：評価Subgroupの標本数と不確実性を明示し、標本条件・推論方法が不適切な場合は計算不能理由を示して未検証区間を生成しない
+- ID：`AR-016`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+
+### 98.8. AR-027（REWRITE_RD）
+
+- 元条文に含まれる条件：coefficient contribution / SHAP / LIMEはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない
+- RDでの要求核：予測モデルの説明値はモデルの挙動に関するものであり、変数の因果的重要性・介入効果・因果機構を示さない
+- ID：`AR-027`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。

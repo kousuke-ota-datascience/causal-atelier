@@ -36,3 +36,12 @@
 6. 個票CATEやLocal Artifactの機微情報保護、Partial Artifactの不正公開防止、Optional Backend不在の隔離、配布前ライセンス審査を必須とする。
 
 **Evidence status:** `NOT_GENERATED / GATE06_GATE07_NOT_FROZEN / SCIENCE_NOT_RUN`。計画の承認と科学的受入は区別する。[全件Trace](../96_rd03_formal_requirement_traceability.md)を参照。
+
+## 12.2. RD-04で保持する既存の数値受入条件
+
+- `AR-016`：適用可能なSubgroup metricは`sample_count`を保持し、現行の採用済み仕様において、信頼水準0.95のpercentile bootstrap、**1000回の再標本化、deterministic seed**を使用する。推論が計算不能な条件で区間を捏造しない。
+- `FR-072`：直接metric差分には同一`DatasetVersion`、同一TEST-row identity/hash、同一定義metricの一致が必要。一般的なsemantic compatibilityだけでは十分でない。
+- `AR-027`：SHAP／LIME／coefficient contributionを因果効果・因果機構の証拠として報告しない。
+- `NFR-035`及びENH-E11 DEC07の独立科学受入（FWER=0.05、Method別K/R/MC等）は前節§12.1のとおり未完。数値受入条件を今回の抽象化で変更しない。
+
+**Note:** `AR-016`の方式・反復数は既存に承認されたSubgroup評価の対象へ適用するのであり、ENH-E11のすべての因果Estimatorに対する普遍的なBootstrap義務と拡張解釈しない。
