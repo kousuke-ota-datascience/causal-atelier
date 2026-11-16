@@ -278,11 +278,11 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | AC | 種別・責務 | 正本への意味 |
 |---|---|---|
 | AC-D04/D05/D06 | CROSS_CONTRACT：schema/hash、Graph/AR set/readback、RNG/replay | SR04:X-01/03/04/05/06/07へ接続。0件の契約違反はImplementation Gateで確認 |
-| AC-I04 | REPORT_ONLY：CI幅やAR集合informativeness | 強IV等でuninformativeな区間を記録。幅に普遍的Hard Gateを設定しない |
+| GROUP-AC-I04 | REPORT_ONLY：CI幅やAR集合informativeness | 強IV等でuninformativeな区間を記録。幅に普遍的Hard Gateを設定しない |
 | AC-I05/I06 | CONDITIONAL_INFERENCE：Method-specific推論構成／CI unavailable | 確認的MethodのCI科学妥当性とexploratory point-onlyを区別 |
 | AC-T04/T05 | STRESS/NOT_APPLICABLE：識別違反・refutation時の誤用回避 | Hidden invalid IV検出の偽保証をしない |
 | AC-P02/P04 | CONDITION_OF_P01：効果尺度・target・支持域 | P01の数値判定に対する前提制約。独立な追加閾値として二重計上しない |
-| AC-P06 | CONDITIONAL_MODE：exploratory/confirmatory | SR03-D05 Owner採用のモード別意味を保持 |
+| GROUP-AC-P06 | CONDITIONAL_MODE：exploratory/confirmatory | SR03-D05 Owner採用のモード別意味を保持 |
 
 **ステータス:** 上記の参照漏れ（単純なID欠落）は`RULE_BOUND_DRAFT`として解消した。ただしformal Method config、閾値採用、Evaluation Cell、正式Gate Evidenceは依然OPEN。
 
