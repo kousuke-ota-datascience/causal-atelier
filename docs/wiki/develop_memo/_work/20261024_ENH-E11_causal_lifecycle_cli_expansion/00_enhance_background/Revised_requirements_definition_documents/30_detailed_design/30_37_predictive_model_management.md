@@ -3,6 +3,8 @@
 
 ---
 
+## 15. Predictive Capability / Stage Contents
+
 ### 15.7 Model Management
 
 read-oriented model surfaceとしてResult / Artifact / Lineageを使用する。
