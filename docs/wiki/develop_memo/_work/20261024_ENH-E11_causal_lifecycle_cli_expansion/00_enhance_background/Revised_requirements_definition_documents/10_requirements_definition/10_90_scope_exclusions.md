@@ -23,7 +23,7 @@
 - Overview / FlagshipをAnalytical Family peerとして追加すること
 - 新規persistent Findings / Evidence domain modelの必須化
 
-## 11.1. ENH-E11に適用する例外と初期対象外（DEC-SR04-09）
+## 11.1. Local Scientific CLIのOptional Capabilityと対象外機能
 
 - 旧ENH-E10の外部Engine除外は、E11においてDEC09が承認した**Local Scientific CLIのMethod別Optional Capability**の範囲に限り例外とする。DoWhy、EconML、Tigramite等の採用を既存Product Web/DBの強制依存にしない。
 - 初期E11に含めないのは、ATC、汎用Mediation、Matching／汎用g-computation、Policy Value、Monitoring/drift、汎用Graph consensus、一般化された部分識別効果集合の自動数値推定。

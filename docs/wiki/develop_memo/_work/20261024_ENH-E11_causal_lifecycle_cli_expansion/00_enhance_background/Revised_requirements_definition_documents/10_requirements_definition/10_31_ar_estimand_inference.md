@@ -42,18 +42,7 @@ Causal semantic keyは`treatment(exposure) / outcome / estimand / target populat
 
 semantic mismatchは比較request自体のtechnical failureにせず、compatible=falseとreasonを返し、quantitative delta/rankingを生成しない。AUC/RMSE/ATE等を単一scoreへ正規化しない。
 
-## 98. RD-04：Estimand / Identificationへの原文制約保持
+**関連要件が拘束する科学的・Method別条件**
 
-**Status:** `RD04_SCIENTIFIC_TRANSFER_RECORDED / OWNER_CONTENT_REVIEW_PENDING`。要件の抽象化で科学的に有効な方法・受入条件を落とさない。元条文・元IDは監査可能であり、科学的PASSやMethod互換性を意味しない。
-
-### 98.1. FR-043（SPLIT）
-
-- 元条文に含まれる条件：Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する
-- RDでの要求核：識別判断に確定的不整合がある場合はそれを明示し、レビュー待ちとして誤表示しない
-- ID：`FR-043`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
-
-### 98.2. AR-006（REWRITE_RD）
-
-- 元条文に含まれる条件：Identification statusは全reasonを収集後に決定する
-- RDでの要求核：因果識別の成否は全ての不適格理由と不確実性を考慮して決定しなければならない
-- ID：`AR-006`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+- **`FR-043`**：Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する
+- **`AR-006`**：Identification statusは全reasonを収集後に決定する

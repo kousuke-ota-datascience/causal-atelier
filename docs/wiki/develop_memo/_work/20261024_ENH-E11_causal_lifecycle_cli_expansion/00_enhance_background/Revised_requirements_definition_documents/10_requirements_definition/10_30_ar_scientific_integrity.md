@@ -39,18 +39,7 @@
 
 指定subgroup columnはuntouched TEST populationを各column独立にsliceする。automatic intersection/discovery/fairness frameworkはcurrent mandatory scope外。各recordは`sample_count`を必須とし、uncertaintyはnonparametric percentile bootstrap（confidence=0.95, resamples=1000, deterministic seed）とする。`n < 2`またはvalid resamples < 200ではCIを返さずwarningを返す。metricを計算できない場合はvalue/uncertaintyを`null`とし、値を捏造しない。
 
-## 98. RD-04：Scientific Integrityへの原文制約保持
+**関連要件が拘束する科学的・Method別条件**
 
-**Status:** `RD04_SCIENTIFIC_TRANSFER_RECORDED / OWNER_CONTENT_REVIEW_PENDING`。要件の抽象化で科学的に有効な方法・受入条件を落とさない。元条文・元IDは監査可能であり、科学的PASSやMethod互換性を意味しない。
-
-### 98.1. FR-067（SPLIT）
-
-- 元条文に含まれる条件：untouched TEST population上で指定subgroup columnごとのmetric、`sample_count`、計算可能な場合のbootstrap uncertaintyを確認できる
-- RDでの要求核：指定Subgroupの評価指標・標本数と計算可能な不確実性を確認できる
-- ID：`FR-067`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
-
-### 98.2. FR-072（REWRITE_RD）
-
-- 元条文に含まれる条件：Result比較はまずsemantic compatibilityを検証し、direct metric comparisonではさらに同一DatasetVersion、同一TEST-row identity/hash、同一定義metricを要求する
-- RDでの要求核：意味的に比較可能なResultのみを比較する。直接数値差分は、同一DatasetVersion・同一TEST標本identity/hash・同一定義metricが一致する場合に限り算出できる
-- ID：`FR-072`。定量的条件・Method名・原文制約は後続のScience／Acceptance検証で引き続き拘束として扱う。
+- **`FR-067`**：untouched TEST population上で指定subgroup columnごとのmetric、`sample_count`、計算可能な場合のbootstrap uncertaintyを確認できる
+- **`FR-072`**：Result比較はまずsemantic compatibilityを検証し、direct metric comparisonではさらに同一DatasetVersion、同一TEST-row identity/hash、同一定義metricを要求する

@@ -115,34 +115,9 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 | Reviewer / Viewer | Result、warning、diagnostics、Lineage、Annotationを確認する | ProjectMembership roleに従う。VIEWERを含むOWNER / EDITOR / VIEWERがread可能 |
 | Infrastructure Operator | 実行基盤、保存領域、認証、監視等のinfrastructureを運用する | ProjectMembership roleではない運用persona。system-level authorization policyはDEFERRED / FUTURE |
 
-## 90. この文書種別の目的・責務・規範性
+## 90. 要件文書の規範性と境界
 
-- **目的:** User/OperatorがAriadneに期待してよい機能、科学的許容条件、状態、セキュリティ、再現性および検証可能な受入条件を定める。
-- **含む:** MUST/SHOULD/MUST NOT、FR/NFR/AR ID、Requirement Status/Implementation Status/Delivery、Actor/UC/Scope、科学的反例、Test/Acceptance Sourceへのリンク。
-- **含まない:** Python classの命名やprivate field、REST/CLIのwire format詳細、推定アルゴリズムの実装手続。
-- **優先順位:** 現行正本の規範性は`docs/wiki/requirement_definition/10_requirements_definition.md`に残る。DEC09で採用された意味差分は別途この作業コピーで改訂草案を作り、Ownerによる最終内容・SHA確認に加え、ENH-E11の全対象テストPASS後にのみControlled Publicationする。
-- **E11特則:** 旧§11のDoWhy/EconML除外は、DEC09採用のE11機能別optional外部engineに限定して作業版§11.1で例外規定を反映済み。旧FR-161（E10 optional predictive engine）はこの許可の根拠として転用しない。
-- **受入:** Scope68行ごとのR/Q/N/D、E11-REQ仮ID→新正式ID、Method/UC/Issue/Architecture/Gate、旧条文との逐条diffを監査する。既存ProductのPARTIALを黙ってIMPLEMENTEDにしない。
-
-**E11旧草案（正式条文発行前）:** [_drafts/enh_e11_formal_requirement_publication_draft.md](_drafts/enh_e11_formal_requirement_publication_draft.md)（RD-03で条文化済み）
-
-## 91. ENH-E11正式要件の発行規則（RD-03）
-
-- **発行済みの正式ID：FR-185〜203（19）、NFR-029〜036（8）、科学的AR-028〜044（17）。** 全44件のLevel/Statusは`MUST / ACTIVE / UNVERIFIED / ENH-E11`とする。
-- `ACTIVE`は要求義務が有効なこと、`UNVERIFIED`は充足状態が未検証であることを示す。**実装完了、科学的受入、Gate PASS、Coding指示ではない。**
-- 既存の195 FR、36 NFR、27 Scientific ARのID・原文・Statusは変更していない。既存Productの保存済み契約と`causal-analysis-spec/2`も維持する。
-- E11-A-01〜07はArchitecture候補であり、Scientific Integrityの`AR`系列へ採番しない。22 BD/ADRへ移管し、外部観測可能な義務だけをFR/NFR/Scientific ARに反映する。
-- 新E11要件と草案の対応は[RD-03 traceability](../96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
-- **Authority boundary:** OwnerはDEC09で要件の意味とScopeを承認した。今回、改訂版working-copyに正式条文・IDを発行した。**最終SHAのOwner確認・原正本への昇格・ADR/Schema Freeze・Gate06/07・Science/Legalは別途未完了**。
-
-## 92. ENH-E11のCanonical昇格条件（Owner決定 2026-11-16）
-
-ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_definition_documents/`ディレクトリを作業期間中の正規の格納先とする。元`docs/wiki/requirement_definition/`は、**ENH-E11の対象テストが全件PASSした後にのみ昇格**する。したがってRD-03の新FR/NFR/科学的AR発行やScope/Method/UCのトレース完了だけでは昇格しない。実装充足・科学的受入・回帰試験の未完を記録し、対象全件のPASS証拠を確認してから昇格を実施する。詳細は[昇格方針](../93_enh_e11_canonical_promotion_policy.md)。
-
-## 93. RD-04：既存要件の改訂・設計移管（2026-11-16）
-
-- RD-01の旧258件を再審査して`KEEP_RD=136`、`REWRITE_RD=7`、`SPLIT=96`、`MOVE_BD=19`を適用した。122条文を改訂し、136条文は維持。
-- 元ID／Level／Status／Implementation Status／DeliveryとE11新44条文を変更せず、設計情報を21/22/23/30系の各担当ファイルへ移管記録として保持した。
-- Method Scope／数値受入（AR-016 bootstrap、FR-072比較、E11の科学制約）を維持する。
-- [RD-04全体監査](../98_rd04_consistency_verification.md)は文書構造とTraceに関してPASS。人間の内容最終レビュー、BD／IF／DDの具体化、科学・Gate・Legalの独立判定は未完了。
-- 正本昇格は全対象テストPASS後にのみ実施する。
+- この文書群は利用者・運用者が満たすべき機能、非機能、科学的許容条件および検証可能な受入条件を規定する。
+- `FR/NFR/AR`のID、Level、Requirement Status、Implementation Status、Deliveryを保持する。実装充足の判定は仕様発行とは別であり、`ACTIVE`を実装済みと読まない。
+- 対象Method／Estimandや科学的な禁止事項は[Method Scope](10_32_scientific_method_scope.md)を、総合受入条件は[Acceptance](10_91_acceptance_conditions.md)を参照する。
+- REST/CLIのwire形式、Pythonクラスのprivate API、詳細算法・物理配置は21／22／23／30系設計で規定する。

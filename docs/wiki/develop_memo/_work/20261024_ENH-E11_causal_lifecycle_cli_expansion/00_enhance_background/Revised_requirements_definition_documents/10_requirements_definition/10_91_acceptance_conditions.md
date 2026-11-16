@@ -26,22 +26,20 @@
 17. Predictive capability metadata、backend validation、Frontend selectionが同一model/method compatibility authorityと整合する。
 18. SHAP/LIME/coefficient explanationをcausal effectまたはcausal mechanismへ読み替えない。
 
-## 12.1. ENH-E11の追加総合受入条件（正式要件発行時点）
+## 12.1. Local Scientific CLIの追加受入条件
 
-1. DEC09の68 Scope行についてR/Q/N/Dを区別し、既存・新規Requirementへ追跡する。後続送りDを初期実装の完了義務と見なさない。
-2. 全41 Methodを、Method別Estimand・適格性・推論Availability・実効Backend/Library・既知真値・科学的負例・参照比較で独立検証する。
-3. 10 UCについて、Formal FR/NFR/Scientific AR、Method Scope、実装Workstream、受入Evidenceを追跡可能にする。
-4. DEC07採用のGate-wide `FWER=0.05`方針とMethod別K/R/MC・Compute Budgetは、独立受入用の事前登録・Owner Freeze・科学的評価を別途必要とする。未測定値を科学的PASSとして扱わない。
-5. 旧`causal-analysis-spec/2`と既存Product Web/API/Worker/DB、CLI、既存FR/NFR/ARの互換性を保護する。
-6. 個票CATEやLocal Artifactの機微情報保護、Partial Artifactの不正公開防止、Optional Backend不在の隔離、配布前ライセンス審査を必須とする。
+1. 承認範囲の68 Scope行をR/Q/N/Dの処遇で追跡し、D（将来提供）を現行必須機能に算入しない。
+2. 対象41 MethodのEstimand、適格条件、推論可用性、実効Backend／Library版、既知真値、負例、参照比較についてMethod別の独立検証証拠を求める。
+3. 10 UCから正式FR/NFR/科学的ARとMethod契約・受入Evidenceを追跡可能にする。
+4. 科学的受入はfamilywise error rate `FWER=0.05`の承認方針と、Method別の事前指定K/R/MC・計算資源上限・coverage・Monte Carlo誤差を満たす必要がある。計画のみをPASSとして扱わない。
+5. 旧`causal-analysis-spec/2`、既存Product Web/API/Worker/DB、CLI、既存FR/NFR/ARへの互換性を保護する。
+6. 個票CATEやLocal Artifactのプライバシー、部分保存の正常公開防止、Optional Backend不在の隔離、配布前ライセンス審査を受入条件とする。
 
-**Evidence status:** `NOT_GENERATED / GATE06_GATE07_NOT_FROZEN / SCIENCE_NOT_RUN`。計画の承認と科学的受入は区別する。[全件Trace](../96_rd03_formal_requirement_traceability.md)を参照。
+## 12.2. 既存の定量的受入条件
 
-## 12.2. RD-04で保持する既存の数値受入条件
+- **`AR-016`**：適用可能なSubgroup metricで`sample_count`を保持し、信頼水準0.95のpercentile bootstrap（1000 resamples、deterministic seed）で計算可能なときのみuncertaintyを併記する。対象外・計算不能の区間を生成しない。
+- **`FR-072`**：直接metric差分は同一DatasetVersion、同一TEST-row identity/hash、同一定義metricの一致を要する。
+- **`AR-027`**：SHAP/LIME/coefficient contributionを因果効果または因果機構の証拠として表示しない。
+- **`NFR-035`**：Method別の独立科学受入と多重性管理を求める。前項の条件を抽象的な能力表現によって弱めない。
 
-- `AR-016`：適用可能なSubgroup metricは`sample_count`を保持し、現行の採用済み仕様において、信頼水準0.95のpercentile bootstrap、**1000回の再標本化、deterministic seed**を使用する。推論が計算不能な条件で区間を捏造しない。
-- `FR-072`：直接metric差分には同一`DatasetVersion`、同一TEST-row identity/hash、同一定義metricの一致が必要。一般的なsemantic compatibilityだけでは十分でない。
-- `AR-027`：SHAP／LIME／coefficient contributionを因果効果・因果機構の証拠として報告しない。
-- `NFR-035`及びENH-E11 DEC07の独立科学受入（FWER=0.05、Method別K/R/MC等）は前節§12.1のとおり未完。数値受入条件を今回の抽象化で変更しない。
-
-**Note:** `AR-016`の方式・反復数は既存に承認されたSubgroup評価の対象へ適用するのであり、ENH-E11のすべての因果Estimatorに対する普遍的なBootstrap義務と拡張解釈しない。
+`AR-016`のbootstrap条件をE11全ての因果Estimatorへの普遍的な推論要件へ一般化してはならない。
