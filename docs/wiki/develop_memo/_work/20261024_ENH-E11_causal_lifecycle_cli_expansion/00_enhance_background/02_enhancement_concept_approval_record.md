@@ -48,11 +48,13 @@
 
 21. **DEC-SR04-04／GRAPH-A（2026-11-16、Human owner明示採用判断）:** **FCI、PCMCI/PCMCI+、LPCMCIの受入Graph Oracleについて、GRAPH-A＝生成DAG、latent projection MAG、Markov equivalence CPDAG/PAG、temporal lag／同時点関係を科学的に区別し、独立に導出する方針を個別採用**する。生成真値DAGの全方向と出力PAG/CPDAGの完全一致を要求するGRAPH-Bは非採用、Graph精度検証を廃止するGRAPH-Cも非採用。DGP-011の同時点2観測変数に対しFCIがlatent confounderを一意識別・bidirected方向へ確定できるという誤基準は禁止。m-separation／独立Graph同値類から強制端点を導出し、Tigramite OracleCI等は補助的cross-checkに限る。**Graph忠実保持・科学的Graph accuracy・Causal Effectの識別は別判定**。独立MAG/PAG/CPDAG/temporal Oracle実装、FCI/Tigramite version/CI-test・Endpoint科学Benchmark、正式Gate・FR/NFR/AR・Architecture・Codingは未完了。先行SR03-D06のGraphVersion新規固定・strict識別・初期一般化識別エンジン非採用の方針は変更しない。詳細比較・科学的境界・Fixture・Acceptanceは[DEC-SR04-04独立技術判断](../working_notes/20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)に一元化する。
 
+22. **DEC-SR04-05-1〜7（2026-11-16、Human ownerによる「準実験7手法のEstimator／Inference契約を実行する」指示）:** **準実験7手法のMethod別初期科学契約を個別採用**する。**(1) DiD**＝2×2 ATTの群差の差＋独立unitに対するcluster適格推論、staggeredはgroup-timeへ別契約。**(2) Event Study**＝never-treated controlを用いるcohort-time ATT(g,t)を非負の事前指定cohort weightでevent-time集約し、cohort-stratified unit trajectory bootstrapを推論候補にする（naive staggered TWFE leads/lagsを保証対象としない）。**(3) ITS**＝time trend/seasonality/介入level・slopeのsegmented regression、HAC型推論を初期候補。**(4) Sharp RD**＝cutoff左右のlocal-linear・triangular kernel・bandwidth明示＋robust bias-corrected（RBC）CI候補。**(5) Fuzzy RD**＝cutoffのoutcome/treatment jump比の局所complier効果＋分子分母の依存を考慮したRBC推論候補、弱い局所first stageではfail-closed。**(6) Synthetic Control**＝preperiodのsimplex-constrained donor weightsとtreated unitのpost gap、**初期は探索的点推定のみ**、placebo rank/RMSPEを普遍的95%CI扱いしない。**(7) Synthetic DiD**＝control unit重みとpre time重みを別最適化したweighted DID、十分な独立treated/control unitsを前提に毎replicateで両weightsも再推定するunit-cluster bootstrapを推論候補とする。**各Methodの推論は必要なDesign/cluster/CIの科学的成立を条件とする**。これらは**方法論的ベースラインと条件付きInference方針の個別採用**であり、rdrobust等の実効依存追加/版・Config・license、Method別SE/bandwidth/optimizer/bootstrap設定、独立DGP Reference、推論Coverage、Quant AC、正式schema/FR/ADR/Gate・Coding・全体構想を承認するものではない。代替案・数式・既知真値・負例・適用不可条件・科学的検証への引渡しは[DEC-SR04-05独立技術判断記録](../working_notes/20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)に一元化する。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
-- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**は個別採用済み。ただし正式Schema enum/Method config・推論方式・数値受入は未承認。
+- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**、DEC-SR04-05-1〜7の**準実験Method別ベースライン推定・条件付き推論方針**は個別採用済み。ただし正式Schema enum/Methodの実効Config、科学的に認定されたInference algorithmとCoverage、数値受入は未承認。
 - **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
 - Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
