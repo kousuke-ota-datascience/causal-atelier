@@ -7,7 +7,7 @@
 
 **判定原則:** 『何を満たさなければならないか』をRDに残す。方法自体が承認された提供義務の場合は`10_32_scientific_method_scope.md`相当のScope契約で保持し、実装と同一視しない。科学的Estimand/前提の制限は`10_31`等で保持する。移管のみのIDもTrace台帳から削除せず、統合元要求を明記してControlled Publicationで処理する。
 
-Source: [E11 formal requirement publication draft](../10_requirements_definition/10_14_enh_e11_formal_requirement_publication_draft.md).
+Source: [E11 formal requirement publication draft](../10_requirements_definition/_drafts/enh_e11_formal_requirement_publication_draft.md).
 
 ## 1. E11-F (19 candidates)
 

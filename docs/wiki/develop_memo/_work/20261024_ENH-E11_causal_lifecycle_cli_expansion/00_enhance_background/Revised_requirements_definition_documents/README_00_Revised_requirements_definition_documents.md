@@ -1,130 +1,162 @@
-# ENH-E11 — Revised Requirements & Design (Working Copy)
+# ENH-E11 — Revised Requirements & Design Documents
 
-**State:** `STRUCTURAL_COPY_DRAFT / ENH_E11_FR_NFR_AR_PUBLICATION_PENDING`  
-**Source:** `docs/wiki/requirement_definition/` at commit `3ba5fe2465ec591f0da7f998c21a5241984b73dc`  
-**Policy:** Original canonical documents remain unchanged. The files here are a working copy, **not** formally published ENH-E11 FR/NFR/AR, ADR, Gate or implementation approval.
+**Status (2026-11-16):** `RD02_REORGANIZED / RD03_FORMAL_CLAUSES_ISSUED_IN_REVISED_COPY / OWNER_SHA_FINAL_REVIEW_PENDING / SCIENCE_AND_GATE_NOT_RUN`.
 
-## 1. Scope and authority
+**Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
-- Lossless source files are under `_source_snapshots/` using the original blob SHA; the concept document is also present at the root.
-- The five baseline documents are split into topic files. Sections and FR rows have been preserved from the originals; relative Markdown links in split text target the *pinned original source*.
-- Every `XX_00_overall_*.md` holds baseline shared policy and has an index role. Enhancement deltas must be labeled as drafts until reviewed and approved at the canonical level.
-- DEC-SR04-09 approves 68 Scope dispositions and semantic/architecture policy, **not** published requirement clauses, detailed ADR, Gate Freeze, scientific acceptance, or coding.
+## 1. Current document index（全105 numbered files）
 
-## 2. Document index
-
-### 10 requirements_definition
-
-Source: `_source_snapshots/10_requirements_definition.md` (blob `40b83f29c67b4a39f6db5393be7534c5e892d656`)
+### 10_requirements_definition
 
 - [10_00_overall_RD.md](10_requirements_definition/10_00_overall_RD.md)
-- [10_01_capabilities_e2e.md](10_requirements_definition/10_01_capabilities_e2e.md)
-- [10_02_fr_fr-001_to_fr-029.md](10_requirements_definition/10_02_fr_fr-001_to_fr-029.md)
-- [10_03_fr_fr-030_to_fr-060.md](10_requirements_definition/10_03_fr_fr-030_to_fr-060.md)
-- [10_04_fr_fr-061_to_fr-089.md](10_requirements_definition/10_04_fr_fr-061_to_fr-089.md)
-- [10_05_fr_fr-090_to_fr-118.md](10_requirements_definition/10_05_fr_fr-090_to_fr-118.md)
-- [10_06_fr_fr-119_to_fr-144.md](10_requirements_definition/10_06_fr_fr-119_to_fr-144.md)
-- [10_07_fr_fr-145_to_fr-175.md](10_requirements_definition/10_07_fr_fr-145_to_fr-175.md)
-- [10_08_fr_fr-176_to_fr-184.md](10_requirements_definition/10_08_fr_fr-176_to_fr-184.md)
-- [10_09_nonfunctional.md](10_requirements_definition/10_09_nonfunctional.md)
-- [10_10_science.md](10_requirements_definition/10_10_science.md)
-- [10_11_state_access_retention.md](10_requirements_definition/10_11_state_access_retention.md)
-- [10_12_scope_acceptance.md](10_requirements_definition/10_12_scope_acceptance.md)
-- [10_13_change_history.md](10_requirements_definition/10_13_change_history.md)
+- [10_01_business_capabilities.md](10_requirements_definition/10_01_business_capabilities.md)
+- [10_02_use_cases_e2e.md](10_requirements_definition/10_02_use_cases_e2e.md)
+- [10_10_fr_project_context_data.md](10_requirements_definition/10_10_fr_project_context_data.md)
+- [10_11_fr_exploratory.md](10_requirements_definition/10_11_fr_exploratory.md)
+- [10_12_fr_predictive.md](10_requirements_definition/10_12_fr_predictive.md)
+- [10_13_fr_causal.md](10_requirements_definition/10_13_fr_causal.md)
+- [10_14_fr_workflow_execution.md](10_requirements_definition/10_14_fr_workflow_execution.md)
+- [10_15_fr_results_lineage.md](10_requirements_definition/10_15_fr_results_lineage.md)
+- [10_16_fr_navigation_ui.md](10_requirements_definition/10_16_fr_navigation_ui.md)
+- [10_17_fr_api_cli.md](10_requirements_definition/10_17_fr_api_cli.md)
+- [10_18_fr_security_operations.md](10_requirements_definition/10_18_fr_security_operations.md)
+- [10_20_nfr_reproducibility.md](10_requirements_definition/10_20_nfr_reproducibility.md)
+- [10_21_nfr_reliability_performance.md](10_requirements_definition/10_21_nfr_reliability_performance.md)
+- [10_22_nfr_security_compatibility.md](10_requirements_definition/10_22_nfr_security_compatibility.md)
+- [10_30_ar_scientific_integrity.md](10_requirements_definition/10_30_ar_scientific_integrity.md)
+- [10_31_ar_estimand_inference.md](10_requirements_definition/10_31_ar_estimand_inference.md)
+- [10_32_scientific_method_scope.md](10_requirements_definition/10_32_scientific_method_scope.md)
+- [10_40_state_lifecycle.md](10_requirements_definition/10_40_state_lifecycle.md)
+- [10_50_authorization_retention.md](10_requirements_definition/10_50_authorization_retention.md)
+- [10_90_scope_exclusions.md](10_requirements_definition/10_90_scope_exclusions.md)
+- [10_91_acceptance_conditions.md](10_requirements_definition/10_91_acceptance_conditions.md)
+- [10_99_change_log.md](10_requirements_definition/10_99_change_log.md)
 
-### 21 logical_data_design
-
-Source: `_source_snapshots/21_logical_data_design.md` (blob `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`)
+### 21_logical_data_design
 
 - [21_00_overall_LDD.md](21_logical_data_design/21_00_overall_LDD.md)
-- [21_01_relationships.md](21_logical_data_design/21_01_relationships.md)
-- [21_02_entity_catalog_3_1_to_3_9.md](21_logical_data_design/21_02_entity_catalog_3_1_to_3_9.md)
-- [21_03_entity_catalog_3_10_to_3_18.md](21_logical_data_design/21_03_entity_catalog_3_10_to_3_18.md)
-- [21_04_value_catalog_4_1_to_4_8.md](21_logical_data_design/21_04_value_catalog_4_1_to_4_8.md)
-- [21_05_value_catalog_4_9_to_4_17.md](21_logical_data_design/21_05_value_catalog_4_9_to_4_17.md)
-- [21_06_state_model.md](21_logical_data_design/21_06_state_model.md)
-- [21_07_constraints.md](21_logical_data_design/21_07_constraints.md)
-- [21_08_history.md](21_logical_data_design/21_08_history.md)
+- [21_01_entity_relationships.md](21_logical_data_design/21_01_entity_relationships.md)
+- [21_10_entity_project_context.md](21_logical_data_design/21_10_entity_project_context.md)
+- [21_11_entity_dataset_view.md](21_logical_data_design/21_11_entity_dataset_view.md)
+- [21_12_entity_specification_graph.md](21_logical_data_design/21_12_entity_specification_graph.md)
+- [21_13_entity_execution.md](21_logical_data_design/21_13_entity_execution.md)
+- [21_14_entity_result_artifact_lineage.md](21_logical_data_design/21_14_entity_result_artifact_lineage.md)
+- [21_15_entity_membership_workspace.md](21_logical_data_design/21_15_entity_membership_workspace.md)
+- [21_20_value_domain_identifiers.md](21_logical_data_design/21_20_value_domain_identifiers.md)
+- [21_21_value_navigation_context.md](21_logical_data_design/21_21_value_navigation_context.md)
+- [21_22_value_analysis_specifications.md](21_logical_data_design/21_22_value_analysis_specifications.md)
+- [21_23_value_execution_snapshot.md](21_logical_data_design/21_23_value_execution_snapshot.md)
+- [21_24_value_comparison_lineage.md](21_logical_data_design/21_24_value_comparison_lineage.md)
+- [21_25_value_canonicalization.md](21_logical_data_design/21_25_value_canonicalization.md)
+- [21_30_state_models.md](21_logical_data_design/21_30_state_models.md)
+- [21_40_integrity_constraints.md](21_logical_data_design/21_40_integrity_constraints.md)
+- [21_41_scientific_data_constraints.md](21_logical_data_design/21_41_scientific_data_constraints.md)
+- [21_99_change_log.md](21_logical_data_design/21_99_change_log.md)
 
-### 22 product_basic_design
-
-Source: `_source_snapshots/22_product_basic_design.md` (blob `87196f2f03a7f3367724bc05fb254d1a4d98109e`)
+### 22_product_basic_design
 
 - [22_00_overall_BD.md](22_product_basic_design/22_00_overall_BD.md)
 - [22_01_information_architecture.md](22_product_basic_design/22_01_information_architecture.md)
 - [22_02_web_operation.md](22_product_basic_design/22_02_web_operation.md)
 - [22_03_navigation_application.md](22_product_basic_design/22_03_navigation_application.md)
-- [22_04_workflow_family_capabilities.md](22_product_basic_design/22_04_workflow_family_capabilities.md)
-- [22_05_validation_results.md](22_product_basic_design/22_05_validation_results.md)
-- [22_06_frontend_security_deploy.md](22_product_basic_design/22_06_frontend_security_deploy.md)
-- [22_07_history_e8.md](22_product_basic_design/22_07_history_e8.md)
+- [22_04_workflow_core.md](22_product_basic_design/22_04_workflow_core.md)
+- [22_05_family_exploratory.md](22_product_basic_design/22_05_family_exploratory.md)
+- [22_06_family_causal.md](22_product_basic_design/22_06_family_causal.md)
+- [22_07_family_predictive.md](22_product_basic_design/22_07_family_predictive.md)
+- [22_08_validation_architecture.md](22_product_basic_design/22_08_validation_architecture.md)
+- [22_09_results_artifacts_lineage.md](22_product_basic_design/22_09_results_artifacts_lineage.md)
+- [22_10_comparison.md](22_product_basic_design/22_10_comparison.md)
+- [22_11_frontend_state.md](22_product_basic_design/22_11_frontend_state.md)
+- [22_12_security.md](22_product_basic_design/22_12_security.md)
+- [22_13_deployment.md](22_product_basic_design/22_13_deployment.md)
+- [22_14_failure_model.md](22_product_basic_design/22_14_failure_model.md)
+- [22_15_schema_dependency.md](22_product_basic_design/22_15_schema_dependency.md)
+- [22_16_test_architecture.md](22_product_basic_design/22_16_test_architecture.md)
+- [22_17_stage_contents_e8_effective.md](22_product_basic_design/22_17_stage_contents_e8_effective.md)
+- [22_99_change_log.md](22_product_basic_design/22_99_change_log.md)
 
-### 23 api_interface_design
+### 23_api_interface_design
 
-Source: `_source_snapshots/23_api_interface_design.md` (blob `131467f02222f105a49e6dfdbcec0f49cadb0f41`)
+- [23_00_overall_IF.md](23_api_interface_design/23_00_overall_IF.md)
+- [23_01_common_conventions.md](23_api_interface_design/23_01_common_conventions.md)
+- [23_10_api_project_context.md](23_api_interface_design/23_10_api_project_context.md)
+- [23_11_api_dataset_view.md](23_api_interface_design/23_11_api_dataset_view.md)
+- [23_12_api_analysis_specification.md](23_api_interface_design/23_12_api_analysis_specification.md)
+- [23_13_api_exploratory.md](23_api_interface_design/23_13_api_exploratory.md)
+- [23_14_api_causal.md](23_api_interface_design/23_14_api_causal.md)
+- [23_15_api_predictive.md](23_api_interface_design/23_15_api_predictive.md)
+- [23_16_api_execution.md](23_api_interface_design/23_16_api_execution.md)
+- [23_17_api_result_comparison_lineage.md](23_api_interface_design/23_17_api_result_comparison_lineage.md)
+- [23_18_api_annotation_artifact.md](23_api_interface_design/23_18_api_annotation_artifact.md)
+- [23_19_api_frontend_support.md](23_api_interface_design/23_19_api_frontend_support.md)
+- [23_20_browser_navigation.md](23_api_interface_design/23_20_browser_navigation.md)
+- [23_30_worker_runtime.md](23_api_interface_design/23_30_worker_runtime.md)
+- [23_40_cli_library.md](23_api_interface_design/23_40_cli_library.md)
+- [23_50_error_contract.md](23_api_interface_design/23_50_error_contract.md)
+- [23_51_idempotency_contract.md](23_api_interface_design/23_51_idempotency_contract.md)
+- [23_52_versioning_compatibility.md](23_api_interface_design/23_52_versioning_compatibility.md)
+- [23_90_interface_verification.md](23_api_interface_design/23_90_interface_verification.md)
+- [23_99_change_log.md](23_api_interface_design/23_99_change_log.md)
 
-- [23_00_overall_API.md](23_api_interface_design/23_00_overall_API.md)
-- [23_01_browser_navigation.md](23_api_interface_design/23_01_browser_navigation.md)
-- [23_02_web_api_5_1_to_5_3.md](23_api_interface_design/23_02_web_api_5_1_to_5_3.md)
-- [23_03_web_api_5_4_to_5_6.md](23_api_interface_design/23_03_web_api_5_4_to_5_6.md)
-- [23_04_web_api_5_7_to_5_9.md](23_api_interface_design/23_04_web_api_5_7_to_5_9.md)
-- [23_05_web_api_5_10_to_5_10.md](23_api_interface_design/23_05_web_api_5_10_to_5_10.md)
-- [23_06_worker_cli.md](23_api_interface_design/23_06_worker_cli.md)
-- [23_07_crosscut_verification.md](23_api_interface_design/23_07_crosscut_verification.md)
-- [23_08_history.md](23_api_interface_design/23_08_history.md)
-
-### 30 detailed_design
-
-Source: `_source_snapshots/30_detailed_design.md` (blob `04d83541e55ab0364500afb4b92ef55c10785a0c`)
+### 30_detailed_design
 
 - [30_00_overall_DD.md](30_detailed_design/30_00_overall_DD.md)
-- [30_01_domain_context.md](30_detailed_design/30_01_domain_context.md)
-- [30_02_planning_execution.md](30_detailed_design/30_02_planning_execution.md)
-- [30_03_project_workspace.md](30_detailed_design/30_03_project_workspace.md)
-- [30_04_exploratory_causal.md](30_detailed_design/30_04_exploratory_causal.md)
-- [30_05_predictive_setup_and_workflow.md](30_detailed_design/30_05_predictive_setup_and_workflow.md)
-- [30_06_predictive_advanced_xai.md](30_detailed_design/30_06_predictive_advanced_xai.md)
-- [30_07_results_frontend.md](30_detailed_design/30_07_results_frontend.md)
-- [30_08_persistence_security.md](30_detailed_design/30_08_persistence_security.md)
-- [30_09_tests_history.md](30_detailed_design/30_09_tests_history.md)
+- [30_01_class_design_template.md](30_detailed_design/30_01_class_design_template.md)
+- [30_10_domain_resources.md](30_detailed_design/30_10_domain_resources.md)
+- [30_11_schema_canonicalization.md](30_detailed_design/30_11_schema_canonicalization.md)
+- [30_12_context_analysis_view.md](30_detailed_design/30_12_context_analysis_view.md)
+- [30_20_planning_validation.md](30_detailed_design/30_20_planning_validation.md)
+- [30_21_execution_runtime.md](30_detailed_design/30_21_execution_runtime.md)
+- [30_30_exploratory.md](30_detailed_design/30_30_exploratory.md)
+- [30_31_causal_setup_discovery.md](30_detailed_design/30_31_causal_setup_discovery.md)
+- [30_32_causal_identification.md](30_detailed_design/30_32_causal_identification.md)
+- [30_33_causal_estimation_effects.md](30_detailed_design/30_33_causal_estimation_effects.md)
+- [30_34_causal_diagnostics_sensitivity.md](30_detailed_design/30_34_causal_diagnostics_sensitivity.md)
+- [30_35_predictive_training.md](30_detailed_design/30_35_predictive_training.md)
+- [30_36_predictive_explanation.md](30_detailed_design/30_36_predictive_explanation.md)
+- [30_37_predictive_model_management.md](30_detailed_design/30_37_predictive_model_management.md)
+- [30_40_project_workspace.md](30_detailed_design/30_40_project_workspace.md)
+- [30_41_navigation_routing.md](30_detailed_design/30_41_navigation_routing.md)
+- [30_42_results_lineage.md](30_detailed_design/30_42_results_lineage.md)
+- [30_43_operation_availability.md](30_detailed_design/30_43_operation_availability.md)
+- [30_50_persistence_artifacts.md](30_detailed_design/30_50_persistence_artifacts.md)
+- [30_51_security.md](30_detailed_design/30_51_security.md)
+- [30_52_failure_handling.md](30_detailed_design/30_52_failure_handling.md)
+- [30_60_cli_adapters.md](30_detailed_design/30_60_cli_adapters.md)
+- [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
+- [30_99_change_log.md](30_detailed_design/30_99_change_log.md)
 
-## 3. Approval / verification boundary
+## 2. RD-03 formal requirement publication
 
-| Object | Status |
-|---|---|
-| Baseline original at `docs/wiki/requirement_definition` | Current approved source; not modified here |
-| These split working copies | `STRUCTURAL_COPY_DRAFT` |
-| DEC09 Scope & requirement meaning | `OWNER_APPROVED` |
-| New canonical FR/NFR/AR / detailed ADR / schema | `PENDING` |
-| Gate06/07 Freeze, Science T2/T3, License approval, Coding authorization | `NOT_COMPLETED` |
+- [正式要件全68 Scope・41 Method・10 UC Trace](96_rd03_formal_requirement_traceability.md)
+- [41 Method scope catalog](10_requirements_definition/10_32_scientific_method_scope.md)
+- [10_00 — Requirement semantics and issuance state](10_requirements_definition/10_00_overall_RD.md)
+- [10_90 — E10 exclusion and E11 exceptions](10_requirements_definition/10_90_scope_exclusions.md)
+- [10_91 — E11 acceptance obligation](10_requirements_definition/10_91_acceptance_conditions.md)
 
-DEC09 authority: [Scope / Requirements / Architecture / Gate owner record](../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md).
+**発行結果:** 新規FR19（FR-185〜203）、NFR8（NFR-029〜036）、科学的AR17（AR-028〜044）を`MUST / ACTIVE / UNVERIFIED / ENH-E11`で登録。既存FR195／NFR36／AR27のStatusと正文は不変。Architecture候補E11-A-01〜07はScientific ARに混ぜず、22 BD／ADRへ移管。
 
-## 4. Source copy and historical note
+## 3. Draft / Review material (not approved physical design)
 
-The prior README in this folder was written for approved snapshots only. This revised index explicitly separates baseline copies from working drafts; presence in this folder does not imply approval. Retain the original effective-snapshot text and change logs as evidence, while using new E11 draft addenda for proposed semantics.
+- [RD publication prior draft](10_requirements_definition/_drafts/enh_e11_formal_requirement_publication_draft.md)
+- [LDD E11 local model draft](21_logical_data_design/_drafts/enh_e11_local_logical_model_draft.md)
+- [BD E11 local architecture draft](22_product_basic_design/_drafts/enh_e11_causal_cli_basic_design_draft.md)
+- [IF E11 local CLI/Port draft](23_api_interface_design/_drafts/enh_e11_cli_and_port_interface_draft.md)
+- [DD proposed classes](30_detailed_design/_drafts/enh_e11_proposed_physical_class_design.md)
+- [DD physical design gap register](30_detailed_design/_review/physical_design_gap_register.md)
 
-## 5. ENH-E11 revision candidates (not canonical)
+## 4. Audit reports
 
-- [10_14 — Candidate formal FR/NFR/AR and §11 diff](10_requirements_definition/10_14_enh_e11_formal_requirement_publication_draft.md)
-- [21_09 — Local logical model](21_logical_data_design/21_09_enh_e11_local_logical_model_draft.md)
-- [22_08 — Causal CLI basic architecture](22_product_basic_design/22_08_enh_e11_causal_cli_basic_design_draft.md)
-- [23_09 — CLI/Scientific Port interface](23_api_interface_design/23_09_enh_e11_cli_and_port_interface_draft.md)
-- [30_10 — Existing verified classes](30_detailed_design/30_10_existing_classes_physical_design_verified.md)
-- [30_11 — Proposed E11 physical class contracts](30_detailed_design/30_11_enh_e11_proposed_physical_class_design.md)
-- [30_12 — Physical specification template and gap register](30_detailed_design/30_12_physical_design_gap_register.md)
+- [RD-02 current file numbering, preservation, and 57 legacy file migration](92_rd02_restructure_verification.md)
+- [RD-01 full 292-item Disposition review](rd01_review/91_rd01_requirement_granularity_review.md)
+- [RD-01 existing FR 195 register](rd01_review/92_rd01_fr_disposition_register.md)
+- [RD-01 NFR36 + AR27 register](rd01_review/93_rd01_nfr_ar_disposition_register.md)
+- [RD-01 E11 provisional candidate register](rd01_review/94_rd01_e11_draft_disposition_register.md)
+- [Prior structural split audit (historical)](90_structural_split_verification.md)
 
-**Note:** structural copies have source-approved content, but formal new requirements/design remain pending; these E11 addenda carry a separate working-draft status.
+## 5. Authority and remaining work
 
-## 6. Verification report
-
-- [Structural source-copy, FR and section-reconstruction audit](90_structural_split_verification.md) — verifies content preservation, while documenting incomplete formal E11 publication and detailed design coverage.
-
-## 7. RD-01 — 要件粒度の逐条再分類（2026-11-16）
-
-- [RD-01 Review Summary / 292 ID（既存FR195、NFR36、AR27、E11草案34）](rd01_review/91_rd01_requirement_granularity_review.md)
-- [既存FR逐条Disposition](rd01_review/92_rd01_fr_disposition_register.md)
-- [既存NFR/AR逐条Disposition](rd01_review/93_rd01_nfr_ar_disposition_register.md)
-- [E11草案逐条Disposition](rd01_review/94_rd01_e11_draft_disposition_register.md)
-
-`KEEP_RD=137 / REWRITE_RD=10 / SPLIT=118 / MOVE_BD=27`。**Dispositionはレビュー草案**であり、正本Requirement、ID、各StatusやImplementation Statusは未改訂。次のRD-02でOwner決定済み`10_00〜10_99`分類別採番を反映する。
+- [DEC-SR04-09 Scope, Requirements, Architecture and Gate integrated Owner decisions](../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)
+- `RD-01`分類Dispositionは独立承認前の編集候補であり、旧FR/NFR/ARの全面的な抽象化・移管本文反映は未完。RD-03の新E11条文発行とは別。
+- 確定していない事項：Ownerによる新条文のSHA確認と元canonicalへの昇格、Method別実効Backend・CIの検証、ADR/Schema freeze、Gate06/07、Science T2/T3、顧客別Legal Gate、全Class物理詳細設計。
+- `PLAN:G01〜G10`は実装Workstreamの名称。正式受入GateのPASSを意味しない。

@@ -1,3 +1,5 @@
+> **Historical audit (pre-RD-02 numbering).** New numbering and migration verification: [92_rd02_restructure_verification.md](92_rd02_restructure_verification.md). This historical file deliberately preserves the former filenames.
+
 # ENH-E11 — Requirements/Design Split Verification
 
 - Verification date: 2026-11-16 (JST)
