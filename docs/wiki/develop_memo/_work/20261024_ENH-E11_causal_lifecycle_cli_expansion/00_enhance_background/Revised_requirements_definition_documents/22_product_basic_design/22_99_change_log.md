@@ -51,4 +51,10 @@ Application IAをProject ManagementとAnalysis Workspaceへ分離し、Project r
 - 既存Product system図でCLIがWeb APIを通ると解釈され得る混在表記を、Product laneとE11 Local laneへ区別。
 - 既存`causal-analysis-spec/2`／Product Worker/DB／Navigation、E9/E10回帰、GAP-C01〜04の非改変条件を維持。
 - 実際のCLI`scientific_stage.py`・`ScientificCoreAdapter`・Manifest等を参照したGapをArchitecture Reviewへ記録。独立レビュー・IF/Port/Schema・Science/Legal/Gateは未承認／未実施。
-- [BD01 review](22_90_architecture_consistency_review.md)、[44 Requirement trace](22_91_bd01_requirement_architecture_trace.md)、[E11 Canonical promotion rule](../93_enh_e11_canonical_promotion_policy.md)。
+- [BD01 review](../bd01_review/90_architecture_consistency_review.md)、[44 Requirement trace](../bd01_review/91_requirement_architecture_trace.md)、[E11 Canonical promotion rule](../93_enh_e11_canonical_promotion_policy.md)。
+
+### 20.11. 2026-11-16 — BD-01整理：常設設計とフロー型レビューの分離
+
+- 旧`22_20〜22_23`に記載した恒常的設計契約は`22_00`、`22_04`、`22_06`、`22_08`、`22_09`、`22_12〜16`に統合した。
+- `22_20〜23`の当初断片は[BD01 source snapshots](../bd01_review/README.md)へ原Blobのまま保全。旧`22_90〜91`の自己レビュー/44要件の割当Traceも`bd01_review/`へ移動。
+- `22_product_basic_design/`には将来の正本として継続利用する責務別ファイルのみ置く。原正本`docs/wiki/requirement_definition/`の昇格条件は変更しない。

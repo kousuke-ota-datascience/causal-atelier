@@ -31,7 +31,7 @@
 | Adapter execution or artifact readback failure | technical failure、完全公開禁止、staging・manifest commitを安全に回復 |
 | Source/Artifact hash collision or mismatch | provenance/consistency error、正本の上書きや黙示再利用を拒否 |
 
-**注意:** 旧Productのretry/idempotency/cross-store compensation方針とLocal Filesystem publicationの実装は分けて定義する。[科学的Gate](22_21_e11_scientific_pipeline.md)／[Artifact publish](22_22_e11_local_result_artifact_lineage.md)。
+**注意:** 旧Productのretry/idempotency/cross-store compensation方針とLocal Filesystem publicationの実装は分けて定義する。[科学的Gate](22_06_family_causal.md)／[Artifact publish](22_09_results_artifacts_lineage.md)。
 
 技術失敗と科学的非識別は別のResult軸に保持し、継続可能なscientific negativeを汎用exceptionとして破棄しない。
 

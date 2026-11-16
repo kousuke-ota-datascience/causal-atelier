@@ -59,7 +59,7 @@
 | ARC09-06 Provenance/Profiles | APPROVED | [22_23](../22_product_basic_design/22_13_deployment.md) | 5 profile lock/preflight/SBOM pending |
 | ARC09-07 Future Product | APPROVED | [22_20](../22_product_basic_design/22_00_overall_BD.md) | Product gaps independently unresolved |
 
-[44 formal requirement ⇄ BD Trace](../22_product_basic_design/22_91_bd01_requirement_architecture_trace.md) はすべて責務へ割当済み。これを設計の科学・実装検証済みとの主張に使わない。
+[44 formal requirement ⇄ BD Trace](91_requirement_architecture_trace.md) はすべて責務へ割当済み。これを設計の科学・実装検証済みとの主張に使わない。
 
 ## 5. IF-01 / DD-01 / Gate06引渡し
 

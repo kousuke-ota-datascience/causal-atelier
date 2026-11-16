@@ -35,7 +35,7 @@ Current design concernを次のtest layerへtraceする。
 | Independent science | 41 Method/68 Scope/10 UC、DGP/NEG/REF/AC/ENV-AC、FWER=.05、K/R/MC／Coverage／Monte Carlo error |
 | Delivery / legal | Artifact・Recipient・License/SBOMの実名審査。Science/Env PASSとは別 |
 
-`PLAN:G01〜G10`は開発Workstreamであり正式Gate06/07ではない。**本BDの文書監査PASSが実行テストPASSを意味しない**。[Review](22_90_architecture_consistency_review.md)。
+`PLAN:G01〜G10`は開発Workstreamであり正式Gate06/07ではない。**本BDの文書監査PASSが実行テストPASSを意味しない**。[Review](../bd01_review/90_architecture_consistency_review.md)。
 
 実装が継続的に充足すべき検証契約として、Local CLIとProductの依存方向、入力版Dispatch、Method適格性、typed inference、成果物の部分公開拒否、環境・Privacy回帰を含む。Method固有のScience受入は設計検証とは独立する。
 

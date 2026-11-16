@@ -4,7 +4,7 @@
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
-## 1. Current document index（全111 numbered files）
+## 1. Current document index（全105 numbered files）
 
 ### 10_requirements_definition
 
@@ -73,12 +73,6 @@
 - [22_15_schema_dependency.md](22_product_basic_design/22_15_schema_dependency.md)
 - [22_16_test_architecture.md](22_product_basic_design/22_16_test_architecture.md)
 - [22_17_stage_contents_e8_effective.md](22_product_basic_design/22_17_stage_contents_e8_effective.md)
-- [22_20_e11_local_system_architecture.md](22_product_basic_design/22_20_e11_local_system_architecture.md)
-- [22_21_e11_scientific_pipeline.md](22_product_basic_design/22_21_e11_scientific_pipeline.md)
-- [22_22_e11_local_result_artifact_lineage.md](22_product_basic_design/22_22_e11_local_result_artifact_lineage.md)
-- [22_23_e11_environment_security_compatibility.md](22_product_basic_design/22_23_e11_environment_security_compatibility.md)
-- [22_90_architecture_consistency_review.md](22_product_basic_design/22_90_architecture_consistency_review.md)
-- [22_91_bd01_requirement_architecture_trace.md](22_product_basic_design/22_91_bd01_requirement_architecture_trace.md)
 - [22_99_change_log.md](22_product_basic_design/22_99_change_log.md)
 
 ### 23_api_interface_design
@@ -144,6 +138,7 @@
 
 ## 3. Draft / Review material (not approved physical design)
 
+- [BD-01 エンハンス固有のArchive/Reviews/Trace](bd01_review/README.md) — 正本候補22系と切り離して保管。
 - [RD publication prior draft](10_requirements_definition/_drafts/enh_e11_formal_requirement_publication_draft.md)
 - [LDD E11 local model draft](21_logical_data_design/_drafts/enh_e11_local_logical_model_draft.md)
 - [BD E11 local architecture draft](22_product_basic_design/_drafts/enh_e11_causal_cli_basic_design_draft.md)
@@ -153,8 +148,8 @@
 
 ## 4. Audit reports
 
-- [BD-01 Architecture consistency self-review and open findings](22_product_basic_design/22_90_architecture_consistency_review.md) — 13 findings, 2 resolved in BD, 11 open; independent review pending.
-- [BD-01 formal 44-requirement and ARC09 7-decision mapping](22_product_basic_design/22_91_bd01_requirement_architecture_trace.md) — mapping coverage checked; science/implementation not verified.
+- [BD-01 Architecture consistency self-review and open findings](bd01_review/90_architecture_consistency_review.md) — 13 findings, 2 resolved in BD, 11 open; independent review pending.
+- [BD-01 formal 44-requirement and ARC09 7-decision mapping](bd01_review/91_requirement_architecture_trace.md) — mapping coverage checked; science/implementation not verified.
 - [RD-04 requirement consistency / design migration verification](98_rd04_consistency_verification.md) — current; structure and trace audit PASS, owner content review pending.
 - [RD-04 FR195 clause review](95_rd04_fr_application_review.md)
 - [RD-04 NFR36+Scientific AR27 review](96_rd04_nfr_ar_application_review.md)
@@ -181,9 +176,10 @@
 - **現状:** 元正本は未変更。`RD-03`新条文は本作業ディレクトリ内で発行済みだが、元正本への昇格ではない。
 - **決定の詳細と判定規則:** [ENH-E11 Canonical昇格方針](93_enh_e11_canonical_promotion_policy.md)。
 
-## 7. BD-01 — Basic Design and Architecture Consistency Review（2026-11-16）
+## 7. BD-01 — 正本候補の常設設計とエンハンス固有レビューの分離（2026-11-16）
 
-- ENH-E11と既存Productを**別の実行/永続authority**として扱い、[22_00のシステム構成](22_product_basic_design/22_00_overall_BD.md)、[22_20 Local Boundary](22_product_basic_design/22_20_e11_local_system_architecture.md)、[22_21 Scientific Pipeline](22_product_basic_design/22_21_e11_scientific_pipeline.md)、[22_22 Result/Artifact](22_product_basic_design/22_22_e11_local_result_artifact_lineage.md)、[22_23 Security/Environment](22_product_basic_design/22_23_e11_environment_security_compatibility.md)を改訂した。
-- Owner承認済みDEC09 ARC09-01〜07は責務別BDに配置済み。新規FR/NFR/科学的AR44件とE11-A7件を[22_91 Trace](22_product_basic_design/22_91_bd01_requirement_architecture_trace.md)へ対応付けた。
-- [22_90内部Architecture整合レビュー](22_product_basic_design/22_90_architecture_consistency_review.md)：Finding13件、基本設計上で修正2件、残る11件は未閉鎖。現行CLIのPort/Manifestと新E11のVersion・typed Result・Atomic Publish・Local Privacy等の実装差分はIF-01/DD-01/Gate06に引き継ぐ。
+- ENH-E11と既存Productを**別の実行/永続authority**として扱い、[22_00のシステム構成](22_product_basic_design/22_00_overall_BD.md)、[Local execution boundary](22_product_basic_design/22_00_overall_BD.md)、[Scientific methods](22_product_basic_design/22_06_family_causal.md)、[Result/Artifact](22_product_basic_design/22_09_results_artifacts_lineage.md)、[Security](22_product_basic_design/22_12_security.md)・[Environment](22_product_basic_design/22_13_deployment.md)を改訂した。
+- Owner承認済みDEC09 ARC09-01〜07は責務別BDに配置済み。新規FR/NFR/科学的AR44件とE11-A7件を[22_91 Trace](bd01_review/91_requirement_architecture_trace.md)へ対応付けた。
+- [22_90内部Architecture整合レビュー](bd01_review/90_architecture_consistency_review.md)：Finding13件、基本設計上で修正2件、残る11件は未閉鎖。現行CLIのPort/Manifestと新E11のVersion・typed Result・Atomic Publish・Local Privacy等の実装差分はIF-01/DD-01/Gate06に引き継ぐ。
+- [BD-01整理方針・歴史的設計断片](bd01_review/README.md)に、旧22_20〜23設計断片と22_90〜91レビューの移動先・原Blobを記録する。これら6件は常設22系には置かない。
 - **本工程は独立Architecture Review PASS、Port/Schema Freeze、Science/Legal Gate、Coding許可を意味しない。** 元正本はENH-E11全件テストPASS後にのみ昇格する。
