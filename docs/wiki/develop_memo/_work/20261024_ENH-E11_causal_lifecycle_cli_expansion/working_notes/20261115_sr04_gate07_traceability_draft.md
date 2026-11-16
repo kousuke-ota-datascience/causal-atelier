@@ -14,6 +14,8 @@
 
 > **DEC-SR04-07（2026-11-16）Owner正式個別採用:** [Quantitative Acceptance／Monte Carlo／Computeの独立判断記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)と02承認記録第24項により**DEC07-1〜7全A採用済み**。41 Method／68 Scope／45 Quant ACのレジストリ構成は維持。FWER=0.05、Hard統計比較Kの事前列挙、Wilson/連続MC bound、Method別R/Pass確率、T2 Pilot、実測予算・seed・中断/失敗分母とGate分離を**設計方針として採用**。**実効K/R/Cell/inner-bootstrap/CPU・Money予算、Method-specific閾値の本適用、正式Gate Evidenceは未freeze**。
 
+> **DEC-SR04-08事前設計（Owner採否待ち、2026-11-16）:** [uv.lock／Backend／Optional Dependency／License独立技術判断案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)を作成。既存5 Environment Profile＋条件付きRD候補、Method別Backend、pyproject／universal uv.lock、SR02候補版・実効Lock検証、SBOMとGPL Customer Delivery Gateを別契約とした。**DEC08-1〜8は全A推奨・Owner未採用**。ENV-AC01〜09のScope/Method連結・NOT_GENERATEDは変えない。現行uv.lockはDoWhy/EconML/Tigramite/rdrobust未登録、SR02単独install/API smokeと同一環境ではない。
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -156,7 +158,7 @@
 | fixture | `a93c744b0fe87124a81b8d4c7701c0d382a72313` |
 | quant | `f046ef66a0c3e51206b092e967f895ead5965541` |
 | ref | `231cd74e81c186dbc2b8fde77489c0fb711828b4` |
-| env | `f2a8465cd24a2556152d8f183317722eebcb531a` |
+| env | `d4021bc2fd5856b5b00d840e5cb4f83a5f53b81d` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -389,6 +391,13 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 - **Quant/Resource pre-freeze（OPEN）:** 45 ACのMethod別Hard適用とmandatoryセル列挙、実効K、R・Bootstrap・n/T・Seed/Source/REF SHA、実測CPU/Wall/RAM・承認Spend cap。
 - **Independent science（NOT_RUN）:** DGP/Reference・Backend推論適格性、Monte Carlo、Graph/AR・旧v2回帰、独立Reviewerと正式Gate判断。
 - **Fail-closed:** K/R/費用未確定やOracle未構築のまま、Owner方針採用を`SCIENCE_PASS`、`QUANT_FROZEN`または`GATE07_ACCEPTED`にしない。
+
+### 8.7. DEC08 profile/lock/Legal未決・Evidence義務
+
+- **ENV-AC01〜03:** platform/Python/CPU Profile、既存5＋RD追加候補、extrasとuniversal-resolutionの実効互換性、fresh venvでの`uv lock --check`/`uv sync --locked`/`uv pip check`、Method API・既存v2/E9回帰。**E11 Extraおよびlock未実装、Evidence NOT_GENERATED**。
+- **ENV-AC04〜08:** RNG/BLAS/CPU/Manifest/SBOM/source hash/個票・旧v2契約。uv.lockのpinと実行・科学的再現性を同値にしない。
+- **ENV-AC09:** Tigramite GPLv3-or-later、rdrobust GPL-3.0-onlyに関する個別SI顧客納入のLegal/配布/結合/Source義務とArtifact SHA。**未法務承認ならDelivery BLOCKED**。Internal Science適格性と別状態。
+- **Owner判断:** [DEC08独立提案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)のDEC08-1〜8全Aは審議案であり**正式採用前**。**ENV LOCK/SCIENCE/GATEは未freeze、対象Method41/Scope68/NEG28/DGP24/REF24/AC45/ENV-AC9/X9のレジストリ数を変えない**。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
