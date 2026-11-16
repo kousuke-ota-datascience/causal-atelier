@@ -90,7 +90,7 @@
 
 - **必須候補として列挙:** FCI（PAG）、optional DoWhy Backdoor/Frontdoor/IV、Random Common Cause／Bootstrapを含むRefutation、既存Placebo/Data Subset、Adjustment Set／Propensity Clippingと追加Unobserved-confounding Sensitivity、Negative Control exposure/outcomeの方法契約。既存Native識別・ATE/ATT・IPW/AIPWはRとして保護する。
 - **Quality:** IPTWの推定Propensity下のSE/CI、overlap・extreme weight・ESS、correct estimandの判定は実装済みと断定せず、E9回帰を含めて科学的に評価する。
-- **要審査:** NCE／NCOの2方式とOLS係数へのpartial R²を**科学的な最小候補として具体化**した。ただし観測対照のvalidity、HC3／古典OLSの分離、IPW/AIPWへの非適用、Human ownerによるPhase1採否は未決であり、方法の存在だけで科学的受入を主張しない。A0全方式の無条件実装も意味しない。
+- **DEC06／DEC09でOwner採否済み:** 観測NCE／NCOの2方式と古典OLS係数へのpartial R²＋point RV（q=1）を、Phase1の科学的適用範囲に限定して採用した。観測対照のvalidity、HC3／古典OLSの分離、IPW/AIPWへの非適用は**Method科学的判定条件**として未実証。A0の全方式を無条件に実装するのではない。
 - **旧Product媒体:** 独立CausalQuestionVersion DB、API/RBAC/Worker/DB migrationの部分はD。Local identity／manifestが今回Nであり、この二者を混同しない。
 
 ### 2.3. Negative Control／未観測交絡Sensitivityの科学的方式（2026-11-01技術案）
@@ -198,15 +198,15 @@
 
 | 00_03行ID | 実装スコープ案 | CLI-onlyで提供する内容／明示的に外すもの | 対応Issue |
 |---|---|---|---|
-| `X-01` | **D（要承認）** | ATCはPhase別必須リストに独立指定なし。controlled direct effectはPhase4側 | #14 |
+| `X-01` | **D（DEC09 Owner承認済み）** | ATCはPhase別必須リストに独立指定なし。controlled direct effectはPhase4側 | #14 |
 | `X-02` | **D** | MediationはPhase4のextension pointへ。Phase1〜3の必須には算入しない | #14 |
-| `X-03` | **D（要承認）** | Matching/汎用g-computationはA0上位のみ。既存OLS等を同等扱いしない | #14 |
+| `X-03` | **D（DEC09 Owner承認済み）** | Matching/汎用g-computationはA0上位のみ。既存OLS等を同等扱いしない | #14 |
 | `X-04` | **N（NCE/NCO各1Method採用）一部／D（追加A0方式）** | 観測NCE/NCOの**対照null検査2方式をP1-15で個別採用**。DoWhyのrandom/placeboとは異なる。Simulated Confounder/Graph PerturbationはDEC06-5により初期非採用D、後続個別審議 | #16,#14 |
 | `X-05` | **N（古典OLS partial R²/point RV採用）一部／D（一般化）** | 未観測交絡の最小方式はP1-17の**古典OLS partial R²／point RV**としてDEC06-3で個別採用。IPW/AIPW/CATEへの一般化、その他のモデル・欠測・Graph Sensitivityは初期非採用D（DEC06-5）、後続審議 | #16,#14 |
 | `X-06` | **Q一部／D** | 採用手法のCI/cluster/bootstrap/stabilityは必要条件として品質検証。一般的多重検定・全Graph consensusは後続 | #19,#20,#21,#24 |
 | `X-07` | **D** | Policy Value、cost/capacity、off-policy/自動配信はPhase4 | #14 |
 | `X-08` | **D** | Monitoring/drift/再分析triggerはPhase4 | #14 |
-| `X-09` | **R+N／D** | Local reproducibilityは#24で追加。Product GAP-C01〜04は閉鎖せず移管要審査 | #14,#24 |
+| `X-09` | **R+N／D（Product Gap移管をDEC09でOwner承認）** | Local reproducibilityは#24で追加。Product GAP-C01〜04は未閉鎖のままProduct側#14へ追跡移管、正式Assignee/期限は未設定 | #14,#24 |
 | `X-10` | **R+N／D** | 既存Product入口は保護。新手法はScientific Core/CLIのみ。新API/Worker/UI/DB統合は後続 | #14,#24 |
 
 ### 5.2. 上位構想の不一致をどう承認するか
