@@ -1,6 +1,6 @@
 # 22_08_validation_architecture
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -94,6 +94,13 @@ AnalysisView create/update/validate/fixは同じDataset logical-type compatibili
 - renderer binding欠落を検出する。
 - Navigation descriptorにruntime input/output、status、retry semanticsを持たせない。
 
+
+## 97. BD-01：E11 Local科学的Preflight・Execution Validation
+
+- **先行Gate:** config・version、Path、source hash、Graph/Design/Estimand、Method対応、backend availabilityを評価し、識別またはEstimate前に不適格の種類を特定する。
+- **Science Gate:** Identificationの結果とEstimator eligibilityを別に検査し、未識別／Review要を数値推定に自動昇格しない。GraphのPAG/CPDAG端点・lag、B0/B1/DRIVの対象差、CATE CI有効性をMethod別に検証する。
+- **Postcondition:** normalized Resultの各状態軸、Confidence Set topology、Manifest/source/output SHA、Atomic readbackを検査。Science negativeとtechnical failureの例外カテゴリを混同しない。
+- [Scientific pipeline](22_21_e11_scientific_pipeline.md)／[Artifacts](22_22_e11_local_result_artifact_lineage.md)。具体Validator/Class/Exception enumはIF/DDに委譲。
 
 ## 98. RD-04：要件由来の基本設計制約
 

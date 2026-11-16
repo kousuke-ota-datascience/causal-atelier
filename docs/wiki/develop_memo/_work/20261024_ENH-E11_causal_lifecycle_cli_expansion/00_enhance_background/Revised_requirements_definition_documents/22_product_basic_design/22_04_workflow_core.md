@@ -1,6 +1,6 @@
 # 22_04_workflow_core
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -88,6 +88,13 @@ CLI / Python library / backend use caseは、Analysis Specificationまたは既�
 
 `Current Navigation Stage`、browser route、sidebar stateをrequired inputへ追加しない。
 
+
+## 97. BD-01：Product generic workflowとE11 Local executionの区別
+
+- 本文§9.1〜9.6は**既存ProductのExecution/StageExecution/Planner/Worker lifecycle**を記述し、E11で新たなProduct runtime Stageを追加する指示ではない。
+- E11 Local ApplicationのPreflight→Identification→Eligibility→Estimator→Result→Artifact順序は新local use caseの内部処理Gateであり、Product`ExecutionPlan`上のStage DAG・Worker lease/claim/StageAttemptを新設することを意味しない。
+- 既存の`ScientificCoreAdapter`と`product.ports.scientific_core`の再利用可否は、旧CLIの互換と新E11 typed resultの要求を両立させるArchitecture/Port設計で判断する。新Core adapterを機械的に重複導入しない。
+- [22_20責務境界](22_20_e11_local_system_architecture.md)／[22_21 Local execution flow](22_21_e11_scientific_pipeline.md)。
 
 ## 98. RD-04：要件由来の基本設計制約
 

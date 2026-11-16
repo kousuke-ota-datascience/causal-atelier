@@ -1,6 +1,6 @@
 # 22_15_schema_dependency
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -17,6 +17,13 @@
 - Reproducibility contractとして`StageAttempt.effective_random_seed: int | null`を追加するDB migrationを行う。
 - `Execution.runtime_version_json`へ`ariadne_code_version / python_version / platform_system / platform_release / machine / libraries`を保存する。
 
+
+## 97. BD-01：E11 version・dependency・migration boundary
+
+- 本文§18の`StageAttempt.effective_random_seed`等のMigrationは既存Product構成に属する設計記録であり、**E11の新Method導入を理由に新DB Migrationを実施する判断ではない**。
+- 旧`causal-analysis-spec/2`およびlegacy CLI/Result parserと新E11のversioned local specを別dispatchする。E11 Methodを旧v2でsilent enableしない。
+- DEC08のExtras（DoWhy/EconML/Tigramite）・universal`uv.lock`・実効Versionを分離し、R/Q/N/DとMethod41の合致をpreflightで検査する。SDK/Backend objectを永続Domainへ含めない。
+- 具体Schema/Port/Env lockのFreezeはIF-01/DD-01/Gate06。 [Environment/Compatibility](22_23_e11_environment_security_compatibility.md)。
 
 ## 98. RD-04：要件由来の基本設計制約
 

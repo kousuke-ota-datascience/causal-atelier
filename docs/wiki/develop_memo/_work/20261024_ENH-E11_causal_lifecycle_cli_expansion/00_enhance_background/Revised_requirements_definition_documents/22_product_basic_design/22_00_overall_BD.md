@@ -1,6 +1,6 @@
 # 22_00_overall_BD
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -43,10 +43,10 @@
 ### 1.3. 上位・下位文書との責務分離
 
 - Product concept、Top-level IAの概念的意味は`00_product_concept_memo.md`をauthorityとする。
-- Product requirement / NFR / analytical requirementは`10_requirements_definition.md`をauthorityとする。
-- Resource、Entity、Value、state model、整合性制約は`21_logical_data_design.md`をauthorityとする。
-- API / browser / internal interfaceの具体contractは`23_api_interface_design.md`へ詳細化する。
-- module / component / state transition / algorithmic orchestrationは`30_detailed_design.md`へ詳細化する。
+- ENH-E11作業版のProduct requirement / NFR / Scientific ARは[`10_requirements_definition/`](../10_requirements_definition/10_00_overall_RD.md)をauthorityとし、元正本は全件テストPASS後まで変更しない。
+- Resource/Entity/Value/stateのE11作業版は[`21_logical_data_design/`](../21_logical_data_design/21_00_overall_LDD.md)を参照する。
+- API/browser/Local CLI/Portの具体contractは[`23_api_interface_design/`](../23_api_interface_design/23_00_overall_IF.md)へ詳細化する。
+- Module/Class/Method・例外・実行詳細は[`30_detailed_design/`](../30_detailed_design/30_00_overall_DD.md)へ詳細化する。
 
 本書はこれらの中間に位置し、**要件をsurface・操作・状態・責務・主要flowへ割り付ける**。
 
@@ -84,35 +84,31 @@
 
 ## 3. システム構成
 
+### 3.1. Existing Product（変更しない）
+
 ```text
-Analyst / Reviewer / Operator
-            │
-            ▼
-        Web Frontend / CLI
-            │
-            ▼
-        Versioned Web API
-            │
-   ┌────────┼───────────────┐
-   ▼        ▼               ▼
-Product   Query          Workflow
-Domain    Services       Application
-   │        │               │
-   └────────┼───────────────┘
-            ▼
-Metadata DB / Artifact Store
-            │
-            ▼
-     Execution Worker
-            │
-   ┌────────┼─────────────┐
-   ▼        ▼             ▼
-Explore   Causal       Predictive
-Runners   Runners       Runners
-            │
-            ▼
-      Scientific Core
+Web Frontend → Versioned Web API → Product Application/Domain
+                              ↓
+                     Metadata DB / ArtifactStore
+                              ↓
+                     Execution Worker / Scientific Core
+                              ↓
+                     Product Result / Artifact / Lineage
 ```
+
+### 3.2. ENH-E11 Local Scientific CLI（独立追加）
+
+```text
+Local CLI / Explicit Versioned Config
+                ↓
+Local Application + Preflight + Scientific Domain
+                ↓
+Identification → Estimator Eligibility → Method Scientific Adapter
+                ↓
+Typed Scientific Outcome → Local Artifact Publisher → Local Manifest
+```
+
+**禁止:** E11 Local CLIがWeb API・Product DB・Worker lifecycleやNavigation Stageをrequired inputにすること。別契約間の自動同期・旧v2暗黙upgradeを禁止。共通化するScientific CoreはPort経由で再利用し、authorityを混同しない。
 
 Web APIとWorkerは同一codebaseを共有できるが、同期request処理と長時間scientific computationの責務を分離する。
 
@@ -194,8 +190,20 @@ Dataset Version、Research Context、Analysis View、Analysis Specification、Gr
 - **含まない:** Class個別属性/メソッド、具体JSON field・endpoint signature、統計式の真偽を設計だけで保証すること。
 - **E11境界:** Scientific Core + Local CLI + Local persistent artifactsに限定。既存Web/API/Worker/DB/migrationへの新手法統合はD。G01〜G10は暫定実装Workstreamで、受入プロセスGate06/07とは別。
 
-**E11追加草案:** [22_08_enh_e11_causal_cli_basic_design_draft.md](22_08_enh_e11_causal_cli_basic_design_draft.md)
+**E11旧草案（履歴）:** [_drafts/enh_e11_causal_cli_basic_design_draft.md](_drafts/enh_e11_causal_cli_basic_design_draft.md)。正式な基本設計内容は22_20〜23に展開。
 
+
+## 97. BD-01：E11 Local/Existing Product二系統のArchitecture authority
+
+DEC09のARC09-01〜07を反映し、**Product Web/API/DB/Workerの既存正本と、E11 Local CLI/Artifactsの局所正本を分離**する。前節のProduct用System構成をE11 CLIの処理経路へそのまま適用しない。
+
+- [22_20 Local System Boundary](22_20_e11_local_system_architecture.md) — Domain／Application／Port／CLI／Productのauthorityと依存方向。
+- [22_21 Scientific Pipeline](22_21_e11_scientific_pipeline.md) — Identification→Eligibility→Estimationの科学的GateとMethod/Estimand制約。
+- [22_22 Local Result & Manifest](22_22_e11_local_result_artifact_lineage.md) — typed scientific outcome、local publish、atomic/readback/lineage。
+- [22_23 Environment/Security](22_23_e11_environment_security_compatibility.md) — Optional Backend、uv.lock/profile、local privacy、旧v2保護、Legal。
+- [22_90 Architecture Review](22_90_architecture_consistency_review.md) — 自己整合レビューと未解決事項。正式独立Architecture審査ではない。
+
+**State:** `BD01_REVISED / OWNER_PRINCIPLES_APPROVED / SCHEMA_AND_INDEPENDENT_REVIEW_PENDING`。正本昇格は全対象テストPASS後のみ（[Owner方針](../93_enh_e11_canonical_promotion_policy.md)）。
 
 ## 98. RD-04：要件由来の基本設計制約
 

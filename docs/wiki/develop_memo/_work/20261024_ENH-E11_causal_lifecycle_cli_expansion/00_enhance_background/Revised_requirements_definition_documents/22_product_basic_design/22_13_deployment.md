@@ -1,6 +1,6 @@
 # 22_13_deployment
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -9,6 +9,12 @@
 
 現行実装ではFastAPI Web API、polling Worker、Product persistence DB、ArtifactStore Port（default LocalArtifactStore）が分離されている。Family / Navigation Stage導入のために別runtime execution serviceを新設しない。
 
+
+## 97. BD-01：E11 Backend Profileと配布境界
+
+DEC08採用の5 Runtime Profileは`ENV-BASE/DOWHY/ECONML/TIGRAMITE/COMBINED`、`ENV-RD`は条件付き追加候補。Ubuntu24.04/CPython3.12.x/x86_64/CPUに基づく`pyproject.toml`＋universal`uv.lock`と実効版Manifest、個別Fresh venv試験を必要とする。Current lockでE11 extrasが導入済みとは主張しない。
+
+配布可能性はScience/Environment PASSとは別のLegal Gateで判断し、Tigramite/RD等のGPL顧客納入を未審査で許可しない。[E11環境とLegal](22_23_e11_environment_security_compatibility.md)。
 
 ## 98. RD-04：要件由来の基本設計制約
 

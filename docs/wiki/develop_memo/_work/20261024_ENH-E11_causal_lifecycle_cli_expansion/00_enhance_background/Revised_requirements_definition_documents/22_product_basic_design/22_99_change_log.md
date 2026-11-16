@@ -44,3 +44,11 @@ Application IAをProject ManagementとAnalysis Workspaceへ分離し、Project r
 
 
 ---
+
+## 20.10. ENH-E11 BD-01 Local Causal CLI Architecture（2026-11-16）
+
+- Owner採用済みDEC09のARC09-01〜07を、Local System Boundary、Scientific Pipeline、Local Result/Artifact、Environment/Securityの責務別4文書へ展開。
+- 既存Product system図でCLIがWeb APIを通ると解釈され得る混在表記を、Product laneとE11 Local laneへ区別。
+- 既存`causal-analysis-spec/2`／Product Worker/DB／Navigation、E9/E10回帰、GAP-C01〜04の非改変条件を維持。
+- 実際のCLI`scientific_stage.py`・`ScientificCoreAdapter`・Manifest等を参照したGapをArchitecture Reviewへ記録。独立レビュー・IF/Port/Schema・Science/Legal/Gateは未承認／未実施。
+- [BD01 review](22_90_architecture_consistency_review.md)、[44 Requirement trace](22_91_bd01_requirement_architecture_trace.md)、[E11 Canonical promotion rule](../93_enh_e11_canonical_promotion_policy.md)。

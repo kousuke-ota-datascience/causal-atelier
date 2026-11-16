@@ -1,6 +1,6 @@
 # 22_06_family_causal
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -27,6 +27,12 @@ IDENTIFICATION -> ELIGIBILITY -> ESTIMATION -> ...
 
 Navigation側の`Setup / Discovery / Identification / Estimation / Effects / Diagnostics / Sensitivity`はユーザーの作業・閲覧コンテキストであり、runtime StageTypeと1:1対応させない。Identification / Estimationの科学的責務分離はNavigation設計として維持するが、それを理由に既存Causal runtime planを多段化しない。
 
+
+## 97. BD-01：Product CausalとE11 Local Causal capability
+
+- 本文`CausalPlanner`の`causal-analysis-spec/2`向け**1 Product Execution = 1 runtime Stage**は従来Productの説明として保持。新E11 Local CLIがIdentification→Estimator等の複合論理Gateを持つことと矛盾しない。両者は同一実行境界ではない。
+- E11のGraphの不確実性、FD-A、NCE/NCO、OLS-RV、CATE7/DRIV、Temporal、7 Quasi、IV B0/B1/AR、SCM/SDIDは[科学Pipeline](22_21_e11_scientific_pipeline.md)でMethod別に責務化。適格性が不足した場合はProductの`REQUIRES_REVIEW`既存overrideを新localへ自動適用しない。
+- 今回のBD修正でProduct Web/API/Worker/DB統合や既存GAP-C01〜04の解消は行わない。
 
 ## 98. RD-04：要件由来の基本設計制約
 

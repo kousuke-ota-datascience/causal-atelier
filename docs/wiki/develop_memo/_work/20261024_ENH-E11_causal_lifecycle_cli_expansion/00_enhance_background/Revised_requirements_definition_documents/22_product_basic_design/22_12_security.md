@@ -1,6 +1,6 @@
 # 22_12_security
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -61,6 +61,13 @@ Idempotency対象は「全POST/create」ではなく、retryでduplicate durable
 
 Artifact materializationはlogical Execution/Stage/output slot/typeからdeterministic identity/object keyを導出し、same logical output + same content hashはreuse、different content hashはnondeterministic-output conflictとする。Result/Artifact bindingは可能な限りmetadata transaction内でcommitする。cross-store compensationは`DEFERRED` scopeである。
 
+
+## 97. BD-01：E11 Local security と既存Product RBACの境界
+
+- 本文§15.1〜15.4は既存ProductのProject Roleと認可ルールであり、新E11 CLIのlocal filesystem/user authorityとして**暗黙再利用しない**。
+- E11ではLocal OS実行主体、private output root、Path／Symlink escape禁止、safe serialization、Secret/row-level CATEの出力最小化と明示export policyを設計する。
+- 個票出力の`authorized`の判定主体・証跡・OS権限適用は未Freeze。opt-in aloneやProductの`X-User-Id`だけでは十分なローカル認可を保証したことにならない。**BD-01 blocking item**として[Review](22_90_architecture_consistency_review.md)に残す。
+- [E11 Runtime/Security](22_23_e11_environment_security_compatibility.md)。既存ProductのOIDC完成などを新規に仮定しない。
 
 ## 98. RD-04：要件由来の基本設計制約
 

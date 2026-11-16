@@ -1,6 +1,6 @@
 # 22_09_results_artifacts_lineage
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
 **Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
@@ -36,6 +36,12 @@ Current lineage read modelは`ResearchContextVersion -> AnalysisSpecification ->
 
 Exploratory ResultからAnalysisSpecification DRAFTへのhandoffは`Result --MOTIVATED--> AnalysisSpecification`を明示保存する。
 
+
+## 97. BD-01：E11 Local Artifactの別authority
+
+- 本文§12は**ProductのDB正本Result/Artifact/Lineage**を規定する。E11 Local Run ManifestをProduct `Result`／`Artifact`行やProduct `LineageEdge`へ暗黙登録しない。
+- E11の局所正本はimmutable input hashes・科学的state・effective environment・output checksumsを持つManifest＋local JSON/Parquetである。ProductのProject/Execution IDは新Local APIの必須keyにしない。
+- [Local Result / Publication](22_22_e11_local_result_artifact_lineage.md)を参照。旧Product ArtifactStore Portとの共有はDDで実装契約を確認し、共有する場合も正本の所有権を混同しない。
 
 ## 98. RD-04：要件由来の基本設計制約
 
