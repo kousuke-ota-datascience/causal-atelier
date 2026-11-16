@@ -1,7 +1,5 @@
 # 30_40_project_workspace
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
-**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
