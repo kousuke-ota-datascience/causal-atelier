@@ -41,3 +41,9 @@ ariadne-identify --navigation-stage identification --config ...
 ```
 
 `AnalysisFamily` / `ExecutionOperation`等のdomain discriminatorと、UI Navigation Stageを区別する。
+
+## 7.1. ENH-E11別Local CLI/Scientific Port契約
+
+追加Local E11のCLI／Portのversion dispatch、Method/Estimand/Backend capability、typed scientific negative、exit分類は[23_41](23_41_e11_local_cli_scientific_ports.md)をInterface Authorityとする。Result/Graph/ManifestのSchema、privacy、atomic bundle publish/readbackは[23_42](23_42_e11_local_result_manifest_artifact.md)を参照。
+
+E11は旧`ariadne-identify`等の`causal-analysis-spec/2`を再解釈せず、新しいCLI entrypointで明示的に分離する。新Interfaceのコード実装は別工程である。
