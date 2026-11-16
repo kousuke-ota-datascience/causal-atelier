@@ -10,6 +10,8 @@
 
 > **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。Frontdoor初期数値推定のFD-A（単一Mediator・線形2-stage）と、FCI/Temporal Graph OracleのGRAPH-A（生成DAG/Markov同値類を区別）をOwnerが個別採用。P1-M07のDoWhy stage/CIとP1-M06/P3-M02/03の独立PAG/CPDAG Oracle・Graph Science Benchmarkは未実証。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
 
+> **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。Quasiの7Method（DiD/Event/ITS/Sharp RD/Fuzzy RD/SCM/SDID）について、2×2群差、cohort-time集約、segmented HAC、cutoff local-linear/RBC、local IV/RBC、SCM simplex point-only、SDID unit/time weights+unit-bootstrapという**初期Estimator/条件付きInferenceの方針を個別採用**。正式Backend、cluster/CI・bandwidth・optimizerの具体的値と科学的Coverageは未完了。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 目的と非目標
@@ -96,16 +98,16 @@
 | P3-M01 | P3-02 | PCMCI／time-lagged graph | causal stationarity、同時点直接linkなし・latent confounderなし、CI test適合 | 既知VAR/非線形時系列のlagged parent recovery | 偽同時点edge、非定常、CI misspec、lag/FPR/recall |
 | P3-M02 | P3-03 | PCMCI+／time-series CPDAG | 同時点linkを許容・潜在交絡なし、CI test・time order | lagged＋contemporaneousの既知Graph。**GRAPH-A原理採用／独立CPDAG Oracle未完成** | 未確定方向を偽のDAG化、CI-test不適格、endpoint fidelity |
 | P3-M03 | P3-04 | LPCMCI／time-series PAG | 潜在交絡を許容、causal stationarity等、experimental statusに注意 | latent common causeを含む既知Graph。**GRAPH-A原理採用／独立Temporal PAG Oracle未完成** | circle/tail/arrow消失、既知latent Graphを強制DAG化 |
-| P3-M04 | P3-07 | DiD／ATT（2×2とstaggeredは別契約） | 無介入時のparallel trends、no anticipation、valid comparison、cluster等 | 2×2既知ATT；staggeredではcohort-time ATTを指定 | 異質性＋staggeredで単純TWFEを正解としない、pretrend有意差非検出を保証としない |
-| P3-M05 | P3-08 | Event Study／event-time効果 | timing、cohort、参照期、anticipation、group-time support | 動的真値 `ATT(g,t)` からevent-time aggregate | TWFE lead/lag汚染、empty cohort-time cell、事後選択CIの誤用 |
-| P3-M06 | P3-09 | Interrupted Time Series／介入時点のlevel/slope変化 | 介入外の同時ショック除外、ベースline/seasonality/autocorrモデル | 既知step/trend change＋季節性・自己相関 | concurrent intervention、偽トレンド、iid SEの誤用。因果性を単なる構造変化と区別 |
-| P3-M07 | P3-10 | Sharp RDD／cutoff局所効果 | 完全sharp assignment、cutoff、running variable局所連続性、bandwidth | cutoffで既知jumpの局所効果 | manipulation/score mass、bandwidth過大、global model代用、robust bias-corrected CI未承認 |
-| P3-M08 | P3-11 | Fuzzy RDD／cutoff局所complier効果 | cutoffでTreatment確率jump、連続性、exclusion、monotonicity、局所first-stage | cutoff近傍の既知局所Wald効果 | weak cutoff first stage、sharp RDDへの混同、P3-M09の全域Wald/ARを自動適用しない |
+| P3-M04 | P3-07 | DiD／ATT（2×2群差のATTを採用／staggeredはgroup-time別契約） | 無介入時のparallel trends、no anticipation、valid comparison、cluster等 | 2×2既知ATT；staggeredではcohort-time ATTを指定 | 異質性＋staggeredで単純TWFEを正解としない、pretrend有意差非検出を保証としない |
+| P3-M05 | P3-08 | Event Study／ATT(g,t)をcohort重みで集約 | timing、cohort、参照期、anticipation、group-time support | 動的真値 `ATT(g,t)` からevent-time aggregate | TWFE lead/lag汚染、empty cohort-time cell、事後選択CIの誤用 |
+| P3-M06 | P3-09 | ITS／segmented level/slope＋HAC候補 | 介入外の同時ショック除外、ベースline/seasonality/autocorrモデル | 既知step/trend change＋季節性・自己相関 | concurrent intervention、偽トレンド、iid SEの誤用。因果性を単なる構造変化と区別 |
+| P3-M07 | P3-10 | Sharp RDD／local-linear＋RBC候補 | 完全sharp assignment、cutoff、running variable局所連続性、bandwidth | cutoffで既知jumpの局所効果 | manipulation/score mass、bandwidth過大、global model代用、robust bias-corrected CI未承認 |
+| P3-M08 | P3-11 | Fuzzy RDD／local ratio＋局所RBC候補 | cutoffでTreatment確率jump、連続性、exclusion、monotonicity、局所first-stage | cutoff近傍の既知局所Wald効果 | weak cutoff first stage、sharp RDDへの混同、P3-M09の全域Wald/ARを自動適用しない |
 | P3-M09 | P3-12 | Wald ratio／binary Z/A complier LATE | 無条件IV独立性、exclusion、monotonicity、relevance、2群support | 既知LATE；B0と標本点推定パリティ | first-stage=0/weak、invalid IV、通常比CIを弱IV頑健扱いしない |
 | P3-M10 | P3-12 | B0 just-identified 2SLS／binary Z/A complier LATE | 切片、共変量なし、単一excluded Z/内生A、I2異分散頑健AR反転 | Waldとの代数的一致とAR集合の形状/被覆 | zero/weak first stage、AR EMPTY正常扱い、finite grid切断 |
 | P3-M11 | P3-12 | B1 additive linear 2SLS／**B1-A加法線形IV構造係数（semantic target Owner採用）** | pre-treatment C、単一Z/A、正しい加法線形構造・IV moment、I2 AR反転 | 線形構造係数既知のDGP、独立AR reference | C非線形・異質性でcomplier LATEへ誤変換、rank/cluster/HAC不適格 |
-| P3-M12 | P3-13 | Synthetic Control／処置単位の時点別反実仮想ギャップ | 介入前fit、非汚染donor、安定な因子構造等の根拠 | latent factor＋既知介入効果 | donor汚染、pre-fit不十分、placebo順位だけを通常CI扱いしない |
-| P3-M13 | P3-14 | Synthetic DiD／panel平均介入効果 | balanced panel等、unit/time weight、実施者の割付パターン | 既知panel ATT/平均効果、unit/time weight参照 | 時間重み・単位重み混同、欠落対照・介入前support、SE方式未固定 |
+| P3-M12 | P3-13 | SCM／simplex donor weights・point-only初期保証 | 介入前fit、非汚染donor、安定な因子構造等の根拠 | latent factor＋既知介入効果 | donor汚染、pre-fit不十分、placebo順位だけを通常CI扱いしない |
+| P3-M13 | P3-14 | SDID／別unit/time weights＋weighted DID・unit-bootstrap候補 | balanced panel等、unit/time weight、実施者の割付パターン | 既知panel ATT/平均効果、unit/time weight参照 | 時間重み・単位重み混同、欠落対照・介入前support、SE方式未固定 |
 
 ### 3.2. B1と弱IV・集合の特記事項
 
