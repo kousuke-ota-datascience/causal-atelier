@@ -7,6 +7,8 @@
 **状態:** SCIENTIFIC_FIXTURE_CATALOG_DRAFT / ALL_41_MAPPED / ORACLE_IMPLEMENTATION_PENDING / NUMERICAL_ACCEPTANCE_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL。  
 **非承認事項:** ここで導入するDGP数値・検証例・候補Estimand・負例パラメータを正式なMethod仕様、実装結果、数値Acceptance、科学的保証として採用しない。
 
+> **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
+
 ## 0. 目的と契約
 
 ### 0.1. 目的
@@ -49,7 +51,7 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | DGP-005 | U~N(0,1), A~Bern(logit^-1(U)), M=1.5A+εM, Y=2M+U+εY。UはA,Yの潜在共通原因、A→Y直接効果なし | Frontdoor ATE=3。Frontdoorの非パラメトリック識別と**線形二段階数値法**の成立を別に検証。第2段階の正しい調整条件も固定する |
 | DGP-006 | Z~Bern(0.5)が型Sと独立。型S=(always,complier,never)、P=(.25,.50,.25)、A(z)=(1,z,0)、Y(a)=λS+τS a+ε、τS=(0,2,8) | 単調二値IV。ITT_A=.5、ITT_Y=1、Wald=complier LATE=2、母集団ATE=3。λSは任意の型別定数でZ独立 |
 | DGP-007 | C,U~独立N(0,1), Z~Bern(.5)独立、A~Bern(logit^-1(-.2+.8Z+.3C+.7U)), Y=1+2A+.5C+U+ε | B1の加法線形構造係数β=2。1 excluded Z/1 endogenous A/処置前C。E[U+ε given Z,C]=0。**本DGPでATE=2でも一般のB1=LATE/ATEは導かない** |
-| DGP-008 | X∈{-1,+1}等確率。Z,U独立標準正規、T=(1+.2X)Z+.5U+εT、Y=(2+.5X)T+.3X+.8U+εY | 連続T,Zの条件付きIV構造傾き候補θ(-1)=1.5、θ(+1)=2.5。Cov(Y,Z given X)/Cov(T,Z given X)と一致。**DRIVの正式estimand/momentは未決** |
+| DGP-008 | X∈{-1,+1}等確率。Z,U独立標準正規、T=(1+.2X)Z+.5U+εT、Y=(2+.5X)T+.3X+.8U+εY | 連続T,Zの条件付きIV構造傾き候補θ(-1)=1.5、θ(+1)=2.5。Cov(Y,Z given X)/Cov(T,Z given X)と一致。**DRIV-Aの構造斜率targetと残差化IV momentは2026-11-16 Owner採用、Backend/nuisance/CI実証は未決** |
 | DGP-009 | stationary VAR: X_t=.5X_{t-1}+εX_t、Y_t=.4Y_{t-1}+.7X_{t-1}+εY_t | PCMCI用lagged truth: X(-1)→X, Y(-1)→Y, X(-1)→Y。burn-inとCI-test/lagを別固定 |
 | DGP-010 | X_t=.5X_{t-1}+εX_t、Y_t=.3Y_{t-1}+.8X_t+εY_t、独立shock | PCMCI+用同時点X_t→Y_tを含むDAG。time-series CPDAGとして識別できる向きは独立Graph oracleで決定 |
 | DGP-011 | 潜在H_tと独立shock、X_t=.5X_{t-1}+H_t+εX_t、Y_t=.4Y_{t-1}+H_t+εY_t | LPCMCI／FCIの潜在共通原因。潜在射影および等価類のPAG endpointは**独立Graph oracleの導出待ち**。特に**同時点観測X_t,Y_tのみの2変数FCIで潜在交絡をbidirected edgeとして確定することは原理的に要求できない**（直接因果モデルと同一観測分布になり得る）。FCIの潜在交絡の向き・端点を評価する場合は独立に同値類を導出できる多変数Graph variantが別途必要。LPCMCIのtemporal PAGとは別Oracle。DAG向きの強制禁止 |
@@ -181,7 +183,7 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | P3-M08 Fuzzy RDD | DGP-016 / local LATE=3 | NEG-006,023 | first-stage jump=.5、局所IV推論は独立検証 |
 | P3-M09 Wald ratio | DGP-006 / complier LATE=2,ATE=3 | NEG-006,007 | population/complier label、zero denom、weak-IV inference分離 |
 | P3-M10 B0 just-ID 2SLS | DGP-006 / sample Wald exact parity, AR-Q1..4 | NEG-006,025 | 同一sample点の代数パリティ＋AR集合lossless |
-| P3-M11 B1 linear IV 2SLS | DGP-007 / β=2、AR-Q1..4 algebra oracle | NEG-008,025 | covariate residualization、未決Estimand enum、AR robust inference |
+| P3-M11 B1 linear IV 2SLS | DGP-007 / β=2、AR-Q1..4 algebra oracle | NEG-008,025 | covariate residualization、B1-A semantic target Owner採用、schema enumとAR robust inference未検証 |
 | P3-M12 Synthetic Control | DGP-017 / w=(.6,.4)、post effect=2 | NEG-024 | pre-fit, non-contaminated donors, placeboとCIの区別 |
 | P3-M13 Synthetic DiD | DGP-018 / panel ATT=2 | NEG-024 | unit/time weight混同防止、panel target、依存構造 |
 
@@ -197,12 +199,12 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 
 ### 4.1. B1：構造係数とLATEを分離
 
-**採用済:** B1は二値Z/A、処置前共変量C、切片あり、単一excluded Z・単一endogenous A、加法線形構造モデル。初期ARは独立単位＋異分散頑健漸近。正式Estimand分類と因果的interpretationの境界は未決。
+**採用済:** B1は二値Z/A、処置前共変量C、切片あり、単一excluded Z・単一endogenous A、加法線形構造モデル。初期ARは独立単位＋異分散頑健漸近。B1-Aの構造係数semantic targetは2026-11-16 Owner採用、科学的成立を仮定依存として審査。
 
 - DGP-007は科学的に適格な**同質構造効果β=2**の確認用。この特殊DGPではATE等も2となるが、等価性を一般法則としてコード化しない。
 - B1異質性stress: C別に効果θ(C)とZ→A first-stageを変化させる。母集団ATE、LATE、線形射影2SLSのpseudo-true targetを**別の式・独立数値積分**で算出するまでは「既知真値B1」の正例にしない。
 - B1 ARの検定式、residualization/covariance、inversionの数値分岐は別oracleでfreeze。DGP-024は集合算術unit専用であり、B1の完全AR coverageを証明しない。
-- **承認待ち:** estimand_kindのenum/target definition、Cの適格性、必要なexogeneityの形式、Model misspec時の対象status。
+- **残余未決:** schema上のestimand_kind enum/fieldとversion、Cの実装時適格性、外生性の観測可能な検査限界、model misspec時のstatus。科学的target自体はB1-AとしてOwner採用。
 
 ### 4.2. DRIV：構造IV候補DGPを正式Estimandと混同しない
 
