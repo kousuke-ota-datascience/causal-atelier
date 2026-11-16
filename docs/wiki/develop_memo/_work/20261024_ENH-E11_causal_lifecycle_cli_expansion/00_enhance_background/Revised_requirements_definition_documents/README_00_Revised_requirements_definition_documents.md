@@ -1,6 +1,6 @@
 # ENH-E11 — Revised Requirements & Design Documents
 
-**Status (2026-11-16):** `BD01_BASIC_DESIGN_REVISED / INTERNAL_ARCH_REVIEW_PARTIAL / 11_FINDINGS_OPEN / INDEPENDENT_REVIEW_PENDING / SCIENCE_AND_GATE_NOT_RUN`.
+**Status (2026-11-16):** `DOC01_IF01_DD01_DRAFT_PREPARED / COMBINED_OWNER_REVIEW_PENDING / INDEPENDENT_ARCH_REVIEW_PENDING / CODING_NOT_AUTHORIZED / SCIENCE_AND_GATE_NOT_RUN`.
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
@@ -92,6 +92,8 @@
 - [23_20_browser_navigation.md](23_api_interface_design/23_20_browser_navigation.md)
 - [23_30_worker_runtime.md](23_api_interface_design/23_30_worker_runtime.md)
 - [23_40_cli_library.md](23_api_interface_design/23_40_cli_library.md)
+- [23_41_e11_local_cli_scientific_ports.md](23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)
+- [23_42_e11_local_result_manifest_artifact.md](23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)
 - [23_50_error_contract.md](23_api_interface_design/23_50_error_contract.md)
 - [23_51_idempotency_contract.md](23_api_interface_design/23_51_idempotency_contract.md)
 - [23_52_versioning_compatibility.md](23_api_interface_design/23_52_versioning_compatibility.md)
@@ -123,6 +125,9 @@
 - [30_51_security.md](30_detailed_design/30_51_security.md)
 - [30_52_failure_handling.md](30_detailed_design/30_52_failure_handling.md)
 - [30_60_cli_adapters.md](30_detailed_design/30_60_cli_adapters.md)
+- [30_61_e11_local_domain_ports.md](30_detailed_design/30_61_e11_local_domain_ports.md)
+- [30_62_e11_local_execution_publication.md](30_detailed_design/30_62_e11_local_execution_publication.md)
+- [30_63_e11_method_adapters.md](30_detailed_design/30_63_e11_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
 - [30_99_change_log.md](30_detailed_design/30_99_change_log.md)
 
@@ -185,3 +190,12 @@
 - **本工程は独立Architecture Review PASS、Port/Schema Freeze、Science/Legal Gate、Coding許可を意味しない。** 元正本はENH-E11全件テストPASS後にのみ昇格する。
 
 > **DOC-01文書分類:** 10／21／22／23／30系のRD-04移管記録は[doc01_review/](doc01_review/README.md)へ隔離し、設計制約は責務別仕様へ保持。各群のStock適合性とリンク検証はDOC-01監査台帳を参照。
+
+## 8. DOC-01／IF-01／DD-01 統合レビュー入口
+
+- [DOC-01 Stock/Flow監査台帳](doc01_review/README.md)／[監査結果詳細](doc01_review/90_doc01_stock_flow_verification.md)
+- [IF-01 Interface内部レビュー](if01_review/90_interface_contract_review.md) — 新Local CLI/Port、Effect/Graph/Manifest・Atomic Publishingの候補契約
+- [DD-01 Physical Design内部レビュー](dd01_review/90_physical_design_review.md) — Domain/Port/Runner/Artifactと41 Methodの詳細設計案
+- [三工程まとめてのOwner Review Pack](combined_review/90_doc01_if01_dd01_owner_review_pack.md)
+
+**文書状態:** 変更は本working copy限定。Ownerによる統合内容レビュー、独立Architecture/Science、Gate06/07、Coding Authorization、canonical昇格は未完了。
