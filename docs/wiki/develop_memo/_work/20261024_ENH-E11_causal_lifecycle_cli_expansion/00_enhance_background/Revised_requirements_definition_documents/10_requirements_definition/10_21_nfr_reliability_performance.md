@@ -1,6 +1,6 @@
 # 10_21_nfr_reliability_performance
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -27,3 +27,6 @@
 | NFR-024 | Testability | Navigation descriptor、route、renderer binding、runtime independenceをunit/integration/E2Eで分離検証できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-025 | Portability | CLI / library executionがWeb UI route、tab/sidebar state、NavigationStageDescriptorへ依存しない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-027 | Performance | navigation metadata取得・renderingがanalysis executionのcritical pathへ不要なI/Oまたはblocking dependencyを追加しない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
+| NFR-030 | Reliability | ローカル成果物の保存に失敗した場合、部分的な書込みや不完全な成果物を正常な正本として公開しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| NFR-035 | Scientific Acceptance | 採用Methodの科学的受入を独立した既知真値・負例・再現性・推論品質の検証で実施し、事前登録した比較と多重性を考慮する | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| NFR-036 | Backward Compatibility | 新Local CLI機能が既存Scientific CLI、Product API／UI／Worker／DBおよび因果分析仕様・結果の互換性を損なわない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
