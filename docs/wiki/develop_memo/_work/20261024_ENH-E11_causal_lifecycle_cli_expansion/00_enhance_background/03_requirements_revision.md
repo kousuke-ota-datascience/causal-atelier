@@ -27,7 +27,7 @@
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
 | E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。**DEC-SR04-06-3 Owner個別採用済み**：古典OLS係数に限定するCinelli–Hazlett partial R²＋point RV(q=1)、2軸強度grid・非適用と既存HC3区別。IPW/AIPWなどへの一般化はDEC06-5で初期非採用D。00_04§2.3とDEC06独立記録に準拠 | 拡張候補 #16（未承認） |
-| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | **適切な観測Negative Controlを指定できる研究に、明示的opt-inの科学的反証分析を提供**する方針（2026-11-01確認）。**DEC-SR04-06-1/2 Owner個別採用済み**：実在NCE/NCOの条件付きnull検査2方式（P1-M18/M19）。未指定では自動実行しない。null／共有バイアス／DAG/時間根拠を要求し、不適格を科学的負結果とする。既存推定の成功を阻害せず、主効果の因果的PASSとは区別（00_04§2.3、[計画メモ](../working_notes/20261101_negative_control_implementation_plan.md)）。Method採否は個別承認済み（DEC06-1/2/4）。実効推論・具体schema・正本改定は未承認 | 新規候補 #16（Method／Gate未承認） |
+| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | **適切な観測Negative Controlを指定できる研究に、明示的opt-inの科学的反証分析を提供**する方針（2026-11-01確認）。**DEC-SR04-06-1/2 Owner個別採用済み**：実在NCE/NCOの条件付きnull検査2方式（P1-M18/M19）。未指定では自動実行しない。null／共有バイアス／DAG/時間根拠を要求し、不適格を科学的負結果とする。既存推定の成功を阻害せず、主効果の因果的PASSとは区別（00_04§2.3、[計画メモ](../working_notes/20261101_negative_control_implementation_plan.md)）。Method採否は個別承認済み（DEC06-1/2/4）。実効推論・具体schema・正本改定は未承認 | 新規候補 #16（Method採否はDEC06でOwner承認済み、正式FR/Gate・科学適格性は未承認） |
 | E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | Hájek型正規化、IPTWの分散・区間推定の品質、Balance/ESS/Overlapの適用性を明文化 | 品質強化 #19 |
 | E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifierとconfounderの区別、点推定と推論区間のavailability、supportと承認済みEstimatorを規定。**IV異質効果を一般CATEと混同しない**（SR-03）。**SR03-D05-1〜5は2026-11-15にB/B/B/B/Bを個別オーナー採用**。詳細は[D05科学的判断記録](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)。非IV7手法とDRIVのEstimand/推論契約を分離し、CI適格性を用途・Method・構成別に記録。**8 Methodの初期候補範囲は縮小しない**。 | 新規Phase 2 #18（個別方針採用、正式要件/Gate未承認） |
 | E11-REQ-SR03D05 | 現行v2 EffectResultは非IV CATE／DRIV向けのMethod別CI検証と科学的推論可用性を一級には規定しない。EconML 0.17のAPI smokeは有限CIを一部設定で取得したが被覆率は未実証 | **D05-1 B:** 非IV CATE7手法とDRIVのIV固有Estimandを分離。**D05-2 B:** Exploratoryでは適格な点推定のみ可、Confirmatoryでは事前指定の妥当な推論証拠を要する。**D05-3 B:** Method別推論方式。**D05-4 B:** point/uncertainty/science acceptanceを分離、無CIはnull＋理由。**D05-5 B:** Known-truth・pointwise CI coverage・Method別負例による独立Science受入。点ごとの区間を同時信頼帯と誤記しない。**正式schema/数値基準/Mode別受入具体条件は未承認**（[D05詳細](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)） | #18,#24（方針採用、正本/Gate未承認） |
@@ -55,7 +55,7 @@
 
 ## 4. 削除・廃止する要件
 
-**承認された削除・廃止はない。** 9月末`HANDOFF_DRAFT`の「Phase 2/3は後続」の扱いは、正式な構想承認後にENH-E11の計画範囲として改定予定だが、現行FRの削除を意味しない。
+**承認された削除・廃止はない。** 9月末`HANDOFF_DRAFT`の「Phase 2/3は後続」の扱いは、**DEC09のOwner構想承認によりE11計画範囲として改定する方針が確定**した。ただし正本FRの削除・新条文公開やStatus変更を実施した事実ではない。
 
 ## 5. 科学的受入条件への影響（案）
 
