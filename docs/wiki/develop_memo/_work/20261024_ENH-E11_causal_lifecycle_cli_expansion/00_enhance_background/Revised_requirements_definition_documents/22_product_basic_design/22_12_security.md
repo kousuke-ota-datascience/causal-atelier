@@ -84,3 +84,12 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 - **`FR-124b`**：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
 - **`NFR-008a`**：current input validation、path traversal防止、secret非露出等のsafeguardを維持する
 - **`AR-020`**：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する
+ 
+
+### 15.6 Source追跡で確認したProduct APIの認可Gap（PREP-02）
+
+**CURRENT（2026-11-17、GitHub Source静的照合）**：`ProductClosureService`には`_require_role(session, project_id, user_id, roles)`等のMembership検査がある。一方、`ProjectDataService.get_project/list_projects/update_project/archive_project`や`WorkspaceLifecycleService`のResearch Context read/mutateでは、そのService methodがactorを受け取らない／Membership検査を実行していない経路が存在する。Route-levelの権限検証も当該Sourceで確認できない。
+
+**REQUIRED:** FR-121の全Project-scoped操作のdeny-by-defaultは引き続きNormative。単にServiceにRole関数が存在することと、全Endpointが同じ検査を通過することは異なる。外部認証Gatewayの有無は未検証であり、デプロイ環境全体における認可不備の最終判定ではない。
+
+**Disposition:** `23_10`§5.1.2で操作ごとの差分・Source blob・負例を追跡。Product Web/APIのGapはDEC09に従いE11 Local CLIへ転嫁せず、別Product修正のOwner・Issue・Test Evidenceを設定する。E11側でこのGapを解消済みと主張しない。安全な受入以前の状態は`SOURCE_GAP_IDENTIFIED / INTEGRATION_TEST_NOT_RUN`。

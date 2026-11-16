@@ -45,7 +45,7 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 - `src/ariadne/interfaces/web_api/routers/workspace_lifecycle.py`：`eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`。
 - `src/ariadne/interfaces/web_api/schemas/__init__.py`：`b2235aed012b954a5b19531f68a9aa2039201781`。
 
-### 既存Routerの操作表（11件／11件のRoute宣言を観測）
+##### 既存Routerの操作表（11件／11件のRoute宣言を観測）
 
 | HTTP | Canonical path (`/api/v1`以降) | Request contract from Router | Success from Router | Source |
 | --- | --- | --- | --- | --- |
@@ -61,7 +61,7 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 | POST | `/projects/{project_id}/research-contexts/{context_id}/fix` | project_id、context_id | 200、Service result dict（固定Response Schema未宣言） | workspace_lifecycle.py |
 | GET | `/projects/{project_id}/research-contexts/{context_id}/usage` | project_id、context_id | 200、Service usage dict（固定Response Schema未宣言） | workspace_lifecycle.py |
 
-### 共通FieldのCoverageと未検証点
+##### 共通FieldのCoverageと未検証点
 
 | Field | Coverage | 根拠・未完了 |
 | --- | --- | --- |
@@ -76,3 +76,22 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 | Test / FR | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | FR-121の追跡は本文に存在。Operation別Contract/Negative Testとの1:1追跡は未完 |
 
 **解釈上の制約:** 本表はRouteとDTOのSource突合というPREP-01の部分是正であり、9欄の完成を意味しない。`NOT_SPECIFIED`を暗黙の成功としない。Service/Handler/Testの確認後に最終Contractとする。
+ 
+
+#### 5.1.2 Router→Application Service→Error Handlerの実装差分（2026-11-17 PREP-01）
+
+**根拠Sourceの範囲（静的照合）**：`routers/projects.py` (blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`)、`routers/workspace_lifecycle.py` (`eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`)、`product/application/project_data_service.py` (`639ef15494e6244282b670aa36d53e9beb92e526`)、`product/application/workspace_lifecycle_service.py` (`ee84e914f8bc5136b9f9fee7323814a552a5d68a`)、`web_api/error_handlers.py` (`c8cd02be0aebd1a6e5399098b6594e3f57d06f15`)、`web_api/idempotency.py` (`12ff23e5bf9dd39a5de59a135eef4e874f047505`)。実行時のGateway/OIDC設定は対象外。
+
+| 観点・操作 | CURRENT Sourceで観測したこと | REQUIRED（Owner採用Requirement） | 判定 |
+| --- | --- | --- | --- |
+| Project POST | `create_project`が`ProjectDataService.create_project`の後、`X-User-Id`／anonymousを使い`ProductClosureService.register_project_owner`を呼ぶ | Authenticated principalによるOwner登録／失敗時の整合性 | AUTH/atomicity NOT_VERIFIED |
+| Project GET list/get, PATCH | `ProjectDataService`のこれらのmethodにはactor ID・Membership評価の引数がなく、RouterでのMembership認可も観測できない | FR-121: 対象ProjectのOWNER/EDITOR/VIEWERをservice action前に検証 | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
+| Project DELETE | `X-User-Id`は`ArchiveProjectCommand.requested_by`へ渡るが、`ProjectDataService.archive_project`はMembership検証を呼んでいない | FR-121: WRITEはOWNER/EDITORのみ | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
+| ResearchContext POST/GET/PATCH/FIX/USAGE | `WorkspaceLifecycleService`の各methodは`project_id`や`created_by`を受けるが、`_project/_active_project`はprojectの存在／ARCHIVEDのみ判定。MembershipのRoleは評価していない | FR-121: Actor/Project/Membershipの一致とRole境界 | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
+| ResearchContext POST | Routeは`IdempotencyServiceDep`や`Idempotency-Key`を使用せず、Serviceは新versionを作成してcommitする | FR-114a/b、23_51: durable createのIdempotency Keyとreplay semantics | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
+| Service error | `EntityNotFound`→404、`ProjectAccessDenied`→403、`ProjectArchived`→409、`InvalidSchema`→422、Request validationは**400** `INVALID_REQUEST` | HTTPごとの型付きError／safe response | Handler mapping DEFINED、Operation別到達はNOT_VERIFIED |
+| Version | FastAPI `app.py`が`/api/v1`として公開 | Product v1とE11 Local CLI versionを分離 | Router prefix DEFINED、E11 compatibilityは未実装 |
+
+**評価上の制約：** 実行時Gateway、依存注入override、middlewareまたは運用上の認証機構が追加され得るため、これだけでデプロイ環境の侵害可能性を断定しない。ただし**CURRENT Route→ServiceでOwner Requirementへの実装追跡が成立していない**ことはSourceから検証可能。要求仕様を緩和するのではなく、Product Security backlog（DEC09のGAP-C群／#14との紐付け要精査）と修正責任を切り出す。CLI-onlyのE11新機能を実装することによって本Gapが自動解消したと扱わない。
+
+**独立確認用Negative Test:** 非Member→Project GET/PATCH/DELETEとContext GET/PATCH/FIX/USAGEはdeny、VIEWER→mutation deny、ARCHIVED→mutation 409、missing／same／different Idempotency Key、他ProjectのContext ID、unauthenticated principalのOwner登録を、固定Source／Integration環境で検証。現状はNOT_RUN。

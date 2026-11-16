@@ -63,3 +63,10 @@ exactly-once executionは保証しない。successful Stage outputのretry/resta
 
 - **`FR-114a`**：Idempotency要否をHTTP method/create一般ではなく、retryでduplicate durable side effectを生成し得るCommandかどうかで判定する
 - **`FR-114b`**：対象Commandで`Idempotency-Key`を必須化し、missing keyを`IDEMPOTENCY_KEY_REQUIRED`、same key/different requestをHTTP 409 `IDEMPOTENCY_CONFLICT`として扱う
+ 
+
+#### 8.2.2 Research ContextのCurrent implementation差分（PREP-01）
+
+`src/ariadne/interfaces/web_api/routers/workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）の`POST /projects/{project_id}/research-contexts`は`Idempotency-Key`を受け取らず、`IdempotencyServiceDep.execute`を呼ばない。呼び先`WorkspaceLifecycleService.create_research_context`（blob `ee84e914f8bc5136b9f9fee7323814a552a5d68a`）はversion番号を計算してcreate/commitする。このSource経路は、上記Required Contractの「ResearchContext create」を満たした実装として数えない。
+
+`CURRENT_GAP`：鍵の欠落／同一鍵再実行／異ペイロード再送を負例検証し、Owner決定した実装Laneへ追跡する。現行APIの観測事実と将来の必須Contractを同一と見なさない。実行テストは`NOT_RUN`。
