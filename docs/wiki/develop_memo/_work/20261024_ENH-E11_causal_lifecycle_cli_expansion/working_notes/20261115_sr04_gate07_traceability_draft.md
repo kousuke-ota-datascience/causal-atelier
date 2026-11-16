@@ -10,7 +10,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwner個別採用:** [準実験7手法のEstimator／Inference判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。初期Method基準と条件付き推論方針のみ決定。P3-M12 SCMは初期defaultを探索的点推定に限定しPlacebo順位を95%CIと認定しない。他6手法のCIも実効Method/cluster/coverageの認証前は未承認。**正式FR/ADR/Schema/Gate、Science Benchmarkは未実施。**
 
-> **DEC-SR04-06（2026-11-16）はOwner採否保留:** [NCE/NCO/OLS partial R²・RV採否の独立提案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)を策定。P1-M18/19/20は**既存Draftの科学的Method候補**のまま。推奨DEC06-A（1〜5すべてA）は未承認。既存Method行の`BLOCKED / NOT_GENERATED`を変更せず、正式採用・Science PASS・G07 Evidenceは未実施。
+> **DEC-SR04-06（2026-11-16）Owner個別採用済み:** [NCE/NCO/OLS partial R²・RV独立技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)と02承認記録第23項で**DEC06-1〜5すべてAを採用**。P1-M18/P1-M19を実在Observed NCE/NCO、P1-M20を古典OLS partial R²＋point RV（q=1）の初期Nとする。X-04/X-05の未提供の広範方式は初期非採用D。**Owner Scope採用のみCLOSED**であり、Null size/power・RV独立数値Oracle・正式FR/NFR/AR/Gate07・Science Evidenceは未完了。Method行は`OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED`とする。
 
 ## 0. 名前空間・証拠の厳格な境界
 
@@ -41,9 +41,9 @@
 | P1-M15 Bootstrap refutation／再標本化安定性 | SCOPE:P1-14 | DGP-001, DGP-002; NEG-016 | REF-R01 | AC-D01, AC-D03, AC-R02 | ENV-BASE | E11-REQ-P1R / #16 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M16 Adjustment Set Sensitivity／設計変更 | SCOPE:P1-16 | DGP-021, DGP-002; NEG-002 | REF-G01, REF-R01 | AC-D01, AC-D02, AC-R02 | ENV-BASE | E11-REQ-P1S / #16 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M17 Propensity Clipping Sensitivity／tr | SCOPE:P1-16 | DGP-002, DGP-023; NEG-010, NEG-018 | REF-E02, REF-R01 | AC-D03, AC-R05 | ENV-BASE | E11-REQ-P1S / #16 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P1-M18 Observed NCE null diagnostic／条件付き関 | SCOPE:P1-15, SCOPE:X-04 | DGP-019; NEG-019, NEG-026 | REF-R02 | AC-D01, AC-T01, AC-T02, AC-T03, AC-R03 | ENV-BASE | E11-REQ-P1NC / #16,#14 | PLAN:G03 / BLOCKED / NOT_GENERATED |
-| P1-M19 Observed NCO null diagnostic／条件付き関 | SCOPE:P1-15, SCOPE:X-04 | DGP-019; NEG-019, NEG-026 | REF-R02 | AC-D01, AC-T01, AC-T02, AC-T03, AC-R03 | ENV-BASE | E11-REQ-P1NC / #16,#14 | PLAN:G03 / BLOCKED / NOT_GENERATED |
-| P1-M20 OLS partial R² / RV sensitivity／指定 | SCOPE:P1-17, SCOPE:X-05 | DGP-020; NEG-020 | REF-R03 | AC-D01, AC-D03, AC-R04 | ENV-BASE | E11-REQ-P1S / #16,#14 | PLAN:G03 / BLOCKED / NOT_GENERATED |
+| P1-M18 Observed NCE null diagnostic／条件付き関 | SCOPE:P1-15, SCOPE:X-04 | DGP-019; NEG-019, NEG-026 | REF-R02 | AC-D01, AC-T01, AC-T02, AC-T03, AC-R03 | ENV-BASE | E11-REQ-P1NC / #16,#14 | PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P1-M19 Observed NCO null diagnostic／条件付き関 | SCOPE:P1-15, SCOPE:X-04 | DGP-019; NEG-019, NEG-026 | REF-R02 | AC-D01, AC-T01, AC-T02, AC-T03, AC-R03 | ENV-BASE | E11-REQ-P1NC / #16,#14 | PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P1-M20 OLS partial R² / RV sensitivity／指定 | SCOPE:P1-17, SCOPE:X-05 | DGP-020; NEG-020 | REF-R03 | AC-D01, AC-D03, AC-R04 | ENV-BASE | E11-REQ-P1S / #16,#14 | PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P2-M01 LinearDML／CATE(x) | SCOPE:P2-02 | DGP-003; NEG-011, NEG-012, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P2-M02 CausalForestDML／CATE(x) | SCOPE:P2-03 | DGP-004; NEG-010, NEG-012, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P2-M03 DRLearner／CATE(x) | SCOPE:P2-04 | DGP-003, DGP-004; NEG-011, NEG-012, NEG-013 | REF-E05, REF-E03 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
@@ -86,9 +86,9 @@
 | SCOPE:P1-12 | R+Q | P1-M10, P1-M11 | — | E11-REQ-P1W | #19 | METHOD_BOUND |
 | SCOPE:P1-13 | R | P1-M12, P1-M13 | — | E11-REQ-P1R | #16 | METHOD_BOUND |
 | SCOPE:P1-14 | N | P1-M14, P1-M15 | — | E11-REQ-P1R | #16 | METHOD_BOUND |
-| SCOPE:P1-15 | N（方法・設計は要審査） | P1-M18, P1-M19 | — | E11-REQ-P1NC | #16 | METHOD_BOUND |
+| SCOPE:P1-15 | N（DEC06-1/2 Observed NCE/NCO 初期NをOwner個別採用） | P1-M18, P1-M19 | — | E11-REQ-P1NC | #16 | METHOD_BOUND |
 | SCOPE:P1-16 | R | P1-M16, P1-M17 | — | E11-REQ-P1S | #16 | METHOD_BOUND |
-| SCOPE:P1-17 | N（要審査）／D | P1-M09, P1-M20 | 後続/例外案 | E11-REQ-P1S | #16 | METHOD_BOUND+PART_DEFERRED |
+| SCOPE:P1-17 | N（DEC06-3 古典OLS partial R²＋point RV Owner個別採用）／D（汎用Sensitivity） | P1-M09, P1-M20 | 後続/例外案 | E11-REQ-P1S | #16 | METHOD_BOUND+PART_DEFERRED |
 | SCOPE:P1-18 | R+N／D | — | SR04:X-05 | E11-REQ-CLI | #15,#24,#14 | CROSS_BOUND |
 | SCOPE:P1-19 | D | — | SR04:X-08 | E11-REQ-CLI | #14 | CROSS_BOUND |
 | SCOPE:P1-20 | R+N | — | SR04:X-05, SR04:X-07 | E11-REQ-CLI | #16,#24 | CROSS_BOUND |
@@ -133,8 +133,8 @@
 | SCOPE:X-01 | D（要承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
 | SCOPE:X-02 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
 | SCOPE:X-03 | D（要承認） | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
-| SCOPE:X-04 | N一部／D | P1-M18, P1-M19 | 後続/例外案 | E11-REQ-P1NC | #16,#14 | METHOD_BOUND+PART_DEFERRED |
-| SCOPE:X-05 | N一部／D | P1-M20 | 後続/例外案 | E11-REQ-P1S | #16,#14 | METHOD_BOUND+PART_DEFERRED |
+| SCOPE:X-04 | N一部（NCE/NCO Owner個別採用）／D（simulated/Graph） | P1-M18, P1-M19 | 後続/例外案 | E11-REQ-P1NC | #16,#14 | METHOD_BOUND+PART_DEFERRED |
+| SCOPE:X-05 | N一部（OLS partial R²/RV Owner個別採用）／D（IPW/AIPW/CATE一般化） | P1-M20 | 後続/例外案 | E11-REQ-P1S | #16,#14 | METHOD_BOUND+PART_DEFERRED |
 | SCOPE:X-06 | Q一部／D | — | SR04:X-04, SR04:X-07 | E11-REQ-SR03D05 | #19,#20,#21,#24 | CROSS_BOUND |
 | SCOPE:X-07 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
 | SCOPE:X-08 | D | — | 後続/例外案 | DEFERRED | #14 | DEFERRED_REQUIRES_OWNER |
@@ -150,11 +150,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `5ec1172743d63b53359610e45fb121b618fbb659` |
-| fixture | `873bf8802c314ae346c9eb5afecf17208488d844` |
-| quant | `36fa1ed6dca3c4634c577668d7f7bbad229af420` |
-| ref | `675c3fc9f2a77475d3157d8217aca79cd7b85898` |
-| env | `f1acd431671bad17addef4fd4ba738444ccc601d` |
+| matrix | `c5f39f06182c46db2da538bf1fe2773694c575ec` |
+| fixture | `ebd58fcf2e4635073e8d76dc189a9be14d356806` |
+| quant | `2f73344b375acd765f3ad2904594e7670089f4d9` |
+| ref | `2c4766b1aba87bd065cf4dd81dfcbbd4abe44ce9` |
+| env | `f06f3398eb8be2dd398f2db1130cfda21d8a9243` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -363,6 +363,16 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | DEC-05-7 / P3-M13 | SDID unit/time weights別最適化のweighted DID | unit cluster bootstrap／毎replicate weights再推定 | REF-Q05、DGP-018、solver/few-treated/coverage |
 
 全7件で`OWNER_BASELINE_ACCEPTED / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN`。METHODのOwner方針採用はAC-Q01〜05の数値基準の承認ではない。
+
+### 8.4. DEC06 Owner採用後の科学的未完事項
+
+| Method | Owner採用済み科学的Scope | Science/Gate未完 |
+|---|---|---|
+| DEC06:NCE (P1-M18) | Observed NCE、明示opt-in・null/conditioning、条件付き係数の診断 | DGP-019 null/alternativeの独立妥当性、REF-R02、AC-T01/T02/T03、CI有効性 |
+| DEC06:NCO (P1-M19) | Observed NCO、A→W causal nullに加えて統計的conditional nullを個別に審査 | DGP-019でγ=0でもU→A,WによりW~Aが関連しうるNEG-026。Null size/power/REF-R02 |
+| DEC06:OLS-RV (P1-M20) | 古典OLS partial R²（2軸grid）・q=1点RV。HC3とは科学的に別診断 | DGP-020のOVB algebra、REF-R03/RV数値・AC-R04、OLS design hash/df/SE |
+
+**この3件のOwner判断は完了したが、Runtime・科学的Inference・Formal FR/ADR/Gateは未完了。**
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
