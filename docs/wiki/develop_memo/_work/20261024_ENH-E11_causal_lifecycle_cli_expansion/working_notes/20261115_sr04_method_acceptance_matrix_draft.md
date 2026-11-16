@@ -12,6 +12,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。Quasiの7Method（DiD/Event/ITS/Sharp RD/Fuzzy RD/SCM/SDID）について、2×2群差、cohort-time集約、segmented HAC、cutoff local-linear/RBC、local IV/RBC、SCM simplex point-only、SDID unit/time weights+unit-bootstrapという**初期Estimator/条件付きInferenceの方針を個別採用**。正式Backend、cluster/CI・bandwidth・optimizerの具体的値と科学的Coverageは未完了。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
+> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の具体採否はOwner未決。NCE/NCOは実在観測Z/Wのopt-in・事前帰無、M20は古典OLS partial R²とpoint RVのみを初期NとするA案を策定。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 目的と非目標
