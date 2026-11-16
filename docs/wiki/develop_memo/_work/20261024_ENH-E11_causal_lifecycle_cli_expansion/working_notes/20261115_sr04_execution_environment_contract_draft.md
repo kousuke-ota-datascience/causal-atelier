@@ -12,6 +12,8 @@
 
 > **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。FD-A採用でもDoWhy 0.14のstage/confinders・full lockは未検証。GRAPH-A採用でもcausal-learn/Tigramiteの実効CI-test、Graph endpoint、GPL顧客SI納入判断は未検証。SR02のinstall/API smokeはScience/Legal PASSではない。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
 
+> **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05の設計基準を個別採用。ENV-BASEの計算backendに加え、Sharp/Fuzzy RDはPython rdrobustのoptional候補（未pin/未lock/未API probe）、ITSはHAC候補、SCMはconstrained optimization、SDIDは独立unit/time weightsと毎Bootstrap再最適化が必要。SI顧客納入License/Dependency/Compute/Science Evidenceは未承認。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
