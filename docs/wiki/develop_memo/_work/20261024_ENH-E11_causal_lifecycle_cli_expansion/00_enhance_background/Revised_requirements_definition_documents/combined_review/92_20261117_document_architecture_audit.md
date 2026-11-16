@@ -107,3 +107,7 @@ Owner指定の例：`### 5.X. ClassName`の下に、`#### 5.X.1`識別/責務、
 **未実施:** 全Source symbolの逐条signature照合、全REST実装/OpenAPIとのcontract equality、全Markdown Anchorの機械検査、全既存条文122件の意味比較、全File移動後のリンク再照合、実行テスト。現段階でそれらをPASS扱いしない。
 
 **結論:** 2026-11-16のDOC/IF/DD Owner採用は設計方向の承認として保持できる。しかし、文書の最終品質としては**Stock/Flow分離、章番号、API Contract、Class詳細設計の4点が未完成**。実装前にこの構造的負債を閉鎖すべきである。
+
+## 追加是正証拠（PREP-01 / 2026-11-17）
+
+Root Flow8件・ChangeLog5件の移動先と新索引は[DOC-01 Flow一覧](../doc01_review/README.md)を正規入口とする。旧Pathは歴史的監査の証拠であり本文中の表は当初の監査時点を記録する。移管前後のBlobとリンク修正は別途Gitコミットで検証する。過去の検証判定を新たな実装/Science PASSへ読み替えない。

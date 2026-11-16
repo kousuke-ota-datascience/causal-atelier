@@ -94,3 +94,7 @@ GitHub上の退避Source Snapshotを照合した。
 5. 機械的にMarkdown heading hierarchy、File links、Class template coverage、旧v2/METHOD41 trace、元正本不変を検査する。
 
 **Approval boundary:** DOC-01のOwner承認／IF-01・DD-01の設計案採用を遡及取消しはしない。本書は承認後の**文書構造と記載粒度の欠陥**を証拠に基づいて指摘し、設計意味・Schema/Port Freeze、独立Architecture／Gate06/07は別の責務とする。
+
+## 追加作業記録（PREP-01 / 2026-11-17）
+
+本監査で指定したRoot8件・ChangeLog5件のFlow移動に伴う新位置は[DOC-01 README](README.md)と[全体Index](../README_00_Revised_requirements_definition_documents.md)を正規入口とする。旧Path・旧章番号の記述は当時の監査対象の識別に限り保持する。移管後の相対リンク／Anchor検証は別の実証記録に明示し、元正本昇格条件を変更しない。

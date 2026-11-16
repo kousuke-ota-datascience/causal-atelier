@@ -77,3 +77,16 @@ DOC-01の`PASS`は以下をすべて満たした時にのみ記録する。
 - **APPROVED:** Stock/Flowの整理・移管結果と静的監査の提出版をOwnerが承認。承認対象Commitは`c17f0baa01b66b24395cf8d96f6ae224d382cc7a`。
 - **OPEN:** DOC01-F01〜F05のうち未検証の全122改訂条文の意味照合、Anchor／非Markdown参照、独立検証の確証は結果を捏造せず後続へ移管する。上記§4の検証条件を無断で緩めない。
 - **NOT AUTHORIZED:** 元正本昇格／Coding／独立Architecture・Science・Legal・Gate06/07受入。
+
+## 5. PREP-01 Flow Migration後の正規格納位置
+
+Rootの90〜98監査・Owner決定8件と、10/21/22/23/30各`*_99_change_log.md`5件はStockではない。原文の監査意味を保持した上で、以下のFlow locationに移管する。Root索引は[全体README](../README_00_Revised_requirements_definition_documents.md)のFlow一覧を参照する。
+
+- [構造分割履歴](structural_migration/90_structural_split_verification.md)
+- [RD-02構造移管監査](rd02_migration/92_rd02_restructure_verification.md)
+- [正式要件発行Trace](rd03_review/96_rd03_formal_requirement_traceability.md)
+- [RD-04 FR改訂記録](rd04_review/95_rd04_fr_application_review.md)、[NFR/AR改訂](rd04_review/96_rd04_nfr_ar_application_review.md)、[新規44要件レビュー](rd04_review/97_rd04_e11_requirement_review.md)、[整合監査](rd04_review/98_rd04_consistency_verification.md)
+- [Owner決定：Canonical Promotion Policy](../combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)
+- [歴史的Change Logs](history/10_99_change_log.md) / [21](history/21_99_change_log.md) / [22](history/22_99_change_log.md) / [23](history/23_99_change_log.md) / [30](history/30_99_change_log.md)
+
+履歴の原BlobはGit historyに保存される。旧Rootや各5群の旧Pathは移管の完了確認後に除去する。移管は**Owner承認の有無、Science PASS、元canonical昇格の条件を変更しない**。
