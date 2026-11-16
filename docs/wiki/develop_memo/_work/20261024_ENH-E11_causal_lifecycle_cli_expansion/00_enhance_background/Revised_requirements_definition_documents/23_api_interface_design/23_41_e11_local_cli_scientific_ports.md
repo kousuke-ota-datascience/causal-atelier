@@ -2,7 +2,7 @@
 
 ## 1. 境界・Compatibility
 
-本InterfaceはCLI-firstの追加実行系だけを対象とする。既存ProductのWeb API（/api/v1）、Worker、Product DB、Execution/Result正本、browser navigationを追加・変更しない。既存の ariande ではなく **Ariadne** の旧 `ariadne-identify`／`ariadne-estimate`／`ariadne-refute`／`ariadne-sensitivity`、`causal-analysis-spec/2`、`CliManifest(manifest_version="2.0")`のreaderと挙動は独立した旧laneとして保護する。
+本InterfaceはCLI-firstの追加実行系だけを対象とする。既存ProductのWeb API（/api/v1）、Worker、Product DB、Execution/Result正本、browser navigationを追加・変更しない。既存Ariadneの旧 `ariadne-identify`／`ariadne-estimate`／`ariadne-refute`／`ariadne-sensitivity`、`causal-analysis-spec/2`、`CliManifest(manifest_version="2.0")`のreaderと挙動は独立した旧laneとして保護する。
 
 DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。Local applicationはversion dispatch、順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、E11の型付きEffect/AR集合を無検証で同型へキャストしない。
 
