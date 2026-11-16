@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — overall
+# 30_00_overall_DD
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
@@ -102,6 +99,35 @@ architecture testで依存方向を検査可能にする。
 
 ---
 
+## 24. Current design invariants
+
+次はcurrent detailed designのMUST NOT invariantである。
+
+1. Project ManagementとAnalysis Workspaceを1つのpeer-tab navigationへ再混在させない。
+2. Project-global resource管理をAnalytical Familyとして扱わない。
+3. Family/Navigation StageをExecution/StageExecution statusへ読み替えない。
+4. current Navigation Stageをscientific reproducibility inputへ保存しない。
+5. frontendにbackend catalogのduplicate full definitionを持たせない。
+6. Analysis Contextをnew persistent aggregate/APIとして実装しない。
+7. Analysis Workspace内でCurrent Projectを直接switchさせない。
+8. missing contextをfake default resourceで補完しない。
+9. Data Quality用backend operationをUI都合で新設しない。
+10. TIME_TRENDへ新しい時系列scientific semanticsをUI都合で導入しない。
+11. CHARTのpersistent operation semanticsを表示専用へ退化させない。
+12. legacy analytical entryをparallel navigation authorityとして維持しない。
+13. Project/Analysis route stateをruntime domainへ逆流させない。
+14. UI IA変更だけを理由にDB/API/backend domain semanticsを変更しない。
+15. Selected ProjectからProject Listへのparent actionを`history.back()`で実装しない。
+16. legacy `Inference`等のworkspace groupingをcurrent canonical Stage identityとして表示しない。
+17. Causal presentation groupingをroute/Navigation Stage/runtime Stage/persistent stateへ昇格させない。
+18. Identification / Estimation / Effects / Diagnostics / Sensitivityのmain responsibilityを1つのgeneric surfaceへflattenしない。
+19. Refutation/Sensitivity editable controlをSensitivity以外のStageへ配置しない。
+20. Predictive Train/Predictでfeature setをad-hocに編集させない。
+21. feature selectorのためだけにnew Predictive specification/API/backend operationを追加しない。
+22. Predict Navigation Stageのためだけにstandalone scoring engineを新設しない。
+23. UI/IA再編だけを理由にLightGBM / LIME / SHAP等のnew analytical capabilityを暗黙追加しない。
+24. major semantic sectionの横並びを理由にpage-level horizontal scrollを必須化しない。
+
 ---
 
 ## 90. 詳細設計の目的・責務・必要粒度
@@ -127,6 +153,6 @@ architecture testで依存方向を検査可能にする。
 
 **制約:** 現行物理コードから確認したclassはsource準拠として記載し、新E11実装前の候補classは`PROPOSED / ADR_REVIEW_REQUIRED`と区別する。既存30_01〜30_09は原文構造分割であり、全classの物理記述完了を意味しない。
 
-- [30_10_existing_classes_physical_design_verified.md](30_10_existing_classes_physical_design_verified.md)
-- [30_11_enh_e11_proposed_physical_class_design.md](30_11_enh_e11_proposed_physical_class_design.md)
-- [30_12_physical_design_gap_register.md](30_12_physical_design_gap_register.md)
+- [30_20_planning_validation.md](30_20_planning_validation.md)
+- [_drafts/enh_e11_proposed_physical_class_design.md](_drafts/enh_e11_proposed_physical_class_design.md)
+- [_review/physical_design_gap_register.md](_review/physical_design_gap_register.md)

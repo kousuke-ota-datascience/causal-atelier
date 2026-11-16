@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — project workspace
+# 30_40_project_workspace
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 

@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — predictive setup and workflow
+# 30_35_predictive_training
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
@@ -165,34 +162,6 @@ primary surface:
 
 Trainのconfig/execution UIをpage purposeとして複製しない。
 
-### 15.6 Explainability
-
-目的はPredictive Explanationを確認することである。
-
-primary surface:
-
-- `PREDICTIVE_EXPLANATION_RESULT`
-- predictive explanation artifact
-- relevant Model Card reference
-- feature/model provenance
-
-Predictive Explanationをcausal effect / causal explanationとして表現しない。Navigation requirementだけを理由に特定external explanation libraryを必須化しない。
-
-### 15.7 Model Management
-
-read-oriented model surfaceとしてResult / Artifact / Lineageを使用する。
-
-対象:
-
-- `TRAINING_RESULT`
-- `EVALUATION_RESULT`
-- `MODEL_CARD_RESULT`
-- fitted preprocessor/model artifact
-- Model Card artifact
-- revised/rerun lineage
-
-UI名だけを理由に別`ModelRegistry` persistent aggregateを追加しない。
-
 ### 15.8 Draft state preservation
 
 Navigation Stage切替時に未保存DRAFT inputを意図せず初期化しない。
@@ -233,3 +202,48 @@ Current IDs:
 Existing logistic/linear are task defaults. Registry/capability response and execution resolver must use the same source of truth.
 
 Optional dependency discovery uses lazy module/version inspection. Importing Ariadne core modules must not import LightGBM/SHAP/LIME eagerly.
+
+### 15.10 LightGBM backend / fitted-model/2
+
+LightGBM backend uses low-level `lightgbm.train` / `Booster`.
+
+Exposed parameter validation:
+
+| Parameter | Contract |
+|---|---|
+| `num_boost_round` | integer 1..2000, default 100 |
+| `learning_rate` | 0 < x <= 1, default 0.1 |
+| `num_leaves` | integer 2..256, default 31 |
+| `max_depth` | -1 or integer 1..64, default -1 |
+| `min_data_in_leaf` | integer 1..10000, default 20 |
+| `lambda_l2` | finite >= 0, default 0 |
+
+Fixed runtime parameters include objective by task, CPU, `metric=None`, `deterministic=true`, `force_col_wise=true`, `num_threads=1`, immutable execution/spec seed, `verbosity=-1`, `use_missing=false`.
+
+Existing PREPARE output remains authoritative. LightGBM receives the TRAIN-fitted transformed numeric matrix; native categorical/missing handling and early stopping are not part of ENH-E10.
+
+New training writes use:
+
+```text
+schema_version = fitted-model/2
+model_id
+model_contract_version
+task_type
+parameters
+seed
+feature_order
+preprocessor_hash
+provider { id, library, library_version }
+determinism { mode, deterministic, force_col_wise, num_threads, device_type }
+payload { format, ... }
+classes? 
+```
+
+Payload:
+
+- linear: `ariadne-linear-json/1`
+- LightGBM: `lightgbm-model-string/1` using provider-supported model string serialization
+
+Loader dispatch is by provider/payload format. Existing `fitted-model/1` loader remains supported. Serialize→load→predict parity is required on deterministic fixtures.
+
+Reproducibility claim is same-runtime/config stability. Cross-platform/compiler/library-version bitwise equality is not promised.

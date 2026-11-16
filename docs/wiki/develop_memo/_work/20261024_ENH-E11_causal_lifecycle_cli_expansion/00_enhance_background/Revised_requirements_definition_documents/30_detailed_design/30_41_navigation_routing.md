@@ -1,144 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — domain context
+# 30_41_navigation_routing
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
-
----
-
-## 3. Canonical domain/application value objects
-
-### 3.1 AnalysisFamily
-
-```python
-class AnalysisFamily(str, Enum):
-    EXPLORATORY = "EXPLORATORY"
-    CAUSAL = "CAUSAL"
-    PREDICTIVE = "PREDICTIVE"
-```
-
-利用箇所:
-
-- `AnalysisSpecification.analysis_family`
-- `ExecutionPlan.analysis_family`
-- `Execution.analysis_family`
-- planner / capability selection
-- API request/response Family discriminator
-- Navigation Family identity
-
-navigation用に別のFamily enumを定義しない。
-
-### 3.2 Runtime StageType
-
-runtime StageはNavigation Stageとは独立したversioned keyを持つ。
-
-```python
-@dataclass(frozen=True, order=True)
-class StageType:
-    namespace: str
-    name: str
-    version: str
-```
-
-Validation:
-
-- `namespace` / `name`: lower snake case、先頭は英小文字。
-- `version`: 1以上の整数を表す文字列。
-- runtime key: `"{namespace}.{name}.v{version}"`。
-
-Serialization example:
-
-```json
-{"namespace":"predictive","name":"train","version":"1"}
-```
-
-StageTypeはRunner Registry / ExecutionPlan / StageExecutionのruntime contractであり、UI Stage slugから自動生成しない。
-
-### 3.3 ResourceRef
-
-runtime/application boundaryでresourceを参照する場合、domain objectそのものではなくstable identifierを用いる。
-
-```python
-@dataclass(frozen=True)
-class ResourceRef:
-    resource_type: str
-    resource_id: str
-    project_id: str
-    schema_version: str | None = None
-    content_hash: str | None = None
-```
-
-Project境界を保持し、versioned/canonical resourceではschema version / content hashを補助identityとして保持できる。Navigation Stageはpersistent Resourceではないため`ResourceRef(resource_type="NavigationStage", ...)`を作らない。
-
-### 3.4 NavigationStageDescriptor
-
-```text
-NavigationStageDescriptor
-├─ stage_id
-├─ slug
-├─ label
-└─ order
-```
-
-### 3.5 FamilyNavigationDescriptor
-
-```text
-FamilyNavigationDescriptor
-├─ family: AnalysisFamily
-├─ slug
-├─ label
-├─ default_stage_id
-└─ stages[]: NavigationStageDescriptor
-```
-
-Catalog invariant:
-
-1. Familyは3件、各Family 1件。
-2. Family slugはglobalに一意。
-3. Family内`stage_id`と`slug`は一意。
-4. `default_stage_id`は当該Family catalog内に存在する。
-5. `order`はdeterministicである。
-6. catalogからruntime StageType / StageDefinitionを生成しない。
-
-### 3.6 Frozen navigation catalog
-
-```text
-EXPLORATORY / exploratory / default=profile
-  profile
-  data-quality
-  distribution
-  relationships
-  comparison
-  findings
-
-PREDICTIVE / predictive / default=setup
-  setup
-  train
-  predict
-  metrics
-  explainability
-  model-management
-
-CAUSAL / causal / default=setup
-  setup
-  discovery
-  identification
-  estimation
-  effects
-  diagnostics
-  sensitivity
-```
-
-Catalog authorityはFamily Capability descriptorであり、application/interface aggregatorがread-only metadataとして公開する。
-
-```text
-GET /api/v1/navigation/analysis
-schema_version = analysis-navigation/1
-```
-
-Frontendはlabel/order/default Stageを含むfull catalogをhard-codeしてduplicate ownershipしない。
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
@@ -343,45 +206,182 @@ compatible with new Dataset Version?
 
 ---
 
-## 6. Schema registry / canonicalization
+## 18. Frontend / Routing detailed design
 
-### 6.1 SchemaRegistry
+### 18.1 Root component responsibility
 
-Generic scientific/product payload schemaはversion stringをkeyとしてvalidatorを登録する。
-
-```python
-class SchemaRegistry:
-    def register(self, schema_version, validator): ...
-    def validate(self, schema_version, payload): ...
-    def canonicalize(self, schema_version, payload) -> bytes: ...
-    def hash(self, schema_version, payload) -> str: ...
+```text
+ApplicationRoot
+├─ ApplicationRouter
+├─ ProjectsSurface
+│  ├─ ProjectList
+│  └─ ProjectRegister
+├─ ProjectManagementShell
+│  ├─ ProjectHeader
+│  ├─ ProjectParentNavigation
+│  ├─ ProjectLocalNavigation
+│  └─ ProjectSectionSurface
+│     ├─ Overview
+│     ├─ ResearchContext
+│     ├─ Data
+│     └─ ResultsLineage
+└─ AnalysisWorkspaceShell
+   ├─ AnalysisContextPanel
+   ├─ FamilyTabs
+   ├─ FamilyStageSidebar
+   └─ StageContents
 ```
 
-Invariant:
+名称はresponsibility roleであり、具体実装のcomponent名を不必要に固定しない。
 
-- empty / duplicate schema version registrationを拒否する。
-- unknown versionはunsupported version errorとする。
-- payloadはMappingを要求する。
-- canonicalization前にschema validationする。
+### 18.2 Navigation catalog loading
 
-Navigation metadata `analysis-navigation/1`はpresentation/application metadata contractであり、scientific generic SchemaRegistryへ登録しない。
+Frontend catalog authority:
 
-### 6.2 Canonical JSON
+```text
+GET /api/v1/navigation/analysis
+response schema = analysis-navigation/1
+```
 
-canonicalizationは少なくとも次を満たす。
+Normalized in-memory model:
 
-- dataclassはfield mappingへ変換する。
-- Enumは`.value`へ変換する。
-- UUID / datetimeはstable stringへ変換する。
-- non-finite floatを拒否する。
-- mapping keyはstringのみ。
-- mapping key orderに依存しないcanonical serializationを行う。
-- semantic payloadに含まれないbrowser navigation stateをhash inputへ混入しない。
+```typescript
+type AnalysisNavigationCatalog = {
+  schemaVersion: "analysis-navigation/1";
+  families: FamilyNavigationDescriptor[];
+};
+```
 
-### 6.3 Reproducibility metadata
+Catalog load state:
 
-Execution/Resultのreproducibility metadataには、実際に利用したlibrary version、input snapshot identifier、analysis specification/version、effective random seed等を必要に応じて記録する。
+```text
+IDLE → LOADING → READY
+              ├→ ERROR
+              └→ EMPTY/INVALID = contract error
+```
 
-browser Navigation Stageはscientific reproducibility inputではない。
+invalid catalog時にhard-coded fallback catalogをsilent採用しない。
+
+### 18.3 Analysis transition coordinator
+
+Analysis navigation transitionは単一authorityで次を順序化する。
+
+```text
+entry intent / parsed URL
+  ↓
+resolve + validate NavigationContext from catalog
+  ↓
+validate project/resource route context
+  ↓
+commit current navigation state
+  ↓
+apply history policy
+  ↓
+render FamilyTabs / StageSidebar / StageContents
+  ↓
+load operation availability / resource data
+  ↓
+focus / error presentation
+```
+
+FamilyTabs、StageSidebar、StageContentsが独立にhistoryを書き換えない。
+
+### 18.4 Project transition coordinator
+
+Project Management側はProject routeだけを扱う。
+
+```text
+project navigation intent
+  ↓
+resolve route + authorization
+  ↓
+normalize short route if needed
+  ↓
+commit Project section / Projects index state
+  ↓
+apply history policy
+  ↓
+render ProjectsSurface / ProjectManagementShell
+```
+
+Selected ProjectからProject Listへのparent actionもこのcoordinatorを利用する。
+
+Analysis Family/StageをProject section transitionへ暗黙付与しない。
+
+### 18.5 Direct link / reload / Back / Forward
+
+Project routeとAnalysis routeの双方で次を保証する。
+
+- direct link
+- reload
+- Back
+- Forward
+- same-target duplicate history suppression
+- normalizationのreplace behavior
+- Selected Project direct entryからのProject List parent navigation
+
+### 18.6 Legacy analytical entry
+
+supported legacy analytical entryはcanonical Analysis routeへ一方向normalizeする。
+
+legacy path/stateを第二のnavigation authorityとして維持しない。旧route tokenの具体形そのものはcurrent public contractとして固定しない。
+
+### 18.7 Project switching
+
+Analysis Workspace内のCurrent Projectはread-onlyである。
+
+Project switch controlをAnalysis Contextへ持たせない。別Projectへ移動する場合はProjects / Project Managementへ遷移してProjectを選択する。
+
+### 18.8 Async presentation state
+
+共通presentation vocabulary:
+
+```text
+IDLE
+LOADING
+READY
+EMPTY
+PARTIAL
+ERROR
+CANCELLED
+```
+
+scientific statusとHTTP/loading statusを同一enumへ統合しない。
+
+### 18.9 Accessibility
+
+- active Family / Stage / Project sectionをsemantically表現する。
+- current Stage headingをreal headingとして公開する。
+- presentation-only sidebar group labelはnon-interactiveとし、active/selected route semanticsを持たせない。
+- Project List parent navigation、Stage navigation、selector trigger等のactionはaccessible nameとkeyboard activationを持つ。
+- keyboard navigation/focus orderをroute structureと整合させる。
+- route transition後のfocus targetをdeterministicにする。
+- Stage-owned surfaceをhideする場合、visual concealmentだけでなくinteraction/focus orderから除外する。
+- loading/error/unavailableを色だけで表現しない。
+- URLで復元したscreenも同じaccessible name/stateを持つ。
+
+### 18.10 Stage presentation binding
+
+frontendはcurrent `(family, navigation_stage_id)`に対し、StagePresentationとStage-owned surface visibilityをdeterministicにresolveする。
+
+```text
+route-authoritative current Stage
+  ↓
+Stage presentation resolver
+  ├─ title / guidance
+  ├─ main surface ownership
+  ├─ prerequisite/reference surfaces
+  └─ presentation-only group label
+```
+
+Causalのlegacy `Inference` workspaceやPredictiveのgeneric result containerを内部実装として共有してもよいが、複数Stageのprimary identity / responsibilityを同一surfaceへflattenしない。
+
+### 18.11 Layout / responsive overflow
+
+- Stage main areaはsemantic section/cardを縦方向に並べる。
+- compact pair/group controlはlocal grid/flexを使用してよい。
+- intrinsically wide table/chart/preformatted resultはcomponent-local overflowを許可する。
+- narrow viewportでもsemantic section orderとcontrol usabilityを維持する。
+- page全体のhorizontal overflowをStage section compositionで発生させない。
 
 ---

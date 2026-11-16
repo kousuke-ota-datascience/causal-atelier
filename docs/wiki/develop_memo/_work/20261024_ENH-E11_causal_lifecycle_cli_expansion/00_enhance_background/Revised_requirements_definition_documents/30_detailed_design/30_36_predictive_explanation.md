@@ -1,59 +1,22 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — predictive advanced xai
+# 30_36_predictive_explanation
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
-## 15. Predictive Capability（続き）
+### 15.6 Explainability
 
-### 15.10 LightGBM backend / fitted-model/2
+目的はPredictive Explanationを確認することである。
 
-LightGBM backend uses low-level `lightgbm.train` / `Booster`.
+primary surface:
 
-Exposed parameter validation:
+- `PREDICTIVE_EXPLANATION_RESULT`
+- predictive explanation artifact
+- relevant Model Card reference
+- feature/model provenance
 
-| Parameter | Contract |
-|---|---|
-| `num_boost_round` | integer 1..2000, default 100 |
-| `learning_rate` | 0 < x <= 1, default 0.1 |
-| `num_leaves` | integer 2..256, default 31 |
-| `max_depth` | -1 or integer 1..64, default -1 |
-| `min_data_in_leaf` | integer 1..10000, default 20 |
-| `lambda_l2` | finite >= 0, default 0 |
-
-Fixed runtime parameters include objective by task, CPU, `metric=None`, `deterministic=true`, `force_col_wise=true`, `num_threads=1`, immutable execution/spec seed, `verbosity=-1`, `use_missing=false`.
-
-Existing PREPARE output remains authoritative. LightGBM receives the TRAIN-fitted transformed numeric matrix; native categorical/missing handling and early stopping are not part of ENH-E10.
-
-New training writes use:
-
-```text
-schema_version = fitted-model/2
-model_id
-model_contract_version
-task_type
-parameters
-seed
-feature_order
-preprocessor_hash
-provider { id, library, library_version }
-determinism { mode, deterministic, force_col_wise, num_threads, device_type }
-payload { format, ... }
-classes? 
-```
-
-Payload:
-
-- linear: `ariadne-linear-json/1`
-- LightGBM: `lightgbm-model-string/1` using provider-supported model string serialization
-
-Loader dispatch is by provider/payload format. Existing `fitted-model/1` loader remains supported. Serialize→load→predict parity is required on deterministic fixtures.
-
-Reproducibility claim is same-runtime/config stability. Cross-platform/compiler/library-version bitwise equality is not promised.
+Predictive Explanationをcausal effect / causal explanationとして表現しない。Navigation requirementだけを理由に特定external explanation libraryを必須化しない。
 
 ### 15.11 Explanation Method Capability registry
 

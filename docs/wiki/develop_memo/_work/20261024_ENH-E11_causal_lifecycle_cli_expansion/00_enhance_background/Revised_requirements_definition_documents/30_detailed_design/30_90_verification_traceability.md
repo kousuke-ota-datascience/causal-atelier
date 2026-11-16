@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 30 — tests history
+# 30_90_verification_traceability
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [30_detailed_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/30_detailed_design.md) · blob `04d83541e55ab0364500afb4b92ef55c10785a0c`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
@@ -215,62 +212,3 @@ Setup
 exhaustive visibility/state correctnessはdeterministic lower-level testをprimary proofとし、Browser E2Eはcross-layer journey proofとする。
 
 ---
-
-## 24. Current design invariants
-
-次はcurrent detailed designのMUST NOT invariantである。
-
-1. Project ManagementとAnalysis Workspaceを1つのpeer-tab navigationへ再混在させない。
-2. Project-global resource管理をAnalytical Familyとして扱わない。
-3. Family/Navigation StageをExecution/StageExecution statusへ読み替えない。
-4. current Navigation Stageをscientific reproducibility inputへ保存しない。
-5. frontendにbackend catalogのduplicate full definitionを持たせない。
-6. Analysis Contextをnew persistent aggregate/APIとして実装しない。
-7. Analysis Workspace内でCurrent Projectを直接switchさせない。
-8. missing contextをfake default resourceで補完しない。
-9. Data Quality用backend operationをUI都合で新設しない。
-10. TIME_TRENDへ新しい時系列scientific semanticsをUI都合で導入しない。
-11. CHARTのpersistent operation semanticsを表示専用へ退化させない。
-12. legacy analytical entryをparallel navigation authorityとして維持しない。
-13. Project/Analysis route stateをruntime domainへ逆流させない。
-14. UI IA変更だけを理由にDB/API/backend domain semanticsを変更しない。
-15. Selected ProjectからProject Listへのparent actionを`history.back()`で実装しない。
-16. legacy `Inference`等のworkspace groupingをcurrent canonical Stage identityとして表示しない。
-17. Causal presentation groupingをroute/Navigation Stage/runtime Stage/persistent stateへ昇格させない。
-18. Identification / Estimation / Effects / Diagnostics / Sensitivityのmain responsibilityを1つのgeneric surfaceへflattenしない。
-19. Refutation/Sensitivity editable controlをSensitivity以外のStageへ配置しない。
-20. Predictive Train/Predictでfeature setをad-hocに編集させない。
-21. feature selectorのためだけにnew Predictive specification/API/backend operationを追加しない。
-22. Predict Navigation Stageのためだけにstandalone scoring engineを新設しない。
-23. UI/IA再編だけを理由にLightGBM / LIME / SHAP等のnew analytical capabilityを暗黙追加しない。
-24. major semantic sectionの横並びを理由にpage-level horizontal scrollを必須化しない。
-
----
-
-## 30. CHANGE LOG
-
-### 30.1 Effective snapshot baseline
-
-Domain/runtime/capability/result/lineage、Family/Navigation Stage catalog、browser navigation、operation availability等のcurrent detailed designをeffective snapshotとして統合した。
-
-### 30.2 Project Management / Analysis Workspace separation
-
-Project ManagementとAnalysis Workspaceを別application/navigation scopeとして定義し、Project routes、resource ownership、Analysis Context、browser restoration、frontend component responsibilityをcurrent detailed designへ統合した。
-
-### 30.3 Analytical surface placement
-
-Causal / Exploratory / Predictiveのanalytical semanticsをNavigation Stage Contentsへ配置した。Exploratory Data Quality、TIME_TREND、CHARTについてbackend semanticsを変更しないcontractを明文化した。
-
-### 30.4 Analysis Stage Content Architecture
-
-Selected ProjectからProject Listへの明示的parent navigation、current Navigation Stageをprimary identityとするStage presentation、Causal Stage responsibility separation、Predictive Stage responsibility separation、Dataset-schema-backed Predictive feature selector、vertical layout/accessibility/history/test seamをcurrent effective detailed design本文へ統合した。
-
-この変更はUI/IA/presentation designの具体化であり、canonical Navigation Stage catalog、API、persistence schema、backend analytical semantics、runtime execution lifecycleを変更しない。
-
-### 30.5 ENH-E10 Predictive Advanced Modeling / XAI
-
-- Model Capability / Explanation Method Capability registry、optional dependency isolation、LightGBM adapterを追加設計した。
-- provider-neutral `fitted-model/2`、v1 read compatibility、same-runtime/config reproducibility contractを定義した。
-- SHAP_TREE raw-output semantics、LIME_TABULAR local-only + TRAIN explanation referenceを定義した。
-- `predictive-capabilities/1`をbackend authorityからadditiveに拡張し、Train / Explainability / Model Managementのconsumer contractを具体化した。
-- G01/G02はdeterministic lower-level correctness、G03 Browser E2Eは2 critical product journeyをprimary scopeとする。

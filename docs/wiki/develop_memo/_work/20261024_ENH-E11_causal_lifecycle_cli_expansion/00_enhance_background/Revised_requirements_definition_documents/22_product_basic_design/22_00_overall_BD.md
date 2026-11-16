@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 22 — overall
+# 22_00_overall_BD
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [22_product_basic_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/22_product_basic_design.md) · blob `87196f2f03a7f3367724bc05fb254d1a4d98109e`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
+**Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
 
@@ -189,8 +186,6 @@ buttonをdisabledにするだけでは要件を満たさない。Domain / Applic
 ### 4.9. Provenance / Contextを一貫して継承する
 
 Dataset Version、Research Context、Analysis View、Analysis Specification、Graph Version、upstream Result等、analysis inputとprovenanceをExecution / Result / Lineageまで追跡可能にする。presentationの都合でprovenance linkを切断しない。
-
----
 
 ## 90. この文書種別の目的・責務・規範性
 

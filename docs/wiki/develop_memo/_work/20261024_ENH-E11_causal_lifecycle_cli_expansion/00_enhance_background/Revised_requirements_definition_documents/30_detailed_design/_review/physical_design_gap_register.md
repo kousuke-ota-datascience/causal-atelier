@@ -47,3 +47,8 @@
 3. Versioned result/schema, error taxonomy and optional runtime capability accepted by independent reviewer.
 4. Method-specific mathematics/CI and Known Truth validation plan linked, without claiming Science PASS.
 5. Explicit Owner acceptance SHA for exact physical design; current `PHYSICAL_DESIGN_PARTIAL` changes only with evidence.
+
+
+## RD-02 status note
+
+旧`30_01〜30_09`というファイル参照と旧全件網羅判定は以前のsplit layoutを指す。現行の責務別30系ファイルは[RD-02構造検証](../../92_rd02_restructure_verification.md)を参照する。Physical designは依然`PARTIAL`であり、全Classの完了を主張しない。
