@@ -16,6 +16,8 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。初期候補3MethodはENV-BASE、明示opt-in・研究Design/null・古典OLS係数/SE/df・backend/seed provenanceを要求するが、Method追加・lock変更は未承認・未実行。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
+> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。T2でMethod/CI/inner Bootstrap/n/T別にp50/p95 core-seconds、peak RSS、Wall、Backend versionを実測し、T3必要コア時・メモリ・課金上限とOwner承認を突合する。CPU/料金値は未実測なので数値freeze禁止。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
