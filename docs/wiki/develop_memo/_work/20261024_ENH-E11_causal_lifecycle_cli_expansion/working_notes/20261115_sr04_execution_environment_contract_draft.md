@@ -14,7 +14,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05の設計基準を個別採用。ENV-BASEの計算backendに加え、Sharp/Fuzzy RDはPython rdrobustのoptional候補（未pin/未lock/未API probe）、ITSはHAC候補、SCMはconstrained optimization、SDIDは独立unit/time weightsと毎Bootstrap再最適化が必要。SI顧客納入License/Dependency/Compute/Science Evidenceは未承認。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
-> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。初期候補3MethodはENV-BASE、明示opt-in・研究Design/null・古典OLS係数/SE/df・backend/seed provenanceを要求するが、Method追加・lock変更は未承認・未実行。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+> **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。初期候補3MethodはENV-BASE、明示opt-in・研究Design/null・古典OLS係数/SE/df・backend/seed provenanceを要求するが、Method追加・lock変更は未承認・未実行。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 ## 0. 目的・システム境界・再現性の分類
 
@@ -117,7 +117,7 @@ SR-04-DのR=6,000/セルは**候補**。p=.95ならMCSE≈0.002814、反復数R�
 | P1-M07 / Frontdoor数値 | ENV-DOWHY | stage1/2回帰・confounder、single mediator、inference config | 0.14の実効stage/CI未承認 |
 | P1-M08〜11 / Diff/OLS/IPW/AIPW | ENV-BASE | effective PS/Outcome nuisance/normalization/crossfit/SE | ATE/ATT別sample unit、weighted ESS |
 | P1-M12〜17 / Refutation, Sensitivity | ENV-BASE（DoWhy method利用時ENV-DOWHYを別profile） | placebo/subset/Bootstrap/clip rule、resample unit、iteration count | REF-R01、真のNCとRandom CCを分ける |
-| P1-M18〜20 / NCE/NCO/partial-R²候補 | ENV-BASE | opt-in、null conditioning、classic OLS SE/df、RV version | **Method正式Scope未採用**。実装しないまま科学合格と扱わない |
+| P1-M18〜20 / NCE/NCO/partial-R²候補 | ENV-BASE | opt-in、null conditioning、classic OLS SE/df、RV version | **DEC06-1〜5全Aの初期NをOwner個別採用済み**。実装しないまま科学合格と扱わない |
 | P2-M01〜07 / non-IV CATE 7 estimator | ENV-ECONML | nuisance/final model・crossfit・train/test・X/W・bootstrap/forest inference | 7つを一律Bootstrapにしない。pointwise vs simultaneous |
 | P2-M08 / DRIV | ENV-ECONML | Treatment/Z型、IV moment、first-stage、final projectionとCI method | DRIV-A条件付き構造斜率semantic targetは採用済み。実効0.17.0・final projection/CI未検証、complier LATEと区別 |
 | P3-M01〜03 / PCMCI, PCMCI+, LPCMCI | ENV-TIGRAMITE | CI-test、tau_max、lag0、stationarity、time index、randomness | PAG/CPDAG endpoint、Tigramite experimental状態、GPL別Gate |
