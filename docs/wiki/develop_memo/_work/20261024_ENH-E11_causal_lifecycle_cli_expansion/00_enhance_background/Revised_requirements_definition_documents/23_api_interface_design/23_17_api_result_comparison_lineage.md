@@ -128,3 +128,27 @@ Current canonical lineage read responseは`ResearchContextVersion -> AnalysisSpe
 - **`FR-091`**：Result payloadはFamily・Type別Schemaで検証する
 - **`FR-092`**：canonical Artifactはproject/execution/stage/result relation、artifact type/scope、object_key、media type、hash、size、metadataを保持する。family/generic schema_versionをdirect fieldへ重複保持しない
 - **`FR-099`**：Manifest、Result summary、Specification、Artifact参照をexportできる
+
+## PREP-01: Router operation source inventory
+
+Evidence: results.py@e565edb21051133b84fb77fd7c1eafcd2d7257ea, product_closure.py@7cae6a3df8725c3f5263ede17167225175f5968e. Source-declared routes only; the app.py API prefix is /api/v1. 200* is default decorator success, not a runtime validation.
+
+| HTTP | Route | Handler | Declared status | Response model | Router |
+| --- | --- | --- | --- | --- | --- |
+| GET | `/api/v1/projects/{project_id}/graph-candidates` | `list_graph_candidates` | 200* | GraphCandidateListResponse | results |
+| GET | `/api/v1/projects/{project_id}/graph-candidates/{candidate_kind}/{candidate_id}` | `get_graph_candidate` | 200* | GraphCandidateResponse | results |
+| POST | `/api/v1/projects/{project_id}/graph-candidate-comparisons/query` | `compare_graph_candidates` | 200* | GraphCandidateComparisonResponse | results |
+| GET | `/api/v1/executions/{execution_id}/results` | `list_results_by_execution` | 200* | ResultListResponse | results |
+| GET | `/api/v1/results/{result_id}` | `get_result` | 200* | ResultResponse | results |
+| POST | `/api/v1/comparisons/query` | `query_comparison` | 200* | ComparisonResponse | results |
+| GET | `/api/v1/results/{result_id}/lineage` | `get_lineage` | 200* | LineageResponse | results |
+| POST | `/api/v1/results/{result_id}/export` | `export_result` | 200* | untyped | results |
+| GET | `/api/v1/projects/{project_id}/results` | `list_results` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/results/summary` | `results_summary` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/results/{result_id}` | `result_detail` | 200* | untyped | product_closure |
+| POST | `/api/v1/projects/{project_id}/comparisons` | `create_comparison` | 201 | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/results/{result_id}/lineage` | `result_lineage` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/lineage` | `project_lineage` | 200* | untyped | product_closure |
+| POST | `/api/v1/projects/{project_id}/lineage-links` | `create_lineage_link` | 201 | untyped | product_closure |
+
+Observed route count: 15. Identity/path = DEFINED by Router Source. Request DTO / constraints, authorization, lifecycle effects, error semantics, idempotency, version compatibility, FR/Negative Test trace are NOT_SPECIFIED pending DTO/Service/OpenAPI verification. Duplicate or shadowed route behavior, if any, is not established from this inventory. This annex is not Contract/Architecture PASS.

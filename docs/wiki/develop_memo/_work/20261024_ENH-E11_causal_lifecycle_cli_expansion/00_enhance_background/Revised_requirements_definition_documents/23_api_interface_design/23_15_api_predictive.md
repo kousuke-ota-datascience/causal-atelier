@@ -160,3 +160,29 @@ Model artifacts continue to use existing Artifact resources. New model writes ca
 - **`FR-181`**：Predictive Explanationはmodel-method compatibilityをbackend authorityで検証し、`LINEAR_COEFFICIENT_CONTRIBUTION` / `SHAP_TREE` / `LIME_TABULAR`を明示methodとして解決する
 - **`FR-183`**：explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する
 - **`FR-184`**：Train / Explainability / Model Managementはbackend capability metadataからcompatible option、availability/reason、parameter definition、provenanceを表示し、Frontendを独立したmodel-method compatibility authorityにしない
+
+## PREP-01: Router operation source inventory
+
+Evidence: predictive.py@ca9f6e37796c38b6b0de22d78b08e5ed20042198, predictive_workflow.py@f6a2b04456d23f37baa4f17331241b2427ea5028. Source-declared routes only; the app.py API prefix is /api/v1. 200* is default decorator success, not a runtime validation.
+
+| HTTP | Route | Handler | Declared status | Response model | Router |
+| --- | --- | --- | --- | --- | --- |
+| GET | `/api/v1/projects/{project_id}/predictive/capabilities` | `predictive_capabilities` | 200* | untyped | predictive |
+| POST | `/api/v1/projects/{project_id}/predictive/split-validations` | `validate_predictive_split` | 201 | PredictiveSplitResponse | predictive |
+| GET | `/api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}` | `get_partition_artifact` | 200* | untyped | predictive |
+| POST | `/api/v1/projects/{project_id}/execution-plans` | `create_execution_plan` | 201 | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/execution-plans/{plan_id}` | `get_execution_plan` | 200* | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/execution-plans/{plan_id}/validate` | `validate_execution_plan` | 200* | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/executions` | `submit_predictive_execution` | 202 | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}` | `get_predictive_execution` | 200* | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/stages` | `get_predictive_stages` | 200* | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/results` | `get_predictive_results` | 200* | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/artifacts` | `get_predictive_artifacts` | 200* | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/lineage` | `get_predictive_lineage` | 200* | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/cancel` | `cancel_predictive_execution` | 200* | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/retry` | `retry_predictive_execution` | 200* | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/rerun` | `rerun_predictive_execution` | 202 | untyped | predictive_workflow |
+| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/revise` | `revise_predictive_execution` | 202 | untyped | predictive_workflow |
+| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/prefill` | `get_predictive_prefill` | 200* | untyped | predictive_workflow |
+
+Observed route count: 17. Identity/path = DEFINED by Router Source. Request DTO / constraints, authorization, lifecycle effects, error semantics, idempotency, version compatibility, FR/Negative Test trace are NOT_SPECIFIED pending DTO/Service/OpenAPI verification. Duplicate or shadowed route behavior, if any, is not established from this inventory. This annex is not Contract/Architecture PASS.

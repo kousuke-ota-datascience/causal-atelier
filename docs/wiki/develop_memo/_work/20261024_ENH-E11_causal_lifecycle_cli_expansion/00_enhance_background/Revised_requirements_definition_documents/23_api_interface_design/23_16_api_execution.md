@@ -117,3 +117,18 @@ Canonical `Execution`には`execution_plan_id`独立field/FKはない。Predicti
 - **`FR-084`**：上流Artifactを下流Stage inputへ型付きでbindingする
 - **`FR-085`**：未登録Runner、cycle、missing output、schema mismatchをPlan受付時に拒否する
 - **`FR-087b`**：Execution `runtime_version_json`にAriadne code、Python、platform、machineおよび実際に利用したscientific library versionを保持する
+
+## PREP-01: Router operation source inventory
+
+Evidence: executions.py@c073974ed1bbd91161b67035850070c78a46e7da. Source-declared routes only; the app.py API prefix is /api/v1. 200* is default decorator success, not a runtime validation.
+
+| HTTP | Route | Handler | Declared status | Response model | Router |
+| --- | --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/execution-batches` | `create_execution_batch` | 202 | ExecutionBatchResponse | executions |
+| GET | `/api/v1/projects/{project_id}/executions` | `list_executions` | 200* | untyped | executions |
+| GET | `/api/v1/executions/{execution_id}` | `get_execution` | 200* | ExecutionResponse | executions |
+| GET | `/api/v1/executions/{execution_id}/prefill` | `get_execution_prefill` | 200* | ExecutionPrefillResponse | executions |
+| POST | `/api/v1/executions/{execution_id}/cancel` | `cancel_execution` | 204 | untyped | executions |
+| POST | `/api/v1/executions/{execution_id}/retry` | `retry_execution` | 204 | untyped | executions |
+
+Observed route count: 6. Identity/path = DEFINED by Router Source. Request DTO / constraints, authorization, lifecycle effects, error semantics, idempotency, version compatibility, FR/Negative Test trace are NOT_SPECIFIED pending DTO/Service/OpenAPI verification. Duplicate or shadowed route behavior, if any, is not established from this inventory. This annex is not Contract/Architecture PASS.
