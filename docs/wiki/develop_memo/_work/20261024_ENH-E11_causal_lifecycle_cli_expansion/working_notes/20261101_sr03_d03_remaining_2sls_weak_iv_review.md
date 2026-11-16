@@ -194,3 +194,7 @@ B1では未調整Waldとの点推定一致を要求しない。**S2の提供対�
 **D03-3オーナー判断（2026-11-06）：** **G2改訂の集合意味契約を採用**。EMPTYの初期B0/B1での扱いを修正し、Method別validatorを必要条件とした。**正式schema・D04互換・SR-04 Science Acceptanceは未完了**。
 
 **最新判断状態（2026-11-15）：** `D03-1_S2_OWNER_ACCEPTED / D03-2_I2_OWNER_ACCEPTED / D03-3_G2_REVISED_OWNER_ACCEPTED / D03-4_C1_OWNER_ACCEPTED / C_METHOD_NOT_ADOPTED / SCIENCE_NOT_RUN`。S2の2SLS初期範囲、I2のAR基準推論、G2の型付き集合意味、C1の**後続管理4項目**はオーナー採用済み。**C推定器そのものは初期非採用**。具体的owner／承認者の割当、C専用Issue、C自身の科学的採否、具体的AR実装・正式schema、数値Benchmark/Gate 07、全体構想・コード実装は**未承認または未完了**。
+
+## 8. 2026-11-16後続Owner判断の反映（当初Draftを上書きする範囲）
+
+**2026-11-16 Owner後続判断（DEC-SR04-01／B1-A採用）:** [独立技術判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)と[02判断記録](../00_enhance_background/02_enhancement_concept_approval_record.md)により、S2/B1の科学的Targetは**加法線形IV構造係数β（semantic kind: `LINEAR_IV_STRUCTURAL_COEFFICIENT`）**として正式個別採用した。従前の「formal B1 target未決」は科学的意味論に限り後続判断で解消。未決の正式schema enum/field、異質性下の不適格判定、ARのHC設定・数値実装/被覆・Gate承認を解消したわけではない。C1後続TriggerとB0/B1初期保証範囲は不変。
