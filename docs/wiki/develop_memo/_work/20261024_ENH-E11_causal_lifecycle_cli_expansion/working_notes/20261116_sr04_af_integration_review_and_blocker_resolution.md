@@ -49,7 +49,7 @@
 | IR-02 Negative短縮表記 | MAJOR | Bの`NEG-011,012,013`等をFで完全IDへ展開、28/28にMethod逆引きを作成 | F | **DOC_RESOLVED** |
 | IR-03 Quant AC 11件未結合 | MAJOR | AC-D04/D05/D06・I04/I05/I06・T04/T05・P02/P04/P06をCross/Condition/Report-onlyに再バインド | D/F | **TRACE_DRAFT_RESOLVED** |
 | IR-04 Cross Oracle未結合 | MAJOR | 横断`REF-X01`の適用先をSR04:X-01〜09と明記。Methodへの誤分類は禁止 | F | **TRACE_DRAFT_RESOLVED** |
-| IR-05 Markdown構造不整合 | MAJOR | Bの`|`を含むDGP table、DのAC-P01数式table、C/Dのliteral escaped backticksを修復 | B/C/D | **DOC_RESOLVED** |
+| IR-05 Markdown構造不整合 | MAJOR | Bの縦棒文字を含むDGP table、DのAC-P01数式table、C/Dのliteral escaped backticksを修復 | B/C/D | **DOC_RESOLVED** |
 | IR-06 DRIVのoff-support評価 | **BLOCKER** | DGP-008はX∈{-1,+1}なのにDのDRIV評価点を非IV CATEの3点Gridと共通化していた。DRIV gridを{-1,+1}へ是正 | A/B/C/D | **DESIGN_ERROR_RESOLVED**（formal theta/CIはOPEN） |
 | IR-07 FCI潜在交絡の過剰主張 | **BLOCKER** | DGP-011の同時点2観測変数でlatent Hの存在をbidirected edgeとして必ず識別できるとは言えない。生成DAGの真値≠FCIのPAG向きのOracle。用途をStress/uncertaintyに限定 | A/B/C/D | **FALSE_ACCEPTANCE_REMOVED**（独立PAG oracleはOPEN） |
 | IR-08 Wald単独とAR義務の衝突 | MAJOR | P3-M09は通常のWald比。P3-M10/M11のG2 AR集合を自動必須としたC側のREF-U01引用を除去しD/Fと整合 | C/F | **DOC_RESOLVED** |
@@ -62,17 +62,17 @@
 
 ### 1.2. 数学的Referenceの独立sanity check（Science PASSではない）
 
-1. **DGP-003のATT:** \\(e(x)=0.5+0.3x\\)、\\(\\tau(x)=2+x\\)、X~Unif[-1,1]より、\\(E[X|A=1]=0.2\\)、ATE=2、ATT=2.2。DGP-004はATE=7/3、ATT=38/15。
-2. **ATT-AIPW:** \\(n_1=\\sum A_i\\)、\\(\\widehat\\mu_0\\)と\\(\\widehat e\\)を用いる独立候補：
-\\[
-\\widehat\\tau_{ATT}
-=\\frac{1}{n_1}\\sum_i\\left[A_i\\{Y_i-\\widehat\\mu_0(X_i)\\}-(1-A_i)\\frac{\\widehat e(X_i)}{1-\\widehat e(X_i)}\\{Y_i-\\widehat\\mu_0(X_i)\\}\\right].
-\\]
+1. **DGP-003のATT:** \(e(x)=0.5+0.3x\)、\(\tau(x)=2+x\)、X~Unif[-1,1]より、\(E[X|A=1]=0.2\)、ATE=2、ATT=2.2。DGP-004はATE=7/3、ATT=38/15。
+2. **ATT-AIPW:** \(n_1=\sum A_i\)、\(\widehat\mu_0\)と\(\widehat e\)を用いる独立候補：
+\[
+\widehat\tau_{ATT}
+=\frac{1}{n_1}\sum_i\left[A_i\{Y_i-\widehat\mu_0(X_i)\}-(1-A_i)\frac{\widehat e(X_i)}{1-\widehat e(X_i)}\{Y_i-\widehat\mu_0(X_i)\}\right].
+\]
    現行AIPW実装の有限標本normalize方式とのパリティ、cross-fit nuisanceとCIは実コードprobeを必要とする。
 3. **DGP-005 Frontdoor:** A→Mの線形係数=1.5、Y~M+AのM係数=2、全媒介のATE=3。一般frontdoor functionalと2段階線形積の一致は本DGPの追加仮定に条件付き。DoWhy実効StageにAが入るかを独立probeするまではBackend contract未完了。
-4. **DGP-007 B1:** \\(\\tilde Z=Z-\\Pi_{1,C}Z\\)、\\(\\beta_{IV,lin}=E[\\tilde ZY]/E[\\tilde ZA]\\)。均質線形効果DGPではβ=2。異質\\(\\tau(C)\\)下では、追加仮定のもと \\(E[\\tilde ZA\\tau(C)]/E[\\tilde ZA]\\) という射影であり、一般のcomplier LATEやATEではない。
-5. **DGP-008 DRIV:** \\(\\theta_{IV}(x)=Cov(Y,Z|X=x)/Cov(T,Z|X=x)=2+0.5x\\)（本DGPの線形構造下）。x=-1→1.5、x=+1→2.5。Final modelに切片が無い場合、この関数を表現できない構成がある。
-6. **DGP-024 AR:** \\(q=\\chi^2_{1,0.95}\\approx3.841458820694124\\)。AR-Q1は[1.0518218236251204,5.926895365726481]、Q2は(-∞,-0.20315286487771517]∪[0.20315286487771517,∞)、Q3は[-0.7248752638076998,∞)、Q4は全実数。**集合形状の独立代数チェックであり、ARの有限標本coverageやweak-IV下の推論validityの実測ではない。**
+4. **DGP-007 B1:** \(\tilde Z=Z-\Pi_{1,C}Z\)、\(\beta_{IV,lin}=E[\tilde ZY]/E[\tilde ZA]\)。均質線形効果DGPではβ=2。異質\(\tau(C)\)下では、追加仮定のもと \(E[\tilde ZA\tau(C)]/E[\tilde ZA]\) という射影であり、一般のcomplier LATEやATEではない。
+5. **DGP-008 DRIV:** \(\theta_{IV}(x)=Cov(Y,Z given X=x)/Cov(T,Z given X=x)=2+0.5x\)（本DGPの線形構造下）。x=-1→1.5、x=+1→2.5。Final modelに切片が無い場合、この関数を表現できない構成がある。
+6. **DGP-024 AR:** \(q=\chi^2_{1,0.95}\approx3.841458820694124\)。AR-Q1は[1.0518218236251204,5.926895365726481]、Q2は(-∞,-0.20315286487771517]∪[0.20315286487771517,∞)、Q3は[-0.7248752638076998,∞)、Q4は全実数。**集合形状の独立代数チェックであり、ARの有限標本coverageやweak-IV下の推論validityの実測ではない。**
 
 数値サンプルの簡易spot check（Python/NumPy/Scipy、GitHubリポジトリ外）でも、Frontdoor2-stageの積≈3、B1のsample IV係数≈2、DRIV conditional covariance ratio≈1.5/2.5という方向の整合を確認した。しかし**生成コードとランダムseed/依存版をScientific Evidenceとして固定しておらず、これらをGate07のReference implementation/Monte Carloとして認めない**。
 
@@ -88,13 +88,13 @@
 | B1-B | 残差化IV比をより一般の**線形射影target**として公開。異質効果下でもweighted ratioを計算可能 | 数値の定義は広いが、処置効果の非負加重平均・complier LATEとしての因果解釈は別途証明が必要 |
 | B1-C | 条件付きcomplier LATE/多変量GMMを初期必須へ拡張 | SR03-D03 C1の「初期C不採用」に抵触。再承認と新科学Methodが必要 |
 
-**レビュー提案:** B1-Aで最小契約を確定する。正式enum名は候補\\(\mathrm{LINEAR\_IV\_STRUCTURAL\_COEFFICIENT}\\)だが採番未承認。C後続Triggerは維持し、IVのheterogeneityがある現実研究ではineligible/reviewに回す。**未解決:** Owner承認、DGP-007のraw estimator/inference/HC0-vs-HC1、DGP-024 AR集合とcoverage、method config。
+**レビュー提案:** B1-Aで最小契約を確定する。正式enum名は候補\(\mathrm{LINEAR\_IV\_STRUCTURAL\_COEFFICIENT}\)だが採番未承認。C後続Triggerは維持し、IVのheterogeneityがある現実研究ではineligible/reviewに回す。**未解決:** Owner承認、DGP-007のraw estimator/inference/HC0-vs-HC1、DGP-024 AR集合とcoverage、method config。
 
 ### 2.2. SR04-R02 DRIV：条件付きIV targetとEstimatorの射影
 
 | 案 | 対象・制限 | 科学的リスク |
 |---|---|---|
-| **DRIV-A（推奨）** | 連続T/Z、\\(X\\)ごとの\\(\\theta_{IV}(x)=Cov(Y,Z|X=x)/Cov(T,Z|X=x)\\)を、部分線形構造・IVの独立性/除外/関連性の下での**conditional structural treatment slope**として定義 | Final modelがθを表現できなければ不一致。弱い条件付きIV、W有り時のモーメント、最終射影とinferenceを別検証 |
+| **DRIV-A（推奨）** | 連続T/Z、\(X\)ごとの\(\theta_{IV}(x)=Cov(Y,Z given X=x)/Cov(T,Z given X=x)\)を、部分線形構造・IVの独立性/除外/関連性の下での**conditional structural treatment slope**として定義 | Final modelがθを表現できなければ不一致。弱い条件付きIV、W有り時のモーメント、最終射影とinferenceを別検証 |
 | DRIV-B | Backend特定final modelへの重み付き射影を正式targetとする | 構成依存のtargetになりMethod/版本ごとの意味説明が複雑。汎用な`IV_HETEROGENEOUS_EFFECT`として過大な互換性を主張しやすい |
 | DRIV-C | Complier CLATE/LATEに統一 | binary Z/Aとmonotonicity等が無い現在の連続IV fixtureとは別。SR03-D01の区分に抵触 |
 
