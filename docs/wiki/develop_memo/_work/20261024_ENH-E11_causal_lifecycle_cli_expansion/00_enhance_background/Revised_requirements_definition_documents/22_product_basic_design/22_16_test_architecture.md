@@ -23,7 +23,8 @@ Current design concernを次のtest layerへtraceする。
 `DEFERRED` concern（general AuditLog、retention、object storage、hard limits、production auth hardening、cross-store compensation等）のtest targetをcurrent mandatory acceptanceへ混ぜない。
 
 
-## 97. BD-01：E11のArchitecture・Scientific受入分離
+
+### 19.1. Local Scientific CLIの検証境界
 
 | Layer | E11 added tests / gate |
 |---|---|
@@ -35,6 +36,8 @@ Current design concernを次のtest layerへtraceする。
 | Delivery / legal | Artifact・Recipient・License/SBOMの実名審査。Science/Env PASSとは別 |
 
 `PLAN:G01〜G10`は開発Workstreamであり正式Gate06/07ではない。**本BDの文書監査PASSが実行テストPASSを意味しない**。[Review](22_90_architecture_consistency_review.md)。
+
+実装が継続的に充足すべき検証契約として、Local CLIとProductの依存方向、入力版Dispatch、Method適格性、typed inference、成果物の部分公開拒否、環境・Privacy回帰を含む。Method固有のScience受入は設計検証とは独立する。
 
 ## 98. RD-04：要件由来の基本設計制約
 

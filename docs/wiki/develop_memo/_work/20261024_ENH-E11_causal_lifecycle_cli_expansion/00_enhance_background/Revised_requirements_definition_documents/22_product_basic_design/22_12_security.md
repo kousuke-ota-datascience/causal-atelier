@@ -62,12 +62,22 @@ Idempotency対象は「全POST/create」ではなく、retryでduplicate durable
 Artifact materializationはlogical Execution/Stage/output slot/typeからdeterministic identity/object keyを導出し、same logical output + same content hashはreuse、different content hashはnondeterministic-output conflictとする。Result/Artifact bindingは可能な限りmetadata transaction内でcommitする。cross-store compensationは`DEFERRED` scopeである。
 
 
-## 97. BD-01：E11 Local security と既存Product RBACの境界
 
-- 本文§15.1〜15.4は既存ProductのProject Roleと認可ルールであり、新E11 CLIのlocal filesystem/user authorityとして**暗黙再利用しない**。
-- E11ではLocal OS実行主体、private output root、Path／Symlink escape禁止、safe serialization、Secret/row-level CATEの出力最小化と明示export policyを設計する。
-- 個票出力の`authorized`の判定主体・証跡・OS権限適用は未Freeze。opt-in aloneやProductの`X-User-Id`だけでは十分なローカル認可を保証したことにならない。**BD-01 blocking item**として[Review](22_90_architecture_consistency_review.md)に残す。
-- [E11 Runtime/Security](22_23_e11_environment_security_compatibility.md)。既存ProductのOIDC完成などを新規に仮定しない。
+### 15.5. Local CLIのセキュリティ境界
+
+| Trust boundary | Required behavior | Open contract |
+|---|---|---|
+| CLI runner identity | 実行主体はlocal OS実行者。Product `X-User-Id`/Project Roleを強制前提としない | OS user/privilege model and delegation |
+| Input Path | Root/path allowlist、traversal・symlink escapeを拒否 | canonical root/reparse/TOCTOU strategy |
+| Config / Serialization | Versioned typed inputのみ受入。未信頼のpickleなど任意code実行を既定経路で許さない | exact parser/allowlist |
+| Output directory | private artifact root、権限・umask等を設計し、失敗時も保護 | filesystem support, ACL/permissions |
+| Row-level CATE and individual explanations | 明示的opt-inと機微Artifact扱い、許可されたexportに限定 | 実行者・承認者の関係、Policy authority / evidence |
+| Manifest/Logs | Credential・機微列・個票値を原則含めず、hashや統計量を記録 | deidentification/log retention |
+| Backend | optional codeを実効版・license・安全性基準で選別 | package audit and runtime isolation |
+
+Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**Local CLIの個票出力の認可をProduct membershipなしで説明できる設計**が必要。これは未解決のBD-01 blocking itemである。明示opt-inだけであらゆる漏洩対策が完成したと解釈しない。
+
+既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportにはOSの実行主体・出力権限・明示opt-inを組み合わせるが、最終的な認可規則・証跡・ACLは未確定の設計事項として扱う。
 
 ## 98. RD-04：要件由来の基本設計制約
 

@@ -37,11 +37,52 @@ Current lineage read modelは`ResearchContextVersion -> AnalysisSpecification ->
 Exploratory ResultからAnalysisSpecification DRAFTへのhandoffは`Result --MOTIVATED--> AnalysisSpecification`を明示保存する。
 
 
-## 97. BD-01：E11 Local Artifactの別authority
 
-- 本文§12は**ProductのDB正本Result/Artifact/Lineage**を規定する。E11 Local Run ManifestをProduct `Result`／`Artifact`行やProduct `LineageEdge`へ暗黙登録しない。
-- E11の局所正本はimmutable input hashes・科学的state・effective environment・output checksumsを持つManifest＋local JSON/Parquetである。ProductのProject/Execution IDは新Local APIの必須keyにしない。
-- [Local Result / Publication](22_22_e11_local_result_artifact_lineage.md)を参照。旧Product ArtifactStore Portとの共有はDDで実装契約を確認し、共有する場合も正本の所有権を混同しない。
+### 12.4. ProductとLocal Artifactの正本境界
+
+| Aspect | Existing Product (unchanged) | ENH-E11 Local (added) |
+|---|---|---|
+| Identity | Project/Execution/StageExecution/Result/ArtifactのDB正本 | content-addressed local Question/Design/Graph/Dataset/Run/Result参照（論理仕様） |
+| Persistent location | Product Metadata DB＋ArtifactStore | Local JSON/Parquet/Manifest (Filesystem-based) |
+| Authority | Product Domain/Application/Worker | Local Scientific Domain/Application＋Artifact Publisher |
+| Scientific status | Product schemaと既存Review/Override | E11 typed outcome（point/inference/science独立） |
+| Lineage | Product FK/LineageEdge/projection | Manifestでlocal refs/hashes/effective environmentを辿る |
+| Cross-lane migration | 旧readerは旧仕様を読む | E11へ旧v2 Manifestを暗黙変換しない。双方向自動同期しない |
+
+Domainは現行Productの`ArtifactStorePort`と設計概念を再利用できるが、Local ArtifactをProduct `Artifact`行に自動登録してはならない。Portの共有可否は既存Repoの実装調査によりDDで決める。
+
+### 12.5. Local Scientific Resultと推論の意味
+
+- **Identity and provenance:** Study identity、Question/Design/Estimand、Data snapshot、GraphVersion、Identification/Estimator specification、parent run、Method、effective backend/API、runtime。
+- **Typed effect:** point estimate availability/value、target population/contrast、diagnostics、Identification result、scientific status／review reasons。
+- **Typed inference:** `not requested`／`supported and valid`／`unsupported`／`calculation failed`／`scientifically ineligible`を区別。区間の存在と科学的受入は同義でない。
+- **AR confidence set:** disjoint component intervals、非有界端点、全実数、confidence level、assumption・method/Referenceを損失なくserializeする。JSONにInfinityを裸数値として書くか否かなどのwire仕様はIF-01へ委譲する。
+- **Data minimization:** aggregate summaryとrow-level CATE/individual local explanationを別Artifact classificationとし、制御応答・Manifestに個票を暗黙埋込しない。
+
+### 12.6. Local ArtifactとManifestの公開手順
+
+1. CLI/Applicationが入力・上流hash・実効Environmentを検証し、局所出力候補をPlanする。
+2. Publisherが指定Root配下の安全な`relative artifact keys`へstagingし、出力内容のchecksumを計算する。Traversal／symlink／外部Pathを拒否する。
+3. JSON/Parquet/Manifestの型とSource SHA、Effective Method/Environment/seed/split、Scientific Status、Artifact refs、サイズ/checksumを照合する。
+4. Staged contentをreadbackし、byte identity・hash・link整合性を確認。**失敗なら正常Run Manifestを公開しない**。
+5. Success/科学的negativeが適切な状態で揃った場合のみ、publish上のcommit marker／complete manifestを外部から認識可能にする。部分書込を完全成功と見せない。
+6. 再試行は同一入力identityと実効seed/Backend条件で比較し、既存正本の内容差異は競合として扱う。変更があれば新Run/versionへ明示移行する。
+
+**Atomicity caveat:** 複数ファイルの移動が単一OS操作で原子的になる保証はない。実装では同一Filesystemのrename/transaction-like marker等の方式とcrash-recovery/readbackをIF/DDでFreezeし、原子的publishの意味（可視状態の判定単位）をテストする。技術失敗後のstaging残骸を正本と認識させない。
+
+### 12.7. 再現可能性とRun Manifestの要求
+
+| Group | Information required |
+|---|---|
+| Source identity | input dataset hashes、Question/Design/Graph refs、Method/Estimand、Config/Schema Version、Git/source SHA |
+| Effective environment | Python patch、OS/arch/CPU、Backend/distribution API/version、lock/pyproject hash、Native ABI/BLAS/thread info、selected Extras/Profile |
+| Reproducibility | effective parameter、seed derivation/role、split/fold、upstream-run refs、analysis mode |
+| Result validity | identification/eligibility status、point/CI availability、Science status、negative reasons、limiting assumptions |
+| Artifacts | relative keys、media type、size、output checksum、readback/complete status、privacy classification |
+
+Manifestは科学的根拠と実行条件の来歴であり、実行結果のbitwise再現や科学的有効性を保証した宣言ではない。SBOM／License provenanceは法務Gateへ独立Traceする。
+
+詳細なJSON/Parquet field、commit marker、Path safety・multi-file crash recoveryはIF/DDで規定する。
 
 ## 98. RD-04：要件由来の基本設計制約
 

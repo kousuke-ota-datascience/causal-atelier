@@ -19,7 +19,8 @@
 | Client disconnect | server-side Execution継続。cancelは明示Command |
 
 
-## 97. BD-01：E11 Local失敗の責務分離
+
+### 17.1. Local Scientific Operationにおける失敗の分類
 
 | Condition | Architecture response |
 |---|---|
@@ -31,6 +32,8 @@
 | Source/Artifact hash collision or mismatch | provenance/consistency error、正本の上書きや黙示再利用を拒否 |
 
 **注意:** 旧Productのretry/idempotency/cross-store compensation方針とLocal Filesystem publicationの実装は分けて定義する。[科学的Gate](22_21_e11_scientific_pipeline.md)／[Artifact publish](22_22_e11_local_result_artifact_lineage.md)。
+
+技術失敗と科学的非識別は別のResult軸に保持し、継続可能なscientific negativeを汎用exceptionとして破棄しない。
 
 ## 98. RD-04：要件由来の基本設計制約
 

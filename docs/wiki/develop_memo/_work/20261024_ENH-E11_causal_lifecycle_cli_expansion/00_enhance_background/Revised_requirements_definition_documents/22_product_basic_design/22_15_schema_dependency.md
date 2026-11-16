@@ -18,12 +18,15 @@
 - `Execution.runtime_version_json`へ`ariadne_code_version / python_version / platform_system / platform_release / machine / libraries`を保存する。
 
 
-## 97. BD-01：E11 version・dependency・migration boundary
 
-- 本文§18の`StageAttempt.effective_random_seed`等のMigrationは既存Product構成に属する設計記録であり、**E11の新Method導入を理由に新DB Migrationを実施する判断ではない**。
-- 旧`causal-analysis-spec/2`およびlegacy CLI/Result parserと新E11のversioned local specを別dispatchする。E11 Methodを旧v2でsilent enableしない。
-- DEC08のExtras（DoWhy/EconML/Tigramite）・universal`uv.lock`・実効Versionを分離し、R/Q/N/DとMethod41の合致をpreflightで検査する。SDK/Backend objectを永続Domainへ含めない。
-- 具体Schema/Port/Env lockのFreezeはIF-01/DD-01/Gate06。 [Environment/Compatibility](22_23_e11_environment_security_compatibility.md)。
+### 18.1. Version Dispatch・Legacy互換・Schema依存
+
+- `causal-analysis-spec/2`と旧CLI parser/Result/overrideの意味を保護する。新Local E11のversioned schemaは別dispatchし、old v2を暗黙移行させない。
+- Product Web API、Frontend、Worker、DB migrationには新E11のroute/field/role/Stageを追加しない。既存Productの認証上の不完全性をE11の設計で解消済みと宣言しない。
+- Local Scientific Core共有部分の改変が既存E9/E10機能・Predictive Model Loader/SHAP/LIMEに影響しないことを回帰試験で確認する。
+- Product GAP-C01〜04は明示的に別Workstreamへ残す。担当・期限未確定のものをE11 CLIのテストPASSでClosedにしない。
+
+新たなLocal Specと`causal-analysis-spec/2`の間では明示的なSchema Version識別を要求する。Unknown Versionを旧Readerに渡して暗黙で解釈しない。
 
 ## 98. RD-04：要件由来の基本設計制約
 
