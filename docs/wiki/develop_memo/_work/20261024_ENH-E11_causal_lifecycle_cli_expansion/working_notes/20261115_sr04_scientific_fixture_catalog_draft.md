@@ -44,15 +44,15 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 |---|---|---|
 | DGP-001 | X~Unif[-1,1], A~Bern(0.5)独立, Y=1+2A+X+ε | RCT。ATE=ATT=2、CATE(x)=2。null変種はDGP-022 |
 | DGP-002 | X~Unif[-1,1], e(X)=0.5+0.3X, A~Bern(e(X)), Y=X+2A+ε | Backdoor加法線形。ATE=ATT=2、PS既知、両armの真のpositivity 0.2〜0.8 |
-| DGP-003 | DGP-002のYを X+(2+X)A+ε に変更 | CATE(x)=2+x、ATE=2、ATT=2.2。E[X|A=1]=0.2。ATE/ATTは明確に異なる |
+| DGP-003 | DGP-002のYを X+(2+X)A+ε に変更 | CATE(x)=2+x、ATE=2、ATT=2.2。E[X given A=1]=0.2。ATE/ATTは明確に異なる |
 | DGP-004 | X,eはDGP-002、Y(0)=sin(πX)+ε、Y(1)=Y(0)+2+X+X² | 非線形CATE(x)=2+x+x²、ATE=7/3、ATT=38/15。選択したxでpointwise評価 |
 | DGP-005 | U~N(0,1), A~Bern(logit^-1(U)), M=1.5A+εM, Y=2M+U+εY。UはA,Yの潜在共通原因、A→Y直接効果なし | Frontdoor ATE=3。Frontdoorの非パラメトリック識別と**線形二段階数値法**の成立を別に検証。第2段階の正しい調整条件も固定する |
 | DGP-006 | Z~Bern(0.5)が型Sと独立。型S=(always,complier,never)、P=(.25,.50,.25)、A(z)=(1,z,0)、Y(a)=λS+τS a+ε、τS=(0,2,8) | 単調二値IV。ITT_A=.5、ITT_Y=1、Wald=complier LATE=2、母集団ATE=3。λSは任意の型別定数でZ独立 |
-| DGP-007 | C,U~独立N(0,1), Z~Bern(.5)独立、A~Bern(logit^-1(-.2+.8Z+.3C+.7U)), Y=1+2A+.5C+U+ε | B1の加法線形構造係数β=2。1 excluded Z/1 endogenous A/処置前C。E[U+ε|Z,C]=0。**本DGPでATE=2でも一般のB1=LATE/ATEは導かない** |
-| DGP-008 | X∈{-1,+1}等確率。Z,U独立標準正規、T=(1+.2X)Z+.5U+εT、Y=(2+.5X)T+.3X+.8U+εY | 連続T,Zの条件付きIV構造傾き候補θ(-1)=1.5、θ(+1)=2.5。Cov(Y,Z|X)/Cov(T,Z|X)と一致。**DRIVの正式estimand/momentは未決** |
+| DGP-007 | C,U~独立N(0,1), Z~Bern(.5)独立、A~Bern(logit^-1(-.2+.8Z+.3C+.7U)), Y=1+2A+.5C+U+ε | B1の加法線形構造係数β=2。1 excluded Z/1 endogenous A/処置前C。E[U+ε given Z,C]=0。**本DGPでATE=2でも一般のB1=LATE/ATEは導かない** |
+| DGP-008 | X∈{-1,+1}等確率。Z,U独立標準正規、T=(1+.2X)Z+.5U+εT、Y=(2+.5X)T+.3X+.8U+εY | 連続T,Zの条件付きIV構造傾き候補θ(-1)=1.5、θ(+1)=2.5。Cov(Y,Z given X)/Cov(T,Z given X)と一致。**DRIVの正式estimand/momentは未決** |
 | DGP-009 | stationary VAR: X_t=.5X_{t-1}+εX_t、Y_t=.4Y_{t-1}+.7X_{t-1}+εY_t | PCMCI用lagged truth: X(-1)→X, Y(-1)→Y, X(-1)→Y。burn-inとCI-test/lagを別固定 |
 | DGP-010 | X_t=.5X_{t-1}+εX_t、Y_t=.3Y_{t-1}+.8X_t+εY_t、独立shock | PCMCI+用同時点X_t→Y_tを含むDAG。time-series CPDAGとして識別できる向きは独立Graph oracleで決定 |
-| DGP-011 | 潜在H_tと独立shock、X_t=.5X_{t-1}+H_t+εX_t、Y_t=.4Y_{t-1}+H_t+εY_t | LPCMCI／FCIの潜在共通原因。潜在射影および等価類のPAG endpointは**独立Graph oracleの導出待ち**。DAG向きの強制禁止 |
+| DGP-011 | 潜在H_tと独立shock、X_t=.5X_{t-1}+H_t+εX_t、Y_t=.4Y_{t-1}+H_t+εY_t | LPCMCI／FCIの潜在共通原因。潜在射影および等価類のPAG endpointは**独立Graph oracleの導出待ち**。特に**同時点観測X_t,Y_tのみの2変数FCIで潜在交絡をbidirected edgeとして確定することは原理的に要求できない**（直接因果モデルと同一観測分布になり得る）。FCIの潜在交絡の向き・端点を評価する場合は独立に同値類を導出できる多変数Graph variantが別途必要。LPCMCIのtemporal PAGとは別Oracle。DAG向きの強制禁止 |
 | DGP-012 | G∈{0,1}, t∈{0,1}, Y_it(0)=α_i+λ_t+ε_it、G=1,t=1でのみ+2 | 2×2 DiD ATT=2。parallel untreated trend/no anticipationを構成上満たす |
 | DGP-013 | cohort g∈{2,3,never}, t=0..4, Y(0)=α_i+λ_t+ε、t≥gでτ(g,t)=1+(t-g) | Group-time ATT(g,t)=1+(t-g)。Event-time合成真値は**cohort weightとrisk-setを事前指定**して計算 |
 | DGP-014 | Y_t(0)=1+.02t+sin(2πt/12)+ε_t (ε_tは定常AR(1))、t≥t0で+2+.1(t-t0) | ITSの介入直後level=2・相対slope=.1。因果解釈は同時ショック無し等に条件付き |
@@ -186,6 +186,12 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | P3-M13 Synthetic DiD | DGP-018 / panel ATT=2 | NEG-024 | unit/time weight混同防止、panel target、依存構造 |
 
 **Coverage上の注意:** P1-M05はDoWhyによるIV識別候補であり、P3-M09〜11のMethodをAPI呼び出し可能というだけで適格化しない。P1-M07のFrontdoor ATEはP1-M04の識別だけでは合格しない。P3-M08は局所RD/IVであり、無条件WaldのAR分布を無審査で継承しない。P2-M08はD03のCではない。
+
+### 3.4. 統合レビュー追補（2026-11-16）：Oracleの識別可能性
+
+- DGP-011は潜在Hを持つ生成真値のfixtureとして有効だが、**2観測変数のみからFCIが潜在交絡の存在を一意に断定する正例とはしない**。同じ同時点観測共分散は直接因果のGaussianモデルでも再現できる。FCIには、Markov等価類で強制される端点が実際に存在する別Graph motifを構築し、独立m-separationで検証した上でpositive orientation fixtureに指定する。
+- DGP-008のX支持は**{-1,+1}のみ**。DGP-003/004のCATE fixed-x grid {-0.75,0,0.75}をDRIVに流用しない。DRIV評価点をx=-1,+1へ限定し、final stageがθ(x)=2+.5x（切片を含む）を表現可能なことを条件とする。
+- これらは先行DGP真値の修正ではなく、**Fixtureの使用条件と検証可能な科学的主張の制限**。正式Method/Graph oracle/Backend acceptanceは未完了。
 
 ## 4. CATE・DRIV・B1の残余研究仕様
 
