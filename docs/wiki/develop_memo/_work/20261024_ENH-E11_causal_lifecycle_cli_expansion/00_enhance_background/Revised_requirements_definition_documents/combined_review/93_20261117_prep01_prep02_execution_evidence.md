@@ -70,3 +70,28 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 3. **PREP-03/04:** only after blockers are resolved, freeze first Gate's 06/07 and seek explicit Owner Coding Authorization. **No Coding authorized by this report.**
 
 **Non-changes:** No `src/`, `pyproject.toml`, `uv.lock`, or `docs/wiki/requirement_definition/` modifications. No Owner decisions or 41 Method scope changed.
+
+
+## 7. PREP-01 継続実施：Web API Router全件のStatic Inventory（2026-11-17）
+
+2026-11-17の作業で、`src/ariadne/interfaces/web_api/routers/`の13 Routerから標準`@router.get/post/put/patch/delete`宣言を抽出し、`23_10〜23_19`の10ファイルにSource由来のRoute表を追記した。**観測した101件は実装Route宣言の棚卸しであり、全OperationのContract規範完成ではない。**
+
+| IF Stock | Source対象 | 観測件数 |
+| --- | --- | ---: |
+| 23_10 Project / Context | projects、workspace_lifecycleのResearch Context | 11 |
+| 23_11 Dataset | dataset_versions | 4 |
+| 23_12 Analysis Spec | workspace_lifecycleのAnalysis Specification | 7 |
+| 23_13 Exploratory | exploration | 14 |
+| 23_14 Causal Graph | graph_versions | 9 |
+| 23_15 Predictive | predictive、predictive_workflow | 17 |
+| 23_16 Execution | executions | 6 |
+| 23_17 Result/Lineage | results、product_closureの関連Operation | 15 |
+| 23_18 Annotation/Artifact | annotations、artifacts、product_closureの関連Operation | 13 |
+| 23_19 Frontend Support | navigation、product_closureのworkspace/authorization関連Operation | 5 |
+| **合計** | **10文書・13 Router** | **101** |
+
+- `23_10`はRouter + Project DTOからRequest/HTTP status等を11件突合。操作別Authorization、Lifecycle、Error、Idempotency、Regressionは未検証。
+- 他9ファイルはSource decorator（Method/Path/Function/declared response）を記載。Pydantic/Service/Runtimeの9欄実効確認は未完。
+- Source Endpointで`X-User-Id` headerを扱う箇所があるが、信頼境界やGateway認証をRouter単体で確認できない。FR-121/RBAC満足を未検証のまま認定しない。
+- next: Operation × 9-field matrixを各Service/Schema/ErrorHandlerと照合し、明確にCURRENT / PROPOSED / NOT_SPECIFIED / N_A理由を示す。必要な負例を追加する。
+- 本追記はPREP-01＝IN_PROGRESS、PREP-02＝IN_PROGRESSの判定を変更しない。
