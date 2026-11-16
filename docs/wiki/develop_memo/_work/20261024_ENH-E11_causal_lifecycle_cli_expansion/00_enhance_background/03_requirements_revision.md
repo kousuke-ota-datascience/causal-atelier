@@ -1,13 +1,15 @@
 # ENH-E11 — 要件定義書改定案
 
 **文書区分:** 計画・意思決定資料  
-**状態:** DRAFT／要件の意味上の差分案／未承認  
+**状態:** **DEC09_REQUIREMENTS_SEMANTIC_DELTA_OWNER_APPROVED / CANONICAL_FR_NFR_AR_PUBLICATION_PENDING / GATE_NOT_FROZEN**  
 **前提資料:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `00_04_phase1_to_phase3_cli_scope_proposal.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
 **採番規則:** `E11-REQ-*`は計画上の仮識別子であり、承認されたFR/NFR/AR番号ではない。
 
 > **2026-11-16 DEC-SR04-06後続Owner決定（詳細参照）:** [02個別承認第23項](02_enhancement_concept_approval_record.md)、[DEC06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の初期N／X-04/05の広範方式Dは科学的適用範囲として**個別採用済み**。本書は**正本改定前のRequirements/Design Revision Draft**であり、この追補は正式FR/NFR/AR・実効Schema・Architecture・Gateの承認ではない。
 
 > **2026-11-16 DEC-SR04-08個別方針採用:** [02 Owner承認記録第25項](02_enhancement_concept_approval_record.md)、[DEC08独立技術判断](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)で**DEC08-1〜8すべてA案を採用**。基盤Python3.12/Linux CPUと5 Environment Profile、E11機能別Extras・universal `uv.lock`、Method↔Backend/実効API・Combinedの隔離検証、SBOM・Run Manifest、GPL系の個別顧客SI納入Legal Gateを設計方針として確定。**本ファイルは要件／設計の改訂案であって正式FR/NFR/AR・ADRの承認ではない**。具体Extra／Backend最終版・`pyproject.toml`／`uv.lock`改修、Science・法務個別判定・Gate06/07・Codingは未実施。DEC08のOwner決定と配布前法務適合を混同しない。
+
+> **2026-11-16 DEC-SR04-09正式統合Owner承認追補:** [DEC09 Owner統合承認](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)と[02第26項](02_enhancement_concept_approval_record.md)により、本03のE11-REQ群および§3の8つの不変条件・DEC01〜08のMethod適用境界は**要件の意味上のベースラインとしてOwner採用済み**。現行[要件正本§11](../../../../requirement_definition/10_requirements_definition.md)のDoWhy/EconML外部engine除外は、E11の承認済み機能別Optional Capabilityに限定する例外改定の方針を採用。ただし**実際の条文改定、新FR/NFR/AR採番・Status/SHA、詳細Method/Schema、Gate受入は未発行**。要件正本の既存`IMPLEMENTED`やProduct GAP-C01〜04を変更した事実はない。
 
 ## 1. 参照元
 
