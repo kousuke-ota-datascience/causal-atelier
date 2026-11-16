@@ -40,3 +40,20 @@
 
 - **`NFR-010a`**：API processとWorker processを分離するcurrent deployment boundaryを維持する
 - **`NFR-010b`（将来拡張・現行提供対象外）**：Worker restart後の明示的resume/recovery semanticsを定義する
+
+
+### 16.3. Effective Dependency Baselineの読取証拠（PREP-02）
+
+**固定Source:** `pyproject.toml` blob `7c24ed729be1a31c15a173ef4510aa3ed961d0b9`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`。本節は全ファイルの文字列と宣言を読み取った**STATIC BASELINE**であって`uv sync --locked`の実行記録ではない。
+
+| Check | Actual observed | Contract implication |
+| --- | --- | --- |
+| Python | `requires-python=">=3.12,<3.13"`、Lockの`requires-python="==3.12.*"` | ENV Profileは3.12系列を前提に実効patch/ABIを別途確認 |
+| Existing Extra | `predictive-advanced`（LightGBM/SHAP/LIME）のみ | DEC08採用の`e11-dowhy`、`e11-econml`、`e11-temporal`、conditional`e11-rdd`はProject declarationに未登録 |
+| DoWhy package | `pyproject` direct dependency無し、`uv.lock`に`name = "dowhy"`無し | 現行Universal Lockから導入済みと認定不可 |
+| EconML package | direct無し、Lock package entry無し | 同上 |
+| Tigramite package | direct無し、Lock package entry無し | 同上 |
+| rdrobust package | direct無し、Lock package entry無し | ENV-RD候補かつ顧客配布法務別 |
+| Existing ML | Lockにcausal-learn、lightgbm、shap、lime package entriesは存在 | E11全Backendを満たす証拠にならない |
+
+**Disposition:** DEC08の5 Profile（BASE/DOWHY/ECONML/TIGRAMITE/COMBINED）と条件付きENV-RDの採用**方針**は保持する。依存導入は明示Coding Contractにより`pyproject.toml`と`uv.lock`を同一Changeで更新し、fresh isolated Profileで`uv lock --check`→`uv sync --locked`→Package/API smoke→旧v2/E9/E10 regression→SBOM/License/Legal separated checksを実行する。**このPREP工程では本体依存ファイルは未変更、実際のinstallation/Science PASSはNOT_RUN。**

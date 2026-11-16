@@ -95,3 +95,23 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 - Source Endpointで`X-User-Id` headerを扱う箇所があるが、信頼境界やGateway認証をRouter単体で確認できない。FR-121/RBAC満足を未検証のまま認定しない。
 - next: Operation × 9-field matrixを各Service/Schema/ErrorHandlerと照合し、明確にCURRENT / PROPOSED / NOT_SPECIFIED / N_A理由を示す。必要な負例を追加する。
 - 本追記はPREP-01＝IN_PROGRESS、PREP-02＝IN_PROGRESSの判定を変更しない。
+
+
+## 8. 2026-11-17継続作業：Stock契約のSource照合・7区分是正
+
+**GitHubのRead-only Source inspectionに基づく追加是正**。以下の修正は承認済みScope・科学的仮定・Source Codeそのものを変更しない。
+
+| 対象 | 具体的な差分 | 結果と限界 |
+| --- | --- | --- |
+| `23_10` Project/Research Context HTTP | `ProjectDataService`／`WorkspaceLifecycleService`／`error_handlers`／`IdempotencyService`をRouterと突合。FR-121のMember Role check欠落と、ResearchContext createのIdempotency-Key経由不在をCURRENT/REQUIRED差分として記載 | **Source上の契約Gap**。外部Gateway等のruntime経路は未検証。Product backlogへ割当要。E11 CLIで自動閉鎖しない |
+| `22_12` Product Security・`23_51` | Role gapとIdempotency gapをScope＋Negative Test付きで記録 | FR-121 / FR-114bの規範を緩和せず、Product側未実装条件として保持 |
+| `30_62` E11 Local | E11LocalCausalUseCase、MethodCapabilityRegistry、LocalArtifactPublisher、LocalRunManifest、LocalManifestReader、LocalPrivacyPolicyを**Class単位のOwner 7区分**へ再設計 | **Proposed**であり実Class未存在。詳細Signature/JSON Schema、FS fault、独立ReviewのFreezeは未了 |
+| `23_42`・`22_15` | no-clobber／secure dirfd walk／Marker→Manifest hash／PAG・AR/Privacy・旧v2隔離の具体的契約と未Freeze点を追記 | Design Draft、Atomic/Privacy/Schemaの実効試験はNOT_RUN |
+| `30_20`、`30_21` | 旧Product PlanValidator／StageRunnerRegistry／ExecutionOutcome／GenericExecutorを実Source SHAと対応させ7区分化。単独`##2/3/4`の見出しを§9.5/9.6、§10.5/10.6へ変更 | Source静的照合／番号衝突の部分解消。Product runtime回帰はNOT_RUN |
+| `30_10` | 既存Product GraphVersionをSource照合し7区分化、重複`##5`見出しを§3.7へ変更 | `apply_edit`は`content_hash`を自動再計算しない点を確認。Product DomainとE11 GraphEvidenceを同一視しない |
+| 正式Gate語彙 | DD/IF/BD Stock内の旧全体`Gate06/Gate07`を、該当**各Gateの06/07**文書／独立検証に修正 | DEC09のOwner受入要求を保持。G01〜G10暫定Workstreamを正式PASS扱いしない |
+| DEC08 Env | `pyproject.toml`と`uv.lock`の全宣言を静的確認。LockにDoWhy/EconML/Tigramite/rdrobustのPackage entry無し | 5 Profile＋ENV-RDはADOPTED POLICY、**CURRENT LOCK未導入／実測NOT_RUN**。pyproject/lock改変なし |
+
+**未実施のExit blocker（継続）:** Root 8 Flowと5 Change Logの安全な移管・Backlinks全数修復、23/30の残る見出し・Class/Protocol/DTO全数、23 API 101 OperationのService/DTO/Error/Auth/Idempotency contract実効Coverage、122既存条文意味照合、Method41科学ACの全セル、5 ProfileのFresh実行、BD01-F03〜09/F12の独立審査・Schema/Port Freeze。**PREP-01/02は双方IN_PROGRESSであってDONEではない。**
+
+**補足:** Product Project/ResearchContextのSource gapはE11新Local CLIの実装障害であると即断しない。DEC09のE11 CLI-only／Product別Backlog境界に従い、依存するGateに関係する場合だけCoding blockerかを判断する。
