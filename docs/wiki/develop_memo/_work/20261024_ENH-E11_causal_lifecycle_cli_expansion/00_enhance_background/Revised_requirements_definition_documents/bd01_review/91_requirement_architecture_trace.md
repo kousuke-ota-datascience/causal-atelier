@@ -92,7 +92,7 @@
 | 68 Scope dispositions | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) scope negative boundary | Workstream/Gate Scope test |
 | 10 UC | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) use case boundary + [22_21](../22_product_basic_design/22_06_family_causal.md) pipeline | IF/DD/Tests independent |
 | Existing FR/NFR/AR transferred | [RD-04 audit](../98_rd04_consistency_verification.md) | Existing 22_00〜17 §97/98 | Preserve original design semantics and Status |
-| Full test PASS then canonical promotion | [Owner rule](../93_enh_e11_canonical_promotion_policy.md) | [22_90 review](../22_product_basic_design/22_90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
+| Full test PASS then canonical promotion | [Owner rule](../93_enh_e11_canonical_promotion_policy.md) | [22_90 review](90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
 
 ## 6. Mechanical assertion summary
 
