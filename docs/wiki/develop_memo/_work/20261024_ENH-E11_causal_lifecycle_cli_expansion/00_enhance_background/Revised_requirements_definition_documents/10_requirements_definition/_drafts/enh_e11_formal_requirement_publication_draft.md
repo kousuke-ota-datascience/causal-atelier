@@ -71,7 +71,7 @@
 
 ## 7. 追跡資料
 
-- [03 要件意味差分](../../03_requirements_revision.md)
-- [04 Architecture改定方針](../../04_design_revision.md)
-- [DEC09 Owner承認](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)
-- [Scope68](../../00_04_phase1_to_phase3_cli_scope_proposal.md)
+- [03 要件意味差分](../../../03_requirements_revision.md)
+- [04 Architecture改定方針](../../../04_design_revision.md)
+- [DEC09 Owner承認](../../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)
+- [Scope68](../../../00_04_phase1_to_phase3_cli_scope_proposal.md)

@@ -1,14 +1,9 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 21 — value catalog 4 9 to 4 17
+# 21_24_value_comparison_lineage
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [21_logical_data_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/21_logical_data_design.md) · blob `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`.
 
 ---
-
-## 4. 続き
 
 ### 4.9 Comparison Projection
 
@@ -100,35 +95,6 @@ availabilityはExecution stateそのものではない。context不足時に架�
 - legacy/historical rowを読み出すために保持し得る。
 - canonical Product lifecycleの新規write authorityにはしない。
 - canonical `Execution / StageExecution / Result / Artifact`との意味を混在させない。
-
-### 4.15 Technical persistence model
-
-`IdempotencyRecord`はbusiness Entityではなくtechnical persistence recordである。
-
-```text
-IdempotencyRecord
-├─ project_id
-├─ scope
-├─ idempotency_key
-├─ request_hash
-├─ response_json
-└─ created_at
-```
-
-(`project_id`, `scope`, `idempotency_key`)を一意とし、同一commandの重複適用を防止する。business lineageやscientific resultの正本として扱わない。
-
-### 4.16 Canonicalization model
-
-canonical hash対象JSONは次のruleで正規化する。
-
-1. object keyを安定順序でserializeする。
-2. datetimeはtimezone-aware ISO-8601へ正規化する。
-3. Enumはstable string valueへ変換する。
-4. set等の順序非保証collectionは意味的に順序が不要な場合のみcanonical sortする。
-5. NaN / Infinityを禁止する。
-6. numpy/pandas/sklearn等のlibrary objectを直接JSONへ保存しない。
-7. schema versionをsnapshotとともに保持する。
-
 
 ### 4.17 Lineage authority model
 

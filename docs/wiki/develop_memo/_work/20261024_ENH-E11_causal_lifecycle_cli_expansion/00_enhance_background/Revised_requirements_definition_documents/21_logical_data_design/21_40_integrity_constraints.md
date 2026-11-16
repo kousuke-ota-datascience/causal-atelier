@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 21 — constraints
+# 21_40_integrity_constraints
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [21_logical_data_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/21_logical_data_design.md) · blob `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`.
 
 ---
 
@@ -62,41 +59,12 @@ Family固有runtime planでOperation taxonomyが異なる場合も、input owner
 - 非決定的関数、任意code execution、外部I/OをAnalysisView expressionとして許可しない。
 - AnalysisViewのDataset compatibilityをWorkspaceSelection変更時にも再検証する。
 
-### 6.6 Result type / scientific status matrix
-
-`Result.result_type`と`scientific_status`は任意組合せではない。少なくとも次を満たす。
-
-| Result Type | Allowed Scientific Status |
-| --- | --- |
-| `DATA_PROFILE_RESULT`, `DISTRIBUTION_RESULT`, `ASSOCIATION_RESULT`, `GROUP_SUMMARY_RESULT`, `CHART_RESULT`, `ERROR_ANALYSIS_RESULT`, `MODEL_CARD_RESULT` | `GENERATED`, `GENERATED_WITH_WARNINGS` |
-| `SPLIT_RESULT` | `PASS` |
-| `TRAINING_RESULT` | `TRAINED`, `TRAINED_WITH_WARNINGS` |
-| `EVALUATION_RESULT` | `EVALUATED`, `INSUFFICIENT_TEST_SAMPLE` |
-| `PREDICTIVE_EXPLANATION_RESULT` | `GENERATED`, `GENERATED_WITH_WARNINGS`, `NOT_APPLICABLE` |
-| `DISCOVERY_GRAPH_RESULT` | `GENERATED`, `GENERATED_WITH_WARNINGS`, `UNRELIABLE` |
-| `IDENTIFICATION_RESULT` | `IDENTIFIED`, `NOT_IDENTIFIED`, `PARTIALLY_IDENTIFIED`, `REQUIRES_REVIEW` |
-| `DATA_ELIGIBILITY_RESULT`, `DIAGNOSTICS_RESULT` | `PASS`, `WARN`, `FAIL` |
-| `TREATMENT_EFFECT_RESULT` | `ESTIMATED`, `INSUFFICIENT_OVERLAP`, `INSUFFICIENT_SAMPLE`, `ESTIMATION_UNRELIABLE`, `REQUIRES_REVIEW` |
-| `REFUTATION_RESULT` | `NO_FAILURE_DETECTED`, `FAILURE_DETECTED`, `INCONCLUSIVE` |
-| `SENSITIVITY_RESULT` | `ROBUST`, `FRAGILE`, `INCONCLUSIVE` |
-
 ### 6.7 Artifact ownership
 
 - `artifact_scope = SOURCE`の場合、execution / stage execution / result ownershipを持たない。
 - `artifact_scope = EXECUTION_OUTPUT`の場合、Executionを必須参照する。
 - stage/result referenceを持つArtifactは、そのExecution/Project ownershipと整合する。
 - `object_key`は一意であり、同一physical objectを別のcanonical Artifact identityとして二重管理しない。
-
-### 6.8 GraphVersion整合性
-
-`graph_origin`とsource/parent referenceの整合を保証する。
-
-- `DISCOVERED`: `source_result_id`必須。
-- `CONSTRAINT_ADJUSTED`: source Resultまたはparent GraphVersionの少なくとも一方を要求。
-- `USER_DEFINED / IMPORTED`: source Resultとparent GraphVersionを持たない。
-- `USER_EDITED`: parent GraphVersion必須、source Resultは持たない。
-- 自己parentを禁止する。
-- Graph lineageでcycleを許容する設計にしてはならない。cycle検出の実装方式は詳細設計で定める。
 
 ### 6.9 ResearchContext relation整合性
 

@@ -1,22 +1,14 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 10 — fr fr-030 to fr-060
+# 10_13_fr_causal
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [10_requirements_definition.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/10_requirements_definition.md) · blob `40b83f29c67b4a39f6db5393be7534c5e892d656`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
 
-## 5. 機能要件
+## FR original requirement rows
 
 | ID | Area | Requirement | Level | Requirement Status | Implementation Status | Delivery |
 | --- | --- | --- | --- | --- | --- | --- |
-| FR-030 | Explore | 探索実行のResultとArtifactを保存する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-031 | Explore | 保存した探索Resultに観察メモと限界をAnnotationできる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-032 | Explore | Exploratory Resultからcanonical Causal/Predictive `AnalysisSpecification`をDRAFTとしてpersistし、source Resultとの`MOTIVATED` relationを保持できる。auto FIX / auto executionは行わない | SHOULD | ACTIVE | IMPLEMENTED | ENH-E5 |
-| FR-033 | Explore | 探索結果をEXPLORATORYと表示し、確認的結論として自動昇格しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-034 | Explore | Exploratory provenanceとしてdata-selection semantics、analysis-significant family_spec、sampling、Execution code/runtime metadataおよびResult/Artifact lineageを再構成できる | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-035 | Causal | 複数algorithm / parameterでcausal discoveryを実行できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-036 | Causal | User-definedまたはImported GraphをDiscoveryなしで登録できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-037 | Causal | DAG、CPDAG、PAGおよびendpoint semanticsを保持する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
@@ -37,9 +29,7 @@
 | FR-052 | Causal | 同一条件のRERUNと条件変更のREVISEDを区別し、changed dimensionsとreasonを保存する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-053 | Causal | 科学的負結果をExecution failureと区別する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-054 | Causal | Causal ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion/AnalysisView、GraphVersion、上流Result、Artifactへcanonical lineageで遡れる | MUST | ACTIVE | PARTIAL | ENH-E5 |
-| FR-055 | Predictive | 表形式Binary ClassificationとRegressionをPrediction Taskとして作成できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-056 | Predictive | Prediction unit、target、prediction time、horizon、intended use、deployment populationを固定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-057 | Predictive | feature setと各featureのavailability cutoffを固定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-058 | Predictive | random、stratified、group、time-based splitを選択できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-059 | Predictive | target leakage、future leakage、group leakage、split overlapをBackendで拒否する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-060 | Predictive | imputation、encoding、scaling等のfitをtraining partitionのみに限定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-153 | Causal | Causalは`setup / discovery / identification / estimation / effects / diagnostics / sensitivity`をFamily-local Navigation Stageとして提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-154 | Causal | IdentificationとEstimationを別Navigation Stageとして扱い、識別可能性と有限標本推定を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-155 | Causal | EstimationとEffectsを別Navigation Stageとして扱い、推定設定と推定結果の閲覧・利用を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-156 | Causal | DiagnosticsとSensitivityを別Navigation Stageとして扱う | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |

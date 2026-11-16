@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 21 — overall
+# 21_00_overall_LDD
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [21_logical_data_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/21_logical_data_design.md) · blob `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`.
 
 ---
 
@@ -102,8 +99,6 @@ Compatibility / transition用の`FamilyExecution / FamilyStageExecution / Family
 - `FK`欄には論理参照先Entityと属性を記載する。物理DBでFKを持たないpolymorphic/logical referenceは「その他制約」で明示する。
 - Project配下Entity間の参照では、参照先が同一Projectに属することをDB制約またはApplication validationで保証する。
 - current sourceとの照合で物理FKが未設定であっても、論理設計上reference authorityが明確な場合は論理FKとして記載し、物理実装差を注記する。
-
----
 
 ## 90. この文書種別の目的・責務・規範性
 

@@ -1,30 +1,9 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 10 — scope acceptance
+# 10_91_acceptance_conditions
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [10_requirements_definition.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/10_requirements_definition.md) · blob `40b83f29c67b4a39f6db5393be7534c5e892d656`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
-
-## 11. 対象外要件
-
-- Multi-class classification
-- survival analysis、forecasting、ranking、recommendation
-- online inference endpoint
-- model deployment / registry / monitoring
-- arbitrary Python execution
-- arbitrary SQL query
-- dashboard layout editor
-- causal effectの自動保証
-- unbounded AutoML
-- automatic business decision
-- LightGBM / SHAP / LIMEのmandatory core dependency化
-- DoWhy / EconML等、ENH-E10でapprovedされていないexternal analytical engine追加
-- Navigation stateのDB persistence / last-stage memory
-- Overview / FlagshipをAnalytical Family peerとして追加すること
-- 新規persistent Findings / Evidence domain modelの必須化
 
 ## 12. 総合完了条件
 

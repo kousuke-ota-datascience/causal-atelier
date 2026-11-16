@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 10 — state access retention
+# 10_40_state_lifecycle
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [10_requirements_definition.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/10_requirements_definition.md) · blob `40b83f29c67b4a39f6db5393be7534c5e892d656`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
 
@@ -106,33 +103,3 @@ Analysis View         = Dataset-Version-compatible selection
 - 必要inputが不足するoperationはexecution unavailableとして表現する。
 - Navigation stateをAnalysisSpecification、ExecutionPlan、ExecutionまたはStageExecutionへ保存しない。
 - Navigation Stageの状態をExecutionまたはStageExecutionのruntime statusへ読み替えない。
-
-## 9. 権限要件
-
-Project-scoped Resourceおよび操作の認可は、§7.1で定義するpersisted Project role `OWNER / EDITOR / VIEWER`をauthorityとする。
-
-* Project-scoped Resourceへアクセスするには、対象Projectに対するmembershipと必要なProject権限を持たなければならない。
-* `OWNER / EDITOR / VIEWER`はProjectをreadできる。
-* Context、Analysis View、Analysis Specification、Annotationその他のProject ResourceのWRITE / MUTATEは`OWNER / EDITOR`のみ許可する。
-* Executionのsubmit / cancel / retry / rerun / reviseは`OWNER / EDITOR`のみ許可する。
-* Exportの作成は`OWNER / EDITOR`のみ許可する。
-* Project membershipの管理は`OWNER`のみ許可する。
-* prediction row / local explanation等のexplicit sensitive outputは`OWNER / EDITOR`のみ取得可能とし、`VIEWER`には返さない。
-* 独立した`EXECUTE` Project roleは設けない。
-* 認可失敗時は、権限を持たない利用者がResourceの存在を推測できない応答を選択できる。
-* system-level Operator authorizationはcurrent Project authorization contractには含めず、`DEFERRED / FUTURE`として扱う。
-
-## 10. データ保持要件とDeferred Audit / Retention Boundary
-
-Current contractで有効なcurrent data-retention contractは次のとおりとする。
-
-* Dataset Version、Result、Artifact metadataおよびExecution snapshotはappend-onlyを基本とする。
-* Projectをarchiveしても、Projectに属する既存の分析Resourceをarchive操作だけを理由として物理削除しない。
-* Annotationについて、current contractで保持されている変更履歴を維持する。
-
-以下はRequirementとして維持するが、current delivery対象には含めない。
-
-* general operational audit trail (`FR-122`): `DEFERRED / FUTURE`
-* configurable retention/deletion policy (`FR-126`): `DEFERRED / FUTURE`
-
-したがってCurrent contractでは、general Audit recordの共通field contract、configurable retention期間、Artifactの一般的な物理削除policyおよび削除audit contractを必須acceptanceとして要求しない。

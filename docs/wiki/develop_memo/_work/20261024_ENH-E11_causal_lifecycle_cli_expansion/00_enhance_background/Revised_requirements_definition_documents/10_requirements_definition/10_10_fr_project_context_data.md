@@ -1,14 +1,11 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 10 — fr fr-001 to fr-029
+# 10_10_fr_project_context_data
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [10_requirements_definition.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/10_requirements_definition.md) · blob `40b83f29c67b4a39f6db5393be7534c5e892d656`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
 
-## 5. 機能要件
+## FR original requirement rows
 
 | ID | Area | Requirement | Level | Requirement Status | Implementation Status | Delivery |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -34,12 +31,6 @@
 | FR-020 | Data / View | Explore stateのdata-selection semantics（row_filter、selected_columns、derived_columns、missing_value_policy、time_cutoff、sampling）からAnalysisView DRAFTを作成できる。presentation-only chart stateはAnalysisViewへ保存しない | SHOULD | ACTIVE | NOT_IMPLEMENTED | ENH-E5 |
 | FR-021 | Data / View | 機微列、利用制限および説明をcolumn metadataへ付与し、configurable sensitive-column policyに利用できる | SHOULD | DEFERRED | NOT_IMPLEMENTED | FUTURE |
 | FR-022 | Data / View | Analysis View生成時に不正列、空母集団、非決定的式を拒否する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-023 | Explore | Dataset overview、schema、型、欠損率、cardinalityを表示する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-024 | Explore | 数値列・カテゴリ列の記述統計と分布を生成する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-025a | Explore | 列別missingnessを確認できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-025b | Explore | 複数列のjoint missing-pattern analysisを行える | MUST | DEFERRED | PARTIAL | FUTURE |
-| FR-026a | Explore | current capabilityとして型に応じた二変量association / bivariate analysisを生成できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-026b | Explore | 散布図、箱ひげ、クロス集計等のfull exploratory bivariate visualization surfaceを提供する | MUST | DEFERRED | PARTIAL | FUTURE |
-| FR-027 | Explore | group-by集計および時系列推移を生成できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-028 | Explore | correlation / association matrixを型に応じて生成できる | SHOULD | DEFERRED | NOT_IMPLEMENTED | FUTURE |
-| FR-029 | Explore | Chart Specificationを保存し、同じDataset Versionで再実行できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-166 | Project Management | selected Projectのlocal navigationはOverview / Research Context / Data / Resultsを提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
+| FR-167 | Project Management | OverviewはProject metadata / identity / status / archiveを所有し、Project Archiveをselected Project lifecycle operationとして提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
+| FR-168 | Project Management | DataはDataset / Dataset Version / Schema / Preview / Analysis View lifecycleを所有し、Analysis ViewをFamily横断analysis inputとして管理する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
