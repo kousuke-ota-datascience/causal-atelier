@@ -104,7 +104,7 @@
 
 ### 30_detailed_design
 
-**章立ての読順:** 旧詳細設計§3→§4/5（30_41）→§6を先に読む。30_41は§18 Routingも収録しており、重複するClass節§4（GenericExecutor）等は別の採番是正対象。番号の修正にはAnchorと引用を一括更新する。
+**章立ての読順:** 旧詳細設計§3→§4/5（30_41）→§6を先に読む。30_41は§18 Routingも収録しており、先行のProduct Class節は§9.5/9.6（PlanValidator/Registry）、§10.5/10.6（ExecutionOutcome/GenericExecutor）、§3.7（GraphVersion）へ配置してグローバル§4/5衝突を縮小済み。30_41自体には§4/5と§18が同居するため、全番号・Anchorの完了判定はまだ行わない。
 
 - [30_00_overall_DD.md](30_detailed_design/30_00_overall_DD.md)
 - [30_01_class_design_template.md](30_detailed_design/30_01_class_design_template.md)
@@ -176,7 +176,7 @@
 
 - [DEC-SR04-09 Scope, Requirements, Architecture and Gate integrated Owner decisions](../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)
 - `RD-01`のDispositionは`RD-04`で逐条再審査し、既存258件のうち122件を改訂・設計へ移管済み。136件は維持。個別条文の最終Ownerレビューは未完。
-- 確定していない事項：Ownerによる新条文のSHA確認と元canonicalへの昇格、Method別実効Backend・CIの検証、ADR/Schema freeze、Gate06/07、Science T2/T3、顧客別Legal Gate、全Class物理詳細設計。
+- 確定していない事項：Ownerによる新条文のSHA確認と元canonicalへの昇格、Method別実効Backend・CIの検証、ADR/Schema freeze、各Gateの06/07契約、Science T2/T3、顧客別Legal Gate、全Class物理詳細設計。
 - `BD-01`でE11 Local Causal CLIの基本設計とDEC09 Authorityを具体化。自己レビューで原則整合と未確定事項を記録したが、独立Architectureレビュー・Schema/Port Freeze・Gate06/07は未完。
 - `PLAN:G01〜G10`は実装Workstreamの名称。正式受入GateのPASSを意味しない。
 
@@ -191,7 +191,7 @@
 
 - ENH-E11と既存Productを**別の実行/永続authority**として扱い、[22_00のシステム構成](22_product_basic_design/22_00_overall_BD.md)、[Local execution boundary](22_product_basic_design/22_00_overall_BD.md)、[Scientific methods](22_product_basic_design/22_06_family_causal.md)、[Result/Artifact](22_product_basic_design/22_09_results_artifacts_lineage.md)、[Security](22_product_basic_design/22_12_security.md)・[Environment](22_product_basic_design/22_13_deployment.md)を改訂した。
 - Owner承認済みDEC09 ARC09-01〜07は責務別BDに配置済み。新規FR/NFR/科学的AR44件とE11-A7件を[22_91 Trace](bd01_review/91_requirement_architecture_trace.md)へ対応付けた。
-- [22_90内部Architecture整合レビュー](bd01_review/90_architecture_consistency_review.md)：Finding13件、基本設計上で修正2件、残る11件は未閉鎖。現行CLIのPort/Manifestと新E11のVersion・typed Result・Atomic Publish・Local Privacy等の実装差分はIF-01/DD-01/Gate06に引き継ぐ。
+- [22_90内部Architecture整合レビュー](bd01_review/90_architecture_consistency_review.md)：Finding13件、基本設計上で修正2件、残る11件は未閉鎖。現行CLIのPort/Manifestと新E11のVersion・typed Result・Atomic Publish・Local Privacy等の実装差分はIF-01/DD-01・該当Gateの06実装契約に引き継ぐ。
 - [BD-01整理方針・歴史的設計断片](bd01_review/README.md)に、旧22_20〜23設計断片と22_90〜91レビューの移動先・原Blobを記録する。これら6件は常設22系には置かない。
 - **本工程は独立Architecture Review PASS、Port/Schema Freeze、Science/Legal Gate、Coding許可を意味しない。** 元正本はENH-E11全件テストPASS後にのみ昇格する。
 
@@ -205,7 +205,7 @@
 - [三工程まとめてのOwner Review Pack](combined_review/90_doc01_if01_dd01_owner_review_pack.md)
 - [2026-11-17 文書構成・API粒度・詳細設計7区分の再監査（要是正）](combined_review/92_20261117_document_architecture_audit.md)
 
-**文書状態（2026-11-16）：** DOC-01をOwner承認、IF-01/DD-01設計案をOwner採用済み。独立Architecture/Science、Schema/Port Freeze、Gate06/07、Coding Authorization、canonical昇格は未完了。[統合Owner決定](combined_review/91_20261116_doc01_if01_dd01_owner_approval_record.md)。
+**文書状態（2026-11-16）：** DOC-01をOwner承認、IF-01/DD-01設計案をOwner採用済み。独立Architecture/Science、Schema/Port Freeze、各Gateの06/07契約、Coding Authorization、canonical昇格は未完了。[統合Owner決定](combined_review/91_20261116_doc01_if01_dd01_owner_approval_record.md)。
 
 
 ## 9. 2026-11-17 横断再監査の追加Finding
@@ -218,3 +218,12 @@ DOC-01 Owner承認／IF-01・DD-01設計案採用の後、[横断監査](combine
 - ENH-E11の対象は、承認済み68 Scope・41 Method・10 UCと改訂要件・設計全体である。初回Coding時点で全Methodの科学実測PASSを要求しないことと、全対象の品質是正義務を捨てることは別。
 - Enhancement WorkflowでGateはsemantic Acceptance Contractの一義のみを持つ。G01〜G10は暫定計画Stageであり、正式なGateは受入境界と06/07 Contractで定義する。06は各GateのCoding Contract、07は各GateのIndependent Verification Contract、999は各GateのDecision。DEC09の「Gate06/07」を全体の工程として使う旧称は現在の標準語彙とは不整合で、独立のGate階層として再利用しない。Ownerが採用したScience・Environment・法務の受入条件は保持する。
 - 工程ごとのStatusは[Notion control plane](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)に集約し、Source・Reviewの証拠はGitHubに保存する。
+
+## 11. PREP-01/02の部分是正（2026-11-17、未完）
+
+- Product Web APIのProject/ResearchContextは、Router→Serviceの静的追跡でFR-121 Membership AuthorizationとFR-114 IdempotencyにSource契約Gapが存在する。23_10と22_12/23_51にCURRENT/REQUIREDとNegative Testを明記。Product gapのE11 CLI自動閉鎖は不可。
+- 23_10〜23_19の10 Stockファイルに13 Router由来101件のOperation宣言を対応付け、共通9欄の必須Fieldを23_01で定義した。Service/Error/Authorization/Testの全セルはまだ未完。
+- 30_62のE11 Local UseCase/MethodRegistry/Publisher/Manifest/Reader/Privacyについて、Owner指定7区分のPhysical Design記述へ部分修正。30_20のExisting PlanValidator/StageRunnerRegistry、30_21のExisting ExecutionOutcome/GenericExecutor、30_10のProduct GraphVersionをSourceと照合した7区分へ更新。**30系全Classの7区分完了ではない。**
+- 23_42と22_15にはAtomic Manifest Publish、no-clobber、version/Schema/Port/PrivacyのFreeze確認事項を追加。実FS/Backend/Science/Independent Architecture Reviewは未実施。
+- 既存WorkflowのGate用語を一意化するため、Stockの旧「Gate06/07」の全体段階としての表現を局所修正した。過去のOwner採択のScientfic/Architecture要件は維持。
+- Root Flow8件、5 Change Log、23/30の全ての番号・Anchor/Link、改訂122条文とMethod41全セル、Backend5環境の実効証拠は引き続き未完。[本ページの進捗authorityはNotion](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)。
