@@ -8,6 +8,8 @@
 
 > **2026-11-16 Owner判断：** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md) および [DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md) を個別採用。FD-AはP1-M07の**線形・単一Mediator数値Method方針**、GRAPH-AはP1-M06／P3-M01〜03の**独立Graph Oracle原理**を固定した。Source schema/Oracleの実装、DoWhy実効stage/CI、FCI/LPCMCI/PCMCI+の独立同値類Oracle、Graph accuracy、正式Gate Evidenceは未生成。
 
+> **2026-11-16 DEC-SR04-05-1〜7をOwner個別採用:** [準実験7手法のEstimator／Inference判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。初期Method基準と条件付き推論方針のみ決定。P3-M12 SCMは初期defaultを探索的点推定に限定しPlacebo順位を95%CIと認定しない。他6手法のCIも実効Method/cluster/coverageの認証前は未承認。**正式FR/ADR/Schema/Gate、Science Benchmarkは未実施。**
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -51,16 +53,16 @@
 | P3-M01 PCMCI／time-lagged graph | SCOPE:P3-02 | DGP-009; NEG-021 | REF-G03 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G05 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M02 PCMCI+／time-series CPDAG | SCOPE:P3-03 | DGP-009, DGP-010; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
 | P3-M03 LPCMCI／time-series PAG | SCOPE:P3-04 | DGP-011; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
-| P3-M04 DiD／ATT（2×2とstaggeredは別契約） | SCOPE:P3-07 | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
-| P3-M05 Event Study／event-time効果 | SCOPE:P3-08 | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
-| P3-M06 Interrupted Time Series／介入時点のlevel | SCOPE:P3-09 | DGP-014; NEG-023 | REF-Q02 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q02 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
-| P3-M07 Sharp RDD／cutoff局所効果 | SCOPE:P3-10 | DGP-015; NEG-023 | REF-Q03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
-| P3-M08 Fuzzy RDD／cutoff局所complier効果 | SCOPE:P3-11 | DGP-016; NEG-006, NEG-023 | REF-Q03, REF-I03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
+| P3-M04 DiD／ATT（2×2とstaggeredは別契約） | SCOPE:P3-07 | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P3-M05 Event Study／event-time効果 | SCOPE:P3-08 | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P3-M06 Interrupted Time Series／介入時点のlevel | SCOPE:P3-09 | DGP-014; NEG-023 | REF-Q02 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q02 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P3-M07 Sharp RDD／cutoff局所効果 | SCOPE:P3-10 | DGP-015; NEG-023 | REF-Q03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P3-M08 Fuzzy RDD／cutoff局所complier効果 | SCOPE:P3-11 | DGP-016; NEG-006, NEG-023 | REF-Q03, REF-I03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M09 Wald ratio／binary Z/A complier LAT | SCOPE:P3-12 | DGP-006; NEG-006, NEG-007 | REF-I03, REF-E07 | AC-D03, AC-P01, AC-P03, AC-P05, AC-D07 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M10 B0 just-identified 2SLS／binary Z/A | SCOPE:P3-12 | DGP-006, DGP-024; NEG-006, NEG-025 | REF-E07, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M11 B1-A／LINEAR_IV_STRUCTURAL_COEFFICIENT | SCOPE:P3-12 | DGP-007, DGP-024; NEG-008, NEG-025 | REF-E08, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
-| P3-M12 Synthetic Control／処置単位の時点別反実仮想ギャップ | SCOPE:P3-13 | DGP-017; NEG-024 | REF-Q04 | AC-D03, AC-P01, AC-P03, AC-Q04 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P3-M13 Synthetic DiD／panel平均介入効果 | SCOPE:P3-14 | DGP-018; NEG-024 | REF-Q05 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q05 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / BLOCKED / NOT_GENERATED |
+| P3-M12 Synthetic Control／処置単位の時点別反実仮想ギャップ | SCOPE:P3-13 | DGP-017; NEG-024 | REF-Q04 | AC-D03, AC-P01, AC-P03, AC-Q04 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / OWNER_BASELINE_ACCEPTED_POINT_ONLY_SCIENCE_PENDING / NOT_GENERATED |
+| P3-M13 Synthetic DiD／panel平均介入効果 | SCOPE:P3-14 | DGP-018; NEG-024 | REF-Q05 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q05 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 
 ## 2. 全68 Scope行のDispositionとSR-04への接続
 
@@ -146,11 +148,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `7269f702925ca1378157f38dbfa7dae4ce51c78d` |
-| fixture | `30efc2aaf7d168d68e2cc1433c454dedb2d87ef2` |
-| quant | `8bd3d8c7e117dd2d8d23a0c4d134f81b8f717647` |
-| ref | `f6aebcd95a7f3016b0d5c5f45d06c29e85748e3f` |
-| env | `b3eb2c6dc84c02193a88c63f155750cb7dcb4ee3` |
+| matrix | `f08b7d506f5aebc4b86e64942b2627e41106bd23` |
+| fixture | `34500badbfc8db6c6ac5299a15e83b2dc187bf8d` |
+| quant | `cbe256e8580c25e7b64d319c94773a78106f0687` |
+| ref | `5ef74cc8693862c818a79a385824310859f68efd` |
+| env | `2e669bddda37c9e7542fb9ac1c9cf3150b339c1c` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -345,6 +347,20 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | P3-M01〜03／DEC-SR04-04 GRAPH-A | temporal lag + contemporaneous CPDAG/PAGの強制方向を区別する原理 | REF-G02/G03、DGP-009〜011のGraph CI test/独立同値類/精度、Tigramite version |
  
 **上記のOwner決定は、科学的Accuracy・有限標本CI・正式Source SHA受入・Architecture/Legal GateをPASSにしない。**
+
+### 8.3. DEC-05 Method別のGate evidence引渡し
+
+| DEC ID / Method | Owner採用Estimator | Inference初期扱い | 残余Evidence |
+|---|---|---|---|
+| DEC-05-1 / P3-M04 | 2×2 ATT・単位変化の群差 | 独立unit clusterに適格なSE | REF-Q01、DGP-012、NEG-022、SE/coverage |
+| DEC-05-2 / P3-M05 | never-treated基準のATT(g,t)→cohort重みのevent-time集約 | cohort-stratified unit trajectory bootstrap候補 | REF-Q01、DGP-013、TWFE汚染・pointwise/joint CI |
+| DEC-05-3 / P3-M06 | segmented regression：level/slope+seasonality | HAC（適格なT/lag/serial model条件付き） | REF-Q02、DGP-014、HAC/GLS coverage |
+| DEC-05-4 / P3-M07 | Sharp RD local-linear p=1 triangular kernel | q=2 robust bias-corrected CI候補 | REF-Q03、DGP-015、bandwidth/rdrobust optional/license |
+| DEC-05-5 / P3-M08 | Fuzzy RD cutoff jump ratio | joint local RBC、weak first-stageでfail-closed | REF-Q03/I03、DGP-016、弱局所IV stress |
+| DEC-05-6 / P3-M12 | SCM simplex donor weights/post treated gap | **EXPLORATORY_POINT_ONLY**、Placebo/RMSPEは診断 | REF-Q04、DGP-017、donor rank/uniqueness |
+| DEC-05-7 / P3-M13 | SDID unit/time weights別最適化のweighted DID | unit cluster bootstrap／毎replicate weights再推定 | REF-Q05、DGP-018、solver/few-treated/coverage |
+
+全7件で`OWNER_BASELINE_ACCEPTED / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN`。METHODのOwner方針採用はAC-Q01〜05の数値基準の承認ではない。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
