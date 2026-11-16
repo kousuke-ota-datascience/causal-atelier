@@ -115,3 +115,7 @@ The prior README in this folder was written for approved snapshots only. This re
 - [30_12 — Physical specification template and gap register](30_detailed_design/30_12_physical_design_gap_register.md)
 
 **Note:** structural copies have source-approved content, but formal new requirements/design remain pending; these E11 addenda carry a separate working-draft status.
+
+## 6. Verification report
+
+- [Structural source-copy, FR and section-reconstruction audit](90_structural_split_verification.md) — verifies content preservation, while documenting incomplete formal E11 publication and detailed design coverage.
