@@ -155,12 +155,12 @@
 |---|---|
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
-| scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `6d9f0bdacfed77401630ee099b900f9a1868a832` |
-| fixture | `a93c744b0fe87124a81b8d4c7701c0d382a72313` |
-| quant | `f046ef66a0c3e51206b092e967f895ead5965541` |
-| ref | `231cd74e81c186dbc2b8fde77489c0fb711828b4` |
-| env | `5b48be8ff24c038d1291292cb82e15206ed1c497` |
+| scope | `b6c2a8c53f42cb5832b3f029dfe7fe64433b1b20` |
+| matrix | `85e3554ce35b1f32d2b555d5235e9dbee8c5475a` |
+| fixture | `f310f2c5a57adceb00efb6fd75f8244bd8b7e158` |
+| quant | `36dbe601eafa493f91f2f680f37a0305cb6095f6` |
+| ref | `3a853f77b81cc23708cec5b9a2428e3bb393c83d` |
+| env | `8bacce39d735435267a024aaafc562456fdac351` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -428,10 +428,10 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | 役割 | ファイル | Blob SHA |
 |---|---|---|
 | scope | [00_04_phase1_to_phase3_cli_scope_proposal.md](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md) | `86d413473c9d2b08ece98a16925b93248e15c9f7` |
-| concept | [01_enhancement_concept_and_requirement_revision_plan.md](../00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md) | `ab4750601d662b1f1300375d4bc04b877be6d848` |
+| concept | [01_enhancement_concept_and_requirement_revision_plan.md](../00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md) | `030085ecc2f27f5728b8f0ac96b8374302bbc334` |
 | owner | [02_enhancement_concept_approval_record.md](../00_enhance_background/02_enhancement_concept_approval_record.md) | `4148aeb41b4f012e3d10f55ffc44c1eacfc5a809` |
-| requirements | [03_requirements_revision.md](../00_enhance_background/03_requirements_revision.md) | `d73c07d65e001839033f7c9b1b0405112fe3a1b6` |
-| architecture | [04_design_revision.md](../00_enhance_background/04_design_revision.md) | `5be5e649b92d3d58084ee22701ff636c0cf4c877` |
+| requirements | [03_requirements_revision.md](../00_enhance_background/03_requirements_revision.md) | `9f5a0b2233babac187d3ee8eca4f15952329792b` |
+| architecture | [04_design_revision.md](../00_enhance_background/04_design_revision.md) | `61b6a7b460571330fc044a8a98a7dd24b3921a8f` |
 | review05 | [05_requirements_design_consistency_and_traceability_review.md](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | `9cd3ce0ce2b647424c135b2e2af5ddfff0dc1f7a` |
 
 **製品既存Gap:** GAP-C01〜04はProduct側に追跡移管、`CLOSED`への変更なし。#14のProduct実担当者・別Enhancement ID/期限は未割当。依存やScienceの失敗時に、Owner承認済みScopeを無断で削除しない。
