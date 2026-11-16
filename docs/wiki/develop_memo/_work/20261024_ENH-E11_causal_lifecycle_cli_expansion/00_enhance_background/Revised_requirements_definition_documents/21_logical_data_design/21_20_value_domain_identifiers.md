@@ -1,7 +1,5 @@
 # 21_20_value_domain_identifiers
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
-**Source blob:** `72903b9ad48b5b7edabaa7bb1c2cace42aa46ce7`.
 
 ---
 
