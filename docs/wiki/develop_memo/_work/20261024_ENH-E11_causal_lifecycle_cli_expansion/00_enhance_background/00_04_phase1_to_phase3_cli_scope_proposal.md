@@ -7,6 +7,8 @@
 **根拠:** [00_01（9月末照合）](00_01_foundation_gap_reconciliation.md) → [00_02（既存Gap4領域）](00_02_foundation_gap_closure_assessment.md) → [00_03（8月Phase1〜3との68行照合）](00_03_phase1_to_phase3_reconciliation.md)。  
 **反映先:** [01_enhancement_concept_and_requirement_revision_plan.md](01_enhancement_concept_and_requirement_revision_plan.md) 第5章。**2026-10-29技術審査:** [20261029_cli_scope_review.md](../working_notes/20261029_cli_scope_review.md)＝**CHANGES_REQUIRED**（BLOCKER SR-01〜05、MAJOR SR-06〜12）。このスコープ案の行IDと候補Dispositionは**承認前・未改定**。承認記録02・正本FR/NFR/AR・Gate 06/07は未更新。
 
+**2026-11-16 DEC-SR04-06採用追補（Ownerの個別Scope判断）:** [02 Owner決定第23項](02_enhancement_concept_approval_record.md)および[DEC-06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)により、P1-15の**P1-M18 Observed NCE／P1-M19 Observed NCO**、P1-17の**P1-M20古典OLS partial R²＋q=1 point RV**を**初期Nとして個別採用**（DEC06-1〜3）。DEC06-4で実在の対照・DAG/null・明示opt-inと不適格時の型付き負結果を、DEC06-5でX-04/X-05未提供の広範方式を初期非採用Dとする方針を採用。本書内に残る「Method候補」「Owner未承認」記述は当初Draftの記述で、**DEC-06の5件の採否に限りこの後続判断が優先**する。正式な68 Scope全体批准・FR/NFR/AR/Gate/実装/科学Benchmarkは依然未承認。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 本文書の目的
@@ -74,9 +76,9 @@
 | `P1-12` | **R+Q** | E9 Weight/Balance/ESS/Overlapを再利用。IPTW推論品質・SE/CI被覆を追加検証 | #19 |
 | `P1-13` | **R** | Placebo Treatment/Data Subset Refutationを維持 | #16 |
 | `P1-14` | **N** | Random Common Cause／Bootstrap Refutation、再推定・seed・再現性 | #16 |
-| `P1-15` | **N（方法・設計は要審査）** | **適切な観測Negative Controlを指定できる研究に限り、研究者が明示的に要求して実行できる反証分析**を提供する方針を採用。NCO/NCEの2方式を科学的Method候補とし、未指定時に自動実行しない。不適格時は理由付きの負結果、非有意時も無交絡と解釈しない（2.3節・実装計画メモ）。 | #16 |
+| `P1-15` | **N（NCE/NCO各1Method、DEC06-1/2 Owner個別採用）** | **適切な観測Negative Controlを指定できる研究に限り、研究者が明示的に要求して実行できる反証分析**を提供する方針を採用。NCO/NCEの2方式（P1-M18/P1-M19）を初期Methodとして個別採用し、未指定時に自動実行しない。不適格時は理由付きの負結果、非有意時も無交絡と解釈しない（2.3節・実装計画メモ）。 | #16 |
 | `P1-16` | **R** | Adjustment Set/Propensity Clipping Sensitivityを維持 | #16 |
-| `P1-17` | **N（要審査）／D** | 最小Nは**Cinelli–Hazlett partial R²／Robustness Value**のOLS係数に限定する案。現行のHC3を古典OLS公式へ無断適用しない。IPW/AIPW等の全面対応や追加A0方式は後続の個別判断（2.3節） | #16 |
+| `P1-17` | **N（OLS partial R²/point RV個別採用）／D（広範Sensitivity）** | 最小Nは**Cinelli–Hazlett partial R²／point Robustness Value（q=1）**の古典OLS係数に限定することをDEC06-3で個別採用。現行のHC3を古典OLS公式へ無断適用しない。IPW/AIPW等の全面対応や追加A0方式は後続の個別判断（2.3節） | #16 |
 | `P1-18` | **R+N／D** | 既存Lineage/Manifestを再利用しlocal manifest増強。Product canonical DB Gapは別Issue審議 | #15,#24,#14 |
 | `P1-19` | **D** | 新しいProduct API/Worker/DB migration/RBACは後続。現行経路を変更しない | #14 |
 | `P1-20` | **R+N** | 既存Scientific CLI再利用。新Identify/Refute/Sensitivity引数と版付き成果物を追加 | #16,#24 |
@@ -197,8 +199,8 @@
 | `X-01` | **D（要承認）** | ATCはPhase別必須リストに独立指定なし。controlled direct effectはPhase4側 | #14 |
 | `X-02` | **D** | MediationはPhase4のextension pointへ。Phase1〜3の必須には算入しない | #14 |
 | `X-03` | **D（要承認）** | Matching/汎用g-computationはA0上位のみ。既存OLS等を同等扱いしない | #14 |
-| `X-04` | **N一部／D** | 観測NCE/NCOの**対照null検査2方式をP1-15で候補化**。DoWhyのrandom/placeboとは異なる。Simulated Confounder/Graph Perturbationは後続提案（オーナー未承認） | #16,#14 |
-| `X-05` | **N一部／D** | 未観測交絡の最小方式はP1-17の**OLS partial R²**候補。IPW/AIPW/CATEへの一般化、その他のモデル・欠測・Graph Sensitivityは対象外案（正式採否保留） | #16,#14 |
+| `X-04` | **N（NCE/NCO各1Method採用）一部／D（追加A0方式）** | 観測NCE/NCOの**対照null検査2方式をP1-15で個別採用**。DoWhyのrandom/placeboとは異なる。Simulated Confounder/Graph PerturbationはDEC06-5により初期非採用D、後続個別審議 | #16,#14 |
+| `X-05` | **N（古典OLS partial R²/point RV採用）一部／D（一般化）** | 未観測交絡の最小方式はP1-17の**古典OLS partial R²／point RV**としてDEC06-3で個別採用。IPW/AIPW/CATEへの一般化、その他のモデル・欠測・Graph Sensitivityは初期非採用D（DEC06-5）、後続審議 | #16,#14 |
 | `X-06` | **Q一部／D** | 採用手法のCI/cluster/bootstrap/stabilityは必要条件として品質検証。一般的多重検定・全Graph consensusは後続 | #19,#20,#21,#24 |
 | `X-07` | **D** | Policy Value、cost/capacity、off-policy/自動配信はPhase4 | #14 |
 | `X-08` | **D** | Monitoring/drift/再分析triggerはPhase4 | #14 |
