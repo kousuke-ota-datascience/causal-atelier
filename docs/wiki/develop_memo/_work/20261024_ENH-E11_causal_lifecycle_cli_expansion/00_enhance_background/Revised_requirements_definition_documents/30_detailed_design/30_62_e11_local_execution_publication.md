@@ -6,14 +6,43 @@
 
 E11では新しいversioned Local laneへ分ける。既存の `causal-analysis-spec/2`／Product Web API/DB/Workerを遡及変更しない。本書は新Class候補の実装契約であり、コード／独立Science証拠ではない。
 
-## 2. `E11LocalCausalUseCase`
+## 2. `E11LocalCausalUseCase`（PROPOSED：Owner 7区分）
 
-### 2.1. Fields / Constructor
+### 2.1. 識別情報・責務
+
+- **Class:** `causal.local_application.use_case.E11LocalCausalUseCase`。Implementation Status **PROPOSED / SOURCE_NOT_PRESENT**。既存`interfaces.cli.scientific_stage.run_stage`は別の旧Product CLI実装であり、このClassのSourceではない。
+- **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
+- **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
+- **Design Authority:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1/5〜8、DEC09 ARC09-01〜07。具体ADRとSchemaはFreeze pending。
+
+### 2.2. フィールド
+
+**Constructor-injected Port fields（現行設計候補）:**
+
+| Field | Type | Value origin | Mutable / constraint |
+| --- | --- | --- | --- |
+| `decoder` | `LocalConfigDecoder` | composition root | immutable; strict E11 version dispatch |
+| `refs` | `ContentReferencePort` | composition root | immutable; trusted-root hash-bound read |
+| `capabilities` | `MethodCapabilityPort` | composition root | immutable; effective profile and no silent fallback |
+| `identifier` | `IdentificationPort` | composition root | immutable; Domain proof/negative outcome |
+| `estimators` | `EstimatorPort` | composition root | immutable; typed scientific result to staging |
+| `diagnostics` | `DiagnosticPort` | composition root | immutable; method-specific typed diagnostics |
+| `publisher` | `LocalPublicationPort` | composition root | immutable; all writes staged |
+| `runtime` | `RuntimeEnvironmentPort` | composition root | immutable; effective provenance not fabricated |
+| `clock` | `ClockPort` | composition root | immutable; injected timestamp authority |
+
+No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. This last concurrency invariant is **PROPOSED**, not source-verified.
+
+### 2.3. Constructor / Factory
 
 候補：`causal.local_application.use_case.E11LocalCausalUseCase`。
 注入Port：`decoder: LocalConfigDecoder`、`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
-### 2.2. Public methods
+- **Proposed signature:** `__init__(self, *, decoder, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
+- **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. Any actual exception class/type is Freeze pending.
+- **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
+
+### 2.4. メソッド
 
 ~~~python
 def preflight(self, spec: LocalStudySpec) -> PreflightReport: ...
@@ -22,7 +51,12 @@ def run(self, spec: LocalStudySpec) -> LocalRunOutcome: ...
 
 preflightはversion／secure Input Ref／static capability／privacy／pathと科学的適格性の検証可能範囲を返す。DGPや独立科学受入済みであると報告しない。
 
-### 2.3. 処理順序と状態
+| Signature | Returns | Side effects / errors |
+| --- | --- | --- |
+| `preflight(self, spec: LocalStudySpec) -> PreflightReport` | capability/eligibility/input diagnostic | trusted input read permitted, **no** scientific execution or bundle publication; invalid version/refs typed |
+| `run(self, spec: LocalStudySpec) -> LocalRunOutcome` | technical + scientific axes, committed ref or typed negative | backend execution only after validated eligibility; publication only via Publisher; errors preserve kind |
+
+### 2.5. 処理仕様
 
 1. `schema_version`を明示dispatchし、strict YAML/JSON parse。旧v2と無版はE11解釈禁止。
 2. Trusted Root配下でQuestion/Design/Graph/Dataset/Upstream Refをsecure openし、bytes hash・Graph/Estimand/Designの意味上の一致を検査。
@@ -33,21 +67,57 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 7. typed ResultとGraph/diagnostics/Manifestを生成。Privacyとartifact hashesを検証し一括publish後readback。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
-### 2.4. Postcondition / Failure
+**Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
+
+### 2.6. I/O・連携・失敗処理
 
 `technical_status=COMPLETED`はVerified Manifestとcommit markerを持つ。Science negativeでも技術的には完了しうる。Config/入力/Backend/Publication exceptionをScientific Negativeに潰さない。途中失敗はcompleted marker無し。無効な上流proofではEstimatorを呼ばない。
 
-### 2.5. Tests
+- **I/O:** reads via ContentReferencePort, writes only via StagingArtifactSink/LocalPublicationPort. Each run has pinned request/content hash and effective API/seed evidence.
+- **Transactions:** This is a Local FS unit, not a Product UoW. Publication atomicity and crash recovery specified in §4 and IF 23_42.
+- **Errors:** invalid config/schema, missing/mismatched refs, unsupported capability, scientific negative, runtime failure and publication failure remain separately typed. **Retry/rollback:** idempotent same-hash readback allowed; another request hash with same run ID rejected; uncommitted staging never advertised as success.
+
+### 2.7. 検証
 
 `DD-E11-RUN01`正常pipeline、`RUN02`非識別でEstimator未呼出、`RUN03`wrong Backend/Estimand、`RUN04`confirmatory unsupported CI、`RUN05`Graph再固定は新識別、`RUN06`旧v2挙動不変、`RUN07`abort時はuncommitted。
 
-## 3. `MethodCapabilityRegistry` / Adapter Factory
+| Acceptance | Required |
+| --- | --- |
+| Unit/Contract | Preflight performs zero Backend scientific calls; run calls Estimator only for proven eligible request; payload/status axes preserved |
+| Negative | wrong version, hash mismatch, Graph uncertainty, unsupported CI, unavailable extra, no row export flag, publication failure |
+| Regression | old v2 identify/estimate/refute/sensitivity and existing Product Stage runner unchanged |
 
-### 3.1. Fields / Responsibility
+**Trace:** DD-E11-RUN01〜RUN07、FR-185/187/201/202/203、NFR-029/032/036、AR-029/034/040、BD01-F04/F06/F07/F12。Test execution NOT_RUN.
+
+## 3. `MethodCapabilityRegistry`（PROPOSED：Owner 7区分）
+
+### 3.1. 識別情報・責務
+
+- **Class:** `causal.local_application.capability_registry.MethodCapabilityRegistry`、**PROPOSED / SOURCE_NOT_PRESENT**。Existing `ScientificCoreAdapter`はこのRegistryの実装証拠ではない。
+- **責務:** 41 Method IDごとのOperation/Estimand/Eligibility/Inference/Backend/Profileをstrictに選択し、Version/API capabilityを検証し、Adapter importを遅延させる。外部Libraryの既定推論を黙認しない。
+- **責務外:** Estimator計算、Local FS publication、Customer Delivery LegalのPASS。
+- **References:** DEC08、30_63 Method41 allocation、23_41 §6〜7、BD01-F08/F09、各Method SCI evidence。
+
+### 3.2. フィールド
 
 候補：`causal.local_application.capability_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
 
-### 3.2. Methods
+| Field（Proposed） | Type | 生成元 | 可変性／制約 |
+| --- | --- | --- | --- |
+| `descriptors` | `Mapping[str, MethodDescriptor]` | pinned Method41 Registry | Immutable; Method ID unique; target Estimand/Inference explicit |
+| `backend_factories` | `Mapping[str, AdapterFactory]` | composition root | Immutable; import lazy; only eligible Method/Profile |
+| `effective_env` | `RuntimeEnvironmentPort` | runtime injection | Observed installed version/API; no fake availability |
+| `inference_registry` | `InferenceRegistry` | fixed Method-specific policy | Immutable, point-only vs confirmatory separated |
+
+These fields are candidate architecture bindings; actual class signatures/extra names require freeze.
+
+### 3.3. Constructor / Factory
+
+- **Proposed** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
+- **Factory** is a collaborator of Registry, **not an additional implemented Class** by implication. If a separately implemented Adapter Factory is adopted, it requires its own Owner 7-section physical specification.
+- **Failure:** Invalid registry/duplicate ID/unsupported policy fails during preflight without selecting unrelated Method or importing missing Backend.
+
+### 3.4. メソッド
 
 ~~~python
 def describe(self, method_id: str) -> MethodDescriptor: ...
@@ -57,9 +127,32 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 `describe`はpure metadata。`resolve`でDistribution metadata、実効API signature/Version、指定Methodの利用可能性・Inference availabilityを検査。`load_adapter`だけがoptional importを実行する。Unavailable時は当該Methodのtyped reasonとし、core起動や旧v2を破壊しない。`pyproject.toml`・universal `uv.lock`・実効runtime・SBOM・Legalは別軸で記録。
 
-### 3.3. Tests
+| Method | Observable contract | Side effects / exceptions |
+| --- | --- | --- |
+| `describe(method_id)` | pinned descriptor | pure; unknown ID typed rejection |
+| `resolve(method_id, backend_id, profile)` | effective Capability Record | inspect distribution/API/version; unavailable reason, never auto fallback |
+| `load_adapter(capability)` | scientifically eligible Adapter | only this method may lazy import; import failure localized as capability error |
+
+### 3.5. 処理仕様
+
+1. Resolve declared Method ID and operation/estimand eligibility from frozen descriptor.
+2. Check profile/extras and **effective installed distribution+API version**, not just `pyproject.toml` declaration.
+3. Check Method-specific inference availability for requested analysis_mode. Backend default is not evidence of valid CI.
+4. Return typed supported/unavailable/unsupported with reasons. Only eligible selected capability permits actual lazy import; never fallback to other Method.
+5. Export effective config/version/seed/algorithm facts for Manifest, not a pre-run Science PASS.
+
+### 3.6. I/O・連携・失敗処理
+
+- **Input:** MethodRequest, Backend ID/Profile, versioned method descriptors, effective runtime probe.
+- **Output:** `MethodDescriptor`, `BackendCapabilityRecord`, `ScientificAdapter` only after eligibility; external estimator objects never enter Domain persistence.
+- **No DB/FS mutation** from `describe`/`resolve`; `load_adapter` may import optional modules.
+- **Errors:** unknown method, incompatible estimand/inference, missing extra, incompatible API signature, import failure. Each is typed and does not disable core or legacy v2 startup. Combined env/BLAS conflicts are not silently ignored.
+
+### 3.7. 検証
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
+
+**Trace:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。ENV smoke/Science benchmarks are NOT_RUN.
 
 ## 4. `LocalArtifactPublisher`（PROPOSED：Owner 7区分）
 
