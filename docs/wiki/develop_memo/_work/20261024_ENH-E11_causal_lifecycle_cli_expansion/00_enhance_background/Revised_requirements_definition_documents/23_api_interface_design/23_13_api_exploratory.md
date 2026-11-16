@@ -70,3 +70,26 @@ CHART
 ```
 
 現行実装のExploratory plannerは各operationを1 runtime StageからなるExecution Planへ写像する。Navigation `Data Quality` / `Findings`等のために同名runtime endpointを追加せず、Dataset metadata、Result、Artifact、Annotation等のreadを組み合わせてよい。
+
+## PREP-01: Router operation source inventory
+
+Evidence: exploration.py source blob 8c068c77357cd628cd278e3668cdf23ff5a6046c. Static decorator inventory only; /api/v1 is the app router prefix. 200* = default declared FastAPI code, not a runtime assertion.
+
+| HTTP | Route | Handler | Declared success | Response model |
+| --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/analysis-views` | `create_analysis_view` | 201 | AnalysisViewResponse |
+| GET | `/api/v1/projects/{project_id}/analysis-views` | `list_analysis_views` | 200* | AnalysisViewListResponse |
+| GET | `/api/v1/projects/{project_id}/analysis-views/{analysis_view_id}` | `get_analysis_view` | 200* | AnalysisViewResponse |
+| PATCH | `/api/v1/projects/{project_id}/analysis-views/{analysis_view_id}` | `update_analysis_view` | 200* | AnalysisViewResponse |
+| POST | `/api/v1/projects/{project_id}/analysis-views/{analysis_view_id}/validate` | `validate_analysis_view` | 200* | untyped |
+| POST | `/api/v1/projects/{project_id}/analysis-views/{analysis_view_id}/fix` | `fix_analysis_view` | 200* | AnalysisViewResponse |
+| POST | `/api/v1/projects/{project_id}/exploration/preview` | `preview_exploration` | 200* | ExplorationPreviewResponse |
+| POST | `/api/v1/projects/{project_id}/exploration/executions` | `submit_exploration` | 202 | FamilyExecutionResponse |
+| GET | `/api/v1/projects/{project_id}/exploration/executions` | `list_exploration_executions` | 200* | FamilyExecutionListResponse |
+| GET | `/api/v1/projects/{project_id}/exploration/executions/{execution_id}` | `get_exploration_execution` | 200* | FamilyExecutionResponse |
+| GET | `/api/v1/projects/{project_id}/exploration/results` | `list_exploration_results` | 200* | FamilyResultListResponse |
+| GET | `/api/v1/projects/{project_id}/exploration/results/{result_id}` | `get_exploration_result` | 200* | FamilyResultResponse |
+| POST | `/api/v1/projects/{project_id}/exploration/results/{result_id}/create-analysis-draft` | `create_analysis_draft` | 201 | untyped |
+| GET | `/api/v1/projects/{project_id}/exploration/capabilities` | `exploration_capabilities` | 200* | untyped |
+
+Observed 14 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.

@@ -54,3 +54,21 @@ Runtime causal operation discriminatorは次である。
 
 - **`FR-051`**：同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する
 - **`AR-004`**：同一immutable `dataset_version_id`を探索とconfirmatory analysisで再利用した場合、`EXPLORATORY_REUSE_SAME_DATA` warningとlineage evidenceを保持する
+
+## PREP-01: Router operation source inventory
+
+Evidence: graph_versions.py source blob ad6ba942ee8ecc95590175ec3de655d3bee9a155. Static decorator inventory only; /api/v1 is the app router prefix. 200* = default declared FastAPI code, not a runtime assertion.
+
+| HTTP | Route | Handler | Declared success | Response model |
+| --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/graph-versions` | `create_graph_version` | 201 | GraphVersionResponse |
+| POST | `/api/v1/projects/{project_id}/graph-edit-drafts` | `create_graph_edit_draft` | 201 | GraphVersionResponse |
+| GET | `/api/v1/projects/{project_id}/graph-versions` | `list_graph_versions` | 200* | GraphVersionListResponse |
+| GET | `/api/v1/graph-versions/{graph_version_id}` | `get_graph_version` | 200* | GraphVersionResponse |
+| GET | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | `get_project_graph_version` | 200* | GraphVersionResponse |
+| PATCH | `/api/v1/graph-versions/{graph_version_id}` | `update_graph_version` | 200* | GraphVersionResponse |
+| PATCH | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}` | `update_project_graph_version` | 200* | GraphVersionResponse |
+| POST | `/api/v1/graph-versions/{graph_version_id}/fix` | `fix_graph_version` | 200* | GraphVersionResponse |
+| POST | `/api/v1/projects/{project_id}/graph-versions/{graph_version_id}/fix` | `fix_project_graph_version` | 200* | GraphVersionResponse |
+
+Observed 9 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.

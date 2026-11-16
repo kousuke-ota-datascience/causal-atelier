@@ -73,3 +73,16 @@ Family tab切替だけでDatasetVersionやAnalysisViewを複製しない。
 **当該Interfaceの追加契約（関連Requirement）**
 
 - **`FR-015`**：AnalysisViewのsource Dataset logical type × operator × value compatibilityをdomain/application validationで検証し、type mismatchを`FILTER_TYPE_MISMATCH`として返す
+
+## PREP-01: Router operation source inventory
+
+Evidence: dataset_versions.py source blob 1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c. Static decorator inventory only; /api/v1 is the app router prefix. 200* = default declared FastAPI code, not a runtime assertion.
+
+| HTTP | Route | Handler | Declared success | Response model |
+| --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/dataset-versions` | `register_dataset_version` | 201 | DatasetVersionResponse |
+| GET | `/api/v1/projects/{project_id}/dataset-versions` | `list_dataset_versions` | 200* | DatasetVersionListResponse |
+| GET | `/api/v1/dataset-versions/{dataset_version_id}` | `get_dataset_version` | 200* | DatasetVersionResponse |
+| GET | `/api/v1/dataset-versions/{dataset_version_id}/preview` | `preview_dataset` | 200* | DatasetPreviewResponse |
+
+Observed 4 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.

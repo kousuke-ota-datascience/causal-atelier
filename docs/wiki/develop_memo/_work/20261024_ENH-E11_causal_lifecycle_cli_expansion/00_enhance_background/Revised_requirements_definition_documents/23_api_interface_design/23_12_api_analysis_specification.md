@@ -107,3 +107,19 @@ Split strategy:
 - `TIME_BASED`
 
 Navigation Stage再配置を理由として、上記field、validation、default semanticsを削除・簡略化しない。
+
+## PREP-01: Router operation source inventory
+
+Evidence: workspace_lifecycle.py source blob eb90bd940fc7a35b84cda0e3fa58235a738cb0a1. Static decorator inventory only; /api/v1 is the app router prefix. 200* = default declared FastAPI code, not a runtime assertion.
+
+| HTTP | Route | Handler | Declared success | Response model |
+| --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/analysis-specifications` | `create_analysis_specification` | 201 | untyped |
+| GET | `/api/v1/projects/{project_id}/analysis-specifications` | `list_analysis_specifications` | 200* | untyped |
+| GET | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}` | `get_analysis_specification` | 200* | untyped |
+| PATCH | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}` | `patch_analysis_specification` | 200* | untyped |
+| POST | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}/validate` | `validate_analysis_specification` | 200* | untyped |
+| POST | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}/fix` | `fix_analysis_specification` | 200* | untyped |
+| POST | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}/revise` | `revise_analysis_specification` | 201 | untyped |
+
+Observed 7 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.
