@@ -3,6 +3,8 @@
 
 ---
 
+## 14. Causal Capability / Stage Contents
+
 ### 14.5 Estimation
 
 目的は、identified estimandを有限標本データから推定することである。
