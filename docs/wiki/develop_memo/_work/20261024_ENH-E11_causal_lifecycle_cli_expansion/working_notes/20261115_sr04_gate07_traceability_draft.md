@@ -142,7 +142,7 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `12844f4f3be64c0431b2688f23874a5c29586879` |
+| matrix | `cd7327cc99f03b2a97adedb9e5cf53bf139b626b` |
 | fixture | `f0a7847b382aa134fefd8b295491624eb583a907` |
 | quant | `443c1c6549179402ca1582b92d445c366832e133` |
 | ref | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
@@ -166,6 +166,10 @@ SR04:X-* は受入Contract、SCOPE:X-* は68 Scopeの上位行。両者は別物
 | SR04:X-07 | Backend optional dep／SR-02 | SCOPE:P1-20, SCOPE:P2-11, SCOPE:P3-05, SCOPE:X-06 | E11-REQ-CLI/P3T | ENV-AC01, ENV-AC02, ENV-AC03, ENV-AC09 | PLAN:G01/G04/G06/G10 | NOT_GENERATED |
 | SR04:X-08 | Legacy Product/v2／D04 R2 | SCOPE:P1-19, SCOPE:P2-18, SCOPE:P3-19, SCOPE:X-09, SCOPE:X-10 | E11-REQ-SR03/CLI | ENV-AC07, ENV-AC08 | PLAN:G02/G10 | NOT_GENERATED |
 | SR04:X-09 | Traceability／SR-01〜12 | SCOPE:P1-21, SCOPE:P2-16, SCOPE:P2-17, SCOPE:P3-16, SCOPE:X-09 | E11-REQ-CLI | ENV-AC06, ENV-AC07, ENV-AC08 | PLAN:G01〜G10 | NOT_GENERATED |
+
+### 4.1. 横断Reference REF-X01（Methodではない独立Oracle）
+
+SR04-C Reference Registryの`REF-X01`はNew E11 versioned schema、strict identification/estimator link、GraphVersion/lineage、CI/AR set typed serialization、privacy、optional dependencies、旧Product/v2回帰に対する**横断Contract Oracle**であり、特定Method IDには割り当てられない。適用先は**SR04:X-01〜X-09の全9件**（主たる証跡：X-01〜08のreadback/hash/override/privacy、X-09の68 Scope trace）。独立Golden reference/旧v2保護の検査コードと結果は`NOT_GENERATED`、正式Gate acceptanceは未実施。
 
 ## 5. NEG28件のMethod reverse index
 
