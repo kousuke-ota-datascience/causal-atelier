@@ -1,7 +1,5 @@
 # 10_12_fr_predictive
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
-**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
 
