@@ -42,6 +42,9 @@ flowchart TD
 
 | Family | Initial target / design contract | Mandatory separation and limits | Trace |
 |---|---|---|---|
+| Baseline identification | Native Randomized／Backdoor、DoWhy Backdoor／Frontdoor／IV（各対応条件に限定） | Backdoor/IVの識別対象と利用者が指定したEstimandの対応を別途検査。DoWhyの内部`nonparametric-ate` labelをIV-LATEの証明とみなさない | FR-187, AR-029 |
+| Baseline ATE/ATT estimation | diff-in-means、OLS、IPW、AIPW | Randomization/adjustment/overlap/weights、ATE/ATTの対象母集団、variance/CIをEstimator・構成ごとに区別 | FR-192, AR-033 |
+| Refutation / Sensitivity | Placebo Treatment、Data Subset、Random Common Cause、Bootstrap、Adjustment Set、Propensity Clipping | どの科学仮説・上流Resultに対する反証か、random seed、再標本化・負例・Method制約を明示。単なる非有意を「頑健性証明」としない | FR-189, AR-044 |
 | FD-A | 1 Mediator、承認済み限定線形FrontdoorによるATE数値推定 | Frontdoorの識別とモデル依存の2-stage estimationは別の成否／証拠 | FR-188, AR-030 |
 | Observed Negative Control | 明示指定NCE/NCOとGraph・時間的適格性 | Null診断の非有意は無交絡の証明ではない；X-04の一般化はD | FR-190, AR-031 |
 | OLS Unobserved Confounding | 古典OLS partial R²とpoint RV(q=1) | HC3推論への無検証転用、IPW/AIPW/CATE全面化不可 | FR-191, AR-032 |
