@@ -84,7 +84,7 @@ Manifestに入力hash、parameter、実効dependency version、seed、split、�
 
 **候補fixture:** [D06-T01〜T14](../working_notes/20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)。旧Graph不変性、未識別からの拒否、Graph再固定根拠、識別集合とCIの誤同一視、旧v2回帰、hash不整合、未対応Algorithm拒否を検証する。**未実行・未freeze**。Product/API/UI/Worker/DBの新規統合は非対象。
 
-## 3. 所有権（未承認の案）
+## 3. 所有権（DEC09 Owner方針採用済み・詳細ADR未凍結）
 
 - Domainが外部ライブラリ非依存のQuestion/Design/Estimand/invariantを定義する。
 - Scientific Core Adapterがoptional backendを呼び出し、数値推定と手法固有検証を担当する。
@@ -122,7 +122,7 @@ ENH-E11では新規DB migrationやサーバ側Resourceは追加しない。Versi
 
 ## 8. Gateとの対応
 
-`01`の暫定G01〜G10と`05`の対応表は、Graph/Design/Resultのauthority、local-file identity、privacy、optional dependencyの決定後に改訂する。**Gate 06/07はいずれも未固定。**
+`01`の暫定G01〜G10は**DEC09によりWorkstream計画としてOwner採用**した。Graph/Design/Resultのauthority、local-file identity、privacy、optional dependencyのArchitecture方針も採用済み。ただし正式FR/ADR/Schemaと受入Gate 06/07の実効Baseline・Evidence・独立Architecture Reviewは**未固定／未実施**。
 
 ## 9. Architecture Reviewで決める事項
 
