@@ -1,7 +1,5 @@
 # 22_15_schema_dependency
 
-**Status:** `BD01_E11_BASIC_DESIGN_REVISED / OWNER_POLICY_APPROVED / INDEPENDENT_REVIEW_PENDING`. Original chapter and source provenance retained; DD physical coverage remains partial.  
-**Source blob:** `87196f2f03a7f3367724bc05fb254d1a4d98109e`.
 
 ---
 
