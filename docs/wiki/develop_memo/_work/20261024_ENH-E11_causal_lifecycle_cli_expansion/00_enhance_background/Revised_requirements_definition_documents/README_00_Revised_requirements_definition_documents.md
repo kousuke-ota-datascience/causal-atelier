@@ -4,7 +4,7 @@
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
-## 1. Current document index（全110 numbered Stock files）
+## 1. Current document index（番号付き110ファイル：Stock候補とFlow履歴を含む）
 
 ### 10_requirements_definition
 
@@ -130,6 +130,8 @@
 - [30_63_e11_method_adapters.md](30_detailed_design/30_63_e11_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
 - [30_99_change_log.md](30_detailed_design/30_99_change_log.md)
+
+**構造監査上の注記:** 上記110件はファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。移管・Backlink/Anchor整合が完了するまで元Pathを維持し、[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で追跡する。
 
 ## 2. RD-03 formal requirement publication
 
