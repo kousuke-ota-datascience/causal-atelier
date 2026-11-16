@@ -6,6 +6,8 @@
 **状態:** REFERENCE_SPEC_DRAFT / METHOD_COVERAGE_41_OF_41 / FORMULA_CANDIDATES_DEFINED / ORACLE_CODE_NOT_IMPLEMENTED / METHOD_CONFIG_PENDING / QUANTITATIVE_AC_PENDING / SCIENCE_NOT_RUN / FULL_CONCEPT_PENDING。  
 **境界:** 2026-11-15時点の個別Human owner採用方針に従う。ここでの科学式・候補Configの記載は追加Methodの承認や正式Estimand enumの確定を意味しない。Source SHA／推論仕様／数値許容値／独立Reference実装はGate07で再固定する。
 
+> **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
+
 ## 0. Referenceの役割と受入可能な主張
 
 ### 0.1. 四種類の「正解」を混ぜない
@@ -25,7 +27,7 @@
 - **Source-of-truth:** (A) 数式・定理／方法の一次資料、(B) DGP構造・生成コードrevision、(C) 独立Oracle source/hash、(D) 固定sample/hash、(E) 実測evidenceを別欄で管理。内部メモの存在はScience PASSではない。
 - **異種検証:** Closed form×独立Quadrature、matrix formula×独立回帰package、二次不等式×直接集合所属点検、Graph定理×手計算小Graph、といった**独立性の異なる二系統**で重大Referenceをcross-checkする。
 - **状態候補（正式enumではない）:** DERIVATION_SPECIFIED／MATH_REVIEW_REQUIRED／REFERENCE_CODE_PENDING／CONFIG_PENDING／IMPLEMENTATION_PARITY_PENDING／SAMPLING_VALIDATION_PENDING／QUANTITATIVE_AC_PENDING／EVIDENCE_ACCEPTED／NOT_APPLICABLE。既存のScientificStatusへ無断移植しない。
-- **Scope:** NCE/NCO・OLS partial R²はPhase1 Method候補だが正式採否保留。DRIVのIV_HETEROGENEOUS_EFFECT familyはD01既採用、具体的θ_IV(x)は未決。B1の形式的Estimand enumも未決。提案を済み扱いしない。
+- **Scope:** NCE/NCO・OLS partial R²はPhase1 Method候補だが正式採否保留。DRIVのIV_HETEROGENEOUS_EFFECT familyはD01既採用、DRIV-Aの具体的構造斜率とW残差化momentはOwner採用済み。B1-Aのsemantic kindも採用済みだが、両者の正式schema enumは未決。提案を済み扱いしない。
 
 ## 1. Reference registry — Method別に再利用する独立計算群
 
@@ -42,7 +44,7 @@
 | REF-E03 | AIPW Reference | ATE/ATT別のDR式、nuisanceの反証 | 独立 influence-function式＋MC |
 | REF-E04 | Frontdoor Two-stage Reference | 適格な線形stage係数積、非線形Frontdoorとの非同等 | SAMPLE formula／DGP真値 |
 | REF-E05 | CATE Truth and Nuisance Reference | τ(x)、oracle nuisance、固定x支持域 | 構造式＋高精度積分 |
-| REF-E06 | DRIV Conditional-IV Reference | 指定momentのθ_IV(x)／投影target | 条件付き共分散の独立計算、**正式Method契約未決** |
+| REF-E06 | DRIV Conditional-IV Reference | 指定momentのθ_IV(x)／投影target | 条件付き共分散の独立計算、**semantic target Owner採用／実効Method config・Inference未検証** |
 | REF-E07 | B0/Wald/2SLS Reference | Group差比と2SLSの完全一致、complier真値 | 標本代数＋principal strata |
 | REF-E08 | B1 2SLS Reference | Covariate-residualized単一IV係数β | FWL射影＋独立matrix IV |
 | REF-U01 | AR Confidence-set Reference | Robust AR反転、全実数を含む集合形状 | 独立二次不等式・非有限端点検査 |
@@ -136,8 +138,8 @@ E[(Z−E[Z|X]){Y−E[Y|X]−θ_IV(X)(T−E[T|X])}|X]=0。
 
 **統合レビュー追補：条件付きIV斜率のReference候補を具体化。** DGP-008のXは\(\{-1,+1\}\)に限るので、評価点は\(x=-1,+1\)とし、非IV CATEの\(x=-0.75,0,+0.75\)を流用しない。\(\mathrm{Cov}(Y,Z\mid X=x)/\mathrm{Cov}(T,Z\mid X=x)\)は\(\theta(x)=2+0.5x\)。EconML DRIVの最終学習器がこの切片付き線形関数を表現することを**科学Benchmarkの前提条件**とする（例：version確認済みのintercept付きfinal estimator）。特に`DRIV`の`fit_cate_intercept=False`のまま、1変数Xを通した線形最終モデルで切片2を表現できると仮定してはならない。原則候補は`projection=False`、`opt_reweighted=False`、`cov_clip`閾値、`fit_cate_intercept=True`および`model_final`指定を明示して別途API probeする。**これは本実装に対する採用済み設定ではない。** 実効DRIV 0.17.0での互換性・Inference/coverageは未実証。
 
-**採用済みでない部分:**
-- 具体的EconML DRIVの最終 estimand/moment/estimating equation、Wを含むorthogonal nuisance、fit_cov_directly/projection/cov_clip/opt_reweighted、model_finalの表現力、treatment/instrument型、inference availabilityを固定していない。
+**科学的TargetはOwner採用したが、実装上まだ採用・検証していない部分:**
+- **採用Target:** `CONDITIONAL_IV_STRUCTURAL_SLOPE`の条件付き残差化IV moment。**未検証:** 具体的EconML DRIVのorthogonal nuisance/pseudo-outcomeがそのmomentへ適合するか、`fit_cov_directly/projection/cov_clip/opt_reweighted`、`model_final`の表現力、treatment/instrument型、inference availability。
 - **モデル射影の問題:** DRIVのfinal modelがθ(x)を正確に表現できない構成では、強いInstrument領域への重み付けを含むprojectionを返す可能性がある。**truth関数=実効の推定先のprojectionとは限らない**。DGP-008はθ(x)を表現できるfinal model候補を確定するまではScience benchmarkで「完全適格」としない。
 - 非IV CATEやbinary-Z/A complier LATE、Phase3で初期非採用の条件付き効率的LATE「C」への自動同一視は禁止。formal `IV_HETEROGENEOUS_EFFECT` familyに属することと、特定θの確定は別の判断。
 - Reference実装は条件付き共分散を**SCM解析値から独立に**導出し、candidate DRIV設定を採用版でprobe→bias・coverageを評価する。
@@ -165,7 +167,7 @@ Owner採用済み対象：二値Z/A、切片+事前指定の処置前C、1 exclu
 
 **母集団での線形射影Reference（統合レビュー追補）:** \(W=(1,C^\top)^\top\)、\(\tilde Z=Z-\Pi_W Z\) を母集団線形射影残差とする。rankとInstrument条件により \(\beta_{IV,lin}=E[\tilde ZY]/E[\tilde ZA]\)。\(Y=\alpha+\gamma^\top C+\tau(C)A+\varepsilon\)、\(E[\tilde Z\varepsilon]=0\) であれば \(\beta_{IV,lin}=E[\tilde ZA\tau(C)]/E[\tilde ZA]\)。異質効果下のこの射影比は、重みの正値性・complier性を追加証明しない限り**ATE/ATT/LATEとは呼べない**。DGP-007は\(\tau(C)\equiv2\)なので独立Referenceの真値=2。この代数上の定義でB1の**mathematical target ambiguityの一部を解消**したが、public enum/Method-supported population/heterogeneity contractは未採用。
 
-**B1の形式的Estimand kindと必要なheterogeneity/exclusion条件は未承認。** `LINEAR_IV_STRUCTURAL_COEFFICIENT` 等の語をこの文書で正式enumとして発行しない。B1をD01のIV_HETEROGENEOUS_EFFECTに自動分類することもしない。
+**B1-Aの加法線形構造係数（均質効果、正しい処置前C/線形baseline、IV妥当性）は2026-11-16にOwner採用。** `LINEAR_IV_STRUCTURAL_COEFFICIENT`は採用された**semantic identifier**であり、正式schema enum/field/versionの発行ではない。B1をD01のIV_HETEROGENEOUS_EFFECTに自動分類することもしない。
 
 ### 5.3. IID異分散頑健ARの実装独立reference候補
 
@@ -283,7 +285,7 @@ DGP-020のOLS coefficient、**古典OLS** `SE=.2`、`df=100`、`R²_{A~U|C}=.1`�
 | P2-M05 S-Learner | REF-E05 | DGP-002/003、shared outcome model |
 | P2-M06 T-Learner | REF-E05 | DGP-003/004、arm別support |
 | P2-M07 X-Learner | REF-E05 | DGP-003/004、pseudo outcome/weights |
-| P2-M08 DRIV | REF-E06 | DGP-008、formal θ_IV/moment/CI PENDING |
+| P2-M08 DRIV | REF-E06 | DGP-008、DRIV-A target/momentはOwner採用／Backend実効fit・CI科学妥当性PENDING |
 
 ### 8.3. Phase3（13）
 
@@ -299,7 +301,7 @@ DGP-020のOLS coefficient、**古典OLS** `SE=.2`、`df=100`、`R²_{A~U|C}=.1`�
 | P3-M08 Fuzzy RDD | REF-Q03,REF-I03 | DGP-016、cutoff局所IV推論 PENDING |
 | P3-M09 Wald ratio | REF-I03,REF-E07 | DGP-006、complier LATE。弱IVに対するAR集合はB0/B1（P3-M10/M11）側の義務でありWald単独Methodには追加しない |
 | P3-M10 B0 2SLS | REF-E07,REF-U01 | DGP-006/024、Wald sample parity、AR |
-| P3-M11 B1 2SLS | REF-E08,REF-U01 | DGP-007/024、formal Estimand enum PENDING |
+| P3-M11 B1 2SLS | REF-E08,REF-U01 | DGP-007/024、B1-A構造係数はOwner採用／schema enum・2SLS/AR科学実証PENDING |
 | P3-M12 Synthetic Control | REF-Q04 | DGP-017、donor rank/unique weight |
 | P3-M13 Synthetic DiD | REF-Q05 | DGP-018、unit/time weighting Config PENDING |
 
