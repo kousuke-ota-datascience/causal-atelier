@@ -8,6 +8,8 @@
 
 > **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
 
+> **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。Frontdoor初期数値推定のFD-A（単一Mediator・線形2-stage）と、FCI/Temporal Graph OracleのGRAPH-A（生成DAG/Markov同値類を区別）をOwnerが個別採用。P1-M07のDoWhy stage/CIとP1-M06/P3-M02/03の独立PAG/CPDAG Oracle・Graph Science Benchmarkは未実証。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 目的と非目標
@@ -42,13 +44,13 @@
 | P1-M03 | P1-08 | DoWhy Backdoor identification／ATE候補 | DoWhy optional、識別式・Graphとadjustmentの一致 | 既知DAGのBackdoor式をNative/referenceと照合 | 仮定不足・非適格Graph。API成功のみでScience PASSにしない |
 | P1-M04 | P1-08 | DoWhy Frontdoor identification／ATE候補 | 全A→Y経路をMが遮断、Frontdoor条件、support | 未観測A-Y交絡あり・有効Mの既知DAGと識別式 | M欠落／A-MまたはM-Yの不適切交絡。数値推定との区別 |
 | P1-M05 | P1-08 | DoWhy IV identification／**方法固有の対象は未確定** | 候補IV、独立性・exclusion・relevance等の根拠 | 有効二値Z/AのGraphでIV式 | invalid IV／弱いfirst stage／LATEへの誤変換を禁止。D03採用を自動拡張しない |
-| P1-M06 | P1-09 | FCI／PAGと等価類 | 因果Markov・faithfulness、CI test適格性、潜在交絡・sample size | **独立に同値類を導出できるGraph motifのPAG endpoints**。DGP-011の2変数同時点Graphはlatent存在の一意識別正例としない | 偽のDAG向き確定、circle/arrow/tailの消失。不適格CI test、adjacency/endpoint精度・readback |
+| P1-M06 | P1-09 | FCI／PAGと等価類 | 因果Markov・faithfulness、CI test適格性、潜在交絡・sample size | **GRAPH-A採用**：独立に同値類を導出できるGraph motifのPAG endpoints（具体Oracle未完成）。DGP-011の2変数同時点Graphはlatent存在の一意識別正例としない | 偽のDAG向き確定、circle/arrow/tailの消失。不適格CI test、adjacency/endpoint精度・readback |
 
 ### 1.2. Effect Estimation（既存＋Frontdoor）
 
 | SR04 ID | Scope ID | Method／Estimand | 適格なDesign・条件 | Known-truth正例 | Negative Case／主な受入 |
 |---|---|---|---|---|---|
-| P1-M07 | P1-08 | Frontdoor two-stage regression／ATE（D02採用） | P1-M04の識別＋DoWhy実装に整合した段階モデル（線形性等を要審査） | 線形で真値既知のFrontdoor DGP／ATEの数値精度 | 非線形・モデル誤指定、M不足、support不足。識別成功を推定成功と取り違えない |
+| P1-M07 | P1-08 | Frontdoor two-stage regression／ATE（D02採用） | P1-M04の識別＋**FD-A採用**：線形・単一Mediator。Stage1 M~1+A、Stage2 Y~1+M+A、実効DoWhy stage/CIは未検証 | 線形で真値既知のFrontdoor DGP／ATEの数値精度 | 非線形・モデル誤指定、M不足、support不足。識別成功を推定成功と取り違えない |
 | P1-M08 | P1-11 | Native diff-in-means／ATE | Randomized、2群support、独立観測など | 既知無作為割付ATE、基準値と一致 | 観測交絡、群欠落、CI不適格。点推定・推論を別判定 |
 | P1-M09 | P1-11/17 | Native OLS／採用済み契約範囲のATE/ATT表現 | 線形モデル仮定、調整変数、estimand定義の一致 | 正しい加法モデルと参照OLS | effect heterogeneity下のATE/ATT誤ラベル、悪い調整、SE方式取り違え |
 | P1-M10 | P1-11/12 | Native IPW／ATE・ATT（別fixture） | propensity・positivity、ATE/ATT固有weight、clipping/normalization | 正しいPS、既知ATE/ATTのbias/ESS/coverage | 極端なweight、overlap不足、誤重み、PS推定込みSEの不適格 |
@@ -92,8 +94,8 @@
 | SR04 ID | Scope ID | Method／科学的対象 | 固有の適格性・推論候補（未採用） | Known-truth正例 | Negative Case／主な受入 |
 |---|---|---|---|---|---|
 | P3-M01 | P3-02 | PCMCI／time-lagged graph | causal stationarity、同時点直接linkなし・latent confounderなし、CI test適合 | 既知VAR/非線形時系列のlagged parent recovery | 偽同時点edge、非定常、CI misspec、lag/FPR/recall |
-| P3-M02 | P3-03 | PCMCI+／time-series CPDAG | 同時点linkを許容・潜在交絡なし、CI test・time order | lagged＋contemporaneousの既知Graph | 未確定方向を偽のDAG化、CI-test不適格、endpoint fidelity |
-| P3-M03 | P3-04 | LPCMCI／time-series PAG | 潜在交絡を許容、causal stationarity等、experimental statusに注意 | latent common causeを含む既知Graph | circle/tail/arrow消失、既知latent Graphを強制DAG化 |
+| P3-M02 | P3-03 | PCMCI+／time-series CPDAG | 同時点linkを許容・潜在交絡なし、CI test・time order | lagged＋contemporaneousの既知Graph。**GRAPH-A原理採用／独立CPDAG Oracle未完成** | 未確定方向を偽のDAG化、CI-test不適格、endpoint fidelity |
+| P3-M03 | P3-04 | LPCMCI／time-series PAG | 潜在交絡を許容、causal stationarity等、experimental statusに注意 | latent common causeを含む既知Graph。**GRAPH-A原理採用／独立Temporal PAG Oracle未完成** | circle/tail/arrow消失、既知latent Graphを強制DAG化 |
 | P3-M04 | P3-07 | DiD／ATT（2×2とstaggeredは別契約） | 無介入時のparallel trends、no anticipation、valid comparison、cluster等 | 2×2既知ATT；staggeredではcohort-time ATTを指定 | 異質性＋staggeredで単純TWFEを正解としない、pretrend有意差非検出を保証としない |
 | P3-M05 | P3-08 | Event Study／event-time効果 | timing、cohort、参照期、anticipation、group-time support | 動的真値 `ATT(g,t)` からevent-time aggregate | TWFE lead/lag汚染、empty cohort-time cell、事後選択CIの誤用 |
 | P3-M06 | P3-09 | Interrupted Time Series／介入時点のlevel/slope変化 | 介入外の同時ショック除外、ベースline/seasonality/autocorrモデル | 既知step/trend change＋季節性・自己相関 | concurrent intervention、偽トレンド、iid SEの誤用。因果性を単なる構造変化と区別 |
