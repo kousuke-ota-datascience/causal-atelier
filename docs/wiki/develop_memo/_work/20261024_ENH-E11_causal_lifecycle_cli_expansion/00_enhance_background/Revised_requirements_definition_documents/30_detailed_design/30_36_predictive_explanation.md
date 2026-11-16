@@ -3,6 +3,8 @@
 
 ---
 
+## 15. Predictive Capability / Stage Contents
+
 ### 15.6 Explainability
 
 目的はPredictive Explanationを確認することである。
