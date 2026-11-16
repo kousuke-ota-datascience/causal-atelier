@@ -54,6 +54,9 @@
 
 ## 2. まだ承認されていない事項
 
+- **DEC-SR04-07（2026-11-16、Owner採否待ち）:** [Quantitative AC／Monte Carlo／計算予算の独立技術判断案](../working_notes/20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を策定した。**DEC07-1〜7の全A案を推奨**。Gate-wide FWER 0.05、全mandatory stochastic comparison Kの事前登録、WilsonとMethod-specific性能指標、R6000は出発候補であって無条件固定しない方針、Pilotによる実測CPU/RAM/Wall/金額とOwner上限に基づく予算freezeを提案。**実効K／n/R／R_inner／CPU予算・費用は未確定・未計測**であり、Method別計算量不足を隠してScience PASSとしない。本ターンの「実施せよ」は候補策定指示として処理し、Ownerが具体的7案を採用したと遡及記録しない。Science／正式Gate／Codingは未実施。
+
+
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
 - Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。 DEC-SR04-06のP1-M18〜20とX-04/X-05 Deferredは個別承認済みだが、正式要件や実効契約の批准は未実施。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**、DEC-SR04-05-1〜7の**準実験Method別ベースライン推定・条件付き推論方針**は個別採用済み。ただし正式Schema enum/Methodの実効Config、科学的に認定されたInference algorithmとCoverage、数値受入は未承認。
