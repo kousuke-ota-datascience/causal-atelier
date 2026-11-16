@@ -4,6 +4,8 @@
 **状態:** DRAFT／Architecture Review未完了  
 **前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`、スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`のR/Q/N/D、ならびに`03_requirements_revision.md`の要件改定案。
 
+> **2026-11-16 DEC-SR04-06後続Owner決定（詳細参照）:** [02個別承認第23項](02_enhancement_concept_approval_record.md)、[DEC06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の初期N／X-04/05の広範方式Dは科学的適用範囲として**個別採用済み**。本書は**正本改定前のRequirements/Design Revision Draft**であり、この追補は正式FR/NFR/AR・実効Schema・Architecture・Gateの承認ではない。
+
 ## 1. 参照設計
 
 正本：`docs/wiki/requirement_definition/21_logical_data_design.md`、`22_product_basic_design.md`、`23_api_interface_design.md`、`30_detailed_design.md`。
@@ -17,7 +19,7 @@
 - **Identification:** Native/DoWhyの結果をAriadneの科学的statusに正規化する。前提仮定とsource graphを保持し、Libraryオブジェクトを標準payloadに含めない。**Frontdoorの数値推定もPhase1に必須包含するオーナー判断（2026-11-01）**は識別成功とは別Estimator契約・科学Benchmarkで受け入れる（[SR-03追加メモ](../working_notes/20261101_sr03_late_estimator_options_econml_inference_review.md)）。
 - **Discovery:** FCI/PCMCI系にalgorithm ID、CI test、parameter、backend versionを持たせる。endpoint・lagと不確実性を失わない往復serializeを保証する。
 - **Estimation:** 既存`ipw`/`aipw`を維持し、CATEと準実験固有estimandを一律ATE/ATTのフィールドに押し込めない。
-- **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。Negative Control exposure/outcome、Unobserved-confoundingの最小実行方式は`00_04_phase1_to_phase3_cli_scope_proposal.md`の**採用案・承認待ち**として、適用仮定・negative result・独立検証方法を別途決定する。
+- **Refutation/Sensitivity:** 上流Effectの識別子と実効parameter/seedを持つ方法別Resultを定義し、既存method codeを保護する。Negative Control exposure/outcome、古典OLS partial R²/point RVの最小実行方式は**DEC-SR04-06-1〜5でOwnerが科学的Scopeを個別採用済み**。P1-M18/M19の実在Z/W・事前帰無・明示opt-in、P1-M20の古典OLS係数/SE/df再現・RVと不適格のtyped結果を要求する。ただし正式Result schema/adapter/API、独立推論・Reference・Gateはまだ承認していない。
 - **Temporal/Quasi-experimental:** Panel、時刻、running variable、IV、donor poolの妥当性を、横断データの既存入力契約とは分けて検証する。
 
 ### 2.2. ローカル成果物の流れ
