@@ -3,7 +3,7 @@
 **文書区分:** `working_notes`／科学的検証の実行環境・再現性・証拠管理契約案。正式なFR/NFR/AR、Architecture Decision、Gate06/07、Work Package、実装指示、Coding許可ではない。  
 **作成日:** 2026-11-15 JST  
 **対象:** `kousuke-ota-datascience/causal-atelier`、`prototype/ariadne_mvp`。  
-**状態:** `SR04_E_ENVIRONMENT_CONTRACT_DRAFT / LOCK_AND_PROFILE_PENDING / RESOURCE_BUDGET_PENDING / EVIDENCE_SCHEMA_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL`。  
+**状態:** `SR04_E_ENVIRONMENT_CONTRACT_DRAFT / LOCK_AND_PROFILE_PENDING / DEC07_POLICY_OWNER_ACCEPTED / RESOURCE_BUDGET_PENDING / EVIDENCE_SCHEMA_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL`。  
 **先行する作業記録:** [Method Acceptance Matrix（41件）](20261115_sr04_method_acceptance_matrix_draft.md) → [Scientific Fixture Catalog（DGP 24／NEG 28／横断9）](20261115_sr04_scientific_fixture_catalog_draft.md) → [Reference Specification（REF 24）](20261115_sr04_reference_specification_draft.md) → [Quantitative Acceptance Criteria（AC 45）](20261115_sr04_quantitative_acceptance_criteria_draft.md)。  
 **Owner決定:** [02 構想承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)。基本方針のみ個別採用済みであり、**全体構想は`PENDING_FULL_CONCEPT_APPROVAL`**。  
 **根拠となる実測:** [SR-02 Python/Linux依存・API実行記録](20261101_sr02_backend_runtime_probe_results.md)。この実測はinstall/API smokeであり、Method別科学妥当性・完全なlock・SI納入適法性を示さない。
@@ -16,7 +16,7 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。初期候補3MethodはENV-BASE、明示opt-in・研究Design/null・古典OLS係数/SE/df・backend/seed provenanceを要求するが、Method追加・lock変更は未承認・未実行。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
-> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。T2でMethod/CI/inner Bootstrap/n/T別にp50/p95 core-seconds、peak RSS、Wall、Backend versionを実測し、T3必要コア時・メモリ・課金上限とOwner承認を突合する。CPU/料金値は未実測なので数値freeze禁止。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+> **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。T2でMethod/CI/inner Bootstrap/n/T別にp50/p95 core-seconds、peak RSS、Wall、Backend versionを実測し、T3必要コア時・メモリ・課金上限とOwner承認を突合する。CPU/料金値は未実測なので数値freeze禁止。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
 
 ## 0. 目的・システム境界・再現性の分類
 
