@@ -5,6 +5,8 @@
 **対象:** `kousuke-ota-datascience/causal-atelier`、branch `prototype/ariadne_mvp`。  
 **総合結論:** **CHANGES_REQUIRED / MATHEMATICAL_AND_TRACEABILITY_CORRECTIONS_APPLIED / SCIENTIFIC_BLOCKERS_OPEN / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL**。
 
+> **2026-11-16正式個別判断の追補（本レビュー後の更新）:** [DEC-SR04-01／02の技術判断記録](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)を作成し、02 Owner記録の第18・19項へ**B1-AとDRIV-Aの採用**を反映済み。本レビューが作成された時点の「OWNER_PENDING」という記載は**上記2件のsemantic target採用に限り解消**。表の状態は`OWNER_ACCEPTED / SCIENCE_PENDING`へ更新した。B1の正式schema enum/ARとDRIVの実効Estimator/CI/coverage、全体構想・FR/ADR/Gate07は未承認・未検証。Next owner decisionはDEC-SR04-03（Frontdoor）／DEC-SR04-04（Graph Oracle）。
+
 ## 0. 目的、審査条件、適用した証拠レベル
 
 ### 0.1. 審査対象（SR04 A〜Fと先行正本案）
@@ -16,7 +18,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `a1ccc55973c629fa1486fca6e0d6e4f8c6ab67db` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `607b6447ed5fdfc2019212375992e4060f642540` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -169,8 +171,8 @@
 
 | ID | 親論点 | 推奨する選択 | 明確に必要な承認/科学証拠 | 現在状態 |
 |---|---|---|---|---|
-| DEC-SR04-01 | B1 formal Estimand | B1-A 構造係数β、異質効果には自動拡張しない | Ownerによる正式kind・仮定・結果ラベル承認、Independent IV/AR Benchmark | **OWNER_PENDING** |
-| DEC-SR04-02 | DRIV IV heterogeneous target | DRIV-A conditional structural IV slope | W等の条件付きmoment、final model・inference、実効0.17.0 probe、coverage | **OWNER+METHOD_PENDING** |
+| DEC-SR04-01 | B1 formal Estimand | B1-A 構造係数β、異質効果には自動拡張しない | Human ownerがB1-A構造係数targetと境界を採用。正式schema enum、独立IV/AR・HCとCoverageは未検証 | **OWNER_ACCEPTED / SCIENCE_PENDING** |
+| DEC-SR04-02 | DRIV IV heterogeneous target | DRIV-A conditional structural IV slope | Human ownerがDRIV-A条件付き構造斜率とX/W残差化IV momentを採用。実効0.17.0/projection/nuisance/CI/coverage未検証 | **OWNER_ACCEPTED / SCIENCE_PENDING** |
 | DEC-SR04-03 | Frontdoor数値 | FD-A 線形singleton mediator＋2-stage積 | DoWhyの段階調整集合確認、独立Sample Reference、CI方式・Coverage | **METHOD_PROBE_PENDING** |
 | DEC-SR04-04 | FCI/temporal Graph | GRAPH-A 独立PAG/CPDAG/lag oracle | 別多変数Graphの強制端点証明、DGP-011のtemporal PAG、Graph accuracy | **ORACLE_PENDING** |
 | DEC-SR04-05 | Quasi 7手法 | 2.5表の各Method固有最小契約 | コホートweight、bandwidth、HAC/cluster、SCM/SDID optimizer/CI採用 | **OWNER+METHOD_PENDING** |
@@ -216,7 +218,7 @@
 | SR-01〜12、68 Scope、正式FR/ADR/06/07 | **CHANGES_REQUIRED** | Human OwnerとArchitecture Reviewの承認が必要 |
 | ENH-E11全体およびGate07 | **NOT APPROVED** | このDraftの是正だけではCoding/Science PASS不可 |
 
-**次にOwnerが決めるなら:** DEC-SR04-01（B1-A）とDEC-SR04-02（DRIV-A）、続いてDEC-03（Frontdoor FD-A）・DEC-04（Graph GRAPH-A）を正式採否するのが依存上の最短ルート。DEC-05〜10はその結果に依存する。採否案の記載はHuman ownerの決定の代替ではない。
+**次にOwnerが決めるなら:** DEC-SR04-01（B1-A）／02（DRIV-A）は**2026-11-16に個別採用済み**。次はDEC-03（Frontdoor FD-A）とDEC-04（Graph GRAPH-A）の科学的適用範囲を判断し、DEC-05〜10へ進む。個別採用をScience PASSまたはCoding承認に読み替えない。
 
 **変更した範囲:** A/B/C/D/Fのworking_notes本文と本レビュー記録。Eはレビューしたが実効環境や正本に変更なし。コード・`pyproject.toml`・`uv.lock`・GitHub Issue/Notion・02のOwner決定記録・正式FR/NFR/AR/Gateは変更していない。
 
