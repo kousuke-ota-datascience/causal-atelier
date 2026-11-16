@@ -14,6 +14,8 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の具体採否はOwner未決。NCE/NCOは実在観測Z/Wのopt-in・事前帰無、M20は古典OLS partial R²とpoint RVのみを初期NとするA案を策定。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
+> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。41 Method別にHard／Conditional／N/AのAC適用と必要な実効Estimator・Inferenceを事前登録。オラクル未完成Methodは数値閾値でScience可としない。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 目的と非目標
