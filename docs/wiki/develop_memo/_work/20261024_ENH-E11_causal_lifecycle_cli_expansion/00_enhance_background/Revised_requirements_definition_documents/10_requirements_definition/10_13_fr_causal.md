@@ -17,18 +17,18 @@
 | FR-040 | Causal | Population、Treatment、Comparator、Outcome、Time、Estimand、Decision UseをCausal Questionに固定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-041 | Causal | assignment、time zero、eligibility、strategy、adjustment set、assumptionsをCausal Designに固定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-042 | Causal | Graph、Question、DesignからIdentification Resultを生成する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-043 | Causal | Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-043 | Causal | 識別判断に確定的不整合がある場合はそれを明示し、レビュー待ちとして誤表示しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-044 | Causal | 型、欠測、post-treatment、sample size、overlapをData Eligibilityとして評価する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-045 | Causal | Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-045 | Causal | 【設計制約移管・Legacy Trace】FR-044の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-046 | Causal | Identification、Eligibility、Estimator互換性を満たす場合のみEstimationを受け付ける | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-047 | Causal | ATEまたはATTと区間推定を生成できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-048 | Causal | estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-048 | Causal | 推定手法に適合した診断を提示し、適用不能な診断を強制しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-049 | Causal | Placebo TreatmentおよびData SubsetによるRefutationを実行できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-050 | Causal | Adjustment SetおよびPropensity ClippingのSensitivityを実行できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-051 | Causal | 同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する | MUST | ACTIVE | PARTIAL | ENH-E5 |
+| FR-051 | Causal | 同一データを探索と確認的分析で再利用する場合、その事実と根拠を警告できる | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-052 | Causal | 同一条件のRERUNと条件変更のREVISEDを区別し、changed dimensionsとreasonを保存する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-053 | Causal | 科学的負結果をExecution failureと区別する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-054 | Causal | Causal ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion/AnalysisView、GraphVersion、上流Result、Artifactへcanonical lineageで遡れる | MUST | ACTIVE | PARTIAL | ENH-E5 |
+| FR-054 | Causal | 因果分析結果から入力データ・仮定・実行・成果物の来歴を追跡できる | MUST | ACTIVE | PARTIAL | ENH-E5 |
 | FR-153 | Causal | Causalは`setup / discovery / identification / estimation / effects / diagnostics / sensitivity`をFamily-local Navigation Stageとして提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-154 | Causal | IdentificationとEstimationを別Navigation Stageとして扱い、識別可能性と有限標本推定を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-155 | Causal | EstimationとEffectsを別Navigation Stageとして扱い、推定設定と推定結果の閲覧・利用を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
