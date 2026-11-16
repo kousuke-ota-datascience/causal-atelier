@@ -223,35 +223,159 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 **Trace:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS fault injectionと独立ReviewはNOT_RUN。
 
-## 5. `LocalManifestReader` / `LocalRunManifest`
+## 5. E11 Local Manifest／Reader（別々のProposed Class）
 
-### 5.1. Fields / Interface
+以下は一つの「Class」ではない。**`LocalRunManifest`（Data/Value）と`LocalManifestReader`（I/O Adapter）を独立に7区分化する**。両者はSource未実装であり、確定JSON Schema／Exception型とsecurity implementationはFreeze待ち。
 
-Manifest fieldsは `manifest_version=e11-local-manifest/1`、run_id/request_hash、upstream lineage、effective Method/Backend/Inference、seed/fold、runtime/uv.lock/BLAS/SBOM、Science states、artifact descriptors、privacy classification。Product旧`CliManifest`へ混在させない。
+### 5.1. `LocalRunManifest`（PROPOSED）
 
-~~~python
-def read_run(self, trusted_root: Path, run_id: str) -> VerifiedLocalRun: ...
-~~~
+#### 5.1.1. 識別情報・責務
 
-ReaderはMarker→Manifest→Artifact bytesのhash/size/typeと上流refを検証する。無版、legacy、絶対参照、symlink、非有限JSON、missing output、unknown critical fieldsは拒否。Private Parquetはrow-level policy確認無しにreader APIで開かない。
+- **Class/Module（候補）:** `interfaces.cli.e11.manifest.LocalRunManifest`、immutable typed DTO。**PROPOSED / SOURCE_NOT_PRESENT**。
+- **責務:** 1 Local runのidentity、lineage、Method/Science/Runtime、artifact inventoryをversioned schemaで保持し、canonical bytesのauthorityを定義する。
+- **責務外:** file open、hash verificationのI/O、実効科学計算、Local OS permission enforcement。
+- **Authority:** IF `23_42` §6、`23_41` §5。Existing `interfaces.cli.manifest.CliManifest`（blob `97216eca9d777e97f7a5ebd4e248afd31c6b4de0`）とは別schema。
 
-### 5.2. Tests
+#### 5.1.2. フィールド
 
-`DD-E11-READ01`valid、`READ02`missing marker、`READ03`mismatch、`READ04`wrong version、`READ05`private suppression、`READ06`old v2 readback。
+| Field | Proposed type | Origin | Constraint |
+| --- | --- | --- | --- |
+| `manifest_version` | `Literal["e11-local-manifest/1"]` | Schema | mandatory, no v2 fallback |
+| `run_id, operation, request_hash` | `str, LocalOperation, str` | validated Study | fixed identity, digest hex64 |
+| `lineage` | typed refs + hashes | Question/Design/Graph/Dataset/Identification | graph/estimand/adapter provenance lossless |
+| `execution_status` | typed technical + scientific axes | LocalRunOutcome | actual facts, independent science not faked |
+| `runtime` | `RuntimeEvidence` | effective probe | Python/backend/lock/seed/fold/BLAS explicit |
+| `artifacts` | `tuple[ArtifactDescriptor,...]` | Publisher stage validation | relative keys, size, hash, media, privacy |
+| `review` | evidence refs + legal release state | SCI + policy | absent proof remains null / NOT_EVALUATED |
 
-## 6. `LocalPrivacyPolicy`
+This table is a logical field grouping; exact nested JSON Schema property names, optionality and enum must be frozen before Coding.
 
-### 6.1. Fields
+#### 5.1.3. Constructor / Factory
 
-`principal_uid, root_owner_uid, classification, row_export_requested, row_export_authorized, allowed_columns, max_rows, audit_context`。OS principalをProduct Membershipの権威とみなさない。
+- **Proposed:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
+- **Precondition:** strict schema/version + no unknown critical keys; content hash references are normalized; `Manifest` must **not** include its own bytes hash; marker is outside Artifact list. Factories do not read the filesystem.
+- **N/A:** runtime backend import is not part of this DTO. Factory naming and exact exception classes remain ADR/Schema Freeze pending.
 
-### 6.2. Method / Preconditions
+#### 5.1.4. メソッド
 
-`assert_export_allowed(spec, cli_flag, runtime_principal) -> None`は、Spec policy許可・CLI flag・OS owner/delegation・安全なroot/権限・column minimizationの全条件をANDで要求する。`--allow-row-level-export`フラグは意図であり認可証明ではない。CI共有Volume、sudo、container root、mountを含め実効アクセス境界を確認する。通常Result/JSON/stdout/logには個票を含めない。
+| Signature（Proposed） | Result | Side effect / failure |
+| --- | --- | --- |
+| `validate_invariants(self) -> tuple[Reason,...]` | typed reasons | pure; reject broken cross-refs, privacy and science axis inconsistency |
+| `to_canonical_bytes(self) -> bytes` | canonical versioned JSON bytes | pure deterministic encoding; reject NaN/Infinity/raw credentials |
+| `from_payload(payload) -> LocalRunManifest` | immutable DTO | pure strict decode; unsupported version rejected |
 
-### 6.3. Tests
+#### 5.1.5. 処理仕様
 
-`DD-E11-PRIV01`default no rows、`PRIV02`flag only deny、`PRIV03`UID mismatch、`PRIV04`0600/0700、`PRIV05`stdout/log leakage、`PRIV06`shared mount deny。
+1. Normalize schema version and all typed scientific statuses without collapsing negative outcomes.
+2. Validate artifact keys unique and safe relative; no absolute input path/secret/row data in Manifest.
+3. Validate lineage digest/target and effective runtime evidence with missing values distinguished from fabricated defaults.
+4. Produce canonical bytes deterministically, independent of map insertion order or local time display. Result identity is a logical run identity, **not** evidence of successful file publication.
+
+#### 5.1.6. I/O・連携・失敗処理
+
+- `LocalArtifactPublisher` creates Manifest bytes; Reader consumes those same canonical bytes. Marker stores SHA256 of Manifest bytes, not a self-reference.
+- **I/O:** N/A in DTO; byte serialization is pure. Actual file I/O/permission, partial bundle, crash and retry belong to Publisher/Reader.
+- **Failure:** `SCHEMA_INVALID`, `VERSION_UNSUPPORTED`, `HASH_INVALID`, `PRIVACY_POLICY_CONFLICT`; no automatic v2 upgrade.
+
+#### 5.1.7. 検証
+
+`DD-E11-MAN01` canonical bytes roundtrip; `MAN02` unknown version/unknown critical; `MAN03` marker outside artifact list; `MAN04` science negative vs technical outcome independent; `MAN05` absolute path/raw secret/row data rejection; `MAN06` legacy v2 readback isolation。**NOT_RUN**。Trace：FR-201/202/203、NFR-029/030/032、AR-040、BD01-F06/F07/F12。
+
+### 5.2. `LocalManifestReader`（PROPOSED）
+
+#### 5.2.1. 識別情報・責務
+
+- **Class/Module（候補）:** `interfaces.cli.e11.manifest_reader.LocalManifestReader`。**PROPOSED / SOURCE_NOT_PRESENT**。
+- **責務:** already-published runをMarker→Manifest→Artifactの順に検証し、`VerifiedLocalRun`を返す。存在だけでCOMMITTEDと判断しない。
+- **責務外:** publish、legacy v2の無断E11解釈、科学的Oracle計算、実Artifactの編集。
+- **Authority:** IF `23_42` §6〜8、BD01-F03/F05/F06/F12。
+
+#### 5.2.2. フィールド
+
+| Field | Type | Origin | Constraint |
+| --- | --- | --- | --- |
+| Instance fields | N/A（stateless Reader候補） | N/A | trusted root/run IDはper-call引数。Cacheを設ける場合は別ADR |
+
+#### 5.2.3. Constructor / Factory
+
+- `__init__()`は特別な依存なし（**Proposed、N/A理由：read_runがrootを明示注入するstateless API**）。
+- Reader instanceに暗黙のworking directory・current Project・Product DB／OS principalを仮定させない。
+
+#### 5.2.4. メソッド
+
+| Signature（Proposed） | Result | Side effect / failure |
+| --- | --- | --- |
+| `read_run(self, trusted_root: Path, run_id: str) -> VerifiedLocalRun` | Verified manifest and artifact descriptors | secure read only; marker/hash/version/root/permissions fail-closed |
+
+#### 5.2.5. 処理仕様
+
+1. Trusted root・run_idとlocal execution principalを検証し、run directoryにsecure open。
+2. `_COMMITTED.json`存在/strict schema/version/request hashを確認。
+3. `manifest.json`を同一安全dirfd scopeでopen、markerに保存されたManifest SHA256と照合し、`LocalRunManifest`をstrict decode。
+4. Artifactの相対key重複、SHA256/size/MediaType、privacy class、必要なLineage Refの一致を検査。
+5. Private Parquetには出力Policy/OS principalの許可なしでrow-level bytesを返さない。
+6. 未検証・partial・legacy・corruptのいずれでも`VerifiedLocalRun`を返さない。
+
+#### 5.2.6. I/O・連携・失敗処理
+
+- **Caller:** E11 Local UseCaseのReadback／CLI status command、publisherのpublication verification。
+- **I/O:** Trusted Rootからread-only。symlink/TOCTOUとstale marker防止のためopenされた同一File Descriptorに対しhashを確認。
+- **Errors:** `NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`等を区分（Exception class名は未Freeze）。
+- **Retry:** 不完全runを勝手に修復／削除しない。既存同hash runの再利用は完全Readback PASSに限定。
+
+#### 5.2.7. 検証
+
+`DD-E11-READ01` valid; `READ02` marker missing; `READ03` corrupted bytes/size; `READ04` wrong version; `READ05` individual export suppression; `READ06` old v2 not E11; `READ07` symlink/path race。**NOT_RUN**。Trace：IF IO-E11-01〜09、FR-201〜203、NFR-031/032、BD01-F03/F05/F06/F12。
+
+## 6. `LocalPrivacyPolicy`（PROPOSED：Owner 7区分）
+
+### 6.1. 識別情報・責務
+
+- **Class/Module候補:** `interfaces.cli.e11.privacy.LocalPrivacyPolicy`、**PROPOSED / SOURCE_NOT_PRESENT**。
+- **責務:** row-level exportのrelease条件をANDで評価し、aggregated defaultと最小限の出力対象を固定する。Product RBACをLocal OSへ擬似的に持ち込まない。
+- **責務外:** 研究対象者の同意獲得、Product ProjectMembership、Backend numerical inference、Customer Legal approval。
+
+### 6.2. フィールド
+
+| Field | Type（Proposed） | 生成元 | 制約 |
+| --- | --- | --- | --- |
+| `principal_uid, root_owner_uid` | `int` | OS effective actor + trusted root | mismatch reject unless explicit delegated policy |
+| `classification` | `PrivacyClass` | Study Spec | default non-row / explicit restricted |
+| `row_export_requested` | `bool` | Study spec | flagだけで認可しない |
+| `row_export_authorized` | `bool` | scope-specific policy | separate positive authorization |
+| `allowed_columns` | `tuple[str,...]` | policy | whitelisted minimal fields |
+| `max_rows` | `int` | policy | bounded; enforce before output |
+| `audit_context` | `Mapping[str,JsonValue]` | local provenance | secrets/raw rows forbidden |
+
+### 6.3. Constructor / Factory
+
+- **Proposed:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, row_export_authorized, allowed_columns, max_rows, audit_context)`。
+- **Preconditions:** OS effective identity＋permission sourceはruntime evidenceから採取。HeaderやCLI flagを信頼済principalの証拠に昇格しない。
+- **Postconditions:** policy object immutable。構築時に実outputを生成しない。Delegated/CI/container UID規則はADR＋negative testで最終確定。
+
+### 6.4. メソッド
+
+| Signature（Proposed） | Result | Side effect / failure |
+| --- | --- | --- |
+| `assert_export_allowed(self, spec: LocalStudySpec, cli_flag: bool, runtime_principal: LocalPrincipal) -> None` | allow / typed reject | pure authorization check; no implicit file write |
+| `filter_export_columns(self, frame_schema: ColumnSchema) -> ColumnSelection` | bounded allowlist | pure; unknown or prohibited columns rejected |
+
+`filter_export_columns`は**設計上の候補**であり、採用する場合はDataFrame raw dataをこのPolicyに渡さず、Schemaのみを渡す。実装署名は未Freeze。
+
+### 6.5. 処理仕様
+
+`assert_export_allowed`は Spec policy許可 ∧ CLI flag ∧ OS Principal/owner/delegation適格 ∧ root permissions ∧ classification/column/minimum-row policy の全条件をrequire。Fail-closedで個票Parquetを生成しない。通常のResult/Manifest/stdout/logにrow valuesを含めない。Shared mount、root container、CI volumeにおける可視性はOS File Modeだけで推測しない。
+
+### 6.6. I/O・連携・失敗処理
+
+- **Input:** `LocalStudySpec`, CLI intent, principal/effective UID, trusted root permission evidence, column Schema。
+- **Output:** allow/reject（含むReason）と許可されたColumnSelection。Raw rows不要。
+- **Side effect:** N/A（純粋Policy）。File create/0600・dir0700とaudit event emissionはPublisher/CLI adapterの責務。
+- **Failure:** missing flag、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
+
+### 6.7. 検証
+
+`DD-E11-PRIV01` default no rows、`PRIV02` flag alone deny、`PRIV03` UID mismatch、`PRIV04` 0600/0700、`PRIV05` stdout/log leakage、`PRIV06` shared mount deny、`PRIV07` allowed-columns minimization。**NOT_RUN**。Trace：FR-194/195/203、NFR-031/032、AR-034/035、BD01-F05/F12。
 
 ## 7. CLI entrypoint / Error bridge
 
