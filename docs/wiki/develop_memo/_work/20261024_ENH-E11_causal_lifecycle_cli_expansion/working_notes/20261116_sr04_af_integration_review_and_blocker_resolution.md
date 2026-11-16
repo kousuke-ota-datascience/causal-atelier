@@ -11,6 +11,8 @@
 
 > **2026-11-16 DEC-SR04-05実施追補:** [7手法Estimator／Inference独立判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)を作成し、[02 Owner記録](../00_enhance_background/02_enhancement_concept_approval_record.md)第22項に**7個別Method baseline方針の採用**を反映。Method設計選択は`OWNER_BASELINE_ACCEPTED`であり、推論科学妥当性・backend/lock・独立Reference/CI coverage・正式Gateは`PENDING`。旧表「05 Owner pending」はこの新判断で改訂。
 
+> **2026-11-16 DEC-SR04-06提案の追補:** [Observed NC＋OLS partial R²/RVの科学的採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)を策定し、02 Owner記録の**未承認事項**へ追加。**DEC06-A（1〜5のA案）は推奨段階でありOwner採用ではない**。NCE/NCO/RVの正式Scope採否、RV Reference/Null sizeと推論Scienceは依然OPEN。
+
 ## 0. 目的、審査条件、適用した証拠レベル
 
 ### 0.1. 審査対象（SR04 A〜Fと先行正本案）
@@ -22,7 +24,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `11f78c19d1327d014bd762f428f03f1a9439f2e1` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `3d795686f0ecce896a9688b65947f7d190613113` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -180,7 +182,7 @@
 | DEC-SR04-03 | Frontdoor数値 | FD-A 線形singleton mediator＋2-stage積 | Human ownerがFD-A（線形・単一Mediatorの2-stage係数積）を採用。DoWhy 0.14実効stage、CI/独立sample Reference/coverageは未検証 | **FD-A OWNER_ACCEPTED / STAGE_AND_CI_SCIENCE_PENDING** |
 | DEC-SR04-04 | FCI/temporal Graph | GRAPH-A 独立PAG/CPDAG/lag oracle | Human ownerがGRAPH-A（DAG/MAG/CPDAG/PAG/temporal別Oracle）を採用。FCI/LPCMCI/PCMCI+の独立同値類とGraph精度は未検証 | **GRAPH-A OWNER_ACCEPTED / INDEPENDENT_ORACLE_PENDING** |
 | DEC-SR04-05 | 準実験7手法の初期Estimator／条件付きInference契約 | 7手法の初期Method baseline・個別Inference方針の採用は完了。SCM=point-only、RDD=RBC、SDID=2種重みとcluster bootstrapなど。実効Backend/CI科学受入は未検証 | [DEC-05独立技術記録](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)＋02 Owner第22項、7 MethodへのTrace更新 | **OWNER_BASELINE_ACCEPTED / INFERENCE_SCIENCE_PENDING** |
-| DEC-SR04-06 | NCE/NCO/RV | opt-inだけでなくPhase1の具体Method採否を個別決裁 | 02承認記録とScope68・仮要件03の更新 | **OWNER_PENDING** |
+| DEC-SR04-06 | NCE/NCO/RV | **DEC06-A／1〜5すべてA推奨**：P1-M18 Observed NCE、M19 NCO、M20 classical-OLS partial R²/point RVはopt-in・適格性・限定対象で初期Nとし、X-04/05の広範MethodはDへ。科学的null/HC3混同/非棄却解釈の反例を記録。 | [独立DEC06提案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)をGitHub作成、02 §2にOwner判断待ちとして参照。採用指示は未取得。 | **PROPOSAL_READY / OWNER_PENDING / SCIENCE_NOT_RUN** |
 | DEC-SR04-07 | Quant AC / MC / Compute | Dを事前登録方式で凍結。普遍的閾値としない | Method/DGP別n/R/K/seed/CI/BLAS、pilot costと独立レビュー | **RESOURCE+METHOD_PENDING** |
 | DEC-SR04-08 | Environmental/License | Eの5 Profile、機能別extras、顧客別GPL Legal Review | full lock/effective version/legacy regression、納入Artifact別法務判断 | **IMPLEMENTATION+LEGAL_PENDING** |
 | DEC-SR04-09 | Scope/Requirement/Architecture/Gate | 68 Scope全行とA0例外・GAPのOwner決裁 | 正本FR/NFR/AR/ADR、G01〜10→正式Gate07責務、批准SHA | **FULL_CONCEPT_PENDING** |
