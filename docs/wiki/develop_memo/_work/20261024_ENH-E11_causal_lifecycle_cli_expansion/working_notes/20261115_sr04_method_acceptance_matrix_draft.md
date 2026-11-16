@@ -6,6 +6,8 @@
 **状態:** `SR04_MATRIX_DRAFT / METHOD_SPEC_PENDING / QUANTITATIVE_AC_PENDING / SCIENCE_NOT_RUN / FULL_CONCEPT_PENDING`
 **直接の入力:** [00_04 68行Scope案](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)、[SR-01〜12審査](20261029_cli_scope_review.md)、[SR-03横断](20261101_sr03_identification_estimand_estimator_contract_review.md)、[D03](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、[D04](20261115_sr03_d04_identification_estimator_contract_options.md)、[D05](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)、[D06](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)、[02 owner判断](../00_enhance_background/02_enhancement_concept_approval_record.md)。
 
+> **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
+
 ## 0. INTRODUCTION
 
 ### 0.1. 目的と非目標
@@ -79,7 +81,7 @@
 | P2-M05 | P2-06 | S-Learner／CATE(x) | Treatmentを特徴量に含む1 outcome model、推論は構成別 | 定数・線形効果を再現するDGP | Treatment feature無視・強い正則化による縮小、bootstrap不適格 |
 | P2-M06 | P2-07 | T-Learner／CATE(x) | 処置armごとのoutcome model、各arm support | group別outcome既知のDGP | 極端arm imbalance、未観測領域外挿、推論不能 |
 | P2-M07 | P2-08 | X-Learner／CATE(x) | pseudo-outcome、arm-specific models、weighting | 不均衡群と既知異質性のDGP | propensity/weighting不適格、pseudo-outcome leakage、被覆不足 |
-| P2-M08 | P2-09 | DRIV／**IV_HETEROGENEOUS_EFFECT**（formal conditional-IV theta未承認） | conditional IV moment、Instrument/Treatment/contrast型、IV assumptions、nuisance/crossfit、IV固有inference | DGP-008の**x=-1,+1のみ**でθ=1.5,2.5を評価。切片付きfinal model適格性は必須 | 無効/弱いIV、moment・projection不一致、通常CATE・complier LATEへの無根拠変換 |
+| P2-M08 | P2-09 | DRIV／**IV_HETEROGENEOUS_EFFECT**（DRIV-A構造斜率はOwner採用、Method/Inference未検証） | conditional IV moment、Instrument/Treatment/contrast型、IV assumptions、nuisance/crossfit、IV固有inference | DGP-008の**x=-1,+1のみ**でθ=1.5,2.5を評価。切片付きfinal model適格性は必須 | 無効/弱いIV、moment・projection不一致、通常CATE・complier LATEへの無根拠変換 |
 
 **既存実証の限界:** 2026-11-01 EconML 0.17.0直接probeでは8 Methodのfit/effectが動作し、追加BootstrapでDRLearner/S/T/Xのfinite CI API取得を確認したが、Ariadne新adapter、bias、coverageは未実証。初期提供候補8手法は削減しない。［[SR-02 probe](20261101_sr02_backend_runtime_probe_results.md)／[D05](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)］
 
@@ -99,13 +101,13 @@
 | P3-M08 | P3-11 | Fuzzy RDD／cutoff局所complier効果 | cutoffでTreatment確率jump、連続性、exclusion、monotonicity、局所first-stage | cutoff近傍の既知局所Wald効果 | weak cutoff first stage、sharp RDDへの混同、P3-M09の全域Wald/ARを自動適用しない |
 | P3-M09 | P3-12 | Wald ratio／binary Z/A complier LATE | 無条件IV独立性、exclusion、monotonicity、relevance、2群support | 既知LATE；B0と標本点推定パリティ | first-stage=0/weak、invalid IV、通常比CIを弱IV頑健扱いしない |
 | P3-M10 | P3-12 | B0 just-identified 2SLS／binary Z/A complier LATE | 切片、共変量なし、単一excluded Z/内生A、I2異分散頑健AR反転 | Waldとの代数的一致とAR集合の形状/被覆 | zero/weak first stage、AR EMPTY正常扱い、finite grid切断 |
-| P3-M11 | P3-12 | B1 additive linear 2SLS／**線形IV構造係数（正式Estimand分類未決）** | pre-treatment C、単一Z/A、正しい加法線形構造・IV moment、I2 AR反転 | 線形構造係数既知のDGP、独立AR reference | C非線形・異質性でcomplier LATEへ誤変換、rank/cluster/HAC不適格 |
+| P3-M11 | P3-12 | B1 additive linear 2SLS／**B1-A加法線形IV構造係数（semantic target Owner採用）** | pre-treatment C、単一Z/A、正しい加法線形構造・IV moment、I2 AR反転 | 線形構造係数既知のDGP、独立AR reference | C非線形・異質性でcomplier LATEへ誤変換、rank/cluster/HAC不適格 |
 | P3-M12 | P3-13 | Synthetic Control／処置単位の時点別反実仮想ギャップ | 介入前fit、非汚染donor、安定な因子構造等の根拠 | latent factor＋既知介入効果 | donor汚染、pre-fit不十分、placebo順位だけを通常CI扱いしない |
 | P3-M13 | P3-14 | Synthetic DiD／panel平均介入効果 | balanced panel等、unit/time weight、実施者の割付パターン | 既知panel ATT/平均効果、unit/time weight参照 | 時間重み・単位重み混同、欠落対照・介入前support、SE方式未固定 |
 
 ### 3.2. B1と弱IV・集合の特記事項
 
-- **未決:** B1の `estimand_kind` 正式enum/field。暫定「加法線形IV構造係数」として科学対象を記録。D03が採用したB0/B1範囲を変更せず、LATE/ATE/IV_HETEROGENEOUS_EFFECTとの形式的対応は別審査。Method名=Estimandとしない。
+- **2026-11-16の決定:** B1-Aの加法線形IV構造係数`LINEAR_IV_STRUCTURAL_COEFFICIENT`という科学的意味はOwner採用済み。具体的な`estimand_kind`正式schema enum/fieldは未決。D03が採用したB0/B1範囲を変更せず、LATE/ATE/IV_HETEROGENEOUS_EFFECTとの形式的対応は別審査。Method名=Estimandとしない。
 - **採用済:** B0/B1の弱IV推論基準は独立観測＋異分散頑健漸近AR inversion（I2）、G2型付き集合：bounded/unbounded/disconnected/all-real、正常EMPTY不可。初期Confidence Setを通常finite CIへ損失変換しない。
 - **未決:** AR test statistic/covariance/critical value、端点計算法・小標本・covered truthのMonte Carlo、degenerate分岐とeffective null confidence setの参照実装。
 - **別物:** Fuzzy RDDの局所IVはcutoff付近の局所化・bias/SE構造を必要とする。B0/B1のAR保証を自動継承しない。
@@ -150,9 +152,9 @@
 
 | Priority | 未決事項 | 先行Output／受入前提 | 引渡し先 |
 |---|---|---|---|
-| BLOCKER | B1線形IV構造係数の正式Estimand分類 | B1のtarget/仮定／LATEとの互換性を明記。D03採用を無断変更しない | SR-03残余→03/04／Science Methods |
+| OWNER_RESOLVED / SCIENCE_BLOCKER | B1-A意味論はOwner採用、正式schema enum／IV・AR数値実証が未決 | B1のtarget/仮定／LATEとの互換性を明記。D03採用を無断変更しない | SR-03残余→03/04／Science Methods |
 | BLOCKER | Frontdoor数値推定のMethod適用範囲 | 線形DGP、二段階式、追加仮定、偏り、CI availabilityを独立に評価 | SR-04／P1-M07 |
-| BLOCKER | DRIV固有theta_IV(x)とmoment | T/Z型、対象集団、条件付きmoment・instrument relevance、真値fixture | SR-03残余／SR-04／P2-M08 |
+| OWNER_RESOLVED / SCIENCE_BLOCKER | DRIV-A構造斜率／W残差化momentはOwner採用、実効Backend/CI未確定 | T/Z型、対象集団、条件付きmoment・instrument relevance、真値fixture | SR-03残余／SR-04／P2-M08 |
 | BLOCKER | B0/B1 ARの具体統計量／端点参照 | just-ID AR非空・集合形状・弱IV頑健漸近条件、独立reference | SR-04／P3-M10/M11 |
 | BLOCKER | DiD/Event/RDD/ITS/SC/SDIDの初期EstimatorとInference選定 | Method別targetとbaseline参照、cluster/HAC/局所等の推論境界 | SR-09＋SR-04 |
 | MAJOR | EconML8のInferenceConfig | Backend version・最終モデルごとにpoint/CI能力とcoverage、Exploratory/Confirmatory | SR-07＋SR-04 |
