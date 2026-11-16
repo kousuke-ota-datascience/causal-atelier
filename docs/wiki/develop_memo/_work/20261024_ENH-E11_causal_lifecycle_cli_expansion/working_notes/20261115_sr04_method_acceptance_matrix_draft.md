@@ -40,7 +40,7 @@
 | P1-M03 | P1-08 | DoWhy Backdoor identification／ATE候補 | DoWhy optional、識別式・Graphとadjustmentの一致 | 既知DAGのBackdoor式をNative/referenceと照合 | 仮定不足・非適格Graph。API成功のみでScience PASSにしない |
 | P1-M04 | P1-08 | DoWhy Frontdoor identification／ATE候補 | 全A→Y経路をMが遮断、Frontdoor条件、support | 未観測A-Y交絡あり・有効Mの既知DAGと識別式 | M欠落／A-MまたはM-Yの不適切交絡。数値推定との区別 |
 | P1-M05 | P1-08 | DoWhy IV identification／**方法固有の対象は未確定** | 候補IV、独立性・exclusion・relevance等の根拠 | 有効二値Z/AのGraphでIV式 | invalid IV／弱いfirst stage／LATEへの誤変換を禁止。D03採用を自動拡張しない |
-| P1-M06 | P1-09 | FCI／PAGと等価類 | 因果Markov・faithfulness、CI test適格性、潜在交絡・sample size | 潜在交絡を含む既知DAG→期待PAG endpoints | 偽のDAG向き確定、circle/arrow/tailの消失。不適格CI test、adjacency/endpoint精度・readback |
+| P1-M06 | P1-09 | FCI／PAGと等価類 | 因果Markov・faithfulness、CI test適格性、潜在交絡・sample size | **独立に同値類を導出できるGraph motifのPAG endpoints**。DGP-011の2変数同時点Graphはlatent存在の一意識別正例としない | 偽のDAG向き確定、circle/arrow/tailの消失。不適格CI test、adjacency/endpoint精度・readback |
 
 ### 1.2. Effect Estimation（既存＋Frontdoor）
 
@@ -79,7 +79,7 @@
 | P2-M05 | P2-06 | S-Learner／CATE(x) | Treatmentを特徴量に含む1 outcome model、推論は構成別 | 定数・線形効果を再現するDGP | Treatment feature無視・強い正則化による縮小、bootstrap不適格 |
 | P2-M06 | P2-07 | T-Learner／CATE(x) | 処置armごとのoutcome model、各arm support | group別outcome既知のDGP | 極端arm imbalance、未観測領域外挿、推論不能 |
 | P2-M07 | P2-08 | X-Learner／CATE(x) | pseudo-outcome、arm-specific models、weighting | 不均衡群と既知異質性のDGP | propensity/weighting不適格、pseudo-outcome leakage、被覆不足 |
-| P2-M08 | P2-09 | DRIV／**IV_HETEROGENEOUS_EFFECT**（固有のtheta_IV(x)未定） | conditional IV moment、Instrument/Treatment/contrast型、IV assumptions、nuisance/crossfit、IV固有inference | 連続T/Zの採用する構造momentと既知theta_IV(x) | 無効/弱いIV、moment不一致、通常CATE・complier LATEへの無根拠変換 |
+| P2-M08 | P2-09 | DRIV／**IV_HETEROGENEOUS_EFFECT**（formal conditional-IV theta未承認） | conditional IV moment、Instrument/Treatment/contrast型、IV assumptions、nuisance/crossfit、IV固有inference | DGP-008の**x=-1,+1のみ**でθ=1.5,2.5を評価。切片付きfinal model適格性は必須 | 無効/弱いIV、moment・projection不一致、通常CATE・complier LATEへの無根拠変換 |
 
 **既存実証の限界:** 2026-11-01 EconML 0.17.0直接probeでは8 Methodのfit/effectが動作し、追加BootstrapでDRLearner/S/T/Xのfinite CI API取得を確認したが、Ariadne新adapter、bias、coverageは未実証。初期提供候補8手法は削減しない。［[SR-02 probe](20261101_sr02_backend_runtime_probe_results.md)／[D05](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)］
 
@@ -164,6 +164,13 @@
 | MAJOR | 68行→Method/横断/後続→Gateの完全照合 | 5% samplingではなく全68行のscope disposition確認 | SR-12／05 |
 
 **SR-04計画Draftの完了:** 全対象を行ID付きで列挙し、対象・成功・負例・主要指標・未決を表現したこと。**SR-04 blocker解消の条件:** Method固有Estimand/Design/推論/Science acceptance、計算可能なfixture/reference、負例、数値判定Rule、依存version、責任と追跡の正式な確定。**Gate07 Science PASSはfreezeされた契約の実行・独立再検証後のみ。**
+
+### 6.1. 統合レビューによる科学的適用境界の修正（2026-11-16）
+
+- P1-M06のFCIは、潜在交絡を含む生成SCMそのものをPAGの完全向きOracleとはしない。2観測変数だけのDGP-011をlatent有無の識別成功Fixtureとして要求することは不適切である。多変数Graphで独立同値類を証明してからorientation Accuracyを定義する。
+- P2-M08のDGP-008で利用可能なXは{-1,+1}だけであり、非IV CATE用の3点評価格子を転用禁止。条件付きIV斜率を表現できるfinal modelのintercept/weights/projectionを事前指定する。
+- P3-M09のWald単独Methodには、B0/B1のG2-AR信頼集合を自動必須化しない。逆にP3-M10/M11ではAR集合とCoverageを必須検証候補として保持する。
+- 以上は科学的に不適切な**検証条件の是正**であり、Method契約・Backend/Owner/Science PASSの承認ではない。
 
 ## 7. 参照した一次資料・公式仕様（要点）
 
