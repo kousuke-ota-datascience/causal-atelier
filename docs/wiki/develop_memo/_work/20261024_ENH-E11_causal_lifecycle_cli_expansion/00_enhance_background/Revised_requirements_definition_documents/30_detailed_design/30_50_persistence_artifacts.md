@@ -76,19 +76,7 @@ retryでduplicate artifactを生成しない。Artifactのcontent identity / lin
 
 **E11 gap:** Local staging, atomic set commit, relative path sanitation and private CATE export constraints require separate reviewed design; existing Port alone does not guarantee these.
 
+**当該構成要素の詳細設計制約（関連Requirement）**
 
-## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
-
-**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
-
-### 98.1. NFR-007（SPLIT）
-
-- 移管する原条項の具体内容：Metadata transactionとArtifact writeのcross-store failure compensationを定義する
-- 上位Requirementと整合する要求核：成果物と管理情報の不整合が発生した場合、安全に回復・検知できる
-- `NFR-007`；Status=`DEFERRED`；Implementation=`PARTIAL`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
-
-### 98.2. NFR-020a（SPLIT）
-
-- 移管する原条項の具体内容：Artifact storageを`ArtifactStore` Port abstraction越しに利用する
-- 上位Requirementと整合する要求核：成果物保存先を交換しても分析の振る舞いが維持される
-- `NFR-020a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+- **`NFR-007`（将来拡張・現行提供対象外）**：Metadata transactionとArtifact writeのcross-store failure compensationを定義する
+- **`NFR-020a`**：Artifact storageを`ArtifactStore` Port abstraction越しに利用する

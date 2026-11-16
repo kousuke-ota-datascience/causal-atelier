@@ -48,13 +48,6 @@ browser Navigation Stageはscientific reproducibility inputではない。
 
 ---
 
+**当該構成要素の詳細設計制約（関連Requirement）**
 
-## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
-
-**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
-
-### 98.1. NFR-003（SPLIT）
-
-- 移管する原条項の具体内容：Canonical JSONとhash生成はfield順やprocessに依存しない
-- 上位Requirementと整合する要求核：同一内容から環境に依存しない同一性識別値を生成できる
-- `NFR-003`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+- **`NFR-003`**：Canonical JSONとhash生成はfield順やprocessに依存しない

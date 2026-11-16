@@ -23,25 +23,8 @@
 
 **Negative:** E11 typed AR or revised GraphResult must not be shoehorned into v2 manifest without an explicitly versioned reader/writer and regression tests.
 
+**当該構成要素の詳細設計制約（関連Requirement）**
 
-## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
-
-**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
-
-### 98.1. FR-120b（SPLIT）
-
-- 移管する原条項の具体内容：canonical schema exampleとOpenAPI/exampleをsystematically同期・検証する
-- 上位Requirementと整合する要求核：API仕様と公開する入出力例との整合性を検証できる
-- `FR-120b`；Status=`DEFERRED`；Implementation=`PARTIAL`；[逐条Disposition](../95_rd04_fr_application_review.md)
-
-### 98.2. NFR-005（SPLIT）
-
-- 移管する原条項の具体内容：新Analysis Familyを既存Executor変更なしにRegistry追加できる
-- 上位Requirementと整合する要求核：新しい分析領域を既存分析の挙動を壊さず追加できる
-- `NFR-005`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
-
-### 98.3. NFR-010b（SPLIT）
-
-- 移管する原条項の具体内容：Worker restart後の明示的resume/recovery semanticsを定義する
-- 上位Requirementと整合する要求核：実行基盤の再起動後に処理状態を復元・回復できる
-- `NFR-010b`；Status=`DEFERRED`；Implementation=`PARTIAL`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+- **`FR-120b`（将来拡張・現行提供対象外）**：canonical schema exampleとOpenAPI/exampleをsystematically同期・検証する
+- **`NFR-005`**：新Analysis Familyを既存Executor変更なしにRegistry追加できる
+- **`NFR-010b`（将来拡張・現行提供対象外）**：Worker restart後の明示的resume/recovery semanticsを定義する

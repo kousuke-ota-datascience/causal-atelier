@@ -110,19 +110,7 @@ Model Management remains read-only and renders persisted model/provider/artifact
 
 ---
 
+**当該構成要素の詳細設計制約（関連Requirement）**
 
-## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
-
-**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
-
-### 98.1. FR-068（SPLIT）
-
-- 移管する原条項の具体内容：fitted model、fitted preprocessor、prediction等のdurable outputをArtifactとして保存し、provider-specific fitted modelはartifact schema/provider/payload identityから対応loaderを一意に解決してfresh-process相当で再読込・predictionできる
-- 上位Requirementと整合する要求核：学習済みモデルと前処理を保存し、適合する環境で復元して再予測できる
-- `FR-068`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-180（SPLIT）
-
-- 移管する原条項の具体内容：fitted modelはserialize/load round-trip後もmodel/task/feature/preprocessor identityを保持し、同一runtime/config fixtureでprediction contractを満たす
-- 上位Requirementと整合する要求核：保存済み学習モデルを復元し、適合条件下で同等の予測を再実行できる
-- `FR-180`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+- **`FR-068`**：fitted model、fitted preprocessor、prediction等のdurable outputをArtifactとして保存し、provider-specific fitted modelはartifact schema/provider/payload identityから対応loaderを一意に解決してfresh-process相当で再読込・predictionできる
+- **`FR-180`**：fitted modelはserialize/load round-trip後もmodel/task/feature/preprocessor identityを保持し、同一runtime/config fixtureでprediction contractを満たす
