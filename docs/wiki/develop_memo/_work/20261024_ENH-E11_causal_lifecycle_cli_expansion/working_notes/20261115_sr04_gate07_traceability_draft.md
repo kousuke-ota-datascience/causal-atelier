@@ -10,6 +10,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwner個別採用:** [準実験7手法のEstimator／Inference判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。初期Method基準と条件付き推論方針のみ決定。P3-M12 SCMは初期defaultを探索的点推定に限定しPlacebo順位を95%CIと認定しない。他6手法のCIも実効Method/cluster/coverageの認証前は未承認。**正式FR/ADR/Schema/Gate、Science Benchmarkは未実施。**
 
+> **DEC-SR04-06（2026-11-16）はOwner採否保留:** [NCE/NCO/OLS partial R²・RV採否の独立提案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)を策定。P1-M18/19/20は**既存Draftの科学的Method候補**のまま。推奨DEC06-A（1〜5すべてA）は未承認。既存Method行の`BLOCKED / NOT_GENERATED`を変更せず、正式採用・Science PASS・G07 Evidenceは未実施。
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -148,11 +150,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `f08b7d506f5aebc4b86e64942b2627e41106bd23` |
-| fixture | `34500badbfc8db6c6ac5299a15e83b2dc187bf8d` |
-| quant | `cbe256e8580c25e7b64d319c94773a78106f0687` |
-| ref | `5ef74cc8693862c818a79a385824310859f68efd` |
-| env | `2e669bddda37c9e7542fb9ac1c9cf3150b339c1c` |
+| matrix | `5ec1172743d63b53359610e45fb121b618fbb659` |
+| fixture | `873bf8802c314ae346c9eb5afecf17208488d844` |
+| quant | `36fa1ed6dca3c4634c577668d7f7bbad229af420` |
+| ref | `675c3fc9f2a77475d3157d8217aca79cd7b85898` |
+| env | `f1acd431671bad17addef4fd4ba738444ccc601d` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
