@@ -239,3 +239,7 @@
 ---
 
 **本書をOwnerの概念・Scope/Requirement/Architecture policy・Gate plan承認記録とする。** `FR/NFR/AR正式発行・ADR Schema Freeze・Gate06/07 Freeze/Pass・Coding/Legal/Science`の各最終承認とは別。人が実際に受入証拠を審査しない限り、Evidence statusや既存Requirement statusを変更しない。
+
+## 用語整合注記（2026-11-17、編集上の補足・採用済みOwner判断は変更しない）
+
+本書のG01〜G10は暫定的Plan Stage/Workstream名として承認された。Enhancement WorkflowでGateはsemantic Acceptance Contractだけを指す。各Gateの06はCoding Contract、07はIndependent Verification Contract、999はFinal Decision。過去の「Gate06 Implementation readiness／Gate07 Scientific acceptance」という全体工程の呼称は現行Workflowの語彙と衝突するため、別種の正式Gateとして使わず、その実質的なArchitecture・科学・環境・法務の要求をPREP-01/02と正式な各Gateの06/07・独立検証へ配分して追跡する。Ownerが採用した要求の削除や既存Science PASSの認定ではない。

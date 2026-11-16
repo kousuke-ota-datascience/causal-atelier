@@ -211,3 +211,10 @@
 ## 9. 2026-11-17 横断再監査の追加Finding
 
 DOC-01 Owner承認／IF-01・DD-01設計案採用の後、[横断監査](combined_review/92_20261117_document_architecture_audit.md)でRoot 90〜98番台8件のFlow混在、23/30章番号の非単調・重複、23系API契約粒度、30系のOwner採用7区分Classテンプレート不適合を確認した。**文書構造・Class仕様の修正が必要**。設計方針の承認を無断撤回するものではないが、文書品質・Source一致・Schema FreezeのPASSを意味しない。Stock文書自体は本監査で未改訂。
+
+## 10. PREP-01/02開始時のSource照合と用語規則（2026-11-17）
+
+- [PREP-01/02 実行記録](../../working_notes/20261117_prep01_prep02_execution_evidence.md) はFlowであり、Stock契約の代替ではない。
+- ENH-E11の対象は、承認済み68 Scope・41 Method・10 UCと改訂要件・設計全体である。初回Coding時点で全Methodの科学実測PASSを要求しないことと、全対象の品質是正義務を捨てることは別。
+- Enhancement WorkflowでGateはsemantic Acceptance Contractの一義のみを持つ。G01〜G10は暫定計画Stageであり、正式なGateは受入境界と06/07 Contractで定義する。06は各GateのCoding Contract、07は各GateのIndependent Verification Contract、999は各GateのDecision。DEC09の「Gate06/07」を全体の工程として使う旧称は現在の標準語彙とは不整合で、独立のGate階層として再利用しない。Ownerが採用したScience・Environment・法務の受入条件は保持する。
+- 工程ごとのStatusは[Notion control plane](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)に集約し、Source・Reviewの証拠はGitHubに保存する。

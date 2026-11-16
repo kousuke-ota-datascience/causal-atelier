@@ -180,3 +180,16 @@ class DiagnosticPort(Protocol):
 5. 最後にApplication／Publisherとfault/privacy/Manifest readbackを統合する。
 
 参照：[IF-01 Local CLI/Ports](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[IF-01 Manifest](../23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)、[Existing Product Port](30_50_persistence_artifacts.md)。
+## 10. 既存実装とのPort/Manifest静的照合（PREP-02）
+
+固定Source観測ベースライン：af9cb0c51bb6faa55fd4e6fd170e547b5e6dd798。以下はSourceの署名と型の静的確認であり、Backend/Runtime/Science PASSではない。
+
+| Existing Component | Blob SHA / 観測Interface | Proposed E11との差分・対応 |
+| --- | --- | --- |
+| src/ariadne/product/ports/scientific_core.py | ccf89d307d626e7b4c82fe3f919230bb781d7f6a；ScientificCorePortの5 run_*メソッド、Product ScientificStatusのResultDescriptor | AR集合・部分識別等のtyped科学結果を旧Resultへ無断投影しない。新Portか明示bridgeを設計 |
+| src/ariadne/interfaces/cli/manifest.py | 97216eca9d777e97f7a5ebd4e248afd31c6b4de0；CliManifestのsnapshot_schema_version既定はcausal-analysis-spec/2 | E11 Local新Versionへ暗黙変換禁止。明示dispatchとroundtrip／負例 |
+| src/ariadne/product/ports/artifact_store.py | e5bb990f9b69ef68df46a1559560ffb67b64caaf；store / retrieve / exists / delete | multi-file Atomic Publishを保証しない。新Local Publisherとcommit-marker、readbackが必要 |
+| src/ariadne/product/domain/graph_version.py | 37ff76e001c8e269a00127e18d375f1dbc34c0e3；project-scoped GraphVersion | PAG circle endpoint、temporal lag、partial identificationを同一視しない |
+| src/ariadne/interfaces/cli/scientific_stage.py | 0467a56ceb0e95bd8e4e6a99b844d5f56c7f75c3；Product analysis_spec、ScientificCorePortをimport | Product／Localのauthorityを分離。旧v2 regression保護 |
+
+**未閉鎖:** Sourceに存在しないE11 Proposed Portの署名・Schema Version・typed statusの最終Freeze、security/atomic負例、独立Architecture Review。既存Classをこの静的一覧だけでOwnerの7区分完成と認定しない。

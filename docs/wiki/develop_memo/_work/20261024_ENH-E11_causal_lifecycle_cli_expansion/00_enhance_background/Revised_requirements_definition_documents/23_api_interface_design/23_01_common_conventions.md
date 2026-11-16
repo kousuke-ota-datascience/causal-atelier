@@ -99,3 +99,23 @@ Analytical Navigation Metadataのcanonical endpoint、schema、catalog authority
 
 - **`FR-120a`**：runtime API schemaから生成されるFastAPI OpenAPIをcurrent API contractとして提供する
 - **`FR-120b`（将来拡張・現行提供対象外）**：canonical schema exampleとOpenAPI/exampleをsystematically同期・検証する
+
+## 10. API Operation契約の最低記述粒度（PREP-01 共通規約）
+
+23_10〜23_19の各HTTP Operationについて、以下の9欄を記録する。これは**記述規範**であり、現行Source未確認のAPI挙動を確定するものではない。
+
+| 欄 | 必須記載内容 |
+| --- | --- |
+| Identity | HTTP Method、Path、Operation、Source blob SHA、CURRENT / PROPOSED |
+| Request | Path / Query / Body、型、必須性、制約 |
+| Success | HTTP Status、Response DTO / Schema、Version |
+| Authorization | 認証、ProjectMembership Role、Project Scope |
+| State | Lifecycle前提、更新先、Side effect |
+| Error | Validation / Domain / Permission / Missing / ConflictのStatus |
+| Idempotency | 再送・Retry・no-clobber規則 |
+| Compatibility | Legacy v2、Port、Clientへの影響 |
+| Evidence | FR/NFR/AR、Contract / Negative Test、Owner approval |
+
+各欄には DEFINED（Sourceまたは承認規範で確定）／INHERITED（共通規範への特定参照）／N_A（理由付き非適用）／NOT_SPECIFIED（未確定）を付す。空欄や例示JSONを完全なSchemaとみなさない。Sourceで確認できないResponse/Errorを推測しない。
+
+この共通規約の追記**だけでは**Operation別Coverageが完了したことにならない。個別23_10〜19と現行Router/DTOのSource突合、負例、レビューは未完として追跡する。
