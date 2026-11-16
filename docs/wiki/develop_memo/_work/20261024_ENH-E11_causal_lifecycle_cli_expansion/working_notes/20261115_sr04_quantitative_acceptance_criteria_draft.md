@@ -3,7 +3,7 @@
 **文書区分:** working_notes／科学的定量Acceptance案。正式なScope・FR/NFR/AR・Architecture Decision・Gate06/07・Work Package・Coding許可ではない。  
 **策定日:** 2026-11-15 JST。  
 **対象branch:** prototype/ariadne_mvp。**本書の方法論的な設計方針はDEC-SR04-07-1〜7でOwner個別採用済み**。ただし各ACの数値閾値は**適格なMethod×DGP×n/T×InferenceごとのHard適用、K/R/Costの計画を凍結するまで候補**であり、Method-specific数値受入・Science PASSではない。  
-**状態:** QUANTITATIVE_AC_DRAFT / DEC07_POLICY_OWNER_ACCEPTED / METHOD_COVERAGE_41_OF_41 / NEGATIVE_COVERAGE_28_OF_28 / CROSS_CONTRACT_9_OF_9 / METHOD_CONFIG_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL。  
+**状態:** QUANTITATIVE_AC_DRAFT / DEC07_POLICY_OWNER_ACCEPTED / METHOD_COVERAGE_41_OF_41 / NEGATIVE_COVERAGE_28_OF_28 / CROSS_CONTRACT_9_OF_9 / METHOD_CONFIG_PENDING / SCIENCE_NOT_RUN / CONCEPT_SCOPE_OWNER_APPROVED / FORMAL_GATE_PENDING。  
 **直接の先行資料:** [Method Acceptance Matrix](20261115_sr04_method_acceptance_matrix_draft.md)、[Scientific Fixture Catalog](20261115_sr04_scientific_fixture_catalog_draft.md)、[Reference Specification](20261115_sr04_reference_specification_draft.md)、[Owner判断記録02](../00_enhance_background/02_enhancement_concept_approval_record.md)、[D03 AR/G2](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、[D05 CATE/DRIV](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)、[D06 Graph uncertainty](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)。  
 **Coverage計画:** Phase1 20件、Phase2 8件、Phase3 13件、横断9件。68 Scope行全体の承認・Traceability完了と同義ではない。
 
@@ -16,6 +16,8 @@
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 > **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。R6000はMCSE 0.002813657の出発候補に過ぎない。Gate-wide K=1024の説明例で真のfailure=.005・R6000のWilson上限は約.01000657、failure Hard Gate（<=.01）を満たさない。RとK、Pass確率・実効CPU費用を同時審査。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
+
+> **DEC-SR04-09（2026-11-16）統合Owner承認追補:** [68 Scope／Requirements／Architecture／Gate計画の独立統合判断](20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)・[02 Owner第26項](../00_enhance_background/02_enhancement_concept_approval_record.md)により**全体構想・68 ScopeのDisposition／E11-REQ意味差分／基本ArchitectureとGate計画のOwner承認が完了**。本書は今も**Method固有の独立科学的検証に関するDraft**であり、Backend/API・具体Schema、DGP/Reference code、45 ACのHard適用とK/R/Resource、Formal FR/ADR/Gate06/07／T3 Science・Codingは**未Freeze／未実施**。本記録の過去段落に残る`PENDING_FULL_CONCEPT_APPROVAL`は文書策定時の履歴であり、DEC09以後のOwner Scope採否には適用しない。
 
 ## 0. 目的、判断階層、禁止事項
 
