@@ -3,6 +3,8 @@
 
 ---
 
+## 14. Causal Capability / Stage Contents
+
 ### 14.4 Identification
 
 目的は、causal question / estimandについて識別可能性とdata eligibilityを明示することである。
