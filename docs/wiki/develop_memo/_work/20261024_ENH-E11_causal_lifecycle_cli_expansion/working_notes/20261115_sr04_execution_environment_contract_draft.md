@@ -14,6 +14,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05の設計基準を個別採用。ENV-BASEの計算backendに加え、Sharp/Fuzzy RDはPython rdrobustのoptional候補（未pin/未lock/未API probe）、ITSはHAC候補、SCMはconstrained optimization、SDIDは独立unit/time weightsと毎Bootstrap再最適化が必要。SI顧客納入License/Dependency/Compute/Science Evidenceは未承認。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
+> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。初期候補3MethodはENV-BASE、明示opt-in・研究Design/null・古典OLS係数/SE/df・backend/seed provenanceを要求するが、Method追加・lock変更は未承認・未実行。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
