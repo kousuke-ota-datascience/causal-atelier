@@ -108,4 +108,3 @@ Compatibility / transition用の`FamilyExecution / FamilyStageExecution / Family
 - **E11境界:** E11 local fileは既存Project/Execution/ResultのProduct DB正本ではない。Graph generating DAG/latent MAG/CPDAG/PAG/Temporal、およびconfidence setの構造を型別に保存する。
 - **照合:** RDのEstimand識別・状態、BD owner、API contract、DD physical serializationとの1対1対応を必要とする。
 
-**E11追加草案:** [21_09_enh_e11_local_logical_model_draft.md](21_09_enh_e11_local_logical_model_draft.md)

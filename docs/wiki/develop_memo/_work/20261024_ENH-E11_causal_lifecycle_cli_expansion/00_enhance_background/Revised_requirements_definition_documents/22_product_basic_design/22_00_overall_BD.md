@@ -246,7 +246,7 @@ Product DB / Worker / Execution lifecycle           Local Scientific Domain / Id
 - Version dispatchは**旧`causal-analysis-spec/2`と新Local契約を別に扱う**。旧読取とREQUIRES_REVIEW/overrideは変更せず、E11新Methodを旧v2経由で無条件に実行しない。
 - 正確なCLI command・config version・Port/class名・Backend pin・具体enumは**IF-01/DD-01/ADRでFreeze**。ここで仮名を既成事実化しない。
 
-本節はLocal Causal解析機能の**現行予定設計**として継続的に保持する。過去の個別Owner承認・Gateway審議は基本設計書ではなく[`bd01_review/`](../bd01_review/README.md)に分離する。
+本節はLocal Causal解析機能の**現行予定設計**として継続的に保持する。
 
 ## 90. この文書種別の目的・責務・規範性
 
@@ -255,7 +255,6 @@ Product DB / Worker / Execution lifecycle           Local Scientific Domain / Id
 - **含まない:** Class個別属性/メソッド、具体JSON field・endpoint signature、統計式の真偽を設計だけで保証すること。
 - **E11境界:** Scientific Core + Local CLI + Local persistent artifactsに限定。既存Web/API/Worker/DB/migrationへの新手法統合はD。G01〜G10は暫定実装Workstreamで、受入プロセスGate06/07とは別。
 
-**E11旧草案（履歴）:** [_drafts/enh_e11_causal_cli_basic_design_draft.md](_drafts/enh_e11_causal_cli_basic_design_draft.md)。正式な基本設計内容は22_20〜23に展開。
 
 **当該機能に適用する設計制約（関連Requirement）**
 

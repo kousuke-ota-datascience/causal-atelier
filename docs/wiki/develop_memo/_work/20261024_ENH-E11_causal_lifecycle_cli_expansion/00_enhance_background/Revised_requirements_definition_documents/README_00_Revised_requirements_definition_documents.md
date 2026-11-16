@@ -72,7 +72,7 @@
 - [22_14_failure_model.md](22_product_basic_design/22_14_failure_model.md)
 - [22_15_schema_dependency.md](22_product_basic_design/22_15_schema_dependency.md)
 - [22_16_test_architecture.md](22_product_basic_design/22_16_test_architecture.md)
-- [22_17_stage_contents_e8_effective.md](22_product_basic_design/22_17_stage_contents_e8_effective.md)
+- [22_17_stage_contents.md](22_product_basic_design/22_17_stage_contents.md)
 - [22_99_change_log.md](22_product_basic_design/22_99_change_log.md)
 
 ### 23_api_interface_design
@@ -139,12 +139,12 @@
 ## 3. Draft / Review material (not approved physical design)
 
 - [BD-01 エンハンス固有のArchive/Reviews/Trace](bd01_review/README.md) — 正本候補22系と切り離して保管。
-- [RD publication prior draft](10_requirements_definition/_drafts/enh_e11_formal_requirement_publication_draft.md)
-- [LDD E11 local model draft](21_logical_data_design/_drafts/enh_e11_local_logical_model_draft.md)
-- [BD E11 local architecture draft](22_product_basic_design/_drafts/enh_e11_causal_cli_basic_design_draft.md)
-- [IF E11 local CLI/Port draft](23_api_interface_design/_drafts/enh_e11_cli_and_port_interface_draft.md)
-- [DD proposed classes](30_detailed_design/_drafts/enh_e11_proposed_physical_class_design.md)
-- [DD physical design gap register](30_detailed_design/_review/physical_design_gap_register.md)
+- [RD publication prior draft](doc01_review/prior_drafts/10_requirements_definition/enh_e11_formal_requirement_publication_draft.md)
+- [LDD E11 local model draft](doc01_review/prior_drafts/21_logical_data_design/enh_e11_local_logical_model_draft.md)
+- [BD E11 local architecture draft](doc01_review/prior_drafts/22_product_basic_design/enh_e11_causal_cli_basic_design_draft.md)
+- [IF E11 local CLI/Port draft](doc01_review/prior_drafts/23_api_interface_design/enh_e11_cli_and_port_interface_draft.md)
+- [DD proposed classes](doc01_review/prior_drafts/30_detailed_design/enh_e11_proposed_physical_class_design.md)
+- [DD physical design gap register](doc01_review/reviews/physical_design_gap_register.md)
 
 ## 4. Audit reports
 
@@ -184,4 +184,4 @@
 - [BD-01整理方針・歴史的設計断片](bd01_review/README.md)に、旧22_20〜23設計断片と22_90〜91レビューの移動先・原Blobを記録する。これら6件は常設22系には置かない。
 - **本工程は独立Architecture Review PASS、Port/Schema Freeze、Science/Legal Gate、Coding許可を意味しない。** 元正本はENH-E11全件テストPASS後にのみ昇格する。
 
-> **未了の正本化整理:** 22系の既存§98（RD-04逐条移管記録）などのフロー型記述は、設計内容の維持を確認してから別途分離する。[BD-01移管記録](bd01_review/README.md)参照。
+> **DOC-01文書分類:** 10／21／22／23／30系のRD-04移管記録は[doc01_review/](doc01_review/README.md)へ隔離し、設計制約は責務別仕様へ保持。各群のStock適合性とリンク検証はDOC-01監査台帳を参照。

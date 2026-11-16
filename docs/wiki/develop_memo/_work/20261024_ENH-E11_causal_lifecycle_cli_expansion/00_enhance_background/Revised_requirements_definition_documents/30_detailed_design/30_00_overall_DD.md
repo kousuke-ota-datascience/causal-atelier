@@ -151,8 +151,7 @@ architecture testで依存方向を検査可能にする。
 
 **設計書の作成単位:** 共通の実行基盤はoverallで境界だけ宣言し、具体class群は同じ責務と依存方向を共有するpackage/module単位で分割する。手法固有の統計式は上位のScientific Contractを参照し、DDには呼出しと数値処理の詳細を書く。
 
-**制約:** 現行物理コードから確認したclassはsource準拠として記載し、新E11実装前の候補classは`PROPOSED / ADR_REVIEW_REQUIRED`と区別する。既存30_01〜30_09は原文構造分割であり、全classの物理記述完了を意味しない。
+**制約:** 現行物理コードから確認したclassはsource準拠として記載し、新E11実装前の候補classは`PROPOSED / ADR_REVIEW_REQUIRED`と区別する。既存Classの記述が存在しても、全Classの物理仕様が完了したことを意味しない。
 
 - [30_20_planning_validation.md](30_20_planning_validation.md)
-- [_drafts/enh_e11_proposed_physical_class_design.md](_drafts/enh_e11_proposed_physical_class_design.md)
-- [_review/physical_design_gap_register.md](_review/physical_design_gap_register.md)
+

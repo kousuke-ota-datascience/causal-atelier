@@ -78,4 +78,3 @@ Ariadne Interface Contracts
 - **含まない:** Application内部のclass layout、DB storage実装、推定器の統計手順。
 - **E11境界:** 追加はlocal CLIとScientific Port/Artifact Interfaceのみ。既存`/api/v1`に新E11 endpointを追加しない。旧v2 spec/read-backを暗黙更新しない。
 
-**E11追加草案:** [23_09_enh_e11_cli_and_port_interface_draft.md](23_09_enh_e11_cli_and_port_interface_draft.md)
