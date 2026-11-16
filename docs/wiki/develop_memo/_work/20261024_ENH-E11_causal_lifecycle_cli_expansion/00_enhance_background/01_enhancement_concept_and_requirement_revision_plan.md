@@ -312,7 +312,7 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 ### 5.3. 後続送りと既存Foundation Gapの取り扱い
 
 - **D（今回提供しない）:** 旧Phase文書の新規Web UI/API/Worker/DB、Product migration/RBAC統合、Phase4 Policy Evaluation／Monitoring／Mediation、RPCMCI/J-PCMCI+、上位A0にのみ挙がるATC・matching/g-computation・汎用Graph perturbation等の独立方式。
-- **要審査の提案:** A0とPhase実装指示の強度差があるNegative ControlとUnobserved-confounding Sensitivityについては、Phase1に最小限の**実行可能な科学的方式（N）**を提案する。具体的なmethod、前提と結果の意味は03/04改定案・Architecture Reviewで審査する。上位A0の全方式を無条件採用するものではない。
+- **DEC06・DEC09で採否済み:** A0とPhase指示の強度差があるNegative ControlとUnobserved-confounding Sensitivityは、Phase1にObserved NCE/NCOと古典OLS partial R²／point RV（q=1）の最小NをOwnerが承認。広範A0方式はD。科学的適格性・Null/CI/Coverage・具体Schema/Backendの検証は未実施。
 - **既存Gap-C01/C02/C04:** Product探索再利用warning、canonical DB lineage、Navigation Capability所有権はCLI-onlyのコード作業対象外の案とする。要件は**未解消のまま**であり、#14を窓口として別Enhancementの担当・Issue・閉鎖条件を承認時に決める。
 - **既存Gap-C03:** 新CLIに実効Library versionとseed/split・環境provenanceを独立した受入契約として課す。これで既存Product StageAttempt／Executionの`PARTIAL`を閉鎖したことにはならない。
 
@@ -325,7 +325,7 @@ ENH-E7/E8はProject・Navigation・Scientific Stageの責務分離を、E9は適
 ## 6. 要件改定の見込み
 
 - 既存FR-035〜050・FR-153〜156の実装済み契約は維持する。**FR-051・FR-054等の現行PARTIAL/NOT_IMPLEMENTEDを、新Capabilityの追加だけで解消としない**。詳細は00_01・00_02に委ねる。スコープ案は00_04を参照する。
-- FCI/DoWhy、CATE/HTE、Temporal/Quasi-experimental Design、追加Refutation/Sensitivity（Negative Control・未観測交絡の最小方式は要審査）、Local CLI artifactを独立した意味の新FRにする。各手法に適格性、識別・推定対象、科学的負結果、provenanceを定義する。
+- FCI/DoWhy、CATE/HTE、Temporal/Quasi-experimental Design、追加Refutation/Sensitivity（DEC06で最小MethodのOwner採否は完了、数値受入は未実施）、Local CLI artifactを独立した意味の新FRにする。各手法に適格性、識別・推定対象、科学的負結果、provenanceを定義する。
 - FR-086a/087b、NFR-001b/002/025/028等の既存再現性・追跡・依存分離要件を新手法へ適用する一方、既存Productへの適用とlocal CLIへの適用を区別する。
 - 現行要件§11の未承認DoWhy/EconML除外規定は、正式採用に必要な範囲だけ承認を得て改定する。Tigramiteその他も同じ採否判断をする。
 - 新FR/NFR/ARの正式採番は承認後に実施する。`03_requirements_revision.md`は現時点で**semantic deltaの案**であり、正本更新済みではない。
