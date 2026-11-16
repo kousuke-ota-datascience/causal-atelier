@@ -97,19 +97,7 @@ Navigation metadata等のpresentation-only responseはpersistent Domain Resource
 
 Analytical Navigation Metadataのcanonical endpoint、schema、catalog authorityは`5.10.2 Analytical Navigation Metadata`および`5.10.3 Catalog source of truth`で定義する。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-120a（SPLIT）
-
-- 旧要件に含まれるIF固有情報：runtime API schemaから生成されるFastAPI OpenAPIをcurrent API contractとして提供する
-- RDの要求核／Legacy Trace：APIの機械可読な仕様を提供し実際の動作と一致させる
-- `FR-120a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-120b（SPLIT）
-
-- 旧要件に含まれるIF固有情報：canonical schema exampleとOpenAPI/exampleをsystematically同期・検証する
-- RDの要求核／Legacy Trace：API仕様と公開する入出力例との整合性を検証できる
-- `FR-120b`；Status=`DEFERRED`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-120a`**：runtime API schemaから生成されるFastAPI OpenAPIをcurrent API contractとして提供する
+- **`FR-120b`（将来拡張・現行提供対象外）**：canonical schema exampleとOpenAPI/exampleをsystematically同期・検証する

@@ -90,91 +90,19 @@ IDLE / LOADING / READY / EMPTY / PARTIAL / ERROR / CANCELLED
 
 このvocabularyはbrowser/presentation stateであり、Execution / StageExecution lifecycle enumの代替ではない。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-175（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Data Qualityはdedicated backend operationを新設せずread-only availabilityとして扱い、Comparisonの`TIME_TREND`は既存grouping/aggregation semanticsを維持し、Findingsの`CHART`は既存persistent operation/result/artifact semanticsを維持する
-- RDの要求核／Legacy Trace：探索のデータ品質・時間推移・Findingを既存意味で利用できる
-- `FR-175`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-150（SPLIT）
-
-- 旧要件に含まれるIF固有情報：既存Predictive UIの設定項目、validation、generated `predictive-analysis-spec/1` semanticsを全量保持する
-- RDの要求核／Legacy Trace：既存の予測機能・入力検証・保存済み仕様の意味を維持する
-- `FR-150`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-107（SPLIT）
-
-- 旧要件に含まれるIF固有情報：操作可否をBackend authoritative state/authorizationから導出し、`allowed / reason_code / message`としてpresentationへ返す
-- RDの要求核／Legacy Trace：操作の可否と不可理由を一貫した権限・状態に基づいて表示できる
-- `FR-107`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-108（SPLIT）
-
-- 旧要件に含まれるIF固有情報：AnalysisSpecification、Execution、Result、GraphVersionへFamily/Navigation Stage contextを保持したdeep routeで直接遷移できる
-- RDの要求核／Legacy Trace：分析仕様・実行・結果・Graphへ文脈を保持して直接移動できる
-- `FR-108`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.5. FR-130（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Current Familyをactive stateとcanonical route `/projects/{project_id}/analysis/{family_slug}/{stage_slug}`の双方で一意に識別できる
-- RDの要求核／Legacy Trace：現在の分析Familyと画面位置を識別・復元できる
-- `FR-130`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.6. FR-133（MOVE_BD）
-
-- 旧要件に含まれるIF固有情報：FamilyごとにCapability-owned immutable descriptorでStage ID、slug、label、order、default Stageを独立定義する
-- RDの要求核／Legacy Trace：【設計制約移管・Legacy Trace】FR-131の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- `FR-133`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.7. FR-136（SPLIT）
-
-- 旧要件に含まれるIF固有情報：canonical URL `/projects/{project_id}/analysis/{family_slug}/{stage_slug}`からProject、Family、Navigation Stageを復元できる
-- RDの要求核／Legacy Trace：分析ページのURLから対象Project・Family・画面位置を復元できる
-- `FR-136`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.8. FR-144（MOVE_BD）
-
-- 旧要件に含まれるIF固有情報：concrete Navigation Stage catalogは各Family-specific Capabilityが所有し、application/interface aggregatorがread-only metadataとして集約する
-- RDの要求核／Legacy Trace：【設計制約移管・Legacy Trace】FR-131の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- `FR-144`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.9. FR-159（SPLIT）
-
-- 旧要件に含まれるIF固有情報：supported legacy analytical entryはFamily Capability catalogで解決したcanonical Analysis routeへ一方向normalizeし、parallel navigation authorityとして維持しない
-- RDの要求核／Legacy Trace：旧分析画面から正規の分析画面へ一意に遷移できる
-- `FR-159`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.10. FR-163（SPLIT）
-
-- 旧要件に含まれるIF固有情報：`/projects`をProject Listのcanonical surfaceとする
-- RDの要求核／Legacy Trace：Project一覧へ一意の正規画面からアクセスできる
-- `FR-163`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.11. FR-164（SPLIT）
-
-- 旧要件に含まれるIF固有情報：`/projects/new`をProject Registerのcanonical surfaceとし、作成成功後は`/projects/{new_project_id}/overview`へ遷移する
-- RDの要求核／Legacy Trace：Project作成後に対象Projectの概要画面へ遷移できる
-- `FR-164`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.12. FR-165（SPLIT）
-
-- 旧要件に含まれるIF固有情報：`/projects/{project_id}/overview`をselected Projectのdefault canonical surfaceとし、`/projects/{project_id}`はhistory-replaceでoverviewへnormalizeする
-- RDの要求核／Legacy Trace：対象Projectの標準表示画面を一意に復元できる
-- `FR-165`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.13. FR-171（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Current Projectはcanonical Analysis URLの`project_id`をauthorityとしAnalysis Workspace内ではread-onlyとする。Project変更はProject Management経由で行う
-- RDの要求核／Legacy Trace：分析画面で選択Projectを確認でき、Project変更は管理機能で実施できる
-- `FR-171`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.14. AR-024（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Causal Effectsは推定されたeffectの閲覧・利用を扱い、estimator configurationと混在させない
-- RDの要求核／Legacy Trace：因果効果の結果閲覧・利用と推定器の設定操作を混同せず、区別して利用できる
-- `AR-024`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-175`**：Data Qualityはdedicated backend operationを新設せずread-only availabilityとして扱い、Comparisonの`TIME_TREND`は既存grouping/aggregation semanticsを維持し、Findingsの`CHART`は既存persistent operation/result/artifact semanticsを維持する
+- **`FR-150`**：既存Predictive UIの設定項目、validation、generated `predictive-analysis-spec/1` semanticsを全量保持する
+- **`FR-107`**：操作可否をBackend authoritative state/authorizationから導出し、`allowed / reason_code / message`としてpresentationへ返す
+- **`FR-108`**：AnalysisSpecification、Execution、Result、GraphVersionへFamily/Navigation Stage contextを保持したdeep routeで直接遷移できる
+- **`FR-130`**：Current Familyをactive stateとcanonical route `/projects/{project_id}/analysis/{family_slug}/{stage_slug}`の双方で一意に識別できる
+- **`FR-133`**：FamilyごとにCapability-owned immutable descriptorでStage ID、slug、label、order、default Stageを独立定義する
+- **`FR-136`**：canonical URL `/projects/{project_id}/analysis/{family_slug}/{stage_slug}`からProject、Family、Navigation Stageを復元できる
+- **`FR-144`**：concrete Navigation Stage catalogは各Family-specific Capabilityが所有し、application/interface aggregatorがread-only metadataとして集約する
+- **`FR-159`**：supported legacy analytical entryはFamily Capability catalogで解決したcanonical Analysis routeへ一方向normalizeし、parallel navigation authorityとして維持しない
+- **`FR-163`**：`/projects`をProject Listのcanonical surfaceとする
+- **`FR-164`**：`/projects/new`をProject Registerのcanonical surfaceとし、作成成功後は`/projects/{new_project_id}/overview`へ遷移する
+- **`FR-165`**：`/projects/{project_id}/overview`をselected Projectのdefault canonical surfaceとし、`/projects/{project_id}`はhistory-replaceでoverviewへnormalizeする
+- **`FR-171`**：Current Projectはcanonical Analysis URLの`project_id`をauthorityとしAnalysis Workspace内ではread-onlyとする。Project変更はProject Management経由で行う
+- **`AR-024`**：Causal Effectsは推定されたeffectの閲覧・利用を扱い、estimator configurationと混在させない

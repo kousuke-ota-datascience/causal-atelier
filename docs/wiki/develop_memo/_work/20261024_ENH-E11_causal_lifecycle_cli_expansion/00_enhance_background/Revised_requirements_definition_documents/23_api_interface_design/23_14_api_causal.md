@@ -50,19 +50,7 @@ Runtime causal operation discriminatorは次である。
 
 したがって、`Identification / Estimation / Effects / Diagnostics`等のNavigation Stageを理由にCausal API/runtimeを単一Plan内の多段Stageへ作り替えない。科学的な前提関係はcanonical Executionの`input_graph_version_id / input_result_id`とResult/Lineageで扱う。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-051（SPLIT）
-
-- 旧要件に含まれるIF固有情報：同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する
-- RDの要求核／Legacy Trace：同一データを探索と確認的分析で再利用する場合、その事実と根拠を警告できる
-- `FR-051`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. AR-004（SPLIT）
-
-- 旧要件に含まれるIF固有情報：同一immutable `dataset_version_id`を探索とconfirmatory analysisで再利用した場合、`EXPLORATORY_REUSE_SAME_DATA` warningとlineage evidenceを保持する
-- RDの要求核／Legacy Trace：同一データを探索と確認的分析に再利用した場合、その事実を示し独立検証として扱わない
-- `AR-004`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-051`**：同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する
+- **`AR-004`**：同一immutable `dataset_version_id`を探索とconfirmatory analysisで再利用した場合、`EXPLORATORY_REUSE_SAME_DATA` warningとlineage evidenceを保持する

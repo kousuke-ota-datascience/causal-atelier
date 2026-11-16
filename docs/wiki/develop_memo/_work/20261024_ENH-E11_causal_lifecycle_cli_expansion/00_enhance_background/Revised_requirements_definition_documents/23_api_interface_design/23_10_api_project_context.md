@@ -31,13 +31,6 @@ Project / Research ContextはFamily切替とは独立したProject-scoped resour
 
 Navigation routeはProject / Research Contextのidentity authorityではない。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-121（SPLIT）
-
-- 旧要件に含まれるIF固有情報：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する
-- RDの要求核／Legacy Trace：Project内操作を所属Roleに応じて認可し権限外の処理を防止する
-- `FR-121`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-121`**：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する

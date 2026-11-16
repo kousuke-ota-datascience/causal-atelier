@@ -153,37 +153,10 @@ Synchronous request/domain validation uses the canonical 422 validation envelope
 
 Model artifacts continue to use existing Artifact resources. New model writes carry `fitted-model/2` in Artifact content/metadata; existing `fitted-model/1` remains readable. No new Model Registry API or persistence aggregate is introduced.
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-061（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Algorithm Registryはtask compatibilityに加えてmodel capability、parameter schema/default、provider/optional dependency availability/versionを表現し、利用可能なtask-compatible modelをbackend authorityで選択できる
-- RDの要求核／Legacy Trace：対象Taskと実行環境に適合するモデルと設定候補を選択できる
-- `FR-061`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-071（SPLIT）
-
-- 旧要件に含まれるIF固有情報：intended use、training data、metric、limitationsに加え、model/provider/version、effective parameters、seed/deterministic settings、feature/preprocessor identity、explanation method等の再現性provenanceをModel Cardへ記録する
-- RDの要求核／Legacy Trace：学習・評価・説明の根拠、限界、再現性情報をModel Cardで確認できる
-- `FR-071`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-181（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Predictive Explanationはmodel-method compatibilityをbackend authorityで検証し、`LINEAR_COEFFICIENT_CONTRIBUTION` / `SHAP_TREE` / `LIME_TABULAR`を明示methodとして解決する
-- RDの要求核／Legacy Trace：利用可能なモデル説明方式を適合性に応じて選択し、予測への変数寄与を定量的に説明できる
-- `FR-181`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-183（SPLIT）
-
-- 旧要件に含まれるIF固有情報：explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する
-- RDの要求核／Legacy Trace：予測説明のモデル・入力・出力尺度・計算条件を追跡し再現できる
-- `FR-183`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.5. FR-184（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Train / Explainability / Model Managementはbackend capability metadataからcompatible option、availability/reason、parameter definition、provenanceを表示し、Frontendを独立したmodel-method compatibility authorityにしない
-- RDの要求核／Legacy Trace：利用可能な学習・説明機能と不可理由、設定条件、由来を一貫して表示する
-- `FR-184`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-061`**：Algorithm Registryはtask compatibilityに加えてmodel capability、parameter schema/default、provider/optional dependency availability/versionを表現し、利用可能なtask-compatible modelをbackend authorityで選択できる
+- **`FR-071`**：intended use、training data、metric、limitationsに加え、model/provider/version、effective parameters、seed/deterministic settings、feature/preprocessor identity、explanation method等の再現性provenanceをModel Cardへ記録する
+- **`FR-181`**：Predictive Explanationはmodel-method compatibilityをbackend authorityで検証し、`LINEAR_COEFFICIENT_CONTRIBUTION` / `SHAP_TREE` / `LIME_TABULAR`を明示methodとして解決する
+- **`FR-183`**：explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する
+- **`FR-184`**：Train / Explainability / Model Managementはbackend capability metadataからcompatible option、availability/reason、parameter definition、provenanceを表示し、Frontendを独立したmodel-method compatibility authorityにしない

@@ -45,25 +45,8 @@ Error contractに関する追加原則:
 - Navigation catalog/route validation failureをruntime Execution failureへ変換しない。
 - Project境界を越えるresource existenceをerror detailで漏洩しない。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-115（SPLIT）
-
-- 旧要件に含まれるIF固有情報：validation、conflict、not found、forbidden、execution failureをcanonical errorで返す
-- RDの要求核／Legacy Trace：利用側が入力不正・競合・不在・権限不足・処理失敗を判別できる
-- `FR-115`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. NFR-028（SPLIT）
-
-- 旧要件に含まれるIF固有情報：optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability discovery/selection時に局所化してstable unavailable state/errorとして報告する
-- RDの要求核／Legacy Trace：任意の分析エンジンが利用不能でも基本機能を継続でき、利用不能理由を識別できる
-- `NFR-028`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
-
-### 98.3. AR-008（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Eligibilityの型はBINARY、CONTINUOUS、UNSUPPORTED等の正規値で保存する
-- RDの要求核／Legacy Trace：推定に必要な変数型が適格かを識別できなければならない
-- `AR-008`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-115`**：validation、conflict、not found、forbidden、execution failureをcanonical errorで返す
+- **`NFR-028`**：optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability discovery/selection時に局所化してstable unavailable state/errorとして報告する
+- **`AR-008`**：Eligibilityの型はBINARY、CONTINUOUS、UNSUPPORTED等の正規値で保存する

@@ -122,31 +122,9 @@ projection relation名とgeneric authoritative write relationを混同しない�
 
 Current canonical lineage read responseは`ResearchContextVersion -> AnalysisSpecification -> ExecutionPlan -> Execution -> StageExecution -> Result -> Artifact`を再構成し、DatasetVersion / AnalysisView / GraphVersion / input Result / base Executionを含める。deterministic structural relationをmanual/generic LineageEdgeとして二重writeしない。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-090（SPLIT）
-
-- 旧要件に含まれるIF固有情報：canonical Resultはexecution/stage relation、result type、scientific status、summary/payload/diagnostics/warningsを保持する。family/generic schema_versionをResult direct fieldへ重複保持しない
-- RDの要求核／Legacy Trace：分析結果について実行・科学的状態・診断・警告を一貫して参照できる
-- `FR-090`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-091（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Result payloadはFamily・Type別Schemaで検証する
-- RDの要求核／Legacy Trace：結果の種類に適合した検証を行い不正な結果を受け入れない
-- `FR-091`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-092（SPLIT）
-
-- 旧要件に含まれるIF固有情報：canonical Artifactはproject/execution/stage/result relation、artifact type/scope、object_key、media type、hash、size、metadataを保持する。family/generic schema_versionをdirect fieldへ重複保持しない
-- RDの要求核／Legacy Trace：成果物について帰属先・種類・同一性・取得情報を追跡できる
-- `FR-092`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-099（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Manifest、Result summary、Specification、Artifact参照をexportできる
-- RDの要求核／Legacy Trace：分析条件・結果要約・成果物参照を外部へ出力できる
-- `FR-099`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-090`**：canonical Resultはexecution/stage relation、result type、scientific status、summary/payload/diagnostics/warningsを保持する。family/generic schema_versionをResult direct fieldへ重複保持しない
+- **`FR-091`**：Result payloadはFamily・Type別Schemaで検証する
+- **`FR-092`**：canonical Artifactはproject/execution/stage/result relation、artifact type/scope、object_key、media type、hash、size、metadataを保持する。family/generic schema_versionをdirect fieldへ重複保持しない
+- **`FR-099`**：Manifest、Result summary、Specification、Artifact参照をexportできる

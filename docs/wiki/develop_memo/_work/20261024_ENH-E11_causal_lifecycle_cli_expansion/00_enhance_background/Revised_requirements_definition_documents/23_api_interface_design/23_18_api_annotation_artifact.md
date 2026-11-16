@@ -100,25 +100,8 @@ Canonical `ArtifactType`はfixed enumであり、Predictive関連では`PARTITIO
 
 これらのNavigation Stageのために重複Result/Annotation/Artifact Resourceを新設しない。
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-124a（SPLIT）
-
-- 旧要件に含まれるIF固有情報：Artifact metadata/downloadでProject境界とsafe content dispositionを検証するcurrent contractを維持する
-- RDの要求核／Legacy Trace：成果物の情報・取得をProject境界内で安全に利用できる
-- `FR-124a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-124b（SPLIT）
-
-- 旧要件に含まれるIF固有情報：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
-- RDの要求核／Legacy Trace：旧経路を含む成果物取得に同じProject権限を適用する
-- `FR-124b`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. AR-020（SPLIT）
-
-- 旧要件に含まれるIF固有情報：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する
-- RDの要求核／Legacy Trace：個票予測と局所説明は機微情報になり得るため、利用権限に応じ露出を制限する
-- `AR-020`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-124a`**：Artifact metadata/downloadでProject境界とsafe content dispositionを検証するcurrent contractを維持する
+- **`FR-124b`**：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
+- **`AR-020`**：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する

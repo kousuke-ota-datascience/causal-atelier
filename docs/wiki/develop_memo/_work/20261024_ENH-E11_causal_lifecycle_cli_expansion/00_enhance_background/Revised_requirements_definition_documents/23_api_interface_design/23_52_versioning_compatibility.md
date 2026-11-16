@@ -39,31 +39,9 @@ Navigation Stageのlabel/order変更をruntime `StageType.version`変更と連�
 13. Project route stateをAnalysis navigation stateへ混在させるinterface
 14. UI Stage配置を理由にExploratory/Predictive/Causalのbackend operation/APIを増設するinterface
 
+**当該Interfaceの追加契約（関連Requirement）**
 
-## 98. RD-04：IF契約の要求起源・Trace
-
-**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
-
-### 98.1. FR-177（SPLIT）
-
-- 旧要件に含まれるIF固有情報：UI / IA再編だけを理由に既存API contract、persistence schema、backend analysis/domain semanticsを変更しない
-- RDの要求核／Legacy Trace：UI・IA再編によって既存API契約・永続化Schema・分析の意味を変更しない
-- `FR-177`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-113（SPLIT）
-
-- 旧要件に含まれるIF固有情報：HTTP APIをversioned pathとversioned payloadで提供する
-- RDの要求核／Legacy Trace：互換性を管理した版付きAPIを提供できる
-- `FR-113`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. NFR-013（SPLIT）
-
-- 旧要件に含まれるIF固有情報：schema versionはversioned Spec/Plan/payload/descriptor等のcontract boundaryで識別し、全persistent Result/Artifact entityへgeneric schema_version fieldを要求しない
-- RDの要求核／Legacy Trace：変化するデータ契約を識別し後方互換を制御できる
-- `NFR-013`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
-
-### 98.4. NFR-014（SPLIT）
-
-- 旧要件に含まれるIF固有情報：`causal-analysis-spec/2`の正規contractおよび保存済みCausal Resultをschema versionに従って読取可能に保つ
-- RDの要求核／Legacy Trace：既存v2の因果分析仕様と保存済み結果を継続して読み取れる
-- `NFR-014`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-177`**：UI / IA再編だけを理由に既存API contract、persistence schema、backend analysis/domain semanticsを変更しない
+- **`FR-113`**：HTTP APIをversioned pathとversioned payloadで提供する
+- **`NFR-013`**：schema versionはversioned Spec/Plan/payload/descriptor等のcontract boundaryで識別し、全persistent Result/Artifact entityへgeneric schema_version fieldを要求しない
+- **`NFR-014`**：`causal-analysis-spec/2`の正規contractおよび保存済みCausal Resultをschema versionに従って読取可能に保つ
