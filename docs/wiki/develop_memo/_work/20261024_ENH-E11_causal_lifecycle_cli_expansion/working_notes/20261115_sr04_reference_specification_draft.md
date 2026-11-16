@@ -78,6 +78,7 @@ DGP-002〜004のe(x)=.5+.3x（positivity 0.2〜0.8）を**oracle propensity**と
 - ESS = (Σw_i)^2/Σw_i²。arm別と全体の定義を別保存。clipping e→clip(e,l,u)とtrimming（行除外）の標的母集団・有限標本差を混同しない。
 - AIPW ATE oracle: n^{-1}Σ[μ1(X_i)−μ0(X_i)+A_i{Y_i−μ1(X_i)}/e_i−(1−A_i){Y_i−μ0(X_i)}/(1−e_i)]。
 - **AIPW ATTは別式をReference化することが必須**。ATE式へp(X|A=1)を掛けただけでは十分でない。DR条件はPS/Outcomeいずれかの正しい指定とその他の正則性に依存する。推論IFと推定PS・crossfitの影響を審査せず、oracle PSで得られる単純分散を一般の実装CIの正解としない。
+- **ATT用の独立sample reference（統合レビュー追補）:** \(\widehat\tau_{ATT}=\frac{1}{n_1}\sum_i[A_i\{Y_i-\widehat\mu_0(X_i)\}-(1-A_i)\frac{\widehat e(X_i)}{1-\widehat e(X_i)}\{Y_i-\widehat\mu_0(X_i)\}]\)、\(n_1=\sum_i A_i\)。この**未正規化のcontrol残差項を使うATT-AIPW/DR形式**は、positivity/一貫性/条件付き交換可能性と nuisanceの一方の整合性等の下でATTを対象とする。実装がcontrol weightを別に正規化する場合は有限sampleで別Estimatorとなるため別sample oracleとする。\(\widehat\mu_0\)の学習fold、\(n_1\)のランダム性、推定PS込みのInfluence Function/CIはMethod別Science Reviewを要する。
 - Known truth: DGP-003 τ_ATE=2、τ_ATT=2.2。nuisance oracle/PS misspec、overlap near/structural zero（DGP-023）を別Fixture。
 
 ### 2.3. Frontdoorの識別式と二段階の追加仮定（REF-I02/E04）
@@ -103,6 +104,7 @@ DGP-005では A~Bern(logit⁻¹(U)), M=1.5A+εM, Y=2M+U+εY、UはAとYの共通
 2. **DAGの矢印とPAGのarrowhead/tail/circleは同一の正解ではない。** 観測分布から一意に方向が定まらない場合、真の生成DAGが既知でも当該向きを強制的に正解orientとして採用しない。
 3. 小Graphの手計算・m-separation/CI表・潜在射影・Markov同値classの独立列挙を正本候補とする。FCI/LPCMCI実装結果を自身のGraph oracleにしない。DGP-011は現状「潜在射影/PAG endpoint導出待ち」であり、方向AccuracyのScience PASSを禁止。
 4. Negative: circle等のendpoint・unoriented関係をDAGへ変換、GraphVersion/refixed parentの消失、未解決Graph→数値推定の自動許可を拒否する。
+5. **統合レビュー追補:** DGP-011の同時点X/Yの2観測変数だけから、FCIが観測上のlatent common causeを一意に判定し、bidirected edgeを確定する期待値は設定できない。Gaussianの同じ観測共分散には、直接X→Yで説明する観測的に等価なモデルがある。**FCI positive oracle**は、独立にm-separationとPAGの強制端点を導出できる別の多変数Graph motifを設計する。現在のDGP-011は潜在交絡を含む**Stress/uncertainty fixture**としてのみ使用可能。LPCMCIの時間情報込みPAGは別Reference導出が必要。Tigramiteの`OracleCI`は独立Math Oracleの**補助的クロスチェック**であり同一Backendの結果を最終正解として使わない。
 
 ### 3.2. 時系列Graph PCMCI/PCMCI+/LPCMCI
 
@@ -132,10 +134,12 @@ E[(Z−E[Z|X]){Y−E[Y|X]−θ_IV(X)(T−E[T|X])}|X]=0。
 
 これにより、Cov(T,Z|X)=1+.2X、Cov(Y,Z|X)=(2+.5X)(1+.2X)、θ_IV(x)=Cov(Y,Z|x)/Cov(T,Z|x)=2+.5x。すなわちθ(-1)=1.5、θ(+1)=2.5。
 
+**統合レビュー追補：条件付きIV斜率のReference候補を具体化。** DGP-008のXは\(\{-1,+1\}\)に限るので、評価点は\(x=-1,+1\)とし、非IV CATEの\(x=-0.75,0,+0.75\)を流用しない。\(\mathrm{Cov}(Y,Z\mid X=x)/\mathrm{Cov}(T,Z\mid X=x)\)は\(\theta(x)=2+0.5x\)。EconML DRIVの最終学習器がこの切片付き線形関数を表現することを**科学Benchmarkの前提条件**とする（例：version確認済みのintercept付きfinal estimator）。特に`DRIV`の`fit_cate_intercept=False`のまま、1変数Xを通した線形最終モデルで切片2を表現できると仮定してはならない。原則候補は`projection=False`、`opt_reweighted=False`、`cov_clip`閾値、`fit_cate_intercept=True`および`model_final`指定を明示して別途API probeする。**これは本実装に対する採用済み設定ではない。** 実効DRIV 0.17.0での互換性・Inference/coverageは未実証。
+
 **採用済みでない部分:**
 - 具体的EconML DRIVの最終 estimand/moment/estimating equation、Wを含むorthogonal nuisance、fit_cov_directly/projection/cov_clip/opt_reweighted、model_finalの表現力、treatment/instrument型、inference availabilityを固定していない。
 - **モデル射影の問題:** DRIVのfinal modelがθ(x)を正確に表現できない構成では、強いInstrument領域への重み付けを含むprojectionを返す可能性がある。**truth関数=実効の推定先のprojectionとは限らない**。DGP-008はθ(x)を表現できるfinal model候補を確定するまではScience benchmarkで「完全適格」としない。
-- 非IV CATEやbinary-Z/A complier LATE、Phase3で初期非採用の条件付き効率的LATE「C」への自動同一視は禁止。formal \`IV_HETEROGENEOUS_EFFECT\` familyに属することと、特定θの確定は別の判断。
+- 非IV CATEやbinary-Z/A complier LATE、Phase3で初期非採用の条件付き効率的LATE「C」への自動同一視は禁止。formal `IV_HETEROGENEOUS_EFFECT` familyに属することと、特定θの確定は別の判断。
 - Reference実装は条件付き共分散を**SCM解析値から独立に**導出し、candidate DRIV設定を採用版でprobe→bias・coverageを評価する。
 
 ## 5. IV/LATE/B0/B1・AR（REF-I03/E07/E08/U01）
@@ -145,7 +149,7 @@ E[(Z−E[Z|X]){Y−E[Y|X]−θ_IV(X)(T−E[T|X])}|X]=0。
 DGP-006：principal strata (always=.25, complier=.50, never=.25)、τ_s=(0,2,8)。Z独立かつmonotonicity、exclusion成立。
 - 母集団ATE=.25×0+.5×2+.25×8=3、complier LATE=2。
 - ITT_A=E[A|Z=1]−E[A|Z=0]=.5、ITT_Y=1、**Wald LATE=ITT_Y/ITT_A=2**。
-- 同一sample/同一complete-case/切片あり、1 excluded binary Z/1 endogenous binary A、Cなしの2SLS sample coefficient \`β_hat_B0 = (mean(Y|Z=1)−mean(Y|Z=0))/(mean(A|Z=1)−mean(A|Z=0))\`。これは数学的同値の**exact parity**（浮動小数点誤差を除く）。母集団LATE=2とのsample exact equalityを要求しない。
+- 同一sample/同一complete-case/切片あり、1 excluded binary Z/1 endogenous binary A、Cなしの2SLS sample coefficient `β_hat_B0 = (mean(Y|Z=1)−mean(Y|Z=0))/(mean(A|Z=1)−mean(A|Z=0))`。これは数学的同値の**exact parity**（浮動小数点誤差を除く）。母集団LATE=2とのsample exact equalityを要求しない。
 - First-stageが0ならβhat ratioは未定義。AR inferenceは識別弱化に対する別軸であり、point missingから必然的に推論missingとは結論しない。
 - DGP-006にdefier/Z→Y追加したstressは仮定違反時の**性能評価**であり、隠れたinvalid IVをデータから必ず検出するOracleにはしない。
 
@@ -153,59 +157,62 @@ DGP-006：principal strata (always=.25, complier=.50, never=.25)、τ_s=(0,2,8)�
 
 Owner採用済み対象：二値Z/A、切片+事前指定の処置前C、1 excluded Z/1 endogenous A、Y=α+βA+γ'C+ε、E[ε|Z,C]=0という条件付きIV momentを要求する。独立観測、rankと外生性・構造式の科学的根拠を別保持する。
 
-\`W=[1,C]\`、\`M_W=I-W(W'W)^{-1}W'\`、\`z̃=M_WZ\`、\`ã=M_WA\`、\`ỹ=M_WY\`（逆行列表記はrank条件下。実装は安定QR/SVD）。単一IVの標本Reference：
+`W=[1,C]`、`M_W=I-W(W'W)^{-1}W'`、`z̃=M_WZ`、`ã=M_WA`、`ỹ=M_WY`（逆行列表記はrank条件下。実装は安定QR/SVD）。単一IVの標本Reference：
 
-**\`β_hat_B1 = (z̃' ỹ)/(z̃' ã)\`**。
+**`β_hat_B1 = (z̃' ỹ)/(z̃' ã)`**。
 
 これは線形FWL residualizationによるjust-identified IV/2SLS係数であり、**一般のATE・ATT・complier LATE・CLATEを推定する保証ではない**。DGP-007は均質な構造効果β=2の**限定正例**。異質効果とC/Z割付の関係を変えた反例のpseudo-true estimandは別の積分・統計対象を導出してから採用する。
 
-**B1の形式的Estimand kindと必要なheterogeneity/exclusion条件は未承認。** \`LINEAR_IV_STRUCTURAL_COEFFICIENT\` 等の語をこの文書で正式enumとして発行しない。B1をD01のIV_HETEROGENEOUS_EFFECTに自動分類することもしない。
+**母集団での線形射影Reference（統合レビュー追補）:** \(W=(1,C^\top)^\top\)、\(\tilde Z=Z-\Pi_W Z\) を母集団線形射影残差とする。rankとInstrument条件により \(\beta_{IV,lin}=E[\tilde ZY]/E[\tilde ZA]\)。\(Y=\alpha+\gamma^\top C+\tau(C)A+\varepsilon\)、\(E[\tilde Z\varepsilon]=0\) であれば \(\beta_{IV,lin}=E[\tilde ZA\tau(C)]/E[\tilde ZA]\)。異質効果下のこの射影比は、重みの正値性・complier性を追加証明しない限り**ATE/ATT/LATEとは呼べない**。DGP-007は\(\tau(C)\equiv2\)なので独立Referenceの真値=2。この代数上の定義でB1の**mathematical target ambiguityの一部を解消**したが、public enum/Method-supported population/heterogeneity contractは未採用。
+
+**B1の形式的Estimand kindと必要なheterogeneity/exclusion条件は未承認。** `LINEAR_IV_STRUCTURAL_COEFFICIENT` 等の語をこの文書で正式enumとして発行しない。B1をD01のIV_HETEROGENEOUS_EFFECTに自動分類することもしない。
 
 ### 5.3. IID異分散頑健ARの実装独立reference候補
 
 **I2/G2の採用範囲:** 1 excluded IV/1 endogenous treatment、IID observation unit、heteroskedasticity-robustな**漸近**AR反転をB0/B1の初期基準とする。Cluster/HAC、over-ID、小標本exact coverageは対象外。ARはInstrumentのvalidityを証明しない。
 
-**B0 sample Oracle:** \`r_i(b)=Y_i-b A_i\`、Zの2群差 \`d(b)=mean(r|Z=1)-mean(r|Z=0)\`、独立群差のrobust variance \`V(b)=s²_1(r(b))/n_1+s²_0(r(b))/n_0\`。Varianceの分母n_g vs n_g−1によるfinite-sample conventionと採用HC型をMethod Configで固定。候補AR test \`AR(b)=d(b)^2/V(b)\`、信頼集合 \`C_α={b∈R: AR(b)≤χ²_{1,1−α}}\`。弱IVでも識別が弱いこと自体ではこの検定の帰無サイズの漸近評価を禁止しない（その他の正則性が必要）。
+**B0 sample Oracle:** `r_i(b)=Y_i-b A_i`、Zの2群差 `d(b)=mean(r|Z=1)-mean(r|Z=0)`、独立群差のrobust variance `V(b)=s²_1(r(b))/n_1+s²_0(r(b))/n_0`。Varianceの分母n_g vs n_g−1によるfinite-sample conventionと採用HC型をMethod Configで固定。候補AR test `AR(b)=d(b)^2/V(b)`、信頼集合 `C_α={b∈R: AR(b)≤χ²_{1,1−α}}`。弱IVでも識別が弱いこと自体ではこの検定の帰無サイズの漸近評価を禁止しない（その他の正則性が必要）。
 
-DGP-024のsample moments \`dY,dA,vYY,vYA,vAA\` を固定した二次不等式：
-\`Q(b)=(dY−b dA)^2−q(vYY−2b vYA+b²vAA)≤0\`、\`q=χ²_{1,1−α}\`。
-- \`Q\`の係数を高精度で評価し、判別式・符号・零次・一次退化を厳密にcase-splitする。**有限grid内で集合端を切断しない**。
+DGP-024のsample moments `dY,dA,vYY,vYA,vAA` を固定した二次不等式：
+`Q(b)=(dY−b dA)^2−q(vYY−2b vYA+b²vAA)≤0`、`q=χ²_{1,1−α}`。
+- `Q`の係数を高精度で評価し、判別式・符号・零次・一次退化を厳密にcase-splitする。**有限grid内で集合端を切断しない**。
 - DGP-024のAR-Q1=bounded interval、Q2=two disconnected unbounded rays、Q3=one unbounded half-line、Q4=all real。Q5のnon-PSD/zero-varianceは正常AR結果ではない。数値上のほぼ零と数学的零の扱いは参照の数値許容値で定義が必要。
-- B0/B1の正常just-ID結果で\`AVAILABLE/EMPTY\`を許さない（G2既採用）。Degenerate covariance/inversionなら型付きfailureへ。汎用Resultの将来EMPTY表現は別の話。
+- **代数的数値チェック（統合レビュー追補）:** α=.05、q=3.841458820694124の時、AR-Q1は[1.0518218236251204, 5.926895365726481]、AR-Q2は(-∞,-0.20315286487771517]∪[0.20315286487771517,∞)、AR-Q3は[-0.7248752638076998,∞)、AR-Q4は全実数。独立の数値二次方程式で計算した**係数/集合形状のsanity check**であり、raw iid sampleからのAR実装・coverageを検証したものではない。
+- B0/B1の正常just-ID結果で`AVAILABLE/EMPTY`を許さない（G2既採用）。Degenerate covariance/inversionなら型付きfailureへ。汎用Resultの将来EMPTY表現は別の話。
 - G2集合は有限/無界・連結/非連結をlossless componentsで表現。JSON Infinity/NaNを使わず、null端点＋unbounded flags、順序/重複/閉端点を検査。通常の2数値CIは単一有界区間である場合に限る導出view。
 
-**B1 sample Oracle:** 外生regressorsを\`W=[1,C]\`、full matrix\`F=[W,Z]\`とする。各候補bにおいて\`r(b)=Y-bA\`をFへOLS、Z係数が0かを異分散頑健で検定し反転する。HC0を**独立Referenceとして提案**：
+**B1 sample Oracle:** 外生regressorsを`W=[1,C]`、full matrix`F=[W,Z]`とする。各候補bにおいて`r(b)=Y-bA`をFへOLS、Z係数が0かを異分散頑健で検定し反転する。HC0を**独立Referenceとして提案**：
 
-\`u_Y = M_F Y\`, \`u_A = M_F A\`, \`z̃=M_W Z\`、\`S_Y(b)=Σ_i z̃_i(Y_i-bA_i)\`、\`V_Y(b)=Σ_i z̃_i²(u_{Y,i}-b u_{A,i})²\`。
+`u_Y = M_F Y`, `u_A = M_F A`, `z̃=M_W Z`、`S_Y(b)=Σ_i z̃_i(Y_i-bA_i)`、`V_Y(b)=Σ_i z̃_i²(u_{Y,i}-b u_{A,i})²`。
 
-\`AR_B1(b)=S_Y(b)²/V_Y(b)\`、\`C_α={b:S_Y(b)²−q V_Y(b)≤0}\`（V_Y(b)>0の領域）。**検定不等式の左右辺がbの二次多項式**なので、全実数に対する二次不等式の解析で集合を再構成できる。full OLS sandwichで算出したZ coefficient Waldの平方と同じsample値になることを別系統でcross-checkする。HC1等へ変更する場合、定数補正と臨界値・適用範囲を改めてfreezeする（この提案は正式採用ではない）。
+`AR_B1(b)=S_Y(b)²/V_Y(b)`、`C_α={b:S_Y(b)²−q V_Y(b)≤0}`（V_Y(b)>0の領域）。**検定不等式の左右辺がbの二次多項式**なので、全実数に対する二次不等式の解析で集合を再構成できる。full OLS sandwichで算出したZ coefficient Waldの平方と同じsample値になることを別系統でcross-checkする。HC1等へ変更する場合、定数補正と臨界値・適用範囲を改めてfreezeする（この提案は正式採用ではない）。
 
-**反証:** \`z̃'A\`が0のsampleでは2SLS pointが未定義でもARは集合を返し得る。V_Y(b)=0又はrank欠落、数値不安定で正しくtestを定義できない時はtyped inference failure。single sampleのAR数値正解とMonte Carlo coverageは別々に検証。
+**反証:** `z̃'A`が0のsampleでは2SLS pointが未定義でもARは集合を返し得る。V_Y(b)=0又はrank欠落、数値不安定で正しくtestを定義できない時はtyped inference failure。single sampleのAR数値正解とMonte Carlo coverageは別々に検証。
 
 ## 6. 準実験・Temporal/SCMの独立Reference
 
 ### 6.1. DiD / Event Study（REF-Q01）
 
-- DGP-012の2×2 ATTは \`[E(Y|G=1,t=1)-E(Y|G=1,t=0)]-[E(Y|G=0,t=1)-E(Y|G=0,t=0)]=2\`（母集団）。並行トレンド/no-anticipationの生成条件に依存し、sample値は誤差を含む。
-- DGP-013 cohort \`g∈{2,3,never}\` に対し \`ATT(g,t)=1+(t-g)\`（t≥g）。Event-time kの真値は \`Σ_{g∈S_k} w_{g,k} ATT(g,g+k)\`、\`Σ w=1\`。重みとcohort supportが未freezeなら**event-time単一数値oracleはPENDING**。TWFE lead/lagがこれと同じ対象とはみなさない。
+- DGP-012の2×2 ATTは `[E(Y|G=1,t=1)-E(Y|G=1,t=0)]-[E(Y|G=0,t=1)-E(Y|G=0,t=0)]=2`（母集団）。並行トレンド/no-anticipationの生成条件に依存し、sample値は誤差を含む。
+- DGP-013 cohort `g∈{2,3,never}` に対し `ATT(g,t)=1+(t-g)`（t≥g）。Event-time kの真値は `Σ_{g∈S_k} w_{g,k} ATT(g,g+k)`、`Σ w=1`。重みとcohort supportが未freezeなら**event-time単一数値oracleはPENDING**。TWFE lead/lagがこれと同じ対象とはみなさない。
 - 順序、calendar time、group-time cell、clusterとtreatment adoption構造、共通ショックを固定。pretrend placeboのp値非有意をparallel trends真の証明としない。
 - 方法推奨候補を作っても、採用するstaggered ATT estimator・variance（cluster、bootstrap等）は正式決定待ち。
 
 ### 6.2. ITS（REF-Q02）
 
-DGP-014：\`Y_t(0)=1+.02t+sin(2πt/12)+ε_t\`、\`Y_t=Y_t(0)+1[t≥t0](2+.1(t-t0))\`。
+DGP-014：`Y_t(0)=1+.02t+sin(2πt/12)+ε_t`、`Y_t=Y_t(0)+1[t≥t0](2+.1(t-t0))`。
 - 介入時点のlevel effect=2、post periodのslope change=.1。**回帰Oracleは季節項・時間傾向・intervention step・post-time interactionを含む線形設計行列**で係数を検証。
 - ε_tがAR(1)ならiid SEを標準受入としない。HAC/GLSと自己相関推定の具体法は方法選択待ち。concurrent shock追加は構造変化検出と介入因果効果の区別を試す研究stress。
 
 ### 6.3. Sharp/Fuzzy RD（REF-Q03）
 
-- DGP-015: cutoff c=0、\`τ_RD = lim_{r↓0} E[Y|R=r]−lim_{r↑0} E[Y|R=r]=3\`。片側条件付き平均を用いた定義を採る。cutoff周辺のlocal regression/robust bias correction/bandwidthは別Method仕様。
-- DGP-016: \`jump_A=.5\`、\`jump_Y=1.5\`、\`τ_FRD=jump_Y/jump_A=3\`。**局所complier効果**であって全域complier LATEやATEへの自動変換をしない。
+- DGP-015: cutoff c=0、`τ_RD = lim_{r↓0} E[Y|R=r]−lim_{r↑0} E[Y|R=r]=3`。片側条件付き平均を用いた定義を採る。cutoff周辺のlocal regression/robust bias correction/bandwidthは別Method仕様。
+- DGP-016: `jump_A=.5`、`jump_Y=1.5`、`τ_FRD=jump_Y/jump_A=3`。**局所complier効果**であって全域complier LATEやATEへの自動変換をしない。
 - density/covariate continuity、manipulation、mass points、bandwidth/momentの弱化は診断・科学stress。観測のみで連続性/除外の成立を無条件に保証しない。Fuzzy RDのCIへB0の無条件ARを無審査流用しない。
 
 ### 6.4. Synthetic Control / SDID（REF-Q04/Q05）
 
-- DGP-017（理想SCM）で \`Y_1(0,t)=.6 D_2(t)+.4 D_3(t)\`、post outcomeに+2。Donor weights=(.6,.4)、post ATT_t=2。**識別しやすいReferenceにはpreperiod donor列の線形独立性と非負・和1制約での解の一意性を明示的に追加**する。noiselessで独立凸最適化／線形代数を照合、noiseありはstatistical tolerance。
+- DGP-017（理想SCM）で `Y_1(0,t)=.6 D_2(t)+.4 D_3(t)`、post outcomeに+2。Donor weights=(.6,.4)、post ATT_t=2。**識別しやすいReferenceにはpreperiod donor列の線形独立性と非負・和1制約での解の一意性を明示的に追加**する。noiselessで独立凸最適化／線形代数を照合、noiseありはstatistical tolerance。
 - DGP-018の真のATT=2は処置後構造式で与える。SDIDの実装はunit weightsとtime weightsを別々に最適化するため、その2系統を混同しない独立計算が必要。**SDIDの具体loss/regularization/SE/denominatorの方式が未決**ならsample-weight parityのScience PASSは出せない。
 - placebo treatment/donor contamination、poor pre-fit、cohort/time support、serial dependenceはMethod固有negative。placebo rankを通常の95% Gaussian CIへ言い換えない。
 
@@ -220,17 +227,17 @@ DGP-014：\`Y_t(0)=1+.02t+sin(2πt/12)+ε_t\`、\`Y_t=Y_t(0)+1[t≥t0](2+.1(t-t0
 
 ### 7.2. Observed Negative Control（Scope method採否未決）
 
-DGP-019では \`U→A,Y\` の潜在交絡と、\`Z=U+εZ\`、\`W=U+εW\` の対照変数を構成した。NCE/NCOは**その対照が因果的に無効な直接経路を持たない**こと、対象となるbiasを反映すること、条件付けの妥当性を研究者が根拠付きで宣言して初めて利用候補とする。
-- NCE: \`Y~A+Z\`のZの条件付き関連nullが対象。γ=0はnull候補、γ>0は対立候補。ただし追加したconditioning setが因果DAG上適切かを必須検討。
-- NCO: \`W~A\` のAの関連nullを対象とするなら、**null variantではAをUと独立にした割付**が必要。元の \`A~Bern(logit⁻¹(U))\` ではγ=0でもW~Aの関連が生じる。これはA-Y交絡の証明ではない。
+DGP-019では `U→A,Y` の潜在交絡と、`Z=U+εZ`、`W=U+εW` の対照変数を構成した。NCE/NCOは**その対照が因果的に無効な直接経路を持たない**こと、対象となるbiasを反映すること、条件付けの妥当性を研究者が根拠付きで宣言して初めて利用候補とする。
+- NCE: `Y~A+Z`のZの条件付き関連nullが対象。γ=0はnull候補、γ>0は対立候補。ただし追加したconditioning setが因果DAG上適切かを必須検討。
+- NCO: `W~A` のAの関連nullを対象とするなら、**null variantではAをUと独立にした割付**が必要。元の `A~Bern(logit⁻¹(U))` ではγ=0でもW~Aの関連が生じる。これはA-Y交絡の証明ではない。
 - Null時のsize、対立時のpower、直接効果やconditioning違反のinvalid graphを別扱い。非棄却→無交絡と結論しない。opt-in未指定時の自動実行禁止。
 
 ### 7.3. Partial R²とRobustness Value（Scope method採否未決）
 
-DGP-020のOLS coefficient、**古典OLS** \`SE=.2\`、\`df=100\`、\`R²_{A~U|C}=.1\`、\`R²_{Y~U|A,C}=.15\` に対し、OVB bias magnitude候補：
+DGP-020のOLS coefficient、**古典OLS** `SE=.2`、`df=100`、`R²_{A~U|C}=.1`、`R²_{Y~U|A,C}=.15` に対し、OVB bias magnitude候補：
 
-\`|bias|=SE_classic * sqrt(df * R²_{Y~U|A,C} * R²_{A~U|C} / (1−R²_{A~U|C}))\`
-\`=.2 sqrt(100×.15×.1/.9)=0.258198889747...\`。
+`|bias|=SE_classic * sqrt(df * R²_{Y~U|A,C} * R²_{A~U|C} / (1−R²_{A~U|C}))`
+`=.2 sqrt(100×.15×.1/.9)=0.258198889747...`。
 
 - 古典的回帰と条件付きpartial R²の定義に限定する。HC3 SEやAIPW/DR/IPWへ無断適用しない。
 - RV（効果を0にしうるbalanced partial-R²）とRV_α（有意性まで変えるもの）は別定義。特に前者と後者を同じ数値のReferenceとして保存しない。
@@ -238,7 +245,7 @@ DGP-020のOLS coefficient、**古典OLS** \`SE=.2\`、\`df=100\`、\`R²_{A~U|C}
 
 ## 8. Method→Reference対応表（全41行）
 
-下記の \`PENDING\` はMethodをScopeから削除する意味ではない。対象のReference計算の科学的未確定を指す。
+下記の `PENDING` はMethodをScopeから削除する意味ではない。対象のReference計算の科学的未確定を指す。
 
 ### 8.1. Phase1（20）
 
@@ -290,7 +297,7 @@ DGP-020のOLS coefficient、**古典OLS** \`SE=.2\`、\`df=100\`、\`R²_{A~U|C}
 | P3-M06 ITS | REF-Q02 | DGP-014、HAC/GLS option PENDING |
 | P3-M07 Sharp RDD | REF-Q03 | DGP-015、local regression/RBC PENDING |
 | P3-M08 Fuzzy RDD | REF-Q03,REF-I03 | DGP-016、cutoff局所IV推論 PENDING |
-| P3-M09 Wald ratio | REF-I03,REF-E07,REF-U01 | DGP-006、complier LATEと弱IV |
+| P3-M09 Wald ratio | REF-I03,REF-E07 | DGP-006、complier LATE。弱IVに対するAR集合はB0/B1（P3-M10/M11）側の義務でありWald単独Methodには追加しない |
 | P3-M10 B0 2SLS | REF-E07,REF-U01 | DGP-006/024、Wald sample parity、AR |
 | P3-M11 B1 2SLS | REF-E08,REF-U01 | DGP-007/024、formal Estimand enum PENDING |
 | P3-M12 Synthetic Control | REF-Q04 | DGP-017、donor rank/unique weight |
@@ -365,7 +372,7 @@ Referenceのtruthを被験Ariadne outputからコピーしない。正常な将�
 
 ### 10.3. 作業メモ作成時点の自己点検（科学Benchmarkではない）
 
-- 前Fixture CatalogのAR-Q1〜Q4について \`q=χ²_{1,0.95}\` を使う二次不等式の独立計算で、bounded/2-ray/half-line/all-realの形状を確認した。Sample生成・Ariadne AR実装・coverageの検証ではない。
+- 前Fixture CatalogのAR-Q1〜Q4について `q=χ²_{1,0.95}` を使う二次不等式の独立計算で、bounded/2-ray/half-line/all-realの形状を確認した。Sample生成・Ariadne AR実装・coverageの検証ではない。
 - DGP-003 ATT=2.2、DGP-004 ATT=38/15、DGP-020 OVB bias=0.258198889747... を式から再計算した。**作成時点の導出sanity-checkのみ**であり、Reference実装としてversion/hash済みのartifactは作成していない。
 - B1 FWL-HC0の二次不等式形を独立の線形代数で確認したが、HC0の正式選択・AR coverage・MethodのScientific PASSとは別。
 - **未確認:** DoWhy 0.14のFrontdoor実効stage-confounder選択、EconML 0.17.0 DRIV最終Model config、FCI/LPCMCIの独立PAG Oracle、QuasiのInference実装とScience benchmarks。
