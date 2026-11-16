@@ -12,7 +12,7 @@
 
 > **DEC-SR04-06（2026-11-16）Owner個別採用済み:** [NCE/NCO/OLS partial R²・RV独立技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)と02承認記録第23項で**DEC06-1〜5すべてAを採用**。P1-M18/P1-M19を実在Observed NCE/NCO、P1-M20を古典OLS partial R²＋point RV（q=1）の初期Nとする。X-04/X-05の未提供の広範方式は初期非採用D。**Owner Scope採用のみCLOSED**であり、Null size/power・RV独立数値Oracle・正式FR/NFR/AR/Gate07・Science Evidenceは未完了。Method行は`OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED`とする。
 
-> **DEC-SR04-07の事前数値・計算予算監査（2026-11-16、Owner採否待ち）:** [Quantitative Acceptance/Monte Carlo/Compute設計の独立技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)。**41 Method／68 Scope／45 Quant ACの番号とMethod statusは変更しない**。R=6000を全Methodの正式計算条件とはしない。Kと全mandatory statistical AC、Method別R・CPU/inner bootstrap・Resource capを独立登録し、Owner/Architecture freeze前は`QUANT_AND_RESOURCE_NOT_FROZEN`。推奨DEC07全7件AはまだOwner判断ではない。
+> **DEC-SR04-07（2026-11-16）Owner正式個別採用:** [Quantitative Acceptance／Monte Carlo／Computeの独立判断記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)と02承認記録第24項により**DEC07-1〜7全A採用済み**。41 Method／68 Scope／45 Quant ACのレジストリ構成は維持。FWER=0.05、Hard統計比較Kの事前列挙、Wilson/連続MC bound、Method別R/Pass確率、T2 Pilot、実測予算・seed・中断/失敗分母とGate分離を**設計方針として採用**。**実効K/R/Cell/inner-bootstrap/CPU・Money予算、Method-specific閾値の本適用、正式Gate Evidenceは未freeze**。
 
 ## 0. 名前空間・証拠の厳格な境界
 
@@ -152,11 +152,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `103af951ae7b3c6ceca539b83789ee354b064581` |
-| fixture | `ff01dc69bc6f3cb465693fc655768690623549a5` |
-| quant | `47e113f779b1baa3b8b32751e3b9883f7a1c93b7` |
-| ref | `eb9a39ef5508355e501174eb55031c0373d52423` |
-| env | `0df48513b4c3bebf757f4dbc232ce3e32a0ca326` |
+| matrix | `6d9f0bdacfed77401630ee099b900f9a1868a832` |
+| fixture | `a93c744b0fe87124a81b8d4c7701c0d382a72313` |
+| quant | `f046ef66a0c3e51206b092e967f895ead5965541` |
+| ref | `231cd74e81c186dbc2b8fde77489c0fb711828b4` |
+| env | `f2a8465cd24a2556152d8f183317722eebcb531a` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -381,7 +381,14 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 - 判定ファミリー候補：全mandatory stochastic comparisonsについてGate-wide FWER=0.05、片側Wilson/Method適格なContinuous interval。**実Kは未計数**。固定Sample exact／Losslessは別Hard契約。
 - R=6000はp=.95のMCSE≈.002814を満たすだけ。K=1024（説明例）、failure実測0.005、R6000の補正Wilson上限は.01000657で閾値.01に満たない。
 - Pilotは100〜200repからMethod/n/T/inner-bootstrapごとに実測する案。pilot未実施・T3 R/CPU/Wall/RAM/Money上限未確定。
-- `DEC07-1〜7`の7判断は[技術提案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)にA/B/C比較を明記したが、**Owner採用は未実施**。K/R/Cost/Scienceも当然PASSではない。
+- `DEC07-1〜7`の7判断は[Owner採用済み独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)にA/B/C比較と数値成立性を保持し、**02第24項でA×7のOwner採用を記録済み**。一方、**実K/R/inner-bootstrap/Cost・Cell SHAの数値凍結とScience/Gate PASSは未実施**。
+
+### 8.6. DEC07採用を数値Freezeと混同しないためのGate区分
+
+- **Owner decision（CLOSED）:** DEC07-1〜7全A／AC分類・FWER/K設計・Method別R・独立Pilot・実測Budget審査・seed・Gate分離。
+- **Quant/Resource pre-freeze（OPEN）:** 45 ACのMethod別Hard適用とmandatoryセル列挙、実効K、R・Bootstrap・n/T・Seed/Source/REF SHA、実測CPU/Wall/RAM・承認Spend cap。
+- **Independent science（NOT_RUN）:** DGP/Reference・Backend推論適格性、Monte Carlo、Graph/AR・旧v2回帰、独立Reviewerと正式Gate判断。
+- **Fail-closed:** K/R/費用未確定やOracle未構築のまま、Owner方針採用を`SCIENCE_PASS`、`QUANT_FROZEN`または`GATE07_ACCEPTED`にしない。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
