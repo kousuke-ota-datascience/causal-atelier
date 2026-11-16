@@ -44,11 +44,15 @@
 
 19. **DEC-SR04-02／DRIV-A（2026-11-16、Human ownerからの正式判断実行指示）:** **DRIVのMethod固有Estimandとして条件付き構造IV処置斜率`θ_IV(x)`（DRIV-A）を個別採用**する。既採用family`IV_HETEROGENEOUS_EFFECT`内のsemantic target `CONDITIONAL_IV_STRUCTURAL_SLOPE`として、構造式`Y=θ_IV(X)T+h(X,W)+U`、処置前Wでの残差化を用いた条件付きIV moment、relevance/除外/外生性/構造線形性、処置dose contrastとX支持域を要求する。W無しのDGP-008ではθ(-1)=1.5、θ(+1)=2.5。W有りの適格性は別々に実証する。**推定器の重み付き射影を正式な構造EstimandとするDRIV-B、binary complier LATEへの一律再分類DRIV-Cは非採用。** 現行EconMLの特定`model_final`/`projection`/`opt_reweighted`/`fit_cate_intercept`/`cov_clip`と実効0.17.0 API、Method固有CI、Coverage、科学Benchmarkは**未選定・未検証**。正式schema enum、FR/ADR、Gate、全体構想・Codingは引き続き未承認。[DEC01/02独立判断記録](../working_notes/20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)に比較・追加仮定・負例を一元化。
 
+20. **DEC-SR04-03／FD-A（2026-11-16、Human owner明示採用判断）:** **Phase1のFrontdoor数値推定について、FD-A＝線形・単一Mediator・二段階推定の係数積を初期Method保証範囲として個別採用**する。Frontdoorの識別条件を数値推定の追加仮定から分離し、適格な線形Stage1 `M∼1+A` とStage2 `Y∼1+M+A` の係数積を限定正例とする。DGP-005の既知真値ATE=3で識別式と数値Referenceを検証する。一般非線形g-functionalを初期必須とするFD-Bは非採用、識別のみのFD-Cは既採用SR03-D02に反するため非採用。**DoWhy 0.14で実際にAが第2段階の調整変数として入るか、stage別数値パリティ、独立Inference/CI coverage、正式Method Config・FR/NFR/AR・Gateは未検証・未承認**。Frontdoor識別条件の成立だけで線形two-stageが必ず正しいとしない。科学的比較・数式・負例・検証条件は[DEC-SR04-03独立技術判断](../working_notes/20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)に一元化する。
+
+21. **DEC-SR04-04／GRAPH-A（2026-11-16、Human owner明示採用判断）:** **FCI、PCMCI/PCMCI+、LPCMCIの受入Graph Oracleについて、GRAPH-A＝生成DAG、latent projection MAG、Markov equivalence CPDAG/PAG、temporal lag／同時点関係を科学的に区別し、独立に導出する方針を個別採用**する。生成真値DAGの全方向と出力PAG/CPDAGの完全一致を要求するGRAPH-Bは非採用、Graph精度検証を廃止するGRAPH-Cも非採用。DGP-011の同時点2観測変数に対しFCIがlatent confounderを一意識別・bidirected方向へ確定できるという誤基準は禁止。m-separation／独立Graph同値類から強制端点を導出し、Tigramite OracleCI等は補助的cross-checkに限る。**Graph忠実保持・科学的Graph accuracy・Causal Effectの識別は別判定**。独立MAG/PAG/CPDAG/temporal Oracle実装、FCI/Tigramite version/CI-test・Endpoint科学Benchmark、正式Gate・FR/NFR/AR・Architecture・Codingは未完了。先行SR03-D06のGraphVersion新規固定・strict識別・初期一般化識別エンジン非採用の方針は変更しない。詳細比較・科学的境界・Fixture・Acceptanceは[DEC-SR04-04独立技術判断](../working_notes/20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)に一元化する。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
-- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**は個別採用済み。ただし正式Schema enum/Method config・推論方式・数値受入は未承認。
+- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**は個別採用済み。ただし正式Schema enum/Method config・推論方式・数値受入は未承認。
 - **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
 - Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
