@@ -93,3 +93,7 @@
 **未承認／未実施:** 正式なfamily enum・schema version、DRIVのMethod別estimandの厳密な数式と識別モーメント、必要な仮定・対応する処置／Instrument型、旧config互換、推論区間の採否、数値Benchmark・Science Gate、全体構想承認、コード実装。
 
 **D01個別判断の記録完了条件:** 本ファイルが比較・制約・未決を記録し、02に個別オーナー判断、SR-03総合メモにD01参照、00_04/03/04に採用方針への参照が存在すること。これは**D01の分類判断についての記録整備**を意味し、**SR-03全体・SR-04科学検証・00_04スコープ承認の完了条件ではない**。
+
+## 8. 2026-11-16後続Owner判断の反映（当初Draftを上書きする範囲）
+
+**2026-11-16 Owner後続判断（DEC-SR04-02／DRIV-A採用）:** [独立技術判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)と[02判断記録](../00_enhance_background/02_enhancement_concept_approval_record.md)により、既採用`IV_HETEROGENEOUS_EFFECT` familyの内側に**`CONDITIONAL_IV_STRUCTURAL_SLOPE`**をDRIVの科学的semantic targetとして正式個別採用した。`Y=θ(X)T+h(X,W)+U`の構造的線形性、`X,W`残差化した条件付きIV moment、relevance/exclusion/contrastを要求。DGP-008の`W=∅`ではx=-1/+1の真値1.5/2.5。従前の「DRIV個別Target未決」はこの範囲で解消したが、実効0.17.0 Backend、W有りnuisance/projection、推論Coverage、正式schema/Gateは未検証・未承認。
