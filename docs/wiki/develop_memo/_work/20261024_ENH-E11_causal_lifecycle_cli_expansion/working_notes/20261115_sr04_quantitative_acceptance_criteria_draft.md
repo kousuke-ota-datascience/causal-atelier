@@ -13,6 +13,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05-1〜7のEstimator/Inference方法論方針はOwner採用済み。しかしMethod×DGP×n/T/bandwidth/cluster/R/K/CI modeを正式freezeするまでAC-Q01〜Q05とAC-I01/02の数値合格を宣言しない。**SCMは初期point-only**で通常CIの未提供をHard Gate違反としない。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
+> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+
 ## 0. 目的、判断階層、禁止事項
 
 ### 0.1. 何を定量的に受け入れるか
