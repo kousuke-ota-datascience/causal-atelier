@@ -3,7 +3,7 @@
 **文書区分:** `working_notes`／科学的Acceptance設計案。正式FR/NFR/AR、承認Scope、Architecture ADR、Gate06/07、Work Package、Science PASSではない。
 **策定日:** 2026-11-15（JST）
 **参照branch/SHA:** `prototype/ariadne_mvp` / `e751849a550285d7b99e62755b5cecd8b3986cce`（入力照合Snapshot。受入用freezeではない）
-**状態:** `SR04_MATRIX_DRAFT / METHOD_SPEC_PENDING / QUANTITATIVE_AC_PENDING / SCIENCE_NOT_RUN / FULL_CONCEPT_PENDING`
+**状態:** `SR04_MATRIX_DRAFT / METHOD_SPEC_PENDING / QUANTITATIVE_AC_PENDING / SCIENCE_NOT_RUN / CONCEPT_SCOPE_OWNER_APPROVED / FORMAL_GATE_PENDING`
 **直接の入力:** [00_04 68行Scope案](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)、[SR-01〜12審査](20261029_cli_scope_review.md)、[SR-03横断](20261101_sr03_identification_estimand_estimator_contract_review.md)、[D03](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、[D04](20261115_sr03_d04_identification_estimator_contract_options.md)、[D05](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)、[D06](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)、[02 owner判断](../00_enhance_background/02_enhancement_concept_approval_record.md)。
 
 > **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
@@ -15,6 +15,8 @@
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の具体採否はOwner未決。NCE/NCOは実在観測Z/Wのopt-in・事前帰無、M20は古典OLS partial R²とpoint RVのみを初期NとするA案を策定。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 > **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。41 Method別にHard／Conditional／N/AのAC適用と必要な実効Estimator・Inferenceを事前登録。オラクル未完成Methodは数値閾値でScience可としない。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
+
+> **DEC-SR04-09（2026-11-16）統合Owner承認追補:** [68 Scope／Requirements／Architecture／Gate計画の独立統合判断](20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)・[02 Owner第26項](../00_enhance_background/02_enhancement_concept_approval_record.md)により**全体構想・68 ScopeのDisposition／E11-REQ意味差分／基本ArchitectureとGate計画のOwner承認が完了**。本書は今も**Method固有の独立科学的検証に関するDraft**であり、Backend/API・具体Schema、DGP/Reference code、45 ACのHard適用とK/R/Resource、Formal FR/ADR/Gate06/07／T3 Science・Codingは**未Freeze／未実施**。本記録の過去段落に残る`PENDING_FULL_CONCEPT_APPROVAL`は文書策定時の履歴であり、DEC09以後のOwner Scope採否には適用しない。
 
 ## 0. INTRODUCTION
 
