@@ -10,6 +10,8 @@
 
 > **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。REF-I02/E04のFD-A stage（M~1+A、Y~1+M+A）とREF-G02/G03のGRAPH-A独立Oracle原理は個別採用。ただし固定標本DoWhy 0.14 stage/parity、CI coverage、MAG/PAG/CPDAG同値類導出・数値Reference実装は未実施。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
 
+> **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。REF-Q01〜05の独立計算ReferenceとQuasiのMethod別Estimator/Inference方針をDEC-05でOwner採用。DiD=2×2群差、Event=ATT(g,t)からevent-time、ITS=level/slope、RDD=local jump/ratio、SCM=simplex donor、SDID=unit/time separately optimized weighted DID。独立Oracle/optimizer/BW/CI runtimeは未実装・未検証。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
+
 ## 0. Referenceの役割と受入可能な主張
 
 ### 0.1. 四種類の「正解」を混ぜない
