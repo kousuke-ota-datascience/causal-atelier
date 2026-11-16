@@ -165,3 +165,14 @@ PaginationはAPIごとにcurrent contractが異なる。`AnalysisViewListRespons
 Navigation metadata等のpresentation-only responseはpersistent Domain Resource responseと区別する。presentation metadataを返すこと自体によって、Analysis Specification / Execution Plan / Execution / StageExecution等のscientific/runtime resourceを生成・更新してはならない。
 
 Analytical Navigation Metadataのcanonical endpoint、schema、catalog authorityは`5.10.2 Analytical Navigation Metadata`および`5.10.3 Catalog source of truth`で定義する。
+
+---
+
+## 90. この文書種別の目的・責務・規範性
+
+- **目的:** Browser/Web API/Worker/CLI/Portの利用者と提供者の間の互換性契約を、観測可能な入出力・検証・失敗として定義する。
+- **含む:** Command/operation、request/response、schema version、status/error、backward compatibility、serialization、path/security、timeout/availability、contract test。
+- **含まない:** Application内部のclass layout、DB storage実装、推定器の統計手順。
+- **E11境界:** 追加はlocal CLIとScientific Port/Artifact Interfaceのみ。既存`/api/v1`に新E11 endpointを追加しない。旧v2 spec/read-backを暗黙更新しない。
+
+**E11追加草案:** [23_09_enh_e11_cli_and_port_interface_draft.md](23_09_enh_e11_cli_and_port_interface_draft.md)

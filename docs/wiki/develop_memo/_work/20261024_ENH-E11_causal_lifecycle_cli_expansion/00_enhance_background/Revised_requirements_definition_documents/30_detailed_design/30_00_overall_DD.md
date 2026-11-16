@@ -101,3 +101,32 @@ Persistence / Artifact / External scientific adapters
 architecture testで依存方向を検査可能にする。
 
 ---
+
+---
+
+## 90. 詳細設計の目的・責務・必要粒度
+
+**本種別は物理ソフトウェア設計である。** 上位のRD/LDD/BD/APIが定める契約を、module、class、関数、フィールド、メソッドシグネチャ、アルゴリズム、例外、テスト可能な不変条件へ落とす。参照例①（個別機能）・参考②（共通機能）の責務分割を踏襲する。
+
+**各classで必須の記載:**
+
+| 項目 | 定義すべき情報 |
+|---|---|
+| 識別 | Class/Protocol名、`module path`、現行/新規/候補の区分、参照source SHA |
+| 目的・責務 | 単一責任、保持しない責務、依存可能/禁止層、lifecycleとowner |
+| 属性 | field名、Python型、必須/default/null、immutableかmutableか、生成元・validation・機密分類 |
+| 生成 | constructor/factoryの引数・型・戻り・precondition・postcondition |
+| 公開method | 可視性、正確なsignature、戻り値、入力検証、計算/状態変更、副作用、例外 |
+| 処理ロジック | 実行順、分岐、事前事後条件、algorithm/pseudocode、数値精度・seed、計算量上の制約 |
+| collaboration | 呼出し先Port/Adapter/Library、呼出し方向、transaction/rollback/retry、I/O |
+| serialization | 入出力Schema/Version、hash/canonicalization、atomic write、readback互換性 |
+| 失敗・安全 | error code、fail-closed条件、partial write、path traversal、privacy、optional Backend unavailable |
+| 検証 | unit/contract/negative/regression/benchmarkのTest IDと上位FR/NFR/AR・GateへのTrace |
+
+**設計書の作成単位:** 共通の実行基盤はoverallで境界だけ宣言し、具体class群は同じ責務と依存方向を共有するpackage/module単位で分割する。手法固有の統計式は上位のScientific Contractを参照し、DDには呼出しと数値処理の詳細を書く。
+
+**制約:** 現行物理コードから確認したclassはsource準拠として記載し、新E11実装前の候補classは`PROPOSED / ADR_REVIEW_REQUIRED`と区別する。既存30_01〜30_09は原文構造分割であり、全classの物理記述完了を意味しない。
+
+- [30_10_existing_classes_physical_design_verified.md](30_10_existing_classes_physical_design_verified.md)
+- [30_11_enh_e11_proposed_physical_class_design.md](30_11_enh_e11_proposed_physical_class_design.md)
+- [30_12_physical_design_gap_register.md](30_12_physical_design_gap_register.md)

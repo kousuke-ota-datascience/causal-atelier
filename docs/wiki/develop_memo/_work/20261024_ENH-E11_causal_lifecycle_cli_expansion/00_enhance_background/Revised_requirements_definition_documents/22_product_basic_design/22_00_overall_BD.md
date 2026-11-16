@@ -189,3 +189,14 @@ buttonをdisabledにするだけでは要件を満たさない。Domain / Applic
 ### 4.9. Provenance / Contextを一貫して継承する
 
 Dataset Version、Research Context、Analysis View、Analysis Specification、Graph Version、upstream Result等、analysis inputとprovenanceをExecution / Result / Lineageまで追跡可能にする。presentationの都合でprovenance linkを切断しない。
+
+---
+
+## 90. この文書種別の目的・責務・規範性
+
+- **目的:** 上位Requirementを実現する論理component、責務境界、実行sequence、validation/authorization/exception policyを定める。
+- **含む:** Domain・Application・Adapter・CLI・Product Authority、入力前提・主処理・状態変化・結果・失敗時挙動、配置先責任、deployment boundary。
+- **含まない:** Class個別属性/メソッド、具体JSON field・endpoint signature、統計式の真偽を設計だけで保証すること。
+- **E11境界:** Scientific Core + Local CLI + Local persistent artifactsに限定。既存Web/API/Worker/DB/migrationへの新手法統合はD。G01〜G10は暫定実装Workstreamで、受入プロセスGate06/07とは別。
+
+**E11追加草案:** [22_08_enh_e11_causal_cli_basic_design_draft.md](22_08_enh_e11_causal_cli_basic_design_draft.md)

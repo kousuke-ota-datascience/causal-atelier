@@ -102,3 +102,15 @@ Compatibility / transition用の`FamilyExecution / FamilyStageExecution / Family
 - `FK`欄には論理参照先Entityと属性を記載する。物理DBでFKを持たないpolymorphic/logical referenceは「その他制約」で明示する。
 - Project配下Entity間の参照では、参照先が同一Projectに属することをDB制約またはApplication validationで保証する。
 - current sourceとの照合で物理FKが未設定であっても、論理設計上reference authorityが明確な場合は論理FKとして記載し、物理実装差を注記する。
+
+---
+
+## 90. この文書種別の目的・責務・規範性
+
+- **目的:** Product canonical Entityと、local CLIの非DB Value/Artifact modelを区別し、概念・識別子・関係・多重度・不変条件・科学的stateを定義する。
+- **含む:** Logical Entity / Value Object、ownership、reference、immutability、state、type/domain constraints、aggregation、source of truth。
+- **含まない:** ORM table/DDLやPython dataclass fieldの物理型、CLI引数名、JSON Schemaのfreeze前の擬似確定。
+- **E11境界:** E11 local fileは既存Project/Execution/ResultのProduct DB正本ではない。Graph generating DAG/latent MAG/CPDAG/PAG/Temporal、およびconfidence setの構造を型別に保存する。
+- **照合:** RDのEstimand識別・状態、BD owner、API contract、DD physical serializationとの1対1対応を必要とする。
+
+**E11追加草案:** [21_09_enh_e11_local_logical_model_draft.md](21_09_enh_e11_local_logical_model_draft.md)

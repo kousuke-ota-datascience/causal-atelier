@@ -98,8 +98,20 @@ Source: `_source_snapshots/30_detailed_design.md` (blob `04d83541e55ab0364500afb
 | New canonical FR/NFR/AR / detailed ADR / schema | `PENDING` |
 | Gate06/07 Freeze, Science T2/T3, License approval, Coding authorization | `NOT_COMPLETED` |
 
-DEC09 authority: [Scope / Requirements / Architecture / Gate owner record](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md).
+DEC09 authority: [Scope / Requirements / Architecture / Gate owner record](../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md).
 
 ## 4. Source copy and historical note
 
 The prior README in this folder was written for approved snapshots only. This revised index explicitly separates baseline copies from working drafts; presence in this folder does not imply approval. Retain the original effective-snapshot text and change logs as evidence, while using new E11 draft addenda for proposed semantics.
+
+## 5. ENH-E11 revision candidates (not canonical)
+
+- [10_14 — Candidate formal FR/NFR/AR and §11 diff](10_requirements_definition/10_14_enh_e11_formal_requirement_publication_draft.md)
+- [21_09 — Local logical model](21_logical_data_design/21_09_enh_e11_local_logical_model_draft.md)
+- [22_08 — Causal CLI basic architecture](22_product_basic_design/22_08_enh_e11_causal_cli_basic_design_draft.md)
+- [23_09 — CLI/Scientific Port interface](23_api_interface_design/23_09_enh_e11_cli_and_port_interface_draft.md)
+- [30_10 — Existing verified classes](30_detailed_design/30_10_existing_classes_physical_design_verified.md)
+- [30_11 — Proposed E11 physical class contracts](30_detailed_design/30_11_enh_e11_proposed_physical_class_design.md)
+- [30_12 — Physical specification template and gap register](30_detailed_design/30_12_physical_design_gap_register.md)
+
+**Note:** structural copies have source-approved content, but formal new requirements/design remain pending; these E11 addenda carry a separate working-draft status.

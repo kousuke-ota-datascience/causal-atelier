@@ -117,3 +117,16 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 | Analyst | Context、Data、Analysis Specification、Execution、比較、Annotationを作成・操作する | ProjectMembership roleに従う。WRITE / MUTATEおよびExecution mutationはOWNER / EDITOR |
 | Reviewer / Viewer | Result、warning、diagnostics、Lineage、Annotationを確認する | ProjectMembership roleに従う。VIEWERを含むOWNER / EDITOR / VIEWERがread可能 |
 | Infrastructure Operator | 実行基盤、保存領域、認証、監視等のinfrastructureを運用する | ProjectMembership roleではない運用persona。system-level authorization policyはDEFERRED / FUTURE |
+
+---
+
+## 90. この文書種別の目的・責務・規範性
+
+- **目的:** User/OperatorがAriadneに期待してよい機能、科学的許容条件、状態、セキュリティ、再現性および検証可能な受入条件を定める。
+- **含む:** MUST/SHOULD/MUST NOT、FR/NFR/AR ID、Requirement Status/Implementation Status/Delivery、Actor/UC/Scope、科学的反例、Test/Acceptance Sourceへのリンク。
+- **含まない:** Python classの命名やprivate field、REST/CLIのwire format詳細、推定アルゴリズムの実装手続。
+- **優先順位:** 現行正本の規範性は`docs/wiki/requirement_definition/10_requirements_definition.md`に残る。DEC09で採用された意味差分は別途この作業コピーで改訂草案を作り、Owner批准・SHA・Status確定後にControlled Publicationする。
+- **E11特則:** 旧§11のDoWhy/EconML除外は、DEC09採用のE11機能別optional外部engineに限定して改訂予定。旧FR-161（E10 optional predictive engine）はこの許可の根拠として転用しない。
+- **受入:** Scope68行ごとのR/Q/N/D、E11-REQ仮ID→新正式ID、Method/UC/Issue/Architecture/Gate、旧条文との逐条diffを監査する。既存ProductのPARTIALを黙ってIMPLEMENTEDにしない。
+
+**E11追加草案:** [10_14_enh_e11_formal_requirement_publication_draft.md](10_14_enh_e11_formal_requirement_publication_draft.md)
