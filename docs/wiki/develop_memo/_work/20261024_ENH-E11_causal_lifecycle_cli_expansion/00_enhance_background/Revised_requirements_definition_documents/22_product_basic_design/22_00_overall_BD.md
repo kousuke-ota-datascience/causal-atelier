@@ -195,3 +195,14 @@ Dataset Version、Research Context、Analysis View、Analysis Specification、Gr
 - **E11境界:** Scientific Core + Local CLI + Local persistent artifactsに限定。既存Web/API/Worker/DB/migrationへの新手法統合はD。G01〜G10は暫定実装Workstreamで、受入プロセスGate06/07とは別。
 
 **E11追加草案:** [22_08_enh_e11_causal_cli_basic_design_draft.md](22_08_enh_e11_causal_cli_basic_design_draft.md)
+
+
+## 98. RD-04：要件由来の基本設計制約
+
+**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
+
+### 98.1. NFR-018（MOVE_BD）
+
+- 既存要件の設計情報を含む原文：Product DomainからWeb Framework、ORMおよびlegacy packageへ依存しない
+- RDに残る能力／Legacy Trace：【設計制約移管・Legacy Trace】NFR-005に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する
+- Original Requirement：`NFR-018`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../96_rd04_nfr_ar_application_review.md)

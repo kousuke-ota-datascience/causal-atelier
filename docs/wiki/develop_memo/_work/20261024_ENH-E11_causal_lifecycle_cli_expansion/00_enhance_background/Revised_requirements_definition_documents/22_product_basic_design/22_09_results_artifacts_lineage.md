@@ -35,3 +35,14 @@ Navigation Stageをpersistent lineage resourceとして追加しない。
 Current lineage read modelは`ResearchContextVersion -> AnalysisSpecification -> ExecutionPlan -> Execution -> StageExecution -> Result -> Artifact`を最低chainとし、DatasetVersion / AnalysisView / GraphVersion / input Result / base Executionを接続する。FK/snapshotからdeterministically導出できるstructural relationをgeneric LineageEdgeへ二重persistせず、`MOTIVATED`等のsemantic relationだけをgeneric edgeとして保持する。
 
 Exploratory ResultからAnalysisSpecification DRAFTへのhandoffは`Result --MOTIVATED--> AnalysisSpecification`を明示保存する。
+
+
+## 98. RD-04：要件由来の基本設計制約
+
+**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
+
+### 98.1. NFR-020a（SPLIT）
+
+- 既存要件の設計情報を含む原文：Artifact storageを`ArtifactStore` Port abstraction越しに利用する
+- RDに残る能力／Legacy Trace：成果物保存先を交換しても分析の振る舞いが維持される
+- Original Requirement：`NFR-020a`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../96_rd04_nfr_ar_application_review.md)

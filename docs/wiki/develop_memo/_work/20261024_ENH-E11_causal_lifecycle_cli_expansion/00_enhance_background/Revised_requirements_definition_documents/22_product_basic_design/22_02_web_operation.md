@@ -153,3 +153,26 @@ Analysis ContextはCurrent Project / Active Research Context / Dataset Version /
 - current main surfacesはkeyboard操作、deterministic focus、accessible name、error association、non-color semanticsを満たす。
 - normal text contrastは4.5:1以上、large text / UI graphics / focus indicatorは3:1以上をtargetとする。
 - small viewportでもProject scope / Family dimension / Stage dimensionを混同させない。
+
+
+## 98. RD-04：要件由来の基本設計制約
+
+**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
+
+### 98.1. FR-002（SPLIT）
+
+- 既存要件の設計情報を含む原文：Projectはtopic、objective、memoを保持し、decision contextはversioned `ResearchContextVersion`の責務として保持する
+- RDに残る能力／Legacy Trace：Projectの研究目的と意思決定文脈を区別して保持・参照できる
+- Original Requirement：`FR-002`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-011（SPLIT）
+
+- 既存要件の設計情報を含む原文：DatasetVersionにcontent hash、schema、row count、column countおよびcurrent profile summaryを保持する。登録時の独立full profile生成を必須化しない
+- RDに残る能力／Legacy Trace：各データ版の同一性・構造・規模・品質概要を確認できる
+- Original Requirement：`FR-011`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
+
+### 98.3. FR-020（SPLIT）
+
+- 既存要件の設計情報を含む原文：Explore stateのdata-selection semantics（row_filter、selected_columns、derived_columns、missing_value_policy、time_cutoff、sampling）からAnalysisView DRAFTを作成できる。presentation-only chart stateはAnalysisViewへ保存しない
+- RDに残る能力／Legacy Trace：探索中に選択したデータ条件をAnalysis Viewの草案として作成できる
+- Original Requirement：`FR-020`; Status：`ACTIVE`; Implementation：`NOT_IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
