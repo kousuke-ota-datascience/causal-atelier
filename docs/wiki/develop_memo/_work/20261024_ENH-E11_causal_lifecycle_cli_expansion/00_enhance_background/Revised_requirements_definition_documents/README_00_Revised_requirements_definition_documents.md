@@ -1,6 +1,6 @@
 # ENH-E11 — Revised Requirements & Design Documents
 
-**Status (2026-11-16):** `DOC01_IF01_DD01_DRAFT_PREPARED / COMBINED_OWNER_REVIEW_PENDING / INDEPENDENT_ARCH_REVIEW_PENDING / CODING_NOT_AUTHORIZED / SCIENCE_AND_GATE_NOT_RUN`.
+**Status (Owner 2026-11-16):** `DOC01_OWNER_APPROVED / IF01_DESIGN_ADOPTED / DD01_DESIGN_ADOPTED / INDEPENDENT_ARCH_AND_SCHEMA_FREEZE_PENDING / CODING_NOT_AUTHORIZED`.
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
@@ -198,4 +198,4 @@
 - [DD-01 Physical Design内部レビュー](dd01_review/90_physical_design_review.md) — Domain/Port/Runner/Artifactと41 Methodの詳細設計案
 - [三工程まとめてのOwner Review Pack](combined_review/90_doc01_if01_dd01_owner_review_pack.md)
 
-**文書状態:** 変更は本working copy限定。Ownerによる統合内容レビュー、独立Architecture/Science、Gate06/07、Coding Authorization、canonical昇格は未完了。
+**文書状態（2026-11-16）：** DOC-01をOwner承認、IF-01/DD-01設計案をOwner採用済み。独立Architecture/Science、Schema/Port Freeze、Gate06/07、Coding Authorization、canonical昇格は未完了。[統合Owner決定](combined_review/91_20261116_doc01_if01_dd01_owner_approval_record.md)。

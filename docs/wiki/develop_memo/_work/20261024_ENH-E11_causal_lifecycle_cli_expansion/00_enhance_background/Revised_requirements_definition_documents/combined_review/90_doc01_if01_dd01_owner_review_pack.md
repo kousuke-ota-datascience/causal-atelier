@@ -1,7 +1,7 @@
 # ENH-E11 — DOC-01 / IF-01 / DD-01 一括Owner Review Pack
 
 **Created:** 2026-11-16  
-**Decision state:** `THREE_DRAFTS_SUBMITTED / INTERNAL_STATIC_CHECKS_RECORDED / OWNER_DECISION_NOT_YET_RECORDED`。  
+**Decision state:** `DOC01_OWNER_APPROVED / IF01_DESIGN_ADOPTED / DD01_DESIGN_ADOPTED / INDEPENDENT_REVIEW_PENDING / CODING_NOT_AUTHORIZED`。  
 **Scope:** 正本候補のStock／Flow分離、Local Interface、Local Physical Design。Architecture・Method science・Coding・Legal・Gate06/07・Canonical昇格の既承認を意味しない。
 
 ## 1. 三工程の成果物（今回まとめて審査する）
@@ -14,22 +14,22 @@
 
 **Scope保証:** ENH-E11の68 Scope（DEC09）／41 Method（20+8+13）／新44 Requirements（19 FR、8 NFR、17 Scientific AR）、旧Product v2との共存・CLI-first・無Web/DB/Worker統合を維持。P1-M05のIV識別対象やMethod別Inference/Endpointの未確定を勝手に解消扱いにしない。
 
-## 2. 一括審議する設計判断（Owner adoption pending）
+## 2. Owner採用済み設計判断（後続検証は未完）
 
 | Decision | 審議対象／候補 | 技術評価と要修正条件 | 採否記録 |
 |---|---|---|---|
-| REV-01 | DOC Stock/Flow分類、原105件＋IF/DDの新5件=110件 | 原文・Status保持、Flow台帳隔離、Owner逐条意味審査 | PENDING |
-| REV-02 | 302 Requirement IDsの整合・MOVE_BD19件一致 | 元正本へは未昇格。122件の意味保存再確認 | PENDING |
-| REV-03 | E11独立CLI `ariadne-causal-local` とStudy/Result/Manifest/Graph Version `/1` | 旧 `causal-analysis-spec/2`との明示的dispatch／Compatibility | PENDING |
-| REV-04 | 新E11 Domain Portと既存 `ScientificCorePort`/`ArtifactStorePort` の非同一性 | Adapter bridgeが必要、重複Package/実装範囲はsource再調査 | PENDING |
-| REV-05 | Typed AR ConfidenceSetとEndpoint Tagged Union | DISCONNECTED/UNBOUNDED/ALL_REAL lossless。EMPTYは正常B0/B1では不可 | PENDING |
-| REV-06 | staged bundle＋Manifest/Marker＋同一FS atomic no-clobber rename | FS、fsync、hash/readback、symlink/race、crash recoveryを受入試験 | PENDING |
-| REV-07 | Local OS Principal＋個票CATE二重opt-in | Product RBACの擬似再利用禁止、security threat model実証 | PENDING |
-| REV-08 | 41 Method→Adapter/Estimand/Inference Registry | FD-A、CATE7/DRIV-A、B0/B1/AR、Temporal、Quasi、SCM point-onlyの区別 | PENDING |
-| REV-09 | DEC08 Extras/5 Profiles/ENV-RD別、SBOM/License | universal lock/Combined実測・顧客GPL法務審査未済 | PENDING |
-| REV-10 | IF/DD/Gate06/07/Coding/正本昇格の権威分離 | Owner設計採用≠実装開始許可。科学/法務/テスト全件PASSの後に正本昇格 | PENDING |
+| REV-01 | DOC Stock/Flow分類、原105件＋IF/DDの新5件=110件 | 原文・Status保持、Flow台帳隔離、Owner逐条意味審査 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-02 | 302 Requirement IDsの整合・MOVE_BD19件一致 | 元正本へは未昇格。122件の意味保存再確認 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-03 | E11独立CLI `ariadne-causal-local` とStudy/Result/Manifest/Graph Version `/1` | 旧 `causal-analysis-spec/2`との明示的dispatch／Compatibility | ADOPTED_AS_DESIGN_BASELINE |
+| REV-04 | 新E11 Domain Portと既存 `ScientificCorePort`/`ArtifactStorePort` の非同一性 | Adapter bridgeが必要、重複Package/実装範囲はsource再調査 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-05 | Typed AR ConfidenceSetとEndpoint Tagged Union | DISCONNECTED/UNBOUNDED/ALL_REAL lossless。EMPTYは正常B0/B1では不可 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-06 | staged bundle＋Manifest/Marker＋同一FS atomic no-clobber rename | FS、fsync、hash/readback、symlink/race、crash recoveryを受入試験 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-07 | Local OS Principal＋個票CATE二重opt-in | Product RBACの擬似再利用禁止、security threat model実証 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-08 | 41 Method→Adapter/Estimand/Inference Registry | FD-A、CATE7/DRIV-A、B0/B1/AR、Temporal、Quasi、SCM point-onlyの区別 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-09 | DEC08 Extras/5 Profiles/ENV-RD別、SBOM/License | universal lock/Combined実測・顧客GPL法務審査未済 | ADOPTED_AS_DESIGN_BASELINE |
+| REV-10 | IF/DD/Gate06/07/Coding/正本昇格の権威分離 | Owner設計採用≠実装開始許可。科学/法務/テスト全件PASSの後に正本昇格 | ADOPTED_AS_DESIGN_BASELINE |
 
-Decisionごとに `ADOPT / ADOPT_WITH_CHANGES / REJECT / DEFER` の結果、採否理由、文書差分、Owner名／日付、確認対象Git Commit SHAを記録する。現時点では審査依頼でありOwnerの採否を推定しない。
+**Owner採用記録:** 2026-11-16の明示指示によりREV-01〜10の設計選択を採用。審査対象SHAは`c17f0baa01b66b24395cf8d96f6ae224d382cc7a`。正式な採否・残余検証は[Owner承認記録](91_20261116_doc01_if01_dd01_owner_approval_record.md)へ記録。採用と実装／科学／法務の証拠は別。
 
 ## 3. Cross-phase findings（非重複の集約）
 
@@ -56,4 +56,4 @@ Decisionごとに `ADOPT / ADOPT_WITH_CHANGES / REJECT / DEFER` の結果、採�
 - DOC-01：原105 Stock fileの移管/文書分類と静的Audit、302ユニークRequirement ID/19原文一致、Flow監査台帳の作業版がある。
 - IF-01：CLI/Port/Result/Graph/Manifest/Atomic/Privacyの具体的Interface契約と負例Test一覧がある。
 - DD-01：主要Class/Port Use Case/Publisherと41 Method adapter、scientific/technical negative、テストTraceの設計がある。
-- **三つの設計成果物はこのレビューPackageへまとめて提出可能。** 実装・実行Test・独立レビュー・Owner採否は未完了として厳格に分離する。
+- **三工程の設計案はOwner採用済み。** 実装・実行Test・独立レビュー、Schema/Port Freeze、Coding許可は未完了として厳格に分離する。

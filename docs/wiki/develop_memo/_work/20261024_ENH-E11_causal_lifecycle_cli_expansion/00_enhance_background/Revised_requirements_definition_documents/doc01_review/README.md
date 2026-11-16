@@ -2,7 +2,7 @@
 
 **種別:** FLOW / AUDIT（将来の正本には昇格しない）  
 **監査開始時点:** 2026-11-16、`prototype/ariadne_mvp` / `db47b8694ce315b4e8dbe3ab18d1c125f2c71205`  
-**判定:** `STOCK_FLOW_DRAFT_COMPLETE / STATIC_CHECK_PASS / OWNER_SEMANTIC_AND_COMBINED_REVIEW_PENDING / CODING_NOT_AUTHORIZED`
+**判定（Owner 2026-11-16）:** `DOC01_OWNER_APPROVED / STATIC_CHECK_PASS / RESIDUAL_INDEPENDENT_SEMANTIC_VERIFICATION_OPEN / CODING_NOT_AUTHORIZED`
 
 ## 1. 目的と判定範囲
 
@@ -42,7 +42,7 @@
 
 ### 3.2. 未検証・未閉鎖事項
 
-| ID | 対象 | 未完事項 | DOC-01判定への影響 |
+| ID | 対象 | 未完事項 | 残存検証・後続Gateへの影響 |
 |---|---|---|---|
 | DOC01-F01 | 105設計書すべて | 本文全体のフロー文言残存、歴史的レビュー結果の仕様誤混入、仕様本文の欠落を逐条検査していない | **BLOCKED** |
 | DOC01-F02 | 10系の要件台帳 | 既存258＋新規44の計302条文は抽出しID重複0を確認。ただし旧条文122件の全文意味比較・Owner最終確認は未完 | PARTIAL / OWNER_REVIEW |
@@ -62,7 +62,7 @@ DOC-01の`PASS`は以下をすべて満たした時にのみ記録する。
 4. 未閉鎖findingsを別工程に移管する場合も、Stockへの混入がないこと、追跡先と判定根拠を台帳に明示する。
 5. 元正本の不変性を確認し、基準Commit SHA・監査方法・結果をこの台帳に記録する。
 
-**次工程:** Ownerの指示によりDOC-01／IF-01／DD-01の3工程Draftを連続作成し統合レビューへ提出する。これはDOC-01の独立PASSを先取りしない。Codingは別途禁止。
+**Owner判断（2026-11-16）:** DOC-01の提出成果物を承認。IF-01・DD-01の設計案も採用済み。未実施の独立逐条検証は別途残し、正式な実装・科学Gate PASSを先取りしない。[Owner統合承認記録](../combined_review/91_20261116_doc01_if01_dd01_owner_approval_record.md)を参照。Codingは別途禁止。
 
 ## 5. DOC-01追加監査結果と統合レビュー提出（2026-11-16）
 
@@ -71,3 +71,9 @@ DOC-01の`PASS`は以下をすべて満たした時にのみ記録する。
 - `MOVE_BD`19件を[退避10要件定義](../_source_snapshots/10_requirements_definition.md)の原表と比較し、Requirement、Level、Requirement Status、Implementation Status、Deliveryが**19/19完全一致**（グループ名を除く）。従来の置換placeholderはStock本文に見当たらない。
 - IF-01で23系に2件、DD-01で30系に3件の新仕様を追加し、Stock候補は**110件**（23/18/19/22/28）。追加5ファイルの相対Markdownリンクは破損0。Source/Traceを参照して詳細は各reviewに記録。
 - 完了判定は**STATIC STRUCTURE/ID/LINK CHECK PASS；Owner/independent semantic review pending**。RD-04の122改定条文や既存Productの全物理Classの意味同一性を機械監査だけで保証したとは主張しない。詳細は[DOC-01 Verification](90_doc01_stock_flow_verification.md)。
+
+## 6. DOC-01 Owner承認の境界（2026-11-16）
+
+- **APPROVED:** Stock/Flowの整理・移管結果と静的監査の提出版をOwnerが承認。承認対象Commitは`c17f0baa01b66b24395cf8d96f6ae224d382cc7a`。
+- **OPEN:** DOC01-F01〜F05のうち未検証の全122改訂条文の意味照合、Anchor／非Markdown参照、独立検証の確証は結果を捏造せず後続へ移管する。上記§4の検証条件を無断で緩めない。
+- **NOT AUTHORIZED:** 元正本昇格／Coding／独立Architecture・Science・Legal・Gate06/07受入。
