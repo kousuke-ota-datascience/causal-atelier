@@ -119,3 +119,12 @@ The prior README in this folder was written for approved snapshots only. This re
 ## 6. Verification report
 
 - [Structural source-copy, FR and section-reconstruction audit](90_structural_split_verification.md) — verifies content preservation, while documenting incomplete formal E11 publication and detailed design coverage.
+
+## 7. RD-01 — 要件粒度の逐条再分類（2026-11-16）
+
+- [RD-01 Review Summary / 292 ID（既存FR195、NFR36、AR27、E11草案34）](rd01_review/91_rd01_requirement_granularity_review.md)
+- [既存FR逐条Disposition](rd01_review/92_rd01_fr_disposition_register.md)
+- [既存NFR/AR逐条Disposition](rd01_review/93_rd01_nfr_ar_disposition_register.md)
+- [E11草案逐条Disposition](rd01_review/94_rd01_e11_draft_disposition_register.md)
+
+`KEEP_RD=137 / REWRITE_RD=10 / SPLIT=118 / MOVE_BD=27`。**Dispositionはレビュー草案**であり、正本Requirement、ID、各StatusやImplementation Statusは未改訂。次のRD-02でOwner決定済み`10_00〜10_99`分類別採番を反映する。
