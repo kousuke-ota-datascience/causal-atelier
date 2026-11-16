@@ -48,6 +48,4 @@
 | FR-198 | Causal Discontinuity | 閾値による準実験で局所効果の推定対象を明示し、Cutoff周辺の適格性と結果を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | FR-199 | Causal Instrumental Variables | 操作変数のcomplier LATEと線形IV構造係数を区別して推定し、弱操作変数の下で妥当な推論集合と診断を提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | FR-200 | Causal Synthetic Controls | 対照Donorを用いた準実験で介入前Fit・汚染・期間条件と手法別の推定／推論範囲を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| F | R | - | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| S | c | i | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| 効 | 果 | 点 | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-202 | Scientific Result | 効果点推定・不確実性の可用性・科学的受入状態を区別し、有界・非有界・非連結・全実数の推論集合を損失なく表現できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
