@@ -34,7 +34,7 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 - **`FR-121`**：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する
 
 
-## 5.1.1 CURRENT API Operation × Source照合（PREP-01）
+#### 5.1.1 CURRENT API Operation × Source照合（PREP-01）
 
 以下のpathは**相対pathではなくAPIルート全体**。2026-11-17 Source静的照合により、`app.py`が`/api/v1`をrouter prefixとし、`projects.py`が`/projects`を持つことを確認した。Research Contextは`workspace_lifecycle.py`で直接`/projects/{project_id}/research-contexts`を宣言する。HTTP error、Service内部の権限、実行時Responseの完全性は静的Router宣言のみでは確定できない。
 
@@ -66,13 +66,13 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 | Field | Coverage | 根拠・未完了 |
 | --- | --- | --- |
 | Identity / HTTP Method / Path | **DEFINED** | 上記Router Decorator + app prefixで11件 |
-| Request | **PARTIALLY DEFINED** | Project DTO/ResearchContext Modelの宣言は確認。全Field制約、service-level invariantは未検証 |
-| Success | **PARTIALLY DEFINED** | ProjectはPydantic response_model、Research Contextは宣言`dict[str,Any]`。Body実形状の独立確認が必要 |
+| Request | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | Project DTO/ResearchContext Modelの宣言は確認。全Field制約、service-level invariantは未検証 |
+| Success | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | ProjectはPydantic response_model、Research Contextは宣言`dict[str,Any]`。Body実形状の独立確認が必要 |
 | Authorization | **NOT_SPECIFIED** | FR-121の期待はOwner要件。Router引数だけから全service pathのrole enforcementを証明しない |
 | State and side effects | **NOT_SPECIFIED** | create/update/archive/fixの名称は存在。UoW commit・DRAFT/FIXED前提はServiceの実コードと負例が必要 |
 | Error / HTTP code | **NOT_SPECIFIED** | shared Error HandlerがあるがOperation別404/403/409/422の実効対応は未照合 |
 | Idempotency / Retry | **NOT_SPECIFIED** | mutationの再送・Idempotency-Key規則を未確認 |
-| Compatibility / Version | **INHERITED+UNVERIFIED** | `/api/v1` prefixはSource確認。旧v2とLocal E11の意味的互換は個別確認が必要 |
-| Test / FR | **PARTIALLY DEFINED** | FR-121の追跡は本文に存在。Operation別Contract/Negative Testとの1:1追跡は未完 |
+| Compatibility / Version | **DEFINED（prefix） / NOT_SPECIFIED（意味互換）** | `/api/v1` prefixはSource確認。旧v2とLocal E11の意味的互換は個別確認が必要 |
+| Test / FR | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | FR-121の追跡は本文に存在。Operation別Contract/Negative Testとの1:1追跡は未完 |
 
 **解釈上の制約:** 本表はRouteとDTOのSource突合というPREP-01の部分是正であり、9欄の完成を意味しない。`NOT_SPECIFIED`を暗黙の成功としない。Service/Handler/Testの確認後に最終Contractとする。
