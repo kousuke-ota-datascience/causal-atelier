@@ -10,6 +10,8 @@
 
 > **2026-11-16 Owner decision:** [DEC-SR04-01/02](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) によりB1-Aの加法線形IV構造係数とDRIV-Aの条件付き構造IV斜率は科学的semantic targetとして採用。Eで未凍結の対象は**実効backend/依存lock、B1 AR/HC、DRIV W残差化nuisance/projection/CI、seed、resource、Method固有科学Benchmark**であり、Owner意味論判断と混同しない。全体構想は未承認。
 
+> **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。FD-A採用でもDoWhy 0.14のstage/confinders・full lockは未検証。GRAPH-A採用でもcausal-learn/Tigramiteの実効CI-test、Graph endpoint、GPL顧客SI納入判断は未検証。SR02のinstall/API smokeはScience/Legal PASSではない。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
