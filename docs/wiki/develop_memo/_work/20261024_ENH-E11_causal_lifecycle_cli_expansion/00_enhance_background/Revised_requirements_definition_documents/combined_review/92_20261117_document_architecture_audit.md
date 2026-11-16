@@ -5,6 +5,8 @@
 **区分:** `FLOW / AUDIT / REWORK_FINDINGS`。この文書自体は10/21/22/23/30のStock本文に昇格しない。  
 **監査判定:** `REWORK_REQUIRED / NO_CANONICAL_PROMOTION / NO_CODING_AUTHORIZATION`。2026-11-16 OwnerのDOC-01承認、IF-01/DD-01設計方針採用そのものを無断撤回しないが、文書構成・API仕様粒度・詳細設計粒度の適合を未達と判断する。
 
+**関連監査:** [DOC-01側の同日構造監査](../doc01_review/92_numbering_stockflow_and_class_template_audit.md)。同監査はDOC-01の根拠資料、本書はIF/DDを含む横断Finding／修復優先順位の集約記録として扱い、両者の内容を別々の承認済み規範とみなさない。
+
 ## 1. ルート90〜98番台：全8件の役割とDisposition
 
 `Revised_requirements_definition_documents/`の番号付き5文書群が将来のStock候補であるのに対し、ルート直下の90〜98は「どう変更・確認・判断したか」のProcess／Trace／Evidenceとして作成された。正本候補の階層に混在させる必然性は薄い。
