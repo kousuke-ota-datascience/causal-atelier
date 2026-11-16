@@ -18,6 +18,8 @@
 
 > **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。T2でMethod/CI/inner Bootstrap/n/T別にp50/p95 core-seconds、peak RSS、Wall、Backend versionを実測し、T3必要コア時・メモリ・課金上限とOwner承認を突合する。CPU/料金値は未実測なので数値freeze禁止。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
 
+> **2026-11-16 DEC-SR04-08設計審議（Owner採否待ち）:** [Backend／uv.lock／Optional Extras／License独立技術判断案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)をGitHub現物・SR02・uv公式仕様・上流Licenseから作成。**uv.lockは現行Ariadne既存依存の解決結果であり、DoWhy/EconML/Tigramite/rdrobustを含まない**。pyproject宣言＋universal lock＋5 Profile（追加RD候補）＋fresh-install／Method API＋実行Manifest/SBOM＋顧客SI配布法務を分離し、DEC08-1〜8すべてAを推奨した。**Owner未採用。pyproject.toml、uv.lockは未改変、full lock/実効版・Legal/Science/Gateは未承認**。SR02観測版と現行lock中のstatsmodels 0.14.6（SR02では0.15.0）を同一環境の証拠として扱わない。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
@@ -238,6 +240,15 @@ SR-02で採用された配布想定は**個別SIでの顧客環境への構築�
 | Failure | 法的適合性未確認／不適合時はTigramiteを含むdelivery profileを`DELIVERY_BLOCKED`。内部研究Methodを勝手にScopeから削除しない |
 
 **法的結論はここで出さない。** 追加制限/改修/納入方法の変更が必要ならOwner+法務の正式判断を要し、科学Methodの同等代替は別の科学BenchmarkとScope再承認に付す。
+
+### 6.3. DEC08で追加審議するLock／RD配布契約（2026-11-16、Owner未決）
+
+- **依存解決の意味:** uvは通常、全extras/groupsを共通にuniversal resolutionする。optional extrasはインストール選択であり、それだけでincompatible依存を隔離しない。Combined profileの要件があるため、`tool.uv.conflicts`による相互排他を無条件採用しない。依存競合時はSource/Backendの前提を再審議する。
+- **現物差異:** `uv.lock`にはDoWhy、EconML、Tigramite、rdrobustが未登録。SR02は`uv pip install`で検証専用環境へ導入した証跡で、同じlockが全環境で成功した事実ではない。既存lockにはstatsmodels 0.14.6があり、SR02の0.15.0とは別である。
+- **Profile拡張:** 既存5 Profileの受入を維持し、Sharp/Fuzzy RDのPython rdrobustは`ENV-RD`／`e11-rdd`を別候補として追加検討。既存ENV-BASEの5件へ黙って6件目の正式必須Profileを追加しない。
+- **GPL:** Tigramite upstream GPLv3-or-later、rdrobust Python PyPI GPL-3.0-only。両者とも**顧客納入物の個別SI配布形態・結合性・source提供の法務審査**が必要。Optional Extraや顧客pip installが適法性の免責条件ではない。DoWhy MIT、EconML MITには第三者BSD-3-Clause由来部分がある。
+- **Delivery Gate:** `ENV-AC09`のLegal Approvalが出るまで、GPL Backendを含む**当該配布形態**の顧客納入はBLOCKED。ただし社内科学計算や非配布Backendの技術検証が自動的に禁止・科学FAILになるわけではない。
+- **別工程のまま:** DEC07 Compute Budgetの数値は、DEC08のProfile/Lock freezeとPilotが未完了なので未測定。Library/Licenseを本記録だけでOwner採用・Science PASSにしない。
 
 ## 7. 未解決Blocker・受入前の依存と次工程
 
