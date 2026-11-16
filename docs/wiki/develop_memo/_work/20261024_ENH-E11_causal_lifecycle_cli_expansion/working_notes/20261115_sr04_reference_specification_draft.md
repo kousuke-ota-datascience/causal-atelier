@@ -14,6 +14,8 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。REF-R02のNCE/NCO条件付き関連とREF-R03のOLS OVB数値公式・point RVをDEC06の判断案として明記。Reference実装/推論有効性は未完成。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
+> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。独立Sample/algebraic/Graph Truthが未成立のCellはBLOCKED。ref SHAとDGP SHAが登録・独立確認されるまでMC Rを増やしてもScience Readyではない。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+
 ## 0. Referenceの役割と受入可能な主張
 
 ### 0.1. 四種類の「正解」を混ぜない
