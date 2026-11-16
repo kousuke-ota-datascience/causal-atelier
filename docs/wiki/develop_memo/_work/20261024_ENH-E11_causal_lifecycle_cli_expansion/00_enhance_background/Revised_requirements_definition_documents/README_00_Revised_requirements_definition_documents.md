@@ -4,7 +4,7 @@
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
-## 1. Current document index（番号付き110ファイル：Stock候補とFlow履歴を含む）
+## 1. Current document index（番号付き105ファイル：Stock候補（適合審査中））
 
 ### 10_requirements_definition
 
@@ -30,7 +30,6 @@
 - [10_50_authorization_retention.md](10_requirements_definition/10_50_authorization_retention.md)
 - [10_90_scope_exclusions.md](10_requirements_definition/10_90_scope_exclusions.md)
 - [10_91_acceptance_conditions.md](10_requirements_definition/10_91_acceptance_conditions.md)
-- [10_99_change_log.md](10_requirements_definition/10_99_change_log.md)
 
 ### 21_logical_data_design
 
@@ -51,7 +50,6 @@
 - [21_30_state_models.md](21_logical_data_design/21_30_state_models.md)
 - [21_40_integrity_constraints.md](21_logical_data_design/21_40_integrity_constraints.md)
 - [21_41_scientific_data_constraints.md](21_logical_data_design/21_41_scientific_data_constraints.md)
-- [21_99_change_log.md](21_logical_data_design/21_99_change_log.md)
 
 ### 22_product_basic_design
 
@@ -73,7 +71,6 @@
 - [22_15_schema_dependency.md](22_product_basic_design/22_15_schema_dependency.md)
 - [22_16_test_architecture.md](22_product_basic_design/22_16_test_architecture.md)
 - [22_17_stage_contents.md](22_product_basic_design/22_17_stage_contents.md)
-- [22_99_change_log.md](22_product_basic_design/22_99_change_log.md)
 
 ### 23_api_interface_design
 
@@ -100,7 +97,6 @@
 - [23_51_idempotency_contract.md](23_api_interface_design/23_51_idempotency_contract.md)
 - [23_52_versioning_compatibility.md](23_api_interface_design/23_52_versioning_compatibility.md)
 - [23_90_interface_verification.md](23_api_interface_design/23_90_interface_verification.md)
-- [23_99_change_log.md](23_api_interface_design/23_99_change_log.md)
 
 ### 30_detailed_design
 
@@ -133,13 +129,12 @@
 - [30_62_e11_local_execution_publication.md](30_detailed_design/30_62_e11_local_execution_publication.md)
 - [30_63_e11_method_adapters.md](30_detailed_design/30_63_e11_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
-- [30_99_change_log.md](30_detailed_design/30_99_change_log.md)
 
-**構造監査上の注記:** 上記110件はファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。移管・Backlink/Anchor整合が完了するまで元Pathを維持し、[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で追跡する。
+**構造監査上の注記:** 上記105件は移管後の5群番号付きファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。移管・Backlink/Anchor整合が完了するまで元Pathを維持し、[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で追跡する。
 
 ## 2. RD-03 formal requirement publication
 
-- [正式要件全68 Scope・41 Method・10 UC Trace](96_rd03_formal_requirement_traceability.md)
+- [正式要件全68 Scope・41 Method・10 UC Trace](doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)
 - [41 Method scope catalog](10_requirements_definition/10_32_scientific_method_scope.md)
 - [10_00 — Requirement semantics and issuance state](10_requirements_definition/10_00_overall_RD.md)
 - [10_90 — E10 exclusion and E11 exceptions](10_requirements_definition/10_90_scope_exclusions.md)
@@ -161,16 +156,16 @@
 
 - [BD-01 Architecture consistency self-review and open findings](bd01_review/90_architecture_consistency_review.md) — 13 findings, 2 resolved in BD, 11 open; independent review pending.
 - [BD-01 formal 44-requirement and ARC09 7-decision mapping](bd01_review/91_requirement_architecture_trace.md) — mapping coverage checked; science/implementation not verified.
-- [RD-04 requirement consistency / design migration verification](98_rd04_consistency_verification.md) — current; structure and trace audit PASS, owner content review pending.
-- [RD-04 FR195 clause review](95_rd04_fr_application_review.md)
-- [RD-04 NFR36+Scientific AR27 review](96_rd04_nfr_ar_application_review.md)
-- [RD-04 formal E11 44-clause semantic review](97_rd04_e11_requirement_review.md)
-- [RD-02 current file numbering, preservation, and 57 legacy file migration](92_rd02_restructure_verification.md)
+- [RD-04 requirement consistency / design migration verification](doc01_review/rd04_review/98_rd04_consistency_verification.md) — current; structure and trace audit PASS, owner content review pending.
+- [RD-04 FR195 clause review](doc01_review/rd04_review/95_rd04_fr_application_review.md)
+- [RD-04 NFR36+Scientific AR27 review](doc01_review/rd04_review/96_rd04_nfr_ar_application_review.md)
+- [RD-04 formal E11 44-clause semantic review](doc01_review/rd04_review/97_rd04_e11_requirement_review.md)
+- [RD-02 current file numbering, preservation, and 57 legacy file migration](doc01_review/rd02_migration/92_rd02_restructure_verification.md)
 - [RD-01 full 292-item Disposition review](rd01_review/91_rd01_requirement_granularity_review.md)
 - [RD-01 existing FR 195 register](rd01_review/92_rd01_fr_disposition_register.md)
 - [RD-01 NFR36 + AR27 register](rd01_review/93_rd01_nfr_ar_disposition_register.md)
 - [RD-01 E11 provisional candidate register](rd01_review/94_rd01_e11_draft_disposition_register.md)
-- [Prior structural split audit (historical)](90_structural_split_verification.md)
+- [Prior structural split audit (historical)](doc01_review/structural_migration/90_structural_split_verification.md)
 
 ## 5. Authority and remaining work
 
@@ -185,7 +180,7 @@
 - **作業先:** この`Revised_requirements_definition_documents/`配下で全5文書群の編集・レビュー・検証を継続する。
 - **昇格条件:** ENH-E11の対象テスト**全件PASSを確認した後**に限り、元の`docs/wiki/requirement_definition/`へ昇格する。未実施・FAIL・BLOCKEDのテストがある場合は昇格しない。
 - **現状:** 元正本は未変更。`RD-03`新条文は本作業ディレクトリ内で発行済みだが、元正本への昇格ではない。
-- **決定の詳細と判定規則:** [ENH-E11 Canonical昇格方針](93_enh_e11_canonical_promotion_policy.md)。
+- **決定の詳細と判定規則:** [ENH-E11 Canonical昇格方針](combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)。
 
 ## 7. BD-01 — 正本候補の常設設計とエンハンス固有レビューの分離（2026-11-16）
 
@@ -227,3 +222,21 @@ DOC-01 Owner承認／IF-01・DD-01設計案採用の後、[横断監査](combine
 - 23_42と22_15にはAtomic Manifest Publish、no-clobber、version/Schema/Port/PrivacyのFreeze確認事項を追加。実FS/Backend/Science/Independent Architecture Reviewは未実施。
 - 既存WorkflowのGate用語を一意化するため、Stockの旧「Gate06/07」の全体段階としての表現を局所修正した。過去のOwner採択のScientfic/Architecture要件は維持。
 - Root Flow8件、5 Change Log、23/30の全ての番号・Anchor/Link、改訂122条文とMethod41全セル、Backend5環境の実効証拠は引き続き未完。[本ページの進捗authorityはNotion](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)。
+
+## 12. 別保管する歴史記録・変更ログ（Flow）
+
+Rootに残した監査・Owner判断の実体は移管対象。移管中は旧Pathが一時的に残り得る。次のリンクが移管後の正規参照先である（全対象テストPASS前の元正本昇格は行わない）。
+
+- [90_structural_split_verification.md](doc01_review/structural_migration/90_structural_split_verification.md)
+- [92_rd02_restructure_verification.md](doc01_review/rd02_migration/92_rd02_restructure_verification.md)
+- [93_enh_e11_canonical_promotion_policy.md](combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)
+- [95_rd04_fr_application_review.md](doc01_review/rd04_review/95_rd04_fr_application_review.md)
+- [96_rd03_formal_requirement_traceability.md](doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)
+- [96_rd04_nfr_ar_application_review.md](doc01_review/rd04_review/96_rd04_nfr_ar_application_review.md)
+- [97_rd04_e11_requirement_review.md](doc01_review/rd04_review/97_rd04_e11_requirement_review.md)
+- [98_rd04_consistency_verification.md](doc01_review/rd04_review/98_rd04_consistency_verification.md)
+- [10_99_change_log.md](doc01_review/history/10_99_change_log.md)
+- [21_99_change_log.md](doc01_review/history/21_99_change_log.md)
+- [22_99_change_log.md](doc01_review/history/22_99_change_log.md)
+- [23_99_change_log.md](doc01_review/history/23_99_change_log.md)
+- [30_99_change_log.md](doc01_review/history/30_99_change_log.md)

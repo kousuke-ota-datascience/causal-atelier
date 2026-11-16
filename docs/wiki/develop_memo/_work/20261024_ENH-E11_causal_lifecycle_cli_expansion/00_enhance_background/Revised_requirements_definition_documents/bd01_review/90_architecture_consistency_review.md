@@ -22,8 +22,8 @@
 |---|---|---|
 | [DEC09 Owner decisions](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md) | ARC09-01〜07 Owner adopted; Gate06/07 unexecuted | Detailed ADR/Port/Schema not frozen |
 | [DEC08 environment record](../../../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md) | 5 profiles, single lock, legal gate adopted | E11 lock/profile/legal not verified |
-| [RD03 formal requirements](../96_rd03_formal_requirement_traceability.md) | FR/NFR/AR new 44, Method 41/Scope 68/UC10 trace | Method execution and scientific success not evidenced |
-| [RD04 requirement review](../97_rd04_e11_requirement_review.md) | 44 clauses preserved, semantic gaps identified | Owner final SHA review pending |
+| [RD03 formal requirements](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md) | FR/NFR/AR new 44, Method 41/Scope 68/UC10 trace | Method execution and scientific success not evidenced |
+| [RD04 requirement review](../doc01_review/rd04_review/97_rd04_e11_requirement_review.md) | 44 clauses preserved, semantic gaps identified | Owner final SHA review pending |
 | [Current CLI scientific_stage.py](https://github.com/kousuke-ota-datascience/causal-atelier/blob/535499b080ed129262bf2f6efd0a1033dc21ec47/src/ariadne/interfaces/cli/scientific_stage.py) | Existing CLI imports Product domain and port; calls core before manifest write | Not an exhaustive path/atomicity/security implementation audit |
 | [Current Scientific Port](https://github.com/kousuke-ota-datascience/causal-atelier/blob/535499b080ed129262bf2f6efd0a1033dc21ec47/src/ariadne/product/ports/scientific_core.py) | ScientificResultDescriptor uses Product ScientificStatus; local result bridge needed | New E11 result schema not implemented |
 | [Current CLI Manifest](https://github.com/kousuke-ota-datascience/causal-atelier/blob/535499b080ed129262bf2f6efd0a1033dc21ec47/src/ariadne/interfaces/cli/manifest.py) | Legacy snapshot_schema_version/manifest_version design observable | E11 schema/version dispatch not frozen |
@@ -72,5 +72,5 @@
 ## 6. Canonical promotion boundary
 
 - 本レビューとBD改訂は`Revised_requirements_definition_documents/`のみで行った。元`docs/wiki/requirement_definition/`正本は未更新。
-- 元正本への昇格は[Owner決定](../93_enh_e11_canonical_promotion_policy.md)の**ENH-E11対象テスト全件PASS後のみ**。
+- 元正本への昇格は[Owner決定](../combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)の**ENH-E11対象テスト全件PASS後のみ**。
 - `Owner Architecture policy APPROVED` ≠ `Independent Architecture Review PASS` ≠ `Gate06 PASS` ≠ `Gate07 Science PASS` ≠ `Delivery Legal APPROVED`。

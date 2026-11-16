@@ -30,4 +30,4 @@
 - 対象Methodが承認Scopeに含まれていても、必要な法務審査を通過しない顧客向けGPL系Backend配布は許可しない。
 - 付録Aの**D-only Scope**はE11初期の必須提供対象ではない。**混合Disposition**ではR/Q/Nの承認部分のみ実装義務とし、D部分は追跡を維持する。
 
-**Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)。対象Scopeと正式要件の対応は [RD-03 Trace](../96_rd03_formal_requirement_traceability.md)。
+**Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)。対象Scopeと正式要件の対応は [RD-03 Trace](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)。

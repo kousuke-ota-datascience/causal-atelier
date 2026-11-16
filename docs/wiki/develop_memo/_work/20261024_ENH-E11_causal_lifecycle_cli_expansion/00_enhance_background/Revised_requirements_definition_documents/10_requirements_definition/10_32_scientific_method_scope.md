@@ -59,7 +59,7 @@
 
 ## 3. 68 Scope・10 UC逆引きと未了条件
 
-[96_rd03_formal_requirement_traceability.md](../96_rd03_formal_requirement_traceability.md)を参照。表の`PLAN:Gxx`は実装Workstreamであって正式なGate06/07受入ではない。SR04-FのDGP/REF/ACは検証計画の参照であり独立Evidenceを意味しない。
+[96_rd03_formal_requirement_traceability.md](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)を参照。表の`PLAN:Gxx`は実装Workstreamであって正式なGate06/07受入ではない。SR04-FのDGP/REF/ACは検証計画の参照であり独立Evidenceを意味しない。
 
 旧E10のLightGBM／SHAP／LIME提供義務は[10_12_fr_predictive.md](10_12_fr_predictive.md)で継続する。
 

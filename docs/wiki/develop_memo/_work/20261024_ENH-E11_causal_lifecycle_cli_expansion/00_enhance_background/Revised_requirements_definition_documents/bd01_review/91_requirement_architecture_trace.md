@@ -7,7 +7,7 @@
 
 ## 1. Contract and status
 
-- 既存[RD-04](../98_rd04_consistency_verification.md)の改訂と[RD-03 68 Scope／41 Method／10 UC](../96_rd03_formal_requirement_traceability.md)を起点に、新規E11 FR19/NFR8/Scientific AR17の44条文を責務別BDへ割り当てる。
+- 既存[RD-04](../doc01_review/rd04_review/98_rd04_consistency_verification.md)の改訂と[RD-03 68 Scope／41 Method／10 UC](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)を起点に、新規E11 FR19/NFR8/Scientific AR17の44条文を責務別BDへ割り当てる。
 - この表の`BD primary`は条文の主要な設計責務であり、Method全件の実装／科学Evidenceが揃った意味ではない。各条文のStatusは元RDと一致させる。
 - E11-A1〜7はArchitecture草案であり、新規Scientific ARではない。
 
@@ -89,10 +89,10 @@
 | Contract | Source | BD place | Next level |
 |---|---|---|---|
 | 41 Method | [10_32](../10_requirements_definition/10_32_scientific_method_scope.md) | [22_21](../22_product_basic_design/22_06_family_causal.md) method/estimand matrix | Method-specific IF/Port/DD; Gate07 science |
-| 68 Scope dispositions | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) scope negative boundary | Workstream/Gate Scope test |
-| 10 UC | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) use case boundary + [22_21](../22_product_basic_design/22_06_family_causal.md) pipeline | IF/DD/Tests independent |
-| Existing FR/NFR/AR transferred | [RD-04 audit](../98_rd04_consistency_verification.md) | Existing 22_00〜17 §97/98 | Preserve original design semantics and Status |
-| Full test PASS then canonical promotion | [Owner rule](../93_enh_e11_canonical_promotion_policy.md) | [22_90 review](90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
+| 68 Scope dispositions | [RD-03 trace](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) scope negative boundary | Workstream/Gate Scope test |
+| 10 UC | [RD-03 trace](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) use case boundary + [22_21](../22_product_basic_design/22_06_family_causal.md) pipeline | IF/DD/Tests independent |
+| Existing FR/NFR/AR transferred | [RD-04 audit](../doc01_review/rd04_review/98_rd04_consistency_verification.md) | Existing 22_00〜17 §97/98 | Preserve original design semantics and Status |
+| Full test PASS then canonical promotion | [Owner rule](../combined_review/decisions/93_enh_e11_canonical_promotion_policy.md) | [22_90 review](90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
 
 ## 6. Mechanical assertion summary
 
