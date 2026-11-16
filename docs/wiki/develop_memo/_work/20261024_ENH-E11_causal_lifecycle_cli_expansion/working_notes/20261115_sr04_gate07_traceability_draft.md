@@ -12,6 +12,8 @@
 
 > **DEC-SR04-06（2026-11-16）Owner個別採用済み:** [NCE/NCO/OLS partial R²・RV独立技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)と02承認記録第23項で**DEC06-1〜5すべてAを採用**。P1-M18/P1-M19を実在Observed NCE/NCO、P1-M20を古典OLS partial R²＋point RV（q=1）の初期Nとする。X-04/X-05の未提供の広範方式は初期非採用D。**Owner Scope採用のみCLOSED**であり、Null size/power・RV独立数値Oracle・正式FR/NFR/AR/Gate07・Science Evidenceは未完了。Method行は`OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED`とする。
 
+> **DEC-SR04-07の事前数値・計算予算監査（2026-11-16、Owner採否待ち）:** [Quantitative Acceptance/Monte Carlo/Compute設計の独立技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)。**41 Method／68 Scope／45 Quant ACの番号とMethod statusは変更しない**。R=6000を全Methodの正式計算条件とはしない。Kと全mandatory statistical AC、Method別R・CPU/inner bootstrap・Resource capを独立登録し、Owner/Architecture freeze前は`QUANT_AND_RESOURCE_NOT_FROZEN`。推奨DEC07全7件AはまだOwner判断ではない。
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -150,11 +152,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `c5f39f06182c46db2da538bf1fe2773694c575ec` |
-| fixture | `ebd58fcf2e4635073e8d76dc189a9be14d356806` |
-| quant | `2f73344b375acd765f3ad2904594e7670089f4d9` |
-| ref | `2c4766b1aba87bd065cf4dd81dfcbbd4abe44ce9` |
-| env | `f06f3398eb8be2dd398f2db1130cfda21d8a9243` |
+| matrix | `103af951ae7b3c6ceca539b83789ee354b064581` |
+| fixture | `ff01dc69bc6f3cb465693fc655768690623549a5` |
+| quant | `47e113f779b1baa3b8b32751e3b9883f7a1c93b7` |
+| ref | `eb9a39ef5508355e501174eb55031c0373d52423` |
+| env | `0df48513b4c3bebf757f4dbc232ce3e32a0ca326` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -373,6 +375,13 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | DEC06:OLS-RV (P1-M20) | 古典OLS partial R²（2軸grid）・q=1点RV。HC3とは科学的に別診断 | DGP-020のOVB algebra、REF-R03/RV数値・AC-R04、OLS design hash/df/SE |
 
 **この3件のOwner判断は完了したが、Runtime・科学的Inference・Formal FR/ADR/Gateは未完了。**
+
+### 8.5. DEC07 Quantitative/Resource Pre-freeze追加依存
+
+- 判定ファミリー候補：全mandatory stochastic comparisonsについてGate-wide FWER=0.05、片側Wilson/Method適格なContinuous interval。**実Kは未計数**。固定Sample exact／Losslessは別Hard契約。
+- R=6000はp=.95のMCSE≈.002814を満たすだけ。K=1024（説明例）、failure実測0.005、R6000の補正Wilson上限は.01000657で閾値.01に満たない。
+- Pilotは100〜200repからMethod/n/T/inner-bootstrapごとに実測する案。pilot未実施・T3 R/CPU/Wall/RAM/Money上限未確定。
+- `DEC07-1〜7`の7判断は[技術提案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)にA/B/C比較を明記したが、**Owner採用は未実施**。K/R/Cost/Scienceも当然PASSではない。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
