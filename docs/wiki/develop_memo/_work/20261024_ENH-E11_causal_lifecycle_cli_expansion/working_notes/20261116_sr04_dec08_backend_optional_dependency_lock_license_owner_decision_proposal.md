@@ -1,8 +1,8 @@
-# ENH-E11 — DEC-SR04-08：Backend・Optional Dependency・uv.lock・License／Delivery判断案
+# ENH-E11 — DEC-SR04-08：Backend・Optional Dependency・uv.lock・License／Delivery（Owner正式個別採用記録）
 
-**文書区分:** SR04独立技術判断記録／Human owner採否待ちの実行環境契約。正式FR/NFR/AR/ADR・Gate06/07・Coding開始・Science PASS・法務承認ではない。  
+**文書区分:** SR04独立技術判断記録。2026-11-16 Human ownerがDEC08-1〜8のA案をすべて明示採用。**正式FR/NFR/AR/ADR・Gate06/07・Coding開始・Science PASS・個別納入の法務承認ではない。**  
 **策定日:** 2026-11-16 JST。**対象Branch:** prototype/ariadne_mvp。  
-**状態:** DEC-SR04-08_PROPOSAL_READY / OWNER_PENDING / DEPENDENCY_AND_LOCK_NOT_FROZEN / LICENSE_REVIEW_PENDING / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
+**状態:** DEC-SR04-08_A1_TO_A8_OWNER_ACCEPTED / ENV_DEPENDENCY_POLICY_APPROVED / DEPENDENCY_AND_LOCK_NOT_FROZEN / LICENSE_REVIEW_PENDING / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
 **先行Owner決定:** DEC-SR04-01〜07は個別採用済み。科学的Estimand・Method・Inference方針、DEC07のMonte Carlo計画は変更しない。  
 **参照:** [02 Owner承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)／[SR-02 Backend実行証跡](20261101_sr02_backend_runtime_probe_results.md)／[SR04-E Environment Contract](20261115_sr04_execution_environment_contract_draft.md)／[SR04-F Gate07 Trace](20261115_sr04_gate07_traceability_draft.md)。
 
@@ -16,24 +16,24 @@
 | uv.lock | universal lock。既存base/predictive-advanced/dev/docsの依存解決結果がある | E11 extras定義後に再解決。Version、wheel/Sdist hash、metadata/lock整合・Profile別導入検証 |
 | uv.lockの実効package | DoWhy、EconML、Tigramite、rdrobustのpackage entryが**ない**。既存causal-learn 0.1.4.8、lingam 1.13.0、numpy 2.2.6、scipy 1.13.1、statsmodels 0.14.6等 | SR02別環境で観測したstatsmodels 0.15.0と、現行uv.lockの0.14.6を**同一環境だと誤認しない** |
 | SR02 GitHub Actions | Ubuntu24.04 / Python3.12.15 / x86_64の4 Job（DoWhyのみ／EconMLのみ／Tigramiteのみ／3者同時）はinstall/API smoke PASS | 試験時の個別python環境から現行uv.lockは変更されていない。科学Benchmark／各プロファイルfull lock／納入法務は未PASS |
-| 本契約作成時 | pyproject.tomlとuv.lockは読取のみ | **本Owner判断前に依存ファイルを直接変更しない**。承認後の実装Work Packageで両ファイルを整合的に変更する |
+| 本契約作成時 | pyproject.tomlとuv.lockは読取のみ | **今回の個別Owner方針採用は依存ファイル改変の実行承認ではない。**承認後の実装Work Packageで両ファイルを整合的に変更する |
 
 **役割の分離:** pyproject.toml＝依存・環境要求の**宣言**、uv.lock＝platform marker込み依存集合の**解決結果**、Environment Profile＝実際に選択したextra／OS・Python・native ABI・BLAS等、Run Manifest＝その実行で使った実効版／Method config／seed／hash、Legal Gate＝特定成果物を特定受領者に配布できるかの審査。uv.lockだけで残りを代替しない。
 
-## 1. DEC08の選択肢：8項目の推奨A
+## 1. DEC08の選択肢：8項目のOwner採用A
 
-| ID | A案（推奨） | B/C案の問題 | 今回状態 |
+| ID | A案（採用） | B/C案の問題 | 今回状態 |
 |---|---|---|---|
-| **DEC08-1** | pyproject.toml宣言＋単一uv.lock解決＋環境Manifestを分離管理し、同一PRで差分・Lockを整合させる | uv.lockを直接手編集する／現行lockをE11依存導入済みと扱う | OWNER_PENDING |
-| **DEC08-2** | Ubuntu24.04 / Python3.12系 / x86_64 / CPUの候補を5既存Profileでpreflight、RDは追加のoptional profile候補とする | Python patch・GPU・macOS等を未検証で保証／各Profile検証を省略 | OWNER_PENDING |
-| **DEC08-3** | DoWhy・EconML・Tigramite・rdrobustのMethod別Backend/Estimatorを明示。SR02観測版は**候補のみ**、実効科学/互換性の採用条件付き | 全Methodのバックエンド一律化／旧API smokeをMethod科学PASSとする | OWNER_PENDING |
-| **DEC08-4** | E11 extrasを機能別に定義し、universal resolution・Combinedの適格性を必須検証。競合時はOwner/Architectureに差戻し | optional化＝必ず依存隔離と誤認、競合を許可したままCombined PASSとする | OWNER_PENDING |
-| **DEC08-5** | fresh venvでuv lock --check、uv sync --locked、uv pip check、profile isolation/legacy回帰を検証し、freeze済みcommitを記録 | --frozenをlock stale検証に使用／最新patch自動更新 | OWNER_PENDING |
-| **DEC08-6** | Seed/Method/backend/final model/env/BLAS/lock/wheel/Source SHA/RuntimeのManifestとSBOMを同時に管理 | seed＋uv.lockだけでbitwise結果再現やlicense provenanceを保証 | OWNER_PENDING |
-| **DEC08-7** | LGPL/MIT/BSD/GPLその他のライセンスを配布形態・artifact単位でReview。Tigramite/RDは法務判定前に**顧客Delivery BLOCKED** | GPLをoptional extrasにすれば義務無し／内部利用と顧客配布の区別無し | OWNER_PENDING |
-| **DEC08-8** | Env/Legal・Scientific・DEC07 Compute・正式Gateを別状態とし、Owner判断→Lock前提固定→T2 Pilot→T3→配布承認 | 科学PASS・uv lock成功・GPL法務承認を相互代用する | OWNER_PENDING |
+| **DEC08-1** | pyproject.toml宣言＋単一uv.lock解決＋環境Manifestを分離管理し、同一PRで差分・Lockを整合させる | uv.lockを直接手編集する／現行lockをE11依存導入済みと扱う | OWNER_ACCEPTED |
+| **DEC08-2** | Ubuntu24.04 / Python3.12系 / x86_64 / CPUの候補を5既存Profileでpreflight、RDは追加のoptional profile候補とする | Python patch・GPU・macOS等を未検証で保証／各Profile検証を省略 | OWNER_ACCEPTED |
+| **DEC08-3** | DoWhy・EconML・Tigramite・rdrobustのMethod別Backend/Estimatorを明示。SR02観測版は**候補のみ**、実効科学/互換性の採用条件付き | 全Methodのバックエンド一律化／旧API smokeをMethod科学PASSとする | OWNER_ACCEPTED |
+| **DEC08-4** | E11 extrasを機能別に定義し、universal resolution・Combinedの適格性を必須検証。競合時はOwner/Architectureに差戻し | optional化＝必ず依存隔離と誤認、競合を許可したままCombined PASSとする | OWNER_ACCEPTED |
+| **DEC08-5** | fresh venvでuv lock --check、uv sync --locked、uv pip check、profile isolation/legacy回帰を検証し、freeze済みcommitを記録 | --frozenをlock stale検証に使用／最新patch自動更新 | OWNER_ACCEPTED |
+| **DEC08-6** | Seed/Method/backend/final model/env/BLAS/lock/wheel/Source SHA/RuntimeのManifestとSBOMを同時に管理 | seed＋uv.lockだけでbitwise結果再現やlicense provenanceを保証 | OWNER_ACCEPTED |
+| **DEC08-7** | LGPL/MIT/BSD/GPLその他のライセンスを配布形態・artifact単位でReview。Tigramite/RDは法務判定前に**顧客Delivery BLOCKED** | GPLをoptional extrasにすれば義務無し／内部利用と顧客配布の区別無し | OWNER_ACCEPTED |
+| **DEC08-8** | Env/Legal・Scientific・DEC07 Compute・正式Gateを別状態とし、Owner判断→Lock前提固定→T2 Pilot→T3→配布承認 | 科学PASS・uv lock成功・GPL法務承認を相互代用する | OWNER_ACCEPTED |
 
-**推奨パッケージ:** DEC08-1〜8の**A案をすべて採用**。これは基準・設計方針の採用であり、未実測の実効依存版・release可能性・Legal approval・Coding承認を作らない。
+**正式判断:** Human ownerがDEC08-1〜8の**A案をすべて採用済み**。これは基準・設計方針の採用であり、未実測の実効依存版・release可能性・Legal approval・Coding承認を作らない。
 
 ## 2. DEC08-1：プロジェクト宣言とLockの整合
 
@@ -143,7 +143,7 @@ uv pip check
 
 | レベル | 事前条件 | 現状態 |
 |---|---|---|
-| DEC08 Owner Policy | この文書の8件のA/B/C採否 | **OWNER_PENDING** |
+| DEC08 Owner Policy | DEC08-1〜8のA案すべてを02承認記録第25項に記録 | **OWNER_ACCEPTED** |
 | SPEC/EXTRAS/LOCK | Architecture/OwnerがMethod↔Backend・extras名・候補版・Combined方針を採用し、pyproject+uv.lockをPR変更 | **NOT IMPLEMENTED** |
 | ENV PREFLIGHT | fresh isolationの全Profileで--locked・pip check・smoke/legacy regression・Manifestを確認 | **NOT RUN under E11 Lock** |
 | SCIENCE T2 Pilot | 採用ProfileとLock SHAでMethod別CPU/RSS/Inference・n/Tを実測、DEC07のResource予算に渡す | **NOT RUN** |
@@ -151,13 +151,13 @@ uv pip check
 | LICENSE/DELIVERY | 納入artifact・software combination・受領者・ソース提供義務を法務/Ownerが個別承認 | **NOT APPROVED** |
 | Formal Gate | 68 Scope→FR/NFR/AR/Architecture、06/07、独立Review、Owner Snapshot | **PENDING_FULL_CONCEPT_APPROVAL** |
 
-**今回の実施範囲:** 現行pyproject.toml / uv.lockとSR02 Evidenceを照合、Backend/Version/Extras/Legalの採否案を策定し、SR04 E/Fと02承認記録の未承認事項に接続する。**実際のpyproject.toml/uv.lock・Source code・Extra導入・lock生成・Runtime/Pilot/Science/法務審査は実施していない。**
+**今回の実施範囲:** 現行pyproject.toml / uv.lockとSR02 Evidenceを照合したBackend/Version/Extras/Legalの8件の設計案について、Ownerが明示的にすべてAを採用した。02承認記録第25項とSR04 E/F／統合レビューに接続する。**実際のpyproject.toml/uv.lock・Source code・Extra導入・lock生成・Runtime/Pilot/Science/法務審査は実施していない。**
 
-## 9. Ownerへの採否依頼
+## 9. Ownerの正式採用・実装前の閉鎖条件
 
-**推奨：DEC08-1〜8をすべてA案で個別採用**。これにより正式なBackend/Lock/Licenseの設計方針は確定するが、**実効ライブラリの最終pin・全Profileのuv.lock成功・GPL納入法務・Science Pass・Coding許可**は別の未解決事項として残る。
+**Owner正式決定：DEC08-1〜8のA案をすべて個別採用済み**。これにより正式なBackend/Lock/Licenseの設計方針は確定するが、**実効ライブラリの最終pin・全Profileのuv.lock成功・GPL納入法務・Science Pass・Coding許可**は別の未解決事項として残る。
 
-後続の推奨順序：OwnerがA×8を採用 → DEC09 全体Scope/FR/Architecture/Gateの統合承認 → 承認済みWork Packageでpyproject.toml/uv.lockとEnvironment Manifestを更新 → 全Profile Preflight → 独立科学T2/T3／Legal Review → 配布承認。T2 Pilotの予算計測は正式なArchitectureと依存の組合せが決まった後に開始する。
+後続の推奨順序：**DEC08 Owner判断（A×8採用）は完了** → DEC09 全体Scope/FR/Architecture/Gateの統合承認 → 承認済みWork Packageでpyproject.toml/uv.lockとEnvironment Manifestを更新 → 全Profile Preflight → 独立科学T2/T3／Legal Review → 配布承認。T2 Pilotの予算計測は正式なArchitectureと依存の組合せが決まった後に開始する。
 
 ## 10. 外部一次資料
 
