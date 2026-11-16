@@ -8,6 +8,8 @@
 **Owner決定:** [02 構想承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)。基本方針のみ個別採用済みであり、**全体構想は`PENDING_FULL_CONCEPT_APPROVAL`**。  
 **根拠となる実測:** [SR-02 Python/Linux依存・API実行記録](20261101_sr02_backend_runtime_probe_results.md)。この実測はinstall/API smokeであり、Method別科学妥当性・完全なlock・SI納入適法性を示さない。
 
+> **2026-11-16 Owner decision:** [DEC-SR04-01/02](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) によりB1-Aの加法線形IV構造係数とDRIV-Aの条件付き構造IV斜率は科学的semantic targetとして採用。Eで未凍結の対象は**実効backend/依存lock、B1 AR/HC、DRIV W残差化nuisance/projection/CI、seed、resource、Method固有科学Benchmark**であり、Owner意味論判断と混同しない。全体構想は未承認。
+
 ## 0. 目的・システム境界・再現性の分類
 
 ### 0.1. この契約が対象にすること
@@ -111,10 +113,10 @@ SR-04-DのR=6,000/セルは**候補**。p=.95ならMCSE≈0.002814、反復数R�
 | P1-M12〜17 / Refutation, Sensitivity | ENV-BASE（DoWhy method利用時ENV-DOWHYを別profile） | placebo/subset/Bootstrap/clip rule、resample unit、iteration count | REF-R01、真のNCとRandom CCを分ける |
 | P1-M18〜20 / NCE/NCO/partial-R²候補 | ENV-BASE | opt-in、null conditioning、classic OLS SE/df、RV version | **Method正式Scope未採用**。実装しないまま科学合格と扱わない |
 | P2-M01〜07 / non-IV CATE 7 estimator | ENV-ECONML | nuisance/final model・crossfit・train/test・X/W・bootstrap/forest inference | 7つを一律Bootstrapにしない。pointwise vs simultaneous |
-| P2-M08 / DRIV | ENV-ECONML | Treatment/Z型、IV moment、first-stage、final projectionとCI method | formal conditional-IV estimand未決、complier LATEと区別 |
+| P2-M08 / DRIV | ENV-ECONML | Treatment/Z型、IV moment、first-stage、final projectionとCI method | DRIV-A条件付き構造斜率semantic targetは採用済み。実効0.17.0・final projection/CI未検証、complier LATEと区別 |
 | P3-M01〜03 / PCMCI, PCMCI+, LPCMCI | ENV-TIGRAMITE | CI-test、tau_max、lag0、stationarity、time index、randomness | PAG/CPDAG endpoint、Tigramite experimental状態、GPL別Gate |
 | P3-M04〜08 / DiD, Event, ITS, Sharp/Fuzzy RD | ENV-BASE＋採用計算backend | panel/time/cluster、HAC/bootstrap、cutoff/bandwidth、cohort weights | **specific estimator/inferenceまだ未採用**。無条件IID SEの汎用化禁止 |
-| P3-M09〜11 / Wald, B0, B1, AR | ENV-BASE＋採用IV backend | binary Z/A、first-stage、pre-treatment C、HC method、AR inversion | B0/B1 I2独立観測・異分散頑健漸近、G2集合、B1 formal enum未決 |
+| P3-M09〜11 / Wald, B0, B1, AR | ENV-BASE＋採用IV backend | binary Z/A、first-stage、pre-treatment C、HC method、AR inversion | B0/B1 I2独立観測・異分散頑健漸近、G2集合、B1-A構造係数semantic targetは採用済み、正式schema enum・AR/HC/coverage未検証 |
 | P3-M12〜13 / SCM, SDID | ENV-BASE＋採用最適化backend | donor rank、unit/time weights、optimizer/tolerance/seed、preperiod | target/optimization/SE初期選定待ち |
 
 **Method ID静的網羅:** 上表の範囲表記は次の集合を意味する。P1: P1-M01, P1-M02, P1-M03, P1-M04, P1-M05, P1-M06, P1-M07, P1-M08, P1-M09, P1-M10, P1-M11, P1-M12, P1-M13, P1-M14, P1-M15, P1-M16, P1-M17, P1-M18, P1-M19, P1-M20。 P2: P2-M01, P2-M02, P2-M03, P2-M04, P2-M05, P2-M06, P2-M07, P2-M08。 P3: P3-M01, P3-M02, P3-M03, P3-M04, P3-M05, P3-M06, P3-M07, P3-M08, P3-M09, P3-M10, P3-M11, P3-M12, P3-M13。 合計41件であり、ENV Profileが具体Methodを新規採用したという意味ではない。
@@ -241,7 +243,7 @@ SR-02で採用された配布想定は**個別SIでの顧客環境への構築�
 
 | 優先 | 論点 | 決定・証拠の帰属 |
 |---|---|---|
-| BLOCKER | B1正式Estimand・HC AR／DRIV正式moment・projection | SR03-R01/R02、SR04-C/D/F、Scientific Methods owner |
+| OWNER_RESOLVED / SCIENCE_BLOCKER | B1-A／DRIV-A semantic target採用済み、B1のHC AR・DRIVの実効moment/projection/CI未検証 | SR03-R01/R02、SR04-C/D/F、Scientific Methods owner |
 | BLOCKER | Frontdoor二段階実効仕様、FCI/LPCMCI PAG oracle | SR04-C、Method別検証 |
 | BLOCKER | Quasi/SCM/SDIDの初期Estimator＋InferenceConfig | SR-09、SR04-D/F |
 | BLOCKER | Environment Profile exact版とextras・full resolution lock／旧回帰 | SR-02/10、Architecture |
