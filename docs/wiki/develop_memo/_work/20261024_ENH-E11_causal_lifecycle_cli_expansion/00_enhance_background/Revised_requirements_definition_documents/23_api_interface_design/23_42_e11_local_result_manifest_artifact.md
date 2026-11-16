@@ -169,3 +169,19 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 | IO-E11-09 | Product v2 reader regression | legacy ManifestのE11誤解釈 |
 
 参照：[E11 CLI/Port](23_41_e11_local_cli_scientific_ports.md)、[E11関連BD](../22_product_basic_design/22_09_results_artifacts_lineage.md)、[Existing Product Artifact Port](../30_detailed_design/30_50_persistence_artifacts.md)。
+
+## 10. Publication Interface設計の未Freeze境界（PREP-02）
+
+**ここでいうAtomicは同一local filesystem内の、読取可能な1 run directoryの可視化と不変性を指す。** 次の実装前Contractを厳密に区分する。
+
+| Concern | REQUIRED semantic contract | 未確定・独立実証 |
+| --- | --- | --- |
+| no-clobber | 既存`runs/{run_id}`を上書きせず、同じrequest hash＋verified bundleのみ再使用 | POSIX plain renameの存在確認だけでは並行書込み競合を防げない。Linux no-replace primitive／exclusive lockを固定し、競合negativeを実測 |
+| trusted relative key | run root配下にのみopen、各path componentでsymlink traversal防止 | O_NOFOLLOWのleafだけで中間symlinkは防げない。dirfd walk/secure openのSource・FS試験 |
+| same-FS visibility | staging→runs一括切替、Marker・Manifest・全Artifacts検証 | NFS/object store/cross-device/Windowsには保証を拡大しない。File/dir fsyncとcrash recoveryの実FS evidence |
+| manifest identity | Manifest自己hash禁止、MarkerがManifest bytes hashを参照し、MarkerはArtifact一覧から除外 | Canonical JSON encoding/version、Manifestのartifactリスト順序、入出力hashの最終JSON Schema |
+| Result・AR topology | Effect point、Inference、Science statesを別軸とし、Infinityや非連結ARをタグ付き型で正規化 | Empty/invalid CI、unknown endpoint、Roundtrip、null reasonのSchema/Test |
+| row Privacy | default no individual export、Spec policy ∧ CLI flag ∧ OS principal/permissionすべてを要求 | Shared mount/container root/delegation/ACLの認可、redaction、Parquet column negative |
+| Legacy separation | E11 Local run marker+schemaと旧v2`CliManifest` readerを別dispatchし、旧データの意味を改変しない | v2 regression fixtures、unknown version/fallback negative |
+
+**Status:** `DESIGN_CONTRACT_DRAFT / ADR_AND_JSON_SCHEMA_FREEZE_PENDING / FS_SECURITY_INDEPENDENT_TEST_NOT_RUN`。この表はOwnerの方法論/安全性承認範囲を狭めず、実装済みまたはPASSを意味しない。対応DD：`30_62`§4（Classの7区分）。対象Finding：BD01-F03/04/05/06/07/12。

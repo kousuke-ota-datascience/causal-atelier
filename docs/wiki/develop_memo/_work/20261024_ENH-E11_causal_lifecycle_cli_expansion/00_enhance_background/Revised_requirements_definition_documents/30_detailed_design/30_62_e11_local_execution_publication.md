@@ -61,44 +61,74 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
 
-## 4. `LocalArtifactPublisher`
+## 4. `LocalArtifactPublisher`（PROPOSED：Owner 7区分）
 
-### 4.1. Fields / State
+### 4.1. 識別情報・責務
 
-候補：`interfaces.cli.e11.publication.LocalArtifactPublisher`。Fieldsは `root: Path`、`run_id: str`、`request_hash: str`、`state: PREPARING/STAGING/VALIDATING/COMMITTED/ABORTED`、`staging_handle`、`artifacts: tuple[ArtifactDescriptor,...]`、`permission_policy`。rootはtrusted existing directoryで同一FileSystemを前提とする。
+- **Module / Class:** `interfaces.cli.e11.publication.LocalArtifactPublisher`（提案。現行Sourceには未実装）
+- **責務:** 同一local filesystem上の複数Artifactをrun単位で検証・原子的に公開し、readback成功を確認する。新E11のLocal authorityでありProductの`ArtifactStorePort`ではない。
+- **責務外:** Scientific Estimator、HTTP/DB、顧客配布Legal、外部FSのcross-device atomicity。
+- **設計参照:** 23_42 §2/6/7、BD01-F03/F05/F06/F12。Current Product Port blob `e5bb990f9b69ef68df46a1559560ffb67b64caaf`。新Port/Schemaの最終freezeは未実施。
 
-### 4.2. Methods
+### 4.2. フィールド
 
-~~~python
-def begin(self) -> StagingArtifactSink: ...
-def stage_bytes(self, key: RelativeArtifactKey, data: bytes,
-                media_type: str, classification: PrivacyClass) -> ArtifactDescriptor: ...
-def validate(self, manifest: LocalRunManifest) -> ValidatedBundle: ...
-def commit(self, validated: ValidatedBundle) -> CommittedRunRef: ...
-def abort(self, reason: str) -> None: ...
-~~~
+| Field | Type（Proposed） | 生成元 | 可変性・制約 |
+| --- | --- | --- | --- |
+| `root` | `Path` | 呼出し元からTrusted Root注入 | Immutable root reference。実FSの所有者・権限／同一devをpreflight |
+| `run_id` | `str` | 正規化済LocalStudySpec | Immutable。23_42のsafe grammar |
+| `request_hash` | `str` | canonical LocalStudySpec bytes | Immutable。小文字SHA256 hex64 |
+| `state` | `PublishState` | FactoryでPREPARING | PREPARING→STAGING→VALIDATING→COMMITTED/ABORTED |
+| `staging_handle` | `StagingHandle|None` | begin | State依存。Trusted FS descriptorを閉鎖管理 |
+| `artifacts` | `tuple[ArtifactDescriptor,...]` | stage_bytes | Commitまで追加、公開後immutable |
+| `permission_policy` | `LocalPrivacyPolicy` | 注入Policy | Resultのrelease policyと一致を要求 |
 
-StagingArtifactSinkによりBackendの出力先をstagingへ限定。絶対pathやroot外Objectへの書き込みはPort上禁止する。
+### 4.3. Constructor / Factory
 
-### 4.3. Atomic algorithm
+- **Proposed** `__init__(self, root: Path, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。注入されたrootは存在するTrusted directoryのみ、random staging tokenは`begin`時に生成する。
+- **前提:** `run_id`にseparator/「.」「..」を含まない、request hashはcanonical versionと一致。Trusted Root所有者／同一FS／OS principalの確認に失敗したらstaging生成しない。
+- **Failure:** `CONFIG_INVALID`/ `INPUT_PATH_INVALID`/ `PERMISSION_DENIED`などのtyped error。実際のException class名・Constructor実装はADR/06 Freeze時に確定。
 
-1. `root/.staging/{random-token}`を `0700` で作り、fileは`0600`。安全なdirfd/openatと`O_NOFOLLOW`相当を使い、単なる文字列のPath正規化でraceを防げたとみなさない。
-2. 全Artifactをstagingへwrite、flush/fsync。JSON Schema・Parquet column/row privacy・size/sha256/relative keyをvalidate。
-3. Manifest（Artifact一覧、source hash、runtime、privacy/Science）を作り、Manifest bytes hashを含む`_COMMITTED.json`を作る。Manifestに自身のdigestを含めない。
-4. Readerと同じMarker→Manifest→全Artifact/readbackをstagingで実施。
-5. filesystemの同一devと `runs/{run_id}`の非存在を確認。**no-clobber atomic directory rename**で一括公開する。単純なexists→renameを並行書込安全とみなさず、no-replace primitive／排他lockの実効方式を実装段階で検証。
-6. `runs`親dirをfsync。公開後再readback。COMMITTEDを返す。
-7. 失敗がrename前なら未公開stagingを保全・abort。rename後は公開済みの可能性があるので勝手に削除／上書きせず、ReaderとrecoveryがIntegrityを判定する。
+### 4.4. メソッド
 
-Atomicityは**同一local filesystemでのdirectory visibility**であり、異Filesystem、object-store、NFS、電源断耐久性の一般的保証ではない。実機fsync/rename semantics、fault injectionが必須。
+| Signature（Proposed） | Return | 責務・副作用 | Failure / retry |
+| --- | --- | --- | --- |
+| `begin(self) -> StagingArtifactSink` | staging sink | 0700 staging dir作成、state遷移 | 重複begin/権限不一致拒否。未公開ならabort可 |
+| `stage_bytes(self, key: RelativeArtifactKey, data: bytes, media_type: str, classification: PrivacyClass) -> ArtifactDescriptor` | descriptor | dirfd相当のroot閉じ込めで0600 file作成/追加 | traversal/symlink/サイズ/重複key拒否 |
+| `validate(self, manifest: LocalRunManifest) -> ValidatedBundle` | readback済み候補 | 各Artifact→Manifest→markerのhash/Schema/Privacy検証 | missing/hash mismatch/個票漏洩ならfail-closed |
+| `commit(self, validated: ValidatedBundle) -> CommittedRunRef` | published run ref | no-clobber rename、親dir fsync、公開後readback | 競合／FS障害時に既存run上書き不可。出所不明runは消去しない |
+| `abort(self, reason: str) -> None` | None | 未公開stagingを隔離しHandle解放 | rename後は既公開の可能性があるため破壊的abort禁止 |
 
-### 4.4. Idempotency / Recovery
+### 4.5. 処理仕様（Preconditions／状態／Postconditions）
 
-既存`run_id`には同一`request_hash`かつ完全readback PASSの場合のみ既存Refを返す。違うrequestは`RUN_ID_CONFLICT`。corrupt/marker無しrunは隔離・診断対象でありoverwriteしない。staging cleanupはownerとactive lock/retentionを確認し、完了扱いしない。exactly-once科学計算は保証しない。
+1. `PREPARING`でroot/safe run ID・output policy・同一FSを検査する。
+2. `begin`で`root/.staging/{random-token}`を0700作成。Path文字列チェックだけでなく、全componentをtrusted dirfd下に開くか同等のanti-symlink手法を適用。
+3. `STAGING`でArtifactを0600でcreate。全bytesのhash/size/schema/Parquet列/Privacyを検証し、同じkeyの二重書込を拒否。
+4. `VALIDATING`でManifestを作り、Artifactリストを走査。Manifest自体のhashを外側の`_COMMITTED.json`へ格納し、Readerと同一アルゴリズムでstagingをreadbackする。File・Directoryをfsync。
+5. `commit`は`runs/{run_id}`未存在を**非原子的exists判定に依存せず**保証するno-replace primitiveまたは実証済みのprocess-wide/exclusive FS lockを要求。単純`Path.rename()`をno-clobber保証としない。
+6. 同一FSで一括公開後、親directory fsyncと公開版の完全readbackが成功して初めて`COMMITTED`。再試行は既存runのrequest hash一致かつ全readback PASSのときのみ同じrefを返す。
+7. Rename後の異常は`COMMITTED`と断定せず、Readerの現在値とRecovery規則で解決。異なるrequest hashは`RUN_ID_CONFLICT`。科学計算のexactly-onceは保証しない。
 
-### 4.5. Tests
+**Postconditions:** `COMMITTED`ではMarker→Manifest→全Artifactが検証可能、output runはimmutable。失敗時に誤った部分成果物を「成功」へ昇格させない。External store/NFS/cross-deviceは同等のatomicityを自動主張しない。
 
-`DD-E11-PUB01`disk-full/crash、`PUB02`manifest/marker前後、`PUB03`rename前後、`PUB04`fsync failure、`PUB05`concurrent same run_id、`PUB06`symlink/path race、`PUB07`checksum corruption、`PUB08`private permissions、`PUB09`readback、`PUB10`既存Product Port独立。
+### 4.6. I/O・連携・失敗処理
+
+- **Caller:** E11LocalCausalUseCase。`StagingArtifactSink`はScientific Adapterにのみ渡し、final `runs` pathを渡さない。
+- **Artifact schema:** 23_42のResult、Graph、Parquet、Manifest、commit marker。それぞれrelative POSIX key＋media_type＋size＋SHA256＋Privacy class。
+- **Transaction:** local same-FS staging → validate → no-clobber directory publication → durable parent sync → readback。DB UoWやProduct ArtifactStoreのtransactionとは無関係。
+- **Failure classes（意味）:** Invalid path、Permission、HASH_MISMATCH、SCHEMA_INVALID、RUN_ID_CONFLICT、NON_ATOMIC_FILESYSTEM、PUBLICATION_FAILED、READBACK_FAILED。実Python Exceptionの命名は未Freeze。
+- **Rollback:** 公開前は未公開stagingを隔離。公開後は既存成果物を勝手に削除しない。Concurrent writers／crashはstagingとrunを混同しない。
+
+### 4.7. 検証
+
+| Test ID | Unit / Contract / Negative | 判定 |
+| --- | --- | --- |
+| DD-E11-PUB01〜04 | disk full、commit marker前後、rename前後、fsync例外 | Partial bundleをsuccessとしない |
+| DD-E11-PUB05 | Concurrent same run_id／異request hash | no-clobber、同hash readback only |
+| DD-E11-PUB06 | path traversal、intermediate symlink、TOCTOU | root外read/write拒否 |
+| DD-E11-PUB07〜09 | corruption、private 0700/0600、Reader roundtrip | 全bytes/hash/privacy/readback |
+| DD-E11-PUB10 | Legacy Product Portと旧v2 CLIの回帰 | E11 publicationをProductの永続authorityへ混入しない |
+
+**Trace:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS fault injectionと独立ReviewはNOT_RUN。
 
 ## 5. `LocalManifestReader` / `LocalRunManifest`
 

@@ -33,3 +33,19 @@
 - **`FR-120a`**：runtime API schemaから生成されるFastAPI OpenAPIをcurrent API contractとして提供する
 - **`NFR-014`**：`causal-analysis-spec/2`の正規contractおよび保存済みCausal Resultをschema versionに従って読取可能に保つ
 - **`NFR-028`**：optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability discovery/selection時に局所化してstable unavailable state/errorとして報告する
+
+
+### 18.2. PREP-02 Schema／Port Freezeへ引き渡す決定事項
+
+この節は**Freeze済みSchemaの宣言ではない**。既存SourceとIF/DD候補の差から、実装前に必要なAuthority・Version決定を列挙する。
+
+| Contract | Current Source観測 | Proposed E11 Authority | Freezeに必要な証拠 |
+| --- | --- | --- | --- |
+| Study Config/Version | 旧CLIのconfig parserと`causal-analysis-spec/2` | `e11-local-study/1`専用decoder、unknown/versionless fail-closed | version discriminator / strict JSON Schema / duplicate YAML key / legacy fixtures |
+| Graph/Lineage | Product `GraphVersion`はProject DB authority | `e11-local-graph/1`、PAG circle/temporal lag付き独立Local graph | Endpoint/GraphKind/lagのunion、参照SHA、編集時のversion発行 |
+| Scientific Port | Product ScientificCorePortはProduct ScientificStatusへ結合 | E11 Local Domain Portとversioned typed DTO | Class/Port signatures、Adapter boundary、Method-specific negative/AR result |
+| Effect/AR/Inferences | 旧ResultはEffectと科学Statusの2軸契約を持つがE11 ARのset形状はない | `e11-local-effect-result/1`と`e11-local-status/1` | bounded/unbounded/disconnected/ALL_REAL、null reason、JSON finite、roundtrip |
+| Publication/Readback | ArtifactStorePortはsingle-Artifact surface | `e11-local-manifest/1`、commit marker、LocalPublicationPort/ManifestReader | no-clobber/collision、同一FS、Manifest→Artifact hash、Privacy/Crash tests |
+| Backend/Env | 現行`pyproject.toml`のE11 extrasは未宣言 | DEC08 5 profile＋conditional ENV-RD | locked distribution/API/ABI、fresh isolated import、SBOM、配布Legal separate |
+
+**依存順序:** (1) Scope/Estimand/Graph意味契約 → (2) Schema version・enum/codec → (3) Port signature・failure → (4) File publish/readback → (5) Backend Profileの実効検証 → (6) 独立Architecture Review。必要なContractをfreezeする前に、設計済みの文章を実装成功の証拠として扱わない。BD01-F03〜09/F12は対応する独立証拠が揃うまでOPEN。
