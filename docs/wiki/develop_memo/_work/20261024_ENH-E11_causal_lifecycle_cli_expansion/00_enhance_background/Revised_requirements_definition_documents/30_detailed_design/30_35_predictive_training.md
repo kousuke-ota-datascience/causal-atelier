@@ -247,3 +247,20 @@ Payload:
 Loader dispatch is by provider/payload format. Existing `fitted-model/1` loader remains supported. Serialize→load→predict parity is required on deterministic fixtures.
 
 Reproducibility claim is same-runtime/config stability. Cross-platform/compiler/library-version bitwise equality is not promised.
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. FR-176（SPLIT）
+
+- 移管する原条項の具体内容：Predictive Navigation Stageを新しいbackend Execution modelまたは1:1 runtime Stageとして扱わず、既存Prediction Task → Split → Training → Evaluation → Explanation → Model Card semanticsを保持する
+- 上位Requirementと整合する要求核：既存の予測タスク設定・データ分割・学習・評価・説明・Model Cardの意味を維持し、Navigation変更で分析実行契約を変更しない
+- `FR-176`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.2. AR-016（SPLIT）
+
+- 移管する原条項の具体内容：subgroup metricは`sample_count`を必須とし、0.95 percentile bootstrap（1000 resamples、deterministic seed）で計算可能な場合にuncertaintyを併記し、計算不能値を捏造しない
+- 上位Requirementと整合する要求核：評価Subgroupの標本数と不確実性を明示し、標本条件・推論方法が不適切な場合は計算不能理由を示して未検証区間を生成しない
+- `AR-016`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)

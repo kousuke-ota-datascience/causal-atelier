@@ -385,3 +385,32 @@ Causalのlegacy `Inference` workspaceやPredictiveのgeneric result containerを
 - page全体のhorizontal overflowをStage section compositionで発生させない。
 
 ---
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. FR-143（MOVE_BD）
+
+- 移管する原条項の具体内容：runtime layerはNavigation Stage ID、browser route、tab/sidebar stateへ依存しない
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】NFR-025の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-143`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-140（MOVE_BD）
+
+- 移管する原条項の具体内容：Navigation Stageをruntime `StageType` / `StageDefinition` / `StageExecution`として再利用・継承しない
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】NFR-021の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-140`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.3. FR-145（MOVE_BD）
+
+- 移管する原条項の具体内容：generic application layerはFamily-specific Stage semanticsを集中所有しない
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】NFR-023の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-145`；Status=`ACTIVE`；Implementation=`NOT_IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.4. NFR-025（SPLIT）
+
+- 移管する原条項の具体内容：CLI / library executionがWeb UI route、tab/sidebar state、NavigationStageDescriptorへ依存しない
+- 上位Requirementと整合する要求核：CLIやライブラリ実行を画面状態なしで行える
+- `NFR-025`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)

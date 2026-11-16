@@ -165,3 +165,44 @@ def execute(
 **Execution sequence:** validate Plan; create/merge StageExecution by stage_key; iterate topological stage keys; skip disabled Stage; resolve input bindings and invoke registry-provided runner; collect results/artifacts and lifecycle state. Existing source owns the exact cancel/compensation semantics; any E11 extension must be reviewed and tested, not inferred from this outline.
 
 **Negative:** Unregistered Stage, mismatched supplied StageExecution, invalid dependency, cancelled Stage and compensating failure. Product lifecycle owner remains outside the local E11 CLI-only design.
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. FR-086a（SPLIT）
+
+- 移管する原条項の具体内容：stochastic Stageのactual effective random seedを`StageAttempt.effective_random_seed`へ保存し、同一logical Stageのretryで同じseedを再利用する
+- 上位Requirementと整合する要求核：確率的処理を再試行しても同じ実効乱数条件を再現できる
+- `FR-086a`；Status=`ACTIVE`；Implementation=`PARTIAL`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-086b（SPLIT）
+
+- 移管する原条項の具体内容：Stageごとのtimeout / operational resource limitをpersistent/configurable policyとして保持する
+- 上位Requirementと整合する要求核：処理ごとの時間・資源上限を設定できる
+- `FR-086b`；Status=`DEFERRED`；Implementation=`PARTIAL`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.3. NFR-001b（SPLIT）
+
+- 移管する原条項の具体内容：actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する
+- 上位Requirementと整合する要求核：解析結果を再現するため実効ライブラリ版・乱数条件を取得できる
+- `NFR-001b`；Status=`ACTIVE`；Implementation=`PARTIAL`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+
+### 98.4. NFR-006a（SPLIT）
+
+- 移管する原条項の具体内容：current claim/lease/retry mechanicsでExecution/Stage lifecycleを安全に再試行できる
+- 上位Requirementと整合する要求核：中断・再送時にExecutionを安全に再開・再試行できる
+- `NFR-006a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+
+### 98.5. NFR-006b（SPLIT）
+
+- 移管する原条項の具体内容：retry/restartでsuccessful Stage outputのduplicate durable Artifact materializationを防止する。exactly-once executionは保証しない
+- 上位Requirementと整合する要求核：再試行・再起動で成功済み成果物の重複作成を防止する
+- `NFR-006b`；Status=`ACTIVE`；Implementation=`PARTIAL`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+
+### 98.6. AR-019（SPLIT）
+
+- 移管する原条項の具体内容：random seedだけでなくsplit indexまたはpartition artifactを保存する
+- 上位Requirementと整合する要求核：分析のデータ分割を再現可能な情報として保持しなければならない
+- `AR-019`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)

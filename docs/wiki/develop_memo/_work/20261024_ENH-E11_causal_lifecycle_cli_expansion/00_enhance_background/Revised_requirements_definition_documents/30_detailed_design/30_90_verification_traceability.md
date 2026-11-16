@@ -212,3 +212,20 @@ Setup
 exhaustive visibility/state correctnessはdeterministic lower-level testをprimary proofとし、Browser E2Eはcross-layer journey proofとする。
 
 ---
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. NFR-015（SPLIT）
+
+- 移管する原条項の具体内容：Domain、Planner、Runner、API、Worker、UI、scientific benchmarkを分離testできる
+- 上位Requirementと整合する要求核：Domain・実行・API・UI・科学計算を個別に検証できる
+- `NFR-015`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)
+
+### 98.2. NFR-024（SPLIT）
+
+- 移管する原条項の具体内容：Navigation descriptor、route、renderer binding、runtime independenceをunit/integration/E2Eで分離検証できる
+- 上位Requirementと整合する要求核：画面構成・URL復元・表示・分析実行独立性を個別に検証できる
+- `NFR-024`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)

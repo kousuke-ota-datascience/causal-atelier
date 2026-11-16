@@ -126,3 +126,44 @@ Family Capability
 | `resolve(stage_type: StageType)` | `StageRunner` | Missing raises `RunnerNotRegistered` |
 | `contains(stage_type: StageType)` | `bool` | Structural membership |
 | `capability_fingerprint` (property) | `tuple[str, ...]` | Sorted StageType.key fingerprint |
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. FR-075（MOVE_BD）
+
+- 移管する原条項の具体内容：Family別PlannerをRegistryから解決する
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】NFR-005の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-075`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-079（MOVE_BD）
+
+- 移管する原条項の具体内容：Stage RunnerをRegistryから解決し、Executorへif/elif分岐を集約しない
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】NFR-005の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-079`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.3. FR-080（MOVE_BD）
+
+- 移管する原条項の具体内容：canonical lifecycle/application serviceがExecutionのclaim、state、cancel、retry、Result/Artifact metadata commitを所有し、Generic Executorはowned workflow context内で依存順、Stage sequencing、runner invocationを実行する
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】FR-081の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-080`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.4. FR-089（MOVE_BD）
+
+- 移管する原条項の具体内容：Generic validationとFamily-specific validationを分離して実行する
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】FR-085の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-089`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.5. FR-128a（MOVE_BD）
+
+- 移管する原条項の具体内容：Algorithm/Runnerをregistry/capabilityから解決・管理するcurrent contractを維持する
+- 上位Requirementと整合する要求核：【設計制約移管・Legacy Trace】FR-035／NFR-005の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
+- `FR-128a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
+
+### 98.6. FR-128b（SPLIT）
+
+- 移管する原条項の具体内容：size limit、timeout等のoperational resource configurationを一元管理する
+- 上位Requirementと整合する要求核：運用上の処理規模と実行時間の上限を設定・適用できる
+- `FR-128b`；Status=`DEFERRED`；Implementation=`NOT_IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)

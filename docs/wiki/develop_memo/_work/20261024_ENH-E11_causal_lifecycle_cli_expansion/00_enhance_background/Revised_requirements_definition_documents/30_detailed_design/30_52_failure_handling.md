@@ -30,3 +30,14 @@ Predictive feature selectorでDataset Version/schemaを取得できない場合�
 Dataset Version変更によりselected featureが無効になった場合は、無効featureをsilent保持しない。clearまたはvalid intersectionへのreconcileを行う場合、利用者に変更を示す。
 
 ---
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. NFR-011a（SPLIT）
+
+- 移管する原条項の具体内容：current request/execution/stage correlation identifiersをlogへ出力する
+- 上位Requirementと整合する要求核：Request・実行・処理単位をまたいで障害を追跡できる
+- `NFR-011a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../96_rd04_nfr_ar_application_review.md)

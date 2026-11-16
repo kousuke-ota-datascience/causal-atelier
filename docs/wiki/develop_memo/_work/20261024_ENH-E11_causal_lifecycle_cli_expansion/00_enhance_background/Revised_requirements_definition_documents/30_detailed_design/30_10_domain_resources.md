@@ -159,3 +159,14 @@ Frontendはlabel/order/default Stageを含むfull catalogをhard-codeしてdupli
 | `validate_outcome()` | `None` | Invalid outcome raises `InvalidAnalysisSpec` |
 
 **E11 caution:** This is Product GraphVersion; new local Graph fidelity and versioning cannot claim Product persistence without explicit ADR/Scope change. FCI circle/Temporal oracle behavior is not proven by this class alone.
+
+
+## 98. RD-04：詳細設計へ引き継ぐ要求起源の具体制約
+
+**Status:** `RD04_DETAILED_CONSTRAINT_TRACE / OWNER_CONTENT_REVIEW_PENDING`。RD-04で抽象化した原文から、モジュール・Class・Method・I/O・失敗処理へ落とすべき実現制約を保持する。実装されていると確認した記録ではない。クラスレベル仕様は[共通テンプレート](30_01_class_design_template.md)に従い別途DD設計確認する。
+
+### 98.1. FR-007（SPLIT）
+
+- 移管する原条項の具体内容：Executionは参照ResearchContextVersionを固定し、受付時のobjective/rationale等の再現に必要なsnapshot metadata/hashを保持する。ResearchContext全体の重複保存を必須化しない
+- 上位Requirementと整合する要求核：分析実行時点の研究目的と理由を後から再現できる
+- `FR-007`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[逐条Disposition](../95_rd04_fr_application_review.md)
