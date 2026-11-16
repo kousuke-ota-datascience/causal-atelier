@@ -10,13 +10,13 @@
 | ID | Area | Requirement | Level | Requirement Status | Implementation Status | Delivery |
 | --- | --- | --- | --- | --- | --- | --- |
 | AR-005 | Scientific Integrity | 因果推定はIdentification ResultとData Eligibility Resultを参照してgateする | — | ACTIVE | IMPLEMENTED | BASELINE |
-| AR-006 | Scientific Integrity | Identification statusは全reasonを収集後に決定する | — | ACTIVE | IMPLEMENTED | BASELINE |
+| AR-006 | Scientific Integrity | 因果識別の成否は全ての不適格理由と不確実性を考慮して決定しなければならない | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-007 | Scientific Integrity | Collider判定はback-door path上のcolliderまたはその子孫を対象とする | — | ACTIVE | IMPLEMENTED | BASELINE |
-| AR-008 | Scientific Integrity | Eligibilityの型はBINARY、CONTINUOUS、UNSUPPORTED等の正規値で保存する | — | ACTIVE | IMPLEMENTED | BASELINE |
-| AR-009 | Scientific Integrity | 外部libraryのdtype objectまたはmodel objectをJSON正本へ保存しない | — | ACTIVE | IMPLEMENTED | BASELINE |
+| AR-008 | Scientific Integrity | 推定に必要な変数型が適格かを識別できなければならない | — | ACTIVE | IMPLEMENTED | BASELINE |
+| AR-009 | Scientific Integrity | 【設計制約移管・Legacy Trace】対応する既存上位要件に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-010 | Scientific Integrity | Estimation前提不成立時は数値を無理に返さず分析状態を保存する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-023 | Scientific Integrity | Causal Identificationでは観測データと仮定からestimandが識別可能かをEstimationと分離して扱う | — | ACTIVE | IMPLEMENTED | ENH-E5 |
-| AR-024 | Scientific Integrity | Causal Effectsは推定されたeffectの閲覧・利用を扱い、estimator configurationと混在させない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
+| AR-024 | Scientific Integrity | 因果効果の結果閲覧・利用と推定器の設定操作を混同せず、区別して利用できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-028 | Graph Uncertainty | GraphのPAG／CPDAG等価類・circle端点・潜在交絡可能性は識別可能性と独立に保持し、未確定辺を無根拠に方向確定してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | AR-029 | Identification Integrity | 因果識別の前提・証拠とEstimator適格性を分離し、明示的な識別根拠と適格性が成立しない場合は科学的負結果を返さなければならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | AR-030 | Frontdoor Scope | 初期Frontdoor数値推定は単一Mediatorの承認済み限定線形設計FD-Aに限り、追加モデル仮定・適格性・識別と推定の差を明示しなければならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |

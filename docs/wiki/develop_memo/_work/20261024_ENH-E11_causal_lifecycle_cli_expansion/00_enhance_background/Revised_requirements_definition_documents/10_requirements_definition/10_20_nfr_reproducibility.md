@@ -10,12 +10,12 @@
 | ID | Area | Requirement | Level | Requirement Status | Implementation Status | Delivery |
 | --- | --- | --- | --- | --- | --- | --- |
 | NFR-001a | 再現性 | current snapshot、code/runtime metadata、seed、schema identity等の再現性情報を保持する | — | ACTIVE | IMPLEMENTED | BASELINE |
-| NFR-001b | 再現性 | actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する | — | ACTIVE | PARTIAL | ENH-E5 |
-| NFR-002 | 追跡可能性 | canonical lineage read modelでResearchContextVersion→AnalysisSpecification→ExecutionPlan→Execution→StageExecution→Result→Artifactを追跡し、DatasetVersion/AnalysisView/GraphVersion/input Result/base Executionも接続する | — | ACTIVE | PARTIAL | ENH-E5 |
-| NFR-003 | 決定性 | Canonical JSONとhash生成はfield順やprocessに依存しない | — | ACTIVE | IMPLEMENTED | BASELINE |
-| NFR-013 | Schema evolution | schema versionはversioned Spec/Plan/payload/descriptor等のcontract boundaryで識別し、全persistent Result/Artifact entityへgeneric schema_version fieldを要求しない | — | ACTIVE | IMPLEMENTED | BASELINE |
+| NFR-001b | 再現性 | 解析結果を再現するため実効ライブラリ版・乱数条件を取得できる | — | ACTIVE | PARTIAL | ENH-E5 |
+| NFR-002 | 追跡可能性 | 研究条件から入力・計画・実行・結果・成果物までの追跡が可能である | — | ACTIVE | PARTIAL | ENH-E5 |
+| NFR-003 | 決定性 | 同一内容から環境に依存しない同一性識別値を生成できる | — | ACTIVE | IMPLEMENTED | BASELINE |
+| NFR-013 | Schema evolution | 変化するデータ契約を識別し後方互換を制御できる | — | ACTIVE | IMPLEMENTED | BASELINE |
 | NFR-016 | Scientific transparency | 仮定、warning、negative result、limitationを省略せず表示する | — | ACTIVE | IMPLEMENTED | BASELINE |
-| NFR-019 | Documentation | `00/10/21/22/23/30`だけでcurrent product concept / requirement / logical model / design / interface contractを自己完結して理解できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
+| NFR-019 | Documentation | 現行Productの要件・データ・設計・Interface契約を整合した正式資料で追跡・理解できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-029 | Reproducibility | ローカル分析の入力・実行条件・実効Backend／Library版・乱数／分割条件・出力の同一性と来歴を第三者が検証できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | NFR-033 | Environment Reproducibility | 採用された科学Methodを再現可能な依存関係と検証済み実行Profileで導入・実行でき、導入前後の互換性を確認できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 
