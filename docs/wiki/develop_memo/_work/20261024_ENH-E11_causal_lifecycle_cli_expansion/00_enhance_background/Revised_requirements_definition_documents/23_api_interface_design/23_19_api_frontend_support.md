@@ -1,14 +1,9 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 23 — web api 5 10 to 5 10
+# 23_19_api_frontend_support
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [23_api_interface_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/23_api_interface_design.md) · blob `131467f02222f105a49e6dfdbcec0f49cadb0f41`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original source section numbering retained; document numbering is by interface responsibility.  
+**Source blob:** `131467f02222f105a49e6dfdbcec0f49cadb0f41`.
 
 ---
-
-## 5. Web API Interface（続き）
 
 ### 5.10 Frontend Support API
 

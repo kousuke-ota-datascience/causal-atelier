@@ -1,10 +1,7 @@
-<!-- ENH-E11 split working copy: not a formal approval. -->
-# 23 — worker cli
+# 23_30_worker_runtime
 
-**Status:** `STRUCTURAL_COPY_DRAFT` (existing baseline text, not E11 canonical publication)
-
-**Source:** [23_api_interface_design.md](https://github.com/kousuke-ota-datascience/causal-atelier/blob/3ba5fe2465ec591f0da7f998c21a5241984b73dc/docs/wiki/requirement_definition/23_api_interface_design.md) · blob `131467f02222f105a49e6dfdbcec0f49cadb0f41`  
-**Index:** [Revised document inventory](../README_00_Revised_requirements_definition_documents.md)
+**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original source section numbering retained; document numbering is by interface responsibility.  
+**Source blob:** `131467f02222f105a49e6dfdbcec0f49cadb0f41`.
 
 ---
 
@@ -100,42 +97,3 @@ Execution `runtime_version_json`は最低限`ariadne_code_version / python_versi
 現行実装に独立したpublic`ExecutionEventPublisher / StageEventPublisher`はない。runtime lifecycle authorityはpersistent `Execution / StageExecution` stateである。
 
 Family tab/Navigation route changeをruntime lifecycle eventへ変換しない。
-
-## 7. CLI / Library Interface
-
-現行実装のproduct script entry pointは次である。
-
-```text
-ariadne-discover
-ariadne-estimate
-ariadne-identify
-ariadne-refute
-ariadne-sensitivity
-ariadne-api
-ariadne-worker
-```
-
-scientific CLIの既存境界:
-
-- `ariadne-discover`はstandalone discovery CLIであり、**Web/API Execution IDを作成しない**。
-- `ariadne-identify` / `ariadne-refute` / `ariadne-sensitivity`は共通local scientific-stage implementationを利用し、`--config`でYAMLを読み、domain analysis-spec validation後に`ScientificCoreAdapter`を直接呼び出す。
-- `ariadne-estimate`もlocal estimation commandとして提供される。
-- CLIは実行manifest等のlocal outputを生成するが、browser route / sidebar stateを入力契約にしない。
-
-したがってCurrent contractでは、存在しない次のようなgeneric Resource CLIをcurrent interfaceとして捏造しない。
-
-```text
-ariadne project list
-ariadne execution submit
-ariadne result show
-```
-
-将来generic product CLIを追加する場合は別scopeでinterface contractを設計する。Current mandatory contractでは、既存headless scientific CLIおよびPython/backend use caseへ`current_family` / `navigation_stage` / browser routeをrequired inputとして追加しない。
-
-禁止例:
-
-```text
-ariadne-identify --navigation-stage identification --config ...
-```
-
-`AnalysisFamily` / `ExecutionOperation`等のdomain discriminatorと、UI Navigation Stageを区別する。
