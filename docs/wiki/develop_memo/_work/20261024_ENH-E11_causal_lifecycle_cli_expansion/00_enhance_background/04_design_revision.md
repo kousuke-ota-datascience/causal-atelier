@@ -6,6 +6,8 @@
 
 > **2026-11-16 DEC-SR04-06後続Owner決定（詳細参照）:** [02個別承認第23項](02_enhancement_concept_approval_record.md)、[DEC06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の初期N／X-04/05の広範方式Dは科学的適用範囲として**個別採用済み**。本書は**正本改定前のRequirements/Design Revision Draft**であり、この追補は正式FR/NFR/AR・実効Schema・Architecture・Gateの承認ではない。
 
+> **2026-11-16 DEC-SR04-08個別方針採用:** [02 Owner承認記録第25項](02_enhancement_concept_approval_record.md)、[DEC08独立技術判断](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)で**DEC08-1〜8すべてA案を採用**。基盤Python3.12/Linux CPUと5 Environment Profile、E11機能別Extras・universal `uv.lock`、Method↔Backend/実効API・Combinedの隔離検証、SBOM・Run Manifest、GPL系の個別顧客SI納入Legal Gateを設計方針として確定。**本ファイルは要件／設計の改訂案であって正式FR/NFR/AR・ADRの承認ではない**。具体Extra／Backend最終版・`pyproject.toml`／`uv.lock`改修、Science・法務個別判定・Gate06/07・Codingは未実施。DEC08のOwner決定と配布前法務適合を混同しない。
+
 ## 1. 参照設計
 
 正本：`docs/wiki/requirement_definition/21_logical_data_design.md`、`22_product_basic_design.md`、`23_api_interface_design.md`、`30_detailed_design.md`。
