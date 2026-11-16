@@ -15,6 +15,8 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
+> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。R6000はMCSE 0.002813657の出発候補に過ぎない。Gate-wide K=1024の説明例で真のfailure=.005・R6000のWilson上限は約.01000657、failure Hard Gate（<=.01）を満たさない。RとK、Pass確率・実効CPU費用を同時審査。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+
 ## 0. 目的、判断階層、禁止事項
 
 ### 0.1. 何を定量的に受け入れるか
