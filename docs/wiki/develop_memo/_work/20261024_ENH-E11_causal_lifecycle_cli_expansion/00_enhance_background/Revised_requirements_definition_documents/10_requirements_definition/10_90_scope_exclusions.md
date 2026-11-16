@@ -1,6 +1,6 @@
 # 10_90_scope_exclusions
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -18,7 +18,18 @@
 - unbounded AutoML
 - automatic business decision
 - LightGBM / SHAP / LIMEのmandatory core dependency化
-- DoWhy / EconML等、ENH-E10でapprovedされていないexternal analytical engine追加
+- ENH-E10の承認範囲に含まれないexternal analytical engineを**ENH-E10へ無条件に追加すること**。ENH-E11のDEC09承認Method別Optional Capabilityに限る例外は後掲§11.1に規定する。
 - Navigation stateのDB persistence / last-stage memory
 - Overview / FlagshipをAnalytical Family peerとして追加すること
 - 新規persistent Findings / Evidence domain modelの必須化
+
+## 11.1. ENH-E11に適用する例外と初期対象外（DEC-SR04-09）
+
+- 旧ENH-E10の外部Engine除外は、E11においてDEC09が承認した**Local Scientific CLIのMethod別Optional Capability**の範囲に限り例外とする。DoWhy、EconML、Tigramite等の採用を既存Product Web/DBの強制依存にしない。
+- 初期E11に含めないのは、ATC、汎用Mediation、Matching／汎用g-computation、Policy Value、Monitoring/drift、汎用Graph consensus、一般化された部分識別効果集合の自動数値推定。
+- 初期E11に含めないのは、Simulated Confounder／Graph Perturbation、古典OLS以外の未観測交絡Sensitivity全面化、RPCMCI／J-PCMCI+、別審査の条件付きIV推定器C、SCM未承認CI。
+- 新E11 MethodのProduct API/UI/Worker/DB/migration統合、既存Product GAP-C01〜04の暗黙の閉鎖は含めない。
+- 対象Methodが承認Scopeに含まれていても、必要な法務審査を通過しない顧客向けGPL系Backend配布は許可しない。
+- 付録Aの**D-only Scope**はE11初期の必須提供対象ではない。**混合Disposition**ではR/Q/Nの承認部分のみ実装義務とし、D部分は追跡を維持する。
+
+**Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)。対象Scopeと正式要件の対応は [RD-03 Trace](../96_rd03_formal_requirement_traceability.md)。

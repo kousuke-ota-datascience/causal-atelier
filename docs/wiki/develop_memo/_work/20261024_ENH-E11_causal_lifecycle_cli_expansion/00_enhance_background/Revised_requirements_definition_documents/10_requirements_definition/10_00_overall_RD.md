@@ -1,6 +1,6 @@
 # 10_00_overall_RD
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -125,3 +125,12 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 - **受入:** Scope68行ごとのR/Q/N/D、E11-REQ仮ID→新正式ID、Method/UC/Issue/Architecture/Gate、旧条文との逐条diffを監査する。既存ProductのPARTIALを黙ってIMPLEMENTEDにしない。
 
 **E11追加草案:** [10_14_enh_e11_formal_requirement_publication_draft.md](10_14_enh_e11_formal_requirement_publication_draft.md)
+
+## 91. ENH-E11正式要件の発行規則（RD-03）
+
+- **発行済みの正式ID：FR-185〜203（19）、NFR-029〜036（8）、科学的AR-028〜044（17）。** 全44件のLevel/Statusは`MUST / ACTIVE / UNVERIFIED / ENH-E11`とする。
+- `ACTIVE`は要求義務が有効なこと、`UNVERIFIED`は充足状態が未検証であることを示す。**実装完了、科学的受入、Gate PASS、Coding指示ではない。**
+- 既存の195 FR、36 NFR、27 Scientific ARのID・原文・Statusは変更していない。既存Productの保存済み契約と`causal-analysis-spec/2`も維持する。
+- E11-A-01〜07はArchitecture候補であり、Scientific Integrityの`AR`系列へ採番しない。22 BD/ADRへ移管し、外部観測可能な義務だけをFR/NFR/Scientific ARに反映する。
+- 新E11要件と草案の対応は[RD-03 traceability](../96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
+- **Authority boundary:** OwnerはDEC09で要件の意味とScopeを承認した。今回、改訂版working-copyに正式条文・IDを発行した。**最終SHAのOwner確認・原正本への昇格・ADR/Schema Freeze・Gate06/07・Science/Legalは別途未完了**。

@@ -1,6 +1,6 @@
 # 10_99_change_log
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -75,3 +75,11 @@ ENH-E11の新規技術スコープを定める前に、過去の完了Enhancemen
 現行SHAでの限定再実行は、E5対象が**52 PASS / 3 FAIL**（旧Nodeテスト2件のDOM前提、旧依存制約テスト1件のLightGBM optional dependency前提）、E10対象が**42 PASS / 2 non-failing warnings**、科学ベンチマークが**13 PASS**、E9診断関連が**27 PASS**、CLI/E7ナビゲーション関連が**21 PASS**だった。Exploratory handoff E2Eは、非UTCホストでlease日時比較の問題に遭遇したが、`TZ=UTC`では**1 PASS**を確認した。この日時処理は独立した改善候補である。今回、全repository suiteとBrowser E2Eの新規実行はしておらず、過去の999 PASSも各Gateのfrozen scopeに限定される。
 
 従って、本是正は「すべてのE5〜E10要件が完全実装済み」という認定ではない。未充足要件と現行テストの陳腐化を明示的に残した状態で、ENH-E11のBaseline判断へ進むためのImplementation Status snapshotを回復する。
+
+## 13.10. 2026-11-16 RD-03：ENH-E11正式要件条文の発行
+
+- `FR-185〜203`／`NFR-029〜036`／科学的`AR-028〜044`の全44件を`ACTIVE / UNVERIFIED / ENH-E11`として改訂版に発行。
+- 既存FR195/NFR36/AR27のID・原文・Statusには変更なし。
+- §11のDoWhy/EconML等の除外は**E10時点の意味**へ明確化し、DEC09承認Local E11 Optional Capabilityのみ例外適用。
+- E11-A系Architecture候補はScientific ARへ改番しない。68 Scope／41 Method／10 UC、Draft-to-formal IDの監査を[RD-03 Trace](../96_rd03_formal_requirement_traceability.md)へ独立記録。
+- Owner SHA最終確認、旧canonicalへの昇格、Independent Architecture、Gate06/07、Science T2/T3、Legalを完了済みと主張しない。
