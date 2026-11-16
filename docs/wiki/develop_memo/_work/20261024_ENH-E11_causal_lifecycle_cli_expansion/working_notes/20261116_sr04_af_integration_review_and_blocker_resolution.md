@@ -7,6 +7,8 @@
 
 > **2026-11-16正式個別判断の追補（本レビュー後の更新）:** [DEC-SR04-01／02の技術判断記録](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)を作成し、02 Owner記録の第18・19項へ**B1-AとDRIV-Aの採用**を反映済み。本レビューが作成された時点の「OWNER_PENDING」という記載は**上記2件のsemantic target採用に限り解消**。表の状態は`OWNER_ACCEPTED / SCIENCE_PENDING`へ更新した。B1の正式schema enum/ARとDRIVの実効Estimator/CI/coverage、全体構想・FR/ADR/Gate07は未承認・未検証。Next owner decisionはDEC-SR04-03（Frontdoor）／DEC-SR04-04（Graph Oracle）。
 
+> **2026-11-16後続Owner判断（DEC-SR04-03／04）:** [FD-A 独立技術記録](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)と[GRAPH-A 独立技術記録](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)を作成し、[02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)の第20・21項にHuman ownerの個別採用を反映。**DEC-SR04-03／04のOwner判断はCLOSED**。DoWhy stage・CI、独立PAG/CPDAG/Temporal Oracle・Graph科学的受入、正式FR/ADR/Gate07・全体構想は引き続きOPEN。
+
 ## 0. 目的、審査条件、適用した証拠レベル
 
 ### 0.1. 審査対象（SR04 A〜Fと先行正本案）
@@ -18,7 +20,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `607b6447ed5fdfc2019212375992e4060f642540` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `b9469ee64041057f20afa18037c9fae82025e14c` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -173,8 +175,8 @@
 |---|---|---|---|---|
 | DEC-SR04-01 | B1 formal Estimand | B1-A 構造係数β、異質効果には自動拡張しない | Human ownerがB1-A構造係数targetと境界を採用。正式schema enum、独立IV/AR・HCとCoverageは未検証 | **OWNER_ACCEPTED / SCIENCE_PENDING** |
 | DEC-SR04-02 | DRIV IV heterogeneous target | DRIV-A conditional structural IV slope | Human ownerがDRIV-A条件付き構造斜率とX/W残差化IV momentを採用。実効0.17.0/projection/nuisance/CI/coverage未検証 | **OWNER_ACCEPTED / SCIENCE_PENDING** |
-| DEC-SR04-03 | Frontdoor数値 | FD-A 線形singleton mediator＋2-stage積 | DoWhyの段階調整集合確認、独立Sample Reference、CI方式・Coverage | **METHOD_PROBE_PENDING** |
-| DEC-SR04-04 | FCI/temporal Graph | GRAPH-A 独立PAG/CPDAG/lag oracle | 別多変数Graphの強制端点証明、DGP-011のtemporal PAG、Graph accuracy | **ORACLE_PENDING** |
+| DEC-SR04-03 | Frontdoor数値 | FD-A 線形singleton mediator＋2-stage積 | Human ownerがFD-A（線形・単一Mediatorの2-stage係数積）を採用。DoWhy 0.14実効stage、CI/独立sample Reference/coverageは未検証 | **FD-A OWNER_ACCEPTED / STAGE_AND_CI_SCIENCE_PENDING** |
+| DEC-SR04-04 | FCI/temporal Graph | GRAPH-A 独立PAG/CPDAG/lag oracle | Human ownerがGRAPH-A（DAG/MAG/CPDAG/PAG/temporal別Oracle）を採用。FCI/LPCMCI/PCMCI+の独立同値類とGraph精度は未検証 | **GRAPH-A OWNER_ACCEPTED / INDEPENDENT_ORACLE_PENDING** |
 | DEC-SR04-05 | Quasi 7手法 | 2.5表の各Method固有最小契約 | コホートweight、bandwidth、HAC/cluster、SCM/SDID optimizer/CI採用 | **OWNER+METHOD_PENDING** |
 | DEC-SR04-06 | NCE/NCO/RV | opt-inだけでなくPhase1の具体Method採否を個別決裁 | 02承認記録とScope68・仮要件03の更新 | **OWNER_PENDING** |
 | DEC-SR04-07 | Quant AC / MC / Compute | Dを事前登録方式で凍結。普遍的閾値としない | Method/DGP別n/R/K/seed/CI/BLAS、pilot costと独立レビュー | **RESOURCE+METHOD_PENDING** |
@@ -218,7 +220,7 @@
 | SR-01〜12、68 Scope、正式FR/ADR/06/07 | **CHANGES_REQUIRED** | Human OwnerとArchitecture Reviewの承認が必要 |
 | ENH-E11全体およびGate07 | **NOT APPROVED** | このDraftの是正だけではCoding/Science PASS不可 |
 
-**次にOwnerが決めるなら:** DEC-SR04-01（B1-A）／02（DRIV-A）は**2026-11-16に個別採用済み**。次はDEC-03（Frontdoor FD-A）とDEC-04（Graph GRAPH-A）の科学的適用範囲を判断し、DEC-05〜10へ進む。個別採用をScience PASSまたはCoding承認に読み替えない。
+**次のOwner判断:** DEC-SR04-01/02（B1-A／DRIV-A）とDEC-SR04-03/04（FD-A／GRAPH-A）は**2026-11-16に個別採用済み**。次の審議対象は**DEC-SR04-05（準実験7手法のEstimator/Inference）**、続いてDEC-06〜10（Method採否、AC/Compute、Environment、全体Scope/Architecture/Gate、独立Science Evidence）。いずれもCodingやScience PASSを意味しない。
 
 **変更した範囲:** A/B/C/D/Fのworking_notes本文と本レビュー記録。Eはレビューしたが実効環境や正本に変更なし。コード・`pyproject.toml`・`uv.lock`・GitHub Issue/Notion・02のOwner決定記録・正式FR/NFR/AR/Gateは変更していない。
 
