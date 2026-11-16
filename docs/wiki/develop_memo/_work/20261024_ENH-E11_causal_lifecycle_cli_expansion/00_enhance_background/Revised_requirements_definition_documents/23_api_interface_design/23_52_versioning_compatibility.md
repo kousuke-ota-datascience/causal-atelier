@@ -1,7 +1,5 @@
 # 23_52_versioning_compatibility
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original source section numbering retained; document numbering is by interface responsibility.  
-**Source blob:** `131467f02222f105a49e6dfdbcec0f49cadb0f41`.
 
 ---
 
