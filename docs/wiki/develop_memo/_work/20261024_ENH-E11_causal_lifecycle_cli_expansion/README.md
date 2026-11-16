@@ -1,6 +1,6 @@
 # ENH-E11 — Causal LifecycleのCLI-first拡張
 
-**状態:** 計画段階／Architecture Review・要件／設計の正式承認待ち（2026-10-25）
+**現在状態（2026-11-16）:** DEC09 Scope/Requirements/Architecture方針 Owner承認済み、RD-04/BD-01改訂済み、DOC-01/IF-01/DD-01作業版を一括Owner Reviewへ提出。独立Architecture Review、Schema/Port Freeze、Gate06/07、Coding Authorization、Science/Legal、正本昇格はいずれも未完。
 
 本ディレクトリはENH-E11のWorkflow資料を格納する。適用規約は`../agentic_enhancement_workflow_template/README.md`と`../agentic_enhancement_workflow_template/README_Appendix_HowToUse.md`。
 
@@ -71,3 +71,13 @@
 本文・見出し・表・判断理由は**日本語を基本**とする。統計手法名、ソフトウェア名称、正式なDomain概念、コード上のenum/field名、GitHub Issueの固定見出しなど、日本語訳が不自然または意味を損なうものは英語のまま用いる。Workflowの規定に従い、canonicalファイル名はASCIIかつ技術英語とする。
 
 **見出し構造のルール:** 原則として見出しには階層に応じた連番を付け、下位見出しは上位の番号を継承する（例：`## 2. ...` → `### 2.1. ...`、`### 2.2. ...`）。見出しレベルの飛越しと、子見出しが1件しかない階層は作成しない。`#` はWorkflowテンプレートに従う文書タイトル専用の例外とし、`00`の本文は `## 0. INTRODUCTION` を起点とする。
+
+## 5. 2026-11-16 継続計画の最新状態（§2〜3の旧履歴より優先）
+
+- **DEC09:** 68 Scope、41 Method/10 UC、新44 Formal requirementsの意味上の方針・Architecture/Gate計画をHuman owner採用。Owner方針承認は実装/Science/Gateの受入ではない。
+- **RD-04／BD-01:** 改訂working copyに保存。BD内部findingsは13件（2文書修正／11未閉鎖）。Independent Architecture Review未完。
+- **DOC-01:** 5群のストック／フロー分離と静的監査を実施。旧105設計書、302ユニーク正式要件行、MOVE_BD19件原文照合。Owner逐条意味審査は残る。
+- **IF-01:** 新Local CLI／Port、typed Effect/Graph/Manifest、Atomic/Privacy契約を23系に追加。具体Version/Schema採用・実行試験は未承認。
+- **DD-01:** Domain/Scientific Port、Local Application/Publisher、41 Method Adapterを30系に詳細設計候補として追加。Class/Backend/Scientific実測は未実施。
+- **三工程一括レビュー入口:** [DOC-01/IF-01/DD-01 Owner Review Pack](00_enhance_background/Revised_requirements_definition_documents/combined_review/90_doc01_if01_dd01_owner_review_pack.md)。[改訂文書索引](00_enhance_background/Revised_requirements_definition_documents/README_00_Revised_requirements_definition_documents.md)。
+- **禁止:** この作業版だけでCodingを許可しない。元`docs/wiki/requirement_definition/`への昇格はE11全対象テストPASSの後に限る。
