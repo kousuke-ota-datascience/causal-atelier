@@ -13,7 +13,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DGP-012〜018はDEC-05-1〜7の既知真値正例として維持。NEG-022（平行トレンド/TWFE）、NEG-023（ITS同時ショック／RD manipulation・weak first stage）、NEG-024（SCM/SDID donor/weights）の適用条件を確定。現物generatorやMethod別推論シミュレーションは未実装。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
-> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。DGP-019/020とNEG-019/020/026の適格性・null/対立・非特異性をDEC06判断案へ整合させた。とくにNCOのA←U→Wはγ=0でも統計的nullではない。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+> **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。DGP-019/020とNEG-019/020/026の適格性・null/対立・非特異性をDEC06判断案へ整合させた。とくにNCOのA←U→Wはγ=0でも統計的nullではない。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 ## 0. 目的と契約
 
@@ -158,9 +158,9 @@ Phase1=20、Phase2=8、Phase3=13の計41行と、横断契約X-01〜09を個別�
 | P1-M15 Bootstrap refutation | DGP-001,002 / repeat-sample reference | NEG-016 | iid前提／resampling validity／run repeatability |
 | P1-M16 Adjustment set sensitivity | DGP-021,002 / graph-valid sets | NEG-002 | 候補集合は有効Graph上でのみ感度比較 |
 | P1-M17 PS clipping sensitivity | DGP-002,023 / known PS | NEG-010,018 | clipping/trim/target変化、ESSとbias |
-| P1-M18 NCE null diagnostic **scope pending** | DGP-019 / γ=0帰無とγ>0対立のY~A+Z | NEG-019,026 | 対照妥当性とnullのsize/powerを別判定 |
-| P1-M19 NCO null diagnostic **scope pending** | DGP-019 / NCO帰無の無作為割付variantとW~A対立variant | NEG-019,026 | Null下sizeとU→A,W下power、A→W不存在、特異性欠如を別々に確認 |
-| P1-M20 partial R²/RV **scope pending** | DGP-020 / OVB closed-form | NEG-020 | partial-R² grid/parity、classic SEのみ |
+| P1-M18 NCE null diagnostic **DEC06-A OWNER_ADOPTED; SCIENCE_PENDING** | DGP-019 / γ=0帰無とγ>0対立のY~A+Z | NEG-019,026 | 対照妥当性とnullのsize/powerを別判定 |
+| P1-M19 NCO null diagnostic **DEC06-A OWNER_ADOPTED; SCIENCE_PENDING** | DGP-019 / NCO帰無の無作為割付variantとW~A対立variant | NEG-019,026 | Null下sizeとU→A,W下power、A→W不存在、特異性欠如を別々に確認 |
+| P1-M20 partial R²/RV **DEC06-A OWNER_ADOPTED; SCIENCE_PENDING** | DGP-020 / OVB closed-form | NEG-020 | partial-R² grid/parity、classic SEのみ |
 
 ### 3.2. Phase2（8 Method）
 
