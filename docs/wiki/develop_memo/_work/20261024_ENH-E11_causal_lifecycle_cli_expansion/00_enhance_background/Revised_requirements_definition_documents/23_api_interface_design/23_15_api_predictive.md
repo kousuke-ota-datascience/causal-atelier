@@ -3,6 +3,8 @@
 
 ---
 
+## 5. Web API Interface
+
 ### 5.6 Predictive Interface
 
 Predictive analysisは`predictive-analysis-spec/1`を入力契約とする。現行実装のfull runtime planは`split -> prepare -> train -> evaluate -> optional explain`である。
@@ -67,7 +69,7 @@ Predictive evaluation outputは指定subgroupごとにrecord listを返す。gro
 - `n < 2`またはvalid resamples < 200では`uncertainty=null` + warning。
 - metric計算不能は`value=null`、`uncertainty=null`、status/warningを返す。値を捏造しない。
 
-### 5.6.2 Predictive advanced capabilities contract
+#### 5.6.2 Predictive advanced capabilities contract
 
 `GET /projects/{project_id}/predictive/capabilities` remains the canonical Predictive capability metadata endpoint.
 
