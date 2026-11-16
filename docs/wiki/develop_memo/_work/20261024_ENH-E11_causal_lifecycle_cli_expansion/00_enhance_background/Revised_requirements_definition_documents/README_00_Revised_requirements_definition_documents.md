@@ -1,6 +1,6 @@
 # ENH-E11 — Revised Requirements & Design Documents
 
-**Status (2026-11-16):** `RD02_REORGANIZED / RD03_FORMAL_CLAUSES_ISSUED_IN_REVISED_COPY / OWNER_SHA_FINAL_REVIEW_PENDING / SCIENCE_AND_GATE_NOT_RUN`.
+**Status (2026-11-16):** `RD04_REQUIREMENTS_REWRITTEN_AND_DESIGN_TRACE_MIGRATED / DOC_AUDIT_PASS / OWNER_FINAL_CONTENT_REVIEW_PENDING / SCIENCE_AND_GATE_NOT_RUN`.
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
@@ -147,6 +147,10 @@
 
 ## 4. Audit reports
 
+- [RD-04 requirement consistency / design migration verification](98_rd04_consistency_verification.md) — current; structure and trace audit PASS, owner content review pending.
+- [RD-04 FR195 clause review](95_rd04_fr_application_review.md)
+- [RD-04 NFR36+Scientific AR27 review](96_rd04_nfr_ar_application_review.md)
+- [RD-04 formal E11 44-clause semantic review](97_rd04_e11_requirement_review.md)
 - [RD-02 current file numbering, preservation, and 57 legacy file migration](92_rd02_restructure_verification.md)
 - [RD-01 full 292-item Disposition review](rd01_review/91_rd01_requirement_granularity_review.md)
 - [RD-01 existing FR 195 register](rd01_review/92_rd01_fr_disposition_register.md)
@@ -157,7 +161,7 @@
 ## 5. Authority and remaining work
 
 - [DEC-SR04-09 Scope, Requirements, Architecture and Gate integrated Owner decisions](../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)
-- `RD-01`分類Dispositionは独立承認前の編集候補であり、旧FR/NFR/ARの全面的な抽象化・移管本文反映は未完。RD-03の新E11条文発行とは別。
+- `RD-01`のDispositionは`RD-04`で逐条再審査し、既存258件のうち122件を改訂・設計へ移管済み。136件は維持。個別条文の最終Ownerレビューは未完。
 - 確定していない事項：Ownerによる新条文のSHA確認と元canonicalへの昇格、Method別実効Backend・CIの検証、ADR/Schema freeze、Gate06/07、Science T2/T3、顧客別Legal Gate、全Class物理詳細設計。
 - `PLAN:G01〜G10`は実装Workstreamの名称。正式受入GateのPASSを意味しない。
 

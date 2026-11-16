@@ -120,11 +120,11 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 - **目的:** User/OperatorがAriadneに期待してよい機能、科学的許容条件、状態、セキュリティ、再現性および検証可能な受入条件を定める。
 - **含む:** MUST/SHOULD/MUST NOT、FR/NFR/AR ID、Requirement Status/Implementation Status/Delivery、Actor/UC/Scope、科学的反例、Test/Acceptance Sourceへのリンク。
 - **含まない:** Python classの命名やprivate field、REST/CLIのwire format詳細、推定アルゴリズムの実装手続。
-- **優先順位:** 現行正本の規範性は`docs/wiki/requirement_definition/10_requirements_definition.md`に残る。DEC09で採用された意味差分は別途この作業コピーで改訂草案を作り、Owner批准・SHA・Status確定後にControlled Publicationする。
-- **E11特則:** 旧§11のDoWhy/EconML除外は、DEC09採用のE11機能別optional外部engineに限定して改訂予定。旧FR-161（E10 optional predictive engine）はこの許可の根拠として転用しない。
+- **優先順位:** 現行正本の規範性は`docs/wiki/requirement_definition/10_requirements_definition.md`に残る。DEC09で採用された意味差分は別途この作業コピーで改訂草案を作り、Ownerによる最終内容・SHA確認に加え、ENH-E11の全対象テストPASS後にのみControlled Publicationする。
+- **E11特則:** 旧§11のDoWhy/EconML除外は、DEC09採用のE11機能別optional外部engineに限定して作業版§11.1で例外規定を反映済み。旧FR-161（E10 optional predictive engine）はこの許可の根拠として転用しない。
 - **受入:** Scope68行ごとのR/Q/N/D、E11-REQ仮ID→新正式ID、Method/UC/Issue/Architecture/Gate、旧条文との逐条diffを監査する。既存ProductのPARTIALを黙ってIMPLEMENTEDにしない。
 
-**E11追加草案:** [10_14_enh_e11_formal_requirement_publication_draft.md](10_14_enh_e11_formal_requirement_publication_draft.md)
+**E11旧草案（正式条文発行前）:** [_drafts/enh_e11_formal_requirement_publication_draft.md](_drafts/enh_e11_formal_requirement_publication_draft.md)（RD-03で条文化済み）
 
 ## 91. ENH-E11正式要件の発行規則（RD-03）
 
@@ -138,3 +138,11 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 ## 92. ENH-E11のCanonical昇格条件（Owner決定 2026-11-16）
 
 ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_definition_documents/`ディレクトリを作業期間中の正規の格納先とする。元`docs/wiki/requirement_definition/`は、**ENH-E11の対象テストが全件PASSした後にのみ昇格**する。したがってRD-03の新FR/NFR/科学的AR発行やScope/Method/UCのトレース完了だけでは昇格しない。実装充足・科学的受入・回帰試験の未完を記録し、対象全件のPASS証拠を確認してから昇格を実施する。詳細は[昇格方針](../93_enh_e11_canonical_promotion_policy.md)。
+
+## 93. RD-04：既存要件の改訂・設計移管（2026-11-16）
+
+- RD-01の旧258件を再審査して`KEEP_RD=136`、`REWRITE_RD=7`、`SPLIT=96`、`MOVE_BD=19`を適用した。122条文を改訂し、136条文は維持。
+- 元ID／Level／Status／Implementation Status／DeliveryとE11新44条文を変更せず、設計情報を21/22/23/30系の各担当ファイルへ移管記録として保持した。
+- Method Scope／数値受入（AR-016 bootstrap、FR-072比較、E11の科学制約）を維持する。
+- [RD-04全体監査](../98_rd04_consistency_verification.md)は文書構造とTraceに関してPASS。人間の内容最終レビュー、BD／IF／DDの具体化、科学・Gate・Legalの独立判定は未完了。
+- 正本昇格は全対象テストPASS後にのみ実施する。

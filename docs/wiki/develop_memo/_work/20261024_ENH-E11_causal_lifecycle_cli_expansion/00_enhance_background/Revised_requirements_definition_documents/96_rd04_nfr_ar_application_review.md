@@ -57,4 +57,4 @@
 
 ## 4. Quantitative safeguards
 
-元の`AR-016`にある信頼区間の水準、bootstrap反復回数、計算不能判定、E11のFWER 0.05やMethod別CI/coverageの受入義務を削除してはならない。方式別の明細・原文は本表及び元の[canonical source](../../../../../../requirement_definition/10_requirements_definition.md)で保持。後続の[RD-04監査](98_rd04_consistency_verification.md)で移管先を明示する。
+元の`AR-016`にある信頼区間の水準、bootstrap反復回数、計算不能判定、E11のFWER 0.05やMethod別CI/coverageの受入義務を削除してはならない。方式別の明細・原文は本表及び元の[canonical source](../../../../../requirement_definition/10_requirements_definition.md)で保持。後続の[RD-04監査](98_rd04_consistency_verification.md)で移管先を明示する。

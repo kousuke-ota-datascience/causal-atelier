@@ -1,3 +1,5 @@
+> **Historical structural snapshot（RD-02完了時点）:** 本書の文字数・原文章節再配置チェックはRD-02時点の構造検証である。RD-04で要件本文を変更した後の最新照合は[98_rd04_consistency_verification.md](98_rd04_consistency_verification.md)に記録。ここでの原文文字数一致を現行全ファイルが原文と逐語一致する意味に解釈しない。
+
 # RD-02 — 全5文書群の番号帯再編・元文書保全監査
 
 **2026-11-16 / Status:** `STRUCTURE_REORGANIZED / ORIGINAL_CANONICAL_UNCHANGED / E11_DRAFTS_ISOLATED`。

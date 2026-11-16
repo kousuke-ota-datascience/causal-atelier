@@ -1,3 +1,5 @@
+> **Historical classification snapshot（2026-11-16）:** 本台帳はRD-01時点の`DISPOSITION_PROPOSED`を保持する。後続の[RD-04全体監査](../98_rd04_consistency_verification.md)で再審査・条文改訂・下位設計移管を実施済み（FR-176/177・AR-021/024等にDisposition改訂あり）。以下のRD-01「NOT_STARTED／PENDING」は本書作成時点の履歴であり現在の進捗を表さない。
+
 # RD-01 — Requirement Granularity Disposition Review
 
 **Review ID:** RD-01  
