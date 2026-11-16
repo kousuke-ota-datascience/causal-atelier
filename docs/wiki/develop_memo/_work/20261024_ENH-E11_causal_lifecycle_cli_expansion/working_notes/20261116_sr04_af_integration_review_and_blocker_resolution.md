@@ -15,7 +15,7 @@
 
 > **2026-11-16 DEC-SR04-07正式Owner個別判断:** [DEC07-1〜7すべてAを採用した独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)と[02承認記録第24項](../00_enhance_background/02_enhancement_concept_approval_record.md)により**定量AC・Monte Carlo・計算予算の設計方針を採用済み**。AC45のMethod別適格性、FWER 0.05／Bonferroni／Wilson、Kの全比較事前登録、Method別Rと通過確率、独立Pilotと実測資源上限を区別。**K/R/CPU/金額の数値freeze・T2実測・T3科学Evidenceは依然未実施。**
 
-> **2026-11-16 DEC-SR04-08の技術比較・判断案（Owner採否待ち）:** [Backend／Optional Extras／uv.lock／License独立技術提案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)を作成。実GitHubのpyprojectとuv.lock（DoWhy/EconML/Tigramite/rdrobust未登録、statsmodels現行lock0.14.6）とSR02の別環境API smoke（statsmodels0.15.0）を照合。既存5 profiles＋RD追加候補、uv universal-resolution/Combined、Python3.12 Linux、fresh --locked、SBOM/Run Manifest、個別顧客SI配布時のGPL Legal Gateを8件A案として整理。**今回の指示でOwnerがDEC08-1〜8を採用したとは記録しない。依存ファイル・法務・Scienceは未実施。**
+> **2026-11-16 DEC-SR04-08正式Owner判断:** [Backend／Optional Extras／uv.lock／License独立技術決定](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)の**DEC08-1〜8全A**をHuman ownerが明示採用し、[02承認記録第25項](../00_enhance_background/02_enhancement_concept_approval_record.md)に記録。5 profiles＋RD条件付き候補、uv universal resolution/Combined、Python3.12/Linux、Fresh --locked、Run Manifest/SBOMとSI納入GPL Legal Gateの設計方針を確定。**現在のpyproject.toml／uv.lockにはE11 Backendを未導入**。Runtime final pin、Profile install/legacy regression、T2費用測定、科学検証、GPL個別法務、正式GateとCodingは別途未完了。
 
 ## 0. 目的、審査条件、適用した証拠レベル
 
@@ -28,7 +28,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `6ea3f8fa855a955380769efc00a72c0ad3ba0cb2` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `4e95150603bd3d599b6227008044155c4f9580fe` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -188,7 +188,7 @@
 | DEC-SR04-05 | 準実験7手法の初期Estimator／条件付きInference契約 | 7手法の初期Method baseline・個別Inference方針の採用は完了。SCM=point-only、RDD=RBC、SDID=2種重みとcluster bootstrapなど。実効Backend/CI科学受入は未検証 | [DEC-05独立技術記録](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)＋02 Owner第22項、7 MethodへのTrace更新 | **OWNER_BASELINE_ACCEPTED / INFERENCE_SCIENCE_PENDING** |
 | DEC-SR04-06 | P1-M18/19 Observed Negative Control／P1-M20 OLS partial R²＋point RV | **DEC06-Aの全5項目を採用**：P1-M18 NCE、M19 NCO、M20古典OLS partial R²／point RV。opt-in/typed非適用必須、X-04/X-05広範方式は初期非採用D。Null size/power・RV独立Oracle・科学Benchmark未完 | [DEC06 Owner採用済み技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)・02第23項・00_04のP1-15/17・X-04/05・A〜F改訂 | **OWNER_METHOD_SCOPE_ACCEPTED / SCIENCE_PENDING** |
 | DEC-SR04-07 | Quant AC／MC／K／Compute Budget（方針Owner採用） | **DEC07-1〜7の7A採用済み**：Exact/Hard/Conditional/N/A、Gate-wide FWER0.05・K全登録・Bonferroni/Wilson、Method別R逆算、T2 independent pilot→T3実測資源上限と固定seedを設計方針とする。R6000は一律固定不可 | [DEC07 Owner採用独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)／02承認記録第24項。実効K/R・CPU/Wall/RAM/支出額、Method-specific閾値・Reference/Source SHA・Gate evidenceは未確定 | **OWNER_POLICY_ACCEPTED / K_R_COST_NOT_FROZEN / SCIENCE_NOT_RUN** |
-| DEC-SR04-08 | Backend・Optional Dependency・uv.lock・顧客SI License | **DEC08-1〜8全A推奨**：pyproject+universal lock+Runtime Manifest、5 Profileと条件付きRD、Backend/Version SCIENCE確認、fresh --locked/legacy、SBOM/BLAS、Tigramite/RD GPL Delivery Gateを分離 | [DEC08独立技術判断案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)。現行lockにDoWhy/EconML/Tigramite/rdrobustなし、SR02別環境smokeと混同禁止。正式lock/License評価は未実行 | **PROPOSAL_READY / OWNER_PENDING / LOCK_LICENSE_SCIENCE_BLOCKED** |
+| DEC-SR04-08 | Backend・Optional Dependency・uv.lock・顧客SI License（方針Owner採用） | **DEC08-1〜8全AのOwner採用済み**：pyproject+universal lock+Run Manifest、5 Profileと条件付きRD、Method↔Backendの適格API、fresh --locked/legacy、SBOM/BLAS、Tigramite/RD GPL Delivery Gateを分離。RNG/Compute/Science/Legalは独立 | [DEC08 Owner個別採用済み技術記録](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)／02承認記録第25項／SR04-E/F。**E11 Extras/uv.lock更新・法務受入・Scienceは未実施** | **OWNER_POLICY_ACCEPTED / LOCK_LICENSE_SCIENCE_BLOCKED / GATE_NOT_FROZEN** |
 | DEC-SR04-09 | Scope/Requirement/Architecture/Gate | 68 Scope全行とA0例外・GAPのOwner決裁 | 正本FR/NFR/AR/ADR、G01〜10→正式Gate07責務、批准SHA | **FULL_CONCEPT_PENDING** |
 | DEC-SR04-10 | Science Evidence | 独立Reference/Monte Carlo/Graph・負例・旧v2回帰を実行後、独立review | F §8のEvidence Bundle＋受入結果・否定結果・独立Gate判断 | **SCIENCE_NOT_RUN** |
 
@@ -228,7 +228,7 @@
 | SR-01〜12、68 Scope、正式FR/ADR/06/07 | **CHANGES_REQUIRED** | Human OwnerとArchitecture Reviewの承認が必要 |
 | ENH-E11全体およびGate07 | **NOT APPROVED** | このDraftの是正だけではCoding/Science PASS不可 |
 
-**次のOwner判断:** DEC-SR04-01〜07は**2026-11-16に個別採用済み**。次は**DEC-SR04-08（実行環境・optional依存・License・配布契約）**。続いてDEC-09（全体Scope/FR/NFR/AR/Architecture/Gate）、DEC-10（実装後の独立科学Evidence）。**DEC07のMethod別K/R/Compute予算はT2 Pilot・実効Backend・資源上限を確認した後の別Freeze**である。今回のOwner判断はCoding・Science PASSではない。
+**次のOwner判断:** DEC-SR04-01〜08は**2026-11-16に個別採用済み**。次は**DEC-SR04-09（全体68 Scope・FR/NFR/AR・Architecture／Gateの最終統合審議）**。DEC-10は実装・独立科学Evidenceの確認。DEC07の実K/R/CPU・Compute BudgetとDEC08の実効Backend/Lock/Legalは**方針採用済み・数値と適格性未freeze**。DEC09のOwner審議は独立T2/T3 Science PASS、納入法務承認、Coding開始を自動許可しない。
 
 **変更した範囲:** A/B/C/D/Fのworking_notes本文と本レビュー記録。Eはレビューしたが実効環境や正本に変更なし。コード・`pyproject.toml`・`uv.lock`・GitHub Issue/Notion・02のOwner決定記録・正式FR/NFR/AR/Gateは変更していない。
 
