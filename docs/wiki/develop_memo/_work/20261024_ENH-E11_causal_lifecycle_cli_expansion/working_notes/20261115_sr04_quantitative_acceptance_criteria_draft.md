@@ -7,6 +7,8 @@
 **直接の先行資料:** [Method Acceptance Matrix](20261115_sr04_method_acceptance_matrix_draft.md)、[Scientific Fixture Catalog](20261115_sr04_scientific_fixture_catalog_draft.md)、[Reference Specification](20261115_sr04_reference_specification_draft.md)、[Owner判断記録02](../00_enhance_background/02_enhancement_concept_approval_record.md)、[D03 AR/G2](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、[D05 CATE/DRIV](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)、[D06 Graph uncertainty](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)。  
 **Coverage計画:** Phase1 20件、Phase2 8件、Phase3 13件、横断9件。68 Scope行全体の承認・Traceability完了と同義ではない。
 
+> **2026-11-16 Owner判断の反映:** [2026-11-16 DEC-SR04-01/02 正式個別判断](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md) により **B1-A**（加法線形IV構造係数）と **DRIV-A**（条件付き構造IV斜率、残差化条件付きモーメント）を**科学的semantic targetとして個別採用**した。本書中の「B1/DRIV formal estimand未決」は**当初Draft時点の記録**であり、現在の未決事項は**正式schema/enum、実効Backend/nuisance/final model、AR/CI、独立Reference実装、定量ACとScience/Gateの検証**である。全体構想は`PENDING_FULL_CONCEPT_APPROVAL`のまま。
+
 ## 0. 目的、判断階層、禁止事項
 
 ### 0.1. 何を定量的に受け入れるか
@@ -32,7 +34,7 @@ SR-04-A/B/Cで定義したMethod/Fixture/独立Referenceについて、(i) 数�
 | CONTRACT_EXACT | 正しく定義された離散契約の一致が必要 | 0件の違反、100%一致を提案 |
 | NOT_APPLICABLE | そのMethodにはそもそも意味のない統計指標 | 無理にCI/Type-Iなどを割当てない |
 
-**未承認の対象:** NCE/NCO/OLS partial R² Method採否、B1正式estimand enum、DRIVの個別conditional-IV moment、Frontdoor具体stage、Graph PAG oracle、準実験の具体estimator/inference。これらには数値候補を置いてもSCIENCE_READYを付与しない。
+**未承認の対象:** NCE/NCO/OLS partial R² Method採否、B1/DRIVの正式schema enumとMethod-specific実効Estimator/CI（semantic targetは2026-11-16採用済み）、Frontdoor具体stage、Graph PAG oracle、準実験の具体estimator/inference。これらには数値候補を置いてもSCIENCE_READYを付与しない。
 
 ## 1. 定量ACポリシー — 原則と提案閾値
 
@@ -168,7 +170,7 @@ Methodが41行あっても「41個」だけが統計判定数ではない。独�
 | Frontdoor（線形数値） | n∈{2,000,8,000}／pilot R=200 | R=6,000は**計算予算審査後の候補** | 適格stage/SEが不明な間はBLOCKED |
 | 非IV CATE7 | n∈{2,000,8,000}、x∈{-0.75,0,0.75}／pilot R=100〜200 | 3点pointwise coverage、R=6,000/セル候補 | DGP-003/004のX支持域内のみ。Forest/Bootstrap多数fitの費用未測定 |
 | DRIV（IV異質効果） | n∈{2,000,8,000}、**DGP-008のx∈{-1,+1}**／pilot R=100〜200 | 2点pointwiseのconditional-IV θ(x)、R=6,000/セルは候補 | x=0等の非IV CATE格子を流用禁止。final estimatorは切片を含め真値を表現可能な構成でのみ効果/CI評価。formal momentとconfig採用待ち |
-| Wald/B0/B1/AR | n∈{2,000,8,000}と複数first-stage strength／pilot R=200 | weak-IVでも真値集合包含率のR=6,000候補 | 小標本exact保証なし。B1正式Estimand・HC方式待ち |
+| Wald/B0/B1/AR | n∈{2,000,8,000}と複数first-stage strength／pilot R=200 | weak-IVでも真値集合包含率のR=6,000候補 | 小標本exact保証なし。B1-A semantic target採用済み、schema enum・HC方式/coverage待ち |
 | FCI/PCMCI+ / LPCMCI | time T∈{1,000,4,000}等、Graph数・burn-in・null edges固定 | 目標MCSEとoracle有効性からRを導く（初期pilot R=100） | PAG oracleなしでorientation PASS不可。R=6,000一律強制は現実性未審査 |
 | DiD/Event/ITS/RDD/SCM/SDID | n_units、cohorts、T_pre/post、cutoff sample、donor数、bandwidthを**別々に固定** | inferential coverageを提供する候補MethodではR=6,000を出発点に精度・費用審査 | 「n=2,000」とだけ記載してpanel/cluster局所の有効情報を代用しない |
 | Algebraic/JSON/typed negative | fixtureの固定input 1〜複数case | 全ケース100% exact／D03 tolerance | Monte CarloのR=6,000は不要。DGP-024の4集合形状を必須 |
@@ -239,7 +241,7 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 | P2-M05 | DGP-002,003 / REF-E05 | D01,P01,P03,P05,I01,I02,I03 | S-Learner shared modelによる縮小、pointwise CIは構成別 |
 | P2-M06 | DGP-003,004 / REF-E05 | D01,P01,P03,P05,I01,I02,I03 | T-Learner arm support、CIモデル別 |
 | P2-M07 | DGP-003,004 / REF-E05 | D01,P01,P03,P05,I01,I02,I03 | X-Learner pseudo-outcomeとweight／支持域 |
-| P2-M08 | DGP-008 / REF-E06 | D01,P01,P03,P05,I01,I02,I03 | DRIV θ_IV(x) candidateのみ。正式moment/projection/CI未決。LATE誤表示0 |
+| P2-M08 | DGP-008 / REF-E06 | D01,P01,P03,P05,I01,I02,I03 | DRIV-A θ_IV(x)の条件付き残差momentはOwner採用済み。実効projection/final model/CI未検証、LATE誤表示0 |
 
 ### 3.3. Phase3（13件）
 
@@ -325,8 +327,8 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 
 | Priority | 残る決定 | 前提/Responsible workstream |
 |---|---|---|
-| BLOCKER | B1正式Estimandとheterogeneity時の解釈、B1 robust ARの実効HC法 | SR03-R01、Reference E08/U01、Owner/Scientific Methods |
-| BLOCKER | DRIV個別theta_IV(x)、conditional moment、EconML final projection/inference | SR03-R02、Reference E06、Scientific Methods |
+| OWNER_RESOLVED / SCIENCE_BLOCKER | B1-A構造係数targetは採用、異質性負例/正式enum/ARの実効HC法とcoverage待ち | SR03-R01、Reference E08/U01、Owner/Scientific Methods |
+| OWNER_RESOLVED / SCIENCE_BLOCKER | DRIV-A conditional-IV構造斜率targetは採用、EconML final projection/nuisance/inference実証待ち | SR03-R02、Reference E06、Scientific Methods |
 | BLOCKER | Frontdoor二段階実効stage、linear model追加仮定と推論 | SR04-C/P1-M07、DoWhy0.14 Method Probe |
 | BLOCKER | DGP-011等のPAG/CPDAGの独立oracle | SR04-C/Graph Scientific Methods |
 | BLOCKER | DiD/Event/ITS/RDD/SCM/SDIDの初期estimator/inference具体採否 | SR09、Quasi Method Owners |
