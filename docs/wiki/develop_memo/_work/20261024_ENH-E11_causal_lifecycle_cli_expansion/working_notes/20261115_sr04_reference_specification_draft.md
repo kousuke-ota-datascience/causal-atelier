@@ -12,6 +12,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。REF-Q01〜05の独立計算ReferenceとQuasiのMethod別Estimator/Inference方針をDEC-05でOwner採用。DiD=2×2群差、Event=ATT(g,t)からevent-time、ITS=level/slope、RDD=local jump/ratio、SCM=simplex donor、SDID=unit/time separately optimized weighted DID。独立Oracle/optimizer/BW/CI runtimeは未実装・未検証。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
+> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。REF-R02のNCE/NCO条件付き関連とREF-R03のOLS OVB数値公式・point RVをDEC06の判断案として明記。Reference実装/推論有効性は未完成。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+
 ## 0. Referenceの役割と受入可能な主張
 
 ### 0.1. 四種類の「正解」を混ぜない
