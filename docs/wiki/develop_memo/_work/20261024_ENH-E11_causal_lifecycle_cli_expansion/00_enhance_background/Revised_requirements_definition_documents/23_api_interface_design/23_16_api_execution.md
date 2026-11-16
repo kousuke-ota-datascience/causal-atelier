@@ -110,3 +110,32 @@ created_at
 `StageDefinition.stage_type`はruntime `StageType(namespace, name, version)`でありNavigation Stage IDではない。
 
 Canonical `Execution`には`execution_plan_id`独立field/FKはない。Predictive/Exploratory current pathではexecution metadataとして`analysis_spec_json`内にplan/spec/view identityを保持し得る。この差を無視して、Navigation StageをExecutionPlanまたはExecutionの共通fieldとして追加しない。
+
+
+## 98. RD-04：IF契約の要求起源・Trace
+
+**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
+
+### 98.1. FR-082（SPLIT）
+
+- 旧要件に含まれるIF固有情報：idempotency対象Commandでは`(project_id, command_scope, idempotency_key)`をauthorityとし、同一semantic requestをreplay、異なるrequestを`IDEMPOTENCY_CONFLICT`で拒否する
+- RDの要求核／Legacy Trace：再送された同一依頼の重複処理を防止し、同じ識別子で異なる依頼が来た場合は拒否する
+- `FR-082`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-084（SPLIT）
+
+- 旧要件に含まれるIF固有情報：上流Artifactを下流Stage inputへ型付きでbindingする
+- RDの要求核／Legacy Trace：依存処理の成果物を適切な形式で後続処理に引き渡せる
+- `FR-084`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+
+### 98.3. FR-085（SPLIT）
+
+- 旧要件に含まれるIF固有情報：未登録Runner、cycle、missing output、schema mismatchをPlan受付時に拒否する
+- RDの要求核／Legacy Trace：計画の依存関係や必要な入力が不整合なら実行前に拒否する
+- `FR-085`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+
+### 98.4. FR-087b（SPLIT）
+
+- 旧要件に含まれるIF固有情報：Execution `runtime_version_json`にAriadne code、Python、platform、machineおよび実際に利用したscientific library versionを保持する
+- RDの要求核／Legacy Trace：分析の再現に必要な実行環境と科学ライブラリの版を確認できる
+- `FR-087b`；Status=`ACTIVE`；Implementation=`PARTIAL`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)

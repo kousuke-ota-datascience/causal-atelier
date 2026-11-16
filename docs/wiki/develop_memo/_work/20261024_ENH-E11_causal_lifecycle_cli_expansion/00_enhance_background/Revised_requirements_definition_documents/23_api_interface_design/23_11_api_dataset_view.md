@@ -69,3 +69,14 @@ Compatibility summary:
 `IS_NULL/NOT_NULL`はvalueなし、`IN/NOT_IN`はnon-empty list。DATETIMEはISO-8601、INTEGERはbooleanを許容せず、REALはfinite numeric。`time_cutoff`はDATETIME + `LT/LTE`。
 
 Family tab切替だけでDatasetVersionやAnalysisViewを複製しない。
+
+
+## 98. RD-04：IF契約の要求起源・Trace
+
+**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
+
+### 98.1. FR-015（SPLIT）
+
+- 旧要件に含まれるIF固有情報：AnalysisViewのsource Dataset logical type × operator × value compatibilityをdomain/application validationで検証し、type mismatchを`FILTER_TYPE_MISMATCH`として返す
+- RDの要求核／Legacy Trace：データ型と演算子・値が適合しない分析条件は拒否され、理由を確認できる
+- `FR-015`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)

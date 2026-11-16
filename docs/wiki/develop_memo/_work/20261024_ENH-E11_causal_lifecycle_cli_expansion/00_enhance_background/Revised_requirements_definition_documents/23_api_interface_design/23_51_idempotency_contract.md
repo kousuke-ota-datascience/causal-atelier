@@ -58,3 +58,20 @@ exactly-once executionは保証しない。successful Stage outputのretry/resta
 - same logical output + different content hashはnondeterministic-output conflictとして失敗させる。
 - Result/Artifact bindingはmetadata transactionでatomicに確定する。
 - ArtifactStoreとmetadata DBのcross-store compensationはNFR-007に対応する`DEFERRED` scopeである。
+
+
+## 98. RD-04：IF契約の要求起源・Trace
+
+**Status:** `RD04_INTERFACE_CONSTRAINT_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。抽象化前のAPI／CLI／Navigationのwire・resource・state契約を失わないための移管記録。現在の実効Implementationを確認したことを意味しない。
+
+### 98.1. FR-114a（SPLIT）
+
+- 旧要件に含まれるIF固有情報：Idempotency要否をHTTP method/create一般ではなく、retryでduplicate durable side effectを生成し得るCommandかどうかで判定する
+- RDの要求核／Legacy Trace：重複する永続的副作用を生む操作の再試行を安全に処理する
+- `FR-114a`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-114b（SPLIT）
+
+- 旧要件に含まれるIF固有情報：対象Commandで`Idempotency-Key`を必須化し、missing keyを`IDEMPOTENCY_KEY_REQUIRED`、same key/different requestをHTTP 409 `IDEMPOTENCY_CONFLICT`として扱う
+- RDの要求核／Legacy Trace：重複要求と競合要求を識別し、誤った二重処理を防止する
+- `FR-114b`；Status=`ACTIVE`；Implementation=`IMPLEMENTED`；[RD-04逐条レビュー](../95_rd04_fr_application_review.md)
