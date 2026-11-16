@@ -183,3 +183,5 @@
 - [22_90内部Architecture整合レビュー](bd01_review/90_architecture_consistency_review.md)：Finding13件、基本設計上で修正2件、残る11件は未閉鎖。現行CLIのPort/Manifestと新E11のVersion・typed Result・Atomic Publish・Local Privacy等の実装差分はIF-01/DD-01/Gate06に引き継ぐ。
 - [BD-01整理方針・歴史的設計断片](bd01_review/README.md)に、旧22_20〜23設計断片と22_90〜91レビューの移動先・原Blobを記録する。これら6件は常設22系には置かない。
 - **本工程は独立Architecture Review PASS、Port/Schema Freeze、Science/Legal Gate、Coding許可を意味しない。** 元正本はENH-E11全件テストPASS後にのみ昇格する。
+
+> **未了の正本化整理:** 22系の既存§98（RD-04逐条移管記録）などのフロー型記述は、設計内容の維持を確認してから別途分離する。[BD-01移管記録](bd01_review/README.md)参照。

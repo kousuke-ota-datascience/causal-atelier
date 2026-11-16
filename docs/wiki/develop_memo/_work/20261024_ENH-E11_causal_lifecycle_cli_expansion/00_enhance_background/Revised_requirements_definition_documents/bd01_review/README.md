@@ -32,3 +32,9 @@
 - [Architecture自律レビュー](90_architecture_consistency_review.md)は13論点（当時2 design-side resolved、11 open）の記録であり、独立審査ではない。
 - [Formal requirement allocation](91_requirement_architecture_trace.md)はFR/NFR/Scientific AR 44件の設計担当・Traceを記録するが、科学的受入を意味しない。
 - IF-01／DD-01、Architecture独立審査、Science、Legal、Gate06/07は別の閉鎖事項。
+
+## 5. 正本化に向けた残務（この6ファイルの移設とは別）
+
+- 22系の既存`## 98. RD-04`逐条移管記録は、まだ各基本設計に残っている。これは設計の要求起源を保全する中間記録であり、将来の元正本へ昇格する前に、必要な設計拘束を各Stock章へ確定反映したうえでレビュー台帳側へ分離する。
+- `22_17_stage_contents_e8_effective.md`等のエンハンス識別を含む既存文書も、内容が持続的機能設計か経過記録かを別途監査する。今回の6ファイル移設だけで22系すべてのStock適合を保証したとは判断しない。
+- 再編の構造・内容移管テストと、独立Architecture/科学/実装テストのPASSは区別する。
