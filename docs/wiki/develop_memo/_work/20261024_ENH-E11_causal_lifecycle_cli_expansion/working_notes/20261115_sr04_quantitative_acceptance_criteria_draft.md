@@ -11,6 +11,8 @@
 
 > **2026-11-16 DEC-SR04-03／04 個別判断:** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md)、[DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)の2件をOwnerが採用済み。P1-M07のFD-AとP1-M06/P3-M01〜03のGRAPH-AはOwnerのMethod/Oracle設計方針が確定。しかしAC-I01/02、AC-G03/04等の数値閾値は未承認・未実測。DGP/Independent REF/n/T/R/K/推論/CI testをfreezeするまではScience PASS禁止。 正式FR/NFR/AR・Architecture・Gate07・Coding・全体構想は未承認（`PENDING_FULL_CONCEPT_APPROVAL`）。この判断より前に記録された「Frontdoor初期Methodの未決」「Graph Oracle採用方針未決」は**Owner方針のみ**解消し、実装・独立Science Oracleの未完成は維持。
 
+> **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05-1〜7のEstimator/Inference方法論方針はOwner採用済み。しかしMethod×DGP×n/T/bandwidth/cluster/R/K/CI modeを正式freezeするまでAC-Q01〜Q05とAC-I01/02の数値合格を宣言しない。**SCMは初期point-only**で通常CIの未提供をHard Gate違反としない。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
+
 ## 0. 目的、判断階層、禁止事項
 
 ### 0.1. 何を定量的に受け入れるか
@@ -252,16 +254,16 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 | P3-M01 | DGP-009 / REF-G03 | D01,G01,G02,G03,G05 | PCMCI lag Graph、CI-test正当性とTごとのGraph精度 |
 | P3-M02 | DGP-010 / REF-G02,G03 | D01,G01,G02,G03,G04,G06 | PCMCI+、同時点Graph向きのOracle Pending |
 | P3-M03 | DGP-011 / REF-G02,G03 | D01,G01,G02,G03,G04,G06 | LPCMCI、PAG/潜在交絡のOracle Pending |
-| P3-M04 | DGP-012,013 / REF-Q01 | D03,P01,P03,I01,I02,Q01 | 2×2 ATT=2、staggered ATT(g,t)は別推論/cluster contract Pending |
-| P3-M05 | DGP-013 / REF-Q01 | D03,P01,P03,I01,I02,Q01 | Event-time aggregation weightsとpost-selection/cluster Pending |
-| P3-M06 | DGP-014 / REF-Q02 | D03,P01,P03,I01,I02,Q02 | ITS level=2/slope=.1、HAC/GLS CI Pending |
-| P3-M07 | DGP-015 / REF-Q03 | D03,P01,P03,I01,I02,Q03 | Sharp RD cutoff local effect=3、bandwidth/RBC CI Pending |
-| P3-M08 | DGP-016 / REF-Q03,I03 | D03,P01,P03,I01,I02,Q03 | Fuzzy RD cutoff local complier LATE=3、weak local IV推論別途 |
+| P3-M04 | DGP-012,013 / REF-Q01 | D03,P01,P03,I01,I02,Q01 | 2×2 DID/独立unit群差のvariance法は採用、staggeredは別Method contract。CI実効validation待ち |
+| P3-M05 | DGP-013 / REF-Q01 | D03,P01,P03,I01,I02,Q01 | never-treated baselineのATT(g,t)・cohort-weighted aggregate・unit trajectory bootstrap方針採用。pointwise/joint CI未freeze |
+| P3-M06 | DGP-014 / REF-Q02 | D03,P01,P03,I01,I02,Q02 | segmented regression＋HAC方針採用。lag/T/serial errorでcoverage未検証 |
+| P3-M07 | DGP-015 / REF-Q03 | D03,P01,P03,I01,I02,Q03 | local-linear＋triangular kernel＋RBC CIを候補採用。実効rdrobust/bandwidth/masspoints未検証 |
+| P3-M08 | DGP-016 / REF-Q03,I03 | D03,P01,P03,I01,I02,Q03 | local first-stage ratio＋joint local RBC推論を候補採用。weak local IVはfail-closed、B0 AR無断流用禁止 |
 | P3-M09 | DGP-006 / REF-I03,E07 | D03,P01,P03,P05,D07 | Wald ratioとcomplier LATE。B0/B1のAR集合をWald単独Methodに無断要求しない |
 | P3-M10 | DGP-006,024 / REF-E07,U01 | D03,P01,P03,P05,A01,A02,A03,A04,A05,I01,I02 | B0 Wald=2SLS sample parity、G2集合、AR coverage |
 | P3-M11 | DGP-007,024 / REF-E08,U01 | D03,P01,P03,P05,A01,A02,A03,A04,A05,I01,I02 | B1 linear-IV structural coefficient、formal estimand/HC Config Pending |
-| P3-M12 | DGP-017 / REF-Q04 | D03,P01,P03,Q04 | noiseless donor weights、post effect=2、noise variant別 |
-| P3-M13 | DGP-018 / REF-Q05 | D03,P01,P03,I01,I02,Q05 | SDID panel ATT=2、unit/time weight/SE/optimizer Pending |
+| P3-M12 | DGP-017 / REF-Q04 | D03,P01,P03,Q04 | **Owner採用：初期Exploratory point-only**。Placebo/RMSPEは診断でありConfirmatory CIを保証しない |
+| P3-M13 | DGP-018 / REF-Q05 | D03,P01,P03,I01,I02,Q05 | unit/time separately optimized weights＋weighted DID、unit-cluster bootstrap refit方針採用。few-treatedでCI不能 |
 
 **注:** P3-M09 Wald ratio単独にはG2 AR confidence setの提供義務を無断追加しない。B0/B1で採用済みのAR推論を、Wald methodが内部参照する場合は実装設計で明記。P3-M08 Fuzzy RDにもB0/B1 ARの保証は自動適用しない。
 
