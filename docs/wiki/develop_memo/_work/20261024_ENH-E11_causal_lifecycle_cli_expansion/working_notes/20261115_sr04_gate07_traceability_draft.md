@@ -6,6 +6,8 @@
 
 > **2026-11-16個別判断更新:** [DEC-SR04-01（B1-A）／DEC-SR04-02（DRIV-A）](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)をHuman ownerのsemantic target判断として**採用済み**。P3-M11の加法線形IV係数とP2-M08の条件付きIV構造斜率について**Owner決裁待ちは解消**したが、`OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED`はBackend実効適格性・独立Inference/AR検証・定量AC・正式schema/FR/ADR/Gateが未完であることを表す。元のGate/Science証拠は一切生成されていない。
 
+> **2026-11-16 Owner判断：** [DEC-SR04-03 FD-A](20261116_sr04_dec03_frontdoor_fd_a_owner_decision.md) および [DEC-SR04-04 GRAPH-A](20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md) を個別採用。FD-AはP1-M07の**線形・単一Mediator数値Method方針**、GRAPH-AはP1-M06／P3-M01〜03の**独立Graph Oracle原理**を固定した。Source schema/Oracleの実装、DoWhy実効stage/CI、FCI/LPCMCI/PCMCI+の独立同値類Oracle、Graph accuracy、正式Gate Evidenceは未生成。
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -23,8 +25,8 @@
 | P1-M03 DoWhy Backdoor identification／ATE候 | SCOPE:P1-08 | DGP-002, DGP-021; NEG-002, NEG-027 | REF-G01, REF-I01 | AC-D01, AC-D02, AC-D07 | ENV-DOWHY | E11-REQ-P1I / #16 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M04 DoWhy Frontdoor identification／ATE | SCOPE:P1-08 | DGP-005; NEG-004 | REF-G01, REF-I02 | AC-D01, AC-D02, AC-D07 | ENV-DOWHY | E11-REQ-P1I / #16 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M05 DoWhy IV identification／方法固有の対象は未確 | SCOPE:P1-08 | DGP-006; NEG-006, NEG-007 | REF-I03, REF-G01 | AC-D01, AC-D02, AC-D07 | ENV-DOWHY | E11-REQ-P1I / #16 | PLAN:G02 / BLOCKED / NOT_GENERATED |
-| P1-M06 FCI／PAGと等価類 | SCOPE:P1-09 | DGP-011, DGP-021; NEG-003, NEG-021, NEG-028 | REF-G02 | AC-D02, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-BASE | E11-REQ-P1G / E11-REQ-SR03D06 / #17 | PLAN:G01 / BLOCKED / NOT_GENERATED |
-| P1-M07 Frontdoor two-stage regression／ATE | SCOPE:P1-08 | DGP-005; NEG-004, NEG-005 | REF-I02, REF-E04 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02 | ENV-DOWHY | E11-REQ-P1I / #16 | PLAN:G02 / BLOCKED / NOT_GENERATED |
+| P1-M06 FCI／PAGと等価類 | SCOPE:P1-09 | DGP-011, DGP-021; NEG-003, NEG-021, NEG-028 | REF-G02 | AC-D02, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-BASE | E11-REQ-P1G / E11-REQ-SR03D06 / #17 | PLAN:G01 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
+| P1-M07 Frontdoor two-stage regression／ATE | SCOPE:P1-08 | DGP-005; NEG-004, NEG-005 | REF-I02, REF-E04 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02 | ENV-DOWHY | E11-REQ-P1I / #16 | PLAN:G02 / OWNER_METHOD_ACCEPTED_TECH_AND_SCIENCE_BLOCKED / NOT_GENERATED |
 | P1-M08 Native diff-in-means／ATE | SCOPE:P1-11 | DGP-001, DGP-022; NEG-001, NEG-010 | REF-E01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02 | ENV-BASE | E11-REQ-P1W / #19 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M09 Native OLS／採用済み契約範囲のATE/ATT表現 | SCOPE:P1-11, SCOPE:P1-17 | DGP-002, DGP-003; NEG-002, NEG-008, NEG-020 | REF-E01, REF-I01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02 | ENV-BASE | E11-REQ-P1W / #19,#16 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M10 Native IPW／ATE・ATT（別fixture） | SCOPE:P1-11, SCOPE:P1-12 | DGP-002, DGP-003; NEG-010, NEG-018 | REF-E02 | AC-D03, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-R05 | ENV-BASE | E11-REQ-P1W / #19 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
@@ -47,8 +49,8 @@
 | P2-M07 X-Learner／CATE(x) | SCOPE:P2-08 | DGP-003, DGP-004; NEG-011, NEG-012, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P2-M08 DRIV-A／CONDITIONAL_IV_STRUCTURAL_SLOPE | SCOPE:P2-09 | DGP-008; NEG-009, NEG-012, NEG-013 | REF-E06 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18,#22 | PLAN:G04 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M01 PCMCI／time-lagged graph | SCOPE:P3-02 | DGP-009; NEG-021 | REF-G03 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G05 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P3-M02 PCMCI+／time-series CPDAG | SCOPE:P3-03 | DGP-009, DGP-010; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / BLOCKED / NOT_GENERATED |
-| P3-M03 LPCMCI／time-series PAG | SCOPE:P3-04 | DGP-011; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / BLOCKED / NOT_GENERATED |
+| P3-M02 PCMCI+／time-series CPDAG | SCOPE:P3-03 | DGP-009, DGP-010; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
+| P3-M03 LPCMCI／time-series PAG | SCOPE:P3-04 | DGP-011; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
 | P3-M04 DiD／ATT（2×2とstaggeredは別契約） | SCOPE:P3-07 | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
 | P3-M05 Event Study／event-time効果 | SCOPE:P3-08 | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
 | P3-M06 Interrupted Time Series／介入時点のlevel | SCOPE:P3-09 | DGP-014; NEG-023 | REF-Q02 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q02 | ENV-BASE / backend pending | E11-REQ-P3D / #21 | PLAN:G07 / BLOCKED / NOT_GENERATED |
@@ -144,11 +146,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `44a2fb6257879c6d2280fe1c683aa73bd3414654` |
-| fixture | `945a91023190fa9c50384120dab0907fad18abec` |
-| quant | `2447ff04386a5dc2509b79f8815a40b52a5aab88` |
-| ref | `3c7fe212abc9af43e889eae2981f4a520c164261` |
-| env | `6c56dbba60e67d0a0b06c887c606bbd536a08f70` |
+| matrix | `7269f702925ca1378157f38dbfa7dae4ce51c78d` |
+| fixture | `30efc2aaf7d168d68e2cc1433c454dedb2d87ef2` |
+| quant | `8bd3d8c7e117dd2d8d23a0c4d134f81b8f717647` |
+| ref | `f6aebcd95a7f3016b0d5c5f45d06c29e85748e3f` |
+| env | `b3eb2c6dc84c02193a88c63f155750cb7dcb4ee3` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -334,12 +336,22 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 - `P2-M08`: **Owner semantic decision closed**。family=`IV_HETEROGENEOUS_EFFECT`、target=`CONDITIONAL_IV_STRUCTURAL_SLOPE`、X/W残差化IV moment。`W=∅`のDGP-008ではx=-1,+1。残余は`REF-E06`、0.17.0 runtime/projection/nuisance/CI、Issue #18・PLAN:G04の科学Evidence。
 - 構造方程式・数値Referenceは独立技術記録へ、正式採用の事実は02へ一元化する。**元の`METHOD_SPEC_PENDING`等の古い文書内表示は、Owner意味論だけ2026-11-16判断で上書きされた**ことを示し、正式Gate ACCEPTEDにはしない。
 
+### 8.2. FD-A／GRAPH-A採用後のMethod別残務
+
+| Method／Owner判断 | 決定済み範囲 | 未実行の必須検証 |
+|---|---|---|
+| P1-M07／DEC-SR04-03 FD-A | P1-M04のFrontdoor識別を前提とする線形単一Mediatorの二段階係数積。Stage1 M~1+A、Stage2 Y~1+M+A | REF-I02/E04の独立sample Oracle、DoWhy 0.14実効stage調整、DGP-005/NEG-004/005、CI/coverage |
+| P1-M06／DEC-SR04-04 GRAPH-A | 生成DAGと観測同値類PAGを区別する独立Oracleの原理 | 独立MAG/PAG/CI oracle・多変数motif、DGP-011はlatent stress |
+| P3-M01〜03／DEC-SR04-04 GRAPH-A | temporal lag + contemporaneous CPDAG/PAGの強制方向を区別する原理 | REF-G02/G03、DGP-009〜011のGraph CI test/独立同値類/精度、Tigramite version |
+ 
+**上記のOwner決定は、科学的Accuracy・有限標本CI・正式Source SHA受入・Architecture/Legal GateをPASSにしない。**
+
 ## 9. 残余Blocker・閉鎖条件・状態
 
 | Status candidate | 意味 |
 |---|---|
 | TRACE_DRAFT | ID接続の設計のみ。Science PASSやCoding許可ではない |
-| SCIENCE_CONTRACT_BLOCKED | B1/DRIV、Frontdoor、PAG/CPDAG、Quasi inference等の対象定義未確定 |
+| SCIENCE_CONTRACT_BLOCKED | B1-A/DRIV-A/FD-A/GRAPH-AのOwner意味論・Method方針は採用済み。ただしBackend実効Inference・独立PAG/CPDAG oracleとQuasi個別推論は未完 |
 | SCOPE_APPROVAL_BLOCKED | 68 Scope・NCE/NCO/RV・GAP-C01〜04・FR/NFR/AR/Architecture未承認 |
 | REFERENCE_ENV_BLOCKED | Oracle、数値閾値、dependency lock、seed/replay、n/R/K、資源/License未freeze |
 | EXECUTED_NOT_REVIEWED | 実測があっても独立ReviewとOwner Gateの承認待ち |
