@@ -1,3 +1,5 @@
+> **Archive location note (2026-11-16):** This is a BD-01 enhancement-specific review/trace record, not a stock Basic Design chapter. The owner-approved permanent architecture obligations are maintained in `22_product_basic_design/22_00〜22_17`. Original content at source blob `d83458c9b40f5c57f6654015a1f3e9dcc224b3eb`; links were updated to current stock files. This record is not independent Architecture PASS.
+
 # BD-01 — Architecture整合性レビュー／未解決事項台帳
 
 **Date:** 2026-11-16  
@@ -49,15 +51,15 @@
 
 | Owner authority | Owner policy state | BD target | Architecture gate status |
 |---|---|---|---|
-| ARC09-01 Domain authority | APPROVED | [22_20](22_20_e11_local_system_architecture.md), [22_21](22_21_e11_scientific_pipeline.md) | Typed Domain/legacy bridge detail pending |
-| ARC09-02 Backend isolation | APPROVED | [22_20](22_20_e11_local_system_architecture.md), [22_23](22_23_e11_environment_security_compatibility.md) | Effective version/API/Port contract pending |
-| ARC09-03 Identification first | APPROVED | [22_21](22_21_e11_scientific_pipeline.md) | Method eligibility + negative tests pending |
-| ARC09-04 Local contract | APPROVED | [22_20](22_20_e11_local_system_architecture.md), [22_22](22_22_e11_local_result_artifact_lineage.md) | Exact version/atomic/path + privacy pending |
-| ARC09-05 Typed inference | APPROVED | [22_21](22_21_e11_scientific_pipeline.md), [22_22](22_22_e11_local_result_artifact_lineage.md) | ConfidenceSet JSON and coverage pending |
-| ARC09-06 Provenance/Profiles | APPROVED | [22_23](22_23_e11_environment_security_compatibility.md) | 5 profile lock/preflight/SBOM pending |
-| ARC09-07 Future Product | APPROVED | [22_20](22_20_e11_local_system_architecture.md) | Product gaps independently unresolved |
+| ARC09-01 Domain authority | APPROVED | [22_20](../22_product_basic_design/22_00_overall_BD.md), [22_21](../22_product_basic_design/22_06_family_causal.md) | Typed Domain/legacy bridge detail pending |
+| ARC09-02 Backend isolation | APPROVED | [22_20](../22_product_basic_design/22_00_overall_BD.md), [22_23](../22_product_basic_design/22_13_deployment.md) | Effective version/API/Port contract pending |
+| ARC09-03 Identification first | APPROVED | [22_21](../22_product_basic_design/22_06_family_causal.md) | Method eligibility + negative tests pending |
+| ARC09-04 Local contract | APPROVED | [22_20](../22_product_basic_design/22_00_overall_BD.md), [22_22](../22_product_basic_design/22_09_results_artifacts_lineage.md) | Exact version/atomic/path + privacy pending |
+| ARC09-05 Typed inference | APPROVED | [22_21](../22_product_basic_design/22_06_family_causal.md), [22_22](../22_product_basic_design/22_09_results_artifacts_lineage.md) | ConfidenceSet JSON and coverage pending |
+| ARC09-06 Provenance/Profiles | APPROVED | [22_23](../22_product_basic_design/22_13_deployment.md) | 5 profile lock/preflight/SBOM pending |
+| ARC09-07 Future Product | APPROVED | [22_20](../22_product_basic_design/22_00_overall_BD.md) | Product gaps independently unresolved |
 
-[44 formal requirement ⇄ BD Trace](22_91_bd01_requirement_architecture_trace.md) はすべて責務へ割当済み。これを設計の科学・実装検証済みとの主張に使わない。
+[44 formal requirement ⇄ BD Trace](../22_product_basic_design/22_91_bd01_requirement_architecture_trace.md) はすべて責務へ割当済み。これを設計の科学・実装検証済みとの主張に使わない。
 
 ## 5. IF-01 / DD-01 / Gate06引渡し
 

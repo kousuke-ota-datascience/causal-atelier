@@ -1,3 +1,5 @@
+> **Archive location note (2026-11-16):** This is a BD-01 enhancement-specific review/trace record, not a stock Basic Design chapter. The owner-approved permanent architecture obligations are maintained in `22_product_basic_design/22_00〜22_17`. Original content at source blob `9e33b3000c8744aee192f0f6997cdc65feffc691`; links were updated to current stock files. This record is not independent Architecture PASS.
+
 # BD-01 — Requirement ⇄ Architecture Responsibility Trace
 
 **Date:** 2026-11-16  
@@ -86,11 +88,11 @@
 
 | Contract | Source | BD place | Next level |
 |---|---|---|---|
-| 41 Method | [10_32](../10_requirements_definition/10_32_scientific_method_scope.md) | [22_21](22_21_e11_scientific_pipeline.md) method/estimand matrix | Method-specific IF/Port/DD; Gate07 science |
-| 68 Scope dispositions | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](22_20_e11_local_system_architecture.md) scope negative boundary | Workstream/Gate Scope test |
-| 10 UC | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](22_20_e11_local_system_architecture.md) use case boundary + [22_21](22_21_e11_scientific_pipeline.md) pipeline | IF/DD/Tests independent |
+| 41 Method | [10_32](../10_requirements_definition/10_32_scientific_method_scope.md) | [22_21](../22_product_basic_design/22_06_family_causal.md) method/estimand matrix | Method-specific IF/Port/DD; Gate07 science |
+| 68 Scope dispositions | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) scope negative boundary | Workstream/Gate Scope test |
+| 10 UC | [RD-03 trace](../96_rd03_formal_requirement_traceability.md) | [22_20](../22_product_basic_design/22_00_overall_BD.md) use case boundary + [22_21](../22_product_basic_design/22_06_family_causal.md) pipeline | IF/DD/Tests independent |
 | Existing FR/NFR/AR transferred | [RD-04 audit](../98_rd04_consistency_verification.md) | Existing 22_00〜17 §97/98 | Preserve original design semantics and Status |
-| Full test PASS then canonical promotion | [Owner rule](../93_enh_e11_canonical_promotion_policy.md) | [22_90 review](22_90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
+| Full test PASS then canonical promotion | [Owner rule](../93_enh_e11_canonical_promotion_policy.md) | [22_90 review](../22_product_basic_design/22_90_architecture_consistency_review.md) | No promotion before all applicable tests PASS |
 
 ## 6. Mechanical assertion summary
 
