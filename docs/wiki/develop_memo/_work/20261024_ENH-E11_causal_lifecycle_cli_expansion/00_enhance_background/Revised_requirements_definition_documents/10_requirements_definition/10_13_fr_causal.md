@@ -1,6 +1,6 @@
 # 10_13_fr_causal
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -33,3 +33,21 @@
 | FR-154 | Causal | IdentificationとEstimationを別Navigation Stageとして扱い、識別可能性と有限標本推定を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-155 | Causal | EstimationとEffectsを別Navigation Stageとして扱い、推定設定と推定結果の閲覧・利用を混同しない | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
 | FR-156 | Causal | DiagnosticsとSensitivityを別Navigation Stageとして扱う | MUST | ACTIVE | IMPLEMENTED | ENH-E5 |
+| FR-186 | Causal Graph | 因果Graphの種類・未確定端点・潜在交絡可能性・時間遅れと方向を保持し、未確定Graphを確定DAGや効果値に暗黙変換しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-187 | Causal Identification | 指定Estimand・Design・Graph・仮定に対する識別可能性とEstimator適格性を区別して判定し、不適格・非識別を数値推定成功として扱わない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-188 | Causal Frontdoor | 承認済みの限定Frontdoor条件下で平均介入効果を数値推定でき、識別結果と推定結果を別個に提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-189 | Causal Robustness | 承認済みのRefutationおよびSensitivityを実行でき、適用範囲・結果・再現条件・科学的限界を手法別に提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-190 | Causal Negative Controls | 適格な観測Negative Control Exposure／Outcomeを研究者が明示指定した場合に限り、条件付き負対照診断を行い、適格性と結果を提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-191 | Causal Sensitivity | 承認済みの回帰モデルについて未観測交絡への感度を定量評価し、非対応推定器に無根拠に一般化しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-192 | Causal Weight Quality | 重み付き因果推定で重みの意味・安定性・overlap・balance・標本損失・推論可否を区別して診断できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-193 | Causal Heterogeneity | 条件付き因果効果の推定で効果修飾因子と交絡調整因子を区別し、対象集団・適格性・支持域・不確実性を提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-194 | Causal IV Heterogeneity | 条件付き操作変数による構造係数を、非IVのCATEおよびcomplier LATEと異なる推定対象として識別・評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-195 | Causal Heterogeneity Output | 探索的点推定と確認的推論を区別して提示し、個票の異質効果について閲覧・出力を権限と適格性に応じて制御できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-196 | Causal Temporal | 時系列の因果探索で時間遅れ・同時点関係・方向の未確定性を保持し、時系列と手法の適格性を示せる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-197 | Causal Quasi Experimental Time | 介入時点を伴う準実験で、手法固有のEstimand・前提・時点別効果・誤差構造・推論可否を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-198 | Causal Discontinuity | 閾値による準実験で局所効果の推定対象を明示し、Cutoff周辺の適格性と結果を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-199 | Causal Instrumental Variables | 操作変数のcomplier LATEと線形IV構造係数を区別して推定し、弱操作変数の下で妥当な推論集合と診断を提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| FR-200 | Causal Synthetic Controls | 対照Donorを用いた準実験で介入前Fit・汚染・期間条件と手法別の推定／推論範囲を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| F | R | - | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| S | c | i | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| 効 | 果 | 点 | MUST | ACTIVE | UNVERIFIED | ENH-E11 |

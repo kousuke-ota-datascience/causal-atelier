@@ -1,6 +1,6 @@
 # 10_10_fr_project_context_data
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -34,3 +34,4 @@
 | FR-166 | Project Management | selected Projectのlocal navigationはOverview / Research Context / Data / Resultsを提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-167 | Project Management | OverviewはProject metadata / identity / status / archiveを所有し、Project Archiveをselected Project lifecycle operationとして提供する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
 | FR-168 | Project Management | DataはDataset / Dataset Version / Schema / Preview / Analysis View lifecycleを所有し、Analysis ViewをFamily横断analysis inputとして管理する | MUST | ACTIVE | IMPLEMENTED | ENH-E7 |
+| FR-185 | Local Scientific Identity | ローカル因果分析の問い・デザイン・グラフ・データと参照版を識別し、上流条件が異なる結果の暗黙の再利用を拒否できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
