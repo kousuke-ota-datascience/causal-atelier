@@ -1,10 +1,12 @@
 # ENH-E11 — 構想・要件改定計画（案）
 
 **文書区分:** Workflow所定の構想・要件改定計画（01）  
-**状態:** DRAFT／ステップ4のCLI-only実装スコープ案作成済み／構想・要件・設計・Gateは正式未承認  
+**状態:** **CONCEPT_AND_SCOPE_OWNER_APPROVED (DEC-SR04-09 / 2026-11-16)**。要件意味差分・Architecture方針・Gate計画はOwner承認、**正式FR/NFR/AR発行・詳細ADR・Gate06/07 freeze／Coding／Scienceは未承認**  
 **起案日:** 2026-10-24（日本時間）／**改訂日:** 2026-10-25（日本時間）  
 **追跡Issue:** [#13（ENH-E11全体）](https://github.com/kousuke-ota-datascience/causal-atelier/issues/13)、[#14（事前照合とArchitecture Review）](https://github.com/kousuke-ota-datascience/causal-atelier/issues/14)  
 **実装現状の参照SHA:** `827a6c3683e0fff0af342cb3aded45d9dde020c9`。**正式な受入Baselineではない。**
+
+> **2026-11-16 DEC-SR04-09正式統合Owner承認追補:** 2026-11-16、Human ownerは[DEC09独立統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)に定義された68 Scope・10 UC・A0例外・E11-REQ意味差分・Architecture責務・G01〜G10計画を一括承認した。[02承認記録第26項](02_enhancement_concept_approval_record.md)が判断権限の記録である。本書内の『構想承認前』記述は**2026-10-24〜25の作成時点の履歴**で、DEC09 Owner採否については本追補を優先。ただし独立Architecture Review、正本FR/NFR/AR新条文・受入Gate06/07のfreeze／科学的受入・Product GAP-C01〜04のClosureは未完了。
 
 ## 0. INTRODUCTION
 
