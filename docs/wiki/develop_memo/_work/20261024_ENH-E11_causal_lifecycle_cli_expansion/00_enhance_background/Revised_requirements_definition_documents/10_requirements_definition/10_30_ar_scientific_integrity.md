@@ -1,6 +1,6 @@
 # 10_30_ar_scientific_integrity
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`; original ID, level and state retained.  
+**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
 **Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
@@ -28,6 +28,13 @@
 | AR-025 | Scientific Integrity | Predictive MetricsとPredictive Explainabilityを別目的として扱い、feature importance等をcausal effectへ読み替えない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-026 | Scientific Integrity | Exploratory Findings / visualizationをcausal conclusionまたはconfirmatory resultへ自動昇格しない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-027 | Scientific Integrity | coefficient contribution / SHAP / LIMEはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない | — | ACTIVE | IMPLEMENTED | ENH-E10 |
+| AR-031 | Negative Control Semantics | 観測NCE／NCOは研究者の明示opt-inとGraph／時間的適格性を要し、Null検査の非有意を未観測交絡がない証明と解釈してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-032 | Sensitivity Scope | 初期の未観測交絡感度は古典OLS係数のpartial R²とpoint RV（q=1）に限り、HC3やIPW／AIPW／CATEへ無検証に一般化してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-033 | Weight and Inference Validity | IPW／IPTW／AIPWの解析重み・正規化・Clipping／Trimmingとoverlap／balance／ESSを区別し、適格性に裏付けられない区間推論を生成してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-035 | Exploratory and Confirmatory | 探索的点推定を確認的推論の成功と表してはならず、確認的区間推論には対象Method・構成に適合した推論根拠が必要である | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-042 | Scientific Negative State | 非識別・適格性不足・Review要・推論未対応・Backend利用不能を技術失敗や数値ゼロに読み替えてはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-044 | Method-specific Scientific Validation | 採用MethodのEstimand・適格性・点推定・推論を個別の既知真値と負例で検証し、未対応の推論や点ごとの区間を同時信頼帯として報告してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+
 ### 7.0.1. Predictive subgroup uncertainty contract
 
 指定subgroup columnはuntouched TEST populationを各column独立にsliceする。automatic intersection/discovery/fairness frameworkはcurrent mandatory scope外。各recordは`sample_count`を必須とし、uncertaintyはnonparametric percentile bootstrap（confidence=0.95, resamples=1000, deterministic seed）とする。`n < 2`またはvalid resamples < 200ではCIを返さずwarningを返す。metricを計算できない場合はvalue/uncertaintyを`null`とし、値を捏造しない。
