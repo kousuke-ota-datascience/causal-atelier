@@ -12,7 +12,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。REF-Q01〜05の独立計算ReferenceとQuasiのMethod別Estimator/Inference方針をDEC-05でOwner採用。DiD=2×2群差、Event=ATT(g,t)からevent-time、ITS=level/slope、RDD=local jump/ratio、SCM=simplex donor、SDID=unit/time separately optimized weighted DID。独立Oracle/optimizer/BW/CI runtimeは未実装・未検証。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
-> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。REF-R02のNCE/NCO条件付き関連とREF-R03のOLS OVB数値公式・point RVをDEC06の判断案として明記。Reference実装/推論有効性は未完成。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+> **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。REF-R02のNCE/NCO条件付き関連とREF-R03のOLS OVB数値公式・point RVをDEC06の判断案として明記。Reference実装/推論有効性は未完成。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 ## 0. Referenceの役割と受入可能な主張
 
@@ -33,7 +33,7 @@
 - **Source-of-truth:** (A) 数式・定理／方法の一次資料、(B) DGP構造・生成コードrevision、(C) 独立Oracle source/hash、(D) 固定sample/hash、(E) 実測evidenceを別欄で管理。内部メモの存在はScience PASSではない。
 - **異種検証:** Closed form×独立Quadrature、matrix formula×独立回帰package、二次不等式×直接集合所属点検、Graph定理×手計算小Graph、といった**独立性の異なる二系統**で重大Referenceをcross-checkする。
 - **状態候補（正式enumではない）:** DERIVATION_SPECIFIED／MATH_REVIEW_REQUIRED／REFERENCE_CODE_PENDING／CONFIG_PENDING／IMPLEMENTATION_PARITY_PENDING／SAMPLING_VALIDATION_PENDING／QUANTITATIVE_AC_PENDING／EVIDENCE_ACCEPTED／NOT_APPLICABLE。既存のScientificStatusへ無断移植しない。
-- **Scope:** NCE/NCO・OLS partial R²はPhase1 Method候補だが正式採否保留。DRIVのIV_HETEROGENEOUS_EFFECT familyはD01既採用、DRIV-Aの具体的構造斜率とW残差化momentはOwner採用済み。B1-Aのsemantic kindも採用済みだが、両者の正式schema enumは未決。提案を済み扱いしない。
+- **Scope:** NCE/NCO・古典OLS partial R²＋point RVはPhase1初期NのOwner個別採用済み。正式schema/独立Science Referenceは未完了。DRIVのIV_HETEROGENEOUS_EFFECT familyはD01既採用、DRIV-Aの具体的構造斜率とW残差化momentはOwner採用済み。B1-Aのsemantic kindも採用済みだが、両者の正式schema enumは未決。提案を済み扱いしない。
 
 ## 1. Reference registry — Method別に再利用する独立計算群
 
@@ -233,14 +233,14 @@ DGP-014：`Y_t(0)=1+.02t+sin(2πt/12)+ε_t`、`Y_t=Y_t(0)+1[t≥t0](2+.1(t-t0))`
 - Random Common Cause: 独立人工変数を追加する摂動の再現性。観測Negative Controlや未観測交絡感度とは別。
 - Bootstrap refutation: 観測単位独立ならiid bootstrap、cluster/timeなら適用する再標本化を別決定。再fit/nuisance/seedを明記。source dataとbaseline estimatorの科学的正当性はこの検査から得られない。
 
-### 7.2. Observed Negative Control（Scope method採否未決）
+### 7.2. Observed Negative Control（DEC06-A Owner個別採用済み、実効検証待ち）
 
 DGP-019では `U→A,Y` の潜在交絡と、`Z=U+εZ`、`W=U+εW` の対照変数を構成した。NCE/NCOは**その対照が因果的に無効な直接経路を持たない**こと、対象となるbiasを反映すること、条件付けの妥当性を研究者が根拠付きで宣言して初めて利用候補とする。
 - NCE: `Y~A+Z`のZの条件付き関連nullが対象。γ=0はnull候補、γ>0は対立候補。ただし追加したconditioning setが因果DAG上適切かを必須検討。
 - NCO: `W~A` のAの関連nullを対象とするなら、**null variantではAをUと独立にした割付**が必要。元の `A~Bern(logit⁻¹(U))` ではγ=0でもW~Aの関連が生じる。これはA-Y交絡の証明ではない。
 - Null時のsize、対立時のpower、直接効果やconditioning違反のinvalid graphを別扱い。非棄却→無交絡と結論しない。opt-in未指定時の自動実行禁止。
 
-### 7.3. Partial R²とRobustness Value（Scope method採否未決）
+### 7.3. Partial R²とRobustness Value（DEC06-A Owner個別採用済み、RV数値Oracle未完）
 
 DGP-020のOLS coefficient、**古典OLS** `SE=.2`、`df=100`、`R²_{A~U|C}=.1`、`R²_{Y~U|A,C}=.15` に対し、OVB bias magnitude候補：
 
@@ -276,9 +276,9 @@ DGP-020のOLS coefficient、**古典OLS** `SE=.2`、`df=100`、`R²_{A~U|C}=.1`�
 | P1-M15 Bootstrap refutation | REF-R01 | DGP-001/002、dependence-sensitive resampling |
 | P1-M16 Adjustment Set | REF-G01,REF-R01 | DGP-021、valid setのみ |
 | P1-M17 PS clipping | REF-E02,REF-R01 | DGP-002/023、clipping vs trimming |
-| P1-M18 NCE | REF-R02 | DGP-019、Method Scope PENDING |
-| P1-M19 NCO | REF-R02 | DGP-019 null variant、Method Scope PENDING |
-| P1-M20 OLS partial R²/RV | REF-R03 | DGP-020、Method Scope／RV oracle PENDING |
+| P1-M18 NCE | REF-R02 | DGP-019、Owner Method採用済み／Null/CI Science PENDING |
+| P1-M19 NCO | REF-R02 | DGP-019 null variant、Owner Method採用済み／Null/CI Science PENDING |
+| P1-M20 OLS partial R²/RV | REF-R03 | DGP-020、Owner Method採用済み／RV oracle Science PENDING |
 
 ### 8.2. Phase2（8）
 
