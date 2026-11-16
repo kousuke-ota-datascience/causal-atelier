@@ -105,3 +105,25 @@ Canonical `ArtifactType`はfixed enumであり、Predictive関連では`PARTITIO
 - **`FR-124a`**：Artifact metadata/downloadでProject境界とsafe content dispositionを検証するcurrent contractを維持する
 - **`FR-124b`**：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
 - **`AR-020`**：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する
+
+## PREP-01: Router operation source inventory
+
+Source-observed, not runtime-verified. Blob evidence: annotations.py@93253262e3e4c99391280ffee7aedc4d022a6ed5; artifacts.py@680b666cd484a08cdc3d764f7829d536cd0e496c; product_closure.py@7cae6a3df8725c3f5263ede17167225175f5968e. Path includes app router prefix /api/v1; status 200* denotes FastAPI default declaration, not actual outcomes.
+
+| HTTP | Full path | Handler | Declared status | Response Model | Router |
+| --- | --- | --- | --- | --- | --- |
+| POST | `/api/v1/projects/{project_id}/annotations` | `create_annotation` | 201 | AnnotationResponse | annotations |
+| GET | `/api/v1/annotations/{annotation_id}` | `get_annotation` | 200* | AnnotationResponse | annotations |
+| PATCH | `/api/v1/annotations/{annotation_id}` | `update_annotation` | 200* | AnnotationResponse | annotations |
+| GET | `/api/v1/artifacts/{artifact_id}` | `get_artifact` | 200* | ArtifactResponse | artifacts |
+| GET | `/api/v1/artifacts/{artifact_id}/download` | `download_artifact` | 200* | untyped | artifacts |
+| GET | `/api/v1/projects/{project_id}/workspace-annotations` | `list_workspace_annotations` | 200* | untyped | product_closure |
+| POST | `/api/v1/projects/{project_id}/workspace-annotations` | `create_workspace_annotation` | 201 | untyped | product_closure |
+| PATCH | `/api/v1/projects/{project_id}/workspace-annotations/{annotation_id}` | `update_workspace_annotation` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/artifacts/{artifact_id}` | `artifact_metadata` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/artifacts/{artifact_id}/download` | `download_artifact` | 200* | untyped | product_closure |
+| POST | `/api/v1/projects/{project_id}/exports` | `create_export` | 201 | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/exports/{export_id}` | `get_export` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/exports/{export_id}/download` | `download_export` | 200* | untyped | product_closure |
+
+Observed route count: 13. Identity = DEFINED from static Source. Operation-specific DTO/Service authorization, side effects, error HTTP mapping, idempotency, version compatibility and FR/Negative tests are NOT_SPECIFIED until verified. Not a completion/PASS assertion.

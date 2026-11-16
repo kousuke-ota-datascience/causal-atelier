@@ -235,3 +235,17 @@ Catalog source of truthは**backend read-only metadata endpoint**へfreeze済み
 #### 5.10.3 Catalog source of truth
 
 Concrete Navigation Stage catalogはFamily Capabilityが所有する。Frontend rendererは`(family, stage_id) -> surface` bindingを保持できるが、stage label/order/defaultのfull catalogを独自に二重管理しない。
+
+## PREP-01: Router operation source inventory
+
+Source-observed, not runtime-verified. Blob evidence: navigation.py@49bf86edf04828a604c20c247163613422d44315; product_closure.py@7cae6a3df8725c3f5263ede17167225175f5968e. Path includes app router prefix /api/v1; status 200* denotes FastAPI default declaration, not actual outcomes.
+
+| HTTP | Full path | Handler | Declared status | Response Model | Router |
+| --- | --- | --- | --- | --- | --- |
+| GET | `/api/v1/navigation/analysis` | `get_analysis_navigation` | 200* | AnalysisNavigationResponse | navigation |
+| GET | `/api/v1/projects/{project_id}/operation-availability` | `operation_availability` | 200* | untyped | product_closure |
+| GET | `/api/v1/projects/{project_id}/workspace-state` | `workspace_state` | 200* | untyped | product_closure |
+| PUT | `/api/v1/projects/{project_id}/workspace-state` | `update_workspace_state` | 200* | untyped | product_closure |
+| PUT | `/api/v1/projects/{project_id}/members/{user_id}` | `set_member_role` | 200* | untyped | product_closure |
+
+Observed route count: 5. Identity = DEFINED from static Source. Operation-specific DTO/Service authorization, side effects, error HTTP mapping, idempotency, version compatibility and FR/Negative tests are NOT_SPECIFIED until verified. Not a completion/PASS assertion.
