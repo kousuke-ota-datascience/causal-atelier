@@ -3,6 +3,8 @@
 
 ---
 
+## 8. Cross-cutting Contract Policy
+
 ### 8.2 Idempotency
 
 Idempotencyはretryでduplicate durable side effectを生成し得るCommandへ適用する。HTTP methodや「create」一般を判定基準にしない。
