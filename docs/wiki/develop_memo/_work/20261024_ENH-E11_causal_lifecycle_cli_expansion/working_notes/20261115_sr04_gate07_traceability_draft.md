@@ -4,6 +4,8 @@
 **策定日:** 2026-11-15 JST。**branch:** prototype/ariadne_mvp。**状態:** TRACE_DRAFT / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
 **先行資料:** [00_04 Scope案](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)／[03 Requirements](../00_enhance_background/03_requirements_revision.md)／[05 Gate候補](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md)／[SR04-A](20261115_sr04_method_acceptance_matrix_draft.md)／[SR04-B](20261115_sr04_scientific_fixture_catalog_draft.md)／[SR04-C](20261115_sr04_reference_specification_draft.md)／[SR04-D](20261115_sr04_quantitative_acceptance_criteria_draft.md)／[SR04-E](20261115_sr04_execution_environment_contract_draft.md)。
 
+> **2026-11-16個別判断更新:** [DEC-SR04-01（B1-A）／DEC-SR04-02（DRIV-A）](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)をHuman ownerのsemantic target判断として**採用済み**。P3-M11の加法線形IV係数とP2-M08の条件付きIV構造斜率について**Owner決裁待ちは解消**したが、`OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED`はBackend実効適格性・独立Inference/AR検証・定量AC・正式schema/FR/ADR/Gateが未完であることを表す。元のGate/Science証拠は一切生成されていない。
+
 ## 0. 名前空間・証拠の厳格な境界
 
 **名前衝突:** 00_04の「X-01〜X-10」は68 Scope行の上位横断要求であり、SR04-Aの「X-01〜X-09」は横断受入Contract。以降前者を SCOPE:X-xx、後者を SR04:X-xx と表記する。**SCOPE:X-04 ≠ SR04:X-04。** 元ファイルのIDは変更しない。
@@ -43,7 +45,7 @@
 | P2-M05 S-Learner／CATE(x) | SCOPE:P2-06 | DGP-002, DGP-003; NEG-010, NEG-012, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P2-M06 T-Learner／CATE(x) | SCOPE:P2-07 | DGP-003, DGP-004; NEG-010, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P2-M07 X-Learner／CATE(x) | SCOPE:P2-08 | DGP-003, DGP-004; NEG-011, NEG-012, NEG-013 | REF-E05 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18 | PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P2-M08 DRIV／IV_HETEROGENEOUS_EFFECT（固有のth | SCOPE:P2-09 | DGP-008; NEG-009, NEG-012, NEG-013 | REF-E06 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18,#22 | PLAN:G04 / BLOCKED / NOT_GENERATED |
+| P2-M08 DRIV-A／CONDITIONAL_IV_STRUCTURAL_SLOPE | SCOPE:P2-09 | DGP-008; NEG-009, NEG-012, NEG-013 | REF-E06 | AC-D01, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02, AC-I03 | ENV-ECONML | E11-REQ-P2 / E11-REQ-SR03D05 / #18,#22 | PLAN:G04 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M01 PCMCI／time-lagged graph | SCOPE:P3-02 | DGP-009; NEG-021 | REF-G03 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G05 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M02 PCMCI+／time-series CPDAG | SCOPE:P3-03 | DGP-009, DGP-010; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / BLOCKED / NOT_GENERATED |
 | P3-M03 LPCMCI／time-series PAG | SCOPE:P3-04 | DGP-011; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | ENV-TIGRAMITE | E11-REQ-P3T / #20 | PLAN:G06 / BLOCKED / NOT_GENERATED |
@@ -54,7 +56,7 @@
 | P3-M08 Fuzzy RDD／cutoff局所complier効果 | SCOPE:P3-11 | DGP-016; NEG-006, NEG-023 | REF-Q03, REF-I03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
 | P3-M09 Wald ratio／binary Z/A complier LAT | SCOPE:P3-12 | DGP-006; NEG-006, NEG-007 | REF-I03, REF-E07 | AC-D03, AC-P01, AC-P03, AC-P05, AC-D07 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M10 B0 just-identified 2SLS／binary Z/A | SCOPE:P3-12 | DGP-006, DGP-024; NEG-006, NEG-025 | REF-E07, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P3-M11 B1 additive linear 2SLS／線形IV構造係数（正 | SCOPE:P3-12 | DGP-007, DGP-024; NEG-008, NEG-025 | REF-E08, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / BLOCKED / NOT_GENERATED |
+| P3-M11 B1-A／LINEAR_IV_STRUCTURAL_COEFFICIENT | SCOPE:P3-12 | DGP-007, DGP-024; NEG-008, NEG-025 | REF-E08, REF-U01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-A01, AC-A02, AC-A03, AC-A04, AC-A05, AC-I01, AC-I02 | ENV-BASE / backend pending | E11-REQ-P3I / #22 | PLAN:G08 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M12 Synthetic Control／処置単位の時点別反実仮想ギャップ | SCOPE:P3-13 | DGP-017; NEG-024 | REF-Q04 | AC-D03, AC-P01, AC-P03, AC-Q04 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M13 Synthetic DiD／panel平均介入効果 | SCOPE:P3-14 | DGP-018; NEG-024 | REF-Q05 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q05 | ENV-BASE / backend pending | E11-REQ-P3S / #23 | PLAN:G09 / BLOCKED / NOT_GENERATED |
 
@@ -142,11 +144,11 @@
 | gate | `4bd58ed903d31a6d2b59401914b1159c4de93ad6` |
 | req | `b75d2e315794d41ec7cc33bd3446ab302115b88b` |
 | scope | `5276ec87f5249e876e5185f19fe8d3e1566c600c` |
-| matrix | `cd7327cc99f03b2a97adedb9e5cf53bf139b626b` |
-| fixture | `f0a7847b382aa134fefd8b295491624eb583a907` |
-| quant | `443c1c6549179402ca1582b92d445c366832e133` |
-| ref | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
-| env | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
+| matrix | `44a2fb6257879c6d2280fe1c683aa73bd3414654` |
+| fixture | `945a91023190fa9c50384120dab0907fad18abec` |
+| quant | `2447ff04386a5dc2509b79f8815a40b52a5aab88` |
+| ref | `3c7fe212abc9af43e889eae2981f4a520c164261` |
+| env | `6c56dbba60e67d0a0b06c887c606bbd536a08f70` |
 
 **後続節（Cross9 / NEG28 / AC45 / ENV-AC9 / Requirement・Gate / Evidence）はこの文書の一部として追加記載する。** この段階の文書の状態はTRACE_DRAFTであり、Science PASSではない。
 
@@ -325,6 +327,12 @@ ACはMethod×DGP×n×推論の評価セルへ割り当ててから正式freeze�
 | Review | 独立Science Review/失敗・修正履歴、正式Gate07承認者・日時・SHA |
 
 **証拠ファイルの候補配置:** evidence/sr04/<campaign>/<method>/<cell>/<replicate>/... は設計上の命名例であり実在pathではない。SR-02 ActionsによるAPI smokeは環境導入可能性だけを支持し、科学的Known-truth・95%CI coverage・PAG oracleの実証ではない。
+
+### 8.1. B1-A／DRIV-A正式判断とGate evidenceの非同一性
+
+- `P3-M11`: **Owner semantic decision closed**。正式科学Target=`LINEAR_IV_STRUCTURAL_COEFFICIENT`（加法線形β）。残余は`REF-E08/U01`、均質性stress、schema/HC AR/coverage、Issue #22・PLAN:G08の科学Evidence。
+- `P2-M08`: **Owner semantic decision closed**。family=`IV_HETEROGENEOUS_EFFECT`、target=`CONDITIONAL_IV_STRUCTURAL_SLOPE`、X/W残差化IV moment。`W=∅`のDGP-008ではx=-1,+1。残余は`REF-E06`、0.17.0 runtime/projection/nuisance/CI、Issue #18・PLAN:G04の科学Evidence。
+- 構造方程式・数値Referenceは独立技術記録へ、正式採用の事実は02へ一元化する。**元の`METHOD_SPEC_PENDING`等の古い文書内表示は、Owner意味論だけ2026-11-16判断で上書きされた**ことを示し、正式Gate ACCEPTEDにはしない。
 
 ## 9. 残余Blocker・閉鎖条件・状態
 
