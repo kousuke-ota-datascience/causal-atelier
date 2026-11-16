@@ -60,25 +60,25 @@
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.FR-002. FR-002（SPLIT）
+### 98.1. FR-002（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Projectはtopic、objective、memoを保持し、decision contextはversioned `ResearchContextVersion`の責務として保持する
 - RD改訂後の要求：Projectの研究目的と意思決定文脈を区別して保持・参照できる
 - Trace：`FR-002`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-006. FR-006（SPLIT）
+### 98.2. FR-006（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Analysis Specificationは一つのResearch Context Versionを参照する
 - RD改訂後の要求：分析仕様が参照する研究文脈の版を特定できる
 - Trace：`FR-006`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-007. FR-007（SPLIT）
+### 98.3. FR-007（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Executionは参照ResearchContextVersionを固定し、受付時のobjective/rationale等の再現に必要なsnapshot metadata/hashを保持する。ResearchContext全体の重複保存を必須化しない
 - RD改訂後の要求：分析実行時点の研究目的と理由を後から再現できる
 - Trace：`FR-007`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-008. FR-008（REWRITE_RD）
+### 98.4. FR-008（REWRITE_RD）
 
 - 元要件（設計上の拘束を含む）：ResearchContextVersionから利用AnalysisSpecification、Execution、Resultへcanonical lineage/read modelで遡及・追跡できる
 - RD改訂後の要求：研究文脈から分析仕様・実行・結果までの来歴を追跡できる

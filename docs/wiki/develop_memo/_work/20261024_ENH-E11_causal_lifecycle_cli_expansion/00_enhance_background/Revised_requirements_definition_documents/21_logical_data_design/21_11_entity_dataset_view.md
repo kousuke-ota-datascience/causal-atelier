@@ -60,13 +60,13 @@
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.FR-011. FR-011（SPLIT）
+### 98.1. FR-011（SPLIT）
 
 - 元要件（設計上の拘束を含む）：DatasetVersionにcontent hash、schema、row count、column countおよびcurrent profile summaryを保持する。登録時の独立full profile生成を必須化しない
 - RD改訂後の要求：各データ版の同一性・構造・規模・品質概要を確認できる
 - Trace：`FR-011`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-020. FR-020（SPLIT）
+### 98.2. FR-020（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Explore stateのdata-selection semantics（row_filter、selected_columns、derived_columns、missing_value_policy、time_cutoff、sampling）からAnalysisView DRAFTを作成できる。presentation-only chart stateはAnalysisViewへ保存しない
 - RD改訂後の要求：探索中に選択したデータ条件をAnalysis Viewの草案として作成できる

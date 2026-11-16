@@ -70,13 +70,13 @@ Navigation metadataを`AnalysisSpecification`、`ExecutionPlan`、`Execution`、
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.FR-148. FR-148（SPLIT）
+### 98.1. FR-148（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Findingsは既存Result / Annotation / Lineageを利用可能とし、新規persistent Finding resourceを必須化しない
 - RD改訂後の要求：探索上のFindingで既存の結果・注釈・来歴を利用できる
 - Trace：`FR-148`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-177. FR-177（SPLIT）
+### 98.2. FR-177（SPLIT）
 
 - 元要件（設計上の拘束を含む）：UI / IA再編だけを理由に既存API contract、persistence schema、backend analysis/domain semanticsを変更しない
 - RD改訂後の要求：UI・IA再編によって既存API契約・永続化Schema・分析の意味を変更しない

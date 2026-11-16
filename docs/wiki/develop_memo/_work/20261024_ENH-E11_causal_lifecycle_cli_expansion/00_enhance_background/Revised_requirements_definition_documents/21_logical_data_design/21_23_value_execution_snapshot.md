@@ -48,19 +48,19 @@ Batch View
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.NFR-001b. NFR-001b（SPLIT）
+### 98.1. NFR-001b（SPLIT）
 
 - 元要件（設計上の拘束を含む）：actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する
 - RD改訂後の要求：解析結果を再現するため実効ライブラリ版・乱数条件を取得できる
 - Trace：`NFR-001b`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../96_rd04_nfr_ar_application_review.md)
 
-### 98.NFR-013. NFR-013（SPLIT）
+### 98.2. NFR-013（SPLIT）
 
 - 元要件（設計上の拘束を含む）：schema versionはversioned Spec/Plan/payload/descriptor等のcontract boundaryで識別し、全persistent Result/Artifact entityへgeneric schema_version fieldを要求しない
 - RD改訂後の要求：変化するデータ契約を識別し後方互換を制御できる
 - Trace：`NFR-013`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../96_rd04_nfr_ar_application_review.md)
 
-### 98.AR-019. AR-019（SPLIT）
+### 98.3. AR-019（SPLIT）
 
 - 元要件（設計上の拘束を含む）：random seedだけでなくsplit indexまたはpartition artifactを保存する
 - RD改訂後の要求：分析のデータ分割を再現可能な情報として保持しなければならない

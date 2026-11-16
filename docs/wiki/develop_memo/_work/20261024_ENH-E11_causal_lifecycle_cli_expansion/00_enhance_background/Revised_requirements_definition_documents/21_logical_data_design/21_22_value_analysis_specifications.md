@@ -145,55 +145,55 @@ Causal Operationは`DISCOVERY / IDENTIFICATION / ESTIMATION / REFUTATION / SENSI
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.FR-029. FR-029（SPLIT）
+### 98.1. FR-029（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Chart Specificationを保存し、同じDataset Versionで再実行できる
 - RD改訂後の要求：可視化の条件を保存し同じデータ版で再実行できる
 - Trace：`FR-029`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-032. FR-032（SPLIT）
+### 98.2. FR-032（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Exploratory Resultからcanonical Causal/Predictive `AnalysisSpecification`をDRAFTとしてpersistし、source Resultとの`MOTIVATED` relationを保持できる。auto FIX / auto executionは行わない
 - RD改訂後の要求：探索結果から因果・予測分析の草案を生成し由来を追跡できる。本人の確定・実行を必要とする
 - Trace：`FR-032`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-034. FR-034（SPLIT）
+### 98.3. FR-034（SPLIT）
 
 - 元要件（設計上の拘束を含む）：Exploratory provenanceとしてdata-selection semantics、analysis-significant family_spec、sampling、Execution code/runtime metadataおよびResult/Artifact lineageを再構成できる
 - RD改訂後の要求：探索に用いたデータ選択・分析設定・実行環境および成果物の由来を再構成できる
 - Trace：`FR-034`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-068. FR-068（SPLIT）
+### 98.4. FR-068（SPLIT）
 
 - 元要件（設計上の拘束を含む）：fitted model、fitted preprocessor、prediction等のdurable outputをArtifactとして保存し、provider-specific fitted modelはartifact schema/provider/payload identityから対応loaderを一意に解決してfresh-process相当で再読込・predictionできる
 - RD改訂後の要求：学習済みモデルと前処理を保存し、適合する環境で復元して再予測できる
 - Trace：`FR-068`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-071. FR-071（SPLIT）
+### 98.5. FR-071（SPLIT）
 
 - 元要件（設計上の拘束を含む）：intended use、training data、metric、limitationsに加え、model/provider/version、effective parameters、seed/deterministic settings、feature/preprocessor identity、explanation method等の再現性provenanceをModel Cardへ記録する
 - RD改訂後の要求：学習・評価・説明の根拠、限界、再現性情報をModel Cardで確認できる
 - Trace：`FR-071`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-183. FR-183（SPLIT）
+### 98.6. FR-183（SPLIT）
 
 - 元要件（設計上の拘束を含む）：explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する
 - RD改訂後の要求：予測説明のモデル・入力・出力尺度・計算条件を追跡し再現できる
 - Trace：`FR-183`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-157. FR-157（MOVE_BD）
+### 98.7. FR-157（MOVE_BD）
 
 - 元要件（設計上の拘束を含む）：既存`AnalysisSpecification.analysis_family`をFamily discriminatorとして再利用し、duplicate Family field/enumを追加しない
 - RD改訂後の要求：【設計制約移管・Legacy Trace】FR-074の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
 - Trace：`FR-157`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-158. FR-158（MOVE_BD）
+### 98.8. FR-158（MOVE_BD）
 
 - 元要件（設計上の拘束を含む）：AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加しない
 - RD改訂後の要求：【設計制約移管・Legacy Trace】NFR-021の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
 - Trace：`FR-158`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
 
-### 98.FR-160. FR-160（MOVE_BD）
+### 98.9. FR-160（MOVE_BD）
 
 - 元要件（設計上の拘束を含む）：Family / Navigation / application IAの変更だけを理由にDB schema migrationまたはnavigation-state persistenceを導入しない
 - RD改訂後の要求：【設計制約移管・Legacy Trace】NFR-021／FR-177の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する

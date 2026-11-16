@@ -127,7 +127,7 @@ Dataset schemaを参照するvalidator / application serviceは、`DatasetVersio
 
 **Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
 
-### 98.NFR-011a. NFR-011a（SPLIT）
+### 98.1. NFR-011a（SPLIT）
 
 - 元要件（設計上の拘束を含む）：current request/execution/stage correlation identifiersをlogへ出力する
 - RD改訂後の要求：Request・実行・処理単位をまたいで障害を追跡できる
