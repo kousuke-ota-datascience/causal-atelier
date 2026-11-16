@@ -66,24 +66,8 @@ Navigation側の`Setup / Discovery / Identification / Estimation / Effects / Dia
 
 採用Methodの正確な範囲・Phase・非対応事項は[Scientific Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)を参照する。
 
-## 98. RD-04：要件由来の基本設計制約
+**当該機能に適用する設計制約（関連Requirement）**
 
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
-
-### 98.1. FR-043（SPLIT）
-
-- 既存要件の設計情報を含む原文：Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する
-- RDに残る能力／Legacy Trace：識別判断に確定的不整合がある場合はそれを明示し、レビュー待ちとして誤表示しない
-- Original Requirement：`FR-043`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-045（MOVE_BD）
-
-- 既存要件の設計情報を含む原文：Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない
-- RDに残る能力／Legacy Trace：【設計制約移管・Legacy Trace】FR-044の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- Original Requirement：`FR-045`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-048（SPLIT）
-
-- 既存要件の設計情報を含む原文：estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない
-- RDに残る能力／Legacy Trace：推定手法に適合した診断を提示し、適用不能な診断を強制しない
-- Original Requirement：`FR-048`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
+- **`FR-043`**：Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する
+- **`FR-045`**：Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない
+- **`FR-048`**：estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない

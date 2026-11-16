@@ -175,31 +175,9 @@ Existing semantics `Prediction Task -> Split -> Training -> Evaluation -> Explan
 | Explainability | Explanation |
 | Model Management | Model Card / existing model management surface |
 
+**当該機能に適用する設計制約（関連Requirement）**
 
-## 98. RD-04：要件由来の基本設計制約
-
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
-
-### 98.1. FR-169（SPLIT）
-
-- 既存要件の設計情報を含む原文：Results / Lineageはpersisted cross-analysis aggregation、comparison、Artifact、Lineage、Annotationを所有し、Analysis Workspaceはexecution-local / stage-local presentationを担う
-- RDに残る能力／Legacy Trace：Project横断結果の比較・来歴と実行中の分析結果を適切に区別して閲覧できる
-- Original Requirement：`FR-169`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-163（SPLIT）
-
-- 既存要件の設計情報を含む原文：`/projects`をProject Listのcanonical surfaceとする
-- RDに残る能力／Legacy Trace：Project一覧へ一意の正規画面からアクセスできる
-- Original Requirement：`FR-163`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-164（SPLIT）
-
-- 既存要件の設計情報を含む原文：`/projects/new`をProject Registerのcanonical surfaceとし、作成成功後は`/projects/{new_project_id}/overview`へ遷移する
-- RDに残る能力／Legacy Trace：Project作成後に対象Projectの概要画面へ遷移できる
-- Original Requirement：`FR-164`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-165（SPLIT）
-
-- 既存要件の設計情報を含む原文：`/projects/{project_id}/overview`をselected Projectのdefault canonical surfaceとし、`/projects/{project_id}`はhistory-replaceでoverviewへnormalizeする
-- RDに残る能力／Legacy Trace：対象Projectの標準表示画面を一意に復元できる
-- Original Requirement：`FR-165`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
+- **`FR-169`**：Results / Lineageはpersisted cross-analysis aggregation、comparison、Artifact、Lineage、Annotationを所有し、Analysis Workspaceはexecution-local / stage-local presentationを担う
+- **`FR-163`**：`/projects`をProject Listのcanonical surfaceとする
+- **`FR-164`**：`/projects/new`をProject Registerのcanonical surfaceとし、作成成功後は`/projects/{new_project_id}/overview`へ遷移する
+- **`FR-165`**：`/projects/{project_id}/overview`をselected Projectのdefault canonical surfaceとし、`/projects/{project_id}`はhistory-replaceでoverviewへnormalizeする

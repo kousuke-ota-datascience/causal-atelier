@@ -109,30 +109,9 @@ AnalysisView create/update/validate/fixは同じDataset logical-type compatibili
 - Science negative、technical execution failure、inference unsupported、manifest publish failureを別状態として扱う。
 - Confidence Set topology・CI availability・Method適格性を結果保存前後に検証する。
 
-## 98. RD-04：要件由来の基本設計制約
+**当該機能に適用する設計制約（関連Requirement）**
 
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
-
-### 98.1. FR-015（SPLIT）
-
-- 既存要件の設計情報を含む原文：AnalysisViewのsource Dataset logical type × operator × value compatibilityをdomain/application validationで検証し、type mismatchを`FILTER_TYPE_MISMATCH`として返す
-- RDに残る能力／Legacy Trace：データ型と演算子・値が適合しない分析条件は拒否され、理由を確認できる
-- Original Requirement：`FR-015`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-085（SPLIT）
-
-- 既存要件の設計情報を含む原文：未登録Runner、cycle、missing output、schema mismatchをPlan受付時に拒否する
-- RDに残る能力／Legacy Trace：計画の依存関係や必要な入力が不整合なら実行前に拒否する
-- Original Requirement：`FR-085`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-089（MOVE_BD）
-
-- 既存要件の設計情報を含む原文：Generic validationとFamily-specific validationを分離して実行する
-- RDに残る能力／Legacy Trace：【設計制約移管・Legacy Trace】FR-085の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- Original Requirement：`FR-089`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../95_rd04_fr_application_review.md)
-
-### 98.4. AR-009（MOVE_BD）
-
-- 既存要件の設計情報を含む原文：外部libraryのdtype objectまたはmodel objectをJSON正本へ保存しない
-- RDに残る能力／Legacy Trace：【設計制約移管・Legacy Trace】対応する既存上位要件に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する
-- Original Requirement：`AR-009`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../96_rd04_nfr_ar_application_review.md)
+- **`FR-015`**：AnalysisViewのsource Dataset logical type × operator × value compatibilityをdomain/application validationで検証し、type mismatchを`FILTER_TYPE_MISMATCH`として返す
+- **`FR-085`**：未登録Runner、cycle、missing output、schema mismatchをPlan受付時に拒否する
+- **`FR-089`**：Generic validationとFamily-specific validationを分離して実行する
+- **`AR-009`**：外部libraryのdtype objectまたはmodel objectをJSON正本へ保存しない

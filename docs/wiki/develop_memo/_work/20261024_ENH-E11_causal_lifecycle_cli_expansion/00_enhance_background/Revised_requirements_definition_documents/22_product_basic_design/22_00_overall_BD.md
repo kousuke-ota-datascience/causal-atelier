@@ -96,7 +96,7 @@ Web Frontend → Versioned Web API → Product Application/Domain
                      Product Result / Artifact / Lineage
 ```
 
-### 3.2. ENH-E11 Local Scientific CLI（独立追加）
+### 3.2. Local Scientific CLI（Product実行系から独立）
 
 ```text
 Local CLI / Explicit Versioned Config
@@ -257,13 +257,6 @@ Product DB / Worker / Execution lifecycle           Local Scientific Domain / Id
 
 **E11旧草案（履歴）:** [_drafts/enh_e11_causal_cli_basic_design_draft.md](_drafts/enh_e11_causal_cli_basic_design_draft.md)。正式な基本設計内容は22_20〜23に展開。
 
+**当該機能に適用する設計制約（関連Requirement）**
 
-## 98. RD-04：要件由来の基本設計制約
-
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。要件文の抽象化・設計移管で失われてはならない元の実現方式・責務境界を保持する。旧Requirement IDとStatusを維持する。コード検証やArchitecture GateのPASSを意味しない。
-
-### 98.1. NFR-018（MOVE_BD）
-
-- 既存要件の設計情報を含む原文：Product DomainからWeb Framework、ORMおよびlegacy packageへ依存しない
-- RDに残る能力／Legacy Trace：【設計制約移管・Legacy Trace】NFR-005に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する
-- Original Requirement：`NFR-018`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [RD-04逐条台帳](../96_rd04_nfr_ar_application_review.md)
+- **`NFR-018`**：Product DomainからWeb Framework、ORMおよびlegacy packageへ依存しない
