@@ -56,6 +56,9 @@
 
 ## 2. まだ承認されていない事項
 
+- **DEC-SR04-08（2026-11-16、Owner採否待ち）:** [Backend／Optional Dependency／uv.lock／Licenseの独立技術判断案](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)を策定。**DEC08-1〜8のA案を推奨**する。現行pyproject.tomlはPython3.12系・既存predictive-advancedのみを宣言し、現行uv.lockにはDoWhy/EconML/Tigramite/rdrobustがない（GitHub現物照合）。SR02のDoWhy0.14/EconML0.17.0/Tigramite5.2.10.1 API Smoke成功はE11 lock pinやScience PASSではない。pyproject→uv.lock→Profile/実効Config/Manifest→Science/Legalの役割分離、5 Environment ProfileとRDD追加候補、fresh install/Combined/legacy回帰、顧客個別SIでのTigramite GPLv3-or-later・rdrobust GPL-3.0-only等のLegal Reviewを提案。**本ターンは工程実行とuv.lock中心という認識の提示であり、個別8案のOwner採用指示ではないため正式採用記録に追加しない。** pyproject/uv.lock改変、依存pin、実効Library、Legal承認、Gate、Codingは未実施。
+
+
 - **DEC-SR04-07の数値freezeと科学的実施（2026-11-16、Owner方針は第24項で採用済み）:** [独立技術判断](../working_notes/20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)によりDEC07-1〜7の設計方針は個別採用した。**残余は実効mandatory cell/K、n/T/R/inner bootstrap、Method別数値閾値・CI/Oracle資格、T2 PilotのCPU秒・RSS・Wall、Owner資源・金額上限の取得、T3 Science・Gate批准である。** 未測定値を「承認済み数値」と扱わない。
 
 
