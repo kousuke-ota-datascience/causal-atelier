@@ -40,11 +40,15 @@
 
 17. **SR03-D06-1〜6（2026-11-15、Human owner明示判断）:** 「推奨案を採用する」との明示判断により、**D06-1=B（Graph未確定でも検証済みの別識別証明があれば将来推定候補を認める。ただし未識別Resultを直接通さない）、D06-2=B（Estimand・Graph・仮定・Methodに紐づく検証可能な識別証明を要求。研究者宣言やBackend successだけでは不十分）、D06-3=B（研究者のGraph再固定は新GraphVersion・編集根拠・親子lineageを保持し再識別）、D06-4=B（科学的に定義された部分識別集合を点推定や信頼集合とは別の将来Resultとして扱う）、D06-5=B（Human overrideは緩和可能なwarningのみ。未識別・要レビュー・部分識別を点推定へ強制昇格しない）、D06-6=A（初期追加実装をGraphの忠実保持・レビュー・研究者再固定・新Graphからの再識別に限定し、CPDAG/PAG自動一般化識別・汎用部分識別推定器は初期非採用）を個別採用**する。**D06-1/2の例外方針は後続のMethod別検証・採用の余地であり、D06-6=Aにより初期実装に一般化識別証明器を追加するものではない。** 具体的な代替案比較・科学的境界・負例・14件の検証候補は[独立D06技術記録](../working_notes/20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)で管理する。D04の新E11 fail-closed gateと旧Product/v2互換を維持。**個別設計方針だけの採用**であり、Graph再固定の正式schema、別証明受入アルゴリズム、部分識別境界Method/Result、RBAC/override enum、科学Benchmark、FR/NFR/AR、Architecture Review、Gate 06/07、全体構想とCodingは未承認・未実施。
 
+18. **DEC-SR04-01／B1-A（2026-11-16、Human ownerからの正式判断実行指示）:** **B1のMethod固有Estimandとして「加法線形IV構造係数β」（B1-A）を個別採用**する。単一二値excluded Z／内生A、事前指定の処置前共変量C、切片付き加法線形Outcome equation、均質構造係数β、IV外生性・除外・rank等の条件に限定する。科学的なsemantic identifier候補`LINEAR_IV_STRUCTURAL_COEFFICIENT`を採用し、一般ATE/ATT/LATE/CLATEへの自動変換を禁止する。異質効果下の残差化IV比（B1-B）は数学的Reference/negative stressに限って保持し、当初の正式B1 Estimandとしては非採用。条件付き効率的LATE拡張B1-CはSR03-D03 C1方針に従い初期非採用。**これはB1の科学的対象・適格性のOwner判断であり、正式schema enum名/版、2SLS/AR実装、HC設定・被覆、SR04-D AC、Gateや全体構想の承認ではない。** 具体的な比較・独立数式・反証・Evidenceは[DEC01/02独立判断記録](../working_notes/20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)を参照。
+
+19. **DEC-SR04-02／DRIV-A（2026-11-16、Human ownerからの正式判断実行指示）:** **DRIVのMethod固有Estimandとして条件付き構造IV処置斜率`θ_IV(x)`（DRIV-A）を個別採用**する。既採用family`IV_HETEROGENEOUS_EFFECT`内のsemantic target `CONDITIONAL_IV_STRUCTURAL_SLOPE`として、構造式`Y=θ_IV(X)T+h(X,W)+U`、処置前Wでの残差化を用いた条件付きIV moment、relevance/除外/外生性/構造線形性、処置dose contrastとX支持域を要求する。W無しのDGP-008ではθ(-1)=1.5、θ(+1)=2.5。W有りの適格性は別々に実証する。**推定器の重み付き射影を正式な構造EstimandとするDRIV-B、binary complier LATEへの一律再分類DRIV-Cは非採用。** 現行EconMLの特定`model_final`/`projection`/`opt_reweighted`/`fit_cate_intercept`/`cov_clip`と実効0.17.0 API、Method固有CI、Coverage、科学Benchmarkは**未選定・未検証**。正式schema enum、FR/ADR、Gate、全体構想・Codingは引き続き未承認。[DEC01/02独立判断記録](../working_notes/20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)に比較・追加仮定・負例を一元化。
+
 ## 2. まだ承認されていない事項
 
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
-- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針は採用済み。
+- Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**は個別採用済み。ただし正式Schema enum/Method config・推論方式・数値受入は未承認。
 - **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
 - Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
