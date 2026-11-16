@@ -35,18 +35,7 @@
 
 技術失敗と科学的非識別は別のResult軸に保持し、継続可能なscientific negativeを汎用exceptionとして破棄しない。
 
-## 98. RD-04：要件由来の基本設計制約
+**当該機能に適用する設計制約（関連Requirement）**
 
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。旧要件の具体設計制約を担当領域へ移管。実装検証・ADR承認済みを意味しない。
-
-### 98.1. FR-128b（SPLIT）
-
-- 元の設計情報を含む要件：size limit、timeout等のoperational resource configurationを一元管理する
-- 改訂後RD／Legacy Trace：運用上の処理規模と実行時間の上限を設定・適用できる
-- ID：`FR-128b`; Status：`DEFERRED`; Implementation：`NOT_IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
-
-### 98.2. NFR-007（SPLIT）
-
-- 元の設計情報を含む要件：Metadata transactionとArtifact writeのcross-store failure compensationを定義する
-- 改訂後RD／Legacy Trace：成果物と管理情報の不整合が発生した場合、安全に回復・検知できる
-- ID：`NFR-007`; Status：`DEFERRED`; Implementation：`PARTIAL`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
+- **`FR-128b`（将来拡張・現行提供対象外）**：size limit、timeout等のoperational resource configurationを一元管理する
+- **`NFR-007`（将来拡張・現行提供対象外）**：Metadata transactionとArtifact writeのcross-store failure compensationを定義する

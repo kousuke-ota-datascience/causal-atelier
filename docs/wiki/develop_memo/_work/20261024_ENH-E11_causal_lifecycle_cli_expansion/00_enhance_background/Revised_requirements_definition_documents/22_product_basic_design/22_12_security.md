@@ -79,36 +79,10 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 
 既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportにはOSの実行主体・出力権限・明示opt-inを組み合わせるが、最終的な認可規則・証跡・ACLは未確定の設計事項として扱う。
 
-## 98. RD-04：要件由来の基本設計制約
+**当該機能に適用する設計制約（関連Requirement）**
 
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。旧要件の具体設計制約を担当領域へ移管。実装検証・ADR承認済みを意味しない。
-
-### 98.1. FR-121（SPLIT）
-
-- 元の設計情報を含む要件：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する
-- 改訂後RD／Legacy Trace：Project内操作を所属Roleに応じて認可し権限外の処理を防止する
-- ID：`FR-121`; Status：`ACTIVE`; Implementation：`PARTIAL`; [逐条記録](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-124a（SPLIT）
-
-- 元の設計情報を含む要件：Artifact metadata/downloadでProject境界とsafe content dispositionを検証するcurrent contractを維持する
-- 改訂後RD／Legacy Trace：成果物の情報・取得をProject境界内で安全に利用できる
-- ID：`FR-124a`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-124b（SPLIT）
-
-- 元の設計情報を含む要件：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
-- 改訂後RD／Legacy Trace：旧経路を含む成果物取得に同じProject権限を適用する
-- ID：`FR-124b`; Status：`ACTIVE`; Implementation：`PARTIAL`; [逐条記録](../95_rd04_fr_application_review.md)
-
-### 98.4. NFR-008a（SPLIT）
-
-- 元の設計情報を含む要件：current input validation、path traversal防止、secret非露出等のsafeguardを維持する
-- 改訂後RD／Legacy Trace：入力検証と危険なパス・秘密情報の保護を維持する
-- ID：`NFR-008a`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
-
-### 98.5. AR-020（SPLIT）
-
-- 元の設計情報を含む要件：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する
-- 改訂後RD／Legacy Trace：個票予測と局所説明は機微情報になり得るため、利用権限に応じ露出を制限する
-- ID：`AR-020`; Status：`ACTIVE`; Implementation：`PARTIAL`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
+- **`FR-121`**：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する
+- **`FR-124a`**：Artifact metadata/downloadでProject境界とsafe content dispositionを検証するcurrent contractを維持する
+- **`FR-124b`**：legacy/generic routeを含むArtifact downloadでProjectMembership authorizationを一貫適用する
+- **`NFR-008a`**：current input validation、path traversal防止、secret非露出等のsafeguardを維持する
+- **`AR-020`**：prediction row / local explanationをpotentially sensitive outputとして扱い、Project roleに応じてdetail exposureを制御する

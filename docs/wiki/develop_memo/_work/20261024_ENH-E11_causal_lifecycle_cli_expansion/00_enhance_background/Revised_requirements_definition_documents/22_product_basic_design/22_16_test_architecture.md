@@ -39,18 +39,7 @@ Current design concernを次のtest layerへtraceする。
 
 実装が継続的に充足すべき検証契約として、Local CLIとProductの依存方向、入力版Dispatch、Method適格性、typed inference、成果物の部分公開拒否、環境・Privacy回帰を含む。Method固有のScience受入は設計検証とは独立する。
 
-## 98. RD-04：要件由来の基本設計制約
+**当該機能に適用する設計制約（関連Requirement）**
 
-**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。旧要件の具体設計制約を担当領域へ移管。実装検証・ADR承認済みを意味しない。
-
-### 98.1. NFR-015（SPLIT）
-
-- 元の設計情報を含む要件：Domain、Planner、Runner、API、Worker、UI、scientific benchmarkを分離testできる
-- 改訂後RD／Legacy Trace：Domain・実行・API・UI・科学計算を個別に検証できる
-- ID：`NFR-015`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
-
-### 98.2. NFR-024（SPLIT）
-
-- 元の設計情報を含む要件：Navigation descriptor、route、renderer binding、runtime independenceをunit/integration/E2Eで分離検証できる
-- 改訂後RD／Legacy Trace：画面構成・URL復元・表示・分析実行独立性を個別に検証できる
-- ID：`NFR-024`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
+- **`NFR-015`**：Domain、Planner、Runner、API、Worker、UI、scientific benchmarkを分離testできる
+- **`NFR-024`**：Navigation descriptor、route、renderer binding、runtime independenceをunit/integration/E2Eで分離検証できる
