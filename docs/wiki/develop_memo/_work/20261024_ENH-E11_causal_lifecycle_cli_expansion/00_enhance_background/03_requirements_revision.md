@@ -5,6 +5,8 @@
 **前提資料:** `00_01_foundation_gap_reconciliation.md` → `00_02_foundation_gap_closure_assessment.md` → `00_03_phase1_to_phase3_reconciliation.md` → `00_04_phase1_to_phase3_cli_scope_proposal.md` → `01_enhancement_concept_and_requirement_revision_plan.md`  
 **採番規則:** `E11-REQ-*`は計画上の仮識別子であり、承認されたFR/NFR/AR番号ではない。
 
+> **2026-11-16 DEC-SR04-06後続Owner決定（詳細参照）:** [02個別承認第23項](02_enhancement_concept_approval_record.md)、[DEC06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の初期N／X-04/05の広範方式Dは科学的適用範囲として**個別採用済み**。本書は**正本改定前のRequirements/Design Revision Draft**であり、この追補は正式FR/NFR/AR・実効Schema・Architecture・Gateの承認ではない。
+
 ## 1. 参照元
 
 - 正本：`docs/wiki/requirement_definition/00_product_concept_memo.md`、`10_requirements_definition.md`（Implementation Status訂正SHA `84c5a624389b233fcb97c656f1c94d177f459c5a`）、`21/22/23/30`の設計文書。
@@ -20,8 +22,8 @@
 | E11-REQ-P1I | FR-042/043/046、AR-005/023はRandomized/BackdoorのIdentification | optional backendによるBackdoor/Frontdoor/IVと負結果を追加。**2026-11-01オーナー判断でFrontdoor ATEの数値推定もPhase1に必須包含**（識別・推定は別受入）。二段階推定のモデル仮定・区間・真値科学試験は未確定（SR-03） | DoWhy候補 #16 |
 | E11-REQ-P1G | FR-035/037は複数Discovery・Graph endpointを要求 | FCIを追加し、PAGのCIRCLE端点と潜在交絡warningを保持。DAGへ暗黙変換しない | 新Discovery #17 |
 | E11-REQ-P1R | FR-049はPlaceboとData Subset | Random Common Cause・Bootstrap Refutationと再実行情報を追加 | 新方式 #16 |
-| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。追加案は**古典OLS係数へのCinelli–Hazlett partial R²／RV**（2軸強度・非適用・既存HC3との差異を明示）。IPW/AIPWなどへの一般化は未承認。00_04§2.3の技術案に基づく | 拡張候補 #16（未承認） |
-| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | **適切な観測Negative Controlを指定できる研究に、明示的opt-inの科学的反証分析を提供**する方針（2026-11-01確認）。NCE/NCOの条件付きnull検査を方法候補とし、未指定では自動実行しない。null／共有バイアス／DAG/時間根拠を要求し、不適格を科学的負結果とする。既存推定の成功を阻害せず、主効果の因果的PASSとは区別（00_04§2.3、[計画メモ](../working_notes/20261101_negative_control_implementation_plan.md)）。Method細部・正本改定は未承認 | 新規候補 #16（Method／Gate未承認） |
+| E11-REQ-P1S | FR-050はAdjustment Set・Clipping | 既存2方式を維持。**DEC-SR04-06-3 Owner個別採用済み**：古典OLS係数に限定するCinelli–Hazlett partial R²＋point RV(q=1)、2軸強度grid・非適用と既存HC3区別。IPW/AIPWなどへの一般化はDEC06-5で初期非採用D。00_04§2.3とDEC06独立記録に準拠 | 拡張候補 #16（未承認） |
+| E11-REQ-P1NC | 現行FR-049のRefutationはPlacebo・Data Subset。A0/A1にNegative Controlの追加要求あり | **適切な観測Negative Controlを指定できる研究に、明示的opt-inの科学的反証分析を提供**する方針（2026-11-01確認）。**DEC-SR04-06-1/2 Owner個別採用済み**：実在NCE/NCOの条件付きnull検査2方式（P1-M18/M19）。未指定では自動実行しない。null／共有バイアス／DAG/時間根拠を要求し、不適格を科学的負結果とする。既存推定の成功を阻害せず、主効果の因果的PASSとは区別（00_04§2.3、[計画メモ](../working_notes/20261101_negative_control_implementation_plan.md)）。Method採否は個別承認済み（DEC06-1/2/4）。実効推論・具体schema・正本改定は未承認 | 新規候補 #16（Method／Gate未承認） |
 | E11-REQ-P1W | FR-047/048はATE/ATTと適用可能な診断。IPW実装済み | Hájek型正規化、IPTWの分散・区間推定の品質、Balance/ESS/Overlapの適用性を明文化 | 品質強化 #19 |
 | E11-REQ-P2 | 現行FRにCATE/HTE・EconMLの第一級推定要件なし | CATE/HTEのestimand/spec/result、effect modifierとconfounderの区別、点推定と推論区間のavailability、supportと承認済みEstimatorを規定。**IV異質効果を一般CATEと混同しない**（SR-03）。**SR03-D05-1〜5は2026-11-15にB/B/B/B/Bを個別オーナー採用**。詳細は[D05科学的判断記録](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)。非IV7手法とDRIVのEstimand/推論契約を分離し、CI適格性を用途・Method・構成別に記録。**8 Methodの初期候補範囲は縮小しない**。 | 新規Phase 2 #18（個別方針採用、正式要件/Gate未承認） |
 | E11-REQ-SR03D05 | 現行v2 EffectResultは非IV CATE／DRIV向けのMethod別CI検証と科学的推論可用性を一級には規定しない。EconML 0.17のAPI smokeは有限CIを一部設定で取得したが被覆率は未実証 | **D05-1 B:** 非IV CATE7手法とDRIVのIV固有Estimandを分離。**D05-2 B:** Exploratoryでは適格な点推定のみ可、Confirmatoryでは事前指定の妥当な推論証拠を要する。**D05-3 B:** Method別推論方式。**D05-4 B:** point/uncertainty/science acceptanceを分離、無CIはnull＋理由。**D05-5 B:** Known-truth・pointwise CI coverage・Method別負例による独立Science受入。点ごとの区間を同時信頼帯と誤記しない。**正式schema/数値基準/Mode別受入具体条件は未承認**（[D05詳細](../working_notes/20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)） | #18,#24（方針採用、正本/Gate未承認） |
@@ -68,7 +70,7 @@
 
 ## 6. 未決定事項
 
-- 新規FR/NFR/ARの正式採番とProductコンセプト改定。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
+- 新規FR/NFR/ARの正式採番とProductコンセプト改定。DEC06-1〜5の科学的Method採否はOwner個別採用済みだが、正式FR/NFR/AR/Architecture/GateとScience受入は未実施。`00_04_phase1_to_phase3_cli_scope_proposal.md`のA0上位要求の後続送り案とNegative Control/未観測交絡Sensitivityの採否。
 - IPTW推論・Trimmingの科学的に適切なdefault。
 - **SR-03の未決事項:** **Frontdoor Phase1数値推定、LATE初期Wald比＋2SLS、D03-1 S2（B0＋B1）は個別採用済み**。B1の対象・追加モデル仮定は[残余D03審議](../working_notes/20261101_sr03_d03_remaining_2sls_weak_iv_review.md)を参照。**D03-2 I2 AR方式も採用済み**。残るのはB1/ARの科学的実証、**G2改訂の意味契約も採用済み**。**C1の後続審議管理は採用済み**。**D04-1 V2／D04-2 E2／D04-3 M2／D04-4 G2-Bridge／D04-5 R2の方針は2026-11-15に個別採用済み**。残るのはC自身のMethod採否・責任者の固有割当、正式G2 schema/enum/version、実装・migration・v2回帰の検証、DRIVの条件付きEstimand・Method固有の推論方式と科学的受入数値基準、D06の具体的Graph refix/別識別証明・境界Result/override schemaと科学検証（**D05-1〜5 B/B/B/B/BとD06-1〜6 B/B/B/B/B/Aの方針判断自体は採用済み**）（[技術案](../working_notes/20261101_sr03_identification_estimand_estimator_contract_review.md)）。
 - Phase 2のIV+MLとしてDRIVまたは同等手法をどう認めるか。
