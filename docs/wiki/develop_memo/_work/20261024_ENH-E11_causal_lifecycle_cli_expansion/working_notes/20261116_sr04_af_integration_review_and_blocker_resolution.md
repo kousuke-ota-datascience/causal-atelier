@@ -13,7 +13,7 @@
 
 > **2026-11-16 DEC-SR04-06 Owner採用追補:** [NCE/NCO＋OLS partial R²/RV独立技術判断](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)の**DEC06-1〜5すべてA**をHuman ownerが明示採用し、[02承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)第23項に登録。P1-M18/19/20を初期N、広範なX-04/X-05を後続Dとする個別Owner採否は**CLOSED**。RVの独立数値Reference、Null size/power、適格Inference・Runtime、正式FR/ADR/全体Scope/GateはOPEN。
 
-> **2026-11-16 DEC-SR04-07設計審議（Owner採否待ち）:** [独立技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)をGitHubへ作成。AC45の意味と多重比較FWER/K、反復数Rの精度・通過確率、Resource pilotとCPU/Wall/RAM/課金上限の確定手順を提示。**DEC07-1〜7全Aは推奨であり採用済みではない。実効K/R/CPUは未凍結。**
+> **2026-11-16 DEC-SR04-07正式Owner個別判断:** [DEC07-1〜7すべてAを採用した独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)と[02承認記録第24項](../00_enhance_background/02_enhancement_concept_approval_record.md)により**定量AC・Monte Carlo・計算予算の設計方針を採用済み**。AC45のMethod別適格性、FWER 0.05／Bonferroni／Wilson、Kの全比較事前登録、Method別Rと通過確率、独立Pilotと実測資源上限を区別。**K/R/CPU/金額の数値freeze・T2実測・T3科学Evidenceは依然未実施。**
 
 ## 0. 目的、審査条件、適用した証拠レベル
 
@@ -26,7 +26,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `68547fbf24d11643d9c4904e5b5bfb3dfef73789` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `0bcd3fe30706e3ae9d61827276fb5ac5a5cc8d24` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -185,7 +185,7 @@
 | DEC-SR04-04 | FCI/temporal Graph | GRAPH-A 独立PAG/CPDAG/lag oracle | Human ownerがGRAPH-A（DAG/MAG/CPDAG/PAG/temporal別Oracle）を採用。FCI/LPCMCI/PCMCI+の独立同値類とGraph精度は未検証 | **GRAPH-A OWNER_ACCEPTED / INDEPENDENT_ORACLE_PENDING** |
 | DEC-SR04-05 | 準実験7手法の初期Estimator／条件付きInference契約 | 7手法の初期Method baseline・個別Inference方針の採用は完了。SCM=point-only、RDD=RBC、SDID=2種重みとcluster bootstrapなど。実効Backend/CI科学受入は未検証 | [DEC-05独立技術記録](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)＋02 Owner第22項、7 MethodへのTrace更新 | **OWNER_BASELINE_ACCEPTED / INFERENCE_SCIENCE_PENDING** |
 | DEC-SR04-06 | P1-M18/19 Observed Negative Control／P1-M20 OLS partial R²＋point RV | **DEC06-Aの全5項目を採用**：P1-M18 NCE、M19 NCO、M20古典OLS partial R²／point RV。opt-in/typed非適用必須、X-04/X-05広範方式は初期非採用D。Null size/power・RV独立Oracle・科学Benchmark未完 | [DEC06 Owner採用済み技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)・02第23項・00_04のP1-15/17・X-04/05・A〜F改訂 | **OWNER_METHOD_SCOPE_ACCEPTED / SCIENCE_PENDING** |
-| DEC-SR04-07 | Quant AC／MC / K ／Compute Budget | **DEC07-A推奨**：7個別判断でExact/Statistical Hard/N/Aを分離、Gate-wide FWER 0.05、K事前計数、Wilsonと通過確率からMethod別Rを設計、T2 cost pilot→T3予算freeze。R=6000一律固定不可 | [DEC07独立技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)にK=1024時のR6000・fail.005反例、計算量・予算式、R100〜200pilotなどを記録。実K/Runtime/単価は未観測 | **PROPOSAL_READY / OWNER_PENDING / K_R_COST_NOT_FROZEN** |
+| DEC-SR04-07 | Quant AC／MC／K／Compute Budget（方針Owner採用） | **DEC07-1〜7の7A採用済み**：Exact/Hard/Conditional/N/A、Gate-wide FWER0.05・K全登録・Bonferroni/Wilson、Method別R逆算、T2 independent pilot→T3実測資源上限と固定seedを設計方針とする。R6000は一律固定不可 | [DEC07 Owner採用独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)／02承認記録第24項。実効K/R・CPU/Wall/RAM/支出額、Method-specific閾値・Reference/Source SHA・Gate evidenceは未確定 | **OWNER_POLICY_ACCEPTED / K_R_COST_NOT_FROZEN / SCIENCE_NOT_RUN** |
 | DEC-SR04-08 | Environmental/License | Eの5 Profile、機能別extras、顧客別GPL Legal Review | full lock/effective version/legacy regression、納入Artifact別法務判断 | **IMPLEMENTATION+LEGAL_PENDING** |
 | DEC-SR04-09 | Scope/Requirement/Architecture/Gate | 68 Scope全行とA0例外・GAPのOwner決裁 | 正本FR/NFR/AR/ADR、G01〜10→正式Gate07責務、批准SHA | **FULL_CONCEPT_PENDING** |
 | DEC-SR04-10 | Science Evidence | 独立Reference/Monte Carlo/Graph・負例・旧v2回帰を実行後、独立review | F §8のEvidence Bundle＋受入結果・否定結果・独立Gate判断 | **SCIENCE_NOT_RUN** |
@@ -226,7 +226,7 @@
 | SR-01〜12、68 Scope、正式FR/ADR/06/07 | **CHANGES_REQUIRED** | Human OwnerとArchitecture Reviewの承認が必要 |
 | ENH-E11全体およびGate07 | **NOT APPROVED** | このDraftの是正だけではCoding/Science PASS不可 |
 
-**次のOwner判断:** DEC-SR04-01〜06は**2026-11-16に個別採用済み**。次は**DEC-SR04-07（定量Acceptance Criteria・Monte Carlo計画・計算予算のfreeze案）**。続いてDEC-08（Environment/Legal）・DEC-09（全体Scope/FR/ADR/Gate）・DEC-10（実装後の独立科学Evidence）。本判断はCoding・Science PASSではない。
+**次のOwner判断:** DEC-SR04-01〜07は**2026-11-16に個別採用済み**。次は**DEC-SR04-08（実行環境・optional依存・License・配布契約）**。続いてDEC-09（全体Scope/FR/NFR/AR/Architecture/Gate）、DEC-10（実装後の独立科学Evidence）。**DEC07のMethod別K/R/Compute予算はT2 Pilot・実効Backend・資源上限を確認した後の別Freeze**である。今回のOwner判断はCoding・Science PASSではない。
 
 **変更した範囲:** A/B/C/D/Fのworking_notes本文と本レビュー記録。Eはレビューしたが実効環境や正本に変更なし。コード・`pyproject.toml`・`uv.lock`・GitHub Issue/Notion・02のOwner決定記録・正式FR/NFR/AR/Gateは変更していない。
 
