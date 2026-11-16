@@ -3,7 +3,7 @@
 **文書区分:** `working_notes`／科学的検証の実行環境・再現性・証拠管理契約案。正式なFR/NFR/AR、Architecture Decision、Gate06/07、Work Package、実装指示、Coding許可ではない。  
 **作成日:** 2026-11-15 JST  
 **対象:** `kousuke-ota-datascience/causal-atelier`、`prototype/ariadne_mvp`。  
-**状態:** `SR04_E_ENVIRONMENT_CONTRACT_DRAFT / LOCK_AND_PROFILE_PENDING / DEC07_POLICY_OWNER_ACCEPTED / RESOURCE_BUDGET_PENDING / EVIDENCE_SCHEMA_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL`。  
+**状態:** `SR04_E_ENVIRONMENT_CONTRACT_DRAFT / DEC08_POLICY_OWNER_ACCEPTED / LOCK_AND_PROFILE_PENDING / DEC07_POLICY_OWNER_ACCEPTED / RESOURCE_BUDGET_PENDING / EVIDENCE_SCHEMA_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL`。  
 **先行する作業記録:** [Method Acceptance Matrix（41件）](20261115_sr04_method_acceptance_matrix_draft.md) → [Scientific Fixture Catalog（DGP 24／NEG 28／横断9）](20261115_sr04_scientific_fixture_catalog_draft.md) → [Reference Specification（REF 24）](20261115_sr04_reference_specification_draft.md) → [Quantitative Acceptance Criteria（AC 45）](20261115_sr04_quantitative_acceptance_criteria_draft.md)。  
 **Owner決定:** [02 構想承認記録](../00_enhance_background/02_enhancement_concept_approval_record.md)。基本方針のみ個別採用済みであり、**全体構想は`PENDING_FULL_CONCEPT_APPROVAL`**。  
 **根拠となる実測:** [SR-02 Python/Linux依存・API実行記録](20261101_sr02_backend_runtime_probe_results.md)。この実測はinstall/API smokeであり、Method別科学妥当性・完全なlock・SI納入適法性を示さない。
@@ -18,7 +18,7 @@
 
 > **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。T2でMethod/CI/inner Bootstrap/n/T別にp50/p95 core-seconds、peak RSS、Wall、Backend versionを実測し、T3必要コア時・メモリ・課金上限とOwner承認を突合する。CPU/料金値は未実測なので数値freeze禁止。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
 
-> **2026-11-16 DEC-SR04-08設計審議（Owner採否待ち）:** [Backend／uv.lock／Optional Extras／License独立技術判断案](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)をGitHub現物・SR02・uv公式仕様・上流Licenseから作成。**uv.lockは現行Ariadne既存依存の解決結果であり、DoWhy/EconML/Tigramite/rdrobustを含まない**。pyproject宣言＋universal lock＋5 Profile（追加RD候補）＋fresh-install／Method API＋実行Manifest/SBOM＋顧客SI配布法務を分離し、DEC08-1〜8すべてAを推奨した。**Owner未採用。pyproject.toml、uv.lockは未改変、full lock/実効版・Legal/Science/Gateは未承認**。SR02観測版と現行lock中のstatsmodels 0.14.6（SR02では0.15.0）を同一環境の証拠として扱わない。
+> **2026-11-16 DEC-SR04-08正式Owner採用:** [Backend／uv.lock／Optional Extras／License独立技術判断](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)と[02承認記録第25項](../00_enhance_background/02_enhancement_concept_approval_record.md)により、**DEC08-1〜8の全A案を個別採用済み**。pyproject宣言＋uv universal lock＋実効Run Manifest、既存5 Profile（条件付きRD候補）、Backend実効版/APIとCombined、fresh --locked、SBOM/BLAS、GPL顧客SI配布法務と科学/予算/Gateの分離を設計方針として確定。**採用されたのは方針のみ**。現行uv.lockにはDoWhy/EconML/Tigramite/rdrobustが未登録で、pyproject・lockは未改変、実効pin/API/Legal/Science/Gateは未承認。SR02のstatsmodels 0.15.0と現行lockの0.14.6は同一環境ではない。
 
 ## 0. 目的・システム境界・再現性の分類
 
@@ -241,14 +241,16 @@ SR-02で採用された配布想定は**個別SIでの顧客環境への構築�
 
 **法的結論はここで出さない。** 追加制限/改修/納入方法の変更が必要ならOwner+法務の正式判断を要し、科学Methodの同等代替は別の科学BenchmarkとScope再承認に付す。
 
-### 6.3. DEC08で追加審議するLock／RD配布契約（2026-11-16、Owner未決）
+### 6.3. DEC08 Owner方針採用後のLock／RD配布契約（2026-11-16、実効検証待ち）
 
 - **依存解決の意味:** uvは通常、全extras/groupsを共通にuniversal resolutionする。optional extrasはインストール選択であり、それだけでincompatible依存を隔離しない。Combined profileの要件があるため、`tool.uv.conflicts`による相互排他を無条件採用しない。依存競合時はSource/Backendの前提を再審議する。
 - **現物差異:** `uv.lock`にはDoWhy、EconML、Tigramite、rdrobustが未登録。SR02は`uv pip install`で検証専用環境へ導入した証跡で、同じlockが全環境で成功した事実ではない。既存lockにはstatsmodels 0.14.6があり、SR02の0.15.0とは別である。
 - **Profile拡張:** 既存5 Profileの受入を維持し、Sharp/Fuzzy RDのPython rdrobustは`ENV-RD`／`e11-rdd`を別候補として追加検討。既存ENV-BASEの5件へ黙って6件目の正式必須Profileを追加しない。
 - **GPL:** Tigramite upstream GPLv3-or-later、rdrobust Python PyPI GPL-3.0-only。両者とも**顧客納入物の個別SI配布形態・結合性・source提供の法務審査**が必要。Optional Extraや顧客pip installが適法性の免責条件ではない。DoWhy MIT、EconML MITには第三者BSD-3-Clause由来部分がある。
 - **Delivery Gate:** `ENV-AC09`のLegal Approvalが出るまで、GPL Backendを含む**当該配布形態**の顧客納入はBLOCKED。ただし社内科学計算や非配布Backendの技術検証が自動的に禁止・科学FAILになるわけではない。
-- **別工程のまま:** DEC07 Compute Budgetの数値は、DEC08のProfile/Lock freezeとPilotが未完了なので未測定。Library/Licenseを本記録だけでOwner採用・Science PASSにしない。
+- **別工程のまま:** DEC08-1〜8の設計方針はOwner採用済みだが、DEC07 Compute Budgetの数値はProfile/Lock freezeとPilotが未完了なので未測定。Library最終pin・実効License適合・Science PASSを本記録だけで承認しない。
+
+**Owner決定済みで未実装の内容:** DEC08-1〜8は基本方針としてCLOSED。Backend直依存を実際に追加するWork Package／uv.lock再生成、5 Profile+条件付きRDのfresh isolation、full SBOMとRun Manifest、個別SI Delivery Legal、Monte Carlo資源・Science・正式Gateは別Closureとする。
 
 ## 7. 未解決Blocker・受入前の依存と次工程
 
@@ -264,12 +266,12 @@ SR-02で採用された配布想定は**個別SIでの顧客環境への構築�
 |---|---|---|
 | OWNER_RESOLVED / SCIENCE_BLOCKER | B1-A／DRIV-A semantic target採用済み、B1のHC AR・DRIVの実効moment/projection/CI未検証 | SR03-R01/R02、SR04-C/D/F、Scientific Methods owner |
 | BLOCKER | Frontdoor二段階実効仕様、FCI/LPCMCI PAG oracle | SR04-C、Method別検証 |
-| BLOCKER | Quasi/SCM/SDIDの初期Estimator＋InferenceConfig | SR-09、SR04-D/F |
+| OWNER_POLICY_ACCEPTED / SCIENCE_BLOCKER | Quasi/SCM/SDIDのEstimator baselineはDEC05で個別採用済み。Method固有のInferenceConfig／backend・実効数値Scienceは未検証 | SR-09、SR04-D/F |
 | BLOCKER | Environment Profile exact版とextras・full resolution lock／旧回帰 | SR-02/10、Architecture |
 | BLOCKER | Monte Carlo mandatory cells、R/n/T/KとCPU/RAM/time/cost | SR04-D/E、Owner承認 |
 | BLOCKER | 実効Manifest/seed/Graph lineage/Reference・PrivacyのSchema | SR03-D04、SR04-E/F、Architecture |
 | BLOCKER | 個別顧客納入時のTigramite GPLv3適合 | Legal/Distribution gate。Science Gateと独立 |
-| MAJOR | NCE/NCO/partial-R²の正式Method採否、既存Product GAP帰属 | SR-01/05/06、Owner |
+| OWNER_POLICY_ACCEPTED / REQUIREMENTS_BLOCKER | NCE/NCO/古典OLS partial R²＋RVの個別Method採否はDEC06で採用済み。正式FR/ADR・Runtime/Scienceと既存Product GAP帰属は未完 | SR-01/05/06、Owner |
 | MAJOR | 68 Scope行・41 Method・9横断→FR/Issue/Gateの完全追跡 | SR04-F、SR-12、05レビュー |
 
 ### 7.3. 次工程への引渡し
