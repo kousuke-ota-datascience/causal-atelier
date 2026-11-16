@@ -3,6 +3,8 @@
 
 ---
 
+## 5. Web API Interface
+
 ### 5.4 Exploratory Interface
 
 Exploratory UIは`Profile / Data Quality / Distribution / Relationships / Comparison / Findings`をNavigation Stageとして持つが、各Navigation Stageに対応する新規Execution APIを1:1で要求しない。
