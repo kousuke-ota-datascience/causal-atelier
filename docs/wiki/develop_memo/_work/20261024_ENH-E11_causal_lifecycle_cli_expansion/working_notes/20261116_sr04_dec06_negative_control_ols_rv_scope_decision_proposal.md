@@ -1,21 +1,21 @@
-# ENH-E11 — DEC-SR04-06：Observed Negative Controls／OLS Partial R²・RV Method採否（判断案・独立技術記録）
+# ENH-E11 — DEC-SR04-06：Observed Negative Controls／OLS Partial R²・RV Method採否（Owner採用済み・独立技術記録）
 
-**文書区分:** Working Notes／Owner判断に付す科学的Scope Proposal。**本書を作成しただけではHuman ownerの新規Method採否は成立しない。**  
-**策定日:** 2026-11-16 JST。  
+**文書区分:** Working Notes／Human ownerが2026-11-16に個別採用した科学的Method判断。**全体構想・正式FR/NFR/AR/ADR/Gate・Coding/Science PASSの承認ではない。**  
+**策定・Owner採用日:** 2026-11-16 JST。Human ownerは本ターンで「推奨案で確定する」と明示指示した。  
 **判断対象:** 00_04のP1-15／P1-17、A0上位X-04／X-05、SR-04 P1-M18/M19/M20。  
-**現状態:** `DEC-SR04-06_PROPOSAL_READY / OWNER_DECISION_PENDING / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL`。  
-**依拠:** [11月1日の方法検討記録](20261101_negative_control_unobserved_confounding_method_review.md)、[Scope68](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)、[SR-04 A〜F統合レビュー](20261116_sr04_af_integration_review_and_blocker_resolution.md)。正式採用事実は[02 owner記録](../00_enhance_background/02_enhancement_concept_approval_record.md)に後続Owner決裁を得てから記載する。**DEC-01〜05の採用を変更しない**。
+**現状態:** `DEC-SR04-06_A1_TO_A5_OWNER_ACCEPTED / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL`。  
+**依拠:** [11月1日の方法検討記録](20261101_negative_control_unobserved_confounding_method_review.md)、[Scope68](../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md)、[SR-04 A〜F統合レビュー](20261116_sr04_af_integration_review_and_blocker_resolution.md)。正式採用事実は[02 owner記録](../00_enhance_background/02_enhancement_concept_approval_record.md)第23項に反映する。**DEC-01〜05の採用を変更しない**。
 
 ## 0. 推奨する単一パッケージと代替案
 
 | 採否案 | 初期Phase1の実装範囲 | 科学的・工程上の評価 | 今回の状態 |
 |---|---|---|---|
-| **DEC06-A（推奨）** | P1-M18 Observed NCE、P1-M19 Observed NCO、P1-M20 古典OLS限定Partial R²＋point RVを**3件ともNとして初期候補採用**。個別opt-in・厳格な適格性と失敗型。非線形・広範SensitivityはD | 既存00_04の条件付きN候補を最小の科学的に定義可能なMethodとして具体化。想定EffectResultや既存R2/method statusの一般化をしない | **OWNER_PENDING** |
-| DEC06-B | NCE/NCOのみN、Partial R²はDへ | 感度分析の初期対応が未実装のまま残り、P1-17の判断を再度後送 | 比較対象 |
-| DEC06-C | Partial R²のみN、Observed NCE/NCOはDへ | valid negative controlsがない研究での実装負担を避けられるが、P1-15の科学的反証機能が失われる | 比較対象 |
-| DEC06-D | NC inferenceで未観測交絡を自動補正し、RVをIPW/AIPW/DiD/CATEへ一般化 | 対象・識別仮定・数値Referenceが不定で、false-passリスクが高い。**推奨しない** | 初期不採用を推奨 |
+| **DEC06-A（採用）** | P1-M18 Observed NCE、P1-M19 Observed NCO、P1-M20 古典OLS限定Partial R²＋point RVを**3件ともNとして初期候補採用**。個別opt-in・厳格な適格性と失敗型。非線形・広範SensitivityはD | 既存00_04の条件付きN候補を最小の科学的に定義可能なMethodとして具体化。想定EffectResultや既存R2/method statusの一般化をしない | **OWNER_ACCEPTED** |
+| DEC06-B（初期非採用） | NCE/NCOのみN、Partial R²はDへ | 感度分析の初期対応が未実装のまま残り、P1-17の判断を再度後送 | 比較対象 |
+| DEC06-C（初期非採用） | Partial R²のみN、Observed NCE/NCOはDへ | valid negative controlsがない研究での実装負担を避けられるが、P1-15の科学的反証機能が失われる | 比較対象 |
+| DEC06-D（初期非採用） | NC inferenceで未観測交絡を自動補正し、RVをIPW/AIPW/DiD/CATEへ一般化 | 対象・識別仮定・数値Referenceが不定で、false-passリスクが高い。**推奨しない** | 初期不採用を推奨 |
 
-**推奨判断:** `DEC06-A`。5個の個別採否論点は §1〜5 を参照。3 Methodはいずれも**新E11 CLI-only の条件付き診断**であり、DoWhy placebo/random common causeと同義ではない。A0 X-04/X-05を3 Methodで全面充足したとは宣言しない。
+**正式判断:** `DEC06-A`をHuman ownerが**採用**。5個の個別採否論点は §1〜5 を参照。3 Methodはいずれも**新E11 CLI-only の条件付き診断**であり、DoWhy placebo/random common causeと同義ではない。A0 X-04/X-05を3 Methodで全面充足したとは宣言しない。
 
 ## 1. DEC06-1：Observed Negative Control Exposure — P1-M18
 
@@ -31,7 +31,7 @@ Treatment `A`、Outcome `Y`、**観測した**対照Exposure `Z`、研究者のD
 
 `DGP-019`のNCE valid-null、shared-U-confounding、invalid-direct-Z→Yを**別variant**として登録。現行DGP019の`γ=0`を無条件なNCE null正例として流用しない。**分析で選んだ統計モデルに条件付きのnullが本当に成立するか、DGP方程式で検証してから**AC-T01サイズ試験を行う。NCE direct null破綻やpost-treatment/colliderを宣言Graphで確認できる場合はtyped reject／review、hidden違反を完全検出する要求はしない。Null下sizeと対立powerは別デザイン、R/K/seedはSR04-Dでfreeze。
 
-**推奨採否:** 初期`N`、`opt-in`、観測Zと検証可能なDesign根拠がない場合は`NOT_APPLICABLE`相当（正式status enum未承認）。非線形Y、NCを代理変数としてUのバイアスを自動補正、潜在交絡推定器は初期非採用。
+**採用判断:** 初期`N`、`opt-in`、観測Zと検証可能なDesign根拠がない場合は`NOT_APPLICABLE`相当（正式status enum未承認）。非線形Y、NCを代理変数としてUのバイアスを自動補正、潜在交絡推定器は初期非採用。
 
 ## 2. DEC06-2：Observed Negative Control Outcome — P1-M19
 
@@ -41,7 +41,7 @@ Treatment `A`、Outcome `Y`、**観測した**対照Exposure `Z`、研究者のD
 
 `DGP-019`の`A←U→W`では、A–Y側の`U→Y`係数が0であっても`W∼A`は関連し得る。これが**NCOの非特異性負例（NEG-026）**。Null下sizeの独立正例はAとUが独立な割当の別variantで作成し、交絡共有が異なる状況でも「有意＝A–Y交絡確証」とは呼ばない。
 
-**推奨採否:** 初期`N`、`opt-in`、観測W/nullとpre-treatmentの根拠が必要。後処置Outcome・null不成立でtyped review、非棄却を因果的成功とみなさない。Proxy control inference、double-negative control bridge/completenessによる同定・自動バイアス補正は初期対象外。
+**採用判断:** 初期`N`、`opt-in`、観測W/nullとpre-treatmentの根拠が必要。後処置Outcome・null不成立でtyped review、非棄却を因果的成功とみなさない。Proxy control inference、double-negative control bridge/completenessによる同定・自動バイアス補正は初期対象外。
 
 ## 3. DEC06-3：Cinelli–Hazlett OLS Partial R²／Robustness Value — P1-M20
 
@@ -78,18 +78,18 @@ r=\frac{\sqrt{f_q^4+4f_q^2}-f_q^2}{2}.
 
 IPW/AIPW/DML/CATE/IV/RDD/DiD等へ上のOLS係数式をコピーすること、HC3/cluster/HACで得たSEを`SE_classic`として投入すること、\(r_A=1\)の特異点やrank/df不適格、前提の無いデータマイニングによるUの「発見」はすべて対象外またはtyped failure。**RVが大きいことを因果効果の識別・真実性PASSとして扱わない**。
 
-**推奨採否:** 初期`N`。連続Yの**classic OLS係数感度**のみ必須、`RV_{q=1}`を数値Referenceの一部、RV for significanceやrobust/非OLS一般化は後続Decision。
+**採用判断:** 初期`N`。連続Yの**classic OLS係数感度**のみ必須、`RV_{q=1}`を数値Referenceの一部、RV for significanceやrobust/非OLS一般化は後続Decision。
 
 ## 4. DEC06-4/05：実行・表示・上位構想の残存境界
 
-### DEC06-4：opt-in＋意味論的Fail-closed（推奨採用）
+### DEC06-4：opt-in＋意味論的Fail-closed（採用）
 
 - 実在NC変数（Z/W）・事前指定対照/null/conditioningと、仮定の根拠・必要となる解析unit・時間順序が揃う場合のみMethod適格。ないときは**自動生成や代替変数の捏造をしない**。任意のraw個票を成果物へコピーせず、Source hashesと必要最小限の診断要約のみ保存。
 - 本当のHypothesis testでは、sample unit・cluster/serial dependenceによってSE/CI方式を別Method-specificに定義する。未検証CIはnull＋reason。`NO_SIGNAL`は`NO_CONFOUNDING`ではない。
 - Existing`PLACEBO_TREATMENT`／`RANDOM_COMMON_CAUSE`／`ADJUSTMENT_SET`／`PROPENSITY_CLIPPING`の科学的意味・versionを壊さない。既存V2/旧Product経路の独立回帰は別Gate。
 - `P1-M18/M19`はRefutation/Diagnostic、`P1-M20`はSensitivity。SCIENCE inference availability／model eligibility／technical failure／hypothesis-test resultを別レイヤー。正式enum/CLI pathはArchitecture/設計04待ち。
 
-### DEC06-5：X-04/X-05のDeferred（推奨採用）
+### DEC06-5：X-04/X-05のDeferred（採用）
 
 `SCOPE:X-04`のSimulated Confounder／Graph Perturbation、`SCOPE:X-05`のIPW/AIPW/非線形Sensitivity一般化・その他Graph/Model sensitivityは**Phase1初期採用の3Methodでは提供完了と見なさず、明示的D（別Decision）**。研究用途の価値と科学的な別手法であることを残し、既存A0上位構想の未解決要件に対する**同等代替の自動承認をしない**。
 
@@ -97,13 +97,13 @@ IPW/AIPW/DML/CATE/IV/RDD/DiD等へ上のOLS係数式をコピーすること、H
 
 | 判断ID | 推奨案 | 含むこと | 含まないこと | 02 Owner採否状態 |
 |---|---|---|---|---|
-| **DEC06-1** | A：Observed NCEをP1-M18として初期Nに含める | Zの因果null/共有bias/conditioningの事前検証、線形係数の条件付き関連null、opt-in | observed NCを自動同定、未観測交絡の因果確証・自動補正 | **PENDING** |
-| **DEC06-2** | A：Observed NCOをP1-M19として初期Nに含める | Wの影響非存在、W∼A条件付きnull、非特異性Stress、opt-in | 「A→W無しなら常に関連0」という誤推論 | **PENDING** |
-| **DEC06-3** | A：古典OLS partial R²＋point RVをP1-M20として初期Nに含める | 2軸grid、OVB magnitude、q=1 RV、classic SE/df re-fit | HC3をclassicと同一視、AIPW/CATE等への一般化 | **PENDING** |
-| **DEC06-4** | A：NC指定無しはnot applicable、Failureとbias signalの区分 | explicit null/conditioning、null-size/power、statistical inference eligibility | 非棄却からunconfoundednessを認定 | **PENDING** |
-| **DEC06-5** | A：上位X-04/X-05で未提供方式をDに残す | Simulated confounder、Graph perturbation、汎用Sensitivityに将来Review trigger | 3MethodだけでA0の全範囲をCLOSED | **PENDING** |
+| **DEC06-1** | A：Observed NCEをP1-M18として初期Nに含める | Zの因果null/共有bias/conditioningの事前検証、線形係数の条件付き関連null、opt-in | observed NCを自動同定、未観測交絡の因果確証・自動補正 | **OWNER_ACCEPTED** |
+| **DEC06-2** | A：Observed NCOをP1-M19として初期Nに含める | Wの影響非存在、W∼A条件付きnull、非特異性Stress、opt-in | 「A→W無しなら常に関連0」という誤推論 | **OWNER_ACCEPTED** |
+| **DEC06-3** | A：古典OLS partial R²＋point RVをP1-M20として初期Nに含める | 2軸grid、OVB magnitude、q=1 RV、classic SE/df re-fit | HC3をclassicと同一視、AIPW/CATE等への一般化 | **OWNER_ACCEPTED** |
+| **DEC06-4** | A：NC指定無しはnot applicable、Failureとbias signalの区分 | explicit null/conditioning、null-size/power、statistical inference eligibility | 非棄却からunconfoundednessを認定 | **OWNER_ACCEPTED** |
+| **DEC06-5** | A：上位X-04/X-05で未提供方式をDに残す | Simulated confounder、Graph perturbation、汎用Sensitivityに将来Review trigger | 3MethodだけでA0の全範囲をCLOSED | **OWNER_ACCEPTED** |
 
-**Ownerへの提案:** **DEC06-1〜5をすべてA**として採用。これは既存SR-03・DEC-01〜05の単一方針と整合し、Phase1のMethod種類を3件追加した**初期Nの設計方針**を明確にする。採用後の具体的enum・科学的検証・依存・正式Scope全体承認は別。
+**Owner判断:** **DEC06-1〜5のA案をすべて採用済み**。これは既存SR-03・DEC-01〜05の単一方針と整合し、Phase1のMethod種類を3件追加した**初期Nの設計方針**を明確にする。採用後の具体的enum・科学的検証・依存・正式Scope全体承認は別。
 
 ## 6. Scientific Fixture・Oracle・定量AC・Trace
 
@@ -123,13 +123,13 @@ IPW/AIPW/DML/CATE/IV/RDD/DiD等へ上のOLS係数式をコピーすること、H
 
 | 判定レベル | 現状態 | Closure |
 |---|---|---|
-| DEC-SR04-06の5項目Owner採否 | **OWNER_DECISION_PENDING** | Human ownerがDEC06-1〜5の具体案を明示承認。02第23項にその事実を記録 |
-| Scientific Method Specification | **TECHNICAL_PROPOSAL_COMPLETE** | 本文のnull・OLS式・適用範囲を正本案03/04へOwner採用後反映 |
+| DEC-SR04-06の5項目Owner採否 | **OWNER_DECISION_CLOSED** | Human ownerがDEC06-1〜5のA案を採用。02第23項に決定事実を登録 |
+| Scientific Method Specification | **OWNER_SCOPE_BOUNDARY_ACCEPTED / DETAIL_PENDING** | 本文のnull・OLS式・適用範囲を正本案03/04へOwner採用後反映 |
 | Runtime / Reference | **NOT_IMPLEMENTED** | 新E11 CLI enum/adapter、独立OLS/NC null size/RV sample reference |
 | Quantitative acceptance | **NOT_FROZEN** | R/K/seed・AC-T01/02、D03 tolerance、Design-specific inference |
-| Full concept / Gate / Coding | **PENDING** | 68 Scope・SR01〜12・正式FR/ADR/Architecture・Gate06/07批准 |
+| Full concept / Gate / Coding | **OWNER_ACCEPTED** | 68 Scope・SR01〜12・正式FR/ADR/Architecture・Gate06/07批准 |
 
-**後続の最短ルート:** Ownerが`DEC06-A（1〜5すべてA）`を採用したら、02採用記録と00_04/03/04の差分案へ伝播し、**DEC-SR04-07（Quantitative AC・Monte Carlo予算）**へ進む。今回はOwnerがMethod選択肢を明示していないため、Owner採用の事実を作らず、`DEC06_PROPOSAL_READY`を到達状態とする。
+**後続の最短ルート:** Ownerは`DEC06-A（1〜5すべてA）`を採用済み。02採用記録と00_04/03/04の差分案に反映し、次は**DEC-SR04-07（Quantitative AC・Monte Carlo予算）**へ進む。具体的enum・Runtime・Null calibration・RVの数値Reference・Science Evidenceと正式FR/ADR/Gateは未承認・未実施。
 
 ## 8. 一次資料（直接性と限界）
 
