@@ -1,13 +1,15 @@
 # ENH-E11 — Phase 1〜3・CLI-only実装スコープ案（ステップ4）
 
 **文書区分:** 構想01に先行する実装対象の境界整理／スコープ判定案（正式要件・設計・Gateではない）  
-**状態:** **STEP4_SCOPE_PROPOSAL_PREPARED／TECHNICAL_REVIEW_CHANGES_REQUIRED**／68行の採否案を作成／**Human ownerの正式承認前**  
+**状態:** **DEC09_68_SCOPE_OWNER_APPROVED / IMPLEMENTATION_AND_GATE_NOT_FROZEN**。2026-10-29技術レビューの`CHANGES_REQUIRED`は履歴として保持し、DEC09でOwnerがScope処遇・例外を決定したことと科学的Blockerが未閉鎖であることを分離  
 **策定日:** 2026-10-26（日本時間）  
 **調査・判断の基準:** `prototype/ariadne_mvp`、`07874a6b1475aa6535265f0c95ae1f062bd1b306`。新しい科学的pytest／外部Library互換性確認は未実施。  
 **根拠:** [00_01（9月末照合）](00_01_foundation_gap_reconciliation.md) → [00_02（既存Gap4領域）](00_02_foundation_gap_closure_assessment.md) → [00_03（8月Phase1〜3との68行照合）](00_03_phase1_to_phase3_reconciliation.md)。  
 **反映先:** [01_enhancement_concept_and_requirement_revision_plan.md](01_enhancement_concept_and_requirement_revision_plan.md) 第5章。**2026-10-29技術審査:** [20261029_cli_scope_review.md](../working_notes/20261029_cli_scope_review.md)＝**CHANGES_REQUIRED**（BLOCKER SR-01〜05、MAJOR SR-06〜12）。このスコープ案の行IDと候補Dispositionは**承認前・未改定**。承認記録02・正本FR/NFR/AR・Gate 06/07は未更新。
 
 **2026-11-16 DEC-SR04-06採用追補（Ownerの個別Scope判断）:** [02 Owner決定第23項](02_enhancement_concept_approval_record.md)および[DEC-06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)により、P1-15の**P1-M18 Observed NCE／P1-M19 Observed NCO**、P1-17の**P1-M20古典OLS partial R²＋q=1 point RV**を**初期Nとして個別採用**（DEC06-1〜3）。DEC06-4で実在の対照・DAG/null・明示opt-inと不適格時の型付き負結果を、DEC06-5でX-04/X-05未提供の広範方式を初期非採用Dとする方針を採用。本書内に残る「Method候補」「Owner未承認」記述は当初Draftの記述で、**DEC-06の5件の採否に限りこの後続判断が優先**する。正式な68 Scope全体批准・FR/NFR/AR/Gate/実装/科学Benchmarkは依然未承認。
+
+> **2026-11-16 DEC-SR04-09正式統合Owner承認追補:** **本00_04の68行の最終Owner dispositionを2026-11-16に承認した。** [DEC09独立統合承認記録](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)の付録AにPhase1=21／Phase2=18／Phase3=19／A0=10の各行ごとのDispositionと追跡Issueを固定。X-01 ATC・X-03 matching/g-computationは初期D（後続）、X-04はNCE/NCOの限定Nとその他D、X-05は古典OLS partial R²/point RV限定Nと一般化D、X-06はMethod別Qとその他D、X-09/10はlocal R+N／Product Dを採用。**本書作成当時の『要承認』『未承認』記述はDEC09のOwner採否に限り後続記録で置換**。正式FR/NFR/ARの逐条発行、ADR/Schema、Gate06/07 freeze／Science／Codingは別作業。
 
 ## 0. INTRODUCTION
 
