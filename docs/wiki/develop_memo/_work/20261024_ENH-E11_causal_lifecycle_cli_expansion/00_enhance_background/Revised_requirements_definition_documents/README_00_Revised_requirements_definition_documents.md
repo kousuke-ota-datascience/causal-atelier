@@ -4,7 +4,7 @@
 
 **Source authority:** 原正本 `docs/wiki/requirement_definition/` を変更せず、元の5文書を `_source_snapshots/` に固定blobのまま保管。Owner DEC09は実装Scopeと要件意味・Architecture方針を承認。今回のE11新FR/NFR/Scientific ARは**改訂版working-copyで条文・Status・Traceを発行**したものであり、元正本へのpromote、Coding、Science/Gate/Legalの承認ではない。
 
-## 1. Current document index（全105 numbered files）
+## 1. Current document index（全110 numbered Stock files）
 
 ### 10_requirements_definition
 
