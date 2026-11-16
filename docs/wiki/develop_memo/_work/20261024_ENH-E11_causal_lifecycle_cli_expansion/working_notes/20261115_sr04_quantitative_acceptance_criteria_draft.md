@@ -95,9 +95,9 @@ T02は効果サイズが弱ければ任意の適切な方法でも達成不能�
 
 | AC ID | 指標 | 提案受入基準 |
 |---|---|---|
-| AC-P01 | Bias | \`bias_hat=(1/R_est)Σ(θhat_r−θ_true)\`、\`MCSE_bias=sd(θhat_r−θ_true)/sqrt(R_est)\`。**regular well-specified DGPの提案:** \`|bias_hat|+z_K MCSE_bias ≤ 0.05 s_0\` |
-| AC-P02 | Outcome scaleの定義 | \`s_0=SD[Y(0)]\` または同等の**DGP指定固定母集団尺度**を事前選択し、未定義/ゼロなら別の物理単位・臨床/事業許容誤差を事前登録。標本実測値に適応して閾値を変えない |
-| AC-P03 | RMSE | \`sqrt(mean[(θhat_r−θ_true)^2])\` とそのMonte Carlo SE（squared-errorのvariance・delta method/paired independent bootstrap）を報告。**regular well-specified caseの改善確認候補:** nを4倍にした際 \`RMSE_large/RMSE_small ≤ 0.90\`。Method別に事前登録が必要 |
+| AC-P01 | Bias | `bias_hat=(1/R_est)Σ(θhat_r−θ_true)`、`MCSE_bias=sd(θhat_r−θ_true)/sqrt(R_est)`。**regular well-specified DGPの提案:** `abs(bias_hat) + z_K * MCSE_bias <= 0.05 * s0` |
+| AC-P02 | Outcome scaleの定義 | `s_0=SD[Y(0)]` または同等の**DGP指定固定母集団尺度**を事前選択し、未定義/ゼロなら別の物理単位・臨床/事業許容誤差を事前登録。標本実測値に適応して閾値を変えない |
+| AC-P03 | RMSE | `sqrt(mean[(θhat_r−θ_true)^2])` とそのMonte Carlo SE（squared-errorのvariance・delta method/paired independent bootstrap）を報告。**regular well-specified caseの改善確認候補:** nを4倍にした際 `RMSE_large/RMSE_small ≤ 0.90`。Method別に事前登録が必要 |
 | AC-P04 | 適用範囲と低support | CATE fixed x、ATT(g,t)、RD cutoff、IV structural coefficientなど**正しいestimand**ごとに別評価。extrapolation/positivity構造違反下のBias/RMSEは科学stressでありP01/P03の健全性gateに混ぜない |
 | AC-P05 | Point estimator failure | well-specified regular caseに限り**点推定非有限/計算失敗率のWilson上限 ≤0.01**を提案。方法別最小sample/supportを固定すること |
 | AC-P06 | PointとCIの関係 | Exploratoryでpoint-only可でもP01/P03の適格な精度検証は省略しない。ConfirmatoryはAC-Iも必須 |
@@ -141,10 +141,10 @@ Simulation designは Aims、Data Generating Mechanisms、Estimands、Methods、P
 **反復独立性:** 同じDGPに対する各replicate間で独立RNG streamを用いる。同じreplicateを複数Methodへ共通入力することはpaired comparisonに有効だが、**同一replicateの複数x・複数edge・複数Methodは独立replicateとして水増ししない**。
 
 Monte Carlo standard error：
-- \`MCSE(coverage_hat)=sqrt(p_hat(1−p_hat)/R_ci)\`
-- \`MCSE(size_hat)=sqrt(p_hat(1−p_hat)/R_null)\`
-- \`MCSE(bias_hat)=sd(θhat−truth)/sqrt(R_est)\`
-- \`MCSE(RMSE)\`はsquared errorsのMC varianceをもとにdelta method／independent replicate bootstrapから推定し、非有限/undefined失敗を別途報告する。
+- `MCSE(coverage_hat)=sqrt(p_hat(1−p_hat)/R_ci)`
+- `MCSE(size_hat)=sqrt(p_hat(1−p_hat)/R_null)`
+- `MCSE(bias_hat)=sd(θhat−truth)/sqrt(R_est)`
+- `MCSE(RMSE)`はsquared errorsのMC varianceをもとにdelta method／independent replicate bootstrapから推定し、非有限/undefined失敗を別途報告する。
 
 **標準設計提案（not frozen）:** regular CI/size確認のR=6,000独立repetitions/セル。p=.95でMCSE≈0.002814（約0.281 percentage points）、p=.05も同値。MCSE≤0.003だけならR≥ceil(.95×.05/.003²)=5,278。**これはMC誤差の精度設計であり、推論がvalidだという実証ではない。**
 
@@ -153,9 +153,9 @@ Monte Carlo standard error：
 Methodが41行あっても「41個」だけが統計判定数ではない。独立した評価セル内のcoverage、size、bias、Graph等について、**Gate07がHard Gateに用いる片側確率判定を列挙し総数Kをfreeze**する。
 
 - Gate-family nominal family-wise α_gate=0.05（**提案**）。
-- 各確率指標の片側Wilson score limitに使うzを \`z_K=Φ^{-1}(1−0.05/K)\` とするBonferroni（independent assumption不要）。
-- Lower goalでは \`L_Wilson(p_hat,R,z_K)≥p_min\`、Upper goalでは \`U_Wilson(p_hat,R,z_K)≤p_max\`。Bias等の連続指標には同等のMC不確実性上限を設定し、**KにはHard Gateとして用いる比較を全て計上**する。重複カウントや後から外した失敗セルを認めない。
-- 片側Wilsonの標準形： \`center=(p_hat+z²/(2R))/(1+z²/R)\`、\`half=z*sqrt(p_hat(1−p_hat)/R+z²/(4R²))/(1+z²/R)\`、lower=center−half、upper=center+half。**両側標準Wald p±zSEを小/稀なfailureに無批判に使わない**。
+- 各確率指標の片側Wilson score limitに使うzを `z_K=Φ^{-1}(1−0.05/K)` とするBonferroni（independent assumption不要）。
+- Lower goalでは `L_Wilson(p_hat,R,z_K)≥p_min`、Upper goalでは `U_Wilson(p_hat,R,z_K)≤p_max`。Bias等の連続指標には同等のMC不確実性上限を設定し、**KにはHard Gateとして用いる比較を全て計上**する。重複カウントや後から外した失敗セルを認めない。
+- 片側Wilsonの標準形： `center=(p_hat+z²/(2R))/(1+z²/R)`、`half=z*sqrt(p_hat(1−p_hat)/R+z²/(4R²))/(1+z²/R)`、lower=center−half、upper=center+half。**両側標準Wald p±zSEを小/稀なfailureに無批判に使わない**。
 - KをMethod familyで別々に分割する案は将来審査可能だが、今回のDraftでは恣意的family分割で合格率を上げないため**全mandatory stochastic ACを一familyに仮置き**する。
 
 **注意:** Bonferroniを適用しても、推定したcoverageと理論上の「95%被覆が成立する」主張は同義ではない。信頼性を評価する側のMC不確実性の補正であり、Method CIの信頼水準そのものを変更する操作ではない。 Kと各指標に要するR・CPU予算はGate前に再計算する。
@@ -166,7 +166,8 @@ Methodが41行あっても「41個」だけが統計判定数ではない。独�
 |---|---|---|---|
 | RCT、Backdoor、OLS、IPW/AIPW regular | n∈{1,000,4,000}／pilot R=200 | inference/sizeセル R=6,000、n∈{1,000,4,000}の**採用セルを限定してfreeze** | variance・nuisance/PS推定・correct model定義待ち |
 | Frontdoor（線形数値） | n∈{2,000,8,000}／pilot R=200 | R=6,000は**計算予算審査後の候補** | 適格stage/SEが不明な間はBLOCKED |
-| CATE7 / DRIV | n∈{2,000,8,000}、x∈{-0.75,0,0.75}／pilot R=100〜200 | 3点pointwise coverage、R=6,000/セル候補 | Forest/Bootstrap多数fitの費用未測定。pilotで事前にR/セル採否を判断。省略でScience PASS不可 |
+| 非IV CATE7 | n∈{2,000,8,000}、x∈{-0.75,0,0.75}／pilot R=100〜200 | 3点pointwise coverage、R=6,000/セル候補 | DGP-003/004のX支持域内のみ。Forest/Bootstrap多数fitの費用未測定 |
+| DRIV（IV異質効果） | n∈{2,000,8,000}、**DGP-008のx∈{-1,+1}**／pilot R=100〜200 | 2点pointwiseのconditional-IV θ(x)、R=6,000/セルは候補 | x=0等の非IV CATE格子を流用禁止。final estimatorは切片を含め真値を表現可能な構成でのみ効果/CI評価。formal momentとconfig採用待ち |
 | Wald/B0/B1/AR | n∈{2,000,8,000}と複数first-stage strength／pilot R=200 | weak-IVでも真値集合包含率のR=6,000候補 | 小標本exact保証なし。B1正式Estimand・HC方式待ち |
 | FCI/PCMCI+ / LPCMCI | time T∈{1,000,4,000}等、Graph数・burn-in・null edges固定 | 目標MCSEとoracle有効性からRを導く（初期pilot R=100） | PAG oracleなしでorientation PASS不可。R=6,000一律強制は現実性未審査 |
 | DiD/Event/ITS/RDD/SCM/SDID | n_units、cohorts、T_pre/post、cutoff sample、donor数、bandwidthを**別々に固定** | inferential coverageを提供する候補MethodではR=6,000を出発点に精度・費用審査 | 「n=2,000」とだけ記載してpanel/cluster局所の有効情報を代用しない |
@@ -189,6 +190,14 @@ Methodが41行あっても「41個」だけが統計判定数ではない。独�
 | NOT_APPLICABLE | 当該Methodには不要なmetric | 根拠を記録し、全件合格母数へ水増ししない |
 
 **再実行:** Gate用のseed/generator/version/reference/thresholdをfreezeした後、失敗したcellを見てseed・DGP難度・許容値を黙って緩和しない。仕様変更時は別versionの審査と新たなpre-registered実験が必要。
+
+### 2.5. 統合レビューで訂正した評価契約（2026-11-16）
+
+1. **DRIVの評価支持域:** DGP-008ではXは二値{-1,+1}であり、3点の非IV CATE用gridとは異なる。DRIVのtruthはθ(-1)=1.5、θ(+1)=2.5。切片なしfinal modelなどモデルクラス誤指定のstressは、適格なDRIVのBias/CI Hard Gateと別セルで評価する。
+2. **FCIのGraph oracle適格性:** DGP-011の同時点2観測変数だけで潜在交絡のbidirected edgeを識別できることを前提とする方向Accuracyは不適格。独立同値類が証明できるmotifでのみG04を適用し、それまではBLOCKED。
+3. **横断ACへの登録:** 本書のAC-D04/D05/D06、AC-I04/I05/I06、AC-T04/T05、AC-P02/P04/P06の11ルールはMethod行に直接書かれていなくても有効な横断・report-only/適用範囲制約である。SR04-Fで明示的なSR04:X-IDと適用Method familyへバインドし、無責任なUNBOUNDを解消する。科学的閾値の承認は別。
+4. **MarkDownと数式:** 本文の代数式のバッククォートescapeおよび`AC-P01`のパイプを修正した。数値閾値自体は前Draftから変更しない。
+5. **数値ACの原則:** coverageの片側Wilson下限やGraph accuracyの候補値を、確定していないMethod configに先行して「正式採用」とすることは禁止。Monte Carlo R=6,000も計算予算・多重性Kのfreeze前は仮案。
 
 ## 3. Method別AC割当（全41 Method）
 
@@ -348,7 +357,7 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 ### 6.2. 検証証跡の原則
 
 - 1 Method＝最低1正例＋1負例を保持。41行のReferenceと28 Negative/9横断Caseへ、全行のAcceptance policy IDを対応付ける。
-- Statusを \`SPECIFIED\`、\`MATH_REVIEWED\`、\`CONFIG_FROZEN\`、\`REFERENCE_IMPLEMENTED\`、\`EXECUTED\`、\`SCIENCE_REVIEWED\`、\`GATE_ACCEPTED\` 等に分離。**現在はSPECIFIED Draftのみ**。
+- Statusを `SPECIFIED`、`MATH_REVIEWED`、`CONFIG_FROZEN`、`REFERENCE_IMPLEMENTED`、`EXECUTED`、`SCIENCE_REVIEWED`、`GATE_ACCEPTED` 等に分離。**現在はSPECIFIED Draftのみ**。
 - PR/ActionでAPI smokeがPASSしても、Monte Carloの成功replicate率・正式Science Gate状態は別に保持する。
 - Methodごとの計算予算見積りと科学指標の測定精度が衝突する場合は、Method Scope・目標精度・複数実行TierをHuman ownerへ再提示。**恣意的に閾値を緩めて完了扱いしない**。
 - 最終的なGitHub Source SHA・Reference SHA・DGP SHA・Threshold version・実効依存版とEnvironment hashをfreezeし、過去のGate判断を上書きしない。
