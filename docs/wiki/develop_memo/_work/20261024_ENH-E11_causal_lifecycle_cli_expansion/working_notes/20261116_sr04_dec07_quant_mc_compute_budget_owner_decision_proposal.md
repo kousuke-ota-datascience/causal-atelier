@@ -1,24 +1,24 @@
-# ENH-E11 — DEC-SR04-07：Quantitative Acceptance／Monte Carlo／Compute Budget 技術判断案
+# ENH-E11 — DEC-SR04-07：Quantitative Acceptance／Monte Carlo／Compute Budget（Owner正式個別判断）
 
 **日付:** 2026-11-16 JST  
-**区分:** SR04独立技術記録、Human ownerの個別採否待ち。正式FR/NFR/AR、Gate06/07、Coding、Science PASSではない。  
-**現在状態:** DEC-SR04-07_PROPOSAL_READY / OWNER_PENDING / SCIENCE_NOT_RUN / K_NOT_ENUMERATED / R_NOT_FROZEN / PILOT_NOT_RUN / COST_NOT_MEASURED / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
+**区分:** SR04独立技術記録。Human ownerが2026-11-16にDEC07-1〜7のA案をすべて明示採用。**正式FR/NFR/AR、Gate06/07、Coding、Science PASSの承認ではない。**  
+**現在状態:** DEC-SR04-07_A1_TO_A7_OWNER_ACCEPTED / ACCEPTANCE_POLICY_APPROVED / K_NOT_ENUMERATED / R_NOT_FROZEN / PILOT_NOT_RUN / COST_NOT_MEASURED / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL。  
 **先行:** 02 Owner判断のDEC01〜06は個別採用済み。適用Method・Estimandを本判断で変更しない。  
 **根拠:** [SR04-D 定量AC](20261115_sr04_quantitative_acceptance_criteria_draft.md)、[SR04-E Environment](20261115_sr04_execution_environment_contract_draft.md)、[SR04-F Trace](20261115_sr04_gate07_traceability_draft.md)、[SR04 A〜F統合レビュー](20261116_sr04_af_integration_review_and_blocker_resolution.md)、[02決定記録](../00_enhance_background/02_enhancement_concept_approval_record.md)。
 
 ## 0. 結論・代替案
 
-**推奨 DEC07-A:** **共通の数学的AC判定ポリシー、Method別の評価セル、Gate全体に対する多重性、事前登録R、独立Pilotによる実測Compute Budget**を採用する。数値未測定のCPU能力・金額・実効K・対象Cellを推測で補完せず、それらはPre-freezeのBlockerとして保持する。
+**Owner採用 DEC07-A:** **共通の数学的AC判定ポリシー、Method別の評価セル、Gate全体に対する多重性、事前登録R、独立Pilotによる実測Compute Budget**を採用する。数値未測定のCPU能力・金額・実効K・対象Cellを推測で補完せず、それらはPre-freezeのBlockerとして保持する。
 
 | 案 | 内容 | 評価 |
 |---|---|---|
-| **DEC07-A（推奨）** | ADEMPベースのセルレジストリを構築、全Hard確率判定数KにFWER 0.05を割当て、Wilson等で誤判定を評価。pilotでruntime/memoryを測りRとcompute上限をOwner承認後freeze | 科学的な受入品質と実行費用を分離。Method別Rを導出できる |
-| DEC07-B | 全41 Method・全組合せでR=6,000を無条件固定 | セル定義・K・Bootstrap内側ループを無視して費用が爆発。稀な失敗率でPass確率不足 |
-| DEC07-C | 小さいRに変更し多重性・MCSEや推論資格を省略 | 偽PASS・optional stopping・失敗replicate選別の危険。非推奨 |
+| **DEC07-A（採用）** | ADEMPベースのセルレジストリを構築、全Hard確率判定数KにFWER 0.05を割当て、Wilson等で誤判定を評価。pilotでruntime/memoryを測りRとcompute上限をOwner承認後freeze | 科学的な受入品質と実行費用を分離。Method別Rを導出できる |
+| DEC07-B（非採用） | 全41 Method・全組合せでR=6,000を無条件固定 | セル定義・K・Bootstrap内側ループを無視して費用が爆発。稀な失敗率でPass確率不足 |
+| DEC07-C（非採用） | 小さいRに変更し多重性・MCSEや推論資格を省略 | 偽PASS・optional stopping・失敗replicate選別の危険。非推奨 |
 
-**今回の採否境界:** 形式的な統計判定式は決められる。一方、実効K、Method固有n/T/cluster・CI/Bootstrap数、必要R、実測CPU秒、資源・金額上限は現在確定していない。**決定式を記しただけで実測予算が確定したと宣言しない。**
+**今回の個別採用境界:** 形式的な統計判定の方針を採用した。一方、実効K、Method固有n/T/cluster・CI/Bootstrap数、必要R、実測CPU秒、資源・金額上限は現在確定していない。**決定式を記しただけで実測予算が確定したと宣言しない。**
 
-## 1. DEC07-1：AC分類・数値閾値（A推奨）
+## 1. DEC07-1：AC分類・数値閾値（A採用）
 
 | AC family | 値／判断方針 | 適格性の境界 |
 |---|---|---|
@@ -34,7 +34,7 @@
 
 数値は**Ariadne向けの工学的な許容案**であり、原著論文がこの値を保証しているわけではない。Method別の適用が未指定の統計閾値を、全Methodの必須Hard Gateにしてはならない。Exact、Hard stochastic、report-only、conditional、N/Aの区分をセルIDごとに登録する。
 
-## 2. DEC07-2：多重性・Wilson／連続指標の判定（A推奨）
+## 2. DEC07-2：多重性・Wilson／連続指標の判定（A採用）
 
 **Kの正しい定義:** mandatory な **stochastic Hard Gate comparisonの総数**。41 Method＝Kではない。各DGP variant、Estimand、固定x/time、sample size、推論構成、Coverage/Size/Power/Bias/Graph metricが異なれば独立したHard比較として計上し得る。固定sample exact-caseは別の100%契約としKに機械的に混ぜない。すべてのmandatory cellと判定指標を登録し、Kを実数として確定するまではAlpha-adjusted PASS不可。
 
@@ -52,7 +52,7 @@ R independent DGP replicate中のBernoulli success数kに対して、p_hat=k/R�
 
 **CoverageとAvailability:** R_total、R_ci、R_coveredを必ず保存。I01は conditional coverage=R_covered/R_ci の側面を評価するが、同時にI02のfailure/availabilityとjoint covered-and-available率を報告し、I02未合格でI01だけPASSさせない。
 
-## 3. DEC07-3：RをMCSEと受入通過確率から逆算（A推奨）
+## 3. DEC07-3：RをMCSEと受入通過確率から逆算（A採用）
 
 R=6,000、名目p=0.95の場合、Monte Carlo SE=sqrt(0.95×0.05/6000)=**0.002813657**（0.2814 percentage points）。MCSE<=0.003だけならR>=5278。この精度だけでWilsonのHard Gate通過が保証されるわけではない。
 
@@ -88,7 +88,7 @@ R=6,000、名目p=0.95の場合、Monte Carlo SE=sqrt(0.95×0.05/6000)=**0.00281
 4. R_final は両方とMethod-specific最低条件の最大以上、ただし実効CPU/RAM/支出見積りの上限を満たす場合だけ採用。R=6000は初期検討点であって全セル共通のfreezeではない。
 5. 所要RがResource capを超えるなら **RESOURCE_BLOCKED**。閾値緩和や必須DGPの事後除去で合格にしない。Method/Scope/検証階層の再審議へ戻す。
 
-## 4. DEC07-4：Pilotの実施計画（A推奨）
+## 4. DEC07-4：Pilotの実施計画（A採用）
 
 | Tier | 候補規模 | 使用目的・受入 |
 |---|---|---|
@@ -102,7 +102,7 @@ R=6,000、名目p=0.95の場合、Monte Carlo SE=sqrt(0.95×0.05/6000)=**0.00281
 
 **停止:** 固定Rを完遂してから単一回判定。途中でWilsonを繰り返し覗き、INCONCLUSIVEだからRを足して最後のPASSを採用するoptional stoppingは禁止。Sequential confidence sequenceやalpha-spendingを**別途事前承認**した場合だけ例外。
 
-## 5. DEC07-5：計算量・Compute Budget（A推奨）
+## 5. DEC07-5：計算量・Compute Budget（A採用）
 
 科学Benchmarkの総CPU費用を、各cellの独立反復数R、DGP生成、fit、推論、inner Bootstrap/RefitのCPU core-secondsを分けて見積もる。
 
@@ -129,7 +129,7 @@ B_core_hour = SUM_over_cells [ R_cell × { t_data + t_fit + t_infer + B_inner ×
 
 **現在は実機構成と価格・Owner上限が与えられておらず、実測Core-hour予算を数値freezeできない。** これを都合のよい数字で埋めた場合の失敗を防ぐため、DEC07では**予算の算定・審査・fail-closedのルール**のみをOwner判断対象とする。T3実行許可は予測総額<=承認Core-hour/Wall/RAM/Cost capかつMethod/Reference/CIが科学的に適格な場合だけ。費用超過なら RESOURCE_BLOCKED とし、後からRだけ減らして同じHard Gateを満たしたと主張しない。
 
-## 6. DEC07-6：RNG・失敗分母・Evidence（A推奨）
+## 6. DEC07-6：RNG・失敗分母・Evidence（A採用）
 
 - **RNG:** ENV-EのSeedSequence/PCG64DXSM候補、campaign/cell/replicate/roleからSHA-256で安定streamを導出。Data-generation seedは同一DGPとreplicateでMethod間共有可、Method-fit/bootstrap RNGは分離。正式採用のBitGenerator/Library版とseed hierarchyはDEC08/Gate後段でfreeze。
 - **Pilot隔離:** T2とT3は別のcampaign/root seed。Pilot結果を見てDGP/Method選定を固定する場合は**T3実行前の新登録version**に記載する。
@@ -137,30 +137,30 @@ B_core_hour = SUM_over_cells [ R_cell × { t_data + t_fit + t_infer + B_inner ×
 - **Status:** 確実な契約違反=FAIL、予測範囲で閾値をまたぐ=INCONCLUSIVE、参照不足や予算超過=BLOCKED。正式Methodの非適用にはN/A＋科学的根拠。PASS_CANDIDATEはOwner Gate前の内部候補。
 - **Reproducibility:** Repo/DGP/Reference SHA、uv.lock/effective versions、OS/CPU/BLAS/thread/seed derivation hash、全部のHard比較Kとz_K、DGP真値、Runtimeを保存。過去の判定Snapshotは上書きしない。
 
-## 7. DEC07-7：Gate/Ownersの段階を分離（A推奨）
+## 7. DEC07-7：Gate/Ownersの段階を分離（A採用）
 
 | 段階 | 完了条件 | 現状態 |
 |---|---|---|
 | METHOD_POLICY_ACCEPTED | DEC01〜06で決めた科学的MethodやEstimandの対象 | 個別Owner判断は完了 |
-| DEC07_OWNER_POLICY | この文書の7項目のA/B/C採否を02へ記載 | **PENDING** |
-| CELL_REGISTRY_FROZEN | mandatory/diag/conditional、DGP × Method × estimand × metrics、Kを列挙しRef/Owner SHAと対応 | **PENDING** |
-| R_AND_RESOURCE_FROZEN | pilot、正式R/CI/Bootstrap、CPU core-hour・Wall・RAM・Moneyの必要上限をOwner承認 | **PENDING** |
+| DEC07_OWNER_POLICY | DEC07-1〜7のA案をHuman ownerが採用。02第24項へ正式記録 | **OWNER_ACCEPTED** |
+| CELL_REGISTRY_FROZEN | mandatory/diag/conditional、DGP × Method × estimand × metrics、Kを列挙しRef/Owner SHAと対応 | **OWNER_ACCEPTED** |
+| R_AND_RESOURCE_FROZEN | pilot、正式R/CI/Bootstrap、CPU core-hour・Wall・RAM・Moneyの必要上限をOwner承認 | **OWNER_ACCEPTED** |
 | SCIENCE_EXECUTED | 適格なT3独立Reference/MC/負例・旧v2回帰を実行 | **NOT RUN** |
 | SCIENCE_GATE_ACCEPTED | 独立Reviewer、実際の証拠SHAとOwner/Gate判定 | **NOT APPROVED** |
 
-## 8. Owner選択票（7項目すべてAを推奨）
+## 8. Owner選択票（7項目すべてAを正式採用）
 
-| 判断 | A案（推奨） | B／C案の主要問題 | Owner状態 |
+| 判断 | A案（採用） | B／C案の主要問題 | Owner状態 |
 |---|---|---|---|
-| **DEC07-1** | Exact vs stochastic vs conditional vs N/Aの分類と限定数値AC | 全Methodへの一律CIやBias閾値の強制 | **PENDING** |
-| **DEC07-2** | FWER 0.05、一つのGate-wide family、K全列挙、Bonferroni／Wilsonと適格な連続bound | 恣意的family分割・多重性を無視 | **PENDING** |
-| **DEC07-3** | RはMCSE・K・閾値通過確率で逆算。6000は初期検討点、必要時8000/10000以上 | 6000全Method強制、低Rで閾値だけ緩和 | **PENDING** |
-| **DEC07-4** | 100〜200repのPilotをT3と独立に行いn/T・CI・inner fit別に実測 | Pilot無し予算決定、Pilot標本を正式分母へ混入 | **PENDING** |
-| **DEC07-5** | Hardware・支払上限を確認しCore-hour/Wall/RAM/Moneyを実測見積りでfreeze。超過はBLOCKED | 架空のCPU単価・Core-hour設定／後から必須Cellを消す | **PENDING** |
-| **DEC07-6** | 独立seed、失敗分母、固定R、no peeking、完全Manifest | 成功分だけ集計、後出しR追加で好都合PASS | **PENDING** |
-| **DEC07-7** | 02 Owner方針採用→Cell/K/R/Resource/Ref freeze→独立T3→Science Gate | Owner方針＝Science PASS、FR/ADR/Gate未承認のままCoding | **PENDING** |
+| **DEC07-1** | Exact vs stochastic vs conditional vs N/Aの分類と限定数値AC | 全Methodへの一律CIやBias閾値の強制 | **OWNER_ACCEPTED** |
+| **DEC07-2** | FWER 0.05、一つのGate-wide family、K全列挙、Bonferroni／Wilsonと適格な連続bound | 恣意的family分割・多重性を無視 | **OWNER_ACCEPTED** |
+| **DEC07-3** | RはMCSE・K・閾値通過確率で逆算。6000は初期検討点、必要時8000/10000以上 | 6000全Method強制、低Rで閾値だけ緩和 | **OWNER_ACCEPTED** |
+| **DEC07-4** | 100〜200repのPilotをT3と独立に行いn/T・CI・inner fit別に実測 | Pilot無し予算決定、Pilot標本を正式分母へ混入 | **OWNER_ACCEPTED** |
+| **DEC07-5** | Hardware・支払上限を確認しCore-hour/Wall/RAM/Moneyを実測見積りでfreeze。超過はBLOCKED | 架空のCPU単価・Core-hour設定／後から必須Cellを消す | **OWNER_ACCEPTED** |
+| **DEC07-6** | 独立seed、失敗分母、固定R、no peeking、完全Manifest | 成功分だけ集計、後出しR追加で好都合PASS | **OWNER_ACCEPTED** |
+| **DEC07-7** | 02 Owner方針採用→Cell/K/R/Resource/Ref freeze→独立T3→Science Gate | Owner方針＝Science PASS、FR/ADR/Gate未承認のままCoding | **OWNER_ACCEPTED** |
 
-**推奨判断:** **DEC07-1〜7の7件すべてAを採用する**。これは科学的受入設計ポリシーの採用であって、**実効K/R/Compute CostやGate07の数値freezeの採用ではない**。計算予算の数量はT2 Pilot/環境の準備・Owner上限の取得後に別途確定する。
+**正式個別判断:** **DEC07-1〜7の7件すべてAを採用済み**。これは科学的受入設計ポリシーの採用であって、**実効K/R/Compute CostやGate07の数値freezeの採用ではない**。計算予算の数量はT2 Pilot/環境の準備・Owner上限の取得後に別途確定する。
 
 ## 9. 外部根拠・限界
 
@@ -169,4 +169,4 @@ B_core_hour = SUM_over_cells [ R_cell × { t_data + t_fit + t_infer + B_inner ×
 3. [SciPy binomtest公式](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.binomtest.html)とそのWilson confidence interval API。採用EnvironmentでのSciPy version/計算parityは別検証。
 4. [SR04-D Quant AC Draft](20261115_sr04_quantitative_acceptance_criteria_draft.md)／[SR04-E Env](20261115_sr04_execution_environment_contract_draft.md)／[SR04-F trace](20261115_sr04_gate07_traceability_draft.md)。これらは未凍結Draftである。
 
-**次工程:** Human ownerがDEC07の個別A/B/Cを承認したら02採用記録へ反映し、DEC08（Environment/Extras/License）を審議。実効計算予算のfreezeには独立PilotとOwner資源上限を必ず先行させる。**コード／Backend science fit／大規模Monte Carlo／課金リソースの予約・実行は本書の作成範囲に含まれない。**
+**次工程:** DEC07-1〜7のOwner判断は採用済み。02承認記録第24項とSR04 A〜F/F traceへ反映したうえでDEC08（Environment/Extras/License）を審議。実効計算予算のfreezeには独立PilotとOwner資源上限を必ず先行させる。**コード／Backend science fit／大規模Monte Carlo／課金リソースの予約・実行は本書の作成範囲に含まれない。**
