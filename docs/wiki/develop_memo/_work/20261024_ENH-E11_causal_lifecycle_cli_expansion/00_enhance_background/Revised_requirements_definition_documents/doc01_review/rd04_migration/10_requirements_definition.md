@@ -23,19 +23,19 @@
 - `ACTIVE`は要求義務が有効なこと、`UNVERIFIED`は充足状態が未検証であることを示す。**実装完了、科学的受入、Gate PASS、Coding指示ではない。**
 - 既存の195 FR、36 NFR、27 Scientific ARのID・原文・Statusは変更していない。既存Productの保存済み契約と`causal-analysis-spec/2`も維持する。
 - E11-A-01〜07はArchitecture候補であり、Scientific Integrityの`AR`系列へ採番しない。22 BD/ADRへ移管し、外部観測可能な義務だけをFR/NFR/Scientific ARに反映する。
-- 新E11要件と草案の対応は[RD-03 traceability](../96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
+- 新E11要件と草案の対応は[RD-03 traceability](../rd03_review/96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
 - **Authority boundary:** OwnerはDEC09で要件の意味とScopeを承認した。今回、改訂版working-copyに正式条文・IDを発行した。**最終SHAのOwner確認・原正本への昇格・ADR/Schema Freeze・Gate06/07・Science/Legalは別途未完了**。
 
 ## 92. ENH-E11のCanonical昇格条件（Owner決定 2026-11-16）
 
-ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_definition_documents/`ディレクトリを作業期間中の正規の格納先とする。元`docs/wiki/requirement_definition/`は、**ENH-E11の対象テストが全件PASSした後にのみ昇格**する。したがってRD-03の新FR/NFR/科学的AR発行やScope/Method/UCのトレース完了だけでは昇格しない。実装充足・科学的受入・回帰試験の未完を記録し、対象全件のPASS証拠を確認してから昇格を実施する。詳細は[昇格方針](../93_enh_e11_canonical_promotion_policy.md)。
+ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_definition_documents/`ディレクトリを作業期間中の正規の格納先とする。元`docs/wiki/requirement_definition/`は、**ENH-E11の対象テストが全件PASSした後にのみ昇格**する。したがってRD-03の新FR/NFR/科学的AR発行やScope/Method/UCのトレース完了だけでは昇格しない。実装充足・科学的受入・回帰試験の未完を記録し、対象全件のPASS証拠を確認してから昇格を実施する。詳細は[昇格方針](../../combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)。
 
 ## 93. RD-04：既存要件の改訂・設計移管（2026-11-16）
 
 - RD-01の旧258件を再審査して`KEEP_RD=136`、`REWRITE_RD=7`、`SPLIT=96`、`MOVE_BD=19`を適用した。122条文を改訂し、136条文は維持。
 - 元ID／Level／Status／Implementation Status／DeliveryとE11新44条文を変更せず、設計情報を21/22/23/30系の各担当ファイルへ移管記録として保持した。
 - Method Scope／数値受入（AR-016 bootstrap、FR-072比較、E11の科学制約）を維持する。
-- [RD-04全体監査](../98_rd04_consistency_verification.md)は文書構造とTraceに関してPASS。人間の内容最終レビュー、BD／IF／DDの具体化、科学・Gate・Legalの独立判定は未完了。
+- [RD-04全体監査](../rd04_review/98_rd04_consistency_verification.md)は文書構造とTraceに関してPASS。人間の内容最終レビュー、BD／IF／DDの具体化、科学・Gate・Legalの独立判定は未完了。
 - 正本昇格は全対象テストPASS後にのみ実施する。
 
 
@@ -156,7 +156,7 @@ ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_def
 5. 旧`causal-analysis-spec/2`と既存Product Web/API/Worker/DB、CLI、既存FR/NFR/ARの互換性を保護する。
 6. 個票CATEやLocal Artifactの機微情報保護、Partial Artifactの不正公開防止、Optional Backend不在の隔離、配布前ライセンス審査を必須とする。
 
-**Evidence status:** `NOT_GENERATED / GATE06_GATE07_NOT_FROZEN / SCIENCE_NOT_RUN`。計画の承認と科学的受入は区別する。[全件Trace](../96_rd03_formal_requirement_traceability.md)を参照。
+**Evidence status:** `NOT_GENERATED / GATE06_GATE07_NOT_FROZEN / SCIENCE_NOT_RUN`。計画の承認と科学的受入は区別する。[全件Trace](../rd03_review/96_rd03_formal_requirement_traceability.md)を参照。
 
 ## 12.2. RD-04で保持する既存の数値受入条件
 

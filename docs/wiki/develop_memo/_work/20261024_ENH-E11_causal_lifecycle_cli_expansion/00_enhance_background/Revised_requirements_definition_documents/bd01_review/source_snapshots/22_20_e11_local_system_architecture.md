@@ -1,7 +1,7 @@
 # 22_20 — ENH-E11 Local Scientific CLI：System Boundary & Authority
 
 **State:** `BD01_REVISED_DESIGN / OWNER_ARCHITECTURE_POLICY_ACCEPTED / INDEPENDENT_REVIEW_PENDING / IF_DD_SCHEMA_UNFROZEN / NOT_IMPLEMENTED`  
-**Date:** 2026-11-16. **Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md), [formal RD-03 trace](../96_rd03_formal_requirement_traceability.md), [RD-04 audit](../98_rd04_consistency_verification.md). 本文のPort名・層は論理的な責務名称であり実装済Class/Schemaを意味しない。
+**Date:** 2026-11-16. **Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md), [formal RD-03 trace](../../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md), [RD-04 audit](../../doc01_review/rd04_review/98_rd04_consistency_verification.md). 本文のPort名・層は論理的な責務名称であり実装済Class/Schemaを意味しない。
 
 ## 1. 決定を反映したSystem Boundary
 
