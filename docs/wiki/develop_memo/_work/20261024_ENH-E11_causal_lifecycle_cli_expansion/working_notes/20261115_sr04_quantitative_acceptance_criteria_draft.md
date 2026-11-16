@@ -13,7 +13,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DEC-05-1〜7のEstimator/Inference方法論方針はOwner採用済み。しかしMethod×DGP×n/T/bandwidth/cluster/R/K/CI modeを正式freezeするまでAC-Q01〜Q05とAC-I01/02の数値合格を宣言しない。**SCMは初期point-only**で通常CIの未提供をHard Gate違反としない。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
-> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+> **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 ## 0. 目的、判断階層、禁止事項
 
@@ -232,9 +232,9 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 | P1-M15 | DGP-001,002 / REF-R01 | D01,D03,R02 | Bootstrap refutation。resampling-unit/SE validity未選定ならCIはBLOCKED |
 | P1-M16 | DGP-021,002 / REF-G01,R01 | D01,D02,R02 | 有効調整集合100%／誤調整拒否 |
 | P1-M17 | DGP-002,023 / REF-E02 | D03,R05 | clipping/trim/ESS parity。改善を合格条件としない |
-| P1-M18 | DGP-019 / REF-R02 | D01,T01,T02,T03,R03 | NCE正しいnullとstrength/n未確定。Method Scope未承認 |
-| P1-M19 | DGP-019 / REF-R02 | D01,T01,T02,T03,R03 | NCO無作為null variantと交絡特異性負例。Method Scope未承認 |
-| P1-M20 | DGP-020 / REF-R03 | D01,D03,R04 | classic OLS OVB=0.2581988897…、RV数値未実装/Method Scope未承認 |
+| P1-M18 | DGP-019 / REF-R02 | D01,T01,T02,T03,R03 | NCE正しいnullとstrength/n未確定。Owner採否済み／Science未実施 |
+| P1-M19 | DGP-019 / REF-R02 | D01,T01,T02,T03,R03 | NCO無作為null variantと交絡特異性負例。Owner採否済み／Science未実施 |
+| P1-M20 | DGP-020 / REF-R03 | D01,D03,R04 | classic OLS OVB=0.2581988897…、RV数値未実装/Owner採否済み／Science未実施 |
 
 ### 3.2. Phase2（8件）
 
@@ -341,7 +341,7 @@ Policy略号：D=AC-D、A=AC-A、P=AC-P、I=AC-I、T=AC-T、G=AC-G、Q=AC-Q、R=
 | MAJOR | DGP-001〜024のnoise variance、sample unit/n/T、強度と弱IV条件の定義 | SR04-B/C科学レビュー |
 | MAJOR | P01のs0、P03 RMSE率、G03/G04 Graph精度、T02 powerの適合性 | Method別pilot設計と閾値の事前科学的レビュー |
 | MAJOR | mandatory K、MC反復R/compute budget/seed、CIのnominal levelと分母 | SR04-E environment、SR04-F trace、Gate07 |
-| MAJOR | NCE/NCO/OLS partial-R²の正式Scope採否 | SR-01/06、Human owner |
+| OWNER_DECISION_CLOSED / SCIENCE_BLOCKER | NCE/NCO/OLS partial R²＋point RVの個別採否はDEC06全Aで確定。null size/power・RV独立数値・正式要件/Gateは未承認 | SR-01/06、Scientific Methods・Architecture |
 | MAJOR | 実効Backend lock、E9/旧Product v2、Tigramite SI GPLv3 | SR-02/10＋Architecture/Legal |
 | MAJOR | 68 Scope→Method/横断/後続→FR/NFR/AR/Issue/Gate | SR-12、05 Traceability、正式全体承認 |
 
