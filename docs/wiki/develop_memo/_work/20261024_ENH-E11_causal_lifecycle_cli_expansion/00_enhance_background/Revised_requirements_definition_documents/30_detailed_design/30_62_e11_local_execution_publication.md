@@ -383,7 +383,7 @@ This table is a logical field grouping; exact nested JSON Schema property names,
 
 ## 8. Traceと受入
 
-| G workstream | Physical obligation | Gate06 Contract |
+| 暫定Plan Workstream | Physical obligation | 各正式Gateの06 Coding Contractへ渡す実装要件 |
 |---|---|---|
 | G01/G02 | local Graph/Question/Design、Identification gate | Graph/Proof/negative roundtrip |
 | G03/G04/G05 | Method Registry/CATE、Privacy | Method compatibility/CI/permission |
@@ -391,6 +391,6 @@ This table is a logical field grouping; exact nested JSON Schema property names,
 | G07/G08/G09 | Quasi/IV/AR/SCM Adapter | typed Result、Reference planning |
 | G10 | Publish/Lock/Manifest/legacy | fault injection、Profile isolation、v2 regression |
 
-Scientific bias/coverage/FWER/MCS/resource・LicenseはMethod別独立Gate07とLegal Gateで判断する。DD設計だけをScience/Legal PASS扱いしない。
+Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科学検証と別個の顧客配布Legal審査で判断する。DD設計だけをScience/Legal PASS扱いしない。
 
 参照：[E11 Domain/Port](30_61_e11_local_domain_ports.md)、[IF CLI](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[IF Manifest](../23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)、[旧Manifest](30_60_cli_adapters.md)。

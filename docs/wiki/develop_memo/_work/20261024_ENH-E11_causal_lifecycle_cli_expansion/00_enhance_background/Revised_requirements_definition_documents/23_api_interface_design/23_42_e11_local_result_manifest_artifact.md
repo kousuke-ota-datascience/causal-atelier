@@ -104,8 +104,8 @@ ROOT/
 - 各endpointは `FINITE(value) / NEG_INFINITY / POS_INFINITY` のtagged union。JSONに `NaN / Infinity / -Infinity` numberを含めない。
 - Componentは下界昇順・空でないintervalで、重複・接続する成分は数学的に和集合として正規化する。真のdisconnectedは成分数2以上。有限・無限端点のclosed flagは規定値に一致すること。
 - `topology` は `ALL_REAL / DISCONNECTED / UNBOUNDED / BOUNDED`。優先順位はALL_REAL→DISCONNECTED→UNBOUNDED→BOUNDEDとし、DISCONNECTEDには非有界componentが混在し得る。全実数は `topology=ALL_REAL; components=[(-∞,+∞)]` の一意表現。正常B0/B1ではEMPTYは有効な結果としてpublishしない。
-- 推論がUNAVAILABLE/FAILEDならconfidence_set=nullとreasonが必須。単なる `point_only` から合格区間を捏造しない。Monte Carlo coverageと弱IV頑健性は別の独立Science Gateで評価する。
-- Intervalの端点条件やstrict inequalityの扱い、AR statistic/covariance/threshold/reference・数値探索精度はDDおよびGate07 Method別contractに属する。
+- 推論がUNAVAILABLE/FAILEDならconfidence_set=nullとreasonが必須。単なる `point_only` から合格区間を捏造しない。Monte Carlo coverageと弱IV頑健性は該当Gateの07独立科学検証で評価する。
+- Intervalの端点条件やstrict inequalityの扱い、AR statistic/covariance/threshold/reference・数値探索精度はDDおよび該当Gateの07 Method別検証契約に属する。
 
 ## 5. Graph／temporal evidenceの往復
 

@@ -152,13 +152,13 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 
 ### 7.5. Tests
 
-`DD-E11-METH-P304`〜`P313`：DGP-012〜018/024、REF-Q01〜Q05/REF-E07/E08、weak-IV negative、Graph/temporal control、CI/AR shape、donor/pretrend/first stage。対応FR-197〜200、AR-037〜041。Method別実効Backend/InferenceとReferenceはGate07 Freeze後に受入。
+`DD-E11-METH-P304`〜`P313`：DGP-012〜018/024、REF-Q01〜Q05/REF-E07/E08、weak-IV negative、Graph/temporal control、CI/AR shape、donor/pretrend/first stage。対応FR-197〜200、AR-037〜041。Method別実効Backend/InferenceとReferenceは該当Gateの07検証契約Freeze後に独立受入。
 
 ## 8. Verification strategy and science boundaries
 
 - Test Registryは41 Method ID全件に対して (a) positive DGP/REF、(b) negative Scenario、(c) Method×Estimand/Backend/CI Interface、(d) Canonical Result/Manifest readback、(e) legacy regression影響の有無をトレースする。
 - `DD-E11-METH-P101〜P120 / P201〜P208 / P301〜P313` は**受入テストID候補**であり、実行済みテストやPython test fileを捏造するものではない。
-- Gate07のK/R/Monte Carlo SE、FWER=0.05、Reference SHA、DGP version、CI coverage、Budget/Env SHAはSR04-Fで事前にOwner Freezeし、独立Reviewerが計測する。T2 PilotとT3を混ぜず、不適格Runを分母から消さない。
+- 該当Gateの07科学検証に使うK/R/Monte Carlo SE、FWER=0.05、Reference SHA、DGP version、CI coverage、Budget/Env SHAはSR04-Fで事前にOwner Freezeし、独立Reviewerが計測する。T2 PilotとT3を混ぜず、不適格Runを分母から消さない。
 - 顧客Deliveryには実際に配るArtifactのSBOM/License法務判断を必要とする。Science受入と配布認可を同一状態にしない。
 
 参照：[E11 Domain/Ports](30_61_e11_local_domain_ports.md)、[E11 runtime/publisher](30_62_e11_local_execution_publication.md)、[E11 Interface](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。

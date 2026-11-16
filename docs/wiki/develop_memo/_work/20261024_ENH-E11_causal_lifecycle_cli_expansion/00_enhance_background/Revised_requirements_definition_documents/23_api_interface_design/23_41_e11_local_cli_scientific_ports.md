@@ -105,7 +105,7 @@ privacy:
 | identification | `IDENTIFIED / NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED / NOT_APPLICABLE` | 科学的識別の状態 |
 | point | `AVAILABLE / NOT_AVAILABLE / NOT_REQUESTED` | 数値点推定の有無 |
 | inference | `AVAILABLE / UNSUPPORTED / UNAVAILABLE / FAILED / NOT_REQUESTED` | 妥当な推論証拠の可用性 |
-| science_acceptance | `NOT_EVALUATED / PASS / FAIL / INCONCLUSIVE / BLOCKED / NOT_APPLICABLE` | **独立Science Gate**の証拠状態 |
+| science_acceptance | `NOT_EVALUATED / PASS / FAIL / INCONCLUSIVE / BLOCKED / NOT_APPLICABLE` | **該当Gateの07独立科学検証**に基づく証拠状態 |
 
 理由コードは安定したsnake_case等に正規化し、Machine-readable statusとhuman messageを分ける。Scientific negative（例：NOT_IDENTIFIED、unsupported confirmatory CI、weak-IV warning）は正常にpublishされた**負の分析結果**であって、勝手にtechnical failureや成功Effectへ変換しない。
 
