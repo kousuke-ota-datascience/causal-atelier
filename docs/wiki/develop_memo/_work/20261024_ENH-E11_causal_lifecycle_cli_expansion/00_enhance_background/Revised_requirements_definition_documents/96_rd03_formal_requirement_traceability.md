@@ -215,3 +215,7 @@ AR-028〜044はDEC09と03_requirements_revision §3の科学的不変条件か�
 - [SR04-F trace draft](../../working_notes/20261115_sr04_gate07_traceability_draft.md)
 - [Concept UC list](../../00_enhance_background/01_enhancement_concept_and_requirement_revision_plan.md)
 - [RD-01 review](rd01_review/91_rd01_requirement_granularity_review.md)
+
+## 10. Canonical昇格条件（Owner決定 2026-11-16）
+
+このTraceはENH-E11の作業ディレクトリ内の正式要件発行台帳であり、旧`docs/wiki/requirement_definition/`への昇格記録ではない。**ENH-E11の対象テスト全件PASS後**にのみ、Traceと対応する要件・設計文書を元正本へ昇格する。Gate計画承認・Scope承認・Method一覧の完成だけでは条件を満たさない。[格納・昇格方針](93_enh_e11_canonical_promotion_policy.md)を参照。

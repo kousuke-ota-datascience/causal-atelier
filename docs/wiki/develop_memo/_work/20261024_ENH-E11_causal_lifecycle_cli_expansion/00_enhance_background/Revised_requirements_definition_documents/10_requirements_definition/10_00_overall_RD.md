@@ -134,3 +134,7 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 - E11-A-01〜07はArchitecture候補であり、Scientific Integrityの`AR`系列へ採番しない。22 BD/ADRへ移管し、外部観測可能な義務だけをFR/NFR/Scientific ARに反映する。
 - 新E11要件と草案の対応は[RD-03 traceability](../96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
 - **Authority boundary:** OwnerはDEC09で要件の意味とScopeを承認した。今回、改訂版working-copyに正式条文・IDを発行した。**最終SHAのOwner確認・原正本への昇格・ADR/Schema Freeze・Gate06/07・Science/Legalは別途未完了**。
+
+## 92. ENH-E11のCanonical昇格条件（Owner決定 2026-11-16）
+
+ENH-E11の要件・設計・監査成果物は、この`Revised_requirements_definition_documents/`ディレクトリを作業期間中の正規の格納先とする。元`docs/wiki/requirement_definition/`は、**ENH-E11の対象テストが全件PASSした後にのみ昇格**する。したがってRD-03の新FR/NFR/科学的AR発行やScope/Method/UCのトレース完了だけでは昇格しない。実装充足・科学的受入・回帰試験の未完を記録し、対象全件のPASS証拠を確認してから昇格を実施する。詳細は[昇格方針](../93_enh_e11_canonical_promotion_policy.md)。

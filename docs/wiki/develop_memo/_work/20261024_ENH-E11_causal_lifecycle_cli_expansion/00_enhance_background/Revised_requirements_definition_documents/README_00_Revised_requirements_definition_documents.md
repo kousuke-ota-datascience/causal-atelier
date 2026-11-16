@@ -160,3 +160,10 @@
 - `RD-01`分類Dispositionは独立承認前の編集候補であり、旧FR/NFR/ARの全面的な抽象化・移管本文反映は未完。RD-03の新E11条文発行とは別。
 - 確定していない事項：Ownerによる新条文のSHA確認と元canonicalへの昇格、Method別実効Backend・CIの検証、ADR/Schema freeze、Gate06/07、Science T2/T3、顧客別Legal Gate、全Class物理詳細設計。
 - `PLAN:G01〜G10`は実装Workstreamの名称。正式受入GateのPASSを意味しない。
+
+## 6. ENH-E11文書の格納・昇格方針（Owner決定 2026-11-16）
+
+- **作業先:** この`Revised_requirements_definition_documents/`配下で全5文書群の編集・レビュー・検証を継続する。
+- **昇格条件:** ENH-E11の対象テスト**全件PASSを確認した後**に限り、元の`docs/wiki/requirement_definition/`へ昇格する。未実施・FAIL・BLOCKEDのテストがある場合は昇格しない。
+- **現状:** 元正本は未変更。`RD-03`新条文は本作業ディレクトリ内で発行済みだが、元正本への昇格ではない。
+- **決定の詳細と判定規則:** [ENH-E11 Canonical昇格方針](93_enh_e11_canonical_promotion_policy.md)。
