@@ -77,8 +77,11 @@
 
 ### 23_api_interface_design
 
+**章立ての読順:** 旧全文書の§1〜9を踏襲する箇所は、ファイル名順と一致しない。§4 Browser Navigationを§5 Web APIより先に置く。23_41/42の§1〜9は新Local Interfaceの**ファイル内採番**であり旧全体章番号と別。
+
 - [23_00_overall_IF.md](23_api_interface_design/23_00_overall_IF.md)
 - [23_01_common_conventions.md](23_api_interface_design/23_01_common_conventions.md)
+- [23_20_browser_navigation.md](23_api_interface_design/23_20_browser_navigation.md)
 - [23_10_api_project_context.md](23_api_interface_design/23_10_api_project_context.md)
 - [23_11_api_dataset_view.md](23_api_interface_design/23_11_api_dataset_view.md)
 - [23_12_api_analysis_specification.md](23_api_interface_design/23_12_api_analysis_specification.md)
@@ -89,7 +92,6 @@
 - [23_17_api_result_comparison_lineage.md](23_api_interface_design/23_17_api_result_comparison_lineage.md)
 - [23_18_api_annotation_artifact.md](23_api_interface_design/23_18_api_annotation_artifact.md)
 - [23_19_api_frontend_support.md](23_api_interface_design/23_19_api_frontend_support.md)
-- [23_20_browser_navigation.md](23_api_interface_design/23_20_browser_navigation.md)
 - [23_30_worker_runtime.md](23_api_interface_design/23_30_worker_runtime.md)
 - [23_40_cli_library.md](23_api_interface_design/23_40_cli_library.md)
 - [23_41_e11_local_cli_scientific_ports.md](23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)
@@ -102,9 +104,12 @@
 
 ### 30_detailed_design
 
+**章立ての読順:** 旧詳細設計§3→§4/5（30_41）→§6を先に読む。30_41は§18 Routingも収録しており、重複するClass節§4（GenericExecutor）等は別の採番是正対象。番号の修正にはAnchorと引用を一括更新する。
+
 - [30_00_overall_DD.md](30_detailed_design/30_00_overall_DD.md)
 - [30_01_class_design_template.md](30_detailed_design/30_01_class_design_template.md)
 - [30_10_domain_resources.md](30_detailed_design/30_10_domain_resources.md)
+- [30_41_navigation_routing.md](30_detailed_design/30_41_navigation_routing.md)
 - [30_11_schema_canonicalization.md](30_detailed_design/30_11_schema_canonicalization.md)
 - [30_12_context_analysis_view.md](30_detailed_design/30_12_context_analysis_view.md)
 - [30_20_planning_validation.md](30_detailed_design/30_20_planning_validation.md)
@@ -118,7 +123,6 @@
 - [30_36_predictive_explanation.md](30_detailed_design/30_36_predictive_explanation.md)
 - [30_37_predictive_model_management.md](30_detailed_design/30_37_predictive_model_management.md)
 - [30_40_project_workspace.md](30_detailed_design/30_40_project_workspace.md)
-- [30_41_navigation_routing.md](30_detailed_design/30_41_navigation_routing.md)
 - [30_42_results_lineage.md](30_detailed_design/30_42_results_lineage.md)
 - [30_43_operation_availability.md](30_detailed_design/30_43_operation_availability.md)
 - [30_50_persistence_artifacts.md](30_detailed_design/30_50_persistence_artifacts.md)
