@@ -3,7 +3,7 @@
 **文書区分:** working_notes／独立統合レビュー、是正記録および未採用事項の決定案。正式要件、Method、Architecture Decision、Gate06/07、Coding権限を新規承認する文書ではない。  
 **実施日:** 2026-11-16 JST。  
 **対象:** `kousuke-ota-datascience/causal-atelier`、branch `prototype/ariadne_mvp`。  
-**総合結論:** **CHANGES_REQUIRED / MATHEMATICAL_AND_TRACEABILITY_CORRECTIONS_APPLIED / SCIENTIFIC_BLOCKERS_OPEN / SCIENCE_NOT_RUN / GATE07_NOT_FROZEN / PENDING_FULL_CONCEPT_APPROVAL**。
+**総合結論（DEC09反映後）:** **DEC09_CONCEPT_68_SCOPE_OWNER_APPROVED / REQUIREMENTS_SEMANTIC_ARCHITECTURE_GATE_PLAN_APPROVED / FORMAL_FR_ADR_AND_GATE06_07_NOT_FROZEN / SCIENTIFIC_BLOCKERS_OPEN / SCIENCE_NOT_RUN / CODING_NOT_AUTHORIZED**。元の統合技術レビューの`CHANGES_REQUIRED`は実効Backend/独立Science等の未解消を示す履歴として保持する。
 
 > **2026-11-16正式個別判断の追補（本レビュー後の更新）:** [DEC-SR04-01／02の技術判断記録](20261116_sr04_dec01_b1_dec02_driv_owner_decisions.md)を作成し、02 Owner記録の第18・19項へ**B1-AとDRIV-Aの採用**を反映済み。本レビューが作成された時点の「OWNER_PENDING」という記載は**上記2件のsemantic target採用に限り解消**。表の状態は`OWNER_ACCEPTED / SCIENCE_PENDING`へ更新した。B1の正式schema enum/ARとDRIVの実効Estimator/CI/coverage、全体構想・FR/ADR/Gate07は未承認・未検証。Next owner decisionはDEC-SR04-03（Frontdoor）／DEC-SR04-04（Graph Oracle）。
 
@@ -17,6 +17,8 @@
 
 > **2026-11-16 DEC-SR04-08正式Owner判断:** [Backend／Optional Extras／uv.lock／License独立技術決定](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)の**DEC08-1〜8全A**をHuman ownerが明示採用し、[02承認記録第25項](../00_enhance_background/02_enhancement_concept_approval_record.md)に記録。5 profiles＋RD条件付き候補、uv universal resolution/Combined、Python3.12/Linux、Fresh --locked、Run Manifest/SBOMとSI納入GPL Legal Gateの設計方針を確定。**現在のpyproject.toml／uv.lockにはE11 Backendを未導入**。Runtime final pin、Profile install/legacy regression、T2費用測定、科学検証、GPL個別法務、正式GateとCodingは別途未完了。
 
+> **2026-11-16 DEC-SR04-09正式統合Owner承認:** [68 Scope・Requirements・Architecture・Gate統合承認記録](20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)と[02承認記録第26項](../00_enhance_background/02_enhancement_concept_approval_record.md)により、**全体構想・68 Scope disposition・E11-REQ意味差分・基本ArchitectureとGate計画をOwner採用**。A0 ATC/Matching等の後続D、GAP-C01〜04のProduct側引渡しと未閉鎖を明示。**実際のFR/NFR/AR正文・ADR/Schema・Gate06/07 freeze・Backend/Lock/License・独立科学EvidenceとCoding許可は未承認**。SR01〜12のOwner方針の採否は解消したが、Science/implementation blockerまでPASSに変更しない。
+
 ## 0. 目的、審査条件、適用した証拠レベル
 
 ### 0.1. 審査対象（SR04 A〜Fと先行正本案）
@@ -28,7 +30,7 @@
 | C Reference Specification | [20261115_sr04_reference_specification_draft.md](20261115_sr04_reference_specification_draft.md) | `e8f5e4df4677c50ed3578eac7931c3d80f715f3f` |
 | D Quantitative Acceptance Criteria | [20261115_sr04_quantitative_acceptance_criteria_draft.md](20261115_sr04_quantitative_acceptance_criteria_draft.md) | `443c1c6549179402ca1582b92d445c366832e133` |
 | E Execution Environment Contract | [20261115_sr04_execution_environment_contract_draft.md](20261115_sr04_execution_environment_contract_draft.md) | `924b4c3af0e0f790838d1031a6a43874dd6973db` |
-| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `4e95150603bd3d599b6227008044155c4f9580fe` |
+| F Gate07 Traceability | [20261115_sr04_gate07_traceability_draft.md](20261115_sr04_gate07_traceability_draft.md) | `d48bb3f2b9bba6b38ac3de5aa9667db8ca8e3df0` |
 | 承認権限の基準 | [02 Owner decision](../00_enhance_background/02_enhancement_concept_approval_record.md)、[03 Requirements](../00_enhance_background/03_requirements_revision.md)、[04 Design](../00_enhance_background/04_design_revision.md)、[05 Consistency](../00_enhance_background/05_requirements_design_consistency_and_traceability_review.md) | 03/04/05は承認前Draft |
 | 過去レビュー | [20261029_cli_scope_review.md](20261029_cli_scope_review.md) | SR-01〜12 CHANGES_REQUIRED。単にSR04を作成してもこれらは自動的に閉鎖しない |
 
@@ -189,7 +191,7 @@
 | DEC-SR04-06 | P1-M18/19 Observed Negative Control／P1-M20 OLS partial R²＋point RV | **DEC06-Aの全5項目を採用**：P1-M18 NCE、M19 NCO、M20古典OLS partial R²／point RV。opt-in/typed非適用必須、X-04/X-05広範方式は初期非採用D。Null size/power・RV独立Oracle・科学Benchmark未完 | [DEC06 Owner採用済み技術記録](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)・02第23項・00_04のP1-15/17・X-04/05・A〜F改訂 | **OWNER_METHOD_SCOPE_ACCEPTED / SCIENCE_PENDING** |
 | DEC-SR04-07 | Quant AC／MC／K／Compute Budget（方針Owner採用） | **DEC07-1〜7の7A採用済み**：Exact/Hard/Conditional/N/A、Gate-wide FWER0.05・K全登録・Bonferroni/Wilson、Method別R逆算、T2 independent pilot→T3実測資源上限と固定seedを設計方針とする。R6000は一律固定不可 | [DEC07 Owner採用独立技術記録](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)／02承認記録第24項。実効K/R・CPU/Wall/RAM/支出額、Method-specific閾値・Reference/Source SHA・Gate evidenceは未確定 | **OWNER_POLICY_ACCEPTED / K_R_COST_NOT_FROZEN / SCIENCE_NOT_RUN** |
 | DEC-SR04-08 | Backend・Optional Dependency・uv.lock・顧客SI License（方針Owner採用） | **DEC08-1〜8全AのOwner採用済み**：pyproject+universal lock+Run Manifest、5 Profileと条件付きRD、Method↔Backendの適格API、fresh --locked/legacy、SBOM/BLAS、Tigramite/RD GPL Delivery Gateを分離。RNG/Compute/Science/Legalは独立 | [DEC08 Owner個別採用済み技術記録](20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)／02承認記録第25項／SR04-E/F。**E11 Extras/uv.lock更新・法務受入・Scienceは未実施** | **OWNER_POLICY_ACCEPTED / LOCK_LICENSE_SCIENCE_BLOCKED / GATE_NOT_FROZEN** |
-| DEC-SR04-09 | Scope/Requirement/Architecture/Gate | 68 Scope全行とA0例外・GAPのOwner決裁 | 正本FR/NFR/AR/ADR、G01〜10→正式Gate07責務、批准SHA | **FULL_CONCEPT_PENDING** |
+| DEC-SR04-09 | 68 Scope／Requirement意味差分／Architecture方針／G01〜10・Gate計画（Owner正式採用） | **全68 ScopeのDispositionとA0例外、E11-REQ/8不変条件、ARC09-01〜07、Workstream G01〜10と受入Gate06/07計画をOwner採用済み**。GAP-C01〜04はProduct側移管候補で未閉鎖 | [DEC09独立統合承認](20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)＋02第26項。FR/NFR/AR逐条発行・独立ADR/Schema Review・Source/Quant/Resource/Backend/License freezeと科学/受入Gateは未実施 | **CONCEPT_SCOPE_POLICY_OWNER_APPROVED / FORMAL_GATE_SCIENCE_BLOCKED** |
 | DEC-SR04-10 | Science Evidence | 独立Reference/Monte Carlo/Graph・負例・旧v2回帰を実行後、独立review | F §8のEvidence Bundle＋受入結果・否定結果・独立Gate判断 | **SCIENCE_NOT_RUN** |
 
 ### 4.1. 順序制約と閉鎖条件
@@ -225,12 +227,12 @@
 | Frontdoor/DRIV/B1/Quasiの実効Backendと科学的CI | **BLOCKED** | specific Method/Inferential settingとReference code未freeze |
 | 45 ACの定量数値と6,000 Monte Carlo | **NOT_ACCEPTED / NOT_RUN** | 事前設定・R/K/予算、Method別科学的妥当性未完了 |
 | SR-02 full lock/seed/Manifest/Delivery legality | **BLOCKED** | install/API smokeのみ、顧客別GPL審査未実施 |
-| SR-01〜12、68 Scope、正式FR/ADR/06/07 | **CHANGES_REQUIRED** | Human OwnerとArchitecture Reviewの承認が必要 |
-| ENH-E11全体およびGate07 | **NOT APPROVED** | このDraftの是正だけではCoding/Science PASS不可 |
+| SR-01〜12、68 Scope、正式FR/ADR/06/07 | **OWNER_SCOPE_POLICY_APPROVED / IMPLEMENTATION_CONSTRAINTS_OPEN** | 68 ScopeとSR01〜12の方針判断はDEC09でOwner採用。正本FR/ADRの逐条発行、独立Architecture Review、Method/Environment/Science Gateは未完了 |
+| ENH-E11構想／Gate07 | **CONCEPT_AND_SCOPE_OWNER_APPROVED / GATE07_NOT_APPROVED** | OwnerがDEC09で構想・全68 Scope・要件意味差分・基本Architecture/Gate計画を承認したが、Coding/Science PASS・法務納入の承認ではない |
 
-**次のOwner判断:** DEC-SR04-01〜08は**2026-11-16に個別採用済み**。次は**DEC-SR04-09（全体68 Scope・FR/NFR/AR・Architecture／Gateの最終統合審議）**。DEC-10は実装・独立科学Evidenceの確認。DEC07の実K/R/CPU・Compute BudgetとDEC08の実効Backend/Lock/Legalは**方針採用済み・数値と適格性未freeze**。DEC09のOwner審議は独立T2/T3 Science PASS、納入法務承認、Coding開始を自動許可しない。
+**次工程:** DEC-SR04-01〜09のOwner方針判断は**2026-11-16に採用済み**。直後に必要なのは**正式FR/NFR/ARのControlled Publication、独立Architecture Review/ADRとLocal Schema、Method別AC・Gate06/07 entry/exit/Source SHAのFreeze、実装WP/権限の確認**。次いで実装、T2 Cost Pilot／T3独立科学EvidenceとDEC10のGate判定、GPL納入法務の別審査を行う。DEC09の構想承認だけで`pyproject.toml`/`uv.lock`変更・Coding・Science PASSを行わない。
 
-**変更した範囲:** A/B/C/D/Fのworking_notes本文と本レビュー記録。Eはレビューしたが実効環境や正本に変更なし。コード・`pyproject.toml`・`uv.lock`・GitHub Issue/Notion・02のOwner決定記録・正式FR/NFR/AR/Gateは変更していない。
+**更新履歴の解釈:** 上記の「本レビュー原実施時」の対象変更範囲は歴史的事実である。その後DEC01〜09で02／00_04／01／03／04／05／SR04 A〜F・独立判断記録を更新した。**現行の`pyproject.toml`／`uv.lock`／要件正本の正式FR Status／コード・Gate06/07／科学実測は本DEC09で変更していない**。本レビューの初期Input Blob SHAは2026-11-16の原レビュー時Snapshotであり、最新Source Revision ChainはSR04-F §8.9に記載。
 
 ## 6. 一次／公式参照（直接性と限界）
 
