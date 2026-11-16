@@ -2,8 +2,8 @@
 
 **文書区分:** working_notes／科学的定量Acceptance案。正式なScope・FR/NFR/AR・Architecture Decision・Gate06/07・Work Package・Coding許可ではない。  
 **策定日:** 2026-11-15 JST。  
-**対象branch:** prototype/ariadne_mvp。**本文の全数値は提案値**であり、Human ownerによるMethod/推論/計算予算の正式採用を意味しない。  
-**状態:** QUANTITATIVE_AC_DRAFT / METHOD_COVERAGE_41_OF_41 / NEGATIVE_COVERAGE_28_OF_28 / CROSS_CONTRACT_9_OF_9 / METHOD_CONFIG_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL。  
+**対象branch:** prototype/ariadne_mvp。**本書の方法論的な設計方針はDEC-SR04-07-1〜7でOwner個別採用済み**。ただし各ACの数値閾値は**適格なMethod×DGP×n/T×InferenceごとのHard適用、K/R/Costの計画を凍結するまで候補**であり、Method-specific数値受入・Science PASSではない。  
+**状態:** QUANTITATIVE_AC_DRAFT / DEC07_POLICY_OWNER_ACCEPTED / METHOD_COVERAGE_41_OF_41 / NEGATIVE_COVERAGE_28_OF_28 / CROSS_CONTRACT_9_OF_9 / METHOD_CONFIG_PENDING / SCIENCE_NOT_RUN / PENDING_FULL_CONCEPT_APPROVAL。  
 **直接の先行資料:** [Method Acceptance Matrix](20261115_sr04_method_acceptance_matrix_draft.md)、[Scientific Fixture Catalog](20261115_sr04_scientific_fixture_catalog_draft.md)、[Reference Specification](20261115_sr04_reference_specification_draft.md)、[Owner判断記録02](../00_enhance_background/02_enhancement_concept_approval_record.md)、[D03 AR/G2](20261101_sr03_d03_remaining_2sls_weak_iv_review.md)、[D05 CATE/DRIV](20261115_sr03_d05_cate_driv_inference_scientific_contract_decision.md)、[D06 Graph uncertainty](20261115_sr03_d06_graph_uncertainty_identification_override_decision.md)。  
 **Coverage計画:** Phase1 20件、Phase2 8件、Phase3 13件、横断9件。68 Scope行全体の承認・Traceability完了と同義ではない。
 
@@ -15,7 +15,7 @@
 
 > **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。AC-T01/T02/T03/R03（NCE/NCO）・AC-D03/R04（partial R²）のMethod採否判断案を策定した。R/K/size/power/RV数字Referenceと閾値は未freeze。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
-> **2026-11-16 DEC-SR04-07事前監査（Owner採否待ち）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。R6000はMCSE 0.002813657の出発候補に過ぎない。Gate-wide K=1024の説明例で真のfailure=.005・R6000のWilson上限は約.01000657、failure Hard Gate（<=.01）を満たさない。RとK、Pass確率・実効CPU費用を同時審査。 **DEC07-1〜7推奨AはOwner未採用**で、既存AC数値・R・K・Pilot・Compute budget／Gateは未freeze。
+> **2026-11-16 DEC-SR04-07正式個別判断（Owner採用済み）:** [定量Acceptance／Monte Carlo／Compute budget技術判断案](20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)を作成。R6000はMCSE 0.002813657の出発候補に過ぎない。Gate-wide K=1024の説明例で真のfailure=.005・R6000のWilson上限は約.01000657、failure Hard Gate（<=.01）を満たさない。RとK、Pass確率・実効CPU費用を同時審査。 **DEC07-1〜7すべてのA案はHuman ownerが第24項で正式採用**。採用済みなのはAC分類、FWER=0.05のGate-wide方針、全mandatory比較K事前列挙、Wilson等の方法論、Method別R設計、独立T2 Pilot、実測Budget承認、seed/失敗分母とGate段階分離である。**実効K・n/T・R・Inner Bootstrap・Method-specific閾値適用・CPU/RAM/Wall/金額・Source Freeze・SCIENCEは未確定／未実施**。
 
 ## 0. 目的、判断階層、禁止事項
 
@@ -42,7 +42,7 @@ SR-04-A/B/Cで定義したMethod/Fixture/独立Referenceについて、(i) 数�
 | CONTRACT_EXACT | 正しく定義された離散契約の一致が必要 | 0件の違反、100%一致を提案 |
 | NOT_APPLICABLE | そのMethodにはそもそも意味のない統計指標 | 無理にCI/Type-Iなどを割当てない |
 
-**未承認の対象:** NCE/NCO/OLS partial R² Method採否、B1/DRIVの正式schema enumとMethod-specific実効Estimator/CI（semantic targetは2026-11-16採用済み）、Frontdoor具体stage、Graph PAG oracle、準実験の具体estimator/inference。これらには数値候補を置いてもSCIENCE_READYを付与しない。
+**残余の未承認・未検証事項:** NCE/NCO/OLS partial R²、B1/DRIV、FD-A、GRAPH-A、準実験7手法のOwner個別方針は採用済み。ただし正式schema enumとMethod-specific実効Estimator/CI、FD-AのBackend stage、Graph独立PAG/CPDAG oracle、各Methodの推論・具体AC適用、K/RとCompute Budgetは未凍結。数値候補があってもSCIENCE_READYに昇格しない。
 
 ## 1. 定量ACポリシー — 原則と提案閾値
 
