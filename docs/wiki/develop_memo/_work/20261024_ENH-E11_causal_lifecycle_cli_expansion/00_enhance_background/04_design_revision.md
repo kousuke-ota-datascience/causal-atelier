@@ -1,12 +1,14 @@
 # ENH-E11 — 設計書改定案
 
 **文書区分:** 計画・設計判断案  
-**状態:** DRAFT／Architecture Review未完了  
+**状態:** **DEC09_ARCHITECTURE_POLICY_OWNER_APPROVED / INDEPENDENT_ARCH_REVIEW_AND_ADR_SCHEMA_FREEZE_PENDING / GATE06_07_NOT_FROZEN**  
 **前提:** 事前調査`00_01_foundation_gap_reconciliation.md`→`00_02_foundation_gap_closure_assessment.md`→`00_03_phase1_to_phase3_reconciliation.md`、スコープ案`00_04_phase1_to_phase3_cli_scope_proposal.md`のR/Q/N/D、ならびに`03_requirements_revision.md`の要件改定案。
 
 > **2026-11-16 DEC-SR04-06後続Owner決定（詳細参照）:** [02個別承認第23項](02_enhancement_concept_approval_record.md)、[DEC06独立技術記録](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の初期N／X-04/05の広範方式Dは科学的適用範囲として**個別採用済み**。本書は**正本改定前のRequirements/Design Revision Draft**であり、この追補は正式FR/NFR/AR・実効Schema・Architecture・Gateの承認ではない。
 
 > **2026-11-16 DEC-SR04-08個別方針採用:** [02 Owner承認記録第25項](02_enhancement_concept_approval_record.md)、[DEC08独立技術判断](../working_notes/20261116_sr04_dec08_backend_optional_dependency_lock_license_owner_decision_proposal.md)で**DEC08-1〜8すべてA案を採用**。基盤Python3.12/Linux CPUと5 Environment Profile、E11機能別Extras・universal `uv.lock`、Method↔Backend/実効API・Combinedの隔離検証、SBOM・Run Manifest、GPL系の個別顧客SI納入Legal Gateを設計方針として確定。**本ファイルは要件／設計の改訂案であって正式FR/NFR/AR・ADRの承認ではない**。具体Extra／Backend最終版・`pyproject.toml`／`uv.lock`改修、Science・法務個別判定・Gate06/07・Codingは未実施。DEC08のOwner決定と配布前法務適合を混同しない。
+
+> **2026-11-16 DEC-SR04-09正式統合Owner承認追補:** [DEC09 Scope／Requirements／Architecture／Gate統合Owner判断](../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)と[02承認第26項](02_enhancement_concept_approval_record.md)で、Domain／Scientific Core Adapter／Local CLI／既存Productの権威分離、Question/Design/Graph/Estimandの識別・安全な推定接続、Graph endpoint・AR型付き集合、Local CLI版とManifest/Privacy/Atomic、Optional Backend・uv.lock/License対応を**Architecture基本方針としてOwner採用**。ただし独立Architecture Reviewの実施と結果、正式ADR/Port/JSON Schema/Method ConfigのFreeze、Product Gap-C01〜04の実担当者指定、Gate06/07の受入・Coding許可は未実施。本書の「未承認」は現行の具体設計がまだ凍結されていない意味であり、Owner方針判断はDEC09により完了。
 
 ## 1. 参照設計
 
