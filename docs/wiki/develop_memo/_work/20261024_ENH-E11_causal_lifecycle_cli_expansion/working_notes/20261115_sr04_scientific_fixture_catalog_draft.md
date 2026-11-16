@@ -13,6 +13,8 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。DGP-012〜018はDEC-05-1〜7の既知真値正例として維持。NEG-022（平行トレンド/TWFE）、NEG-023（ITS同時ショック／RD manipulation・weak first stage）、NEG-024（SCM/SDID donor/weights）の適用条件を確定。現物generatorやMethod別推論シミュレーションは未実装。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
+> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。DGP-019/020とNEG-019/020/026の適格性・null/対立・非特異性をDEC06判断案へ整合させた。とくにNCOのA←U→Wはγ=0でも統計的nullではない。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+
 ## 0. 目的と契約
 
 ### 0.1. 目的
