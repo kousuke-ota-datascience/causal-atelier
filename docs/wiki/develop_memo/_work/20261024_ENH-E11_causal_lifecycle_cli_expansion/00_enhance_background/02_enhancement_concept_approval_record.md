@@ -55,6 +55,7 @@
 - 拡大後の構想名称、必須手法一覧および例外・同等手法。
 - 正本§11の外部engine除外の変更、FR/NFR/ARの追加・削除・変更。
 - Design/Resultの所有権、**optional依存の具体的version・実効API・CLIファイル契約**、科学的許容基準。A/B/C/D/Eの基本方針、DEC-SR04-01/02の**科学的semantic target**、DEC-SR04-03/04の**Frontdoor数値Method・Graph Oracle方針**、DEC-SR04-05-1〜7の**準実験Method別ベースライン推定・条件付き推論方針**は個別採用済み。ただし正式Schema enum/Methodの実効Config、科学的に認定されたInference algorithmとCoverage、数値受入は未承認。
+- **DEC-SR04-06（2026-11-16、Owner採否保留）:** [Method採否の独立判断案](../working_notes/20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)を策定済み。P1-M18実在NCE、P1-M19実在NCO、P1-M20古典OLS partial R²＋point RVをPhase1初期Nに含める**DEC06-A（DEC06-1〜5すべてA）を推奨**する。Null/共有Bias仮定とSensitivity対象の科学的条件を記録したが、**本工程着手指示はOwner採用指示ではないため、02 §1にDEC-SR04-06の新規個別採用を追記しない**。具体Method採否、X-04/X-05のD扱い、実効Inference/正式Schema/Scienceは依然判断・検証待ち。
 - **Tigramiteを含む個別SI納入物のGPLv3適合性**（配布前評価方針は採用済み。個別の組合せ・納入主体・対応ソース義務等は未判定）。
 - Architecture Review結論、Gate分割、06/07のfreeze、受入用基準SHA。
 
