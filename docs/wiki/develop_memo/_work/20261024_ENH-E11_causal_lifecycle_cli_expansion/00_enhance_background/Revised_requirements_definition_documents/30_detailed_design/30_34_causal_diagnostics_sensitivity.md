@@ -3,6 +3,8 @@
 
 ---
 
+## 14. Causal Capability / Stage Contents
+
 ### 14.7 Diagnostics
 
 目的は、推定の支持条件・安定性・diagnostic warningを確認することである。
