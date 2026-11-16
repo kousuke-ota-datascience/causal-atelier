@@ -1,7 +1,5 @@
 # 10_30_ar_scientific_integrity
 
-**Status:** `RD03_FORMAL_E11_ISSUED / OWNER_SHA_REVIEW_PENDING`; original ID, level and state retained.  
-**Source blob:** `40b83f29c67b4a39f6db5393be7534c5e892d656`.
 
 ---
 

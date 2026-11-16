@@ -1,6 +1,6 @@
 # 10_32_scientific_method_scope — Method提供義務とScience制限
 
-**State:** `RD03_FORMAL_METHOD_SCOPE_REGISTER / OWNER_SHA_REVIEW_PENDING`. 承認されたMethodの対象・適格性・Estimandを利用者向けFRの抽象化で縮小しない。Science/Legal/Gateは未受入。
+承認されたMethodの対象・適格性・Estimandを利用者向けFRの抽象化で縮小しない。Science/Legal/Gateは未受入。
 
 ## 1. Scopeと制約
 
