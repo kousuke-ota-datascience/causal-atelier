@@ -1,11 +1,8 @@
 # 30_01_class_design_template
 
-**Status:** `RD02_STRUCTURAL_WORKING_COPY / E11_NOT_PUBLISHED`. Original chapter and source provenance retained; DD physical coverage remains partial.  
-**Source blob:** `04d83541e55ab0364500afb4b92ef55c10785a0c`.
 
 ---
 
-**Status:** `SOURCE_VERIFIED_BASELINE / ENH_E11_NO_CODE_CHANGE`  
 **Source commit:** `3ba5fe2465ec591f0da7f998c21a5241984b73dc`. This document records existing behavior for six representative classes/ports. It does not approve E11 use of these exact classes or cover all current product classes.
 
 ## 1. Scope and source mapping
