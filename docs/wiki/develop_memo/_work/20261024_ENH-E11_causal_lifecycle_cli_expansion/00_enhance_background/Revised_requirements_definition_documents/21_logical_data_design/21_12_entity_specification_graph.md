@@ -63,25 +63,8 @@
 - `graph_origin`と`source_result_id / parent_graph_version_id`の組合せを制約する。
 - 親GraphVersion参照によりGraphVersion lineageを明示する。
 
+**適用する論理データ制約（関連Requirement）**
 
-## 98. RD-04：要求の論理データ制約の受入・Trace
-
-**Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
-
-### 98.1. FR-045（MOVE_BD）
-
-- 元要件（設計上の拘束を含む）：Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない
-- RD改訂後の要求：【設計制約移管・Legacy Trace】FR-044の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- Trace：`FR-045`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-051（SPLIT）
-
-- 元要件（設計上の拘束を含む）：同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する
-- RD改訂後の要求：同一データを探索と確認的分析で再利用する場合、その事実と根拠を警告できる
-- Trace：`FR-051`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-054（SPLIT）
-
-- 元要件（設計上の拘束を含む）：Causal ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion/AnalysisView、GraphVersion、上流Result、Artifactへcanonical lineageで遡れる
-- RD改訂後の要求：因果分析結果から入力データ・仮定・実行・成果物の来歴を追跡できる
-- Trace：`FR-054`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-045`**：Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない
+- **`FR-051`**：同一immutable `dataset_version_id`の先行Exploratory Resultを用いたconfirmatory分析では`EXPLORATORY_REUSE_SAME_DATA` warningとevidence Result IDを保持する
+- **`FR-054`**：Causal ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion/AnalysisView、GraphVersion、上流Result、Artifactへcanonical lineageで遡れる

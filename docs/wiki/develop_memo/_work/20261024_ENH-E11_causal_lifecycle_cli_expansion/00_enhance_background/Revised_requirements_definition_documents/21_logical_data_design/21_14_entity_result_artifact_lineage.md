@@ -155,37 +155,10 @@ Result semantic levelはExecution-levelまたはStage-levelであり、別のRes
 - source/targetは同一Project境界内で解決する。
 - LineageEdgeをUI表示時の推測で生成せず、Command受付・Result/Resource生成時に明示保存する。
 
+**適用する論理データ制約（関連Requirement）**
 
-## 98. RD-04：要求の論理データ制約の受入・Trace
-
-**Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
-
-### 98.1. FR-090（SPLIT）
-
-- 元要件（設計上の拘束を含む）：canonical Resultはexecution/stage relation、result type、scientific status、summary/payload/diagnostics/warningsを保持する。family/generic schema_versionをResult direct fieldへ重複保持しない
-- RD改訂後の要求：分析結果について実行・科学的状態・診断・警告を一貫して参照できる
-- Trace：`FR-090`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-091（SPLIT）
-
-- 元要件（設計上の拘束を含む）：Result payloadはFamily・Type別Schemaで検証する
-- RD改訂後の要求：結果の種類に適合した検証を行い不正な結果を受け入れない
-- Trace：`FR-091`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-092（SPLIT）
-
-- 元要件（設計上の拘束を含む）：canonical Artifactはproject/execution/stage/result relation、artifact type/scope、object_key、media type、hash、size、metadataを保持する。family/generic schema_versionをdirect fieldへ重複保持しない
-- RD改訂後の要求：成果物について帰属先・種類・同一性・取得情報を追跡できる
-- Trace：`FR-092`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-095（SPLIT）
-
-- 元要件（設計上の拘束を含む）：ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion、AnalysisView、GraphVersion、input Result、base Execution、Artifactへ遡れるcanonical lineage read modelを提供する
-- RD改訂後の要求：結果に影響した研究条件・データ・実行・上流結果・成果物を追跡できる
-- Trace：`FR-095`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.5. NFR-002（SPLIT）
-
-- 元要件（設計上の拘束を含む）：canonical lineage read modelでResearchContextVersion→AnalysisSpecification→ExecutionPlan→Execution→StageExecution→Result→Artifactを追跡し、DatasetVersion/AnalysisView/GraphVersion/input Result/base Executionも接続する
-- RD改訂後の要求：研究条件から入力・計画・実行・結果・成果物までの追跡が可能である
-- Trace：`NFR-002`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`FR-090`**：canonical Resultはexecution/stage relation、result type、scientific status、summary/payload/diagnostics/warningsを保持する。family/generic schema_versionをResult direct fieldへ重複保持しない
+- **`FR-091`**：Result payloadはFamily・Type別Schemaで検証する
+- **`FR-092`**：canonical Artifactはproject/execution/stage/result relation、artifact type/scope、object_key、media type、hash、size、metadataを保持する。family/generic schema_versionをdirect fieldへ重複保持しない
+- **`FR-095`**：ResultからResearchContextVersion、AnalysisSpecification、ExecutionPlan、Execution、StageExecution、DatasetVersion、AnalysisView、GraphVersion、input Result、base Execution、Artifactへ遡れるcanonical lineage read modelを提供する
+- **`NFR-002`**：canonical lineage read modelでResearchContextVersion→AnalysisSpecification→ExecutionPlan→Execution→StageExecution→Result→Artifactを追跡し、DatasetVersion/AnalysisView/GraphVersion/input Result/base Executionも接続する

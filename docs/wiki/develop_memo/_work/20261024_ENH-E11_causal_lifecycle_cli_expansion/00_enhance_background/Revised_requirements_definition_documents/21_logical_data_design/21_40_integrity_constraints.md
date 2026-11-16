@@ -122,13 +122,6 @@ Dataset schemaを参照するvalidator / application serviceは、`DatasetVersio
 - logical type aliasの正規化規則を一箇所へ集約する。
 - filter/type validationとUI schema表示で異なる型解釈を持たない。
 
+**適用する論理データ制約（関連Requirement）**
 
-## 98. RD-04：要求の論理データ制約の受入・Trace
-
-**Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
-
-### 98.1. NFR-011a（SPLIT）
-
-- 元要件（設計上の拘束を含む）：current request/execution/stage correlation identifiersをlogへ出力する
-- RD改訂後の要求：Request・実行・処理単位をまたいで障害を追跡できる
-- Trace：`NFR-011a`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../96_rd04_nfr_ar_application_review.md)
+- **`NFR-011a`**：current request/execution/stage correlation identifiersをlogへ出力する

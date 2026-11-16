@@ -129,43 +129,11 @@ Canonical `Execution`には`execution_plan_id`を独立属性として必須化�
 設計判断・制約:
 - StageAttemptはappend-onlyとし、過去attemptを上書きしない。
 
+**適用する論理データ制約（関連Requirement）**
 
-## 98. RD-04：要求の論理データ制約の受入・Trace
-
-**Status:** `DESIGN_CONSTRAINT_MIGRATION / OWNER_CONTENT_REVIEW_PENDING`。以下はRD-04で抽象化した元要件のうち、データ定義・同一性・来歴・正本性に関係する条項を論理設計側に残したもの。原文は出典保証目的で保持する。現行コードで検証済みと主張しない。
-
-### 98.1. FR-076（SPLIT）
-
-- 元要件（設計上の拘束を含む）：Plannerはversionedで不変なExecution Planを生成する
-- RD改訂後の要求：分析の実行計画を版管理し、実行時の条件を後から復元できる
-- Trace：`FR-076`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.2. FR-077（MOVE_BD）
-
-- 元要件（設計上の拘束を含む）：Stage Typeをnamespace、name、versionで識別する
-- RD改訂後の要求：【設計制約移管・Legacy Trace】FR-076の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する
-- Trace：`FR-077`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.3. FR-078（SPLIT）
-
-- 元要件（設計上の拘束を含む）：PlanはStage dependencyとinput/output bindingをDAGとして保持する
-- RD改訂後の要求：分析処理の依存順序と処理間の入力・出力の対応を追跡できる
-- Trace：`FR-078`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.4. FR-082（SPLIT）
-
-- 元要件（設計上の拘束を含む）：idempotency対象Commandでは`(project_id, command_scope, idempotency_key)`をauthorityとし、同一semantic requestをreplay、異なるrequestを`IDEMPOTENCY_CONFLICT`で拒否する
-- RD改訂後の要求：再送された同一依頼の重複処理を防止し、同じ識別子で異なる依頼が来た場合は拒否する
-- Trace：`FR-082`; Status=`ACTIVE`; Implementation=`IMPLEMENTED`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.5. FR-086a（SPLIT）
-
-- 元要件（設計上の拘束を含む）：stochastic Stageのactual effective random seedを`StageAttempt.effective_random_seed`へ保存し、同一logical Stageのretryで同じseedを再利用する
-- RD改訂後の要求：確率的処理を再試行しても同じ実効乱数条件を再現できる
-- Trace：`FR-086a`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
-
-### 98.6. FR-087b（SPLIT）
-
-- 元要件（設計上の拘束を含む）：Execution `runtime_version_json`にAriadne code、Python、platform、machineおよび実際に利用したscientific library versionを保持する
-- RD改訂後の要求：分析の再現に必要な実行環境と科学ライブラリの版を確認できる
-- Trace：`FR-087b`; Status=`ACTIVE`; Implementation=`PARTIAL`; [逐条レビュー](../95_rd04_fr_application_review.md)
+- **`FR-076`**：Plannerはversionedで不変なExecution Planを生成する
+- **`FR-077`**：Stage Typeをnamespace、name、versionで識別する
+- **`FR-078`**：PlanはStage dependencyとinput/output bindingをDAGとして保持する
+- **`FR-082`**：idempotency対象Commandでは`(project_id, command_scope, idempotency_key)`をauthorityとし、同一semantic requestをreplay、異なるrequestを`IDEMPOTENCY_CONFLICT`で拒否する
+- **`FR-086a`**：stochastic Stageのactual effective random seedを`StageAttempt.effective_random_seed`へ保存し、同一logical Stageのretryで同じseedを再利用する
+- **`FR-087b`**：Execution `runtime_version_json`にAriadne code、Python、platform、machineおよび実際に利用したscientific library versionを保持する
