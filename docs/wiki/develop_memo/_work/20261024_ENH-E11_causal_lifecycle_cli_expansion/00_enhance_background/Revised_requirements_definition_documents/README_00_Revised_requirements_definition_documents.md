@@ -197,5 +197,11 @@
 - [IF-01 Interface内部レビュー](if01_review/90_interface_contract_review.md) — 新Local CLI/Port、Effect/Graph/Manifest・Atomic Publishingの候補契約
 - [DD-01 Physical Design内部レビュー](dd01_review/90_physical_design_review.md) — Domain/Port/Runner/Artifactと41 Methodの詳細設計案
 - [三工程まとめてのOwner Review Pack](combined_review/90_doc01_if01_dd01_owner_review_pack.md)
+- [2026-11-17 文書構成・API粒度・詳細設計7区分の再監査（要是正）](combined_review/92_20261117_document_architecture_audit.md)
 
 **文書状態（2026-11-16）：** DOC-01をOwner承認、IF-01/DD-01設計案をOwner採用済み。独立Architecture/Science、Schema/Port Freeze、Gate06/07、Coding Authorization、canonical昇格は未完了。[統合Owner決定](combined_review/91_20261116_doc01_if01_dd01_owner_approval_record.md)。
+
+
+## 9. 2026-11-17 横断再監査の追加Finding
+
+DOC-01 Owner承認／IF-01・DD-01設計案採用の後、[横断監査](combined_review/92_20261117_document_architecture_audit.md)でRoot 90〜98番台8件のFlow混在、23/30章番号の非単調・重複、23系API契約粒度、30系のOwner採用7区分Classテンプレート不適合を確認した。**文書構造・Class仕様の修正が必要**。設計方針の承認を無断撤回するものではないが、文書品質・Source一致・Schema FreezeのPASSを意味しない。Stock文書自体は本監査で未改訂。
