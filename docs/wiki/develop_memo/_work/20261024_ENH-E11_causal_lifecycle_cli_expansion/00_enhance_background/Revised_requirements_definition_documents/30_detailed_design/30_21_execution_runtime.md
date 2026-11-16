@@ -132,43 +132,99 @@ UI上の1 Stageから複数Executionを開始してよく、1 Executionを複数
 
 ---
 
-## 4. `ExecutionOutcome` / `GenericExecutor`
+### 10.5. `ExecutionOutcome`（EXISTING：Owner 7区分）
 
-**Responsibility:** Generic synchronous Stage lifecycle; no Browser navigation or scientific Estimand authority.
+#### 10.5.1. 識別情報・責務
 
-| Symbol/field | Python type | Invariant |
-|---|---|---|
-| `ExecutionOutcome.status` | `str` | Overall technical status |
-| `ExecutionOutcome.stages` | `tuple[StageExecution, ...]` | Stage snapshots |
-| `ExecutionOutcome.results` / `artifacts` | `tuple[Any, ...]` | Stage output collections |
-| `ExecutionOutcome.stage_results` | `tuple[tuple[str, StageRunResult], ...]=()` | Identified stage output |
-| `GenericExecutor.runners` | `StageRunnerRegistry` | Stage resolution |
-| `GenericExecutor.validator` | `PlanValidator` | Refuses invalid plan |
-| `GenericExecutor.bindings` | `BindingResolver` | Typed upstream output binding |
-| `GenericExecutor.clock` | `Callable[[], datetime]` | Injected UTC clock default |
-| `GenericExecutor.compensate` | `Callable[[StageExecution, Exception], None]` | Injected stage compensation default no-op |
+- **Class/module:** `ariadne.product.workflow.executor.ExecutionOutcome`。**EXISTING**、source blob `81d91e7de0fc0eb5a582711968b698fa4ac44761`。
+- **Responsibility:** Product GenericExecutorからのimmutable synchronous run outcome snapshot。E11 Local Science/ManifestやProduct DB lifecycleのauthorityではない。
+
+#### 10.5.2. フィールド
+
+| Field | Type/default | Invariant |
+| --- | --- | --- |
+| `status` | `str` | technical outcome summary、科学合否とは異なる |
+| `stages` | `tuple[StageExecution,...]` | immutable tuple |
+| `results` | `tuple[Any,...]` | runner results; typed Sci canonical bridgeではない |
+| `artifacts` | `tuple[Any,...]` | runtime artifact collection |
+| `stage_results` | `tuple[tuple[str, StageRunResult],...]=()` | stage key→outcome references |
+
+#### 10.5.3. Constructor / Factory
+
+`@dataclass(frozen=True)`の自動生成`__init__`を使用。**N/A:** 明示Factory、外部Backend wiring、I/O side effects無し。Exact generated constructor signatureはdataclass fieldsに従う。
+
+#### 10.5.4. メソッド
+
+User-defined methodsはSourceに存在しない。**N/A理由:** immutable dataclassのみ。Dataclass生成`__init__`/`__repr__`等の既定演算を利用する。
+
+#### 10.5.5. 処理仕様
+
+GenericExecutorがStageExecutionとResult/Artifact collectionsを収集した後に生成するimmutable snapshot。Scientific Estimand、Identification Status、AR Confidence Setの意味をこのResult型から推測しない。
+
+#### 10.5.6. I/O・連携・失敗処理
+
+`GenericExecutor.execute`の戻り値であるin-memory DTO。**N/A:** DTO自身にDB/FS I/O・retry・rollback・外部例外は無し。保存可否は別のApplication Service/Portで審査する。
+
+#### 10.5.7. 検証
+
+**Unit:** field preservation、immutability、empty stage_results default。**Contract:** Product GenericExecutor戻り値の型とstage linkage。**Negative:** 異なるMethodのScience合否をDTO statusから捏造しない。Source構造確認のみ／テストNOT_RUN。
+
+### 10.6. `GenericExecutor`（EXISTING：Owner 7区分）
+
+#### 10.6.1. 識別情報・責務
+
+- **Class/module:** `ariadne.product.workflow.executor.GenericExecutor`、**EXISTING**、source blob `81d91e7de0fc0eb5a582711968b698fa4ac44761`。
+- **Responsibility:** Product Runtime Planの検証、topological Stage sequencing、Runner invocationとStage結果収集。Execution Lease/DB authority、Browser navigation、E11 Local scientific Estimand authorityは責務外。
+- **Reuse boundary:** E11 Local CLIからの直接流用はOwner未決であり、既存Product Stage lifecycleを暗黙にE11 run lifecycleへ昇格しない。
+
+#### 10.6.2. フィールド
+
+| Field | Type | Origin/constraint |
+| --- | --- | --- |
+| `runners` | `StageRunnerRegistry` | required constructor injection |
+| `validator` | `PlanValidator` | constructor creates from runners |
+| `bindings` | `BindingResolver` | constructor creates |
+| `clock` | `Callable[[], datetime]` | injected or UTC now default |
+| `compensate` | `Callable[[StageExecution,Exception],None]` | injected or no-op default |
+
+#### 10.6.3. Constructor / Factory
+
+`__init__(self, runners: StageRunnerRegistry, *, clock: Callable[[],datetime]|None=None, compensate: Callable[[StageExecution,Exception],None]|None=None) -> None`。Inject runner registry and clock/compensation policy; initialize`PlanValidator` and`BindingResolver`. **N/A:** Separate Factory not implemented in this Source.
+
+#### 10.6.4. メソッド
 
 ```python
-def execute(
-    self, execution_id: str, plan: ExecutionPlan, *,
-    external_inputs: dict[str, dict[str, Any]] | None = None,
-    snapshots: dict[str, Any] | None = None,
-    worker_id: str = "local-worker",
-    cancelled: Callable[[], bool] | None = None,
-    stage_executions: tuple[StageExecution, ...] | None = None,
-    effective_random_seed: int | None = None,
-) -> ExecutionOutcome: ...
+def execute(self, execution_id: str, plan: ExecutionPlan, *,
+            external_inputs: dict[str,dict[str,Any]]|None=None,
+            snapshots: dict[str,Any]|None=None,
+            worker_id: str="local-worker",
+            cancelled: Callable[[],bool]|None=None,
+            stage_executions: tuple[StageExecution,...]|None=None,
+            effective_random_seed: int|None=None) -> ExecutionOutcome: ...
 ```
 
-**Execution sequence:** validate Plan; create/merge StageExecution by stage_key; iterate topological stage keys; skip disabled Stage; resolve input bindings and invoke registry-provided runner; collect results/artifacts and lifecycle state. Existing source owns the exact cancel/compensation semantics; any E11 extension must be reviewed and tested, not inferred from this outline.
+Public method `execute` accepts a Product Plan and emits `ExecutionOutcome`; it may invoke runners and compensation (side effects controlled by injected collaborators). Constructor is described in §10.6.3.
 
-**Negative:** Unregistered Stage, mismatched supplied StageExecution, invalid dependency, cancelled Stage and compensating failure. Product lifecycle owner remains outside the local E11 CLI-only design.
+#### 10.6.5. 処理仕様
 
-**当該構成要素の詳細設計制約（関連Requirement）**
+`PlanValidator.validate` generates deterministic order; executor creates/merges StageExecutions by key, resolves upstream bindings, and invokes registered Runner for enabled Stages, collecting typed StageRunResult and artifacts. It respects supplied StageExecution identity and cancellation semantics. **Source inspection rather than execution** supports this outline; actual error and compensation branches require independent unit/negative tests. §10.2 defines higher-level Product worker lifecycle; DB claim/lease/Result metadata commit is performed outside this Class.
 
-- **`FR-086a`**：stochastic Stageのactual effective random seedを`StageAttempt.effective_random_seed`へ保存し、同一logical Stageのretryで同じseedを再利用する
-- **`FR-086b`（将来拡張・現行提供対象外）**：Stageごとのtimeout / operational resource limitをpersistent/configurable policyとして保持する
-- **`NFR-001b`**：actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する
-- **`NFR-006a`**：current claim/lease/retry mechanicsでExecution/Stage lifecycleを安全に再試行できる
-- **`NFR-006b`**：retry/restartでsuccessful Stage outputのduplicate durable Artifact materializationを防止する。exactly-once executionは保証しない
-- **`AR-019`**：random seedだけでなくsplit indexまたはpartition artifactを保存する
+#### 10.6.6. I/O・連携・失敗処理
+
+- Input: Product ExecutionPlan, StageRunnerRegistry, optional supplied StageExecution and cancellation callback.
+- Output: immutable ExecutionOutcome. External interactions happen through injected runners; direct Web API/DB authority is N/A.
+- Failure: InvalidExecutionPlan, unregistered StageType, cancelled Stage, invalid supplied StageExecution, Runner or compensation exception. **Retry/rollback:** Product application/worker owns lease/retry/commit; `compensate` callback may be invoked within this component but cannot guarantee cross-store rollback alone.
+- E11 Local CLI must not reuse this lifecycle without verified Port/authority ADR and regressions.
+
+#### 10.6.7. 検証
+
+**Unit:** valid dependency order, external inputs and binding, cancellation, supplied StageExecution, runner failure/compensation, seed preservation. **Negative:** bad dependency/StageType, mismatch, late failure. **Regression:** existing Product E9/E10 and Worker lifecycle, avoid conflating E11 Local run. **Trace:** FR-080/086a/089、NFR-001b/006a/006b、AR-019。No test execution reported.
+
+### 10.7. Chapter-wide Requirement Trace
+
+- `FR-086a`：stochastic Stageのactual effective random seedを`StageAttempt.effective_random_seed`へ保存し、同一logical Stageのretryで同じseedを再利用する
+- `FR-086b`（将来拡張・現行提供対象外）：Stageごとのtimeout / operational resource limitをpersistent/configurable policyとして保持する
+- `NFR-001b`：actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する
+- `NFR-006a`：current claim/lease/retry mechanicsでExecution/Stage lifecycleを安全に再試行できる
+- `NFR-006b`：retry/restartでsuccessful Stage outputのduplicate durable Artifact materializationを防止する。exactly-once executionは保証しない
+- `AR-019`：random seedだけでなくsplit indexまたはpartition artifactを保存する

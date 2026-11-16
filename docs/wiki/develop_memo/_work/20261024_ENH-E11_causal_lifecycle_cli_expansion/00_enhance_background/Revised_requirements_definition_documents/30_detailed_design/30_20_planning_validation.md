@@ -91,45 +91,86 @@ Family Capability
 
 ---
 
-## 2. `PlanValidator`
+### 9.5. `PlanValidator`（EXISTING：Owner 7区分）
 
-**Responsibility:** Verify the structural validity of an `ExecutionPlan` and produce deterministic topological execution order. This is not a causal identification oracle.
+#### 9.5.1. 識別情報・責務
 
-| Field | Python type / default | Role |
-|---|---|---|
-| `runners` | `StageRunnerRegistry`, required | Registered runtime Stage capabilities |
-| `max_timeout_seconds` | `int=86400` | Resource policy upper bound |
+- **Class/module:** `ariadne.product.workflow.plan_validator.PlanValidator`。**EXISTING**、source blob `53aab649a0ed3f0dbec78e5fa98271ff78f5dc12`。
+- **責務:** ExecutionPlanの構造検証とdeterministic topological stage order。科学的因果識別・Navigation Catalog・Project RBACは責務外。E11のLocal科学Method Registryとは同一でない。
 
-| Method | Return | Preconditions and operations | Exceptions |
-|---|---|---|---|
-| `__init__(runners: StageRunnerRegistry, *, max_timeout_seconds: int = 86_400)` | `None` | store dependencies and limit | none specified |
-| `validate(plan: ExecutionPlan)` | `tuple[str, ...]` | Validate plan schema/reference, unique Stage key, registered runner, timeout, edge endpoint, binding and schema agreement; perform deterministic topological sort | `InvalidExecutionPlan(code, message)` |
-| `_error(code: str, message: str)` | `None` (never returns normally) | raise the above exception | `InvalidExecutionPlan` |
+#### 9.5.2. フィールド
 
-**Negative codes checked by source:** `UNSUPPORTED_PLAN_SCHEMA`, `MISSING_PLAN_REFERENCE`, `DUPLICATE_STAGE_KEY`, `EMPTY_PLAN`, `RUNNER_NOT_REGISTERED`, `RESOURCE_POLICY_EXCEEDED`, `MISSING_DEPENDENCY_NODE`, `DISABLED_DEPENDENCY`, `MISSING_OUTPUT`, `MISSING_INPUT`, `SCHEMA_MISMATCH`, `DUPLICATE_BINDING`, `PLAN_CYCLE`.
+| Field | Type/default | Source | Invariant |
+| --- | --- | --- | --- |
+| `runners` | `StageRunnerRegistry` mandatory | Constructor argument | StageType availability authority |
+| `max_timeout_seconds` | `int=86400` | Constructor keyword | per-stage timeoutの上限・bool不可 |
 
-**Test obligations:** Graph DAG deterministic order, empty/cycle, type mismatch, disabled dependency, timeout/boundary, missing runner; E11 must not bypass these checks if reusing this component.
+#### 9.5.3. Constructor / Factory
 
-## 3. `StageRunnerRegistry`
+`__init__(self, runners: StageRunnerRegistry, *, max_timeout_seconds: int = 86_400) -> None` はrunnerとtimeout limitを保存。**N/A:** 専用FactoryはSourceに存在しない。Constructorで科学BackendやProduct DB transactionを起動しない。
 
-**Responsibility:** Runtime StageType to concrete StageRunner lookup, not E11 scientific estimator registry unless independently decided.
+#### 9.5.4. メソッド
 
-| Field | Type / default | Invariant |
-|---|---|---|
-| `_runners` | `dict[StageType, StageRunner]={}` | unique stage_type |
+| Method signature | Return | Side effect | Failure |
+| --- | --- | --- | --- |
+| `validate(self, plan: ExecutionPlan) -> tuple[str,...]` | stable topological stage keys | N/A（Validation read-only） | `InvalidExecutionPlan(code,message)` |
+| `_error(code: str,message: str) -> None`（staticmethod） | normal returnなし | N/A | `InvalidExecutionPlan` |
 
-| Method | Return | Behavior / error |
-|---|---|---|
-| `register(runner: StageRunner)` | `None` | Duplicate type raises `DuplicateRegistration` |
-| `resolve(stage_type: StageType)` | `StageRunner` | Missing raises `RunnerNotRegistered` |
-| `contains(stage_type: StageType)` | `bool` | Structural membership |
-| `capability_fingerprint` (property) | `tuple[str, ...]` | Sorted StageType.key fingerprint |
+#### 9.5.5. 処理仕様
 
-**当該構成要素の詳細設計制約（関連Requirement）**
+Sourceの`validate`に従い、Plan schema version・Project/Spec references・stage count/unique keys・registered runner・timeout type/range・dependency endpoints・enabled/disabled関係・output/input binding/schema・duplicate target binding・cycleを検証し、ready setをsortしてdeterministic topological順を返す。成功時に入力Planを変更しない。詳細条件は本書§9.2。Navigation Stage slugによってStageTypeを生成しない。
 
-- **`FR-075`**：Family別PlannerをRegistryから解決する
-- **`FR-079`**：Stage RunnerをRegistryから解決し、Executorへif/elif分岐を集約しない
-- **`FR-080`**：canonical lifecycle/application serviceがExecutionのclaim、state、cancel、retry、Result/Artifact metadata commitを所有し、Generic Executorはowned workflow context内で依存順、Stage sequencing、runner invocationを実行する
-- **`FR-089`**：Generic validationとFamily-specific validationを分離して実行する
-- **`FR-128a`**：Algorithm/Runnerをregistry/capabilityから解決・管理するcurrent contractを維持する
-- **`FR-128b`（将来拡張・現行提供対象外）**：size limit、timeout等のoperational resource configurationを一元管理する
+#### 9.5.6. I/O・連携・失敗処理
+
+入力は`ExecutionPlan`と注入`StageRunnerRegistry`、出力は順序tuple。**N/A:** Persistence・FS・HTTP・Retry・Rollbackは無い。Error code：`UNSUPPORTED_PLAN_SCHEMA`、`MISSING_PLAN_REFERENCE`、`DUPLICATE_STAGE_KEY`、`EMPTY_PLAN`、`RUNNER_NOT_REGISTERED`、`RESOURCE_POLICY_EXCEEDED`、`MISSING_DEPENDENCY_NODE`、`DISABLED_DEPENDENCY`、`MISSING_OUTPUT`、`MISSING_INPUT`、`SCHEMA_MISMATCH`、`DUPLICATE_BINDING`、`PLAN_CYCLE`。正確な入力型・Exceptionは上記blobをauthorityとする。
+
+#### 9.5.7. 検証
+
+**Unit:** valid DAG deterministic order、empty/cycle、schema mismatch、disabled dependency、timeout bool/range、unknown StageType、duplicate binding。**Contract:** valid Planのtopological order repeatability。**Negative:** unsupported version/error codes。**Trace:** FR-079/089、Product runtime regression。試験実行と独立検証は本PREP-01ではNOT_RUN。
+
+### 9.6. `StageRunnerRegistry`（EXISTING：Owner 7区分）
+
+#### 9.6.1. 識別情報・責務
+
+- **Class/module:** `ariadne.product.workflow.runner_registry.StageRunnerRegistry`。**EXISTING**、source blob `7ffa673d92818e597c4349737860df0ff75b4f97`。
+- **責務:** Runtime StageType→StageRunner登録・resolve・contains。E11 MethodCapabilityRegistry（Method/Estimand/Inference/Backend選択）やNavigation Stage Catalogの実装ではない。
+
+#### 9.6.2. フィールド
+
+| Field | Type | Default | Constraint |
+| --- | --- | --- | --- |
+| `_runners` | `dict[StageType, StageRunner]` | `{}` in constructor | StageType unique、runner.stage_type一致 |
+
+#### 9.6.3. Constructor / Factory
+
+`__init__(self) -> None`で空dictを設定。**N/A:** 専用Factory無し。外部科学libraryのimportやArtifact書込みはしない。
+
+#### 9.6.4. メソッド
+
+| Signature | Return | Side effect / failure |
+| --- | --- | --- |
+| `register(self, runner: StageRunner) -> None` | None | registryへmutate、duplicateで`DuplicateRegistration` |
+| `resolve(self, stage_type: StageType) -> StageRunner` | StageRunner | read-only、missingで`RunnerNotRegistered` |
+| `contains(self, stage_type: StageType) -> bool` | bool | read-only |
+| `capability_fingerprint(self) -> tuple[str,...]`（property） | stable sorted StageType.key tuple | read-only |
+
+#### 9.6.5. 処理仕様
+
+`register`は同じStageTypeの二重登録を拒否。解決は完全一致key。Fingerprintは`stage_type.key`をsortしたtuple。Runtime StageTypeはNavigation Stage IDから導かない。E11 Local Scientific AdapterをこのRegistryのStageTypeへ無理に詰め込まない。
+
+#### 9.6.6. I/O・連携・失敗処理
+
+入力は純粋StageTypeとStageRunner、出力はin-memory Registry。**N/A:** DB/FS/Network I/O・retry/rollback、Science Status。失敗は上記typed Domain exception。外部Side effectは登録用dict変更のみ。
+
+#### 9.6.7. 検証
+
+**Unit:** register/resolve/contains、unknown/duplicate、fingerprint order invariant。**Negative:** duplicate StageType／invalid missing lookup。**Regression:** Product Runner選択とE11 Local Method Registry非混合。**Trace:** FR-075/079/080/128a、Product E9/E10 protected contract。Source一致は静的確認済み、テストはNOT_RUN。
+
+### 9.7. Chapter-wide Requirement Trace
+
+- `FR-075`：Family別PlannerをRegistryから解決する
+- `FR-079`：Stage RunnerをRegistryから解決し、Executorへif/elif分岐を集約しない
+- `FR-080`：canonical lifecycle/application serviceがExecutionのclaim、state、cancel、retry、Result/Artifact metadata commitを所有し、Generic Executorはowned workflow context内で依存順、Stage sequencing、runner invocationを実行する
+- `FR-089`：Generic validationとFamily-specific validationを分離して実行する
+- `FR-128a`：Algorithm/Runnerをregistry/capabilityから解決・管理するcurrent contractを維持する
+- `FR-128b`（将来拡張・現行提供対象外）：size limit、timeout等のoperational resource configurationを一元管理する
