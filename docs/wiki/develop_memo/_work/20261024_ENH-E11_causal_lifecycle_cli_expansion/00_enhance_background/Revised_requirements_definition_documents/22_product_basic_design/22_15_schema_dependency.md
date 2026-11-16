@@ -16,3 +16,38 @@
 - Navigation metadata/stateについてはDB migrationを行わない。
 - Reproducibility contractとして`StageAttempt.effective_random_seed: int | null`を追加するDB migrationを行う。
 - `Execution.runtime_version_json`へ`ariadne_code_version / python_version / platform_system / platform_release / machine / libraries`を保存する。
+
+
+## 98. RD-04：要件由来の基本設計制約
+
+**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。旧要件の具体設計制約を担当領域へ移管。実装検証・ADR承認済みを意味しない。
+
+### 98.1. FR-161（SPLIT）
+
+- 元の設計情報を含む要件：LightGBM / SHAP / LIME等のexternal analytical engineはoptional capabilityとして導入し、未導入でもcore startupと既存supported flowを壊さず、unavailable capabilityから別model/methodへsilent fallbackしない
+- 改訂後RD／Legacy Trace：追加分析機能が未導入でも基本機能を使え、未対応手法へ勝手に切替えない
+- ID：`FR-161`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-114a（SPLIT）
+
+- 元の設計情報を含む要件：Idempotency要否をHTTP method/create一般ではなく、retryでduplicate durable side effectを生成し得るCommandかどうかで判定する
+- 改訂後RD／Legacy Trace：重複する永続的副作用を生む操作の再試行を安全に処理する
+- ID：`FR-114a`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
+
+### 98.3. FR-120a（SPLIT）
+
+- 元の設計情報を含む要件：runtime API schemaから生成されるFastAPI OpenAPIをcurrent API contractとして提供する
+- 改訂後RD／Legacy Trace：APIの機械可読な仕様を提供し実際の動作と一致させる
+- ID：`FR-120a`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
+
+### 98.4. NFR-014（SPLIT）
+
+- 元の設計情報を含む要件：`causal-analysis-spec/2`の正規contractおよび保存済みCausal Resultをschema versionに従って読取可能に保つ
+- 改訂後RD／Legacy Trace：既存v2の因果分析仕様と保存済み結果を継続して読み取れる
+- ID：`NFR-014`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../96_rd04_nfr_ar_application_review.md)
+
+### 98.5. NFR-028（SPLIT）
+
+- 元の設計情報を含む要件：optional analytical engineのimport/availability failureをcore process startup failureへ伝播させず、capability discovery/selection時に局所化してstable unavailable state/errorとして報告する
+- 改訂後RD／Legacy Trace：任意の分析エンジンが利用不能でも基本機能を継続でき、利用不能理由を識別できる
+- ID：`NFR-028`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../96_rd04_nfr_ar_application_review.md)

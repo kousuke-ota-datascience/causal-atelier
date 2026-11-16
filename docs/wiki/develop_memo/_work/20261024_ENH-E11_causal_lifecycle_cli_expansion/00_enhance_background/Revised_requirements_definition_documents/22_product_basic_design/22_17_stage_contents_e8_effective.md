@@ -114,3 +114,20 @@ ENH-E8はUI/IA変更のみを理由として以下を変更しない。
 - existing `predictive-analysis-spec/1` semantics
 
 ENH-E8時点ではLightGBM / LIME / SHAPを後続Enhancementへdeferした。current effective snapshotではENH-E10 §10.3.2がそのadvanced Predictive capability contractを所有する。
+
+
+## 98. RD-04：要件由来の基本設計制約
+
+**Status:** `RD04_DESIGN_MIGRATED / OWNER_CONTENT_REVIEW_PENDING`。旧要件の具体設計制約を担当領域へ移管。実装検証・ADR承認済みを意味しない。
+
+### 98.1. FR-175（SPLIT）
+
+- 元の設計情報を含む要件：Data Qualityはdedicated backend operationを新設せずread-only availabilityとして扱い、Comparisonの`TIME_TREND`は既存grouping/aggregation semanticsを維持し、Findingsの`CHART`は既存persistent operation/result/artifact semanticsを維持する
+- 改訂後RD／Legacy Trace：探索のデータ品質・時間推移・Findingを既存意味で利用できる
+- ID：`FR-175`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
+
+### 98.2. FR-174（SPLIT）
+
+- 元の設計情報を含む要件：existing Causal / Exploratory / Predictive capabilityを定義済みStage Contentsから操作可能にし、UI再配置だけを理由にanalysis execution semanticsを変更しない
+- 改訂後RD／Legacy Trace：既存の因果・探索・予測機能を整理後の画面から利用でき、分析の意味を維持する
+- ID：`FR-174`; Status：`ACTIVE`; Implementation：`IMPLEMENTED`; [逐条記録](../95_rd04_fr_application_review.md)
