@@ -183,6 +183,71 @@ buttonをdisabledにするだけでは要件を満たさない。Domain / Applic
 
 Dataset Version、Research Context、Analysis View、Analysis Specification、Graph Version、upstream Result等、analysis inputとprovenanceをExecution / Result / Lineageまで追跡可能にする。presentationの都合でprovenance linkを切断しない。
 
+
+## 5. Local Scientific CLIの独立した実行境界
+
+### 5.1. ProductとLocalの正本・依存の分離
+
+```text
+Existing Product lane (unchanged)                 ENH-E11 local lane (new, independent)
+Web UI → Web API → Product Application             CLI / local config & data
+          ↓                                                   ↓
+       Product Domain                               Local Application / Preflight
+          ↓                                                   ↓
+Product DB / Worker / Execution lifecycle           Local Scientific Domain / Identification
+          ↓                                                   ↓
+      Product Scientific Adapter                       Method Scientific Port
+          ↓                                                   ↓
+  Canonical Product Result / Artifact                 Optional Scientific Adapter
+                                                               ↓
+                                                  Local Result + Local Artifact Publisher
+                                                               ↓
+                                                  JSON / Parquet / Manifest + readback
+
+        Both may reuse scientific algorithms/interfaces only via compatible Ports.
+        Neither lane silently writes or upgrades the other lane's canonical state.
+```
+
+- 左は既存Productの説明でありE11の改修対象外。旧`causal-analysis-spec/2`、Execution/StageExecution、Worker、Project DB、Navigation、Product Web APIの意味を維持する。
+- 右は**Local CLI → Local Application → Scientific Domain/Ports → Method別Adapter → Local Artifact**。E11を追加するためにWeb APIを経由させず、Product Execution ID／Project Membership／DB connectionを必須入力にしない。
+- 両レーンでアルゴリズムの共通化は許すが、**Productの永続正本をLocal Manifestで置換しない**。独立のauthorityとprovenanceを明記する。
+- Web UIのFamily/Navigation Stage、既存Product Workflowのruntime Stageと、Local CLIの分析処理順序は**異なる概念**。Local CLIでpreflight→identification→estimationと処理することはProductのStageType増設を意味しない。
+
+### 5.2. Layer別の責務と依存方向
+
+| Layer | Owner / Responsibility | Allowed input / dependency | Forbidden dependency |
+|---|---|---|---|
+| Local Scientific Domain | Question, Design, Estimand, Graph, assumptions, identification/eligibility state, result意味・不変条件 | versioned domain values / immutable refs | DoWhy/EconML/Tigramiteの生object、Product ORM、Web route |
+| Scientific Port | Domain入力をMethod実行可能性と標準結果に接続 | versioned domain contract | backend独自のdtype／method objectを外部契約に露出 |
+| Method Scientific Adapter | optional backend/APIのAvailability・版確認、入力翻訳、出力正規化 | declared Port, optional library | Domain上のEstimand再定義、silent fallback、Product DB直接更新 |
+| Local Application | Preflight・Identification・Eligibility・Execution・Result validation・publish coordination | Domain, Port, local IO abstractions | Navigation Stage ID、Product Worker claim/lease、browser route |
+| CLI Interface | 明示schema dispatch、config/args・ファイル検証、Method選択、exit class表示 | Local Application API | Product API必須化、旧v2の無断reinterpretation |
+| Local Artifact Port/Adapter | canonical relative key、安全なstaging、checksum/readback、publish、failure cleanup | Root/policy, normalized data | 部分保存の成功宣言、制御外パスへの任意書込 |
+| Product Domain / Application | 現行Product Resource・RBAC・persistent lifecycle authority | 既存契約 | E11を理由にしたDB migration・Product API/Worker拡張 |
+
+**Dependency direction:** CLI→Local Application→Domain/Ports、External adapter→Port implementation。DomainからCLI/Framework/Adapterへ逆依存させない。既存のPortと重複する新Portを導入するかはDD-01で実物コード・Authorityを照合してから決定する。
+
+### 5.3. Operational ownership matrix
+
+| Operation / invariant | Domain | Local Application | Scientific Adapter | CLI | Local Artifact |
+|---|---|---|---|---|---|
+| Estimandの科学的意味、Graph不確実性、IV target区別 | R | C | C | — | — |
+| Method/Estimand/Identification適格性 | R | R（順序・Gate） | C（実効Capability） | — | — |
+| Backend実効API/version probe | C（許容契約） | C | R | C（表示） | — |
+| config/version dispatch・入力Fileの検証 | C | C | — | R | C（Path） |
+| Scientific Resultと各状態の正規化 | R | R（検査・公開可否） | R（raw変換） | C | C（保存） |
+| Manifest・hash・staging・Readback/atomic publish | C | R（commit決定） | C（実効版） | C | R |
+| 局所データ/個票出力のプライバシー方針適用 | R（分類） | R（Policy Gate） | — | R（opt-in受付） | R（権限/Path） |
+| Product auth/Execution/DB/Worker | — | — | — | — | —（既存Productのowner） |
+
+### 5.4. 相互運用上の禁止事項
+
+- Phase1〜3は承認されたLocal Scientific CLI（41 Method内のR/Q/N）とLocal Artifactのみに限る。DEC09のD-only、Product統合、GAP-C01〜04の解消を「Local CLI実装」と同一視しない。
+- Version dispatchは**旧`causal-analysis-spec/2`と新Local契約を別に扱う**。旧読取とREQUIRES_REVIEW/overrideは変更せず、E11新Methodを旧v2経由で無条件に実行しない。
+- 正確なCLI command・config version・Port/class名・Backend pin・具体enumは**IF-01/DD-01/ADRでFreeze**。ここで仮名を既成事実化しない。
+
+本節はLocal Causal解析機能の**現行予定設計**として継続的に保持する。過去の個別Owner承認・Gateway審議は基本設計書ではなく[`bd01_review/`](../bd01_review/README.md)に分離する。
+
 ## 90. この文書種別の目的・責務・規範性
 
 - **目的:** 上位Requirementを実現する論理component、責務境界、実行sequence、validation/authorization/exception policyを定める。
@@ -192,18 +257,6 @@ Dataset Version、Research Context、Analysis View、Analysis Specification、Gr
 
 **E11旧草案（履歴）:** [_drafts/enh_e11_causal_cli_basic_design_draft.md](_drafts/enh_e11_causal_cli_basic_design_draft.md)。正式な基本設計内容は22_20〜23に展開。
 
-
-## 97. BD-01：E11 Local/Existing Product二系統のArchitecture authority
-
-DEC09のARC09-01〜07を反映し、**Product Web/API/DB/Workerの既存正本と、E11 Local CLI/Artifactsの局所正本を分離**する。前節のProduct用System構成をE11 CLIの処理経路へそのまま適用しない。
-
-- [22_20 Local System Boundary](22_20_e11_local_system_architecture.md) — Domain／Application／Port／CLI／Productのauthorityと依存方向。
-- [22_21 Scientific Pipeline](22_21_e11_scientific_pipeline.md) — Identification→Eligibility→Estimationの科学的GateとMethod/Estimand制約。
-- [22_22 Local Result & Manifest](22_22_e11_local_result_artifact_lineage.md) — typed scientific outcome、local publish、atomic/readback/lineage。
-- [22_23 Environment/Security](22_23_e11_environment_security_compatibility.md) — Optional Backend、uv.lock/profile、local privacy、旧v2保護、Legal。
-- [22_90 Architecture Review](22_90_architecture_consistency_review.md) — 自己整合レビューと未解決事項。正式独立Architecture審査ではない。
-
-**State:** `BD01_REVISED / OWNER_PRINCIPLES_APPROVED / SCHEMA_AND_INDEPENDENT_REVIEW_PENDING`。正本昇格は全対象テストPASS後のみ（[Owner方針](../93_enh_e11_canonical_promotion_policy.md)）。
 
 ## 98. RD-04：要件由来の基本設計制約
 

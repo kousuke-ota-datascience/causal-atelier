@@ -95,12 +95,19 @@ AnalysisView create/update/validate/fixは同じDataset logical-type compatibili
 - Navigation descriptorにruntime input/output、status、retry semanticsを持たせない。
 
 
-## 97. BD-01：E11 Local科学的Preflight・Execution Validation
 
-- **先行Gate:** config・version、Path、source hash、Graph/Design/Estimand、Method対応、backend availabilityを評価し、識別またはEstimate前に不適格の種類を特定する。
-- **Science Gate:** Identificationの結果とEstimator eligibilityを別に検査し、未識別／Review要を数値推定に自動昇格しない。GraphのPAG/CPDAG端点・lag、B0/B1/DRIVの対象差、CATE CI有効性をMethod別に検証する。
-- **Postcondition:** normalized Resultの各状態軸、Confidence Set topology、Manifest/source/output SHA、Atomic readbackを検査。Science negativeとtechnical failureの例外カテゴリを混同しない。
-- [Scientific pipeline](22_21_e11_scientific_pipeline.md)／[Artifacts](22_22_e11_local_result_artifact_lineage.md)。具体Validator/Class/Exception enumはIF/DDに委譲。
+### 11.6. Local Causalの科学的状態・推論のValidation
+
+1. Technical execution outcome, identification state, point availability, uncertainty availability, scientific acceptance are **orthogonal axes**。Science不適格をI/O errorやゼロ値で置き換えない。
+2. Weak-IVのAnderson–Rubin反転Confidence Setは`bounded`／`unbounded`／`disconnected`／`all real`を区別。承認済み正常なB0/B1のAR反転で`EMPTY`を通常形として出さない。Finite intervalへ丸めない。
+3. CATE/DRIVはMethod・backend version・inference implementation・final model・nuisance・fold/seed/Bootstrapにより区間推論の妥当性が異なる。Backend標準出力を無条件に科学的受入しない。
+4. Pointwise CIをsimultaneous confidence bandと呼ばない。推論無しならnull+typed reasonを保持。Exploratory point-onlyをConfirmatoryとして提供しない。
+5. 研究者のoverrideは科学的な未識別を自動で打消さない。再識別・新GraphVersion・代替識別根拠が必要な場合はその手続き・provenanceを残す。
+
+- 必須入力の`schema/version`、Path、Graph/Design/Estimand、データidentity、Method/Backend capabilityを識別・推定前に検査する。
+- 非識別・要Review・Estimator不適格を数値推定成功へ自動昇格しない。
+- Science negative、technical execution failure、inference unsupported、manifest publish failureを別状態として扱う。
+- Confidence Set topology・CI availability・Method適格性を結果保存前後に検証する。
 
 ## 98. RD-04：要件由来の基本設計制約
 

@@ -89,12 +89,30 @@ CLI / Python library / backend use caseは、Analysis Specificationまたは既�
 `Current Navigation Stage`、browser route、sidebar stateをrequired inputへ追加しない。
 
 
-## 97. BD-01：Product generic workflowとE11 Local executionの区別
 
-- 本文§9.1〜9.6は**既存ProductのExecution/StageExecution/Planner/Worker lifecycle**を記述し、E11で新たなProduct runtime Stageを追加する指示ではない。
-- E11 Local ApplicationのPreflight→Identification→Eligibility→Estimator→Result→Artifact順序は新local use caseの内部処理Gateであり、Product`ExecutionPlan`上のStage DAG・Worker lease/claim/StageAttemptを新設することを意味しない。
-- 既存の`ScientificCoreAdapter`と`product.ports.scientific_core`の再利用可否は、旧CLIの互換と新E11 typed resultの要求を両立させるArchitecture/Port設計で判断する。新Core adapterを機械的に重複導入しない。
-- [22_20責務境界](22_20_e11_local_system_architecture.md)／[22_21 Local execution flow](22_21_e11_scientific_pipeline.md)。
+### 9.7. Local Scientific Use Caseの実行制御
+
+```mermaid
+flowchart TD
+  A[Versioned CLI input and local dataset] --> B[Schema/hash/path preflight]
+  B --> C[Resolve selected method and effective backend capability]
+  C --> D[Domain identification: estimand/design/graph/assumptions]
+  D --> E{Identification and estimator eligible?}
+  E -->|No| N[Typed scientific negative; no estimator invocation]
+  E -->|Yes| F[Invoke selected method adapter]
+  F --> G[Normalize effect, diagnostics, inference availability]
+  N --> H[Validate science outcome]
+  G --> H
+  H --> I[Local staging, readback and publication]
+```
+
+- **Malformed/unsafe input** はpreflightで拒否し、科学的な非識別とは区別する。
+- **未識別・Review要・Estimator非適格**なら選択Estimatorを呼ばず、原因・仮定・入力/Graph参照を保持したscientific negativeを表現する。旧v2のoverrideを新E11へ暗黙継承しない。
+- **Backend不在**は`METHOD_UNAVAILABLE`相当のCapability結果として扱う（具体codeはIF-01）。要求されたMethodを他Estimatorで代替して成功扱いしない。
+- 点推定可能でも、**Confirmatory**で妥当な推論が無い場合はScience PASSではない。Exploratoryのpoint-onlyと区別する。
+- Scientific negativeの正常記録と、I/O／計算／validationの技術障害は別の軸。Publish可否を`Execution success`という1つのbooleanに押し込めない。
+
+**Product workflowとの相違:** 上記のpreflight→identification→eligibility→estimationの論理手順はProductのStage DAG／Worker lifecycle／`StageExecution`増設ではない。既存ProductのPlanner・Runnerと、Local CLIのscientific orchestrationは異なる実行authorityである。
 
 ## 98. RD-04：要件由来の基本設計制約
 
