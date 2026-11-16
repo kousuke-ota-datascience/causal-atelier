@@ -12,7 +12,7 @@
 
 > **2026-11-16 DEC-SR04-05-1〜7をOwnerが採用済み:** [準実験7手法の独立技術判断](20261116_sr04_dec05_quasi_experimental_seven_methods_estimator_inference_decisions.md)。Quasiの7Method（DiD/Event/ITS/Sharp RD/Fuzzy RD/SCM/SDID）について、2×2群差、cohort-time集約、segmented HAC、cutoff local-linear/RBC、local IV/RBC、SCM simplex point-only、SDID unit/time weights+unit-bootstrapという**初期Estimator/条件付きInferenceの方針を個別採用**。正式Backend、cluster/CI・bandwidth・optimizerの具体的値と科学的Coverageは未完了。 本書の旧「Quasi estimator/inference未決」は**採用するMethod baselineの方針だけ**後続判断で解消した。実効Backendと独立Science Benchmark/正式FR/ADR/Gateは依然OPEN、全体構想は`PENDING_FULL_CONCEPT_APPROVAL`。
 
-> **2026-11-16 DEC-SR04-06判断案（OWNER_PENDING）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の具体採否はOwner未決。NCE/NCOは実在観測Z/Wのopt-in・事前帰無、M20は古典OLS partial R²とpoint RVのみを初期NとするA案を策定。 **DEC06-1〜5推奨Aは未承認**。正式Scope採否・科学的Benchmark・Gate07/全体構想の状態は変更しない。
+> **2026-11-16 DEC-SR04-06採用済み（OWNER_ACCEPTED）:** [Negative Control／OLS partial R²・RVの採否案](20261116_sr04_dec06_negative_control_ols_rv_scope_decision_proposal.md)。P1-M18/19/20の具体採否はOwner未決。NCE/NCOは実在観測Z/Wのopt-in・事前帰無、M20は古典OLS partial R²とpoint RVのみを初期NとするA案を策定。 **DEC06-1〜5すべてのA案をHuman ownerが個別採用済み**。3 Methodの個別採否・X-04/05のD扱いは決定済み。ただし科学Benchmark／Gate07・正式FR/ADRおよび全体構想は未承認。
 
 ## 0. INTRODUCTION
 
@@ -70,9 +70,9 @@
 | P1-M15 | P1-14 | Bootstrap refutation／再標本化安定性 | 再標本化単位と独立性・依存構造、モデル再fit | 既知DGPの再標本化結果・再実行一致 | 時系列/clusterへのiid bootstrap誤用、反復・seed不明 |
 | P1-M16 | P1-16 | Adjustment Set Sensitivity／設計変更 | 候補集合がDAG上有効であること | 複数の有効調整集合で真値との整合 | collider/mediator投入、誤調整を『robust』と表示しない |
 | P1-M17 | P1-16 | Propensity Clipping Sensitivity／truncation効果 | 推定PS、trim/clip ruleと対象母集団を明示 | overlap良好／悪化DGPでESS・biasの変化を測定 | clippingのtarget変化、極端weight、CIを無条件有効扱いしない |
-| P1-M18 | P1-15/X-04 | Observed NCE null diagnostic／条件付き関連の反証候補 | 研究者opt-in、NCEのoutcome直接効果なし・共有bias仮定、DAGに整合したconditioning | 有効対照、交絡あり/なしでnullのsize/powerを分離 | 負の対照でない変数、根拠欠落、非有意から無交絡証明は禁止。Method採否保留 |
-| P1-M19 | P1-15/X-04 | Observed NCO null diagnostic／条件付き関連の反証候補 | 研究者opt-in、NCOが処置の影響を受けない・共有bias仮定 | 有効対照、交絡あり/なしの既知DGP | 事後変数、同一Outcomeの混同、nullの誤適用。Method採否保留 |
-| P1-M20 | P1-17/X-05 | OLS partial R² / RV sensitivity／指定OLS係数 | 連続Y、古典OLS SE/df、2軸partial R²、対象係数を固定 | 数式独立実装／sensemakr等と係数・RV・grid照合 | HC3 SEの無断流用、IPW/AIPW/CATEへ誤適用、R²の範囲外。正式採否保留 |
+| P1-M18 | P1-15/X-04 | Observed NCE null diagnostic／条件付き関連の反証候補 | 研究者opt-in、NCEのoutcome直接効果なし・共有bias仮定、DAGに整合したconditioning | 有効対照、交絡あり/なしでnullのsize/powerを分離 | 負の対照でない変数、根拠欠落、非有意から無交絡証明は禁止。初期NのOwner採否済み（Runtime/Null Science未完） |
+| P1-M19 | P1-15/X-04 | Observed NCO null diagnostic／条件付き関連の反証候補 | 研究者opt-in、NCOが処置の影響を受けない・共有bias仮定 | 有効対照、交絡あり/なしの既知DGP | 事後変数、同一Outcomeの混同、nullの誤適用。初期NのOwner採否済み（Runtime/Null Science未完） |
+| P1-M20 | P1-17/X-05 | OLS partial R² / RV sensitivity／指定OLS係数 | 連続Y、古典OLS SE/df、2軸partial R²、対象係数を固定 | 数式独立実装／sensemakr等と係数・RV・grid照合 | HC3 SEの無断流用、IPW/AIPW/CATEへ誤適用、R²の範囲外。初期NのOwner採否済み（RV数値Oracle未完成） |
 
 ## 2. Phase 2：非IV CATE 7種類とIV異質効果1種類
 
@@ -165,7 +165,7 @@
 | BLOCKER | DiD/Event/RDD/ITS/SC/SDIDの初期EstimatorとInference選定 | Method別targetとbaseline参照、cluster/HAC/局所等の推論境界 | SR-09＋SR-04 |
 | MAJOR | EconML8のInferenceConfig | Backend version・最終モデルごとにpoint/CI能力とcoverage、Exploratory/Confirmatory | SR-07＋SR-04 |
 | MAJOR | PCMCI系とFCIのCI test/endpoint・latents | 仮定・CI testがDGPへ適合すること、Graph結果の忠実保持 | SR-08＋SR-04 |
-| MAJOR | NCE/NCO・OLS partial R²の正式Scope採否 | opt-in原則のみ既採用。2診断＋OLS限定方式の採否はHuman owner待ち | SR-01/05/06 |
+| OWNER_DECISION_CLOSED / SCIENCE_BLOCKER | NCE/NCO・OLS partial R²＋point RVのMethod採否 | DEC06-1〜5全AをOwner個別採用。正式schema・null/calibration・RV数値検証は未完了 | SR-01/05/06 |
 | MAJOR | 数値閾値・Monte Carlo設計 | Reference truth、DGP/n/seed、effect error、coverage/Type-I基準の事前登録 | SR-04→Gate07 |
 | MAJOR | 実行・配布・privacy・version lock | 既存Product/v2回帰、atomic/lineage、安全出力、optional+license | SR-02/10／Architecture Review |
 | MAJOR | A0上位要求・Product GAP帰属 | 68行の処遇・担当役割・IssueとClosure evidenceの承認 | SR-01/05 |
