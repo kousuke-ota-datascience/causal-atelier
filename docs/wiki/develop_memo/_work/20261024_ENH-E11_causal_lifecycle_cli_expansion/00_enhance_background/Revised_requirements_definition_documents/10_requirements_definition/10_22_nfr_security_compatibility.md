@@ -14,7 +14,7 @@
 | NFR-009b | Privacy | prediction/local explanation/exportのconfigurable minimization policyを提供する | — | DEFERRED | PARTIAL | FUTURE |
 | NFR-012 | Accessibility | current surfaceの主要操作をkeyboardで実行でき、focus/name/error/non-color/contrast semanticsを満たす | — | ACTIVE | PARTIAL | ENH-E5 |
 | NFR-014 | 互換性 | 既存v2の因果分析仕様と保存済み結果を継続して読み取れる | — | ACTIVE | IMPLEMENTED | BASELINE |
-| NFR-018 | Dependency direction | Product DomainからWeb Framework、ORMおよびlegacy packageへ依存しない | — | ACTIVE | IMPLEMENTED | BASELINE |
+| NFR-018 | Dependency direction | 【設計制約移管・Legacy Trace】NFR-005に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する | — | ACTIVE | IMPLEMENTED | BASELINE |
 | NFR-022 | Navigation determinism | 同一Project / Family / Stage routeは同一navigation stateへdeterministicに復元される | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-026 | Accessibility | Current Family / Stageを色だけでなくsemantic active state、label、focus等でも識別できる | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | NFR-028 | Dependency isolation | 任意の分析エンジンが利用不能でも基本機能を継続でき、利用不能理由を識別できる | — | ACTIVE | IMPLEMENTED | ENH-E10 |

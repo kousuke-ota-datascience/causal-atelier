@@ -22,7 +22,7 @@
 | AR-019 | Scientific Integrity | 分析のデータ分割を再現可能な情報として保持しなければならない | — | ACTIVE | IMPLEMENTED | BASELINE |
 | AR-020 | Scientific Integrity | 個票予測と局所説明は機微情報になり得るため、利用権限に応じ露出を制限する | — | ACTIVE | PARTIAL | ENH-E5 |
 | AR-021 | Scientific Integrity | Navigation Stageの表示順を、因果分析その他の科学的な実行順序や必須解析手順として解釈させない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
-| AR-022 | Scientific Integrity | Family間でStage数・名称を揃えることを科学的workflow要件としない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
+| AR-022 | Scientific Integrity | 【設計制約移管・Legacy Trace】対応する既存上位要件に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-025 | Scientific Integrity | Predictive MetricsとPredictive Explainabilityを別目的として扱い、feature importance等をcausal effectへ読み替えない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-026 | Scientific Integrity | Exploratory Findings / visualizationをcausal conclusionまたはconfirmatory resultへ自動昇格しない | — | ACTIVE | IMPLEMENTED | ENH-E5 |
 | AR-027 | Scientific Integrity | 予測モデルの説明値はモデルの挙動に関するものであり、変数の因果的重要性・介入効果・因果機構を示さない | — | ACTIVE | IMPLEMENTED | ENH-E10 |
