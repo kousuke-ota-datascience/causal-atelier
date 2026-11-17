@@ -1,39 +1,37 @@
-# ENH-E11 G05 P00 — Work Package実行計画
+# ENH-E11 G05 P00 — Work Package Plan (DRAFT)
 
-**Contract status: DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED**
-**Gate: G05 / formally planned G01〜G10 / Trial01 NOT_STARTED**
-**Depends on: G04 PASS — upstream canonical 999 mandatory (DRAFT dependency proposal)**
-**Execution Mode: WORK_PACKAGE (DRAFT proposal); Required packages: P01, P02, P03, P04**
-**Owner Freeze: PENDING / Coding Authorization: NOT_AUTHORIZED / Baseline full SHA: NOT_FIXED**
-**References:** [10_32 Scientific Method Scope](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md) / [30_61 Domain/Ports](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md) / [30_62 Local Execution](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md) / [30_63 Method Adapters](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md) / [23_41 Scientific Ports](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md) / [23_42 Artifact](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)
+**Gate:** G05 / Official Enhance Workflow Gate  
+**Class:** Planning/Operator Artifact, not Coding Agent's normative package  
+**Plan status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
+**Gate06:** [Implementation Contract](06_Ariadne_ENH-E11_G05_implementation_instruction.md)  
+**Gate07:** NOT_CREATED / NOT_FROZEN  
+**Execution mode proposal:** WORK_PACKAGE / P01,P02,P03,P04  
+**Upstream dependency proposal:** G04 PASS。未承認のEdgeとしてまとめReviewする。
 
-## 1. Gate boundary and P00 responsibility
+## 1. Gate semantic acceptance
 
-CATE support/calibration/uncertainty診断と、明示的に許可されたときだけの個票Parquetを分離し、原子的なファイル出力と安全なReadbackを提供する。
+CATE support/calibration/uncertaintyと独立事前承認に基づく個票成果物発行を検証する。
 
-P00はCoding Unitでなく、Package DAG・Entrypoint/Checkpoint・Candidate handoffを管理。Pxxの実装WHATや独立07のACを上書きしない。
+**主要不確実性:** 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。
 
-## 2. Package DAG
+## 2. Package ownership map
 
-| Package | Responsibility | Depends on | Exit proof |
-|---|---|---|---|
-| `P01` | HTE support/calibration/uncertainty | NONE | CATE/DRIV別support/uncertainty/diagnostics |
-| `P02` | 個票出力Policy認可とTrust Anchor | P01 | row flag/principal/verified policy/column allowlist |
-| `P03` | 個票ParquetとAtomic Publisher連携 | P02 | staging、schema/column control、readback |
-| `P04` | HTE/Row Export統合と回帰 | P01,P02,P03 | 不許可出力0、Aggregate互換/Manifest |
+| Package | Scope | Required Pxx deps | Method | Package obligations |
+|---|---|---|---|---|
+| P01 | hte_diagnostics | NONE | — | G04推定器を再実装せずMethod別support/calibration/uncertaintyを型付き診断。算法/Result owner不足ならDESIGN_GAP。 |
+| P02 | row_authorization | NONE | — | Study要求∧CLI flag∧独立事前承認∧OS root/UID/ACL/mount∧列行上限のAND。署名方式/鍵/失効はFreeze前決定。 |
+| P03 | parquet_bundle | P01,P02 | — | 個票Parquet WriterのClass責務・正確署名未確定はDESIGN_GAPとして明記。Writer/Reader両側でcolumn/row bound検査。 |
+| P04 | privacy_e2e | P01,P02,P03 | — | Denied時row bytes 0 / COMMITTED marker無し、shared mounts、root UID差、stdout/log leak負例。 |
 
-## 3. Entry and restart
+## 3. Execution DAG and handoff
 
-- 全PxxとGate06/07が一意でOwner承認/Freeze済み、DependsOn upstream canonical 999 PASS、実行基準full SHA・Git/remote/lock・Backend/環境・Coding Authorizationを確認する。未成立はBLOCKED。
-- Dependency Pxxの20 Package report/checkpoint full SHAを一意に確認。異なるTrialや未承認Sourceとの混在禁止。
-- 各PxxのFocused Testと20 status/reportは当該PackageのCheckpointに帰属し、`PACKAGE_READY`をGate PASSと見なさない。
+- `P01` <- NONE
+- `P02` <- NONE
+- `P03` <- P01,P02
+- `P04` <- P01,P02,P03
 
-## 4. Final integration and independent test
+Each Pxx→focused verification→20 Package Report→Checkpoint SHA。全required Package完了→Candidate Assembly→Gate-wide self-verification→single fixed candidate SHA→Independent 07→canonical 999。Package Completed≠ReadyForTest≠PASS。
 
-- 全required Pxx completion後Candidate Assembly AgentがSource/Manifest/Method/Protected regressionを検証しFixed Trial Candidateを1個確定。20 CompletionとSha Chainを残す。
-- Independent Test Agentは07のTest Itemsと999を同一Fixed SHAで判定。正式FAIL後だけ08 remediation、契約欠陥は09 amendment/再Freeze。
+## 4. Governance / Coding Authorization
 
-## 5. Test architecture and stop
-
-- 40が初期`tests/enhancement/enh_e11/<gate>/<layer>/`、実効test discovery/collection、legacy Product suite維持を定める。G01のCLI-only条件を他Gateへ誤適用しない。
-- Schema/Reference/Backend/Policy/License未定義はtyped BLOCKED。Owner review未完でCoding禁止。E11 closure時のPROMOTE判断まで`tests/regression/`への自動移動禁止。
+P00は独立受入条件でも実装許可でもない。06/07 Freeze、Owner採用のPackage list/dependency、上流Gate canonical 999、実基準SHAとenvironment preflightが揃うまでPxxは実行禁止。Issue、Package結果、P00の状態を999代用にしない。

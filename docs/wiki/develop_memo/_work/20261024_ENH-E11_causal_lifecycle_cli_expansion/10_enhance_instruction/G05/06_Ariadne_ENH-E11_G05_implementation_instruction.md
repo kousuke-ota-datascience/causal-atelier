@@ -1,89 +1,88 @@
-# Ariadne ENH-E11 G05 — 06 実装指示書：HTE診断・個票Privacy・Artifact
+# Ariadne ENH-E11 / G05 — 06 実装指示書
 
-**Contract status: DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED**
-**Gate: G05 / formally planned G01〜G10 / Trial01 NOT_STARTED**
-**Depends on: G04 PASS — upstream canonical 999 mandatory (DRAFT dependency proposal)**
-**Execution Mode: WORK_PACKAGE (DRAFT proposal); Required packages: P01, P02, P03, P04**
-**Owner Freeze: PENDING / Coding Authorization: NOT_AUTHORIZED / Baseline full SHA: NOT_FIXED**
-**References:** [10_32 Scientific Method Scope](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md) / [30_61 Domain/Ports](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md) / [30_62 Local Execution](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md) / [30_63 Method Adapters](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md) / [23_41 Scientific Ports](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md) / [23_42 Artifact](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)
+**Document class:** Gate Coding Contract — Reviewer DRAFT  
+**Gate:** G05 — 正式Enhance Workflow Gate  
+**Contract status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
+**Depends on:** G04 PASS （依存DAGは提案、Owner決定待ち）  
+**Execution mode:** WORK_PACKAGE （提案）  
+**Required packages:** P01,P02,P03,P04 （提案）  
+**Trial:** NOT_STARTED  
+**Gate07:** `07_Ariadne_ENH-E11_G05_test_instruction.md` — NOT_CREATED / NOT_FROZEN。今回の作成対象外。  
+**Baseline SHA:** 未固定（Coding Authorization時に取得）。  
+**Authority/reference:** [Gate decomposition](../../40_operator_workflows/architecture_review/03_gate_decomposition.md)／[PREP-02 freeze](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[RD 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)／[DD 30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md)／[DD 30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md)／[IF 23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)
 
-## 0. Gate Acceptance Authority and Entry
+## 0. Contract Boundary and PREP-03 Status
 
-本06は本GateのImplementation WHATの一次契約。P00は計画、Pxxはbounded Coding Unit、07は独立Verification、999は正式Decision。Method IDのP1-Mxx等とPackage P01等を混同しない。上流Gate 999 PASS・本Gate 06/07/Pxx Owner承認とFreeze・固定Source/lock SHA・実行環境/remote/preflight・明示Coding Authorizationが成立する前はCodingを禁止。G01の06/07を他Gateの仕様として参照・転用しない。
+Gateの06は実装WHAT、07は独立Verification WHAT、40 Operatorは物理Test配置・実行HOW、999は唯一の正式Gate Verdict。P00はPlan、Pxxはbounded Coding Unitであり、Pxx/06の作成はGate PASS、Coding Authorization、Method Science PASS、07 Freezeを意味しない。
 
-## 1. Objective / Downstream contract
+PREP-02のCommon Design BaselineはFreeze済み。**本Gate固有のBackend/Method config、実装Class存在、Science Oracle、07/Acceptance Criteria、Gate Dependency/Packagesは未承認DRAFT。** 本文内の`Gxx PASS`は現在達成された状態ではない。
 
-**UC: UC-04,UC-10。**Meaningful PASS:** CATE support/calibration/uncertainty診断と、明示的に許可されたときだけの個票Parquetを分離し、原子的なファイル出力と安全なReadbackを提供する。
+## 1. Gate Acceptance Claim and Scope
 
-Gate単位のPASS後に守るもの: Typed Result/Graph/Diagnostic、Method固有Estimand・Identification/Eligibility・Science negative、strict Local CLI/Manifest/Readerと環境再現性を、本Gateの統合Fixed Candidateで独立に検証した状態。Pxx checkpointやCLI Exit=0はGate/Science PASSではない。
+**受入命題:** CATE support/calibration/uncertaintyと独立事前承認に基づく個票成果物発行を検証する。
 
-## 2. In scope, prohibited scope and compatibility
+**候補依存:** `G04`のlatest canonical 999 PASS。設計上の前提と実行DAGは同義とは限らず、全依存EdgeをFreeze前にOwner Reviewする。Issue追跡は999の代替でない。
 
-- **In scope:** Gate固有MethodとDesign/Question/Method strict Schema、30_63 Class Adapter、30_61 Domain/Port、Local CLI composition、typed status/Result、独立Scientific Reference、上流Protected Contract回帰。
-- **Reuse:** G01のContentRef/JCS/GraphEvidence/Version authority/TrustedRoot/AtomicPublisher/ManifestReader/MethodCapabilityRegistry・既存ScientificCore/v2計算処理を適格に再利用し、CLI専用Scientific Domainを並行実装しない。
-- **Out of scope:** 本Gate外のMethod、Web/API/Worker/DB/UI統合、Product migration、正本documentsの昇格、未採用Policy/CI/Backend、ライセンス未審査配布。
-- **科学/安全上の禁止:** CLI flagだけの個票出力許可、偽造Policy、未承認列の持ち出しを禁止。
-- **Protected invariant:** 旧Product v2 CLI/Manifest/Result・上流PASS Gateの06/07/999が保護するsemantics。Unsupported Backend/Inferenceはtyped UNAVAILABLE、silent fallback/placeholder Effect/CI/Graphは禁止。
+**科学的失敗モードと未決事項:** 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。
 
-## 3. Work Package map and provisional DAG
+**対象外:** 既存Product科学ABIの変更、Web/API/DB/Worker新規統合、G01のPublisherやGraphVersionを別実装すること、他Gate MethodをScopeなしに追加すること、顧客配布許可、現時点での正本文書昇格。
 
-| WP | Owned boundary | Method IDs | Depends on Pxx | Mandatory proof |
+## 2. Class/Module Ownership and Canonical Signatures
+
+既存Classと新規Design Classの区別は現物Sourceで確認すること。`30_61/62/63`のClass placement、Constructor fields、Method signatureがAuthority。明記のないConcrete引数型を創作せず、設計欠落ならFreeze前に解決する。
+
+| Class / Port | Designed module | Method signature / source | Reuse |
+|---|---|---|---|
+| `EffectOutcome` | `ariadne.causal.inference.contracts.EffectOutcome` | validate_consistency() / to_result_payload() | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `InferenceEvidence` | `ariadne.causal.inference.contracts.InferenceEvidence` | validate_for(mode,method) | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | run(self, request:ValidatedDiagnosticRequest, *, sink:StagingArtifactSink) -> DiagnosticOutcome | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, policy:VerifiedStudyPolicyEvidence|None, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `LocalCausalUseCase` | `ariadne.capabilities.causal.local_execution.LocalCausalUseCase` | preflight(self,spec:ValidatedStudy,context:LocalRunContext)->PreflightReport / run(self,spec:ValidatedStudy,context:LocalRunContext)->LocalRunOutcome | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `LocalArtifactPublisher` | `ariadne.interfaces.cli.local_causal.publication.LocalArtifactPublisher` | begin/stage_bytes/validate/commit/abort (DD30_62 §3; concrete signatures need full DD verification) | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `LocalRunManifest` | `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest` | to_canonical_bytes() | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+| `LocalManifestReader` | `ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader` | read_run(trusted_root:TrustedLocalRoot,run_id:RunId) | 既存/新規の共通Value・Port・Facade参照。重複実装しない |
+
+**Port dependency:** Local CLI Composition Root → ValidatedStudy/ContentRef → `LocalCausalUseCase` → MethodCapabilityPort/Scientific Ports/Privacy/Publication → Method Adapter → shared `ariadne.causal.*` / `ariadne.scientific.*` Kernel。DomainからCLI ConcreteやWeb/DBへ逆依存しない。既存Product `ScientificCorePort`はBridge経由で同じ科学Kernelに接続する。
+
+## 3. Bounded Work Packages and DAG
+
+| Package | Responsibility | Primary Classes / Ports | Methods | Depends on Pxx |
 |---|---|---|---|---|
-| `P01` | HTE support/calibration/uncertainty | Cross-cutting | NONE | CATE/DRIV別support/uncertainty/diagnostics |
-| `P02` | 個票出力Policy認可とTrust Anchor | Cross-cutting | P01 | row flag/principal/verified policy/column allowlist |
-| `P03` | 個票ParquetとAtomic Publisher連携 | Cross-cutting | P02 | staging、schema/column control、readback |
-| `P04` | HTE/Row Export統合と回帰 | Cross-cutting | P01,P02,P03 | 不許可出力0、Aggregate互換/Manifest |
+| P01 | hte diagnostics | — / EffectOutcome,InferenceEvidence,DiagnosticPort | cross-cutting | NONE |
+| P02 | row authorization | — / LocalPrivacyPolicy,LocalCausalUseCase | cross-cutting | NONE |
+| P03 | parquet bundle | — / LocalArtifactPublisher,LocalRunManifest,LocalManifestReader | cross-cutting | P01,P02 |
+| P04 | privacy e2e | — / LocalCausalUseCase,LocalPrivacyPolicy,LocalManifestReader | cross-cutting | P01,P02,P03 |
 
-P00はCoding Unitではない。各Pxxがself-contained Class.Method実装、正負例、Checkpoint SHAと20 Package reportを作る。Package構成/依存はOwnerレビューで確定し、Freeze前に実行しない。
+全PxxのScopeとClass/Method ownershipは別文書`06_G05_Pxx_*.md`に自己完結記述。上流Packageからの利用はPort/Value/Bridgeであり、別Packageが所有するMethodを複製しない。Package setはOwnerが変更し得るため**DRAFT**。
 
-## 4. Method/Class/Port matrix
+## 4. Method Requirements, Eligibility, Positive/Negative Science
 
-本Gateは既存MethodのCross-cutting契約を構築・検証し、新規Method IDを追加しない。上流Methodの同定・独立Scienceは既存証拠を再確認する。
+**G05は新Method IDを追加しない。** G04のCATE/HTE Resultに対するSupport/Calibration/Inference/個票Policyの追加受入境界。
 
-### 4.1. Concrete Adapter Class/Method duties
+**Reference rule:** MethodごとのDGP/NEG/REF/ACを必須とする。Backend自身の結果は独立Referenceではない。P1-M05等のRDでBLOCKEDなら開発都合でMethodを削除せず、識別対象/実装方法/独立Science TestをOwner決定へ戻す。科学的定量判定はOwner採用FWER=.05とMethod別PilotからのK/R/MC-SE/Resource/coverageを07に具体化してから実測する。
 
-- Cross-cuttingでは30_61のIdentificationOutcome / EstimatorRequest / InferenceEvidence、30_62のLocalCausalUseCase / LocalPrivacyPolicy / Publisher / Manifest/Readerを既存Class/Portとして再利用。新Classが必要ならDesign Amendmentを先に提案し、並行Domainを増やさない。
+## 5. Global Scientific, I/O and Compatibility Constraints
 
-**Common signature contract:** `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`はMethod/Target/Operation一致を検査しBackend import/外部I/Oを行わない。`preflight`は実データ実行前のMethodConfig/Design/GraphVersion/Backend/Inferenceの適格性を型付き判定する。`execute`は適格Requestのみ、`StagingArtifactSink`へportable finite DTOを渡し、Library Instanceを公開しない。例外：既存Product v2の`RefutationAdapter.run`/`SensitivityAdapter.run`公開署名を改変しない。
+- PREP-02の共通F03/F04/F05/F06/F07は適用基準。JCS RFC8785、Source/Graph/ContentRef/Manifestの異なるhash domain、atomic no-clobber、Trusted Root/independent privacy、typed scientific statusを損なわない。
+- 旧Product `causal-analysis-spec/2`、`ScientificCorePort.run_*`、Web/API/Worker/DB、旧CLI、既存Refutation/Sensitivity `run`の公開ABIを変更しない。CLIだけの新Scientific Kernel、別MethodRegistry、別GraphVersion writer、別Publisherを作らない。
+- Scientific `Identification/Point/Inference/ScienceAcceptance`とTechnical outcomeは別軸。不適格なMethod、無識別、Unsupported CI、missing optional Backendは型付き負結果またはTechnical error。未実行をPASS、point-onlyをCI有り、Backend自身の出力を独立Oracleにしない。
+- `LocalCausalUseCase`はstrict ValidatedStudyから各Portへ委譲し、Fileはstaging→atomic Publisher→independent readback。G05のPolicy認可前は個票禁止。
 
-### 4.2. Common cross-Port signatures (reuse, not duplicate)
+**このGate固有の実装判断:** 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。。各PxxのPositive/NegativeとBackend/Inference/Estimand/Statusを実行前にSchema/Registryで照合する。
 
-- `IdentificationOutcome.from_evidence(evidence: ValidatedIdentificationEvidence) -> IdentificationOutcome`：識別Proof/Estimand/GraphVersion/hash・nonidentifiedを保持。
-- `EstimatorRequest.validate_against(self, identification: IdentificationOutcome, design: CausalDesign, policy: EstimandEligibilityPolicy) -> ValidatedEstimatorRequest`：識別先行・全upstream hashとTargetの一致、未識別/弱識別を拒否。
-- `LocalCausalUseCase.preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport` / `run(self, spec: ValidatedStudy, context: LocalRunContext) -> LocalRunOutcome`：validated RequestからPort実行・publication。CLIに科学的判断を書かない。
-- `LocalRunManifest.to_canonical_bytes(self) -> bytes` / `LocalManifestReader.read_run(self, trusted_root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun`：Operation別Inventory、JCS/hash、marker/Readback一致。
-- `LocalPrivacyPolicy.authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, policy: VerifiedStudyPolicyEvidence|None, output_shape: OutputShape) -> PrivacyDecision`：PolicyはCLIから独立した唯一の判断者。
+## 6. Gate Coding-side Verification and Candidate Assembly
 
-## 5. Per-package mandatory implementation behavior
+- 各PxxはMethod/DGPP/NEG/REF/DD、Class.Method signature、typed Status、Backend effective API/optional Dependency、必要な実OS/CLI、既存Product invariantをFocused Testで確認。物理Path/Commandは40 Operatorがcurrent checkoutをdiscover/collectする。
+- 新Testは原則`tests/enhancement/enh_e11/g05/<layer>/`、layer=unit/contract/integration（ENH-E11はCLI-only）。もし現行ProductのFrontend/Browser Regressionがaffectedならその既存Suiteも現物から検証する。科学的真偽をDir名やmockのみで推定しない。
+- 全required PxxがCheckpoint SHAとStatus Reportを残してからCandidate Assembly。Gate-wide self-verification後に**1つのFixed Trial Candidate SHA**を確定、別途Freezeされた07による独立Test Item/999を実行する。
+- Test-side defectはBLOCKEDとしIndependent Test Agentはtest/productionを修理しない。G10の最終統合は各Gateの独立999を置換しない。
 
-### 5.1 P01 — HTE support/calibration/uncertainty
+## 7. Freeze前のReview/Stop条件
 
-Owner: P01。Methods: No new Method ID; cross-cutting。Entry dependencies: NONE。**Pre:** Gate/Package frozen, upstream checkpoint fixed, strict Profile/Method Target consistent. **Required:** CATE/DRIV別support/uncertainty/diagnostics。**Post:** typed Result/Reason, correct OutputShape/Hash/Backend/seed, package-scoped focused tests and checkpoint. No Gate PASS.
-### 5.2 P02 — 個票出力Policy認可とTrust Anchor
+1. OwnerがGate依存・Acceptance Boundary・WORK_PACKAGE/Pxx順序を採否する。
+2. `10_32`のMethod config、Estimand、DGP、NEG、Reference、実効Backend/API/Inferenceの適格性を検証する。特に本Gateの未決事項 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。
+3. 06/PxxのClass.Field/Constructor/Signature/Result authorityと既存Source、共有Port/Bridgeを整合させ、必要な設計欠落を閉じる。
+4. **Gate07を作成**し、Method別AC/独立科学閾値・負例・固定Fixture/Runtime・No PASS条件を確定して06/07をともにFreezeする。
+5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
-Owner: P02。Methods: No new Method ID; cross-cutting。Entry dependencies: P01。**Pre:** Gate/Package frozen, upstream checkpoint fixed, strict Profile/Method Target consistent. **Required:** row flag/principal/verified policy/column allowlist。**Post:** typed Result/Reason, correct OutputShape/Hash/Backend/seed, package-scoped focused tests and checkpoint. No Gate PASS.
-### 5.3 P03 — 個票ParquetとAtomic Publisher連携
-
-Owner: P03。Methods: No new Method ID; cross-cutting。Entry dependencies: P02。**Pre:** Gate/Package frozen, upstream checkpoint fixed, strict Profile/Method Target consistent. **Required:** staging、schema/column control、readback。**Post:** typed Result/Reason, correct OutputShape/Hash/Backend/seed, package-scoped focused tests and checkpoint. No Gate PASS.
-### 5.4 P04 — HTE/Row Export統合と回帰
-
-Owner: P04。Methods: No new Method ID; cross-cutting。Entry dependencies: P01,P02,P03。**Pre:** Gate/Package frozen, upstream checkpoint fixed, strict Profile/Method Target consistent. **Required:** 不許可出力0、Aggregate互換/Manifest。**Post:** typed Result/Reason, correct OutputShape/Hash/Backend/seed, package-scoped focused tests and checkpoint. No Gate PASS.
-
-## 6. Scientific / runtime / failure policy
-
-- 各Methodのstrict Config・Question/Design/Estimand/Inference profileは正式Method IDでdispatchし、Gate IDでMethodを選ばない。必要schema未確定は`METHOD_PROFILE_UNAVAILABLE`などtyped BLOCK。P1-M05のtarget不明などを推測で埋めない。
-- Science DGP/NEG/REFは10_32の各行に従い、Backend outputを独立Oracleにしない。K/R/seed/threshold/computeはT2 Pilot→T3事前登録で決定し、未確定を自動数値で補完しない。
-- 実効Backend version/API、optional dependency、uv.lockとLicenseの可否は別々に記録。技術的不在と科学的不識別、Inference unavailableは異なるtyped Reason。
-- 既存G01 root/no-clobber/fsync/privacyは再利用し、row exportはG05以外で勝手に許可しない。Graph uncertain marksやAR confidence_setはlossless保存、fake Point/CIを出さない。
-
-## 7. Implementation-side verification, assembly, handoff
-
-- 各PxxのDD/METHOD ID・positive/negative・unit/contract/integrationを必要な実境界で検証。テストの実ファイル名/実行commandは40 Operatorがcurrent checkoutから発見。G01 CLI-only等の他Gate固有制約を本Gateに混入しない。
-- 既存Product v2 Testsは現配置で実行・保護。新規E11 Testsの初期lifecycleはenhancement、恒久RegressionへのPROMOTEは独立判断。E11中の全repo Test移動禁止。
-- Pxxは20 Package reportにcheckpoint full SHA、実path/command、DD ID、fixture/lock/seed/Backend・Observed結果、PASS/FAIL/BLOCKEDを記録。全Pxx完了後Candidate AssemblyがSource chain/実効回帰を監査しFixed Trial Candidate SHAを設定。
-- 独立07担当AgentはProduct/Test/Dependenciesを修正せずTest Item/999を判定。Science evidence未実行をPASSとしない。
-- **STOP/BLOCKED:** Gate06/07/Pxx未Freeze、上流999未PASS、Version/Target/Schema/Design/Science Oracle不足、Backend/Environment不適格、旧v2互換破壊、fixed SHA不明、未承認Owner選択。
-
-## 8. Owner review items (not implementation claims)
-
-Gate境界・Dependency G04、WORK_PACKAGE modeとDAG、Method/Design/Inference/Backend/License、独立DGP/REF/T2/T3・受入閾値、Reuseと科学的不確実性の契約を一括レビューし、差分承認後にだけFreezeする。**Coding Authorization remains NOT_AUTHORIZED.**
+**本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
