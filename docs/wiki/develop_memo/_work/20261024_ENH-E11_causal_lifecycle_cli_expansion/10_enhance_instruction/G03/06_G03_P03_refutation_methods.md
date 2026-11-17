@@ -37,13 +37,93 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **Responsibility:** Method Adapterを担当するClassは `RefutationAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
-## 4. Execution Protocol
+### 3. Embedded Class contracts — normative here
 
-1. Gate/Trial/Package/Source SHAと依存Checkpoint(P01,P02)を確認し、06/07/Pxx Freeze、Coding AuthorizationとBaselineを必須とする。
-2. Strict Study/Question/Design/Graph/Dataset/Method/Estimand/Inference/Backend capabilityを検証。Backend/Target/Optional dependencyへsilent fallbackしない。
-3. **実装本体:** 既存run(input_,output_dir) API不変。M12/M13実装再利用、M14/M15不足Kernel追加、seedと元Effect hash必須。
-4. 出力は適格なTyped Value/Graph/Effect/Diagnostic/Manifestへ正規化し、StagingSinkを通してPublish。実効input hash・Method config・seed・upstream proof・science/technical reasonを保存する。
-5. 正例、invalid config、Method-specific negative、missing dependency、unsupported CI、危険なPrivacy/Filesystem条件を区別。旧v2公開ABIとProduct Regressionを保持。
+次のField/Constructor/Method/Pre-Post/FailureはこのPxxの実装Contractを構成する。DDは由来情報に限り、実装Agentへの仕様補完委譲は禁止。実在Source/ABIは開始時に照合し、Designed Classを既存と断定しない。
+
+### 3.1. `RefutationAdapter` — standalone Class/Method contract
+
+#### 1.7.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M12, P1-M13, P1-M14, P1-M15`。**既存Sourceの実装済みはP1-M12（PLACEBO_TREATMENT）とP1-M13（DATA_SUBSET）のみ。P1-M14（RANDOM_COMMON_CAUSE）とP1-M15（BOOTSTRAP）は本Class/Facadeでの新規実装が必要で、既存機能と称さない。 **再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.7.2. フィールド
+
+**既存ABI契約:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
+
+#### 1.7.3. Constructor / Factory
+
+**既存ABI契約:** ariadne.scientific.refutation.adapter.RefutationAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。typed Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
+
+#### 1.7.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `run(self, input_: RefutationInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **既存v2公開API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.7.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M12` | placebo treatment | 事前指定置換ルール、null診断、再現seed |
+| `P1-M13` | data subset | Subset規則、sample/support、差分の解釈 |
+| `P1-M14` | random common cause | 摂動DGP/seed、条件付き安定性 |
+| `P1-M15` | bootstrap refutation | resampling unit/CI可用性、同一DGP |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本PackageのMethod固有契約に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.7.6. I/O・連携・失敗処理
+
+既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は共通の純粋計算Kernelを抽出する互換Bridgeから再利用し、新Portが旧Path writerを直接呼んでStaging制約を迂回してはならない。旧v2は従来のPath出力、新型付きAdapterは`StagingArtifactSink`だけに書く。旧DTOからの無検証CASTは禁止。Scientific Negativeとtechnical errorを分離。
+
+#### 1.7.7. 検証
+
+`DD-E11-METH-P112`（`P1-M12`）、`DD-E11-METH-P113`（`P1-M13`）、`DD-E11-METH-P114`（`P1-M14`）、`DD-E11-METH-P115`（`P1-M15`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本PackageのMethod別DGP/NEG/REF一覧とFocused Verificationを優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 3.2. `DiagnosticPort` — standalone Class/Method contract
+
+#### 5.4.1. 識別情報・責務
+
+**Protocol配置：ariadne.scientific.ports.causal.DiagnosticPort。** 既存Product `ScientificCorePort`のv2メソッドを保持し、旧APIと型付きPortは共通科学計算を用いる互換Bridgeで接続する。
+
+#### 5.4.2. フィールド
+
+N/A：Protocol自身はinstance fieldを所有しない。
+
+#### 5.4.3. Constructor / Factory
+
+N/A：Protocolに具体Factoryはない。Concreteの依存関係注入はAdapterの責務。
+
+#### 5.4.4. メソッド
+
+```python
+class DiagnosticPort(Protocol):
+    def run(self, request: ValidatedDiagnosticRequest, *, sink: StagingArtifactSink) -> DiagnosticOutcome: ...
+```
+
+#### 5.4.5. 処理仕様
+
+診断結果を型付きで正規化し、未検証Science PASSにしない。科学的PreconditionはWeb/CLI共通であり、CLI optionやHTTP状態ではない。
+
+#### 5.4.6. I/O・連携・失敗処理
+
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+
+#### 5.4.7. 検証
+
+DD-E11-METH-P101〜P313。
+
+## 4. Required execution — method-specific coding order (G03/P03)
+
+1. **Entry/preflight:** G03/G02 upstream canonical 999、Frozen06/07/Pxx、Owner Coding Authorization、Source/lock SHA、依存Pxx checkpointを確認。Method×Operation×Design×Estimand×Inference×Backendをstrictに検証し、失敗時はtyped negativeまたはtechnical errorを返す。
+2. 既存`RefutationAdapter.run(input_, output_dir)`は公開Product ABIとして変更せず、typed DiagnosticPortからのbridgeを別責務として配置。
+3. `P1-M12` Placeboは元Effect/Design hashを固定して置換機構/seedを明示。`P1-M13` Subsetは選定前のRuleと支持条件、`P1-M14` random common causeは扰動DGP/seed、`P1-M15` bootstrapは再標本化単位/繰返し/CIの適格性を記録。
+4. Refutation統計量・差分とその科学的解釈を分け、refutationで有意差がなかったことを因果識別の証明にしない。
+5. **Postconditions:** Placebo/Subsetting/Random common cause/Bootstrapは変更条件とベースEffect hash、Seed/Resampling Unitを固定。検定結果≠因果識別。
+6. **Publication & compatibility:** Kernel結果をtyped portable Effect/Diagnosticに正規化し、G01のStagingSink/Publisherを使用。自己publish、Resultへのraw model/行データ混入、未承認row export、旧v2 API変更、silent Backend fallbackは禁止。
+7. **Error boundaries:** illegitimate negative/unsupported CI, invalid config, numerical nonconvergence, missing dependency, FS/Policy denialを別Status/Reasonとし、Technical SUCCESSからScience PASSを推論しない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -67,6 +147,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 TestはLifecycle（enhancement/regression/characterization/benchmark/support/legacy）とLayer（unit/contract/integration/frontend/browser_e2e）を独立分類。新規は`tests/enhancement/enh_e11/g03/<layer>/`に原則配置、実Path/command/pytest collectionは40 Operatorがcurrent checkoutからdiscover。受入07をpathの文字列で置き換えない。Mock-onlyでreal Backend/FS/ScienceをPASSにしない。
 
+### 6.1. Method-specific acceptance and observation
+
+- §5の各Methodに対しDGP/NEG/独立REF/DD IDをすべて実行義務として追跡する。登録IDがあることはTest fixtureが実在・PASSしたことを意味しない。
+- **Required test semantics:** 既存`RefutationAdapter.run(input_, output_dir)`は公開Product ABIとして変更せず、typed DiagnosticPortからのbridgeを別責務として配置。 `P1-M12` Placeboは元Effect/Design hashを固定して置換機構/seedを明示。`P1-M13` Subsetは選定前のRuleと支持条件、`P1-M14` random common causeは扰動DGP/seed、`P1-M15` bootstrapは再標本化単位/繰返し/CIの適格性を記録。 Refutation統計量・差分とその科学的解釈を分け、refutationで有意差がなかったことを因果識別の証明にしない。
+- Schema+Method validation（unit）、Class.Port/Result provenance（contract）、実有効Backend/CLI/Publisher/旧v2（integration）を区別。Independent scientific DGP/Oracleは適格な真値から導出し、Estimator自己出力をReferenceにしない。
+- Evidenceにsource/lock/fixture SHA、Method/Estimand/Inference、positive+negativeのexpected/observed、実効Backend/API/config/seed、collect済path/command/Resultを残す。Filesystem/科学証拠が未取得ならBLOCKED、期待値緩和によるPASSは禁止。
+
 ## 7. Checkpoint / Handoff / Stop
 
 **Package Done:** 実SourceのClass/Method追加・Reuse・正例/負例/typed result/被影響Product Regression、focused test actual command/result、DD/Method coverage、Diff/Checkpoint full SHA、20 Package Status Reportを完備。科学的実測が未完ならScience PASSと報告しない。
@@ -74,3 +161,9 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Next:** P06。Pxx完了をGate 999 PASSにしない。
 
 **STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+
+
+## 8. Self-contained freeze review boundary
+
+- 本文§3で必要なClassのConstructor・Field・公開Method・処理責務、§4で実装順序/分岐、§5〜6でMethod別のScience/Testを保持する。外部DDやGate06を読ませて不足仕様を推測させない。
+- **未確定事項:** 既存RefutationAdapter ABI Bridgeと各Methodのresampling・統計判定。 未解決のBackend API、Method Config、DGP/NEG/Reference/quantitative Science、Owner Decisionは該当MethodをBLOCKEDとし、Freeze前に閉じる。
