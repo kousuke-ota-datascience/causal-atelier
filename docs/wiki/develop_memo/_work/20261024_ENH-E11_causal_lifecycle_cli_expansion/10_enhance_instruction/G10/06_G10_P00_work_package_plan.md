@@ -4,7 +4,7 @@
 **Class:** Planning/Operator Artifact, not Coding Agent's normative package  
 **Plan status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
 **Gate06:** [Implementation Contract](06_Ariadne_ENH-E11_G10_implementation_instruction.md)  
-**Gate07:** NOT_CREATED / NOT_FROZEN  
+**Gate07:** [Independent Verification Draft](07_Ariadne_ENH-E11_G10_test_instruction.md) / DRAFT / NOT_FROZEN / TESTS_NOT_RUN  
 **Execution mode proposal:** WORK_PACKAGE / P01,P02,P03,P04,P05  
 **Upstream dependency proposal:** G01 PASS, G02 PASS, G03 PASS, G04 PASS, G05 PASS, G06 PASS, G07 PASS, G08 PASS, G09 PASS。未承認のEdgeとしてまとめReviewする。
 

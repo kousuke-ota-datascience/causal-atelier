@@ -4,9 +4,9 @@
 **Class:** Planning/Operator Artifact, not Coding Agent's normative package  
 **Plan status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
 **Gate06:** [Implementation Contract](06_Ariadne_ENH-E11_G07_implementation_instruction.md)  
-**Gate07:** NOT_CREATED / NOT_FROZEN  
+**Gate07:** [Independent Verification Draft](07_Ariadne_ENH-E11_G07_test_instruction.md) / DRAFT / NOT_FROZEN / TESTS_NOT_RUN  
 **Execution mode proposal:** WORK_PACKAGE / P01,P02,P03  
-**Upstream dependency proposal:** G02 PASS。未承認のEdgeとしてまとめReviewする。
+**Upstream dependency proposal:** G01 PASS, G02 PASS。未承認のEdgeとしてまとめReviewする。
 
 ## 1. Gate semantic acceptance
 
