@@ -43,7 +43,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ## 6. Required implementation — security and transaction contracts
 
-### 6.1. Trusted local OS capability (30_60 `10 / 23_41 `4 / REF02–04, PRIV03/04/06)
+### 6.1. Trusted local OS capability (30_60 §10 / 23_41 §4 / REF02–04, PRIV03/04/06)
 
 **Types:** `ariadne.shared.local_fs.TrustedLocalRoot` and `LocalPrincipal` must represent the effective OS subject and verified root-dirfd/owner/ACL/mount information, not an arbitrary Path or caller self-assertion. CLI composition root owns factory and OS verification; `LocalRunContext` later consumes these verified capabilities.
 
@@ -51,7 +51,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 **Secure operations:** Open each relative path under verified dirfd with `openat2` (restricted resolution) or correct component-by-component `openat/O_NOFOLLOW` equivalent. Validate regular-file type, mount/owner and opened-FD identity. Reject traversal, symlink changes, hardlink-based unexpected exposure and path replacement. A lexical check is insufficient. Never materialize an absolute untrusted path and reopen by name.
 
-### 6.2. `ContentReferencePort.verify` and `LocalContentReferenceAdapter` (30_60 `10 / REF01–04)
+### 6.2. `ContentReferencePort.verify` and `LocalContentReferenceAdapter` (30_60 §10 / REF01–04)
 
 **App Port module:** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`; **CLI Concrete:** `ariadne.interfaces.cli.local_causal.content_io.LocalContentReferenceAdapter`. Public signature:
 
@@ -63,7 +63,7 @@ No Port mutable Instance Fields. Concrete receives verified root on each call; n
 
 **Failure:** invalid root/owner/ACL/mount, symlink/hardlink/race, non-regular file, changed inode or actual bytes/hash/size mismatch, missing file, unreadable data -> typed INPUT/SECURITY (CLI exit3), never SCI negative. No I/O writes. Stale verification is not authorization to write outputs.
 
-### 6.3. Application Port facade (30_62 `8.2 / PUB01–10, READ01–07)
+### 6.3. Application Port facade (30_62 §8.2 / PUB01–10, READ01–07)
 
 ~~~python
 # ariadne.capabilities.causal.ports.local_io
@@ -75,7 +75,7 @@ def verify(self, *, root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun: 
 
 Publisher facade creates/binds **one** run-scoped `LocalArtifactPublisher` to `StagingArtifactSink`; `seal` delegates to its `validate` and `publish` to its `commit`. Do not implement a second staging/commit transaction inside the facade. Scientific code sees only `StagingArtifactSink` Protocol (`ariadne.scientific.ports.artifacts`) and never receives final `runs/` path or CLI Concrete type. Reader Port delegates to `LocalManifestReader.read_run`. Runtime type/ownership of sink and bundle must match same run_id, request_hash and root; cross-run substitution rejects.
 
-### 6.4. `LocalArtifactPublisher` (30_62 `3 / PUB01–10)
+### 6.4. `LocalArtifactPublisher` (30_62 §3 / PUB01–10)
 
 **Module:** `ariadne.interfaces.cli.local_causal.publication`. A publisher instance is **run-scoped**, unlike stateless Reader.
 
@@ -110,7 +110,7 @@ Publisher facade creates/binds **one** run-scoped `LocalArtifactPublisher` to `S
 
 **Race/indeterminate:** On `EEXIST`, never overwrite; read back existing run and reuse only if request hash **and every artifact/manifest/privacy invariant** match. Different request hash -> `RUN_ID_CONFLICT`. Unsupported syscall/FS (ENOSYS/EINVAL/EOPNOTSUPP/EXDEV) -> typed failure, not fallback. Rename success but fsync/readback fault or indeterminate syscall outcome -> `PUBLICATION_INDETERMINATE`, no deletion, second rename, auto-repair or false COMMITTED. If uncommitted pre-rename failure, `abort` may isolate staging safely.
 
-### 6.5. `LocalManifestReader` (30_62 `5 / READ01–07)
+### 6.5. `LocalManifestReader` (30_62 §5 / READ01–07)
 
 **Module:** `ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader`. Stateless: **no required Instance Fields**, `__init__()`, caller supplies verified root per invocation.
 

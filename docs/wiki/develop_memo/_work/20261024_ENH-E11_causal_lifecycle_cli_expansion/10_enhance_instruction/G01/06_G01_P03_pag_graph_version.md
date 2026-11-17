@@ -41,7 +41,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ## 6. Required implementation — Graph semantics and Version provenance
 
-### 6.1. `GraphEvidence` / `GraphSemanticsValidator` — 30_61 `1,6,7 / GRAPH01,03,04
+### 6.1. `GraphEvidence` / `GraphSemanticsValidator` — 30_61 §1,6,7 / GRAPH01,03,04
 
 **Class/Module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`; immutable value distinct from Product Entity. Instance fields:
 

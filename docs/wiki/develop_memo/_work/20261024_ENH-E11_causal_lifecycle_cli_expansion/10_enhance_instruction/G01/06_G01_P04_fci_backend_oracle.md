@@ -43,7 +43,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ## 6. Required implementation — capability, FCI and science evidence
 
-### 6.1. `MethodCapabilityRegistry` (30_62 `2 / CAP01,04,05)
+### 6.1. `MethodCapabilityRegistry` (30_62 §2 / CAP01,04,05)
 
 **Class/module:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`. Immutable Constructor fields:
 
@@ -65,7 +65,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 **resolve flow:** approved selected Method (`P1-M06`), explicit Backend `causal-learn` and declared eligible profile -> effective installed distribution/ABI, relevant extra, chosen CI, inference/analysis mode and API probes -> immutable capability record. Backend default or `pyproject.toml` declaration does not establish runtime availability. Do not use StageRunnerRegistry as second Method registry. Unsupported Method/Backend/version -> typed nonavailable/unsupported, never silent fallback or import unrelated method. `load_adapter` alone lazy-imports approved optional engine; a missing import changes only selected Method's availability, not legacy startup.
 
-### 6.2. `BackendCapabilityRecord` and `MethodCapabilityPort` (30_62 `7/8.1; CAP04/05)
+### 6.2. `BackendCapabilityRecord` and `MethodCapabilityPort` (30_62 §7/8.1; CAP04/05)
 
 **Record module:** `ariadne.scientific.capabilities.BackendCapabilityRecord`. Immutable fields `method_id`, `backend_id`, `distribution_version`, `adapter_version`, `api_signature_hash`, `extra`, `profile`, `available` and `reason`. Construct from *effective observed* versions/probes; no fake defaults. Method `check(self, request: ValidatedCapabilityRequest) -> typed compatibility decision`; pure request-vs-capability assertion.
 
@@ -73,7 +73,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 **Failure:** `UNSUPPORTED_COMBINATION` for invalid user request (CLI exit2); Backend missing/incompatible distribution/API/optional import => typed unavailable/ENGINE (CLI exit4); no scientific negative or PASS inferred from capability response. Save effective Backend/version/API probe evidence in eventual Manifest via P05.
 
-### 6.3. `DiscoveryPort` and selected-method dispatch (30_61 `5.5 / DISC01–03)
+### 6.3. `DiscoveryPort` and selected-method dispatch (30_61 §5.5 / DISC01–03)
 
 **Protocol module:** `ariadne.scientific.ports.causal.DiscoveryPort`; no Protocol Instance Fields or direct Product DB/FS.
 
@@ -87,7 +87,7 @@ def discover(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactS
 
 **Outcome:** `ariadne.causal.discovery.contracts.DiscoveryGraphOutcome` is either immutable valid `GraphEvidence` (P03) or typed legitimate scientific Graph-negative with nonempty reasons. Technical Backend exception, malformed Graph, schema or input is a technical failure, **not** an alternate "negative scientific discovery." Artifact output goes to `StagingArtifactSink` only; no write to final `runs/`.
 
-### 6.4. `FciDiscoveryAdapter` exact signatures and Instance Fields (30_63 `1.3/4.4; METH-P106)
+### 6.4. `FciDiscoveryAdapter` exact signatures and Instance Fields (30_63 §1.3/4.4; METH-P106)
 
 **Class/module:** `ariadne.scientific.causal_methods.discovery.FciDiscoveryAdapter`. Instance Fields: `method_descriptor: MethodDescriptor`, `backend_factory: BackendFactory`, `policy: ScientificEligibilityPolicy`. Validated per-run ScientificContext belongs to request, **not** reusable instance field.
 

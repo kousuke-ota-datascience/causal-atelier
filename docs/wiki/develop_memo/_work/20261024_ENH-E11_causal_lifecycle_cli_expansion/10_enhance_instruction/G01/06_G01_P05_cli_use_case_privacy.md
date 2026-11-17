@@ -44,7 +44,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ## 6. Required implementation — orchestration, Privacy and CLI
 
-### 6.1. `LocalRunContext` and trusted CLI composition (30_62 `1.2/1.3)
+### 6.1. `LocalRunContext` and trusted CLI composition (30_62 §1.2/1.3)
 
 **Module:** `ariadne.capabilities.causal.local_execution`. An immutable Context with fields:
 
@@ -57,7 +57,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 Only CLI composition root creates Context from verified capabilities. The User-supplied `--output-root` path is **not** itself a TrustedLocalRoot; reject unsafe root before using it. Input ContentRefs and output Bundle belong under same verified root but disjoint relative keys. Never import CLI Concrete into Application, never persist row/credential secrets in Context/Manifest. P05 refuses row release even when an anchor is present.
 
-### 6.2. `LocalCausalUseCase` field/constructor contract (30_62 `1 / RUN01,03,04,06,07)
+### 6.2. `LocalCausalUseCase` field/constructor contract (30_62 §1 / RUN01,03,04,06,07)
 
 **Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`; stateless reusable Application orchestration. Only immutable Constructor-injected Port fields:
 
@@ -115,7 +115,7 @@ def run(self, spec: ValidatedStudy, context: LocalRunContext) -> LocalRunOutcome
 
 **Operation dispatch:** Other operations (`IDENTIFY/ESTIMATE/REFUTE/SENSITIVITY/DIAGNOSE`) have defined ports but are **not implemented in G01**. Reject them as typed `UNSUPPORTED_COMBINATION` before anything executes, not as successful fallback to FCI. Subsequent Gate implementations will use `IdentifierPort/EstimatorPort/DiagnosticPort` and 23_42 Bundle matrix; preserve constructor API now without implementing their scientific methods.
 
-### 6.5. `LocalPolicyVerifierPort` / `LocalPrivacyPolicyPort` and Concrete (30_62 `6/8.4; PRIV01–06)
+### 6.5. `LocalPolicyVerifierPort` / `LocalPrivacyPolicyPort` and Concrete (30_62 §6/8.4; PRIV01–06)
 
 **Port modules:** `ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort` and `ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`. Concrete `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy`, **stateless**, `__init__(self) -> None`, no per-run Instance Fields. Effective Principal/Root/Policy are call inputs, not stored between runs.
 
@@ -132,7 +132,7 @@ def filter_export_columns(self, frame_schema: ColumnSchema, *,
 
 **Release invariant:** neither Publisher staging nor stdout/stderr/log stores individual rows/secret raw data; input Dataset may contain rows but only aggregate Graph/Diagnostics/Status is published. Test report should not contain row-level fixture payloads.
 
-### 6.6. CLI `command.main` and version compatibility (30_62 `8.5; RUN06/07, PUB10/MAN06/READ06)
+### 6.6. CLI `command.main` and version compatibility (30_62 §8.5; RUN06/07, PUB10/MAN06/READ06)
 
 **Module/entrypoint:** `ariadne.interfaces.cli.local_causal.command.main(argv: list[str]|None) -> int` registered **only** as new `ariadne-causal-local` in `pyproject.toml`. Preserve old `ariadne-identify`, `ariadne-estimate`, `ariadne-refute`, `ariadne-sensitivity`, legacy `causal-analysis-spec/2`, `CliManifest(manifest_version="2.0")` and Product DB/Web/Worker path.
 

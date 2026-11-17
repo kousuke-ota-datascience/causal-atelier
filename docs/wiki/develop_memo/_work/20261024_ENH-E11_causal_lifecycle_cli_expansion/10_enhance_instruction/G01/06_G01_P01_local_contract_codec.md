@@ -43,7 +43,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ## 6. Required implementation — executable Class contracts
 
-### 6.1. `ContentRef` — 30_60 `11 / REF01–04
+### 6.1. `ContentRef` — 30_60 §11 / REF01–04
 
 **Class/Module:** `ariadne.shared.content_ref.ContentRef`; immutable value. Fields and no implicit defaults:
 
@@ -59,7 +59,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 **Pre/Post:** never open a file or assert content authenticity. A syntactically valid SHA string is not hash verification; `ContentReferencePort.verify(ref,*,root)` in P02 performs FD-bound actual-byte/hash validation. Errors are typed schema/path violations, not successful Ref with warning. No retry or I/O side effects.
 
-### 6.2. `LocalStudySpec` / `ValidatedStudy` — 30_60 `12 / SPEC01–04
+### 6.2. `LocalStudySpec` / `ValidatedStudy` — 30_60 §12 / SPEC01–04
 
 **Module/Class:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`; immutable CLI envelope. Fields: `schema_version:Literal["e11-local-study/1"]`, `run_id:str`, `operation:LocalOperation`, `analysis_mode:AnalysisMode`, `question/design/dataset:ContentRef`, `graph/identification:ContentRef|None`, `estimand:EstimandRef`, `method:MethodRequest`, `inference:InferenceRequest`, `randomness:RandomnessSpec`, `privacy:LocalPrivacySpec`.
 
@@ -67,7 +67,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 **G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false,policy_ref:null}`. Row request is a denial in P05 (exit3); malformed structural combination is exit2. Never fabricate ATE, Effect Result, Identification or Science PASS.
 
-### 6.3. `LocalConfigDecoder` — 30_60 `9 / SPEC01–04
+### 6.3. `LocalConfigDecoder` — 30_60 §9 / SPEC01–04
 
 **Port/Module:** `ariadne.interfaces.cli.local_causal.config_decoder.LocalConfigDecoder`. Protocol has no mutable per-run fields. Concrete can receive immutable schema registry and Method profile selection at composition time. No optional scientific-engine import.
 
@@ -101,7 +101,7 @@ Implement versioned deterministic `e11-json-jcs-rfc8785/1` canonicalization. Inp
 
 Run the repository's `e11_jcs_golden_vectors.json` (7 positive/7 negative) against independent ECMAScript bytes; Python-only roundtripping does not establish cross-language conformance. No UTF normalization that changes the supplied code points.
 
-### 6.5. `LocalRunManifest` — 30_62 `4 / MAN01–06
+### 6.5. `LocalRunManifest` — 30_62 §4 / MAN01–06
 
 **Module/Class:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`; immutable DTO. Logical fields `manifest_version:Literal["e11-local-manifest/1"]`, `run_id`, `operation`, `request_hash`, `lineage` (typed refs), `execution_status` (technical and science independent), `runtime` (actual runtime evidence), `artifacts:tuple[ArtifactDescriptor,...]` and `review`. These are logical groups: public serialized keys must conform to `e11_local_manifest_v1.schema.json`, not a newly invented representation.
 
