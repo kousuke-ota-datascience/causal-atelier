@@ -43,7 +43,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 1.1.7. 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirectedおよびstandalone両Version null、`GRAPH04` Product参照時に親IDが実在すること、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Product GraphVersion整合と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
 
 ## 2. Identification / Estimation
 
