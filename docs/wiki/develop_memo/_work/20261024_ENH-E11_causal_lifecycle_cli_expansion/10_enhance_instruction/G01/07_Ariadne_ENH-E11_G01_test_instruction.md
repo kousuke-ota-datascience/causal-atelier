@@ -18,32 +18,30 @@
 - CLIのExit 0は技術的完了であり、`science_acceptance=PASS`とは違う。テスト合格とScience pass、Unit testとMonte Carloは分離する。
 - **数値検証：** Owner採用のDEC07方針（既知型/serialization一致=100%、stochastic K/FWER=.05、必要R/Compute Budgetは独立Pilotから）を適用する。実効K/R/Computeの架空設定はしない。**Coding Entryは計画設計を完了していれば可能**だが、G01科学的999 PASSを出す前にT2 Pilot→独立PAG reference→T3事前登録が必要。
 
-## 2. テスト配置と実行方法
+## 2. Required verification layers and lifecycle authority — not physical test paths
 
-実装に合わせて次のPathを作る。既存Test Configは`pyproject.toml`の`[tool.pytest.ini_options]`に従う。実行コマンドは**実装後の実行案**であって本書作成時に実行した結果ではない。
+**本07は WHAT のauthority:** Required behavior / DD ID / negative and positive cases / primary proof layer / pass-block-failの根拠。具体的なテストファイル名・配置・実行コマンドは受入条件ではない。ENH-E9 [test architecture handoff](../../../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md)と ENH-E11 40 Operator PolicyがWHERE/HOWを所有する。
 
-```text
-tests/enhancement/enh_e11/g01/
-  unit/test_g01_spec_schema_codec.py
-  unit/test_g01_graph_roundtrip.py
-  component/test_g01_fci_method.py
-  component/test_g01_bundle_reader.py
-  integration/test_g01_atomic_publication.py
-  integration/test_g01_cli.py
-  scientific/test_g01_fci_graph_oracle.py
-```
+**二軸:** Lifecycle = enhancement / regression / characterization / benchmark / support / legacy; verification layer = unit / contract / integration / frontend / browser_e2e。新規G01テストはenhancement lifecycleから開始する。`component` / `scientific`を正規G01 layerと見なさない。`scientific`は対象科学分野または再利用可能なcharacterization/benchmarkの用途であって、このGate固有のテスト階層を増やす根拠ではない。
 
-```bash
-uv sync --frozen
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/unit -q
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/component -q
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/integration -q
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/scientific -q
-uv run --no-sync python -m pytest tests/product/test_cli_contract.py -q
-uv run --no-sync python -m pytest tests/scientific_benchmarks -q
-```
+| G01 Verification Item | Primary verification layer | Mandatory evidence |
+| --- | --- | --- |
+| 07-01/03/04 Study/Graph/JCS pure invariants | unit + contract | exact schema, bytes, lossless, negative |
+| 07-02/05/06 Trusted FD, atomic publication/readback | contract + **real Linux integration** | actual root/OS/FS behavior; mocks alone insufficient |
+| 07-07/11 DISCOVER Bundle, CLI, Privacy | contract + integration | E11 end-to-end no row/Effect, typed status/exit |
+| 07-08 FCI config/API/BK eligibility | contract + effective backend integration | real selected distribution/API and CI execution |
+| 07-09/10 independent MAG/PAG scientific reference | deterministic contract + real backend integration + independent reference evidence | Graph-A compelled/uncertain endpoints, BK/latent negatives |
+| T2 Pilot / T3 stochastic science | preregistered independent scientific verification with executable integration/contract assertions | actual K/R/seed/compute/effect measures, not a mock or orphan benchmark |
+| 07-12 Product v2 compatibility | current existing test suite at its actual current layer + G01 integration regression cases | no change to legacy behavior; keep existing tests in place |
+| Test Item 001 candidate identity | independent provenance audit | exact SHA + actual resolved checkout |
+ 
+**Life-cycle:** A newly authored test that checks old Product behavior remains `enhancement` until a recorded semantic PROMOTE decision. Existing `tests/product/` and other pre-migration suites are acceptable current evidence locations. End-of-ENH-E11 disposition is explicit `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`. Do not create or populate `tests/regression/` just to label an assertion. Full estate migration is ENH-E12+.
 
-`uv sync --frozen`が変更するのは環境であり`uv.lock`更新ではない。Linuxのroot/FS検証とfault injectionはprivate temp rootで実施し、既存データや共有mountを破壊しない。科学的T3で別の資源が必要なときは事前に承認された環境でのみ実行する。
+**CLI-only G01:** No Browser UI journey and **no mandatory Browser E2E**. Scientific correctness belongs to independent MAG/PAG reference and statistical tests, not Browser proof. Real OS/FS and backend must still be exercised.
+
+**Execution evidence:** The 40 Independent Test Agent discovers actual current tests (G01 enhancement first, then relevant existing Product/legacy suites, any approved regression/benchmark sets), verifies their existence, pytest collection and runner/environment, and records actual path/command/candidate SHA/fixture/env and DD IDs **as evidence only**. A past test path is not the 07 normative test authority. Never silently exclude a mandatory DD case because the expected filename is absent: distinguish `BLOCKED` test-side infrastructure/collection issue from `FAIL` demonstrated product violation.
+
+**Execution order:** First pure deterministic/contract assertions, then real filesystem/CLI/backend integration, then independent scientific Oracle and appropriately designed quantitative evidence. Required fixed candidate and independent Gate test rules in `1, `3–6 remain unchanged.
 
 ## 3. Deterministic/Contract Matrix（12件）
 
@@ -60,7 +58,7 @@ uv run --no-sync python -m pytest tests/scientific_benchmarks -q
 | **G01-07-09 GRAPH-A reference** | 小さな**3変数以上**のDAGとlatent付きMAG、Oracle PAGの強制endpointと未確定endpoint、複数seed/依存variant | 独立に導出したPAG/MAG同値類の正解と比較。Backend自身のGraphを教師にしない。DGP母集団truthと推定Graphを分ける | 30_63 `1.3/4.4 `FciDiscoveryAdapter.execute`：METH-P106（GRAPH-A独立Oracle）；30_61 `1：GRAPH01/03 |
 | **G01-07-10 BK and latent negatives** | 2変数のlatent confounderと、BK forbidden edgeが余分な`TAIL`を作る可能性、required/forbidden矛盾 | 2変数だけでlatentを「識別」したと宣言しない、BKに過剰確定があれば拒否/Method not available。BK負例は理由付きで止まり偽PASS 0件 | 30_63 `1.3/4.4 `FciDiscoveryAdapter`：METH-P106（BK負例）；30_61 `1：GRAPH03 |
 | **G01-07-11 CLI error/privacy** | `--check-only`零書込、row flag / Study row requested、bad hash、bad config、backend failure、corrupt readback | exit2/3/4/5をphaseごとに検証。実効principal/root/Policy Anchorの不一致でdenyし、個票・secretのlogs/stdout/staging漏洩0。非Effect科学的負結果と技術失敗を混同しない | 30_62 `1/6/8.5 `UseCase/LocalPrivacyPolicyPort.authorize/command.main`：RUN07、PUB07、PRIV01〜06、READ03 |
-| **G01-07-12 Product & scope regression** | `tests/product/test_cli_contract.py`、既存discovery/identify/estimate/refute/sensitivityとResult v2、G01外Method | legacy`manifest_version=2.0`・旧CLI output semantics不変、Product DB/Web/Worker Source不変、G01外Method変更0 | 30_62 `1/3/4/5/8.5 `command.main/Manifest/Reader`：RUN06、PUB10、MAN06、READ06；30_61 `4：EFF05（旧v2回帰のみ） |
+| **G01-07-12 Product & scope regression** | 現存する旧Product v2 CLI/Scientific Coreテスト群（実効PathはOperatorが発見）、既存discovery/identify/estimate/refute/sensitivityとResult v2、G01外Method | legacy`manifest_version=2.0`・旧CLI output semantics不変、Product DB/Web/Worker Source不変、G01外Method変更0 | 30_62 `1/3/4/5/8.5 `command.main/Manifest/Reader`：RUN06、PUB10、MAN06、READ06；30_61 `4：EFF05（旧v2回帰のみ） |
 
 **具体的な実効コマンドは上記Test Pathの作成後に実行する。** ABI不適合をmockだけで隠すことを禁止。Tests 05/06はReal Linux target filesystemの実際のsystem call pathを観測し、monkeypatchだけでPASSとしない。
 
@@ -115,11 +113,11 @@ defect_or_reason | evidence_relative_key
 
 | AC | MUST acceptance claim | Primary test layer |
 | --- | --- | --- |
-| AC-01 | Study/ContentRef/Version/Method Config strict integrity | UNIT_DOMAIN, COMPONENT |
-| AC-02 | Lossless PAG/GraphVersion and strict JCS hashes | UNIT_DOMAIN |
-| AC-03 | Linux same-FS no-replace atomic publish/readback/privacy | REAL_FS_INTEGRATION |
-| AC-04 | Effective FCI/CI/BK validity and independent MAG/PAG oracle | COMPONENT, SCIENTIFIC |
-| AC-05 | DISCOVER-only status/result semantics; v2 regression | INTEGRATION, REGRESSION |
-| AC-06 | Candidate identity, protected contracts, full evidence | META |
+| AC-01 | Study/ContentRef/Version/Method Config strict integrity | unit + contract; FD security in integration |
+| AC-02 | Lossless PAG/GraphVersion and strict JCS hashes | unit + contract |
+| AC-03 | Linux same-FS no-replace atomic publish/readback/privacy | contract + real Linux integration |
+| AC-04 | Effective FCI/CI/BK validity and independent MAG/PAG oracle | contract + real backend integration + independent scientific evidence |
+| AC-05 | DISCOVER-only status/result semantics; v2 regression | contract + integration; protected legacy suite at current physical location |
+| AC-06 | Candidate identity, protected contracts, full evidence | independent provenance audit, not filesystem test layer |
 
-Test Item 001 = Candidate identity audit; 002〜013 = G01-07-01〜12 in §3; 999 = independent Gate Decision. CLI-onlyでBrowser E2Eは対象外。固定候補/環境/独立Referenceを検証できないならBLOCKED、MUST違反を実証したらFAIL、全MUST実測成立の場合のみPASS。
+Test Item 001 = Candidate identity audit; 002〜013 = G01-07-01〜12 in §3; 999 = independent Gate Decision. Actual Test Path and command exist only in Operator/Execution Evidence, not in the normative AC. CLI-onlyでBrowser E2Eは対象外。固定候補/環境/独立Referenceを検証できないならBLOCKED、MUST違反を実証したらFAIL、全MUST実測成立の場合のみPASS。

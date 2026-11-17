@@ -21,7 +21,7 @@
 
 **対象外：** `P1-M01〜05, P1-M07〜20, P2-*, P3-*`の科学的Method実装（既存Productとの互換回帰は例外）。PAGからの自動識別・効果推定、Temporal PCMCI（G06）、個票CATE／署名付き行認可（G05）、AR推論（G08）、Web/API/Worker/DB、Product migration、正本`docs/wiki/requirement_definition/`、配布・顧客利用判断。
 
-**現行Source照合：** `src/ariadne/causal/discovery/algorithms.py`の`run_pc`はPC専用でありFCI実装ではない。`src/ariadne/causal/discovery/graph.py`はlossless endpointをCSVに正規化できるがE11 GraphVersionの新しいwriterではない。`src/ariadne/interfaces/cli/discovery.py`と`src/ariadne/interfaces/cli/manifest.py`はProduct v2 CLIであり書換禁止。`tests/product/test_cli_contract.py`は回帰必須。`pyproject.toml`はPython`>=3.12,<3.13`、`uv.lock`は`causal-learn 0.1.4.8`を含む。E11新CLI scriptを追加する場合だけ[project.scripts]変更可、既存登録は保持する。
+**現行Source照合：** `src/ariadne/causal/discovery/algorithms.py`の`run_pc`はPC専用でありFCI実装ではない。`src/ariadne/causal/discovery/graph.py`はlossless endpointをCSVに正規化できるがE11 GraphVersionの新しいwriterではない。`src/ariadne/interfaces/cli/discovery.py`と`src/ariadne/interfaces/cli/manifest.py`はProduct v2 CLIであり書換禁止。旧Product v2 CLI contractの継続的な回帰保護は必須（実効Test Pathは40 Operatorがcurrent checkoutからdiscover。既存の旧配置を移行条件にしない）。`pyproject.toml`はPython`>=3.12,<3.13`、`uv.lock`は`causal-learn 0.1.4.8`を含む。E11新CLI scriptを追加する場合だけ[project.scripts]変更可、既存登録は保持する。
 
 ## 2. ディレクトリ・Port・開発順序
 
@@ -51,11 +51,7 @@ src/ariadne/
     manifest.py        # LocalRunManifest value
     privacy.py         # LocalPrivacyPolicy
     manifest_reader.py # Reader/verification
- tests/enhancement/enh_e11/g01/
-    unit/
-    component/
-    integration/
-    scientific/
+  # Gate 06 is NOT a test physical-path authority; placement/discovery belongs to 40 Operator.
 ```
 
 Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; modules named above are the selected design destinations; no parallel Local Domain package. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
@@ -68,7 +64,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`DiscoveryPort.discover`→`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
 | **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicyPort.authorize`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
-**実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
+**実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/contract/integrationの振る舞いを検証し、最後にreal FS・CLIと独立Graph Science証拠を結合する。物理Test Pathの作成・discover・runner選定は40 Operator側で行う。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
 
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
