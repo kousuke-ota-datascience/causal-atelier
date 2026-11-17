@@ -185,3 +185,8 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 | Legacy separation | E11 Local run marker+schemaと旧v2`CliManifest` readerを別dispatchし、旧データの意味を改変しない | v2 regression fixtures、unknown version/fallback negative |
 
 **Status:** `DESIGN_CONTRACT_DRAFT / ADR_AND_JSON_SCHEMA_FREEZE_PENDING / FS_SECURITY_INDEPENDENT_TEST_NOT_RUN`。この表はOwnerの方法論/安全性承認範囲を狭めず、実装済みまたはPASSを意味しない。対応DD：`30_62`§4（Classの7区分）。対象Finding：BD01-F03/04/05/06/07/12。
+
+
+## 11. DEC-PREP02 Owner-approved interface constraints (2026-11-17)
+
+[Decision](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): A/B/C all Option A **ADOPTED**. For IO-E11-01/02/03/06/08/09, normative initial support is non-delegated same-UID owner-controlled trusted root; restricted row export requires both Study authorization and explicit CLI opt-in; shared/CI/container-root/delegated accessible volumes denied until separately approved. Publish must use effective Linux same-FS atomic **no-replace** directory operation and fail closed when not supported. Version identifiers `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1` are adopted; unknown/legacy v2 cannot be silently parsed as E11. §10's 'unfrozen' label now applies to **mechanical schema/signatures/FS proof**, not Owner's selected policy. `OWNER_POLICY_ADOPTED / JSON_SCHEMA_NOT_FROZEN / TESTS_NOT_RUN`.
