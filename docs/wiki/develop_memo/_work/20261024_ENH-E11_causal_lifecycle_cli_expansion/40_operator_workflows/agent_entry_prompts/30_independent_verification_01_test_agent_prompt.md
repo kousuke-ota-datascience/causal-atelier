@@ -223,6 +223,17 @@ UNKNOWN
 
 ---
 
+### 7.1. ENH-E11 Test Architecture — physical discovery / independent evidence
+
+**Authority separation:** 07だけがWHAT（AC, Test Item, DD ID, mandatory primary proof layer）を規定し、本40はWHERE/HOWを所有する。file pathやpytest commandはcheckoutから発見したevidenceであり、07/Pxx/過去Completion Reportの物理Path記載をnormative authorityにしない。テストの独立した二軸は lifecycle = enhancement / regression / characterization / benchmark / support / legacy と verification layer = unit / contract / integration / frontend / browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。
+
+1. **Discover:** Fixed Trial Candidate SHAの現在のcheckoutで最初に `tests/enhancement/enh_e11/<gate>/`（GATE_IDをlowercase化）を探索し、次に必要なlegacy Product suites（`tests/product/`、`tests/integration/`、`tests/scientific/`、`tests/browser_e2e/`）および明示PROMOTE済みの `tests/regression/`、必要なbenchmark/characterizationを調査する。未生成のdirectoryや古いpathを存在したと見なさない。各testのexistence、pytest --collect-only、imports、fixtures/conftest、markers、runner、依存、environmentを実行前に確認する。
+2. **Layer:** G01の新規テストはenhancement lifecycleに属し、純粋Value/Codec→unit、Port・Manifest・独立固定MAG/PAG→contract、実Linux atomic syscall・実FCI・CLI/Privacy→integrationをprimary proofとする。`component/`、`scientific/`を標準Gate-local layerにしない。科学的T2/T3は独立Referenceと実測を要求する。CLI-only G01にはBrowser E2Eは不要。
+3. **既存Product v2:** 旧CLI/Scientific Coreのcurrent invariantは実在する既存suiteを移動せず実行する。Enhancement内でregression-like assertionを追加しても `tests/regression/` へ自動昇格しない。永続不変条件のPROMOTE判断は別のsemantic decision、全repo移行はE12以降。
+4. **Evidence:** Gate Test Item / DD ID / AC / lifecycle / primary layer / resolved actual file / exact collected command / source+fixture+lock SHA / effective OS/FS/backend / observed result / expected / PASS・FAIL・BLOCKED / negative case を残す。必要なテストが未配置・収集不能・実行不能なら `BLOCKED` であり、テストを削除・skippedにしてPASSを作らない。実FSや実Engineの検証をmockだけでPASSとしない。Backend出力で独立PAG oracleを自己定義しない。
+5. **Failure classification:** `PRODUCT_DEFECT / TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN` をevidenceで分離する。Product仕様違反の実証はFAIL候補、test-side / UNKNOWNでproduct正否を判断できなければBLOCKED。**Independent Test Agentはproduction/test code、CI、runner、依存、06/07を修理しない**。別責務のrepair owner/actionを明記し、Human-controlled continuation後に同一Trialを再検証する。E9 G02固有の31修理promptをENH-E11の標準promptにしない。
+6. **Fixed Candidate後:** test-only変更があってもcandidateを自動refreezeしない。差分を `PRODUCT_SEMANTIC_CHANGE / TEST_IMPLEMENTATION_CHANGE / TEST_ORCHESTRATION_CHANGE / TEST_INFRASTRUCTURE_CHANGE / DOCUMENTATION_ONLY` に分類し、product semantic impactを否定できない場合だけcandidate identityをBLOCKEDとする。Test-side evidence commit SHAとProduct Candidate SHAは区別。
+
 ## 8. Prohibited actions
 
 本 Agent は以下を変更してはならない。
