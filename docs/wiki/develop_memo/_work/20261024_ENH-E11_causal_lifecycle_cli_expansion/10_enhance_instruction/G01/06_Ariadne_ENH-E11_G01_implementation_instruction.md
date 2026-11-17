@@ -37,6 +37,7 @@ src/ariadne/
   scientific/capabilities.py           # BackendCapabilityRecord
   scientific/causal_methods/discovery.py # FciDiscoveryAdapter; lazy backend import
   capabilities/causal/local_execution.py  # LocalCausalUseCase
+  capabilities/causal/ports/content_ref.py  # ContentReferencePort; avoid App→CLI import
   capabilities/causal/ports/local_io.py      # Publication/Reader Port facades
   capabilities/causal/ports/local_policy.py  # independent PolicyVerifier Port
   capabilities/causal/ports/local_privacy.py # LocalPrivacyPolicyPort
@@ -44,7 +45,7 @@ src/ariadne/
   interfaces/cli/local_causal/
     study.py           # LocalStudySpec; CLI envelope
     config_decoder.py  # LocalConfigDecoder
-    content_io.py      # ContentReferencePort; TrustedRoot
+    content_io.py      # LocalContentReferenceAdapter: concrete implements App Port
     command.py         # ariadne-causal-local entrypoint
     publication.py     # TrustedRoot/staging/no-replace
     manifest.py        # LocalRunManifest value
@@ -62,9 +63,9 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
 | **G01-P01** | 30_60 §11/12：REF01〜04・SPEC01〜04；30_61 §1：GRAPH01/03/04（CLI Decoder=30_60 §9）；30_62 `4：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
-| **G01-P02** | 30_62 `3/5：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
-| **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `4：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
-| **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
+| **G01-P02** | 30_62 `3/5：PUB01〜09、READ01〜07、PRIV03/04/06 | `LocalContentReferenceAdapter(ContentReferencePort).verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
+| **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `4：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有。CLI standaloneのVersion/parent=null）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`DiscoveryPort.discover`→`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
 | **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
 **実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
@@ -94,7 +95,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 1. `ContentRef.from_payload → LocalConfigDecoder.decode`：入力のVersion/Schema/Methodを検証した後、同一Rootのfile bytes/lineageをverifyする。`ValidatedStudy`を経由せずApplicationを呼び出さない。
 2. `LocalCausalUseCase.preflight`：実行前にStudy/Question/Design/CI Eligibilityと安全なRootを調べるが、Fit・Staging・Manifest書込なし（07-11）。`run`はFCIが返すGraphとScience結果の型を維持。
-3. `FciDiscoveryAdapter.execute`：Dataset列順↔Backend node IDを検査。source/target順を換えればmarkも同時swap。曖昧なPAG endpointの方向を創作しない（07-03/09/10）。
+3. `DiscoveryPort.discover`はSelected Methodに束縛されたConcrete経由で`FciDiscoveryAdapter.execute`を呼ぶ：Dataset列順↔Backend node IDを検査。source/target順を換えればmarkも同時swap。曖昧なPAG endpointの方向を創作しない（07-03/09/10）。
 4. `LocalArtifactPublisher`：`begin→stage_bytes→validate(seal)→commit`が唯一の書込経路。`renameat2(RENAME_NOREPLACE)`と両parent sync＋独立Reader readback後だけCOMPLETED。abortはrename**前**だけ、結果不定時の削除/repair禁止（07-05/06）。
 5. `LocalRunManifest/Reader`：DISCOVERではEffect Resultを作らず、`manifest.schema_dispatch.result=null`。実ファイルBytes HashとGraph意味Hashを区別し、StatusのScience NOT_EVALUATEDを誤ってPASSに変更しない（07-04/06/07）。
 

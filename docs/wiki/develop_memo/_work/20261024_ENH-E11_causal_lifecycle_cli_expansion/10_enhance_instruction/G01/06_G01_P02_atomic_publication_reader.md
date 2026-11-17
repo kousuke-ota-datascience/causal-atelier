@@ -21,7 +21,7 @@ private TrustedRootとimmutable multi-artifact run publicationを実FSで安全�
 G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分離し旧CLI/Web/API/DB/Workerは改変しない。strict version/Method/EstimatorとJCSのハッシュ対象を検証し、PAGをDAG/ATEへ変換しない。OS root/Privacy/Atomic Publishの不適格はfail-closed、SCI不確実性をPASSに変換しない。Coding Authorization前の実装は禁止。
 
 ## 3. In scope
-`ContentReferencePort.verify`はdirfd/O_NOFOLLOW等で中間symlink/path race拒否、同一FDでbytes SHA。`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`へ委譲し、0600/0700・file/dir fsync・Linux同一FS `renameat2(RENAME_NOREPLACE)`・公開後独立readbackを必須とする。EEXISTは完全readbackで同request hashの場合だけreuse。post-rename不定時の削除・上書き禁止。`LocalManifestReader.read_run`はMarker→Manifest→全Artifact/Lineage/Privacyのhash/type/size。
+Application Port `ContentReferencePort.verify`をCLI Concrete `LocalContentReferenceAdapter`が実装し、dirfd/O_NOFOLLOW等で中間symlink/path race拒否、同一FDでbytes SHA。`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`へ委譲し、0600/0700・file/dir fsync・Linux同一FS `renameat2(RENAME_NOREPLACE)`・公開後独立readbackを必須とする。EEXISTは完全readbackで同request hashの場合だけreuse。post-rename不定時の削除・上書き禁止。`LocalManifestReader.read_run`はMarker→Manifest→全Artifact/Lineage/Privacyのhash/type/size。
 
 ## 4. Explicitly out of scope
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
@@ -32,7 +32,7 @@ Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends o
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
 ## 6. Required implementation
-`ContentReferencePort.verify`はdirfd/O_NOFOLLOW等で中間symlink/path race拒否、同一FDでbytes SHA。`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`へ委譲し、0600/0700・file/dir fsync・Linux同一FS `renameat2(RENAME_NOREPLACE)`・公開後独立readbackを必須とする。EEXISTは完全readbackで同request hashの場合だけreuse。post-rename不定時の削除・上書き禁止。`LocalManifestReader.read_run`はMarker→Manifest→全Artifact/Lineage/Privacyのhash/type/size。
+Application Port `ContentReferencePort.verify`をCLI Concrete `LocalContentReferenceAdapter`が実装し、dirfd/O_NOFOLLOW等で中間symlink/path race拒否、同一FDでbytes SHA。`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`へ委譲し、0600/0700・file/dir fsync・Linux同一FS `renameat2(RENAME_NOREPLACE)`・公開後独立readbackを必須とする。EEXISTは完全readbackで同request hashの場合だけreuse。post-rename不定時の削除・上書き禁止。`LocalManifestReader.read_run`はMarker→Manifest→全Artifact/Lineage/Privacyのhash/type/size。
 
 ## 7. Focused verification
 
