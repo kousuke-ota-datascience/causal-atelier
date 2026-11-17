@@ -128,9 +128,9 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | ENV-ECONML | `e11-econml` | method-specific CATE/DRIV、CI availability |
 | ENV-TIGRAMITE | `e11-temporal` | PCMCI系、端点/lag、顧客配布Legalは別判定 |
 | ENV-COMBINED | 上記3 extras | universal lock、共存、旧CLI回帰 |
-| ENV-RD | `e11-rdd`（法務・配布条件付き） | RD Backend・GPLの個別採否と法務Gate必要 |
+| ENV-RD | `e11-rdd`（法務・配布条件付き） | RD Backend・GPLの配布可否を受領者単位で判定 |
 
-`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版、SBOMは成果物集合、Legal Gateは受領者別の配布可否。全Profileはfresh isolated venvで `uv lock --check / uv sync --locked / uv pip check` とMethod API smokeを実施する。未実測版を実効値として出力しない。GPLに係る特定顧客へのDeliveryは法務承認前 `CUSTOMER_DELIVERY_BLOCKED` とする。
+`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版、SBOMは成果物集合、Legal Reviewは受領者別の配布可否。全Profileはfresh isolated venvで `uv lock --check / uv sync --locked / uv pip check` とMethod API smokeを実施する。未実測版を実効値として出力しない。GPLに係る特定顧客へのDeliveryは法務承認前 `CUSTOMER_DELIVERY_BLOCKED` とする。
 
 ## 8. 受入契約（IF-01）
 
@@ -145,9 +145,9 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | IF-E11-07 | 全Profile、lock/capability、no optional import at core startup | unavailable隔離、Combined経路と旧v2 |
 | IF-E11-08 | technical exitとscientific negative、stderr/stdout非漏洩 | Science FAILをCLI error扱い・Science PASS偽装禁止 |
 | IF-E11-09 | manifest/version/effective API/hash/readback | corrupted artifactやpartial publishを成功扱いしない |
-| IF-E11-10 | method-specific DGP/NEG/REF/ACとG01〜G10追跡 | 同名別Estimandや未検証CIの自動代替禁止 |
+| IF-E11-10 | method-specific DGP/NEG/REF/ACの網羅 | 同名別Estimandや未検証CIの自動代替禁止 |
 
-対応要件：FR-185〜203、NFR-029〜036、Scientific AR-028〜044のうち本Interfaceが担う箇所。全44件の責務対応は[BD-01 Trace](../bd01_review/91_requirement_architecture_trace.md)で確認する。Implementation ContractとIndependent Science Gateは別判定とする。
+対応要件：FR-185〜203、NFR-029〜036、Scientific AR-028〜044のうち本Interfaceが担う箇所。Interface Contractと独立科学的受入は別の判定である。
 
 ### Publication・Privacy・Errorの恒久契約
 

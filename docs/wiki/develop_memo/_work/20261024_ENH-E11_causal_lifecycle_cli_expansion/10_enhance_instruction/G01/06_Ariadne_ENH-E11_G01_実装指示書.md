@@ -59,7 +59,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
 
-正本となる詳細設計：[30_61 Domain/Port `2〜4/`16](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_e11_local_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7/`14](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`10](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
+正本となる詳細設計：[30_61 Domain/Port `2〜4/`8.1](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_e11_local_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
 
 | Class.Method / DD検証ID | Precondition・必須動作（06） | Postcondition／失敗 | 07 |
 |---|---|---|---|
@@ -70,10 +70,10 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_62 `3 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
 | 30_63 `6.3 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
 | 30_62 `4 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
-| 30_62 `5.1/14 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
-| 30_62 `5.2/14 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
-| 30_62 `6/14 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
-| 30_62 `7/14 `interfaces.cli.e11.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
+| 30_62 `5.1/5.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
+| 30_62 `5.2/5.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
+| 30_62 `6/6.8 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
+| 30_62 `7 `interfaces.cli.e11.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
 **G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph revision factoryだけG01）、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
 

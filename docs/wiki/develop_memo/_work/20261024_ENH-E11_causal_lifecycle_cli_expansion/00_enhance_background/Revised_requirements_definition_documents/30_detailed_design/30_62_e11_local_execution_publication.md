@@ -32,10 +32,10 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 
 ### 2.3. Constructor / Factory
 
-候補：`causal.local_application.use_case.E11LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
+配置：`causal.local_application.use_case.E11LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
 注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
-- **Proposed signature:** `__init__(self, *, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
+- **Constructor signature:** `__init__(self, *, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. Any actual exception class/type is .
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
@@ -84,7 +84,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | Negative | wrong version, hash mismatch, Graph uncertainty, unsupported CI, unavailable extra, no row export flag, publication failure |
 | Regression | old v2 identify/estimate/refute/sensitivity and existing Product Stage runner unchanged |
 
-**Trace:** DD-E11-RUN01〜RUN07、FR-185/187/201/202/203、NFR-029/032/036、AR-029/034/040、BD01-F04/F06/F07/F12。.
+**検証契約:** DD-E11-RUN01〜RUN07。関連要件：FR-185/187/201/202/203、NFR-029/032/036、AR-029/034/040。
 
 ### 2.8. Operation別Bundle contract
 
@@ -101,7 +101,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.2. フィールド
 
-候補：`causal.local_application.capability_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
+配置：`causal.local_application.capability_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
 
 | Field | Type | 生成元 | 可変性／制約 |
 | --- | --- | --- | --- |
@@ -112,7 +112,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.3. Constructor / Factory
 
-- **Proposed** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
+- **Constructor:** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
 - **Factory** is a collaborator of Registry, **not an additional implemented Class** by implication. 独立Factoryを設ける場合も同じMethod×Backend×Inference不変条件に従う。
 - **Failure:** Invalid registry/duplicate ID/unsupported policy fails during preflight without selecting unrelated Method or importing missing Backend.
 
@@ -151,7 +151,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
 
-**Trace:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。ENV smoke/Science benchmarks are .
+**関連ID:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。ENV smoke/Science benchmarks are .
 
 ### 3.8. Capability FacadeとRegistryの役割
 
@@ -164,7 +164,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 - **Module / Class:** `interfaces.cli.e11.publication.LocalArtifactPublisher`（提案。Local契約）
 - **責務:** 同一local filesystem上の複数Artifactをrun単位で検証・原子的に公開し、readback成功を確認する。新E11のLocal authorityでありProductの`ArtifactStorePort`ではない。
 - **責務外:** Scientific Estimator、HTTP/DB、顧客配布Legal、外部FSのcross-device atomicity。
-- **設計参照:** 23_42 §2/6/7、BD01-F03/F05/F06/F12。Product ArtifactStorePortは別のauthorityである。新Port/Schemaの最終freezeは未実施。
+- **関連設計:** 23_42 §2/6/7。Product ArtifactStorePortは別のauthorityである。
 
 ### 4.2. フィールド
 
@@ -180,7 +180,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.3. Constructor / Factory
 
-- **Proposed** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS/ACL/mount/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
+- **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS/ACL/mount/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
 - **前提:** `run_id`にseparator/「.」「..」を含まない、request hashはcanonical versionと一致。Trusted Root所有者／同一FS／OS principalの確認に失敗したらstaging生成しない。
 
 ### 4.4. メソッド
@@ -210,7 +210,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 - **Caller:** E11LocalCausalUseCase。`StagingArtifactSink`はScientific Adapterにのみ渡し、final `runs` pathを渡さない。
 - **Artifact schema:** 23_42のResult、Graph、Parquet、Manifest、commit marker。それぞれrelative POSIX key＋media_type＋size＋SHA256＋Privacy class。
 - **Transaction:** local same-FS staging → validate → no-clobber directory publication → durable parent sync → readback。DB UoWやProduct ArtifactStoreのtransactionとは無関係。
-- **Failure classes（意味）:** Invalid path、Permission、HASH_MISMATCH、SCHEMA_INVALID、RUN_ID_CONFLICT、NON_ATOMIC_FILESYSTEM、PUBLICATION_FAILED、READBACK_FAILED。実Python Exceptionの命名は。
+- **Failure classes（意味）:** Invalid path、Permission、HASH_MISMATCH、SCHEMA_INVALID、RUN_ID_CONFLICT、NON_ATOMIC_FILESYSTEM、PUBLICATION_FAILED、READBACK_FAILED。
 - **Rollback:** 公開前は未公開stagingを隔離。公開後は既存成果物を勝手に削除しない。Concurrent writers／crashはstagingとrunを混同しない。
 
 ### 4.7. 検証
@@ -223,13 +223,13 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | DD-E11-PUB07〜09 | corruption、private 0700/0600、Reader roundtrip | 全bytes/hash/privacy/readback |
 | DD-E11-PUB10 | Legacy Product Portと旧v2 CLIの回帰 | E11 publicationをProductの永続authorityへ混入しない |
 
-**Trace:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS fault injectionと独立Reviewは。
+**関連ID:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS fault injectionと独立Reviewは。
 
 ### 4.8. 公開PortとConcrete handle
 
 Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`を用いるFacade。二重の公開アルゴリズムにしない。staging全File/Directory fsync→同一FSの`renameat2(RENAME_NOREPLACE)`→親dir fsync→独立Reader readbackまで成功して初めてCOMMITTED。EEXIST時の同request hash再利用は全bytes/Manifest/Privacy検証済みに限る。rename後の失敗は`PUBLICATION_INDETERMINATE`、削除・上書き禁止。
 
-## 5. E11 Local Manifest／Reader（別々のProposed Class）
+## 5. E11 Local Manifest／Reader（Value/Readerの独立Class）
 
 以下は一つの「Class」ではない。**`LocalRunManifest`（Data/Value）と`LocalManifestReader`（I/O Adapter）を独立に7区分化する**。値型とI/O Adapterとして独立した動作契約を持つ。
 
@@ -240,11 +240,11 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 - **Class/Module:** `interfaces.cli.e11.manifest.LocalRunManifest`、immutable typed DTO。。
 - **責務:** 1 Local runのidentity、lineage、Method/Science/Runtime、artifact inventoryをversioned schemaで保持し、canonical bytesのauthorityを定義する。
 - **責務外:** file open、hash verificationのI/O、実効科学計算、Local OS permission enforcement。
-- **Authority:** IF `23_42` §6、`23_41` §5。Existing Product CliManifestとは別schema。
+- **参照:** IF `23_42` §6、`23_41` §5。Existing Product CliManifestとは別schema。
 
 #### 5.1.2. フィールド
 
-| Field | Proposed type | Origin | Constraint |
+| Field | Type | Origin | Constraint |
 | --- | --- | --- | --- |
 | `manifest_version` | `Literal["e11-local-manifest/1"]` | Schema | mandatory, no v2 fallback |
 | `run_id, operation, request_hash` | `str, LocalOperation, str` | validated Study | fixed identity, digest hex64 |
@@ -258,7 +258,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 #### 5.1.3. Constructor / Factory
 
-- **Proposed:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
+- **Factory:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
 - **Precondition:** strict schema/version + no unknown critical keys; content hash references are normalized; `Manifest` must **not** include its own bytes hash; marker is outside Artifact list. Factories do not read the filesystem.
 - **N/A:** runtime backend import is not part of this DTO. Factory naming and exact exception classes remain ADR/Schema .
 
@@ -294,17 +294,17 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 - **Class/Module:** `interfaces.cli.e11.manifest_reader.LocalManifestReader`。****。
 - **責務:** already-published runをMarker→Manifest→Artifactの順に検証し、`VerifiedLocalRun`を返す。存在だけでCOMMITTEDと判断しない。
 - **責務外:** publish、legacy v2の無断E11解釈、科学的Oracle計算、実Artifactの編集。
-- **Authority:** IF `23_42` §6〜8、BD01-F03/F05/F06/F12。
+- **参照:** IF `23_42` §6〜8。
 
 #### 5.2.2. フィールド
 
 | Field | Type | Origin | Constraint |
 | --- | --- | --- | --- |
-| Instance fields | N/A（stateless Reader候補） | N/A | trusted root/run IDはper-call引数。Cacheを設ける場合は別ADR |
+| Instance fields | N/A（stateless Reader） | N/A | trusted root/run IDはper-call引数。Cacheを設ける場合は別ADR |
 
 #### 5.2.3. Constructor / Factory
 
-- `__init__()`は特別な依存なし（**Proposed、N/A理由：read_runが検証済み`TrustedLocalRoot`を明示注入するstateless API**）。共通`LocalManifestReaderPort.verify(root,run_id)`はConcrete `read_run`へ委譲するAdapter。`Path`単独をTrustedRootに昇格しない。
+- `__init__()`は特別な依存なし（read_runへ検証済み`TrustedLocalRoot`を明示注入するstateless API）。共通`LocalManifestReaderPort.verify(root,run_id)`はConcrete `read_run`へ委譲するAdapter。`Path`単独をTrustedRootに昇格しない。
 - Reader instanceに暗黙のworking directory・current Project・Product DB／OS principalを仮定させない。
 
 #### 5.2.4. メソッド
@@ -343,7 +343,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 6.1. 識別情報・責務
 
-- **Class/Module候補:** `interfaces.cli.e11.privacy.LocalPrivacyPolicy`、****。
+- **Class/Module:** `interfaces.cli.e11.privacy.LocalPrivacyPolicy`。
 - **責務:** row-level exportのrelease条件をANDで評価し、aggregated defaultと最小限の出力対象を固定する。Product RBACをLocal OSへ擬似的に持ち込まない。
 - **責務外:** 研究対象者の同意獲得、Product ProjectMembership、Backend numerical inference、Customer Legal approval。
 
@@ -361,9 +361,9 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 6.3. Constructor / Factory
 
-- **Proposed:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, authorization_evidence, allowed_columns, max_rows, audit_context)`。
+- **Constructor:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, authorization_evidence, allowed_columns, max_rows, audit_context)`。
 - **Preconditions:** OS effective identity＋permission sourceはruntime evidenceから採取。HeaderやCLI flagを信頼済principalの証拠に昇格しない。
-- **Postconditions:** policy object immutable。構築時に実outputを生成しない。Delegated/CI/container UID規則はADR＋negative testで最終確定。
+- **Postconditions:** policy object immutable。構築時に実outputを生成しない。Non-delegated same-UID/private Rootを標準とし、委譲・共有mount等は信頼できる別契約がない限り拒否する。
 
 ### 6.4. メソッド
 
@@ -372,7 +372,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 | `assert_export_allowed(self, spec: LocalStudySpec, cli_flag: bool, runtime_principal: LocalPrincipal) -> None` | allow / typed reject | pure authorization check; no implicit file write |
 | `filter_export_columns(self, frame_schema: ColumnSchema) -> ColumnSelection` | bounded allowlist | pure; unknown or prohibited columns rejected |
 
-`filter_export_columns`は**設計上の候補**であり、採用する場合はDataFrame raw dataをこのPolicyに渡さず、Schemaのみを渡す。実装署名は。
+`filter_export_columns`はRaw DataFrameを受け取らずColumnSchemaから許可列集合を導出する。Unknown/unauthorized列は拒否し、max_rowsは出力実行側で強制する。
 
 ### 6.5. 処理仕様
 
@@ -395,6 +395,6 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ## 7. CLI entrypoint / Error bridge
 
-候補`interfaces.cli.e11.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path/**privacy/authorization denial（Owner採用）**、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
+`interfaces.cli.e11.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path/**privacy/authorization denial**、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
 
 Error envelopeはreason `code`と発生`phase`を区別する。入力Schema=exit2、入力path/hash/認可=exit3、Backend/Capability=exit4、出版/readback=exit5。科学的negativeは完全に検証されたBundleのときのみexit0となり得る。

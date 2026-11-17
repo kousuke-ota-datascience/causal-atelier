@@ -30,7 +30,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 ### 2.1. 識別とフィールド
 
-配置候補 `causal.local_contract.references.ContentRef`。immutable dataclass：`identity: str`、`relative_key: str`、`sha256: str`、`media_type: str`、`schema_version: str|None`。Data bytesとmetadataの識別子を混同しない。外部入力の絶対pathやaccess tokenを正本値に保持しない。
+配置 `causal.local_contract.references.ContentRef`。immutable dataclass：`identity: str`、`relative_key: str`、`sha256: str`、`media_type: str`、`schema_version: str|None`。Data bytesとmetadataの識別子を混同しない。外部入力の絶対pathやaccess tokenを正本値に保持しない。
 
 ### 2.2. Constructorと処理
 
@@ -52,7 +52,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 ### 3.1. Class/fields
 
-配置候補 `causal.local_contract.study.LocalStudySpec`。immutable：
+配置 `causal.local_contract.study.LocalStudySpec`。immutable：
 - `schema_version: Literal["e11-local-study/1"]`
 - `run_id: str`、`operation: LocalOperation`、`analysis_mode: AnalysisMode`
 - `question: ContentRef`、`design: ContentRef`、`graph: ContentRef|None`、`dataset: ContentRef`、`identification: ContentRef|None`

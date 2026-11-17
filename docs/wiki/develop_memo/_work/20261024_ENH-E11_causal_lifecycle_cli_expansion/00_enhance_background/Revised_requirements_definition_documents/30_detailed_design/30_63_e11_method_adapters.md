@@ -10,7 +10,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 ## 2. 全41件のAdapter allocation
 
-| Method ID | 初期責務の候補Adapter / Estimand型 | 必須preflight／Result・Inference |
+| Method ID | Adapter / Estimand型 | 必須preflight／Result・Inference |
 | --- | --- | --- |
 | P1-M01 | `NativeIdentificationAdapter` / randomized identification | 割当機構・target、proofの型付き正規化 |
 | P1-M02 | `NativeIdentificationAdapter` / backdoor ATE | adjustment/backdoor、Graph・Design適格性 |
@@ -60,7 +60,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 ### 3.1. Module-level関数とResult処理
 
-候補 `scientific.local_adapters.*`：
+`scientific.local_adapters.*`：
 - `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
 - `run(request, sink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
 - `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
@@ -152,10 +152,10 @@ Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpo
 - B0（P3-M09/M10）：単一二値Z/A、無調整、単一内生Aのcomplier LATE。Wald ratioは縮約形Outcome差/First-stage Treatment差。分母0/弱い場合にfinite CIを強制しない。
 - B1（P3-M11）：単一二値Z/A、事前指定C、additive linear IV構造の2SLS slope。一般ATE/ATTやB0と同一complier LATEと呼ばない。
 - B0/B1の2SLSはfirst-stage/2nd-stage、heteroskedasticity-robust covariance、Instrument support/first-stage diagnosticsを保存。通常Wald区間はweak-IV robustでないことを明示。
-- Anderson–Rubin：H0(β)の下で`Y - β A`のZとの関係を（B1では指定Cを条件付けて）検定、反転集合を作る。初期契約は独立観測・単一excluded Z・単一endogenous A・異分散頑健漸近推論の範囲。任意のcluster/HAC版へ自動拡張しない。β探索は有界gridだけではALL_REAL/非有界/非連結を判定できないためtail/bracketing/数値精度を別実装として検証。数学的にEMPTYなAR集合は汎用Codecで表現可能。ただし、非退化なB0/B1 just-identified HC1 AR反転では gA≠0、Var_HC1(βhat)>0 の条件からT_AR(βhat)=0で非空性が従う。そこでEMPTYが観測された場合はMethod別SCIENCE_INCONSISTENTとして検査する。first-stage=0、非正分散、rank欠損は別途型付き分岐にし、数値的な失敗と数学的EMPTYを混同しない。
+- Anderson–Rubin：H0(β)の下で`Y - β A`のZとの関係を（B1では指定Cを条件付けて）検定、反転集合を作る。初期契約は独立観測・単一excluded Z・単一endogenous A・異分散頑健漸近推論の範囲。任意のcluster/HAC版へ自動拡張しない。β探索は有界gridだけではALL_REAL/非有界/非連結を判定できないためtail/bracketing/数値精度を検証。数学的にEMPTYなAR集合は汎用Codecで表現可能。ただし、非退化なB0/B1 just-identified HC1 AR反転では gA≠0、Var_HC1(βhat)>0 の条件からT_AR(βhat)=0で非空性が従う。そこでEMPTYが観測された場合はMethod別SCIENCE_INCONSISTENTとして検査する。first-stage=0、非正分散、rank欠損は別途型付き分岐にし、数値的な失敗と数学的EMPTYを混同しない。
 - AR testがIVのexclusion/independence/monotonicityを証明すると解釈しない。CI coverageは独立Simulationで計測する。
 
-**AR具体化（共通Source設計拘束）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を機械的候補とする。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは[共通科学契約](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)を参照。これはB0/B1の科学的な統計量・推論前提を規定するものであり、独立ReferenceとCoverage実測とは別である。
+**AR具体化（共通Source設計拘束）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を対象実装方式とする。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは本節のAR定義に従い、Method固有の独立Referenceと照合する。これはB0/B1の科学的な統計量・推論前提を規定するものであり、独立ReferenceとCoverage実測とは別である。
 
 ### 7.4. SCM / SDID
 
