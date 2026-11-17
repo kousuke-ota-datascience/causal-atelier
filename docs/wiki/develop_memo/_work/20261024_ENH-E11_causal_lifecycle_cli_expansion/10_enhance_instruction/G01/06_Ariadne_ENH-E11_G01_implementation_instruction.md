@@ -51,16 +51,17 @@ src/ariadne/
     manifest.py        # LocalRunManifest value
     privacy.py         # LocalPrivacyPolicy
     manifest_reader.py # Reader/verification
-  # Gate 06 is NOT a test physical-path authority; placement/discovery belongs to 40 Operator.
 ```
+
+テストのLifecycle/Verification layer、物理配置、discovery、runnerは40 Operatorが選択する。Gate 06はテストファイル配置をnormativeに固定しない。
 
 Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; modules named above are the selected design destinations; no parallel Local Domain package. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
-| **G01-P01** | 30_60 §11/12：REF01〜04・SPEC01〜04；30_61 §1：GRAPH01/03/04（CLI Decoder=30_60 §9）；30_62 `4：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-P01** | 30_60 §9/11/12：REF01/04（lexical）・SPEC01〜04；30_62 §4：MAN01〜06（pure DTO） | `ContentRef.from_payload`、`LocalStudySpec.validate_local_invariants`、`LocalConfigDecoder.decode`、JCS、`LocalRunManifest.to_canonical_bytes`。Graphの意味論はP03、実Ref検証REF02/03はP02 | G01-07-01/02(lexical)/04/07 |
 | **G01-P02** | 30_62 `3/5：PUB01〜09、READ01〜07、PRIV03/04/06 | `LocalContentReferenceAdapter(ContentReferencePort).verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
-| **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `4：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有。CLI standaloneのVersion/parent=null）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-P03** | 30_61 §1：GRAPH01/03/04；30_62 §4：MAN03/04 | `GraphEvidence.from_canonical_json/canonical_payload`（Product GraphVersionServiceがrevisionを所有）、PAG端点・Version/parent・Graph二種類のHash。CLI Graph editは対象外 | G01-07-03/04/07 |
 | **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`DiscoveryPort.discover`→`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
 | **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicyPort.authorize`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 

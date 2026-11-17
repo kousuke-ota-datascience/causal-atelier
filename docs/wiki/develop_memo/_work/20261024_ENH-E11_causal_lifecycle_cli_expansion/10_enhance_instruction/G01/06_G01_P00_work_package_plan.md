@@ -13,8 +13,8 @@
 ## 2. Required package map
 | Package | Purpose | Depends on | Focused verification |
 | --- | --- | --- | --- |
-| P01 | strict Study/ContentRef、Question/Design/Method Profile、Canonical JCSとManifest Valueを定義する。 | NONE | G01-07-01/02(lexical)/04；REF01〜04、SPEC01〜04、MAN01/02 |
-| P02 | private TrustedRootとimmutable multi-artifact run publicationを実FSで安全に確立する。 | P01 | G01-07-02/05/06；PUB01〜09、READ01〜07、PRIV03/04/06 |
+| P01 | strict Study/ContentRef、Question/Design/Method Profile、Canonical JCSとManifest Valueを定義する。 | NONE | G01-07-01/02(lexical)/04；REF01/04（pure lexical）、SPEC01〜04、MAN01〜06（pure DTO）。REF02/03物理FS検証はP02 |
+| P02 | private TrustedRootとimmutable multi-artifact run publicationを実FSで安全に確立する。 | P01 | G01-07-02/05/06；REF02/03（actual FD/FS）、PUB01〜09、READ01〜07、PRIV03/04/06 |
 | P03 | Graphの不確定性と版・同一性を損失なく保持する。 | P01 | G01-07-03/04/07；GRAPH01/03/04、MAN03/04 |
 | P04 | FCI/PAG Adapterの技術的・科学的適格性を分離して実証する。 | P01,P03 | G01-07-08/09/10；CAP01/04/05、DD-E11-METH-P106 |
 | P05 | DISCOVER-only CLIの全経路を統合し、Product v2を回帰保護する。 | P02,P03,P04 | G01-07-07/11/12；RUN01/03/04/06/07、PRIV01〜06、PUB10/MAN04〜06/READ06 |

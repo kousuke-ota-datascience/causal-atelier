@@ -293,7 +293,7 @@ Template migration/apply tooling、instantiation tooling、validatorは同一規
 
 ## 5. ENH-E11 test architecture transition — operator placement/discovery policy
 
-**Origin:** [ENH-E9 → ENH-E11 active test architecture handoff](../../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md). This section is **WHERE/HOW**, not product acceptance semantics. ENH-E11 does not wait for repository-wide migration (deferred to ENH-E12+).
+**Origin:** [ENH-E9 → ENH-E11 active test architecture handoff](../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md). This section is **WHERE/HOW**, not product acceptance semantics. ENH-E11 does not wait for repository-wide migration (deferred to ENH-E12+).
 
 ### 5.1. Classify each test along two independent axes
 

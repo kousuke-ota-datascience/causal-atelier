@@ -20,7 +20,7 @@
 
 ## 2. Required verification layers and lifecycle authority — not physical test paths
 
-**本07は WHAT のauthority:** Required behavior / DD ID / negative and positive cases / primary proof layer / pass-block-failの根拠。具体的なテストファイル名・配置・実行コマンドは受入条件ではない。ENH-E9 [test architecture handoff](../../../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md)と ENH-E11 40 Operator PolicyがWHERE/HOWを所有する。
+**本07は WHAT のauthority:** Required behavior / DD ID / negative and positive cases / primary proof layer / pass-block-failの根拠。具体的なテストファイル名・配置・実行コマンドは受入条件ではない。ENH-E9 [test architecture handoff](../../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md)と ENH-E11 40 Operator PolicyがWHERE/HOWを所有する。
 
 **二軸:** Lifecycle = enhancement / regression / characterization / benchmark / support / legacy; verification layer = unit / contract / integration / frontend / browser_e2e。新規G01テストはenhancement lifecycleから開始する。`component` / `scientific`を正規G01 layerと見なさない。`scientific`は対象科学分野または再利用可能なcharacterization/benchmarkの用途であって、このGate固有のテスト階層を増やす根拠ではない。
 
