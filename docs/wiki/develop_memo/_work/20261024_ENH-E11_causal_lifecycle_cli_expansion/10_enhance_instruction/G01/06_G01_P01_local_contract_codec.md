@@ -27,7 +27,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
 
 ## 5. Entry criteria / required evidence
-Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends on NONEの実装checkpoint full SHAとfocused検証を確認。矛盾/依存未成立はBLOCKED。
+Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。P01に先行する実装Packageは存在しないので依存Checkpointは不要。矛盾/依存未成立はBLOCKED。
 
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
@@ -41,7 +41,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 | G01-07-01/02(lexical)/04；REF01〜04、SPEC01〜04、MAN01/02 | `uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01 -q` | Valid/invalid schemaとJCS independent vectorsについてlossless・strictを実証し、旧v2 E11誤認ゼロ。 |
 
 ## 8. Protected contract / Transition Debt constraints
-Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。G01受入境界は再審査待ちで、勝手にGate acceptanceを変更しない。
+Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
 
 ## 9. Checkpoint / reporting rule
 

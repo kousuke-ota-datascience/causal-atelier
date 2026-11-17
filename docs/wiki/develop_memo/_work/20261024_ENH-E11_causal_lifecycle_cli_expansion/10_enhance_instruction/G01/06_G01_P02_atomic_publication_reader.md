@@ -41,7 +41,7 @@ Application Port `ContentReferencePort.verify`をCLI Concrete `LocalContentRefer
 | G01-07-02/05/06；PUB01〜09、READ01〜07、PRIV03/04/06 | `uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01 -q` | 競合・fsync・crash・symlink・ACL負例でoverwrite0、偽COMMITTED0、未対応FSはfail-closed。 |
 
 ## 8. Protected contract / Transition Debt constraints
-Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。G01受入境界は再審査待ちで、勝手にGate acceptanceを変更しない。
+Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
 
 ## 9. Checkpoint / reporting rule
 

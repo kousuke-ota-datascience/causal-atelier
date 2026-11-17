@@ -41,7 +41,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 | G01-07-07/11/12；RUN01/03/04/06/07、PRIV01〜06、PUB10/MAN04〜06/READ06 | `uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01 -q` | strict CLI envelope、no row/secret leakage、old Product v2 regression、no false COMMITTED/Science PASS。 |
 
 ## 8. Protected contract / Transition Debt constraints
-Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。G01受入境界は再審査待ちで、勝手にGate acceptanceを変更しない。
+Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
 
 ## 9. Checkpoint / reporting rule
 

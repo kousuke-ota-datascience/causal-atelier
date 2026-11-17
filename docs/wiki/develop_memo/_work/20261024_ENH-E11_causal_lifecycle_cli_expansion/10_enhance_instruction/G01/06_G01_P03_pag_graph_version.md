@@ -21,7 +21,7 @@ Graphの不確定性と版・同一性を損失なく保持する。
 G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分離し旧CLI/Web/API/DB/Workerは改変しない。strict version/Method/EstimatorとJCSのハッシュ対象を検証し、PAGをDAG/ATEへ変換しない。OS root/Privacy/Atomic Publishの不適格はfail-closed、SCI不確実性をPASSに変換しない。Coding Authorization前の実装は禁止。
 
 ## 3. In scope
-`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
+`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証（GraphEvidenceはVersion Writerでなくrevision操作を実装しない）。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
 
 ## 4. Explicitly out of scope
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
@@ -32,7 +32,7 @@ Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends o
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
 ## 6. Required implementation
-`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
+`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証（GraphEvidenceはVersion Writerでなくrevision操作を実装しない）。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
 
 ## 7. Focused verification
 
@@ -41,7 +41,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 | G01-07-03/04/07；GRAPH01/03/04、MAN03/04 | `uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01 -q` | 全部の定義済みPAG endpoint round-tripが100%で、PAG→DAG silent conversionも旧Graph mutateも0。 |
 
 ## 8. Protected contract / Transition Debt constraints
-Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。G01受入境界は再審査待ちで、勝手にGate acceptanceを変更しない。
+Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
 
 ## 9. Checkpoint / reporting rule
 
