@@ -38,13 +38,133 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **Responsibility:** Method Adapterを担当するClassは `RddAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
-## 4. Execution Protocol
+### 3. Standalone Class-level contracts (normative)
 
-1. Gate/Trial/Package/Source SHAと依存Checkpoint(NONE)を確認し、06/07/Pxx Freeze、Coding AuthorizationとBaselineを必須とする。
-2. Strict Study/Question/Design/Graph/Dataset/Method/Estimand/Inference/Backend capabilityを検証。Backend/Target/Optional dependencyへsilent fallbackしない。
-3. **実装本体:** cutoff/bandwidth/densityとFuzzy first stage、RBC CI API availabilityを検証。
-4. 出力は適格なTyped Value/Graph/Effect/Diagnostic/Manifestへ正規化し、StagingSinkを通してPublish。実効input hash・Method config・seed・upstream proof・science/technical reasonを保存する。
-5. 正例、invalid config、Method-specific negative、missing dependency、unsupported CI、危険なPrivacy/Filesystem条件を区別。旧v2公開ABIとProduct Regressionを保持。
+Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定義する。外部DDはprovenanceに限り、Agentが参照しなければ実装できない仕様を残さない。Designed Module≠Source実装済み。ABIはSource照合する。
+
+### 3.1. `RddAdapter` — full fields/constructor/methods
+
+#### 1.18.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.RddAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M07, P3-M08`。**再利用:** 共通IV/EstimandとScientific CIを再利用しSharp/Fuzzyを明示区別。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.18.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
+
+#### 1.18.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.18.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.18.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M07` | Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI |
+| `P3-M08` | Fuzzy RD local complier effect | First stage、discontinuity ratio、local IV inference |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Package内の数理定義とMethod別科学契約に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.18.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.18.7. 検証
+
+`DD-E11-METH-P307`（`P3-M07`）、`DD-E11-METH-P308`（`P3-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageの各Method DGP/NEG/REF一覧を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 3.2. `EstimatorPort` — full fields/constructor/methods
+
+#### 5.2.1. 識別情報・責務
+
+**Protocol配置：ariadne.scientific.ports.causal.EstimatorPort。** 既存Product `ScientificCorePort`のv2メソッドを保持し、旧APIと型付きPortは共通科学計算を用いる互換Bridgeで接続する。
+
+#### 5.2.2. フィールド
+
+N/A：Protocol自身はinstance fieldを所有しない。
+
+#### 5.2.3. Constructor / Factory
+
+N/A：Protocolに具体Factoryはない。Concreteの依存関係注入はAdapterの責務。
+
+#### 5.2.4. メソッド
+
+```python
+class EstimatorPort(Protocol):
+    def estimate(self, request: ValidatedEstimatorRequest, *, sink: StagingArtifactSink) -> EffectOutcome: ...
+```
+
+#### 5.2.5. 処理仕様
+
+識別・Method適格なRequestのみ実行し、ArtifactをStagingSinkへ限定。科学的PreconditionはWeb/CLI共通であり、CLI optionやHTTP状態ではない。
+
+#### 5.2.6. I/O・連携・失敗処理
+
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+
+#### 5.2.7. 検証
+
+DD-E11-EFF01〜05。
+
+### 3.3. `InferenceEvidence` — full fields/constructor/methods
+
+#### 3.2.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.inference.contracts.InferenceEvidence`。Inferenceの可用性と実際のFinite CI／AR集合を型付きで保持する。
+
+#### 3.2.2. フィールド
+
+| Field | Type | 制約 |
+|---|---|---|
+| `availability` | `InferenceAvailability` | AVAILABLE/UNAVAILABLE/FAILED/NOT_REQUESTED等 |
+| `kind` | Method-specific enum | 実効推論方式 |
+| `interval, confidence_set` | `FiniteInterval|None, ARConfidenceSet|None` | AVAILABLEなら正当な片方ちょうど1つ |
+| `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
+| `method_config` | typed config | Backend/Method/Estimandに適合 |
+
+#### 3.2.3. Constructor / Factory
+
+Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整合を検査。実行済みCIをデフォルト値で捏造しない。
+
+#### 3.2.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
+
+#### 3.2.5. 処理仕様
+
+EXPLORATORY point-onlyとCONFIRMATORY inference要件を分離する。FiniteIntervalとARConfidenceSetを丸め合わせず、SCM point-onlyを確証CIと報告しない。
+
+#### 3.2.6. I/O・連携・失敗処理
+
+Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲。
+
+#### 3.2.7. 検証
+
+`DD-E11-AR04/AR05`、`DD-E11-EFF01/02`、Method-specific CI availability、independent coverage。
+
+## 4. G08/P01 required scientific and code execution
+
+1. **Preconditions:** G08 Frozen06/07/Pxx、G01/G02 upstream canonical 999、Owner Coding Authorization、fixed candidate Source/lock、Pxx checkpointsを照合。Method/Design/IV assumptions/Estimand/Inference/Backend selectionをpreflightで検証。
+2. `P3-M07` Sharp RDはrunning variable R、cutoff c、Bandwidth h、Kernel、Local polynomial order、covariates、Outcome discontinuityをMethod Configで固定し、cutoff近傍だけのTargetを推定。
+3. `P3-M08` Fuzzy RDは同一cutoffにおけるOutcome jumpをTreatment first-stage jumpで割った局所IV/Complier effectとし、sharpの単なる別ラベルにしない。Zero/weak first-stageではfinite inferenceを捏造しない。
+4. Assignment manipulation/density continuity、Covariate continuity、Bandwidth support、left/right sample countとRobust bias correction APIを検証する。`rdrobust`等の配布License適格性と数値推定Scienceは別判定。
+8. **Dataflow:** Typed ValidatedMethodRequest→Method Adapter eligibility→selected numeric kernel/effective Backend→EffectOutcome/ARConfidenceSet→G01 StagingSink/Atomic Publisher/Reader。外部Backend model objectやRaw row/SecretsをResultへ含めない。
+9. **Typed failure:** Zero denominator, rank/HC1 variance degeneracy, unsupported CI, invalid design, optional backend unavailable, numerical FAILED, legitimate scientific weak IVを明確に区別。Technical exit0はScience PASSでない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -66,6 +186,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 TestはLifecycle（enhancement/regression/characterization/benchmark/support/legacy）とLayer（unit/contract/integration/frontend/browser_e2e）を独立分類。新規は`tests/enhancement/enh_e11/g08/<layer>/`に原則配置、実Path/command/pytest collectionは40 Operatorがcurrent checkoutからdiscover。受入07をpathの文字列で置き換えない。Mock-onlyでreal Backend/FS/ScienceをPASSにしない。
 
+### 6.1. Deterministic/independent scientific proof matrix
+
+- §5の各Method DGP/NEG/REF/DD/ACを保持。Positive DGPとindependent ReferenceをBackend予測から作らない。
+- **Mandatory focused cases:** `P3-M07` Sharp RDはrunning variable R、cutoff c、Bandwidth h、Kernel、Local polynomial order、covariates、Outcome discontinuityをMethod Configで固定し、cutoff近傍だけのTargetを推定。 `P3-M08` Fuzzy RDは同一cutoffにおけるOutcome jumpをTreatment first-stage jumpで割った局所IV/Complier effectとし、sharpの単なる別ラベルにしない。Zero/weak first-stageではfinite inferenceを捏造しない。 Assignment manipulation/density continuity、Covariate continuity、Bandwidth support、left/right sample countとRobust bias correction APIを検証する。`rdrobust`等の配布License適格性と数値推定Scienceは別判定。
+- Unit: domain/Estimand/AR set serialization/edge cases; Contract: Class.Method、typed outputs、result discriminator/lineage; Integration: 実Backend、IV instrument/data support、real Publisher/readback、旧Product v2回帰。Weak IV / negative assumptions/HC1 confidence inversionは独立算出Referenceと照合。
+- Environment/Backend/API、Source+fixture+lock SHA、DGP/negative、実行Command/Collection、Expected/Observed、Scientific vs Technical outcomeをEvidence化。未確定Oracle/quant K/R/coverageならBLOCKED、Science PASSは出さない。
+
 ## 7. Checkpoint / Handoff / Stop
 
 **Package Done:** 実SourceのClass/Method追加・Reuse・正例/負例/typed result/被影響Product Regression、focused test actual command/result、DD/Method coverage、Diff/Checkpoint full SHA、20 Package Status Reportを完備。科学的実測が未完ならScience PASSと報告しない。
@@ -73,3 +200,8 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Next:** P04。Pxx完了をGate 999 PASSにしない。
 
 **STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+
+
+## 8. Freeze-critical standalone gaps
+
+本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残未決:** RDDのBandwidth/kernel/order、実効Backend API、density/continuity testとLicense決定。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。

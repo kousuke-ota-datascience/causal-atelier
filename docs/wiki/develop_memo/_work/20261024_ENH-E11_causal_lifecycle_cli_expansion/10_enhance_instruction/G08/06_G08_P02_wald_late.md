@@ -38,13 +38,136 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **Responsibility:** Method Adapterを担当するClassは `WaldRatioAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
-## 4. Execution Protocol
+### 3. Standalone Class-level contracts (normative)
 
-1. Gate/Trial/Package/Source SHAと依存Checkpoint(NONE)を確認し、06/07/Pxx Freeze、Coding AuthorizationとBaselineを必須とする。
-2. Strict Study/Question/Design/Graph/Dataset/Method/Estimand/Inference/Backend capabilityを検証。Backend/Target/Optional dependencyへsilent fallbackしない。
-3. **実装本体:** 二値Z/A・B0無調整LATE、first-stage weak/zero、IV independence/exclusion/monotonicityは証明済みとしない。
-4. 出力は適格なTyped Value/Graph/Effect/Diagnostic/Manifestへ正規化し、StagingSinkを通してPublish。実効input hash・Method config・seed・upstream proof・science/technical reasonを保存する。
-5. 正例、invalid config、Method-specific negative、missing dependency、unsupported CI、危険なPrivacy/Filesystem条件を区別。旧v2公開ABIとProduct Regressionを保持。
+Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定義する。外部DDはprovenanceに限り、Agentが参照しなければ実装できない仕様を残さない。Designed Module≠Source実装済み。ABIはSource照合する。
+
+### 3.1. `WaldRatioAdapter` — full fields/constructor/methods
+
+#### 1.19.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.iv.WaldRatioAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M09`。**再利用:** 共通IV適格性を再利用、Waldとweak-IV negativeを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.19.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
+
+#### 1.19.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.19.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.19.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M09` | B0 complier LATE reference | binary Z/A、IV assumptions、first stage |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Package内の数理定義とMethod別科学契約に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.19.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.19.7. 検証
+
+`DD-E11-METH-P309`（`P3-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageの各Method DGP/NEG/REF一覧を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 3.2. `IdentificationOutcome` — full fields/constructor/methods
+
+#### 2.1.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.identification.contracts.IdentificationOutcome`。識別状態・対象Estimand・Proof・lineageを保持するValue。DoWhy内部ラベルをDomainの推定対象と混同しない。
+
+#### 2.1.2. フィールド
+
+| Field | Type・制約 |
+|---|---|
+| `identification_id` | immutable identity |
+| `estimand` | `EstimandRef`。B0/B1/DRIV等の区別 |
+| `status` | `IdentificationStatus`。nonidentified/review/partialを型付け |
+| `strategy, proof` | Strategy、`IdentificationProof|None` |
+| `upstream, reasons` | `UpstreamHashSet, tuple[ScientificReason,...]` |
+
+#### 2.1.3. Constructor / Factory
+
+`from_evidence(evidence:ValidatedIdentificationEvidence)->IdentificationOutcome`。BackendのStatus、assumption、GraphVersion、Estimand、Upstreamを意味検証して正規化。未提供Proofを生成しない。
+
+#### 2.1.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `from_evidence(evidence:ValidatedIdentificationEvidence)` | `IdentificationOutcome` | pure status/proof normalization | proof/estimand/upstream不整合 |
+
+#### 2.1.5. 処理仕様
+
+`NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED`を点推定許可へ自動昇格しない。緩和可能な列挙WARNだけに理由付きoverrideを許可。
+
+#### 2.1.6. I/O・連携・失敗処理
+
+外部I/Oなし。実際のBackend識別計算は`IdentificationPort`、Proof/File readbackは別Port。Retry/RollbackはN/A。
+
+#### 2.1.7. 検証
+
+`DD-E11-ID01` B0/B1/DRIV mislabel、`ID02` lineage差、`ID03` nonidentified override拒否、`ID04` GraphVersion再識別。FR-187/194/199、AR-029/039/043。
+
+### 3.3. `EstimatorRequest` — full fields/constructor/methods
+
+#### 2.2.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.inference.contracts.EstimatorRequest`。Identification proofが適格な場合だけEstimatorへ渡すRequest Value。
+
+#### 2.2.2. フィールド
+
+| Field | Type・制約 |
+|---|---|
+| `method_id, estimand_family` | Method×target一致 |
+| `identification_ref` | 上流証拠参照 |
+| `question/design/graph/dataset_hashes` | 完全な上流digest集合 |
+| `method_config, inference_request` | Method/Inference適格なtyped config |
+
+#### 2.2.3. Constructor / Factory
+
+`validate_against(identification,design,policy)->ValidatedEstimatorRequest`は入力と上流証拠を照合する型付きvalidator。Validation前の生RequestをAdapterへ送らない。
+
+#### 2.2.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `validate_against(self, identification:IdentificationOutcome, design:CausalDesign, policy:EstimandEligibilityPolicy)` | `ValidatedEstimatorRequest` | pure eligibility check | scientific negative / schema validation区別 |
+
+#### 2.2.5. 処理仕様
+
+Method-specific assumptions、Mediator/Instrument/support、Data Eligibility、Graph/Design/Question/Dataset hash全一致、CI要求を検証。不適格は`ScientificNegativeOutcome`としてBackend未呼出。Path/schema mismatchはtechnical validationとする。
+
+#### 2.2.6. I/O・連携・失敗処理
+
+Value自身はI/Oなし。ScientificValidationServiceの既存適格性規則を共通pure policyとして再利用する。実Estimator I/O/Artifactは`EstimatorPort.estimate(...,sink)`を通す。
+
+#### 2.2.7. 検証
+
+`DD-E11-ID01〜04`およびMethod固有Negative Tests。
+
+## 4. G08/P02 required scientific and code execution
+
+1. **Preconditions:** G08 Frozen06/07/Pxx、G01/G02 upstream canonical 999、Owner Coding Authorization、fixed candidate Source/lock、Pxx checkpointsを照合。Method/Design/IV assumptions/Estimand/Inference/Backend selectionをpreflightで検証。
+2. `P3-M09` B0 Wald LATE Referenceはbinary Z/A、single instrument/single endogenous treatment/no adjustmentで、(E[Y|Z=1]−E[Y|Z=0])/(E[A|Z=1]−E[A|Z=0])を構成。TargetはComplier LATE、B1構造傾きと混同しない。
+3. IV relevance・independence・exclusion・monotonicityをAssumptionとして明示。弱/零First stageやInstrument support不足はtyped negative、無意味な大きなPoint/CIへsilent fallbackしない。
+4. Wald referenceと2SLS/AR結果は別の推定・推論契約であり、同一TargetのときのみIndependent consistency比較を実施する。
+8. **Dataflow:** Typed ValidatedMethodRequest→Method Adapter eligibility→selected numeric kernel/effective Backend→EffectOutcome/ARConfidenceSet→G01 StagingSink/Atomic Publisher/Reader。外部Backend model objectやRaw row/SecretsをResultへ含めない。
+9. **Typed failure:** Zero denominator, rank/HC1 variance degeneracy, unsupported CI, invalid design, optional backend unavailable, numerical FAILED, legitimate scientific weak IVを明確に区別。Technical exit0はScience PASSでない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -65,6 +188,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 TestはLifecycle（enhancement/regression/characterization/benchmark/support/legacy）とLayer（unit/contract/integration/frontend/browser_e2e）を独立分類。新規は`tests/enhancement/enh_e11/g08/<layer>/`に原則配置、実Path/command/pytest collectionは40 Operatorがcurrent checkoutからdiscover。受入07をpathの文字列で置き換えない。Mock-onlyでreal Backend/FS/ScienceをPASSにしない。
 
+### 6.1. Deterministic/independent scientific proof matrix
+
+- §5の各Method DGP/NEG/REF/DD/ACを保持。Positive DGPとindependent ReferenceをBackend予測から作らない。
+- **Mandatory focused cases:** `P3-M09` B0 Wald LATE Referenceはbinary Z/A、single instrument/single endogenous treatment/no adjustmentで、(E[Y|Z=1]−E[Y|Z=0])/(E[A|Z=1]−E[A|Z=0])を構成。TargetはComplier LATE、B1構造傾きと混同しない。 IV relevance・independence・exclusion・monotonicityをAssumptionとして明示。弱/零First stageやInstrument support不足はtyped negative、無意味な大きなPoint/CIへsilent fallbackしない。 Wald referenceと2SLS/AR結果は別の推定・推論契約であり、同一TargetのときのみIndependent consistency比較を実施する。
+- Unit: domain/Estimand/AR set serialization/edge cases; Contract: Class.Method、typed outputs、result discriminator/lineage; Integration: 実Backend、IV instrument/data support、real Publisher/readback、旧Product v2回帰。Weak IV / negative assumptions/HC1 confidence inversionは独立算出Referenceと照合。
+- Environment/Backend/API、Source+fixture+lock SHA、DGP/negative、実行Command/Collection、Expected/Observed、Scientific vs Technical outcomeをEvidence化。未確定Oracle/quant K/R/coverageならBLOCKED、Science PASSは出さない。
+
 ## 7. Checkpoint / Handoff / Stop
 
 **Package Done:** 実SourceのClass/Method追加・Reuse・正例/負例/typed result/被影響Product Regression、focused test actual command/result、DD/Method coverage、Diff/Checkpoint full SHA、20 Package Status Reportを完備。科学的実測が未完ならScience PASSと報告しない。
@@ -72,3 +202,8 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Next:** P03,P04。Pxx完了をGate 999 PASSにしない。
 
 **STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+
+
+## 8. Freeze-critical standalone gaps
+
+本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残未決:** B0のAssumption/first stage threshold/独立Wald Reference、Infinity負例。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。
