@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:effect-result:1",
   "title": "E11 effect-result v1 schema — PREP-02 review draft only",
-  "description": "F07 typed effect schema candidate. EMPTY AR set currently restricted by embedded F07 draft; generic mathematical EMPTY is an unresolved scientific decision. Semantic method eligibility, reference hashes, science evidence require independent verification.",
+  "description": "F07 Owner-adopted generic AR EMPTY support; Method-specific just-identified B0/B1 validator must distinguish mathematically EMPTY from computational FAILED. Shape only; semantic topology/coverage/references unverified.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -258,6 +258,7 @@
         },
         "topology": {
           "enum": [
+            "EMPTY",
             "ALL_REAL",
             "DISCONNECTED",
             "UNBOUNDED",
@@ -266,7 +267,7 @@
         },
         "components": {
           "type": "array",
-          "minItems": 1,
+          "minItems": 0,
           "items": {
             "$ref": "#/$defs/interval"
           }
@@ -274,7 +275,35 @@
         "inversion_evidence": {
           "$ref": "#/$defs/contentRef"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "topology": {
+                "const": "EMPTY"
+              }
+            },
+            "required": [
+              "topology"
+            ]
+          },
+          "then": {
+            "properties": {
+              "components": {
+                "maxItems": 0
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "components": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "inferenceEvidence": {
       "type": "object",
