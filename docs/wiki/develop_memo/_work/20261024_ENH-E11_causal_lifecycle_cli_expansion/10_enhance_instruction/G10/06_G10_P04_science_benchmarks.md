@@ -60,14 +60,14 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `MethodCapabilityRegistry` — complete Class method protocol
 
-### 2.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Product ScientificCoreAdapterとは別契約である。
 - **責務:** 41 Method IDごとのOperation/Estimand/Eligibility/Inference/Backend/Profileをstrictに選択し、Version/API capabilityを検証し、Adapter importを遅延させる。外部Libraryの既定推論を黙認しない。
 - **責務外:** Estimator計算、Local FS publication、Customer Delivery LegalのPASS。
 - **関連契約:** 30_63 Method41 allocation、23_41 §6〜7。
 
-### 2.2. フィールド
+#### フィールド
 
 配置：`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
 
@@ -78,13 +78,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `effective_env` | `RuntimeEnvironmentPort` | runtime injection | Observed installed version/API; no fake availability |
 | `inference_registry` | `InferenceRegistry` | fixed Method-specific policy | Immutable, point-only vs confirmatory separated |
 
-### 2.3. Constructor / Factory
+#### Constructor / Factory
 
 - **Constructor:** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
 - **Factory** is a collaborator of Registry; 独立実装を置く場合も 独立Factoryを設ける場合も同じMethod×Backend×Inference不変条件に従う。
 - **Failure:** Invalid registry/duplicate ID/unsupported policy fails during preflight without selecting unrelated Method or importing missing Backend.
 
-### 2.4. メソッド
+#### メソッド
 
 ~~~python
 def describe(self, method_id: str) -> MethodDescriptor: ...
@@ -100,7 +100,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `resolve(method_id, backend_id, profile)` | effective Capability Record | inspect distribution/API/version; unavailable reason, never auto fallback |
 | `load_adapter(capability)` | scientifically eligible Adapter | only this method may lazy import; import failure localized as capability error |
 
-### 2.5. 処理仕様
+#### 処理仕様
 
 1. Resolve declared Method ID and operation/estimand eligibility from frozen descriptor.
 2. Check profile/extras and **effective installed distribution+API version**, not just `pyproject.toml` declaration.
@@ -108,14 +108,14 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 4. Return typed supported/unavailable/unsupported with reasons. Only eligible selected capability permits actual lazy import; never fallback to other Method.
 5. Export effective config/version/seed/algorithm facts for Manifest, not a pre-run Science PASS.
 
-### 2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 - **Input:** MethodRequest, Backend ID/Profile, versioned method descriptors, effective runtime probe.
 - **Output:** `MethodDescriptor`, `BackendCapabilityRecord`, `ScientificAdapter` only after eligibility; external estimator objects never enter Domain persistence.
 - **No DB/FS mutation** from `describe`/`resolve`; `load_adapter` may import optional modules.
 - **Errors:** unknown method, incompatible estimand/inference, missing extra, incompatible API signature, import failure. Each is typed and does not disable core or legacy v2 startup. Combined env/BLAS conflicts are not silently ignored.
 
-### 2.7. 検証
+#### 検証
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
 
@@ -123,11 +123,11 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 3.2. `EffectOutcome` — complete Class method protocol
 
-#### 4.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EffectOutcome`。点推定・Inference・ScienceAcceptance・lineageを別軸で保持する。Productの既存`ScientificResultDescriptor`へ無検証castしない。
 
-#### 4.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -138,36 +138,36 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
 | `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
-#### 4.1.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成。不正なEffect/Estimand一致やfalse PASSを拒否。
 
-#### 4.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
 | `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
 
-#### 4.1.5. 処理仕様
+#### 処理仕様
 
 Pointの存在≠Science PASS。Technical、Identification、Point、Inference、ScienceAcceptanceの状態を混同せず、Method固有estimand/CIを検査。
 
-#### 4.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、Graph内部hash、ContentRef実bytes hash、Manifest bytes hashを分離。Codec`e11-json-jcs-rfc8785/1`、Productの`hash_mapping(default=str)` fallback禁止。
 
-#### 4.1.7. 検証
+#### 検証
 
 `DD-E11-EFF01` point-only、`EFF02` Science独立、`EFF03` backend mismatch、`EFF04` canonical finite、`EFF05` old Product regression。FR-202、NFR-030/032/036、AR-034/040。
 
 ### 3.3. `InferenceEvidence` — complete Class method protocol
 
-#### 3.2.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.InferenceEvidence`。Inferenceの可用性と実際のFinite CI／AR集合を型付きで保持する。
 
-#### 3.2.2. フィールド
+#### フィールド
 
 | Field | Type | 制約 |
 |---|---|---|
@@ -177,35 +177,35 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 | `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
 | `method_config` | typed config | Backend/Method/Estimandに適合 |
 
-#### 3.2.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整合を検査。実行済みCIをデフォルト値で捏造しない。
 
-#### 3.2.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
 
-#### 3.2.5. 処理仕様
+#### 処理仕様
 
 EXPLORATORY point-onlyとCONFIRMATORY inference要件を分離する。FiniteIntervalとARConfidenceSetを丸め合わせず、SCM point-onlyを確証CIと報告しない。
 
-#### 3.2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲。
 
-#### 3.2.7. 検証
+#### 検証
 
 `DD-E11-AR04/AR05`、`DD-E11-EFF01/02`、Method-specific CI availability、independent coverage。
 
 ### 3.4. `GraphEvidence` — complete Class method protocol
 
-#### 1.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
 
-#### 1.1.2. フィールド
+#### フィールド
 
 | Field | Type | 制約 |
 |---|---|---|
@@ -217,26 +217,26 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 | `source_graph_parent_version_id` | `str|None` | 実在する親GraphVersion ID。source_graph_version_idがnullなら必ずnull |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
-#### 1.1.3. Constructor / Factory
+#### Constructor / Factory
 
 `from_canonical_json(raw:bytes)->GraphEvidence`：strict Graph Schema＋意味Validator。不可逆PAG→DAG変換、未知node/endpoint/重複edge/lag規約欠落を拒否。
 
-#### 1.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `from_canonical_json(raw:bytes)` | `GraphEvidence` | pure strict graph decode | schema、endpoint、lag、hash不整合 |
 | `canonical_payload()` | `Mapping[str,JsonValue]` | lossless domain serialization | invalid/incomplete Graph |
 
-#### 1.1.5. 処理仕様
+#### 処理仕様
 
 `EndpointEdge(source,target,source_mark,target_mark,lag)`のmarkはTAIL/ARROW/CIRCLE。Node順序を反転する場合はendpointも対応させる。PAGのbidirected/circleをDAGへ暗黙確定しない。FIXEDは編集状態であってScientific Truthではない。未確定GraphからのEffect識別は独立のEstimand別識別証拠を要求。
 
-#### 1.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`endpoint_target`と新Wireの`source_mark`／`target_mark`は明示した双方向変換Adapterで対応し、端点の順序反転とmarkの交換を同時に行う。既存`graph_semantics.validate_graph_document`に新Wire dictを無変換で渡さない。内部`content_hash=SHA256(JCS(Graphからcontent_hash自身を除く意味射影))`、外部`ContentRef.sha256=SHA256(完成Graph File実bytes)`を**別々に検証**。RevisionとFIXはProductの既存GraphVersionServiceが所有する。
 
-#### 1.1.7. 検証
+#### 検証
 
 `DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
 
@@ -337,7 +337,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** P05。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Explicit design/Science/Legal Freeze conditions

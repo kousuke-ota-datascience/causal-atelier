@@ -59,11 +59,11 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 
 ### 3.1. `SyntheticControlAdapter` — self-contained class protocol
 
-#### 1.21.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticControlAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M12`。**再利用:** 共通Panel/Time/Donor適格性とpoint-only inferenceを利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.21.2. フィールド
+#### フィールド
 
 | Field / dependency | Type | 制約 |
 |---|---|---|
@@ -71,11 +71,11 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 | `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
 | `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
 
-#### 1.21.3. Constructor / Factory
+#### Constructor / Factory
 
 `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
 
-#### 1.21.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -84,7 +84,7 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.21.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -92,21 +92,21 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本PackageのMethod/Science条件に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.21.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
 
-#### 1.21.7. 検証
+#### 検証
 
 `DD-E11-METH-P312`（`P3-M12`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageに記載するMethod/DD/Scienceを優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `EffectOutcome` — self-contained class protocol
 
-#### 4.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EffectOutcome`。点推定・Inference・ScienceAcceptance・lineageを別軸で保持する。Productの既存`ScientificResultDescriptor`へ無検証castしない。
 
-#### 4.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -117,36 +117,36 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
 | `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
-#### 4.1.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成。不正なEffect/Estimand一致やfalse PASSを拒否。
 
-#### 4.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
 | `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
 
-#### 4.1.5. 処理仕様
+#### 処理仕様
 
 Pointの存在≠Science PASS。Technical、Identification、Point、Inference、ScienceAcceptanceの状態を混同せず、Method固有estimand/CIを検査。
 
-#### 4.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、Graph内部hash、ContentRef実bytes hash、Manifest bytes hashを分離。Codec`e11-json-jcs-rfc8785/1`、Productの`hash_mapping(default=str)` fallback禁止。
 
-#### 4.1.7. 検証
+#### 検証
 
 `DD-E11-EFF01` point-only、`EFF02` Science独立、`EFF03` backend mismatch、`EFF04` canonical finite、`EFF05` old Product regression。FR-202、NFR-030/032/036、AR-034/040。
 
 ### 3.3. `InferenceEvidence` — self-contained class protocol
 
-#### 3.2.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.InferenceEvidence`。Inferenceの可用性と実際のFinite CI／AR集合を型付きで保持する。
 
-#### 3.2.2. フィールド
+#### フィールド
 
 | Field | Type | 制約 |
 |---|---|---|
@@ -156,25 +156,25 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 | `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
 | `method_config` | typed config | Backend/Method/Estimandに適合 |
 
-#### 3.2.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整合を検査。実行済みCIをデフォルト値で捏造しない。
 
-#### 3.2.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
 
-#### 3.2.5. 処理仕様
+#### 処理仕様
 
 EXPLORATORY point-onlyとCONFIRMATORY inference要件を分離する。FiniteIntervalとARConfidenceSetを丸め合わせず、SCM point-onlyを確証CIと報告しない。
 
-#### 3.2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲。
 
-#### 3.2.7. 検証
+#### 検証
 
 `DD-E11-AR04/AR05`、`DD-E11-EFF01/02`、Method-specific CI availability、independent coverage。
 
@@ -234,7 +234,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** P02,P03。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Self-contained Freeze stop

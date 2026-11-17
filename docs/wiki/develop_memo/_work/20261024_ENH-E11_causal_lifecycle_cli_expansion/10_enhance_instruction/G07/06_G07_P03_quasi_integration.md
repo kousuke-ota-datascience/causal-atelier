@@ -58,14 +58,14 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `LocalCausalUseCase` — inline Field/Constructor/Method contract
 
-### 1.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
 - **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
 - **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
 - **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1〜5、30_60 §11〜12、30_62 §7。
 
-### 1.2. フィールド
+#### フィールド
 
 **Constructor-injected Port fields:**
 
@@ -90,7 +90,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 
 **Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。Policy verifierはStudyと独立のTrust Anchorで事前承認証拠を検証する。
 
-### 1.3. Constructor / Factory
+#### Constructor / Factory
 
 配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
 注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`policy_verifier: LocalPolicyVerifierPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
@@ -99,7 +99,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
-### 1.4. メソッド
+#### メソッド
 
 ~~~python
 def preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport: ...
@@ -113,7 +113,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport` | capability/eligibility/input diagnostic | trusted input read permitted, **no** scientific execution or bundle publication; invalid version/refs typed |
 | `run(self, spec: ValidatedStudy, context: LocalRunContext) -> LocalRunOutcome` | technical + scientific axes, committed ref or typed negative | backend execution only after validated eligibility; publication only via Publisher; errors preserve kind |
 
-### 1.5. 処理仕様
+#### 処理仕様
 
 1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。
 2. Trusted Root配下でQuestion/Design/Graph/Dataset/Upstream Refをsecure openし、bytes hash・Graph/Estimand/Designの意味上の一致を検査。
@@ -126,7 +126,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
 
-### 1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 `technical_status=COMPLETED`はVerified Manifestとcommit markerを持つ。Science negativeでも技術的には完了しうる。Config/入力/Backend/Publication exceptionをScientific Negativeに潰さない。途中失敗はcompleted marker無し。無効な上流proofではEstimatorを呼ばない。
 
@@ -134,7 +134,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 - **Transactions:** This is a Local FS unit, not a Product UoW. Publication atomicity and crash recovery specified in §3 and IF 23_42.
 - **Errors:** invalid config/schema, missing/mismatched refs, unsupported capability, scientific negative, runtime failure and publication failure remain separately typed. **Retry/rollback:** idempotent same-hash readback allowed; another request hash with same run ID rejected; uncommitted staging never advertised as success.
 
-### 1.7. 検証
+#### 検証
 
 `DD-E11-RUN01`正常pipeline、`RUN02`非識別でEstimator未呼出、`RUN03`wrong Backend/Estimand、`RUN04`confirmatory unsupported CI、`RUN05`Graph再固定は新識別、`RUN06`旧v2挙動不変、`RUN07`abort時はuncommitted。
 
@@ -148,11 +148,11 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.2. `EffectOutcome` — inline Field/Constructor/Method contract
 
-#### 4.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EffectOutcome`。点推定・Inference・ScienceAcceptance・lineageを別軸で保持する。Productの既存`ScientificResultDescriptor`へ無検証castしない。
 
-#### 4.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -163,36 +163,36 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
 | `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
-#### 4.1.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成。不正なEffect/Estimand一致やfalse PASSを拒否。
 
-#### 4.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
 | `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
 
-#### 4.1.5. 処理仕様
+#### 処理仕様
 
 Pointの存在≠Science PASS。Technical、Identification、Point、Inference、ScienceAcceptanceの状態を混同せず、Method固有estimand/CIを検査。
 
-#### 4.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、Graph内部hash、ContentRef実bytes hash、Manifest bytes hashを分離。Codec`e11-json-jcs-rfc8785/1`、Productの`hash_mapping(default=str)` fallback禁止。
 
-#### 4.1.7. 検証
+#### 検証
 
 `DD-E11-EFF01` point-only、`EFF02` Science独立、`EFF03` backend mismatch、`EFF04` canonical finite、`EFF05` old Product regression。FR-202、NFR-030/032/036、AR-034/040。
 
 ### 3.3. `InferenceEvidence` — inline Field/Constructor/Method contract
 
-#### 3.2.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.InferenceEvidence`。Inferenceの可用性と実際のFinite CI／AR集合を型付きで保持する。
 
-#### 3.2.2. フィールド
+#### フィールド
 
 | Field | Type | 制約 |
 |---|---|---|
@@ -202,25 +202,25 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 | `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
 | `method_config` | typed config | Backend/Method/Estimandに適合 |
 
-#### 3.2.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整合を検査。実行済みCIをデフォルト値で捏造しない。
 
-#### 3.2.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
 
-#### 3.2.5. 処理仕様
+#### 処理仕様
 
 EXPLORATORY point-onlyとCONFIRMATORY inference要件を分離する。FiniteIntervalとARConfidenceSetを丸め合わせず、SCM point-onlyを確証CIと報告しない。
 
-#### 3.2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲。
 
-#### 3.2.7. 検証
+#### 検証
 
 `DD-E11-AR04/AR05`、`DD-E11-EFF01/02`、Method-specific CI availability、independent coverage。
 
@@ -275,7 +275,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** 全required Pxx完了後Candidate Assembly。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Freeze-only review: unresolved decisions

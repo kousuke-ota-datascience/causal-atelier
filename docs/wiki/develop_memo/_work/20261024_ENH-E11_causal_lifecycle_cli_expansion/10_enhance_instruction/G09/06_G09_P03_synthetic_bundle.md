@@ -60,14 +60,14 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 
 ### 3.1. `LocalCausalUseCase` — self-contained class protocol
 
-### 1.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
 - **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
 - **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
 - **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1〜5、30_60 §11〜12、30_62 §7。
 
-### 1.2. フィールド
+#### フィールド
 
 **Constructor-injected Port fields:**
 
@@ -92,7 +92,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 
 **Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。Policy verifierはStudyと独立のTrust Anchorで事前承認証拠を検証する。
 
-### 1.3. Constructor / Factory
+#### Constructor / Factory
 
 配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
 注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`policy_verifier: LocalPolicyVerifierPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
@@ -101,7 +101,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
-### 1.4. メソッド
+#### メソッド
 
 ~~~python
 def preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport: ...
@@ -115,7 +115,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport` | capability/eligibility/input diagnostic | trusted input read permitted, **no** scientific execution or bundle publication; invalid version/refs typed |
 | `run(self, spec: ValidatedStudy, context: LocalRunContext) -> LocalRunOutcome` | technical + scientific axes, committed ref or typed negative | backend execution only after validated eligibility; publication only via Publisher; errors preserve kind |
 
-### 1.5. 処理仕様
+#### 処理仕様
 
 1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。
 2. Trusted Root配下でQuestion/Design/Graph/Dataset/Upstream Refをsecure openし、bytes hash・Graph/Estimand/Designの意味上の一致を検査。
@@ -128,7 +128,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
 
-### 1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 `technical_status=COMPLETED`はVerified Manifestとcommit markerを持つ。Science negativeでも技術的には完了しうる。Config/入力/Backend/Publication exceptionをScientific Negativeに潰さない。途中失敗はcompleted marker無し。無効な上流proofではEstimatorを呼ばない。
 
@@ -136,7 +136,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 - **Transactions:** This is a Local FS unit, not a Product UoW. Publication atomicity and crash recovery specified in §3 and IF 23_42.
 - **Errors:** invalid config/schema, missing/mismatched refs, unsupported capability, scientific negative, runtime failure and publication failure remain separately typed. **Retry/rollback:** idempotent same-hash readback allowed; another request hash with same run ID rejected; uncommitted staging never advertised as success.
 
-### 1.7. 検証
+#### 検証
 
 `DD-E11-RUN01`正常pipeline、`RUN02`非識別でEstimator未呼出、`RUN03`wrong Backend/Estimand、`RUN04`confirmatory unsupported CI、`RUN05`Graph再固定は新識別、`RUN06`旧v2挙動不変、`RUN07`abort時はuncommitted。
 
@@ -150,11 +150,11 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.2. `EffectOutcome` — self-contained class protocol
 
-#### 4.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EffectOutcome`。点推定・Inference・ScienceAcceptance・lineageを別軸で保持する。Productの既存`ScientificResultDescriptor`へ無検証castしない。
 
-#### 4.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -165,39 +165,39 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
 | `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
-#### 4.1.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成。不正なEffect/Estimand一致やfalse PASSを拒否。
 
-#### 4.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
 | `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
 
-#### 4.1.5. 処理仕様
+#### 処理仕様
 
 Pointの存在≠Science PASS。Technical、Identification、Point、Inference、ScienceAcceptanceの状態を混同せず、Method固有estimand/CIを検査。
 
-#### 4.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、Graph内部hash、ContentRef実bytes hash、Manifest bytes hashを分離。Codec`e11-json-jcs-rfc8785/1`、Productの`hash_mapping(default=str)` fallback禁止。
 
-#### 4.1.7. 検証
+#### 検証
 
 `DD-E11-EFF01` point-only、`EFF02` Science独立、`EFF03` backend mismatch、`EFF04` canonical finite、`EFF05` old Product regression。FR-202、NFR-030/032/036、AR-034/040。
 
 ### 3.3. `LocalRunManifest` — self-contained class protocol
 
-### 4.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class/Module:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`、immutable typed DTO。
 - **責務:** 1 Local runのidentity、lineage、Method/Science/Runtime、artifact inventoryをversioned schemaで保持し、canonical bytesのauthorityを定義する。
 - **責務外:** file open、hash verificationのI/O、実効科学計算、Local OS permission enforcement。
 - **参照:** IF `23_42` §6、`23_41` §5。Existing Product CliManifestとは別schema。
 
-### 4.2. フィールド
+#### フィールド
 
 | Field | Type | Origin | Constraint |
 | --- | --- | --- | --- |
@@ -211,13 +211,13 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 
 この表は論理的なField groupingであり、wireの厳格なversion/Schema検証は23_42に従う。
 
-### 4.3. Constructor / Factory
+#### Constructor / Factory
 
 - **Factory:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
 - **Precondition:** strict schema/version + no unknown critical keys; content hash references are normalized; `Manifest` must **not** include its own bytes hash; marker is outside Artifact list. Factories do not read the filesystem.
 - **N/A:** runtime backend import is not part of this DTO. Factoryはstrict Schema違反を型付きErrorとして返す。
 
-### 4.4. メソッド
+#### メソッド
 
 | Signature | Result | Side effect / failure |
 | --- | --- | --- |
@@ -225,50 +225,50 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 | `to_canonical_bytes(self) -> bytes` | canonical versioned JSON bytes | pure deterministic encoding; reject NaN/Infinity/raw credentials |
 | `from_payload(payload) -> LocalRunManifest` | immutable DTO | pure strict decode; unsupported version rejected |
 
-### 4.5. 処理仕様
+#### 処理仕様
 
 1. Normalize schema version and all typed scientific statuses without collapsing negative outcomes.
 2. Validate artifact keys unique and safe relative; no absolute input path/secret/row data in Manifest.
 3. Validate lineage digest/target and effective runtime evidence with missing values distinguished from fabricated defaults.
 4. Produce canonical bytes deterministically, independent of map insertion order or local time display. Result identity is a logical run identity, **not** evidence of successful file publication.
 
-### 4.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 - `LocalArtifactPublisher` creates Manifest bytes; Reader consumes those same canonical bytes. Marker stores SHA256 of Manifest bytes, not a self-reference.
 - **I/O:** N/A in DTO; byte serialization is pure. Actual file I/O/permission, partial bundle, crash and retry belong to Publisher/Reader.
 - **Failure:** `SCHEMA_INVALID`, `VERSION_UNSUPPORTED`, `HASH_INVALID`, `PRIVACY_POLICY_CONFLICT`; no automatic v2 upgrade.
 
-### 4.7. 検証
+#### 検証
 
 `DD-E11-MAN01` canonical bytes roundtrip; `MAN02` unknown version/unknown critical; `MAN03` marker outside artifact list; `MAN04` science negative vs technical outcome independent; `MAN05` absolute path/raw secret/row data rejection; `MAN06` legacy v2 readback isolation。関連要件：FR-201/202/203、NFR-029/030/032、AR-040、BD01-F06/F07/F12。
 
 ### 3.4. `LocalManifestReader` — self-contained class protocol
 
-### 5.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class/Module:** `ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader`。
 - **責務:** committed runをMarker→Manifest→Artifactの順に検証し、`VerifiedLocalRun`を返す。存在だけでCOMMITTEDと判断しない。
 - **責務外:** publish、legacy v2の無断E11解釈、科学的Oracle計算、実Artifactの編集。
 - **参照:** IF `23_42` §6〜8。
 
-### 5.2. フィールド
+#### フィールド
 
 | Field | Type | Origin | Constraint |
 | --- | --- | --- | --- |
 | Instance fields | N/A（stateless Reader） | N/A | trusted root/run IDはper-call引数。Cacheが必要なら原本Root・run IDとhash一致を保持し、未検証値の再利用を禁止 |
 
-### 5.3. Constructor / Factory
+#### Constructor / Factory
 
 - `__init__()`は特別な依存なし（read_runへ検証済み`TrustedLocalRoot`を明示注入するstateless API）。共通`LocalManifestReaderPort.verify(root,run_id)`はConcrete `read_run`へ委譲するAdapter。`Path`単独をTrustedRootに昇格しない。
 - Reader instanceに暗黙のworking directory・current Project・Product DB／OS principalを仮定させない。
 
-### 5.4. メソッド
+#### メソッド
 
 | Signature | Result | Side effect / failure |
 | --- | --- | --- |
 | `read_run(self, trusted_root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun` | Verified manifest and artifact descriptors | secure read only; marker/hash/version/root/permissions fail-closed |
 
-### 5.5. 処理仕様
+#### 処理仕様
 
 1. Trusted root・run_idとlocal execution principalを検証し、run directoryにsecure open。
 2. `_COMMITTED.json`存在/strict schema/version/request hashを確認。
@@ -277,14 +277,14 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 5. Private Parquetには出力Policy/OS principalの許可なしでrow-level bytesを返さない。
 6. 未検証・partial・legacy・corruptのいずれでも`VerifiedLocalRun`を返さない。
 
-### 5.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 - **Caller:** Local causal UseCaseのReadback／CLI status command、publisherのpublication verification。
 - **I/O:** Trusted Rootからread-only。symlink/TOCTOUとstale marker防止のためopenされた同一File Descriptorに対しhashを確認。
 - **Errors:** `NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`等を区分。
 - **Retry:** 不完全runを勝手に修復／削除しない。既存同hash runの再利用は完全Readback PASSに限定。
 
-### 5.7. 検証
+#### 検証
 
 `DD-E11-READ01` valid; `READ02` marker missing; `READ03` corrupted bytes/size; `READ04` wrong version; `READ05` individual export suppression; `READ06` old v2 not E11; `READ07` symlink/path race。関連要件：IF IO-E11-01〜09、FR-201〜203、NFR-031/032、BD01-F03/F05/F06/F12。
 
@@ -341,7 +341,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** 全required Pxx完了後Candidate Assembly。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Self-contained Freeze stop

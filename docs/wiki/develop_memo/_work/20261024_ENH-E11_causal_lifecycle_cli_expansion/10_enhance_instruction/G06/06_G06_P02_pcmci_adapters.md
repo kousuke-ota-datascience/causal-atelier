@@ -57,11 +57,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `TigramiteTemporalAdapter` — inline Field/Constructor/Method contract
 
-#### 1.15.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.causal_methods.temporal.TigramiteTemporalAdapter`。 Graph DiscoveryのMethod実行Adapter。担当Method：`P3-M01, P3-M02, P3-M03`。**再利用:** 既存Graph endpoint意味とlag規約の共通Validatorを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.15.2. フィールド
+#### フィールド
 
 | Field / dependency | Type | 制約 |
 |---|---|---|
@@ -69,11 +69,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
 | `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
 
-#### 1.15.3. Constructor / Factory
+#### Constructor / Factory
 
 `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
 
-#### 1.15.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -82,7 +82,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.15.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -92,44 +92,44 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Pxx固有のMethod/Science contractに保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.15.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
 
-#### 1.15.7. 検証
+#### 検証
 
 `DD-E11-METH-P301`（`P3-M01`）、`DD-E11-METH-P302`（`P3-M02`）、`DD-E11-METH-P303`（`P3-M03`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本PxxのMethod別DGP/NEG/REF/AC obligationsを優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `DiscoveryPort` — inline Field/Constructor/Method contract
 
-#### 5.5.1. 識別情報・責務
+#### 識別情報・責務
 
 **Protocol配置：** `ariadne.scientific.ports.causal.DiscoveryPort`。PAG/CPDAG等の科学的Graph Discovery実行を型付きで抽象化する。既存Productの`ScientificCorePort.run_discovery(input_,output_dir)`は旧APIとして維持し、共通純粋Scientific Kernelへの互換Bridgeを通す。
 
-#### 5.5.2. フィールド
+#### フィールド
 
 N/A：Protocol自身のInstance Fieldは持たない。
 
-#### 5.5.3. Constructor / Factory
+#### Constructor / Factory
 
 N/A：具体Adapterは同一Method RegistryのCapabilityとFactoryから構築し、選択済Method/Backendに対してのみ実行する。
 
-#### 5.5.4. メソッド
+#### メソッド
 
 ```python
 class DiscoveryPort(Protocol):
     def discover(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSink) -> DiscoveryGraphOutcome: ...
 ```
 
-#### 5.5.5. 処理仕様
+#### 処理仕様
 
 `ValidatedDiscoveryRequest`はVerified Study/Question/Design/Dataset、選択済`BackendCapabilityRecord`、CI適格性、seedとInput Hashを保持する。Graph生成成功か、理由付き科学的negativeのいずれかを`DiscoveryGraphOutcome`で返す。P1-M06では`FciDiscoveryAdapter.preflight/execute`へ委譲する。Backend例外・schema不正を科学的negativeへ変換しない。
 
-#### 5.5.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Graph/DiagnosticsのFile出力先は`StagingArtifactSink`のみ。Product GraphVersion writer、DB/UoW、旧`Path`直接書込はこのPortの責務にしない。
 
-#### 5.5.7. 検証
+#### 検証
 
 `DD-E11-DISC01`：Registry→Port→Adapterの正例と異Method不一致拒否。`DISC02`：Graph成功と科学的negativeの排他性・dummy Effect禁止。`DISC03`：Staging限定と旧Product run_discovery署名回帰。独立PAG Science Oracleは`DD-E11-METH-P106`の責務。
 
@@ -193,7 +193,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** P03。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Freeze-only review: unresolved decisions

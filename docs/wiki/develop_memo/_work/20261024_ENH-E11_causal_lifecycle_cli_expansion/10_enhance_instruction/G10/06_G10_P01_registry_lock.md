@@ -58,14 +58,14 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `MethodCapabilityRegistry` — complete Class method protocol
 
-### 2.1. 識別情報・責務
+#### 識別情報・責務
 
 - **Class:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Product ScientificCoreAdapterとは別契約である。
 - **責務:** 41 Method IDごとのOperation/Estimand/Eligibility/Inference/Backend/Profileをstrictに選択し、Version/API capabilityを検証し、Adapter importを遅延させる。外部Libraryの既定推論を黙認しない。
 - **責務外:** Estimator計算、Local FS publication、Customer Delivery LegalのPASS。
 - **関連契約:** 30_63 Method41 allocation、23_41 §6〜7。
 
-### 2.2. フィールド
+#### フィールド
 
 配置：`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
 
@@ -76,13 +76,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `effective_env` | `RuntimeEnvironmentPort` | runtime injection | Observed installed version/API; no fake availability |
 | `inference_registry` | `InferenceRegistry` | fixed Method-specific policy | Immutable, point-only vs confirmatory separated |
 
-### 2.3. Constructor / Factory
+#### Constructor / Factory
 
 - **Constructor:** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
 - **Factory** is a collaborator of Registry; 独立実装を置く場合も 独立Factoryを設ける場合も同じMethod×Backend×Inference不変条件に従う。
 - **Failure:** Invalid registry/duplicate ID/unsupported policy fails during preflight without selecting unrelated Method or importing missing Backend.
 
-### 2.4. メソッド
+#### メソッド
 
 ~~~python
 def describe(self, method_id: str) -> MethodDescriptor: ...
@@ -98,7 +98,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `resolve(method_id, backend_id, profile)` | effective Capability Record | inspect distribution/API/version; unavailable reason, never auto fallback |
 | `load_adapter(capability)` | scientifically eligible Adapter | only this method may lazy import; import failure localized as capability error |
 
-### 2.5. 処理仕様
+#### 処理仕様
 
 1. Resolve declared Method ID and operation/estimand eligibility from frozen descriptor.
 2. Check profile/extras and **effective installed distribution+API version**, not just `pyproject.toml` declaration.
@@ -106,14 +106,14 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 4. Return typed supported/unavailable/unsupported with reasons. Only eligible selected capability permits actual lazy import; never fallback to other Method.
 5. Export effective config/version/seed/algorithm facts for Manifest, not a pre-run Science PASS.
 
-### 2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 - **Input:** MethodRequest, Backend ID/Profile, versioned method descriptors, effective runtime probe.
 - **Output:** `MethodDescriptor`, `BackendCapabilityRecord`, `ScientificAdapter` only after eligibility; external estimator objects never enter Domain persistence.
 - **No DB/FS mutation** from `describe`/`resolve`; `load_adapter` may import optional modules.
 - **Errors:** unknown method, incompatible estimand/inference, missing extra, incompatible API signature, import failure. Each is typed and does not disable core or legacy v2 startup. Combined env/BLAS conflicts are not silently ignored.
 
-### 2.7. 検証
+#### 検証
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
 
@@ -121,11 +121,11 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 3.2. `BackendCapabilityRecord` — complete Class method protocol
 
-### 7.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.scientific.capabilities.BackendCapabilityRecord`（Runtime能力値としてScientific層が所有）。実効Backend適格性の証拠を保持し、silent fallbackを禁止する。
 
-### 7.2. フィールド
+#### フィールド
 
 | Field | 制約 |
 |---|---|
@@ -134,25 +134,25 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `extra, profile` | effective environment/profile |
 | `available, reason` | boolと欠落時のtyped reason |
 
-### 7.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructorは観測証拠から作成。未実測値を使用可能とするdefault/fallback禁止。
 
-### 7.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `check(self, request: ValidatedCapabilityRequest)` | typed compatibility decision | version/Method/API/Inference照合 | unsupported/unavailable typed reason |
 
-### 7.5. 処理仕様
+#### 処理仕様
 
 静的Registryと実効Probeから指定Methodと推論方式の可用性を検証。Probeの取得はConcrete Registry/Runtime Port側で行い、Value自身がoptional Backendをimportしない。`load_adapter`時だけBackend import可能。
 
-### 7.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 RecordはI/Oなし。Runtime probe、distribution inspection、optional importは30_62のCapability Registryと30_63のAdapter実装の責務。
 
-### 7.7. 検証
+#### 検証
 
 `DD-E11-EFF03` version/API mismatch、`DD-E11-CAP01〜06` profile isolation/inference availability、no silent fallback。
 
@@ -211,7 +211,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** P02,P03。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Explicit design/Science/Legal Freeze conditions

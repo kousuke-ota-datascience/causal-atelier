@@ -295,7 +295,7 @@ Template migration/apply tooling、instantiation tooling、validatorは同一規
 
 **根拠:** [ENH-E9 → ENH-E11 test architecture handoff](../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md)。本`5は**正式Gate G01〜G10すべて**に適用する実行規約であり、各Gate 06/Pxx/07の検証要求を代替しない。
 
-`GATE_ID`は実行時変数。40は全Gate共通の **WHERE / HOW**（Test配置・発見・実行・Evidence・Test-side障害処理）を規定し、各Gateの06/Pxx/07が **WHAT**（実装対象、受入条件、保護するInvariant、必要なVerification layer、Browser E2E要否）を定める。G01のFCI/PAG、Linux publication、CLI-onlyという事情をG02〜G10へ一般化してはならない。
+`GATE_ID`は実行時変数。40は全Gate共通の **WHERE / HOW**（Test配置・発見・実行・Evidence・Test-side障害処理）を規定し、各Gateの06/Pxx/07が **WHAT**（実装対象、受入条件、保護するInvariant、必要なVerification layer、Browser E2E要否）を定める。G01固有のFCI/PAG科学契約をG02〜G10へ一般化してはならない。一方、ENH-E11の採用済み実装Scopeは全GateでLocal Scientific CLIであり、新規Web/API/Worker/DB/UI統合を含まない。Gate固有の実行・科学契約はそれぞれの06/Pxx/07が所有する。
 
 ### 5.1. 直交する二つのTest分類軸
 
@@ -309,7 +309,7 @@ Template migration/apply tooling、instantiation tooling、validatorは同一規
 ### 5.2. G01〜G10の共通配置・発見ルール
 
 1. **新規またはmaterially rebuiltしたGate固有Test**は原則 `tests/enhancement/enh_e11/<gate>/<layer>/` に置く。`<gate>` は実行時`GATE_ID`のlowercase（G01→g01、G10→g10）、`<layer>` は`5.1の5種から、そのGateのPxx/06/07が要求する証明レイヤーを選ぶ。`component/`と`scientific/`を新しいGate-local標準レイヤーとして追加しない。
-2. **G01限定の例:** G01はCLI-onlyなのでunit/contract/integrationが主でBrowser E2Eは不要。PAG/Graph/JCSの純粋意味検証、実Linux atomic publication、実FCI API/独立科学OracleはG01の07が所有する。**G02〜G10は各Gate 07によってfrontendやBrowser E2Eが必要になる場合があり、G01のCLI-only制約を適用してはならない。** Browser E2Eを要求するGateではcritical cross-layer connectivityだけに限定し、細部のcorrectnessはlower deterministic layerで証明する。
+2. **ENH-E11 G01〜G10のLocal CLI Scope:** 新規Web UI/Frontend機能を対象外とするため、新規Browser E2E blocking journeyは全Gateで**N/A**。各Gateの主要な証明レイヤーはunit/contract/実CLI・Linux FS integration/独立Scientific Reference。既存Productを変更した影響がある場合は、既存Browser E2Eを含むaffected regression suiteを実施しうる。将来Web/UIをE11へ追加する場合はOwnerの正式scope amendment、06/07再Freeze、Browser test契約の具体化を先行させる。G01固有PAG/FCI検証は他Gateに無差別適用しない。
 3. **既存Testの共存:** `tests/product/`、`tests/integration/`、`tests/scientific/`、`tests/browser_e2e/` 等の既存Suiteはcurrent invariantが有効なら現配置のまま利用する。対象Gateに必要でないという理由だけでは移動・archiveしない。事実上obsoleteと判断した場合だけ`legacy_archive`を検討する。
 4. **`tests/regression/`への昇格:** 将来のProduct invariantを継続的に守るという個別のsemantic promotion decisionがあるときに限る。E11完了時のDisposition候補は `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`。`tests/characterization/scientific/`、`tests/benchmarks/scientific/`、`tests/support/`の採用も用途と再利用根拠がある場合だけ。ENH-E11中のrepository-wide移行は必須ではなく、包括的再構成はENH-E12以降。
 5. **Gate existence/readiness:** `GATE_ID`はG01〜G10の範囲で指定する。対応する06/07/Pxx/08が未作成・未Freeze・一意でない・Coding Authorizationがない場合、該当実行フェーズは`BLOCKED_*`で停止する。後続Gateの文書をG01の06/07から推測生成してはならない。
@@ -331,6 +331,6 @@ Template migration/apply tooling、instantiation tooling、validatorは同一規
 ### 5.4. 正本と実行状況
 
 - 実体化された6種のAgent Promptと変数規約は`40_operator_workflows/agent_entry_prompts/`に存在し、**G01〜G10共通で使用する**。Gate別実装契約は`10_enhance_instruction/<GATE_ID>/`側に存在する場合だけ有効。
-- **現時点で06/07/Pxxが実際に用意されているのはG01のみ**。これはG02〜G10をGate範囲から除外する意味ではない。
+- **文書実在状況（2026-11-17）：G01〜G10に06/07が存在し、G02〜G10には各P00と計36件のPxxを作成済み。** いずれもPREP-03 Review DRAFTであり、承認・Freeze・Coding Authorization・Gate999 PASSを意味しない。存在と実行可能性を混同しない。
 - G01はWORK_PACKAGE方式の草案で、Coding Authorization未発行。Promptの存在はOwner承認・06/07 Freeze・readiness validator・実装着手権限を意味しない。
 

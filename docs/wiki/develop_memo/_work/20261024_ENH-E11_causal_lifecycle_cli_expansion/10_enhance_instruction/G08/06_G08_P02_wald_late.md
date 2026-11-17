@@ -59,11 +59,11 @@ Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定�
 
 ### 3.1. `WaldRatioAdapter` — full fields/constructor/methods
 
-#### 1.19.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.causal_methods.iv.WaldRatioAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M09`。**再利用:** 共通IV適格性を再利用、Waldとweak-IV negativeを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.19.2. フィールド
+#### フィールド
 
 | Field / dependency | Type | 制約 |
 |---|---|---|
@@ -71,11 +71,11 @@ Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定�
 | `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
 | `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
 
-#### 1.19.3. Constructor / Factory
+#### Constructor / Factory
 
 `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
 
-#### 1.19.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -84,7 +84,7 @@ Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定�
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.19.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -92,21 +92,21 @@ Class Fields/Constructor/Method/Pre/Post/Failureは以下で本Package内に定�
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Package内の数理定義とMethod別科学契約に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.19.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
 
-#### 1.19.7. 検証
+#### 検証
 
 `DD-E11-METH-P309`（`P3-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageの各Method DGP/NEG/REF一覧を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `IdentificationOutcome` — full fields/constructor/methods
 
-#### 2.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.identification.contracts.IdentificationOutcome`。識別状態・対象Estimand・Proof・lineageを保持するValue。DoWhy内部ラベルをDomainの推定対象と混同しない。
 
-#### 2.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -116,35 +116,35 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | `strategy, proof` | Strategy、`IdentificationProof|None` |
 | `upstream, reasons` | `UpstreamHashSet, tuple[ScientificReason,...]` |
 
-#### 2.1.3. Constructor / Factory
+#### Constructor / Factory
 
 `from_evidence(evidence:ValidatedIdentificationEvidence)->IdentificationOutcome`。BackendのStatus、assumption、GraphVersion、Estimand、Upstreamを意味検証して正規化。未提供Proofを生成しない。
 
-#### 2.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `from_evidence(evidence:ValidatedIdentificationEvidence)` | `IdentificationOutcome` | pure status/proof normalization | proof/estimand/upstream不整合 |
 
-#### 2.1.5. 処理仕様
+#### 処理仕様
 
 `NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED`を点推定許可へ自動昇格しない。緩和可能な列挙WARNだけに理由付きoverrideを許可。
 
-#### 2.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 外部I/Oなし。実際のBackend識別計算は`IdentificationPort`、Proof/File readbackは別Port。Retry/RollbackはN/A。
 
-#### 2.1.7. 検証
+#### 検証
 
 `DD-E11-ID01` B0/B1/DRIV mislabel、`ID02` lineage差、`ID03` nonidentified override拒否、`ID04` GraphVersion再識別。FR-187/194/199、AR-029/039/043。
 
 ### 3.3. `EstimatorRequest` — full fields/constructor/methods
 
-#### 2.2.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EstimatorRequest`。Identification proofが適格な場合だけEstimatorへ渡すRequest Value。
 
-#### 2.2.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -153,25 +153,25 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | `question/design/graph/dataset_hashes` | 完全な上流digest集合 |
 | `method_config, inference_request` | Method/Inference適格なtyped config |
 
-#### 2.2.3. Constructor / Factory
+#### Constructor / Factory
 
 `validate_against(identification,design,policy)->ValidatedEstimatorRequest`は入力と上流証拠を照合する型付きvalidator。Validation前の生RequestをAdapterへ送らない。
 
-#### 2.2.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_against(self, identification:IdentificationOutcome, design:CausalDesign, policy:EstimandEligibilityPolicy)` | `ValidatedEstimatorRequest` | pure eligibility check | scientific negative / schema validation区別 |
 
-#### 2.2.5. 処理仕様
+#### 処理仕様
 
 Method-specific assumptions、Mediator/Instrument/support、Data Eligibility、Graph/Design/Question/Dataset hash全一致、CI要求を検証。不適格は`ScientificNegativeOutcome`としてBackend未呼出。Path/schema mismatchはtechnical validationとする。
 
-#### 2.2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Value自身はI/Oなし。ScientificValidationServiceの既存適格性規則を共通pure policyとして再利用する。実Estimator I/O/Artifactは`EstimatorPort.estimate(...,sink)`を通す。
 
-#### 2.2.7. 検証
+#### 検証
 
 `DD-E11-ID01〜04`およびMethod固有Negative Tests。
 
@@ -232,7 +232,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Next:** P03,P04。Pxx完了をGate 999 PASSにしない。
 
-**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+**STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、当該PxxのOptional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。本Pxxの依存契約・科学的Referenceが未解決なら当該ScopeだけをBLOCKEDとする。他Gateの未決を全Packageの一律停止条件にせず、Agentによる推測補完を禁止する。
 
 
 ## 8. Freeze-critical standalone gaps
