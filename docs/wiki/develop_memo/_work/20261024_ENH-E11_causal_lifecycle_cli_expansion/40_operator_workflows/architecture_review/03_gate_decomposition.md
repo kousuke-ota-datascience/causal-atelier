@@ -56,4 +56,4 @@ Phase 1〜3の必須手法が、再利用済みであることを証拠で示す
 
 ## 7. 用語訂正と未解決のGate受入境界
 
-G01〜G10は正式Enhance Workflow Gate IDであり、独自Workstream IDではない。06/07/999はGate内の契約・判定文書、P00は計画、P01〜Pxxは実装Execution Unit。旧G01-WP01〜05はG01/P01〜P05へ変更する。10 Gateの計画は存在するが全件999未実施。現在のG01はGraph/FCI Science、Linux Atomic Publication/Privacy等の独立authorityを跨ぐため、1 Gateに収める論拠をCoding Authorization前に再審査し、必要なら再分割とOwner承認を行う。06/07はDRAFT。
+G01〜G10は正式Enhance Workflow Gate IDであり、独自Workstream IDではない。06/07/999はGate内の契約・判定文書、P00は計画、P01〜Pxxは実装Execution Unit。従来G01の下に置いた5実装単位は、正式にはG01/P01〜P05と呼ぶ。10 Gateの計画は存在するが全件999未実施。現在のG01はGraph/FCI Science、Linux Atomic Publication/Privacy等の独立authorityを跨ぐため、1 Gateに収める論拠をCoding Authorization前に再審査し、必要なら再分割とOwner承認を行う。06/07はDRAFT。

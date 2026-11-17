@@ -69,7 +69,7 @@ uv run --no-sync python -m pytest tests/scientific_benchmarks -q
 
 - G01直接対象：`REF01〜04、SPEC01〜04、GRAPH01/03/04、RUN01/03/04/06/07、CAP01/04/05、PUB01〜10、MAN01〜06、READ01〜07、PRIV01〜06、DD-E11-METH-P106`。Testごとに個別正例・負例を実行して初めて各DD-IDを判定する。
 - G01対象外：`GRAPH02` Temporal→G06、`RUN02/05` Identification連携→G02（Graph Factory RevisionはGRAPH04）、`CAP02/03` Multi-profile→G10、`CAP06` Delivery/legal→別審査、`PRIV07` row export approval/column controls→G05、`ID01〜04 / AR01〜05 / EFF01〜04`の科学的実装→後続Method Gate。`EFF05`は旧v2回帰として07-12だけ実施。
-- 例：`DD-E11-PUB05`（30_62 `4.7 concurrent no-clobber）→06 `2 G01-WP02/`2.1 `LocalArtifactPublisher.commit`→07-05。`DD-E11-GRAPH01`（30_61 `4.3 PAG marks）→06 `2 G01-WP03/`2.1 `GraphEvidence.canonical_payload`→07-03（**形式保存**）と07-09（**PAG科学的正しさ**）。この2種類を同じScience PASSにはしない。
+- 例：`DD-E11-PUB05`（30_62 `4.7 concurrent no-clobber）→06 `2 G01/P02/`2.1 `LocalArtifactPublisher.commit`→07-05。`DD-E11-GRAPH01`（30_61 `4.3 PAG marks）→06 `2 G01/P03/`2.1 `GraphEvidence.canonical_payload`→07-03（**形式保存**）と07-09（**PAG科学的正しさ**）。この2種類を同じScience PASSにはしない。
 
 
 ## 4. FCI独立Graph Referenceと定量セル（G01 Gate07）
