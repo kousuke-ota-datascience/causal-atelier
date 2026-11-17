@@ -37,3 +37,8 @@ The current schemas are structurally strict at top-level and some subobjects, bu
 ## Cross-schema semantics for F06 (current design candidate)
 
 [Cross-schema invariants](../../combined_review/114_20261117_prep02_f06_schema_semantic_invariants.md) specify two distinct Graph hashes: `Graph.content_hash` is the JCS digest of Graph excluding that field itself; external `ContentRef.sha256` verifies full Graph file bytes. The Manifest `schema_dispatch.result` is **nullable** for non-Effect operations, but an Operation-specific scientific Bundle validator must reject missing required Effect or a fake Effect in discovery-only operations. [Shared Port and ErrorPhase](../../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md) governs typed cross-artifact joins and phase-specific CLI exit codes. These runtime/semantic rules cannot be certified by JSON Schema alone.
+
+
+## G01 strict Method/Question/Design profiles (PREP-03)
+
+G01 Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_g01_fci_method_config_v1.schema.json)でMethod registry dispatchする。G01の外部入力Question/Designは[Question profile](e11_g01_question_evidence_profile.schema.json)、[Design profile](e11_g01_design_evidence_profile.schema.json)で厳格検証。**これら3件はG01内部のValidation Profileであって、Ownerが採用した5種類のE11公開payload/schema versionを変更・追加するものではない。** Strict duplicate key/semantic join/Dataset type/CI admissibilityは07の実行時検査対象。

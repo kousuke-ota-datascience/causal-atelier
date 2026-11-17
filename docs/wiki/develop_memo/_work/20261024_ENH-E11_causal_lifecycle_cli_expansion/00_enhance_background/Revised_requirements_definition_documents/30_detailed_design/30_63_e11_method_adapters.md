@@ -164,3 +164,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 - 顧客Deliveryには実際に配るArtifactのSBOM/License法務判断を必要とする。Science受入と配布認可を同一状態にしない。
 
 参照：[E11 Domain/Ports](30_61_e11_local_domain_ports.md)、[E11 runtime/publisher](30_62_e11_local_execution_publication.md)、[E11 Interface](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
+
+## 9. PREP-03 G01 P1-M06 implementation-facing Method config
+
+[Gate06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)により`P1-M06`のFCI Adapterに限って、`fisherz/chisq/gsq`、明示`alpha/depth/max_path_length`、BG知識（nullまたはrequired/forbidden directed pairs）、Graph PAG losslessと明示`causal-learn` Backendを構成契約とする。Method-specific JSON Schemaは[FCI schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)；Question/Design内部Profileは同Schema indexを参照。上流のBackgroundKnowledge endpoint過剰確定RegressionはG01-07で検査し、未検証の条件でPAG確定を偽装しない。

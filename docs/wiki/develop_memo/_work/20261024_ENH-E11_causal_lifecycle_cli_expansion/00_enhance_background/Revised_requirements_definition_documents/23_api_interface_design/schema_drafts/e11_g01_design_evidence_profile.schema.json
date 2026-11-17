@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:g01:internal:design-evidence-profile",
+  "title": "G01 observational discovery Design evidence: internal strict validation profile",
+  "description": "Application-only strict G01 design profile. Declared causal assumptions are not proof that they hold.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_id",
+    "question_id",
+    "design_kind",
+    "variables",
+    "assumptions",
+    "background_knowledge"
+  ],
+  "properties": {
+    "design_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "design_kind": {
+      "const": "OBSERVATIONAL_GRAPH_DISCOVERY"
+    },
+    "variables": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "measurement_scale"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "measurement_scale": {
+            "enum": [
+              "CONTINUOUS",
+              "CATEGORICAL"
+            ]
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "causal_markov_declared",
+        "faithfulness_declared",
+        "acyclicity_declared",
+        "latent_confounding_possible",
+        "sampling_unit"
+      ],
+      "properties": {
+        "causal_markov_declared": {
+          "type": "boolean"
+        },
+        "faithfulness_declared": {
+          "type": "boolean"
+        },
+        "acyclicity_declared": {
+          "type": "boolean"
+        },
+        "latent_confounding_possible": {
+          "type": "boolean"
+        },
+        "sampling_unit": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "background_knowledge": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_edges",
+            "forbidden_edges"
+          ],
+          "properties": {
+            "required_edges": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/directedPair"
+              }
+            },
+            "forbidden_edges": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/directedPair"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "directedPair": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "string",
+          "minLength": 1
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}

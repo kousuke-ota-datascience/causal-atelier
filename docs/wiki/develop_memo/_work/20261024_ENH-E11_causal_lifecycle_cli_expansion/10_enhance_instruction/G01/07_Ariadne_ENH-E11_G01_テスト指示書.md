@@ -42,7 +42,7 @@ uv run --no-sync python -m pytest tests/scientific_benchmarks -q
 
 | Test | 正例／負例 | PASSの観測条件（実結果を記録） |
 | --- | --- | --- |
-| **G01-07-01 Strict Study+dispatch** | Schema v1、P1-M06 only、duplicate YAML/JSON key、unknown fields、旧Product`causal-analysis-spec/2`、G02 Method指定 | 正例parse。未知・旧版・余剰config→exit2。旧Product v2は別入口で成功し挙動不変 |
+| **G01-07-01 Strict Study+dispatch** | Schema v1、P1-M06 only、**Question/Design G01内部Profile**、question_idとStudy.identity一致、Designの変数名・Dataset列順・CI type照合、BK Study/Design一致。duplicate YAML/JSON key、unknown fields、旧Product`causal-analysis-spec/2`、G02 Method指定 | 正例parse。未知・旧版・余剰config/不一致→exit2。旧Product v2は別入口で成功し挙動不変 |
 | **G01-07-02 ContentRef and Root** | Regular input same root、../、/abs、Windows separator、symlink/hardlink、hash不一致、違うowner/unsafe mount、race | 元FDの実bytesとSHA一致のみ許可、root外open 0、破損/不正入力exit3 |
 | **G01-07-03 Graph/PAG fidelity** | `o-o`, `o->`, `--o`, `->`, `<->`、source/target swap、parent revision、Self-loop/duplicate/unknown node/unknown endpoint | 全定義済みendpoint pair・version/parent/lag=nullの**100% roundtrip**、DAG化なし、revisionは新ID、INVALID拒否 |
 | **G01-07-04 Canonical JCS** | 用意済み7 positive+7 negative vectors、UTF16 sort/NFC-NFD/大値/-0、duplicate/NaN/nonfinite、Graph self digest | Python↔独立JavaScriptのJCS **実bytes一致**、それぞれSHA256一致、Hashの対象混同0。既知JSON文字列をhashするだけではPASS不可 |
@@ -87,3 +87,8 @@ defect_or_reason | evidence_relative_key
 計算不能なtestを削除、未実行をSKIP扱いでPASS、科学的負結果をExit4として隠すことは不可。
 
 **実行状況:** `07_SPEC_PREPARED / TESTS_NOT_RUN / INDEPENDENT_SCIENCE_NOT_RUN / G01_999_NOT_DECIDED / CODING_NOT_AUTHORIZED`。
+
+
+### G01内部Question/Design入力の検証追加（2026-11-17）
+
+[Question evidence profile](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)、[Design evidence profile](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)は、5つの公開E11 payload version以外に新しいwire versionを追加するものではない。G01-07-01/08で`question_id`・Study ContentRef identity・Design同一性、Design列名/順序/型とDataset、Method config背景知識の同値、unknown/duplicate field・混合尺度不適格、宣言された仮定を科学的真と誤表示しないことを確認する。

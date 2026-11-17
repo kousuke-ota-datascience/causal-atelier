@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:g01:internal:question-evidence-profile",
+  "title": "G01 Question evidence: internal strict validation profile",
+  "description": "Application-specific payload profile selected by Study.operation=DISCOVER + method=P1-M06. NOT an extra E11 public payload version. ContentRef.schema_version must be null; byte-level integrity is verified independently.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "question_id",
+    "research_question",
+    "population",
+    "analysis_goal"
+  ],
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "research_question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "population": {
+      "type": "string",
+      "minLength": 1
+    },
+    "analysis_goal": {
+      "const": "GRAPH_STRUCTURE"
+    }
+  }
+}

@@ -60,6 +60,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 - Study `schema_version=e11-local-study/1`、`operation=DISCOVER`、`analysis_mode=EXPLORATORY`。CONFIRMATORYは、FCI Graphを効果推定の確定証拠と扱わないためG01では`METHOD_COMBINATION_UNSUPPORTED`（exit2）。
 - Required `inputs.question/design/dataset`は既存のE11 ContentRef 5 field。G01 DISCOVERの`inputs.graph=null`・`inputs.identification=null`（未作成Graphを入力に要求しない）。Question/Designはsemantic validationの対象で、実際のbytes hashを再計算する。OutputGraphは別run artifact。Datasetは`text/csv`または`application/vnd.apache.parquet`。列順と名前の一意性、データ行の順序を保持。
+- G01専用の[Question入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)と[Design入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)を厳格検証する。両者は**G01内部のMethod別入力バリデーション**であり、Owner採用済み5つの公開payload versionを増やすものではない。`ContentRef.schema_version=null`で参照し、`question.question_id=design.question_id=Study.inputs.question.identity`および`design.variables[].name`とDataset列名/列順の完全一致を必須とする。`design.assumptions`は研究者の事前宣言であり、Markov/faithfulness/acyclicityの成立証明ではない。`design.background_knowledge`と`Study.method.config.background_knowledge`はJCS同値であることを求め、勝手に条件を差し替えない。`fisherz`の場合すべての`measurement_scale=CONTINUOUS`、`chisq/gsq`はすべて`CATEGORICAL`。混合型はG01では`METHOD_COMBINATION_UNSUPPORTED`で拒否し、勝手な変換をしない。GraphVersionの初版生成はCLI `DISCOVER`で行い、編集操作はG01のDomain factory / component検証まで（新CLI editサブコマンドは追加しない）。
 - 現行共通Study schemaは`estimand`必須なので、G01では`family=GRAPH_STRUCTURE`、`population=OBSERVED_VARIABLES`、`contrast=NOT_APPLICABLE`を**Discovery-onlyの非効果Target**として使用する。ATE等のDummy Effectを作らない。 `inference.requested=false`, `confidence_level=null`, `privacy.classification=AGGREGATE`, `row_export_requested=false`, `policy_ref=null`。違反時は明示的に拒否。
 - `Study.method.config`は[FCI専用JSON Schema](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)をMethod registryが選択して厳格検証。**Method configの未知Fieldと別Method用Fieldは拒否**。全Fieldを明示させ、Backend既定値への依存を禁止。
 - `indep_test`は`fisherz`（complete continuous numeric、非定数、検定のGaussian条件を記録）、`chisq/gsq`（事前に整数カテゴリ符号化・有効カテゴリsupport確認）の3方式。自動quantile binning、勝手な欠測補完、未申告の標準化は禁止。`alpha∈(0,1)`、`depth/max_path_length`は`-1`または0以上の整数、`background_knowledge`は`null`またはrequired/forbidden ordered pairs。 `show_progress=false,verbose=false`はCLI Adapter固定。
@@ -88,6 +89,18 @@ randomness: {seed: 1711}
 privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: null}
 ```
 **注：** 上記`<actual...>`はliteral placeholderでありそのままの入力はINVALID。QA fixture生成で実ファイルのSHA256へ置換する。Question/Design JSONのG01 domain validationは既存の文書意味（研究問い、変数、制約）を保ち、source file hashだけを妥当性証拠としない。
+
+**Question/Design入力ファイルの最小例（説明用、hashは実ファイルから取得）：**
+```json
+{"question_id":"q1","research_question":"観測変数間の条件付き独立性構造を探索する","population":"sampled units","analysis_goal":"GRAPH_STRUCTURE"}
+```
+```json
+{"design_id":"d1","question_id":"q1","design_kind":"OBSERVATIONAL_GRAPH_DISCOVERY",
+ "variables":[{"name":"x","measurement_scale":"CONTINUOUS"},{"name":"y","measurement_scale":"CONTINUOUS"},{"name":"z","measurement_scale":"CONTINUOUS"}],
+ "assumptions":{"causal_markov_declared":true,"faithfulness_declared":true,"acyclicity_declared":true,"latent_confounding_possible":true,"sampling_unit":"one independent row"},
+ "background_knowledge":null}
+```
+実行時は厳格JSONだけを許し、Design変数名の重複・列漏れ・順序違い・Question/DesignのID不一致を拒否。科学的仮定が真である保証にはしない。
 
 ## 4. FCI Backend・Graph変換（科学的に誤った方向付けをしない）
 
