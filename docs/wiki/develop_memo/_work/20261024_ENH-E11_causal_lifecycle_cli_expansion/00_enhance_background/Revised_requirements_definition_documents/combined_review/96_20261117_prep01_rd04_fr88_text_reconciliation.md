@@ -132,3 +132,7 @@ For every SPLIT/MOVE_BD ID, verify that the original normative predicates (prohi
 - FR-158: expected/observed revised text mismatch = true; observed `AnalysisSpecification / ExecutionPlan / Execution / StageExecutionへNavigation Stage fieldを追加しない`
 - FR-160: expected/observed revised text mismatch = true; observed `Family / Navigation / application IAの変更だけを理由にDB schema migrationまたはnavigation-state persistenceを導入しない`
 - FR-128a: expected/observed revised text mismatch = true; observed `Algorithm/Runnerをregistry/capabilityから解決・管理するcurrent contractを維持する`
+
+## Status update after RD04 recovery (2026-11-17)
+
+The 16 FR MOVE_BD mismatches in this **historical pre-fix audit** were corrected at commit `7f3ccfa1617e897ab1800180fcd2c5be6a1f8046`, after checking each original text and ID was already present verbatim in each target design stock document. See [FR16 recovery](100_20261117_prep01_rd04_move_bd_fr16_recovery.md) and [complete post-fix 122 recheck](102_20261117_prep01_rd04_122_postfix_reconciliation.md). Current status: **FR88 literal text + metadata MATCH 88/88**. Historical FAIL remains as evidence of the original gap, not the current disposition; semantic review is still outstanding.

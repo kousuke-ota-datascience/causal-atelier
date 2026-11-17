@@ -64,3 +64,8 @@ Resolve each ID once among the 5 revised NFR/AR stock files, compare RD04 ledger
 - **AR-009 (MOVE_BD):** ledger revised = "【設計制約移管・Legacy Trace】対応する既存上位要件に係る既存設計制約。具体的な実装契約は下位設計へ移し、元ID・Status・科学的制約の追跡を維持する"; current stock = "外部libraryのdtype objectまたはmodel objectをJSON正本へ保存しない"; file `10_31_ar_estimand_inference.md`
 
 **Next:** 34 scientific/operational constraints must still be checked for loss, status changes, test acceptance, and transfer to 21/22/23/30. Document-level literal match cannot replace independent scientific/Architecture review.
+
+
+## Status update after RD04 recovery (2026-11-17)
+
+All 3 NFR/Scientific AR MOVE_BD mismatches in this **historical pre-fix audit** were corrected at commit `738a382eb3feb032be0aef4ba306871e2d60a9fc`. The original text and ID were verified verbatim in each target 21/22/30 design stock file; an earlier preliminary check used the wrong ledger original-text column and was corrected. See [NFR/AR3 recovery](101_20261117_prep01_rd04_move_bd_nfr_ar3_recovery.md) and [complete post-fix 122 recheck](102_20261117_prep01_rd04_122_postfix_reconciliation.md). Current status: **NFR/AR34 literal text + metadata MATCH 34/34**. Historical FAIL remains traceable; semantic review is still outstanding.
