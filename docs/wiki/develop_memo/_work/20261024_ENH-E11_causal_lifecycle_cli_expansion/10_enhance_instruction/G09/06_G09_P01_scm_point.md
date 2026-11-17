@@ -188,6 +188,20 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 6. **Outcome and negative:** donor contamination/invalid time support/poor pre-fit/nonconvergence、unsupported CI、Backend unavailable、Scientific negative、technical errorを別扱い。Timestamp/seed/weights/profileのProofを保存。
 7. **Protected behavior:** G05のPolicy承認なしに個票出力しない。Product v2とPassed-Gate Graph/Codec/Atomic/Privacyを保護する。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+- SCM：donor poolの介入汚染を拒否し、pre-treatment fitとextrapolation、time-indexとweight optimization objectiveを保存する。初期は**point-only**であり未検証のplacebo intervalを付けない。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M12` | treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |

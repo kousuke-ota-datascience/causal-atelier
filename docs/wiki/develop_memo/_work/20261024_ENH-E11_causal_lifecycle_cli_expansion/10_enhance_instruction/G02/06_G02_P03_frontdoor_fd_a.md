@@ -224,6 +224,20 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 
 **Science-specific method constraints incorporated here:** General Frontdoor識別とは異なるFD-A線形数値推定を対象。
 
+### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
+
+以下は30_63の確定記述のうち本Packageに該当する部分を**本文へ複製した実装規則**であり、DDへの外部参照によって補完する規則ではない。担当外Methodの記述がある場合は担当Classを追加実装しない。
+
+- FD-A：Frontdoor識別（A→M→Y、適格なバックドア条件等）と線形二段階数値推定を分離。MediatorとOutcomeの条件付き回帰仕様・直接効果項や交互作用の扱いを固定し、`a_to_m * m_to_y`型の制限付き係数積が有効なDGPでのみ利用。一般Frontdoor識別をすべてこの算式へ還元しない。DGP-005/REF-E04と照合して正式化する。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M07` | restricted FD-A ATE | 線形Mediator/Outcomeモデルとno direct path仮定、別Reference・CI |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+**未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |

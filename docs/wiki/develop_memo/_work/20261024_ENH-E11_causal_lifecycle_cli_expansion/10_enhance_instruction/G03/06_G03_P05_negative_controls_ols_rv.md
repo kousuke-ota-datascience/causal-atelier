@@ -269,6 +269,27 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 6. **Publication & compatibility:** Kernel結果をtyped portable Effect/Diagnosticに正規化し、G01のStagingSink/Publisherを使用。自己publish、Resultへのraw model/行データ混入、未承認row export、旧v2 API変更、silent Backend fallbackは禁止。
 7. **Error boundaries:** illegitimate negative/unsupported CI, invalid config, numerical nonconvergence, missing dependency, FS/Policy denialを別Status/Reasonとし、Technical SUCCESSからScience PASSを推論しない。
 
+### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
+
+以下は30_63の確定記述のうち本Packageに該当する部分を**本文へ複製した実装規則**であり、DDへの外部参照によって補完する規則ではない。担当外Methodの記述がある場合は担当Classを追加実装しない。
+
+- NCE/NCOは観測実在のZ/W、事前指定負の対照関係・条件付き帰無、同じDesign covariatesとデータ適格性を要求し、p値が大きいことを無交絡証明と報告しない。
+- OLS RVは古典OLSのcoefficient/SE/dfを再現し、指定の `q=1` partial R² / robustness valueのみ対象。他Estimatorへ自動拡張しない。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M18` | negative control exposure | 実在Z・事前帰無・opt-in、条件付き関連/負結果 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M20` | OLS partial R²、point RV(q=1) | 古典OLS係数/SE/df、非OLS拒否 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+**未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |

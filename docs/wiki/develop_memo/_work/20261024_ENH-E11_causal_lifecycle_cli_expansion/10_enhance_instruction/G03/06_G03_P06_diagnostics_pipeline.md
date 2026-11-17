@@ -298,6 +298,27 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 6. **Publication & compatibility:** Kernel結果をtyped portable Effect/Diagnosticに正規化し、G01のStagingSink/Publisherを使用。自己publish、Resultへのraw model/行データ混入、未承認row export、旧v2 API変更、silent Backend fallbackは禁止。
 7. **Error boundaries:** illegitimate negative/unsupported CI, invalid config, numerical nonconvergence, missing dependency, FS/Policy denialを別Status/Reasonとし、Technical SUCCESSからScience PASSを推論しない。
 
+### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
+
+以下は30_63の確定記述のうち本Packageに該当する部分を**本文へ複製した実装規則**であり、DDへの外部参照によって補完する規則ではない。担当外Methodの記述がある場合は担当Classを追加実装しない。
+
+`ariadne.scientific.causal_methods.*`：
+- `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
+- `run(request, *, sink: StagingArtifactSink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
+- `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
+- `serialize(result) -> ArtifactBundle`：Graph/Result/Diagnosticsを型付きSchemaに純粋変換する。File I/Oはしない。保存はAdapterが渡された`StagingArtifactSink`を通じて行い、Finite/not-finiteを判定しnull+reasonを記録する。
+
+- 入力契約違反＝`CONFIG_INVALID / METHOD_INCOMPATIBLE`、Backend unavailable＝`CAPABILITY_UNAVAILABLE`。これらは他手法へのfallback要因にしない。
+- 仮定未成立、positivity不足、弱IV、非識別、CI unavailable、negative-control nullは**科学的Status/Reason**。当該Methodに適格なPointやCIがないことを明示。
+- Backendの数値例外、収束エラー、非有限推定を成功へ書き換えない。
+- Confirmatory ResultはMethod別の妥当な推論がなければScience PASSとしない。
+
+- Placebo/Data subset/Random Common Cause/Bootstrapは同一base Effectのhash、変更条件・seed・resampling unitを固定。Refutationの統計的検定と因果識別自体を同一視しない。
+- NCE/NCOは観測実在のZ/W、事前指定負の対照関係・条件付き帰無、同じDesign covariatesとデータ適格性を要求し、p値が大きいことを無交絡証明と報告しない。
+- OLS RVは古典OLSのcoefficient/SE/dfを再現し、指定の `q=1` partial R² / robustness valueのみ対象。他Estimatorへ自動拡張しない。
+
+**未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

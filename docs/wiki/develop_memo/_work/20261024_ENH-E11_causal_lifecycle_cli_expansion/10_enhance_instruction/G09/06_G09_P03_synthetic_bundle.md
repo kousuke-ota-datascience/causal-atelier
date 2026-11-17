@@ -298,6 +298,19 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 6. **Outcome and negative:** donor contamination/invalid time support/poor pre-fit/nonconvergence、unsupported CI、Backend unavailable、Scientific negative、technical errorを別扱い。Timestamp/seed/weights/profileのProofを保存。
 7. **Protected behavior:** G05のPolicy承認なしに個票出力しない。Product v2とPassed-Gate Graph/Codec/Atomic/Privacyを保護する。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+- SCM：donor poolの介入汚染を拒否し、pre-treatment fitとextrapolation、time-indexとweight optimization objectiveを保存する。初期は**point-only**であり未検証のplacebo intervalを付けない。
+- Synthetic DiD：unit/time weights、pre/post period、面積とsupport、Method-specific standard errorを区別。SCMと同一Estimatorにはしない。
+
+`LocalRunManifest.to_canonical_bytes`は`e11-json-jcs-rfc8785/1`のstrict JCSで符号化しProductの`hash_mapping(default=str)`は用いない。request hashはValidatedStudy意味射影、Graph内部hashは自己fieldを除く意味射影、ContentRefとMarkerが指すManifest hashは保存実bytes。Markerはinventory外に置き、非Effect操作の`schema_dispatch.result=null`を認める。これだけでIDENTIFY/REFUTE/SENSITIVITY/DIAGNOSEの成果物を省略してよいことにはならない。23_42 §2.1のOperation Bundle ValidatorがGraph/Identification/Effect/Diagnosticsの必須性、Status、Method、upstream hashを結合検証する。
+
+Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunId)`は公開`LocalManifestReaderPort.verify(*,root:TrustedLocalRoot,run_id:RunId)`から委譲される。Marker→Manifest→Artifact bytes/type/hash/size→cross-refsとPrivacyを検証する。入力Schema不正はexit2、公開済みbundle readback破損はphase=PUBLICATIONのexit5。修復・自動削除は行わない。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

@@ -181,6 +181,23 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 5. **Dataflow:** Typed ValidatedMethodRequest→Method Adapter eligibility→selected numeric kernel/effective Backend→EffectOutcome/ARConfidenceSet→G01 StagingSink/Atomic Publisher/Reader。外部Backend model objectやRaw row/SecretsをResultへ含めない。
 6. **Typed failure:** Zero denominator, rank/HC1 variance degeneracy, unsupported CI, invalid design, optional backend unavailable, numerical FAILED, legitimate scientific weak IVを明確に区別。Technical exit0はScience PASSでない。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+- Sharp RD：cutoff周辺のlocal regression、bandwidth、polynomial order、kernel、density manipulation、covariate continuityの診断を出力。
+- Fuzzy RD：cutoff近傍のTreatment first-stage jumpとOutcome jumpの比による局所IV効果。weak first stageやinstrument validityに注意。単なるSharp RDにlabelを変えるだけで代用しない。
+- `rdrobust` 等の外部BackendはPython APIの実効版とrobust bias correction inferenceの利用可否を確認。GPLの顧客配布Legal approvalとは別。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M07` | Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI |
+| `P3-M08` | Fuzzy RD local complier effect | First stage、discontinuity ratio、local IV inference |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |

@@ -182,6 +182,22 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 6. **Publication & compatibility:** Kernel結果をtyped portable Effect/Diagnosticに正規化し、G01のStagingSink/Publisherを使用。自己publish、Resultへのraw model/行データ混入、未承認row export、旧v2 API変更、silent Backend fallbackは禁止。
 7. **Error boundaries:** illegitimate negative/unsupported CI, invalid config, numerical nonconvergence, missing dependency, FS/Policy denialを別Status/Reasonとし、Technical SUCCESSからScience PASSを推論しない。
 
+### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
+
+以下は30_63の確定記述のうち本Packageに該当する部分を**本文へ複製した実装規則**であり、DDへの外部参照によって補完する規則ではない。担当外Methodの記述がある場合は担当Classを追加実装しない。
+
+- IPW：propensity `e(X)`、ATEの重み例 `A/e(X)+(1-A)/(1-e(X))`、ATTには別の標本対象・weight normalization。clip/trimでtargetが変化し得ることをResultへ記録。balance/ESSとoverlap必須。
+- AIPW：outcome nuisance `m_a(X)` とpropensityのAugmented scoreを別統計量として実装。double robustnessは必要な推定仮定／十分な推定品質の代わりでない。nuisance/fold/seedと推論方針を記録。
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M10` | IPW ATE/ATT | propensity/overlap/balance/ESS/weights/CI |
+| `P1-M11` | AIPW ATE/ATT | nuisance/DR claimの条件、crossfit/variance |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+**未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |

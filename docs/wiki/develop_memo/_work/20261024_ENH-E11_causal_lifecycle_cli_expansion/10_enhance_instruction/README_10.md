@@ -292,3 +292,20 @@ P00は存在してもoptional authoring / audit artifactであり、preflight / 
 | G10 | 41 Method×10 UCのT2/T3 prereg K/R/MC-SE・coverage・FWER=.05・fixed candidate replay・SBOM/License・Product v2互換 |
 
 **Owner review rule:** 個別未決は(1) Owner意思決定、(2)設計修正、(3)effective Runtime実測、(4)Independent Testでしか確証できない事項、(5)後続Gate依存に分類し、無関係Gateを一律BLOCKしない。判定後は該当06/07/Pxx内に完全な採用値・positive/negative・failure semanticsを戻し、self-containedの再監査を行う。未承認のFreeze、Coding Authorization、Source/test/uv.lock変更、独立07/999の代行は禁止。
+
+### 12.4. PREP-03 semantic authority correction — 36 Pxx design-semantics transcription
+
+**訂正:** §12.3の「実装に必要な意味論が未確定」という一般化は過大であった。詳細設計30_61/30_62/30_63には多数のMethod/Port/State/Algorithmの採用済み規則が既に存在している。未生成Fixtureや独立Referenceを、Method Target/数理・Port責務が未決である証拠として扱わない。
+
+**是正:** G02〜G10の36 Pxx全件に、当該Packageに適用される詳細設計上の意味論を§4末尾・§5直前へ本文規範として展開。従来の§3 Class/Field/Constructor/Methodと§4処理順序は保持し、既存Source ABI/共通Port/Operation Bundle契約（§2A/§2B）とも併用する。設計書・Requirementのpathはprovenance/evidence用であり、Coding Agentの未記載normative semantics取得用ではない。各PxxはAssigned Class/Method以外の実装を追加しない。
+
+| Category | 判定 | 例 |
+|---|---|---|
+| A: **設計書で規定済みの意味論** | Pxxへ本文転記。Ownerに無条件の再決定を求めない | Frontdoor識別とFD-A数値推定の分離、IPW/AIPWのTargetとscore、DRIV `theta_IV(x)`、DiD 2×2/staggered分離、B0/B1のEstimand、HC1/χ²(1) AR full-real inversion、SCM point-only |
+| B: **設計書に本当に未指定の契約** | 該当ScopeのFreeze blocker / Owner設計判断を要する | P1-M05 DoWhy IVのTarget、G05の独立Approval Authority実装契約・鍵/失効/Verifier・row Parquet WriterのClass/Factory/Method、各Methodのstrict Config/Profileでまだ未定義なschema・optional API policy |
+| C: **設計の決定とは別の未生成Evidence** | Method固有のIndependent Science／Backend verificationで取得。設計既決事項を再決定しない | 実効Library/API probe、DGP/NEG fixtures、独立Reference、K/R/Compute、MC-SE/CI coverage、実Candidate回帰/Reader/License evidence |
+| D: **齟齬・衝突** | Pxxと詳細設計・実Sourceに真の矛盾を発見したときだけOwnerに設計変更提起 | 署名/Owner不一致、物理Schema矛盾、統計量の式と採用推論Profileの非整合 |
+
+**実装可能性との区別:** 36件に意味論の規範的展開を行ったことは、未承認Method Schemaや証拠を「存在する」ものに変えない。全Pxxは`REVISED_DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED`。静的な展開の確認はScience Test PASSでもGate999 PASSでもない。Owner一括ReviewではAを再議決するのでなくB/Dのみに焦点を当て、CをIndependent Verification計画に配置する。Category Aの既決契約は採用済み値としてPxxに保持する。
+
+**Provenance:** 30_63 §§1〜10、30_62 §8、30_61 §§6〜7、23_42 §2.1、10_32全41 Method Scope。既存Sourceの旧Product公開ABIについては当該Pxx §2Aの実Source照合を保持する。

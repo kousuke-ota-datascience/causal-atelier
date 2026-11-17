@@ -233,6 +233,18 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 5. **I/O/Failure:** Approved Method Adapter preflight→selected Backend（必要時lazy import）→typed Scientific Outcome→G01 Staging Publisher/Reader。Invalid config、合法的Scientific negative、不確定CI、Backend failureを分離し、Resultにeffective Method/Backend/Seed/Time/Design Evidenceを保存。
 6. **Non-goals:** 旧v2 Public ABI、Web/API/DB/Worker、G01 GraphVersion/Publisherの再実装、未承認row export、Backend実測なしのScience PASSを禁止。
 
+### 設計で定義済みのGraph／Quasi意味論（自己完結した実装規範）
+
+以下は既存の詳細設計に記載された規則を本Packageへ直接展開したもの。Designの決定済み部分を不明事項としてAgentに再判断させない。実効Backend/API probe、独立Graph/Counterfactual Oracle、推論可用性の未実測は別にBLOCKEDとする。
+
+- DiD：2×2 ATTとstaggered adoptionを別Configuration/Estimandとし、staggeredに単純TWFE係数を普遍的ATTとして流用しない。parallel trendsとcohort support、cluster covarianceのunitを保存。
+- Event Study：事前指定reference periodとevent-time vector、cohort composition、lead/pretrend診断を保持。post-intervention windowによる選択が推論に与える影響を記録。
+- ITS：level/slope change、intervention date、seasonality/trend、serial covariance（HAC等）を方法別Configに固定。独立残差OLSのSEを無検証で採用しない。
+
+`LocalRunManifest.to_canonical_bytes`は`e11-json-jcs-rfc8785/1`のstrict JCSで符号化しProductの`hash_mapping(default=str)`は用いない。request hashはValidatedStudy意味射影、Graph内部hashは自己fieldを除く意味射影、ContentRefとMarkerが指すManifest hashは保存実bytes。Markerはinventory外に置き、非Effect操作の`schema_dispatch.result=null`を認める。これだけでIDENTIFY/REFUTE/SENSITIVITY/DIAGNOSEの成果物を省略してよいことにはならない。23_42 §2.1のOperation Bundle ValidatorがGraph/Identification/Effect/Diagnosticsの必須性、Status、Method、upstream hashを結合検証する。
+
+Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunId)`は公開`LocalManifestReaderPort.verify(*,root:TrustedLocalRoot,run_id:RunId)`から委譲される。Marker→Manifest→Artifact bytes/type/hash/size→cross-refsとPrivacyを検証する。入力Schema不正はexit2、公開済みbundle readback破損はphase=PUBLICATIONのexit5。修復・自動削除は行わない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

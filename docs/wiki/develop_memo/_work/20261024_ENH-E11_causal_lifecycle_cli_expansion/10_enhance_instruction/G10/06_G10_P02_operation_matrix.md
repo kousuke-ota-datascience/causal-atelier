@@ -291,6 +291,27 @@ Graph/DiagnosticsのFile出力先は`StagingArtifactSink`のみ。Product GraphV
 6. **Boundaries:** Value/Scientific typed Ports→G01 StagingSink/Atomic Publisher/Readerを使い、CLI専用Scientific Kernel、未承認Row export、old v2破壊、Unknown Backendへのfallbackを禁止。科学的・技術的Statusは独立。
 7. **Output/Evidence:** Method/Operation/Version/Backend/Profile/Source/Fixture/Oracle/seed/CI/Privacy/Manifest/Result SHA、実行時のenvironment、negativeとaccepted/rejected Reasonを残す。Independent 07/999は本Packageが代行しない。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+`ariadne.scientific.causal_methods.*`：
+- `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
+- `run(request, *, sink: StagingArtifactSink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
+- `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
+- `serialize(result) -> ArtifactBundle`：Graph/Result/Diagnosticsを型付きSchemaに純粋変換する。File I/Oはしない。保存はAdapterが渡された`StagingArtifactSink`を通じて行い、Finite/not-finiteを判定しnull+reasonを記録する。
+
+- 入力契約違反＝`CONFIG_INVALID / METHOD_INCOMPATIBLE`、Backend unavailable＝`CAPABILITY_UNAVAILABLE`。これらは他手法へのfallback要因にしない。
+- 仮定未成立、positivity不足、弱IV、非識別、CI unavailable、negative-control nullは**科学的Status/Reason**。当該Methodに適格なPointやCIがないことを明示。
+- Backendの数値例外、収束エラー、非有限推定を成功へ書き換えない。
+- Confirmatory ResultはMethod別の妥当な推論がなければScience PASSとしない。
+
+公開`MethodCapabilityPort.resolve(request:ValidatedCapabilityRequest)`はOperation/Estimand/Inference/Designを含む要求を厳格検証し、整合が確認できたMethod/Backend/ProfileだけをConcrete `MethodCapabilityRegistry.resolve(method_id,backend_id,profile)`へ委譲するFacadeである。Method ID/Backend/Profileの3値だけから要求全体の適格性を推測してはならない。`describe`はpure、`resolve`は実効Distribution/APIを検査、`load_adapter`だけがoptional importを行う。互換検証とfallback禁止の規則を2系統に複製しない。
+
+**Adapter dispatch：** `MethodCapabilityPort.resolve`はConcrete `MethodCapabilityRegistry`の単一metadata/Runtime probeを使い、`BackendCapabilityRecord`をValidated Requestに付与する。各Scientific Port Concreteは同じRegistryの`load_adapter(capability)`を利用する。UseCaseが任意のBackend objectを受け取らず、`LocalCausalUseCase.run → MethodCapabilityPort.resolve → DiscoveryPort.discover → FciDiscoveryAdapter.execute`を唯一のG01実行経路にする。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

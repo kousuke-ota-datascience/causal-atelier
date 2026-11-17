@@ -281,6 +281,27 @@ DD-E11-EFF01〜05。
 
 **Science-specific method constraints incorporated here:** Identification/Estimationの分離とoperation別Manifestを維持。
 
+### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
+
+以下は30_63の確定記述のうち本Packageに該当する部分を**本文へ複製した実装規則**であり、DDへの外部参照によって補完する規則ではない。担当外Methodの記述がある場合は担当Classを追加実装しない。
+
+41 Method IDは固定Catalog識別子であり、各IDにOperation、Estimand、Backend/Profile、Method Config Schema、Question/Design Evidence Profile、Inference Policy、Output Artifact Profileを登録する。Class割当があることだけでは実行可能性を意味しない。`ValidatedMethodRequest`は登録済みstrict Method Schemaとcross-asset semantic Validatorの双方に成功した場合のみFactoryから生成する。
+
+P1-M06は`e11_p1_m06_fci_method_config_v1.schema.json`、専用Question/Design internal profilesを使用する。他のMethodについてconfig/profile未定義のまま`config={}`やBackend defaultで通すことを禁止し、`METHOD_PROFILE_UNAVAILABLE`等のtyped reasonでfail-closedにする。各Method提供前に対応Gateで正規Schema、条件付き必須項目、negative fixturesを確定し登録する。Gate IDはSchema dispatchのキーにしない。
+
+`ariadne.scientific.causal_methods.*`：
+- `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
+- `run(request, *, sink: StagingArtifactSink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
+- `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
+- `serialize(result) -> ArtifactBundle`：Graph/Result/Diagnosticsを型付きSchemaに純粋変換する。File I/Oはしない。保存はAdapterが渡された`StagingArtifactSink`を通じて行い、Finite/not-finiteを判定しnull+reasonを記録する。
+
+- 入力契約違反＝`CONFIG_INVALID / METHOD_INCOMPATIBLE`、Backend unavailable＝`CAPABILITY_UNAVAILABLE`。これらは他手法へのfallback要因にしない。
+- 仮定未成立、positivity不足、弱IV、非識別、CI unavailable、negative-control nullは**科学的Status/Reason**。当該Methodに適格なPointやCIがないことを明示。
+- Backendの数値例外、収束エラー、非有限推定を成功へ書き換えない。
+- Confirmatory ResultはMethod別の妥当な推論がなければScience PASSとしない。
+
+**未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

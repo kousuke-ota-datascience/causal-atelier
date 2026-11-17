@@ -243,6 +243,22 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 6. **Boundaries:** Value/Scientific typed Ports→G01 StagingSink/Atomic Publisher/Readerを使い、CLI専用Scientific Kernel、未承認Row export、old v2破壊、Unknown Backendへのfallbackを禁止。科学的・技術的Statusは独立。
 7. **Output/Evidence:** Method/Operation/Version/Backend/Profile/Source/Fixture/Oracle/seed/CI/Privacy/Manifest/Result SHA、実行時のenvironment、negativeとaccepted/rejected Reasonを残す。Independent 07/999は本Packageが代行しない。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.causal.discovery`・`ariadne.causal.inference`内の既存計算を意味互換で再利用する。新しいFCI/IV/CATE等はMethod固有の新実装が必要な場合のみ追加する。Typed Port=`ariadne.scientific.ports.causal`、Capability Port=`ariadne.scientific.ports.capability`、BackendEvidence=`ariadne.scientific.capabilities`。旧Product `ScientificCorePort.run_*`は公開v2 DTO/Pathの署名を維持し、実装移行時は明示Bridgeから同一科学Kernelを呼ぶ。旧v2の型へAR/PAG/識別状態を損失変換してはいけない。
+
+22 Adapter Class中、`ariadne.scientific.refutation.adapter.RefutationAdapter`と`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`は既存実装であり、旧`run(input_,output_dir)`署名を変更しない。その他のClassはMethodごとのClass契約として定義し、既存ClassのABIを無条件に変更しない。いずれも入口専用の独立数値実装を持つことは認めず、既存`causal.discovery`/`causal.inference`と`scientific.*`の関数・validationを再利用する。
+
+`MethodDescriptor`の唯一のOwnerは`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。`StageRunnerRegistry`のStageType registryと同一視しない。旧Product `ScientificCorePort`の5 Operation署名を維持し、Method別typed Portが同じ科学的Kernelを利用する明示Bridgeを介する。新しいFCI、LATE/AR、CATE、Temporal、Quasiは既存の科学実装で不足する部分だけを別Method Adapterとして追加する。
+
+22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
+
+`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。

@@ -251,6 +251,18 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 7. **Boundaries:** Value/Scientific typed Ports→G01 StagingSink/Atomic Publisher/Readerを使い、CLI専用Scientific Kernel、未承認Row export、old v2破壊、Unknown Backendへのfallbackを禁止。科学的・技術的Statusは独立。
 8. **Output/Evidence:** Method/Operation/Version/Backend/Profile/Source/Fixture/Oracle/seed/CI/Privacy/Manifest/Result SHA、実行時のenvironment、negativeとaccepted/rejected Reasonを残す。Independent 07/999は本Packageが代行しない。
 
+### 設計書の採用済み意味論（独立した本Package実装規範）
+
+以下は30_62/30_63に明文化された数理・Port・互換性の契約をこのPxxへ取り込んだもの。Scopeは本Packageの§3/4に限り、他PackageのClassを再実装しない。
+
+- `DD-E11-METH-P101〜P120 / P201〜P208 / P301〜P313`は41 Methodに対応する恒久的な受入義務ID。各Methodについてpositive DGP/独立Reference、negative Scenario、Method×Estimand/Backend/CI、canonical Result/Manifest readback、Product regression影響を検証する。
+- 独立検証ではDGP version・seed・Method-specific推論・Monte Carlo SE/Coverage/多重性と適格Run分母を定義する。型・Schema一致は科学的Coverageや識別の証明ではない。
+- 顧客Deliveryは実際のBundleのSBOM/Licenseと受領者別法務判定を別途必要とする。
+
+参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
+
+**実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 **G10/P04は全41 MethodのScienceを再検証し、数値Kernelを再実装しない。**
