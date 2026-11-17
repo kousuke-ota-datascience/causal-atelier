@@ -327,4 +327,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 ## 8. Freeze-critical standalone gaps
 
-本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残未決:** RD/IV/AR Type MappingとE11 result schema/Manifest負例。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。
+本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残課題:** RD/IV/ARのEstimand区別およびAR ConfidenceSetのlossless表現は設計済み。未完了なのは対応するstrict Method Profile、Schema/Manifestの負例Fixtureおよび実効readback/独立Reference検証。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。

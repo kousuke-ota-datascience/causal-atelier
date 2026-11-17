@@ -237,4 +237,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Self-contained freeze review boundary
 
 - 本文§3で必要なClassのConstructor・Field・公開Method・処理責務、§4で実装順序/分岐、§5〜6でMethod別のScience/Testを保持する。外部DDやGate06を読ませて不足仕様を推測させない。
-- **未確定事項:** AIPW推論/finite sample・nuisance/crossfit/CI・Policyの明文化。 未解決のBackend API、Method Config、DGP/NEG/Reference/quantitative Science、Owner Decisionは該当MethodをBLOCKEDとし、Freeze前に閉じる。
+- **残課題:** IPW/AIPWのATE/ATT Target、propensity/outcome nuisanceとAugmented scoreは§4の設計済み規則。未確定なのは実効nuisance/crossfit/fold/seed/finite-sample variance/CIの具体Method Profile・独立Science受入条件。 未解決のBackend API、Method Config、DGP/NEG/Reference/quantitative Science、Owner Decisionは該当MethodをBLOCKEDとし、Freeze前に閉じる。

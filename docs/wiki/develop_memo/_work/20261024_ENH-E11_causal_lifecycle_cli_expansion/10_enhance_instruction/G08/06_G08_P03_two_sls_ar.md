@@ -289,4 +289,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 ## 8. Freeze-critical standalone gaps
 
-本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残未決:** HC1 AR推論の独立数理Referenceと全実数集合算法/退化、Pilot coverage判定。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。
+本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残課題:** HC1/χ²(1) AR検定反転・全実数集合と退化の分岐は§4および設計書に定義済み。未完了なのは独立数理Reference、数値精度/境界・退化ケースの検証、Pilot coverage判定。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。

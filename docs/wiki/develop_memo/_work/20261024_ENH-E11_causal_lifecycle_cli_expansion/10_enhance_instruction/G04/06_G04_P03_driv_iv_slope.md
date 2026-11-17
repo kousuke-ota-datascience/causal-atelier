@@ -274,4 +274,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 ## 8. Freeze-critical independent contract audit
 
-Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は§4、DGP/NEG/REF/Focused acceptanceは§5〜6に含み、外部Gate06/07/DDに実装指示を委譲しない。残未決: DRIV-Aの識別対象・IV assumptions・inference/weak IV評価の独立REF-E06を確定する。 Backend実効API/Science Pilot/Reference/Method Config未確定のまま実装しない。Ownerの一括レビューで調停する。
+Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は§4、DGP/NEG/REF/Focused acceptanceは§5〜6に含み、外部Gate06/07/DDに実装指示を委譲しない。残課題: DRIV-AのTargetは`CONDITIONAL_IV_STRUCTURAL_SLOPE`/θ_IV(x)として設計済み。独立REF-E06によるIV仮定の適格性確認、実効inference/weak-IV診断・Science Evidenceを確定する。 Backend実効API/Science Pilot/Reference/Method Config未確定のまま実装しない。Ownerの一括レビューで調停する。
