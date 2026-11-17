@@ -64,3 +64,8 @@ F07の区間表現はextended-real tagged endpoints・nonempty canonical compone
 承認済みA/A/Aの選択を実装拘束として反映：F03はLinux同mount/FS `RENAME_NOREPLACE`（ロックのみの代替を禁止）、F05はOwner EUID/private TrustedLocalRoot/事前Policy＋CLI flagを独立検証、F06は`e11-local-*/1`の5識別子を正確なdiscriminatorでdispatchし旧v2を改変しない。F04は既存Product Port/Statusの無検証cast禁止、F07は有界/無界/非連結集合とInference/Scienceの独立を保持。
 
 レビューにより、汎用ARの`EMPTY`、Legacy Study YAML例の`path`と`ContentRef.relative_key`差、Publisherの`Path`引数とTrusted Rootの不一致、Process lock fallback矛盾を発見。修復した設計と未決定事項は[レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md)、[F03](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)、[F05](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)、[F06](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)を参照。実効FS・Privacy・Science試験は未実施。F04/F07レビューは**Author Self Review**であり、F12独立Architecture Reviewを満たさない。
+
+
+### 18.5. DEC-PREP02-D Owner採用結果
+
+4件A案（F07 generic EMPTY、F05 independently approved Policy、F06 strict versioned canonical JSON、F06 privacy denial exit3）を[DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)として採用。これにより『Owner未決定』という分類は終了。ただしF05の信頼Anchor/F06のRFC8785適合・有限精度/F07のB0/B1 Scienceは実装・独立review対象であり、Port/Schema Freezeは未完了。

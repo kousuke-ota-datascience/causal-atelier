@@ -379,7 +379,7 @@ This table is a logical field grouping; exact nested JSON Schema property names,
 
 ## 7. CLI entrypoint / Error bridge
 
-候補`interfaces.cli.e11.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
+候補`interfaces.cli.e11.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path/**privacy/authorization denial（Owner採用）**、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
 
 ## 8. Traceと受入
 
@@ -406,3 +406,10 @@ Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科�
 - [F05 security threat model](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Trusted RootはUID一致＋private ACL/mount/namespaceを検証。自分でYAMLに書いた`row_export_authorized: true`を事前承認扱いしない。
 - [F06 dispatch/codec/error](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：5採用済みDiscriminator＋Commit Marker、strict JSON Schema v1草案、typed Error→CLI exit候補、unknown/old versionsの拒否。
 - **Open:** Stable trusted Policy authority、Canonical JSON bytes/hash specification、OS/FS ABI and ACL probe, independent reviewer and runtime tests。候補Class仕様であって実装・Freeze・受入PASSではない。
+
+
+## 11. Owner 4-choice integration: Row Policy / Codec / Exit（2026-11-17）
+
+[DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)により、行出力許可は別に事前承認されたPolicy authority（self-declared boolean不可）、明示Study request、CLI flag、OS Trusted Root、column/max_rows全件AND。`RowExportAuthorization.policy_ref`だけでは権限証明にならず、`VerifiedStudyPolicyEvidence`とtrust anchor確認が必要。要求された行出力が不許可なら**exit3**、aggregate出力へ黙ってfallbackしない。Rowをstaging・ログへ漏洩しない。
+
+`LocalRunManifest.to_canonical_bytes()`はProductの`hash_mapping(default=str)`を呼ばず、独立E11 strict canonical Codecを用いる。候補RFC 8785 JCS版ID・cross-runtime vectorsは[F06](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)に規定。Canonical bytesの完全適合・Policy署名/承認機構とOS適格性を含むFreezeは未完了。

@@ -119,12 +119,12 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 - `ARConfidenceSet.from_components(level, components, evidence) -> ARConfidenceSet`：有限性、順序、重複と接触するintervalの正規化、topology分類（ALL_REAL > DISCONNECTED > UNBOUNDED > BOUNDED）を行う。
 - `ARConfidenceSet.contains(beta: float) -> bool`：endpoint open/closedと∞を尊重。ALL_REALは任意有限betaを含む。
 - `ARConfidenceSet.to_payload() / from_payload()`はJSON Infinity/NaNを使わず同じ数学集合に往復。
-- 正常なB0/B1 Anderson–Rubin反転にEMPTYは出さない。閾値/探索失敗なら `FAILED + reason`、有界区間へ捏造しない。
+- **Owner採用 D-F07-EMPTY A:** 汎用AR Setは`EMPTY`（成分0）もlosslessに表現する。B0/B1でjust-identifiedかつ採用Methodの前提により非空集合が数学的に保証される場合のみ、**Method-specific validator**でEMPTYを科学的不整合として検出する。未確認の識別条件へ一律に非空を仮定しない。反転失敗は `FAILED + typed reason`、数学的EMPTYは `AVAILABLE + inversion_evidence`で区別する。
 - `InferenceEvidence.validate_for(mode, method)`：EXPLORATORYのpoint-onlyとCONFIRMATORYの有効推論要件を区別。SCM初期point-onlyを確証的CIありと報告しない。
 
 ### 6.3. 検証
 
-`DD-E11-AR01`：ALL_REAL、two-ray DISCONNECTED、片側非有界、有限BOUNDED、`AR02`：normal EMPTY拒否、`AR03`：round-trip、`AR04`：CI unavailable reason、`AR05`：CONFIRMATORY fail-closed。FR-202、AR-040、NFR-036。
+`DD-E11-AR01`：EMPTY、ALL_REAL、two-ray DISCONNECTED、片側非有界、有限BOUNDED、`AR02`：generic EMPTYの成功出力とMethod別just-identified EMPTY拒否を分離、`AR03`：round-trip、`AR04`：CI unavailable reason、`AR05`：CONFIRMATORY fail-closed。FR-202、AR-040、NFR-036。
 
 ## 7. EffectOutcome / BackendCapabilityRecord（PROPOSED）
 
@@ -224,9 +224,9 @@ class DiagnosticPort(Protocol):
 
 ## 12. F07：AR・Inferenceのlossless DTO規範
 
-`ARConfidenceSet`は`confidence_level∈(0,1)`、非空のcanonical `components: tuple[ExtendedRealInterval,...]`、`topology`および検証可能な`inversion_evidence: ContentRef`で構成する。各Endpointは有限値または`NEG_INFINITY/POS_INFINITY`のタグ付きJSON型とし、裸のNaN/±Infinityやnullへの置換は禁止。負∞はlower専用、正∞はupper専用、無限端点は開区間。二つの成分が端点で接していても両者がその端点を除外する場合、そこに1点のgapが残るためDISCONNECTEDを保つ。
+`ARConfidenceSet`は`confidence_level∈(0,1)`、**空集合も許す**canonical `components: tuple[ExtendedRealInterval,...]`、`topology`および検証可能な`inversion_evidence: ContentRef`で構成する。各Endpointは有限値または`NEG_INFINITY/POS_INFINITY`のタグ付きJSON型とし、裸のNaN/±Infinityやnullへの置換は禁止。負∞はlower専用、正∞はupper専用、無限端点は開区間。二つの成分が端点で接していても両者がその端点を除外する場合、そこに1点のgapが残るためDISCONNECTEDを保つ。
 
-分類はcanonical unionで、全実数なら`ALL_REAL`、成分数が2以上なら`DISCONNECTED`、単一区間でいずれか無限端点なら`UNBOUNDED`、残り`BOUNDED`。通常の成功ARで`EMPTY`を出さず、反転失敗は`InferenceAvailability.FAILED + typed reason`として保持する。これはE11初期契約の結果表現規則であって、一般の統計的反転で空集合が数学的に不可能という主張ではない。
+分類はcanonical unionで、成分0なら`EMPTY`、全実数なら`ALL_REAL`、非空で成分数2以上なら`DISCONNECTED`、単一区間でいずれか無限端点なら`UNBOUNDED`、残り`BOUNDED`。正常に反転された`EMPTY`は`AVAILABLE`で、反転が技術的に失敗した場合は`InferenceAvailability.FAILED + typed reason`。特定B0/B1の非空条件はMethod別科学的受入で決定する。
 
 `InferenceEvidence.availability=AVAILABLE`では、承認された推論型と一致する`FiniteInterval`または`ARConfidenceSet`ちょうど1つを持つ。他のAvailabilityでは両方nullかつreason必須。点推定とScienceAcceptanceは独立。CONFIRMATORY結果にはMethod別に受入済み推論証拠を要求し、`NOT_EVALUATED`を`PASS`として表示しない。
 
@@ -236,4 +236,14 @@ Wire shape candidateと証明範囲は[F07 review input](../combined_review/99_2
 ## 13. F04/F07レビュー是正による型・Science境界
 
 - F04 `TrustedLocalRoot`はraw `Path`ではなく、OS/ACL/mount/dirfdが検証されたCapability。`Validated*Request`はType Hintのみで科学的適格性を証明できないため、生成時とAdapter直前の不変条件を検証する。Product Portへの無検証cast禁止。[レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md) §1、[F05](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)。
-- F07の`EMPTY`は汎用AR数学集合として有効な可能性があり、特定B0/B1 just-identified Methodの不変条件とは区別する。従前の非空仕様は**初期ドラフト方針であり科学的に一般化された確定事実ではない**。汎用Schemaで`EMPTY`を採用するかはOwner/Science決定後に`AR02`とJSON Schemaを同時更新する。数値計算失敗は別に`FAILED + reason`。
+- [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)で汎用`EMPTY`をOwner採用し、AR02と両Schemaを更新した。科学的に正常な数学的空集合と`FAILED + reason`は別。B0/B1のjust-identified条件はMethod別Science Reviewで確認する。
+
+
+## 14. DEC-PREP02-Dの4採用事項（2026-11-17）
+
+1. 汎用`ARConfidenceSet`は5分類（`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`）。EMPTYは成分0・inversion_evidence必須で`AVAILABLE`の結果を取りうる。just-identified B0/B1のみMethod別否定ケースを検査。
+2. 個票はself-authored Study YAMLのflagだけでなく、当該Studyと出力Policyの独立した事前承認Evidenceに束縛。`VerifiedStudyPolicyEvidence`なしでは行出力なし。
+3. E11 hashはstrict canonical Codecで計算し、Product `hash_mapping(default=str)`を利用しない。実装方式はRFC 8785 JCS候補、適合性FreezeとRuntime testは別。
+4. Privacy・Row認可拒否はCLI exit3。`0`はscience PASSの意味ではない。
+
+Authority: [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Owner決定済み≠Port/Schema Freeze済み**。

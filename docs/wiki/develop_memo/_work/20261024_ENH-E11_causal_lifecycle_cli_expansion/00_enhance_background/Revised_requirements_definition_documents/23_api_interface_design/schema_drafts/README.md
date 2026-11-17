@@ -15,3 +15,13 @@
 The Effect schema currently embeds the F07 AR/Inference draft `$defs`. This temporarily excludes `EMPTY` AR sets and **must not be frozen** until [REV-F07-01](../../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md) is resolved. The separate [F06 contract](../../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md) fixes intended discriminator locations, old-v2 rejection and remaining canonicalization decisions. IDs/keys and required fields remain draft pending independent Architecture review.
 
 The current schemas are structurally strict at top-level and some subobjects, but flexible method-specific `config`, `provenance`, `stochastic`, etc. are **intentionally not contract-complete**. Completing their typed definitions, duplicate artifact uniqueness, hash/cross-reference correctness, URI/path confinement, graph semantics and scientific inference is mandatory before Freeze. JSON Schema shape checking cannot prove scientific or OS security properties.
+
+
+## Owner採用 D-F07-EMPTY / D-F05-POLICY / D-F06-CODEC・ROW-EXIT（2026-11-17）
+
+- Generic AR Confidence Setは`EMPTY` topologyの0 componentを受理。Effect schemaへ同じ規則を複製して更新。Method別just-ID拒否は科学的検証に残る。
+- Study側`privacy.policy_ref`は入力であり、それ単体は行出力許可ではない。事前Policyの権威・Scope・Policy digestの証明が必要。
+- E11 strict canonicalizationはOwner採用済み方向性。RFC8785 JCSを技術候補とし、Manifestに`canonical_codec_version`を持つDraft、`default=str`は禁止。実装・クロス言語検証は残る。
+- Privacy/authorization denialはExit 3。No silent aggregate-only fallback。
+
+[Owner決定記録](../../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Schema drafts**でありFreeze済みではない。

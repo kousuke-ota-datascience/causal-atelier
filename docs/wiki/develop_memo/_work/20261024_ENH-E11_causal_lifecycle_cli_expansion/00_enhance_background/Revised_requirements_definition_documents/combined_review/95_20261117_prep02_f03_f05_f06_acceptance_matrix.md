@@ -44,3 +44,13 @@
 | All required actual FS/Security/schema negative tests | Implementation/verification Gate | appropriate Gate's 07 acceptance | NOT_RUN |
 
 **Note:** Per-Method scientific tests and five dependency execution profiles are tracked separately; none are waived by this matrix.
+
+
+## 4. DEC-PREP02-D acceptance delta（2026-11-17）
+
+- **F07 AR EMPTY**: Schema `EMPTY/components=[]`を受理、非EMPTY空成分・EMPTY非空成分は拒否。`AVAILABLE + EMPTY + valid inversion_evidence`は正常な数学的集合結果。`FAILED`は`confidence_set=null`とreason必須。該当just-identified B0/B1 MethodはEMPTYを科学的不整合として検出する。
+- **F05 Policy**: 自己生成Study YAMLの`row_export_authorized:true`や自己発行`policy_ref`のみではDENY。事前承認済み別AuthorityとStudy/Scope/列/行数を照合、root条件をAND、拒否なら**CLI exit3**・row bytes未作成・stdout/stderr/log未露出。
+- **F06 Codec**: Product `hash_mapping(default=str)`利用は禁止。E11 typed JSONのRFC8785 JCS候補、UTF-16 keys/Unicode非正規化/ECMAScript float、SHA256 bytesのgolden fixturesをPython/ECMAScript独立実装で検証。
+- **F06 CLI**: security/privacy denial=3とconfig/schema=2を正例・負例で区別。Old CLI v2は変更なし。
+
+[Owner決定](decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Tests not executed**。判断の採用を受入試験PASSとして扱わない。

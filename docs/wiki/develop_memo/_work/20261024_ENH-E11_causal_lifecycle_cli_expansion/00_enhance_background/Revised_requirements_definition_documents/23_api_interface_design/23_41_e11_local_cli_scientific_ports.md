@@ -98,7 +98,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 理由コードは安定したsnake_case等に正規化し、Machine-readable statusとhuman messageを分ける。Scientific negative（例：NOT_IDENTIFIED、unsupported confirmatory CI、weak-IV warning）は正常にpublishされた**負の分析結果**であって、勝手にtechnical failureや成功Effectへ変換しない。
 
-CLI exit code候補：`0`＝制御上正常終了（科学的負結果を含む）、`2`＝config/schema/不適格request、`3`＝input/hash/path、`4`＝method/backend technical/capability、`5`＝publication/readback failure。`0`はScience PASSを意味しない。stdoutにrun/status/manifest参照を返し、stderrに操作可能なエラーのみ出す。既存CLIのexit codeは遡及変更しない。
+CLI exit code候補：`0`＝制御上正常終了（科学的負結果を含む）、`2`＝config/schema/不適格request、**`3`＝input/hash/path/Privacy・Row Export認可拒否（Owner採用）**、`4`＝method/backend technical/capability、`5`＝publication/readback failure。`0`はScience PASSを意味しない。stdoutにrun/status/manifest参照を返し、stderrに操作可能なエラーのみ出す。既存CLIのexit codeは遡及変更しない。
 
 ## 6. Method別互換と推論契約
 
@@ -163,3 +163,8 @@ Portの候補署名/Negative case/Regression obligationsは[F04 ADR候補](../co
 - [F05 Trusted Root/Privacy契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Local Principal、ACL/mount、Owner一致と事前承認済みPolicyの証跡を検証。Study自己申告boolのみで個票を許可しない。
 - [F06 Dispatch/Codec/Error契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：採用済み5種のversionと`e11-commit/1` markerを厳格dispatch。Unknown/legacyはfail-closed。構造は[Schema draft一覧](schema_drafts/README.md)に対応。
 - **状態:** `CANDIDATE / OWNER_AAA_ADOPTED / SCHEMAS_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN`。`23_41`内の旧候補表現はA/A/A採用済みversion値を撤回するものではない。
+
+
+## 11. DEC-PREP02-D：CLI Interface判断の適用
+
+[Owner採用](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)：個票出力のPrivacy/Authorization拒否は`exit 3`とし、明示されたrow export要求をAggregate-only成功に置き換えない。Policy自体の事前承認はStudy YAML booleanで自己証明させず、別のverifiable trust anchorに束縛する。`0`は科学的PASSと同義ではなく、**数学的にEMPTYなAR推論結果自体**はvalid inversion evidenceがあれば一般には科学的負結果の表現にとどまり、自動的なCLI error exitを意味しない。実装・Runtime負例・独立reviewは未実施。

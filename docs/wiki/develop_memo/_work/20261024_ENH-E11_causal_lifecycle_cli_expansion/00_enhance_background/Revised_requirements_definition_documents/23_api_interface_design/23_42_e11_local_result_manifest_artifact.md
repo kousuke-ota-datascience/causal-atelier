@@ -154,7 +154,7 @@ ROOT/
 
 - 各endpointは `FINITE(value) / NEG_INFINITY / POS_INFINITY` のtagged union。JSONに `NaN / Infinity / -Infinity` numberを含めない。
 - Componentは下界昇順・空でないintervalで、重複・接続する成分は数学的に和集合として正規化する。真のdisconnectedは成分数2以上。有限・無限端点のclosed flagは規定値に一致すること。
-- `topology` は `ALL_REAL / DISCONNECTED / UNBOUNDED / BOUNDED`。優先順位はALL_REAL→DISCONNECTED→UNBOUNDED→BOUNDEDとし、DISCONNECTEDには非有界componentが混在し得る。全実数は `topology=ALL_REAL; components=[(-∞,+∞)]` の一意表現。正常B0/B1ではEMPTYは有効な結果としてpublishしない。
+- `topology` は **`EMPTY / ALL_REAL / DISCONNECTED / UNBOUNDED / BOUNDED`**。優先順位はEMPTY（`components=[]`）→ALL_REAL→DISCONNECTED→UNBOUNDED→BOUNDEDとし、DISCONNECTEDには非有界componentが混在し得る。全実数は `topology=ALL_REAL; components=[(-∞,+∞)]` の一意表現。**数学的EMPTYは汎用Codecで正常な推論結果として表現可能**。B0/B1のjust-identified MethodでEMPTYが科学的不整合ならMethod-specific validatorで拒否し、計算`FAILED`と混同しない。
 - 推論がUNAVAILABLE/FAILEDならconfidence_set=nullとreasonが必須。単なる `point_only` から合格区間を捏造しない。Monte Carlo coverageと弱IV頑健性は該当Gateの07独立科学検証で評価する。
 - Intervalの端点条件やstrict inequalityの扱い、AR statistic/covariance/threshold/reference・数値探索精度はDDおよび該当Gateの07 Method別検証契約に属する。
 
@@ -178,7 +178,7 @@ Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、
 | identity | `manifest_version=e11-local-manifest/1`、run_id、operation、request_hash、schema dispatch |
 | lineage | question/design/graph/dataset/upstream Identification refs＋hash、effective Estimand |
 | execution | technical/result science axis、actual backend and method、inference config、analysis mode |
-| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、SBOM ref |
+| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、SBOM ref、**E11 canonical_codec_version** |
 | stochastic | effective seed、stream derivation、split/partition hash、fold、Bootstrap config、retries |
 | artifacts | canonical relative key、type、size bytes、sha256、privacy classification、visibility |
 | review | method Reference／Science evidence refs（未実行ならnull）、legal delivery status別記 |
@@ -259,4 +259,12 @@ F05：default row-level Parquetなし。明示Study request ∧ CLI flag ∧ 別
 
 F06：5種類の採用済みVersion文字列と独立`e11-commit/1` markerを厳格dispatch。[F06契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)、[機械可読Schemaドラフト](schema_drafts/README.md)参照。例の`ContentRef`は5キー形式。旧`id/sha256`例・`path/sha256`例を新v1正規値として暗黙解釈しない。
 
-F07：汎用ARの`EMPTY`表現は[設計レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md)の`REV-F07-01`として**未決定**。既存`arConfidenceSet.components.minItems=1`ドラフトのまま統計的に空集合が不可能と一般化しない。最終Schema Freeze前にOwner/Science判断が必要。
+F07：[DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)で汎用ARの`EMPTY`をOwner採用。`arConfidenceSet.components=[]`は`topology=EMPTY`の場合に限り許可し、Effect schemaでも同条件を反映済み。**Science/Method別の妥当性と統計的Coverage、JSON Schema正式試験は未実施**。
+
+
+## 14. Owner採用4事項とResult/Manifestとの同期（2026-11-17）
+
+- F07: AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5 topology。`EMPTY` iff components空。成功ARのinversion_evidence必須。古い4分類・一律EMPTY拒否は失効。[Owner決定](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。
+- F05: Study `privacy.policy_ref`の提出は**未信頼**。別の事前承認Authorityと照合して`VerifiedStudyPolicyEvidence`ができた場合のみ個票出力を許可。Row拒否ではCLI exit3、暗黙のAggregate fallback禁止。
+- F06: F06 codecの候補版`e11-json-jcs-rfc8785/1`をManifest `canonical_codec_version`に保存する設計案（[F06詳細](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)）。`request_hash`はTyped Studyのcanonical JSON bytes、`manifest_sha256`は保存Manifestの**実bytes**、ContentRefはFile実bytesのSHA256。全て異なるHashの対象であり混同しない。
+- 形式・Reason/StatusはSchemaドラフトに同期済み。Method-specific科学的適格性、Policy trust anchor、Codec/FS/Schema正式試験は未完了。
