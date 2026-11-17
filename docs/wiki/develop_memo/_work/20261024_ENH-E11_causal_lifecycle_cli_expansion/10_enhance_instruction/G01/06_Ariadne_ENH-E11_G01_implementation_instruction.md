@@ -53,7 +53,7 @@ src/ariadne/
     scientific/
 ```
 
-Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; modules named above are the selected design destinations; no parallel causal.local_contract tree. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
+Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; modules named above are the selected design destinations; no parallel Local Domain package. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
@@ -74,7 +74,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 |---|---|---|---|
 | 30_60 `11 `ContentRef.from_payload` / 30_60 `10 `ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
 | 30_60 `9 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
-| 30_61 `1 `GraphEvidence.from_canonical_json/canonical_payload` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
+| 30_61 `1 `GraphEvidence.from_canonical_json/canonical_payload` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、immutable Graph Evidence。PAG→DAG拒否、Product Version IDを偽造しない | 03/04/07 |
 | 30_62 `2 `LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
 | 30_62 `3 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
 | 30_63 `4.4 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
@@ -84,7 +84,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_62 `6/6.8 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
 | 30_62 `7 `interfaces.cli.local_causal.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
-**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidence純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
+**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
 
 ### 2.2 Method不変条件の実装順序（曖昧性防止）
 

@@ -3,7 +3,7 @@
 - Date: 2026-11-17 JST
 - Kind: FLOW / draft cross-component Interface contract; **not** production source, Architecture Freeze or authorization to code
 - Authority: DEC-PREP02 A/A/A + DEC-PREP02-D A/A/A/A, existing IF 23_41/42 and DD 30_61/62, Product Ports source snapshot
-- **2026-11-17 Design baseline update:** [117](117_20261117_prep02_common_contract_baseline_freeze.md)により、**§1・§2の論理Port署名とcross-Port不変条件を共通設計baselineとして採用**した。実装Python module ABI / DTO constructor / Method固有の型はGate 06で完成させ、実行試験はGate 07とする。Reviewer証跡の追加提出は工程阻害条件にしない。`COMMON_LOGICAL_PORT_CONTRACT_FROZEN / MODULE_ABI_PENDING / CODING_NOT_AUTHORIZED`。旧候補文言は採用前の注釈。
+- **2026-11-17 Design baseline update:** [117](117_20261117_prep02_common_contract_baseline_freeze.md)により、**§1・§2の論理Port署名とcross-Port不変条件を共通設計baselineとして採用**した。実装Python module ABI / DTO constructor / Method固有の型はGate 06で完成させ、実行試験はGate 07とする。Reviewer証跡の追加提出は工程阻害条件にしない。`COMMON_LOGICAL_PORT_CONTRACT_FROZEN / MODULE_ABI_SELECTION_RECORDED_FOR_13 / CODING_NOT_AUTHORIZED`。旧候補文言は採用前の注釈。
 
 ## 1. One authority per boundary
 
@@ -97,3 +97,7 @@ Candidate `E11Error`: `{error_version:"e11-local-error/1", code: ErrorCode, phas
 7. Error exit3 for unauthorized requested row-level export, no row staging; exit0 means technical complete, not Science acceptance.
 
 **Freeze gate**: independent architecture/scientific/security review of this exact contract; Method-specific G08 references, real FS/ACL/Codec/Schema verification, legacy readback must be collected at appropriate authorized Gate. The matrix is a design candidate, not a test execution.
+
+## Design reconciliation — 13 Class Module/Method contracts（2026-11-17）
+
+13件の具体Module・method署名・再利用方式は[Class配置決定記録](../doc01_review/95_20261117_30_61_class_placement_signature_reuse_decision.md)に固定。既存Product `ScientificCorePort` v2公開Portを維持し、型付きPortと科学Kernelの兼用を明示Bridgeで行う。`GraphEvidence`はimmutable scientific Valueであり、Product GraphVersionのVersion発行/編集を行わない。選定済み13件のModuleは実装先として指定したが、他の未完Port全てのABIやMethod-specific DTO constructorが完成したことは意味しない。06/07は引き続きDRAFT。

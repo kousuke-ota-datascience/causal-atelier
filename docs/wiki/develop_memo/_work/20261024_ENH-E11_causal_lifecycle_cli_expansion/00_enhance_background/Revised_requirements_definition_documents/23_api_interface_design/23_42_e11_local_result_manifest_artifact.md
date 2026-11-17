@@ -166,7 +166,7 @@ B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む�
 
 ## 5. Graph／temporal evidenceの往復
 
-Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、必要なlatent/temporal variants）、edge endpoint pairs（tail/arrow/circle）、lag付き向き、time index policy、parent GraphVersion ID、assumption／edit rationale、source referenceとhashを保存する。Graph修正は元Graphを上書きせず新しいVersionとして発行する。
+Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、必要なlatent/temporal variants）、edge endpoint pairs（tail/arrow/circle）、lag付き向き、time index policy、optional Product GraphVersion参照（存在時のparent/version provenanceを含む）、assumptionとsource reference/hashを保存する。`GraphEvidence`はimmutable科学Valueであり、CLIのGraph生成はProduct GraphVersion発行を必要としない。Graph編集/新Version作成/FIXはProduct連携時に既存`GraphVersionService`だけが実施する。
 
 禁止する可逆でない変換：
 - PAG circle-circle、circle-arrow、bidirected等をDAG単一向きへ丸める。
