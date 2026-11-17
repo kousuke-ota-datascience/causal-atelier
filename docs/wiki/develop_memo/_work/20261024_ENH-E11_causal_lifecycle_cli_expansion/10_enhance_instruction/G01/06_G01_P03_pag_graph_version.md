@@ -21,7 +21,7 @@ Graphの不確定性と版・同一性を損失なく保持する。
 G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分離し旧CLI/Web/API/DB/Workerは改変しない。strict version/Method/EstimatorとJCSのハッシュ対象を検証し、PAGをDAG/ATEへ変換しない。OS root/Privacy/Atomic Publishの不適格はfail-closed、SCI不確実性をPASSに変換しない。Coding Authorization前の実装は禁止。
 
 ## 3. In scope
-`GraphEvidence.from_canonical_json/canonical_payload/make_revision`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、version parent/rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
+`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
 
 ## 4. Explicitly out of scope
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
@@ -32,7 +32,7 @@ Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends o
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
 ## 6. Required implementation
-`GraphEvidence.from_canonical_json/canonical_payload/make_revision`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、version parent/rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
+`GraphEvidence.from_canonical_json/canonical_payload`でTAIL/ARROW/CIRCLE/bidirected、source/targetとmark順序、unique nodes/edges、FCI PAG lag=null、CLI standalone両Version nullとProduct実在Version/parent参照、rationale/assumptions、旧Graph不変を検証。内部content_hashは自己fieldを除くJCS意味射影、外側ContentRefはFile実bytes。`DISCOVER`は効果EstimandではないGRAPH_STRUCTURE targetを表し、Effect dummyを作らずManifest `schema_dispatch.result=null`とする。
 
 ## 7. Focused verification
 

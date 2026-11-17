@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:graph:1",
-  "title": "E11 graph v1 schema — PREP-02 review draft only",
+  "title": "Ariadne local causal graph v1 — structural schema",
   "description": "Endpoint and temporal shape only; graph kind semantics, node reference integrity, DAG/PAG/CPDAG edge constraints and hash binding require semantic validators. Graph.content_hash is a semantic projection SHA256 over all Graph fields except content_hash; external ContentRef.sha256 covers full exact bytes. This avoids a cyclic self-hash.",
   "type": "object",
   "additionalProperties": false,
@@ -46,7 +46,7 @@
           "type": "null"
         }
       ],
-      "description": "Existing Product parent GraphVersion ID; null when no Product parent, including standalone CLI graph."
+      "description": "Existing Product parent GraphVersion ID; null when no Product parent, including standalone CLI graph. When non-null, version_id must also be a non-null existing Product GraphVersion ID; real Product lineage is verified by the semantic validator."
     },
     "nodes": {
       "type": "array",
@@ -153,5 +153,26 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "parent_version_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "parent_version_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "version_id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
 }

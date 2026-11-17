@@ -45,3 +45,7 @@ Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci
 
 
 **Naming / authority:** 上記 `e11_p1_m06_fci_*.schema.json` がMethod-IDに紐付く参照対象。旧 `e11_g01_*.schema.json` は過去の作業記録への参照互換性のため残す歴史的draftであり、新しいDomain/Method実装がdispatch対象にしてはならない。Schemaはstructural validation、ID/hashes/CI eligibility/BKのcross-asset semantic ruleは別途検証する。過去のPREP-02/PREP-03は設計履歴としてのみ扱い、これらのProfileはG01というGate IDで選択しない。
+
+## Graph identity and parent linkage
+
+`e11-local-graph/1`では両Versionキーは存在必須・nullableとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、Product由来のGraphだけ実在するProduct GraphVersion識別子を設定する。parentが非nullならversionも非nullであることはJSON Schemaの条件式で拒否可能。**ID実在性、親子の対応、graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
