@@ -75,7 +75,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 Study wireの`estimand`フィールドは必須だが、`DISCOVER`の`{family: GRAPH_STRUCTURE, population: OBSERVED_VARIABLES, contrast: NOT_APPLICABLE}`は効果Estimandではなく**非効果の探索Target**を表すタグ付き値である。Effect Estimatorに渡さず、ダミーATE/ATTも生成しない。DISCOVERでは未作成のInput Graph/Identificationを要求しない。ESTIMATE等では実際の効果Estimandと識別証拠を要求する。Operation×Method×Targetに応じてvalidatorを分ける。
 
-P1-M06の[Question Profile](../23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)、[Design Profile](../23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)は**FCIに対するMethod固有の内部検証**であって全Discovery Method共通の機能制限ではない。Question/Design/Studyのidentity、Design variablesとDataset列名・順序、Design/Method BackgroundKnowledge、CI familyとmeasurement scaleを照合する。Markov/faithfulness等のassumptionsは研究者の宣言であり、成立の証明ではない。
+P1-M06の[Question Profile](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json)、[Design Profile](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json)は**FCIに対するMethod固有の内部検証**であって全Discovery Method共通の機能制限ではない。Question/Design/Studyのidentity、Design variablesとDataset列名・順序、Design/Method BackgroundKnowledge、CI familyとmeasurement scaleを照合する。Markov/faithfulness等のassumptionsは研究者の宣言であり、成立の証明ではない。
 
 ## 4. GraphEvidence / GraphVersion
 

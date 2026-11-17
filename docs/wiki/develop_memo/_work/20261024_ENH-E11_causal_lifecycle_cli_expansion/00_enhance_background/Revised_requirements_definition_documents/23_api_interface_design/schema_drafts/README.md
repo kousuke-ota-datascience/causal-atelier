@@ -39,6 +39,9 @@ The current schemas are structurally strict at top-level and some subobjects, bu
 [Cross-schema invariants](../../combined_review/114_20261117_prep02_f06_schema_semantic_invariants.md) specify two distinct Graph hashes: `Graph.content_hash` is the JCS digest of Graph excluding that field itself; external `ContentRef.sha256` verifies full Graph file bytes. The Manifest `schema_dispatch.result` is **nullable** for non-Effect operations, but an Operation-specific scientific Bundle validator must reject missing required Effect or a fake Effect in discovery-only operations. [Shared Port and ErrorPhase](../../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md) governs typed cross-artifact joins and phase-specific CLI exit codes. These runtime/semantic rules cannot be certified by JSON Schema alone.
 
 
-## G01 strict Method/Question/Design profiles (PREP-03)
+## P1-M06 FCI Method/Question/Design validation profiles
 
-G01 Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_g01_fci_method_config_v1.schema.json)でMethod registry dispatchする。G01の外部入力Question/Designは[Question profile](e11_g01_question_evidence_profile.schema.json)、[Design profile](e11_g01_design_evidence_profile.schema.json)で厳格検証。**これら3件はG01内部のValidation Profileであって、Ownerが採用した5種類のE11公開payload/schema versionを変更・追加するものではない。** Strict duplicate key/semantic join/Dataset type/CI admissibilityは07の実行時検査対象。
+Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci_method_config_v1.schema.json)でMethod registry dispatchする。P1-M06の外部入力Question/Designは[Question profile](e11_p1_m06_fci_question_profile_v1.schema.json)、[Design profile](e11_p1_m06_fci_design_profile_v1.schema.json)で厳格検証。**これら3件はP1-M06用の内部Validation Profileであって、Ownerが採用した5種類のE11公開payload/schema versionを変更・追加するものではない。** Strict duplicate key/semantic join/Dataset type/CI admissibilityは07の実行時検査対象。
+
+
+**Naming / authority:** 上記 `e11_p1_m06_fci_*.schema.json` がMethod-IDに紐付く参照対象。旧 `e11_g01_*.schema.json` は過去の作業記録への参照互換性のため残す歴史的draftであり、新しいDomain/Method実装がdispatch対象にしてはならない。Schemaはstructural validation、ID/hashes/CI eligibility/BKのcross-asset semantic ruleは別途検証する。過去のPREP-02/PREP-03は設計履歴としてのみ扱い、これらのProfileはG01というGate IDで選択しない。
