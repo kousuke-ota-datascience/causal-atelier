@@ -61,3 +61,8 @@ Owner 2026-11-17 accepted all four A choices. See [Owner Decision record](decisi
 - [111 F07 B0/B1 AR](111_20261117_prep02_b0_b1_ar_science_method_contract.md)：proposed HC1 AR statistic/quadratic inversion and conditional just-ID nonempty property; [115 limited numerical parity](115_20261117_prep02_f07_f06_limited_numeric_qa.md) shows B0/B1 8-point max difference ~7.1e-14 with statsmodels OLS HC1; **no Monte Carlo/Science PASS**.
 
 **Gate:** common Mechanical/Scientific design has concrete review contracts. Exact FS, Security trust, schema/codec/Method41 runtime and F12 independent Architecture Review are outstanding. `PREP02_IN_PROGRESS / NO_FREEZE / NO_CODING_AUTHORIZATION`.
+
+
+## 8. Pre-Freeze common review contract checkpoint
+
+[116 reviewer checkpoint](116_20261117_prep02_f03_f07_review_submission_checkpoint.md) integrates [111 Science](111_20261117_prep02_b0_b1_ar_science_method_contract.md), [112 Port](112_20261117_prep02_f03_f07_shared_port_signature_contract.md), [113 Policy trust](113_20261117_prep02_f05_policy_trust_anchor_candidate.md), [114 Schema/Hash joins](114_20261117_prep02_f06_schema_semantic_invariants.md), [115 numerical/static QA](115_20261117_prep02_f07_f06_limited_numeric_qa.md). F04 App receives ValidatedStudy via CLI decoder; F06 Graph self-hash fixed as excluded-field semantic projection **candidate**, Manifest non-Effect Result discriminator null **with operation validator**. B0/B1 HC1 algebra has only limited statsmodels synthetic parity; still requires independent reference/coverage/degeneracy testing. Ed25519 admin Trust Anchor is an **engineering candidate**, not a new Owner decision. Overall **CONTRACTS_REFINED / PREP02_IN_PROGRESS / PORT_SCHEMA_NOT_FROZEN / F12_INDEPENDENT_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED**.
