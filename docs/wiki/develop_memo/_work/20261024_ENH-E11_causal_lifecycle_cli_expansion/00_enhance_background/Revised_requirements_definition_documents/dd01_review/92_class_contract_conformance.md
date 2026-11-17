@@ -77,3 +77,30 @@
 - Proposedで実装Class名・SignatureがOwner未確定なら`PROPOSED / FREEZE_PENDING`と明記し、存在しているかのように書かない。
 
 **結論:** 現時点でDD-01の**設計案採用**は有効だが、指定されたClassテンプレートを満たした**物理詳細設計完成**とは判定できない。独立Architecture Reviewに移る前にこの再記述が必要である。
+
+
+## 5. PREP-01/02 follow-up — 2026-11-17 Class契約の是正差分
+
+上記§2の`FAIL`は**初回監査時点の歴史的判定**であり、その後に修正したClassと未修正のClassを混同しない。以下はOwner7区分（章/節存在とSource署名・責務・Error・Testの静的記載）への**文書上の補完状況**。独立Class Review、実装動作・Unit/Scientific TestのPASSではない。
+
+| Class / DTO / Port | Stock fileと節 | Source status | 記述上の7区分 |
+| --- | --- | --- | --- |
+| GraphVersion | `30_10` §3.7.1〜7 | EXISTING / source blob `37ff76e0...` | 7/7 WRITTEN |
+| PlanValidator | `30_20` §9.5.1〜7 | EXISTING / `53aab649...` | 7/7 WRITTEN |
+| StageRunnerRegistry | `30_20` §9.6.1〜7 | EXISTING / `7ffa673d...` | 7/7 WRITTEN |
+| ExecutionOutcome | `30_21` §10.5.1〜7 | EXISTING / `81d91e7d...` | 7/7 WRITTEN |
+| GenericExecutor | `30_21` §10.6.1〜7 | EXISTING / `81d91e7d...` | 7/7 WRITTEN |
+| StoredArtifact | `30_50` §20.5.1〜7 | EXISTING / `e5bb990f...` | 7/7 WRITTEN |
+| ArtifactStorePort | `30_50` §20.6.1〜7 | EXISTING / `e5bb990f...` | 7/7 WRITTEN |
+| CliManifest | `30_60` §7.1〜7 | EXISTING / `97216eca...` | 7/7 WRITTEN |
+| E11LocalCausalUseCase | `30_62` §2.1〜7 | PROPOSED | 7/7 WRITTEN |
+| MethodCapabilityRegistry | `30_62` §3.1〜7 | PROPOSED | 7/7 WRITTEN |
+| LocalArtifactPublisher | `30_62` §4.1〜7 | PROPOSED | 7/7 WRITTEN |
+| LocalRunManifest | `30_62` §5.1.1〜7 | PROPOSED | 7/7 WRITTEN |
+| LocalManifestReader | `30_62` §5.2.1〜7 | PROPOSED | 7/7 WRITTEN |
+| LocalPrivacyPolicy | `30_62` §6.1〜7 | PROPOSED | 7/7 WRITTEN |
+
+**残存:** `30_61`のContentRef/Config/Graph/Identification/Inference/Effect DTO・Protocol全体、`30_63`のScientific Adapter Class別Contract、さらに`30_30〜43`のUX narrativeから実Class/Protocolへ結びつける処理。Method41行の対応表だけでClass仕様を満たしたとはしない。これらはPREP-01全体の未完項目。
+
+**Result:** `CLASS_DOC_REMEDIATION_PARTIAL (14 WRITTEN / remaining UNVERIFIED) / INDEPENDENT_REVIEW_NOT_RUN / ALL_DESIGN_PASS_NOT_CLAIMED`。
+**Evidence:** `f51d0be`（Product workflow 4 Class）、`a4fcdd4`（Product GraphVersion）、`3d4a4a7`／`4811cd4`／`95fdcad`（Local 6 Class）、`66ce203`（Artifact/Manifest 3 Class）。Git Sourceの原Blobを上記Stockと比較すること。変更されたClassの実動作証明ではない。
