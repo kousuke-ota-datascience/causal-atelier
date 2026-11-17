@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:g01:fci-config:1",
+  "title": "E11 G01 P1-M06 FCI Method configuration, implementation contract",
+  "description": "Method-specific strict config for Study.method.config when method.id=P1-M06 and backend=causal-learn. Local schema; registered semantically against Study, not a new payload version. No implicit PC defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "indep_test",
+    "alpha",
+    "depth",
+    "max_path_length",
+    "background_knowledge"
+  ],
+  "properties": {
+    "indep_test": {
+      "enum": [
+        "fisherz",
+        "chisq",
+        "gsq"
+      ],
+      "description": "fisherz requires continuous eligible numeric observations; chisq and gsq require explicitly integer-coded categories. Never autodiscretize or impute."
+    },
+    "alpha": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": -1,
+      "description": "-1 backend unrestricted; >=0 finite conditioning set depth."
+    },
+    "max_path_length": {
+      "type": "integer",
+      "minimum": -1,
+      "description": "-1 backend unrestricted; >=0 finite discriminating-path length."
+    },
+    "background_knowledge": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "required_edges",
+            "forbidden_edges"
+          ],
+          "properties": {
+            "required_edges": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/directedPair"
+              }
+            },
+            "forbidden_edges": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/directedPair"
+              }
+            }
+          }
+        }
+      ],
+      "description": "No BK is represented as null. Edges refer to source variable-name pairs in declared data columns. Constraint consistency and backend semantics require separate validation and regression."
+    }
+  },
+  "$defs": {
+    "directedPair": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "string",
+          "minLength": 1
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    }
+  }
+}
