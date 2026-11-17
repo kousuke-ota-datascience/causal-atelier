@@ -168,3 +168,24 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 ## 9. PREP-03 G01 P1-M06 implementation-facing Method config
 
 [Gate06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)により`P1-M06`のFCI Adapterに限って、`fisherz/chisq/gsq`、明示`alpha/depth/max_path_length`、BG知識（nullまたはrequired/forbidden directed pairs）、Graph PAG losslessと明示`causal-learn` Backendを構成契約とする。Method-specific JSON Schemaは[FCI schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)；Question/Design内部Profileは同Schema indexを参照。上流のBackgroundKnowledge endpoint過剰確定RegressionはG01-07で検査し、未検証の条件でPAG確定を偽装しない。
+
+
+## 10. G01 P1-M06 `FciDiscoveryAdapter` のMethod/科学的実装契約
+
+**`P1-M06`のみ**をG01で実装する。`2の他Method配置と`3の共通Port/Result/Negative規範は不変。G01 [06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)/[07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)のAuthoritative designは[30_61 `16](30_61_e11_local_domain_ports.md)及び[30_62 `14](30_62_e11_local_execution_publication.md)と本節。
+
+### 10.1 Class/Method/Preconditions
+
+- `scientific.local_adapters.fci.FciDiscoveryAdapter`：`preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的適格性のみ、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果をDomain Graph（または理由付きunavailable）に正規化する。Product `ScientificCorePort.run_discovery` や既存`CausalDiscovery.run_pc`のaliasは禁止。
+- Configurationは[G01 FCI Method schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)に固定。Study P1-M06/causal-learn/DISCOVER/GRAPH_STRUCTURE、CI `fisherz/chisq/gsq`、明示alpha/depth/max_path_length、BK（null/required/forbidden pair）を事前検証。列名/順序、finite complete observations、CI別measurement scale、カテゴリsupport、独立観測とサンプルサイズ、BK矛盾を検査。自動離散化・欠損補完・未知CI代替禁止。
+- Effective `causal-learn 0.1.4.8`で`causallearn.search.ConstraintBased.FCI.fci`の実際のimport・signature・return/object endpoint accessorをテスト。相違は`BACKEND_API_MISMATCH`、Fallback無し。module import時に外部Backendを先読みしない。
+
+### 10.2 Postconditions / Graph oracle
+
+- Backend Node IDsとDataset columnsは検査済み1:1 mapping。`edge.node1/node2`及び`endpoint1/2`は同じ位置で対応。node順序入替時はmarkも入替、dup/invalid node/endpointを拒否。Graphは`kind=PAG`・`temporal=null`・`lag=null`、circle/bidirected等lossless保持。GraphVersion/JCS dual hash/parentは30_61に委譲。
+- Background KnowledgeがPAGの非識別端点を過剰確定しうる場合は独立motif Regressionを通るまでは`BACKEND_SEMANTICS_UNVERIFIED`を返し、PAG成功として公開しない。
+- Method scientific PASSはGRAPH-A独立Oracle（真DAG→観測MAG→同値類PAG）と実測受入に依存。2観測変数の潜在交絡から「潜在原因を一意識別した」と誤表示しない。BackEnd invoke自体はScience PASSではない。
+
+### 10.3 DD Method test IDの割当
+
+`DD-E11-METH-P106`は`P1-M06`のMethod固有テストID（`4.3`の`P101〜P120`系列中）。G01の07-08（API/eligibility）、07-09（GRAPH-A oracle）、07-10（BKと潜在交絡の負例）で検証。科学的Oracle/Pilot未実施なら`G01-07-09=BLOCKED`を維持。

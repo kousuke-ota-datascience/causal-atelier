@@ -62,7 +62,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 ### 3.2. Factory・method
 
 `LocalConfigDecoder.decode_yaml(raw: bytes) -> LocalStudySpec`：
-- YAML duplicate key、alias/excessive nesting、構造外のPython Tag・任意オブジェクトを拒否し、strict schema validation。
+- `LocalConfigDecoder.decode(raw: bytes, *, declared_format: Literal["yaml", "json"]) -> ValidatedStudy`が共通Portとの接点。`decode_yaml`は内部helperであり別公開契約を作らない。YAML/JSON重複key・alias/excessive nesting・Python Tag等を拒否し、strict Schema/Method Profile検証後だけValidatedStudy factoryを呼ぶ。
 - `schema_version`を先に判定。unknown/legacyはE11 parserに流さない。
 - `LocalStudySpec.validate_local_invariants() -> tuple[Reason,...]`：required refs by Operation、Method/Estimand target、analysis_mode/inference、row export request、Run IDなどの純粋不変条件を収集。
 - Result/Manifest bytesを生成せず、副作用は無し。config hashはcanonical encoding後のbytesのdigestから求め、canonicalization versionを記録する。
@@ -252,3 +252,23 @@ Authority: [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_fo
 ## 15. B0/B1 ARの非退化条件と推論結果型（共通規範）
 
 ARの汎用Confidence Setは`EMPTY`を含むが、B0/B1 just-identifiedで`gA≠0`かつβhat点のHC分散が正で有限なら、その点で`T_AR=0`となり集合は非空。first-stage=0やrank/HC退化を自動的に通常EMPTY、正常PASS又は計算失敗へ潰さない。Method別の確定試験は[統計量・退化条件](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)、合成データ照合は[限定数値証跡](../combined_review/115_20261117_prep02_f07_f06_limited_numeric_qa.md)を参照。数学的な成立条件の定義と、実際のMethod適格性・弱IV被覆率・独立受入は区別する。
+
+
+## 16. G01 Class/Method/Invariant（06/07のSource of Truth）
+
+G01の[06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)と[07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)は、本書`2〜8及び以下の**G01専用の制限**を実装・検証する。新しい公開E11 Schema Versionは作らない。
+
+### 16.1 ContentRef / LocalConfigDecoder / Question・Design
+
+- `ContentRef.from_payload`は5 field（identity/relative_key/sha256/media_type/schema_version）をstrictに検証。`ContentReferencePort.verify(ref,root:TrustedLocalRoot)`はdirfd/O_NOFOLLOWと同一File FDのbytes・SHA・regular file検証によりpath-traversal/raceを拒否（DD-E11-REF01〜04）。同一identityの異なるbytesを黙って同一証拠としない。
+- `LocalConfigDecoder.decode(raw, declared_format)`はE11 v1、Study必須field、strict YAML/JSON、Method Registry/Estimand/Operation、不正Version／旧v2を検査して`ValidatedStudy`を返す（DD-E11-SPEC01〜04）。`decode_yaml`は内部HelperでありCLIからApplicationへの公開境界を変更しない。
+- G01 `DISCOVER + P1-M06`はStudyのQuestion/Design/Dataset必須、input Graph/Identification = null、AnalysisMode = EXPLORATORY、`Estimand={GRAPH_STRUCTURE,OBSERVED_VARIABLES,NOT_APPLICABLE}`、Inference false、row_export false、PolicyRef null。`GRAPH_STRUCTURE`は**効果Estimandではなく探索対象**。その他Operation/Method・CONFIRMATORYはG01では不適格。
+- Input [Question Profile](../23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)と[Design Profile](../23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)をstrictに適用し`ContentRef.schema_version=null`を許容。`question.question_id = design.question_id = Study.inputs.question.identity`。Design variables（ユニークなname+scale）はDataset列名・**順序**と同じ。Design BKとMethod config BKはJCS同値、CI familyはscaleに適格。Markov/faithfulness等の`assumptions`は研究者の**宣言**であり成立の証明ではない。
+
+### 16.2 GraphEvidence / GraphVersion
+
+- `GraphEvidence.from_canonical_json`と`canonical_payload`で`e11-local-graph/1`のkind=PAG・`temporal=null`・G01 lag=null、各edgeのTAIL/ARROW/CIRCLE endpoint、node identity、unique undirected pairをlossless保持する（GRAPH01/03）。PAG→DAGへの暗黙変換、bidirectedを2本の因果辺と解釈する行為は禁止。
+- 内部`content_hash`はGraphの当該fieldを除くJCS意味射影SHA256、外側`ContentRef.sha256`は完成Fileの実bytes SHA256。`make_revision`は新version ID＋旧parent＋rationale/assumptionsを残し、旧Graphを変更しない（GRAPH04）。G01ではrevision factoryとround-tripのみ実装し、公開CLI edit操作・新Graph再識別は後続Gate。
+- `GRAPH02`のTemporal PCMCI lag oracleと処理はG06に割当。G01ではtemporal graph入力を不適格拒否し、G01のGRAPH02 PASSは付けない。
+
+G01で使う範囲: `DD-E11-REF01〜04`、`SPEC01〜04`、`GRAPH01/03/04`。`DD-E11-ID/AR/EFF`の科学的推定と`GRAPH02`は対象外（ただし旧Productと科学的Statusの境界を維持）。

@@ -297,14 +297,14 @@ This table is a logical field grouping; exact nested JSON Schema property names,
 
 #### 5.2.3. Constructor / Factory
 
-- `__init__()`は特別な依存なし（**Proposed、N/A理由：read_runがrootを明示注入するstateless API**）。
+- `__init__()`は特別な依存なし（**Proposed、N/A理由：read_runが検証済み`TrustedLocalRoot`を明示注入するstateless API**）。共通`LocalManifestReaderPort.verify(root,run_id)`はConcrete `read_run`へ委譲するAdapter。`Path`単独をTrustedRootに昇格しない。
 - Reader instanceに暗黙のworking directory・current Project・Product DB／OS principalを仮定させない。
 
 #### 5.2.4. メソッド
 
 | Signature（Proposed） | Result | Side effect / failure |
 | --- | --- | --- |
-| `read_run(self, trusted_root: Path, run_id: str) -> VerifiedLocalRun` | Verified manifest and artifact descriptors | secure read only; marker/hash/version/root/permissions fail-closed |
+| `read_run(self, trusted_root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun` | Verified manifest and artifact descriptors | secure read only; marker/hash/version/root/permissions fail-closed |
 
 #### 5.2.5. 処理仕様
 
@@ -424,3 +424,44 @@ Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科�
 ## 13. Façade Port署名とConcrete Classの区別
 
 本書§4の`LocalArtifactPublisher`は1 runの具体的な内部Class候補で、constructorにrun_id/rootを保持する設計案である。一方、E11 Applicationが依存する**公開Port**は[112 Cross-Port contract](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)の`LocalPublicationPort.begin(run_id,request_hash,root)`/`seal`/`publish`であり、Façadeはrun毎のConcrete handleを生成する。`LocalArtifactPublisher.begin(self)`は**その内部HandleのLifecycle Method**であって同名のPort methodを置き換えるものではない。最終freeze前にClass Factory/Concrete Adapterに同一契約のUnit Testが必要。`LocalPrivacyPolicy.assert_export_allowed`もFacade `LocalPrivacyPolicyPort.authorize`による事前承認検証後の内部Guardであり、前者だけでPolicy署名／ACLを省略しない。
+
+
+## 14. G01 Class.Method単位の実装・検証契約（`2〜7補足）
+
+G01 [06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)/[07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)のSource of Truth。新Class増殖を目的とせず、**既存`2〜7のClass/Method**を実装対象／繰越しに分ける。
+
+### 14.1 E11LocalCausalUseCase（`2；RUN01〜07）
+
+- `preflight(ValidatedStudy)`はFile/Design/CI eligibility/OS root/Static Method capabilityを検証し、FCI execute/manifest publicationを呼ばない。`run(ValidatedStudy)`のG01分岐は`DISCOVER+P1-M06`に限定し、`ContentRef→Registry→FCI→Graph/Status/Manifest→Publisher→Reader`の順。結果は技術とScienceの別Axis（RUN01/03/04/06/07）。
+- RUN02（未識別からEstimator禁止）とRUN05（Graph改訂後の**再識別**）はG02でのIntegration責務。G01 `GraphEvidence.make_revision`単体の証拠は`GRAPH04`で取得。G01ではIdentification/Estimator Portのダミー実行を作らない。
+
+### 14.2 MethodCapabilityRegistry（`3；CAP01〜06）
+
+- `describe`はP1-M06のDISCOVER/GRAPH_STRUCTURE/FCI/PAG descriptorとMethod ID拒否。`resolve(method_id,backend_id,profile)`は実効Distribution/API/Version/CI適格性を検証。`load_adapter`だけがFCI optional import。Base/Legacy import時にFCIをロードしない（G01分: CAP01/04/05）。
+- 共通`MethodCapabilityPort.resolve(request:ValidatedCapabilityRequest)`はRegistry `resolve(method_id,backend_id,profile)`への**Facade**。同一Pythonメソッドを2署名で実装しない。CAP02/03の全Profiles、CAP06顧客配布LegalはG10等で検証し、G01 PASSを偽装しない。
+
+### 14.3 LocalArtifactPublisher（`4；PUB01〜10）
+
+| Concrete Method / 公開Port | Precondition/不変条件 | Return/失敗とDD |
+|---|---|---|
+| `LocalPublicationPort.begin(run_id,request_hash,root)`→`LocalArtifactPublisher.begin()` | TrustedRootが同一effective UID、Private dir/mount/FS、safe ID、random staging 0700 | 1個のSink、二重begin拒否（PUB06/08、PRIV03/04/06） |
+| `stage_bytes(key,data,media_type,classification)` | dirfd・relative key・duplicate禁止、File 0600、G01はaggregate only | 実bytes hash/size descriptor。row bytes出力禁止（PUB06〜09、PRIV01/02/05） |
+| `LocalPublicationPort.seal`→`validate(manifest)` | 全Artifact/Method/Status/Lineage/Privacy、markerはinventory外、file/dir fsync | sealed ValidatedBundle、欠損・不整合ならrename前abort（PUB01〜04/07、MAN01〜05） |
+| `LocalPublicationPort.publish`→`commit(validated)` | Linux同一FS `renameat2(RENAME_NOREPLACE)`、check-then-renameやlock代替禁止 | 親dirs fsyncと独立Readback成功後だけCOMPLETED。競合／post-rename不定は上書き・削除禁止（PUB01〜05/07〜09） |
+| `abort(reason)` | 事前公開stagingのみ | handle解放・安全な隔離、rename後は破壊的abort禁止（PUB01〜04） |
+
+LocalPublicationPortはApplicationが依存するFacade、LocalArtifactPublisherはrun固有Concrete handleであり**重複した2つの公開機構ではない**。同一request hashの既存runも完全readbackで認証してから参照する（PUB05）。旧Product ArtifactStoreとは別（PUB10）。
+
+### 14.4 LocalRunManifest / LocalManifestReader（`5）
+
+- `LocalRunManifest.from_run_evidence / validate_invariants / to_canonical_bytes / from_payload`でDISCOVER時は`schema_dispatch.result=null`（Dummy Effect禁止）、Study/Status常在、Graphは有効なときだけ存在。Manifest self hashは禁止、外部Markerは実Manifest bytes SHA256、Codecは`e11-json-jcs-rfc8785/1`。Method/RunID/Graph/ContentRefs/Science axesを突合（MAN01〜06）。
+- `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunId)`は具体Classの実装で、`LocalManifestReaderPort.verify(root,run_id)`から委譲。Marker→Manifest→全artifact bytes/type/hash/size→semantic lineage検査。保存済みBundle破損はexit5、入力時不正configはexit2。既存正常runを自動修復・削除しない（READ01〜07）。
+- 有効なedge無しPAGも`graph.json`を発行できる一方、Backend API例外を成功Bundleに偽装しない。`study.json/status.json`は確定したrunに必要であり、Manifest/Markerはartifact inventory外。
+
+### 14.5 LocalPrivacyPolicy / CLI（`6/7；PRIV01〜07）
+
+- G01の個票出力は**未サポート**。Study row要求またはCLI row flagの**いずれか**があれば公開・staging前にexit3。特定用途のStudy Policy参照や自己申告boolだけで許可しない。Private Root/UID/ACL/mount・0700/0600・stdout/logの非漏洩はG01で確認（PRIV01〜06）。
+- `PRIV07`のrestricted allow-columns、署名付事前許可、row boundはG05へ繰越し。G01のrow拒否を完全なRestricted export capabilityに見せない。
+- `interfaces.cli.e11.command.main`は新入口のみ。Product v2 CLI/Manifestのreader等は触らない（RUN06/PUB10/MAN06/READ06）。
+
+**G01の範囲外:** Identification/Eff/ARのMethod別統計処理、CAP02/03/06、PRIV07、PCMCI(Graph02)等。これらにG01の仮PASSを付けない。ソース未実装・試験未実行であることは本設計変更では変化しない。
