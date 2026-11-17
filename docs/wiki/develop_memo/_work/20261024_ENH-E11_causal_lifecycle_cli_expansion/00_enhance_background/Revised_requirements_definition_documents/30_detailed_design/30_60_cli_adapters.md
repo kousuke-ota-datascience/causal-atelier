@@ -6,7 +6,7 @@
 ## 7. `CliManifest` — Existing v2 CLI DTO（Owner 7区分）
 
 ### 7.1. 識別情報・責務
-- **Class/Module:** `ariadne.interfaces.cli.manifest.CliManifest`、`src/ariadne/interfaces/cli/manifest.py` blob `97216eca9d777e97f7a5ebd4e248afd31c6b4de0`。**EXISTING**。
+- **Class/Module:** `ariadne.interfaces.cli.manifest.CliManifest`、`src/ariadne/interfaces/cli/manifest.py` blob `97216eca9d777e97f7a5ebd4e248afd31c6b4de0`。**既存公開ABI**。
 - **Responsibility:** Existing v2 CLI manifest fieldsの構造保持と`to_dict` serialization。E11 typed Graph/PAG、AR集合、Local commit marker、独立Science acceptanceのAuthorityではない。
 - **Reuse:** E11新結果をこのv2 DTOへ暗黙拡張しない。FR-120b/NFR-005/NFR-010bをE11の既成機能と扱わない。
 
@@ -56,7 +56,7 @@
 
 #### 9.1.1. 識別情報・責務
 
-**Protocol / planned concrete module:** `ariadne.interfaces.cli.local_causal.config_decoder.LocalConfigDecoder`。raw YAML/JSONから`ariadne.causal.design.study.ValidatedStudy`を生成。CLI DTOの`LocalStudySpec`はParserの内部入力であり、ApplicationはCLI DTOに依存しない。Application内で再parseしない。
+**Protocol / module:** `ariadne.interfaces.cli.local_causal.config_decoder.LocalConfigDecoder`。raw YAML/JSONから`ariadne.causal.design.study.ValidatedStudy`を生成。CLI DTOの`LocalStudySpec`はParserの内部入力であり、ApplicationはCLI DTOに依存しない。Application内で再parseしない。
 
 #### 9.1.2. フィールド
 
