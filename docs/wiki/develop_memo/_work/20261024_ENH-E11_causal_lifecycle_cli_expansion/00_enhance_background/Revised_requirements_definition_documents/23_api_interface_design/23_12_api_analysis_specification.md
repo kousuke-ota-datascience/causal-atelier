@@ -123,3 +123,116 @@ Evidence: workspace_lifecycle.py source blob eb90bd940fc7a35b84cda0e3fa58235a738
 | POST | `/api/v1/projects/{project_id}/analysis-specifications/{spec_id}/revise` | `revise_analysis_specification` | 201 | untyped |
 
 Observed 7 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.
+
+## PREP-01 — Analysis Specification 7 Operation Request / Response / Errors（2026-11-17）
+
+**Source:** `routers/workspace_lifecycle.py` (blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`), `error_handlers.py`. All routes use `/api/v1` prefix. Source declares `dict[str,Any]` response for all seven operations; **there is no Pydantic response_model**, so no exact field list is asserted without Service return-path inspection. Success body shape is `{items: [...]}` for list; otherwise Service-returned dict with keys **UNVERIFIED**. HTTP errors handled as JSON `{"error":{"code","message","details","request_id"}}` for Domain/RequestValidationError, not application/problem+json. Request validation 400 `INVALID_REQUEST`; 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` possible based on raised DomainError, but *operation reachability not verified*. No invented OAuth contract.
+
+### OP-SPEC-01 — `POST /api/v1/projects/{project_id}/analysis-specifications`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string |
+| Request body | JSON request body `AnalysisSpecificationCreate`; extra keys rejected by DTO. |
+| Success | HTTP 201: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+| JSON field | Type / required / constraints |
+|---|---|
+| `schema_version` | required, literal `analysis-specification/1` (removed before Service call) |
+| `specification_key` | required string |
+| `analysis_family` | required enum `EXPLORATORY/CAUSAL/PREDICTIVE` |
+| `research_context_version_id`, `dataset_version_id` | required string |
+| `analysis_view_id` | optional string|null |
+| `analysis_mode` | required `EXPLORATORY/CONFIRMATORY` |
+| `family_spec_schema_version` | required string |
+| `family_spec` | required object |
+| `revision_context` | optional object|null |
+| `warnings` | optional array[object], default [] |
+Router reads `X-User-Id` (default `anonymous`) for created_by; not evidence of authenticated identity.
+
+### OP-SPEC-02 — `GET /api/v1/projects/{project_id}/analysis-specifications`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string |
+| Request body | No query or body declared by Router. |
+| Success | HTTP 200: object with `items` list |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+
+
+
+### OP-SPEC-03 — `GET /api/v1/projects/{project_id}/analysis-specifications/{spec_id}`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string and spec_id:string |
+| Request body | No query or body declared by Router. |
+| Success | HTTP 200: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+
+
+
+### OP-SPEC-04 — `PATCH /api/v1/projects/{project_id}/analysis-specifications/{spec_id}`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string and spec_id:string |
+| Request body | JSON request body `AnalysisSpecificationPatch`; extra keys rejected by DTO. |
+| Success | HTTP 200: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+| JSON field | Type / required |
+|---|---|
+| `analysis_family` | optional enum or null |
+| `research_context_version_id`, `dataset_version_id`, `analysis_view_id` | optional string|null |
+| `analysis_mode` | optional enum|null |
+| `family_spec_schema_version` | optional string|null |
+| `family_spec`, `revision_context` | optional object|null |
+| `warnings` | optional array[object]|null |
+
+Router uses `exclude_unset=True`. Omitted and explicit-null inputs are distinguishable; allowed transitions must be verified in Service.
+
+
+### OP-SPEC-05 — `POST /api/v1/projects/{project_id}/analysis-specifications/{spec_id}/validate`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string and spec_id:string |
+| Request body | No query or body declared by Router. |
+| Success | HTTP 200: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+
+
+
+### OP-SPEC-06 — `POST /api/v1/projects/{project_id}/analysis-specifications/{spec_id}/fix`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string and spec_id:string |
+| Request body | No query or body declared by Router. |
+| Success | HTTP 200: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+
+
+
+### OP-SPEC-07 — `POST /api/v1/projects/{project_id}/analysis-specifications/{spec_id}/revise`
+
+| Category | CURRENT Contract |
+|---|---|
+| Request path | required path project_id:string and spec_id:string |
+| Request body | JSON request body `AnalysisSpecificationRevise`; extra keys rejected by DTO. |
+| Success | HTTP 201: Service-produced object (untyped keys, UNVERIFIED) |
+| Errors | 400 `INVALID_REQUEST` on typed request failures; potential domain errors 404 `ENTITY_NOT_FOUND`, 409 `RESOURCE_IMMUTABLE`, 422 `INVALID_SCHEMA` (reachability **UNVERIFIED**) |
+
+| JSON field | Type / required |
+|---|---|
+| `change_reason` | string, required |
+| `changes` | object, optional, default {} |
+Router reads `X-User-Id` (default `anonymous`) for created_by.
+
+**Coverage limit:** These 7 Endpoint contracts document every declared Router input and success code; Service result shape, domain-specific validation branches and real error reachability are still open. Existing §5.3 domain invariants remain required. No runtime tests were run.
