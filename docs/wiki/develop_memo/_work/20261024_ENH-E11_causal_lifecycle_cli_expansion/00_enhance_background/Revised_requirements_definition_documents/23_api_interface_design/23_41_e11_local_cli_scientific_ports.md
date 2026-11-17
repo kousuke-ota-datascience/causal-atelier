@@ -153,3 +153,8 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | IF-E11-10 | method-specific DGP/NEG/REF/ACとG01〜G10追跡 | 同名別Estimandや未検証CIの自動代替禁止 |
 
 対応要件：FR-185〜203、NFR-029〜036、Scientific AR-028〜044のうち本Interfaceが担う箇所。全44件の責務対応は[BD-01 Trace](../bd01_review/91_requirement_architecture_trace.md)で確認する。Implementation ContractとIndependent Science Gateは別判定とする。
+
+
+## PREP-02 Owner-approved Version/Privacy boundary (2026-11-17)
+
+[DEC-PREP02](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) adopts Options A/A/A. The five literal `e11-local-*/1` identifiers in §2 are **now adopted identifiers**, while CLI signatures, Protocol typing, exact JSON Schema and implementation are still not frozen. Unknown/versionless/legacy-v2 input must fail closed in E11 decoder; legacy reader behavior stays separate. `--allow-row-level-export` does not confer authorization: same-UID, private owner-controlled trusted local root, preauthorized Study policy and explicit flag are jointly required; delegated/shared/CI/container-root-accessible paths are outside initial scope. Publisher is constrained to same-FS Linux atomic no-replace with unsupported platforms rejected. This supersedes the 'candidate until Owner snapshot adoption' qualification **only for version identifiers and three selected policies**.
