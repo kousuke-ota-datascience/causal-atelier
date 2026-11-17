@@ -33,7 +33,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `SensitivityAdapter` | `ariadne.scientific.sensitivity.adapter.SensitivityAdapter` | Method Adapter ownership | `run(self, input_: SensitivityInput, output_dir: Path)` → `list[ScientificResultDescriptor]` |
 | `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | Port/Value/Facade integration (no duplicate implementation) | run(self, request:ValidatedDiagnosticRequest, *, sink:StagingArtifactSink) -> DiagnosticOutcome |
 
-**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Constructor/Instance Fields/Factoryは本Pxx§3.1以降に内包したClass契約が規範であり、外部DD参照はprovenanceのみとする。未知のConcrete引数を追加しない。
+**Class/Method signature authority:** 本Pxx §3.1以降の埋込契約がField/Constructor/公開Method/前後条件/失敗時の一次規範。所有するAdapterだけにMethod-specific preflight/executeを実装し、既存`RefutationAdapter`/`SensitivityAdapter`の公開`run` ABIを維持する。統合専用Packageは新Adapterを作らず、Product Scientific Kernelを共有する。
 
 **Responsibility:** Method Adapterを担当するClassは `SensitivityAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -43,19 +43,19 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `SensitivityAdapter` — standalone Class/Method contract
 
-#### 1.8.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M16, P1-M17`。既存SourceはADJUSTMENT_SETとPROPENSITY_CLIPPINGの実装を持つが、新契約で必要な適格性・実効推論・Codecの再検証は別途必要。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.8.2. フィールド
+#### フィールド
 
 **既存ABI契約:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
 
-#### 1.8.3. Constructor / Factory
+#### Constructor / Factory
 
 **既存ABI契約:** ariadne.scientific.sensitivity.adapter.SensitivityAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。typed Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
 
-#### 1.8.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -63,7 +63,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.8.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -72,44 +72,44 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本PackageのMethod固有契約に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.8.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は共通の純粋計算Kernelを抽出する互換Bridgeから再利用し、新Portが旧Path writerを直接呼んでStaging制約を迂回してはならない。旧v2は従来のPath出力、新型付きAdapterは`StagingArtifactSink`だけに書く。旧DTOからの無検証CASTは禁止。Scientific Negativeとtechnical errorを分離。
 
-#### 1.8.7. 検証
+#### 検証
 
 `DD-E11-METH-P116`（`P1-M16`）、`DD-E11-METH-P117`（`P1-M17`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本PackageのMethod別DGP/NEG/REF一覧とFocused Verificationを優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `DiagnosticPort` — standalone Class/Method contract
 
-#### 5.4.1. 識別情報・責務
+#### 識別情報・責務
 
 **Protocol配置：ariadne.scientific.ports.causal.DiagnosticPort。** 既存Product `ScientificCorePort`のv2メソッドを保持し、旧APIと型付きPortは共通科学計算を用いる互換Bridgeで接続する。
 
-#### 5.4.2. フィールド
+#### フィールド
 
 N/A：Protocol自身はinstance fieldを所有しない。
 
-#### 5.4.3. Constructor / Factory
+#### Constructor / Factory
 
 N/A：Protocolに具体Factoryはない。Concreteの依存関係注入はAdapterの責務。
 
-#### 5.4.4. メソッド
+#### メソッド
 
 ```python
 class DiagnosticPort(Protocol):
     def run(self, request: ValidatedDiagnosticRequest, *, sink: StagingArtifactSink) -> DiagnosticOutcome: ...
 ```
 
-#### 5.4.5. 処理仕様
+#### 処理仕様
 
 診断結果を型付きで正規化し、未検証Science PASSにしない。科学的PreconditionはWeb/CLI共通であり、CLI optionやHTTP状態ではない。
 
-#### 5.4.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
-#### 5.4.7. 検証
+#### 検証
 
 DD-E11-METH-P101〜P313。
 
