@@ -38,5 +38,5 @@
 - **着手承認:** Ownerが「次進めて」と指示。PREP-02のレビュー結果はOwner承認済みとして扱い、Issue #25は完了クローズ。レビュー証跡追跡を前提にしない。
 - **PREP-03 Scope:** G01〜G10の作業分割、依存/共通基盤の負担範囲、最初のG01**06実装指示書／07テスト指示書**を完成させる。各Gateの`06`はCoding Contract、`07`はIndependent Verification Contract、`999`はGate Verdict。G01〜G10番号と各Gate文書の06/07を混同しない。
 - **PREP-01:** 既存RD/IF/Class全数レビューの残項目は並行管理するが、G01計画**策定そのもの**を阻害しない。PREP-04 Coding Authorization前に、実装対象へ影響する重大な不整合を閉じる。
-- **現在の次の作業:** [G01 06/07作成先](../../../../10_enhance_instruction/G01/) を参照して内容・適格性/negative/old v2回帰を校正し、実装着手前にそのGate固有の条件を確定する。
+- **現在の次の作業:** [G01 06実装指示書](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)・[G01 07テスト指示書](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md) を参照して内容・適格性/negative/old v2回帰を校正し、実装着手前にそのGate固有の条件を確定する。
 - **このCommitは実装許可ではない:** `PREP03_IN_PROGRESS / G01_06_07_DRAFT / E11_CODING_NOT_AUTHORIZED / NO_RUNTIME_OR_SCIENCE_PASS`。

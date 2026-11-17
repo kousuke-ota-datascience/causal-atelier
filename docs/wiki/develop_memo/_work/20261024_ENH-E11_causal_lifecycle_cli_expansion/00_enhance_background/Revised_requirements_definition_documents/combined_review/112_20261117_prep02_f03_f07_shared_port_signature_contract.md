@@ -3,7 +3,7 @@
 - Date: 2026-11-17 JST
 - Kind: FLOW / draft cross-component Interface contract; **not** production source, Architecture Freeze or authorization to code
 - Authority: DEC-PREP02 A/A/A + DEC-PREP02-D A/A/A/A, existing IF 23_41/42 and DD 30_61/62, Product Ports source snapshot
-- Status: `COMMON_PORT_SIGNATURES_DRAFTED / INDEPENDENT_REVIEW_PENDING / RUNTIME_NOT_RUN / NOT_FROZEN`
+- **2026-11-17 Design baseline update:** [117](117_20261117_prep02_common_contract_baseline_freeze.md)により、**§1・§2の論理Port署名とcross-Port不変条件を共通設計baselineとして採用**した。実装Python module ABI / DTO constructor / Method固有の型はGate 06で完成させ、実行試験はGate 07とする。Reviewer証跡の追加提出は工程阻害条件にしない。`COMMON_LOGICAL_PORT_CONTRACT_FROZEN / MODULE_ABI_PENDING / CODING_NOT_AUTHORIZED`。旧候補文言は採用前の注釈。
 
 ## 1. One authority per boundary
 

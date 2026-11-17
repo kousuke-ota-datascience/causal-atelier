@@ -4,7 +4,7 @@
 - Type: FLOW / integrated design review, not an approval decision
 - Scope: all common E11 Local architecture across 41 Methods; Method-specific 06/07 contracts remain Gate-scoped
 - Owner decisions: DEC-PREP02 A/A/A are accepted; no change to Product/legacy lane
-- **Overall state: DESIGN_REFINED / PORT_SCHEMA_NOT_FROZEN / INDEPENDENT_ARCH_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED**
+- **LATEST PROCESS UPDATE (2026-11-17):** [117 PREP-02 Common Design Baseline Freeze](117_20261117_prep02_common_contract_baseline_freeze.md)を最新の工程判断とする。**Architecture Core/Port logical interface/Version/Hash/Privacy/Publish不変条件を限定Freezeし、PREP-03へ進む**。本表の過去の`NOT_FROZEN`や未レビュー証跡は**検査時点の履歴**であり、Ownerの独立レビュー承認を再提出させるGateではない。実装後のFS/Schema/Science検証、Method別06/07は後続Gateの責務。`CODING_NOT_AUTHORIZED`は継続。
 
 ## 1. Finding disposition / exit evidence
 

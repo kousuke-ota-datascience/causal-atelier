@@ -1,6 +1,6 @@
 # E11 Local v1 JSON Schema drafts — PREP-02
 
-**Status: DRAFT / NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN.** These schemas are not an implementation, runtime observation or acceptance PASS. Adopted Owner version strings are normative; field/union/codec details remain review candidates.
+**2026-11-17 scoped design Freeze:** [PREP-02 baseline 117](../../combined_review/117_20261117_prep02_common_contract_baseline_freeze.md) fixes common v1 payload identifiers, outer envelope/ContentRef/Graph & Manifest hash semantics, typed science and Error/Privacy/Publish invariants. **These machine-readable files remain structural DRAFTs for Method-specific config, operation bundles and runtime validation.** Design-basis adopted ≠ all 41 configs verified, runtime Schema PASS or Coding Authorization.
 
 | Contract | Machine-readable draft | Version |
 |---|---|---|
