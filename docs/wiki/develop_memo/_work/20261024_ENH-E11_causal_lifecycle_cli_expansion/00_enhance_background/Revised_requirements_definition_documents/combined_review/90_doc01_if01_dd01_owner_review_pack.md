@@ -10,7 +10,7 @@
 |---|---|---|---|
 | DOC-01 | [監査台帳](../doc01_review/README.md)／[全件構造検証](../doc01_review/90_doc01_stock_flow_verification.md) | `STOCK_FLOW_PREPARED / STATIC_CHECK_PASS` | 全122改訂正文の意味比較・Owner final review、anchor/非Markdown参照 |
 | IF-01 | [Local CLI/Ports](../23_api_interface_design/23_41_cli_scientific_ports.md)／[Result/Graph/Manifest/Artifact](../23_api_interface_design/23_42_local_result_manifest_artifact.md)／[IF Review](../if01_review/90_interface_contract_review.md) | `IF_SPEC_DRAFT_COMPLETE` | Version/CLI grammar/Schema/atomic/privacyの正式Freeze・実行証拠 |
-| DD-01 | [Domain/Ports](../30_detailed_design/30_61_e11_local_domain_ports.md)／[UseCase/Publisher](../30_detailed_design/30_62_local_execution_publication.md)／[41 Method adapters](../30_detailed_design/30_63_causal_method_adapters.md)／[DD Review](../dd01_review/90_physical_design_review.md) | `DD_SPEC_DRAFT_COMPLETE` | exact package/reuse、actual Backend/Inference/FS tests、Method Science |
+| DD-01 | [Domain/Ports](../30_detailed_design/30_61_causal_domain_ports.md)／[UseCase/Publisher](../30_detailed_design/30_62_local_execution_publication.md)／[41 Method adapters](../30_detailed_design/30_63_causal_method_adapters.md)／[DD Review](../dd01_review/90_physical_design_review.md) | `DD_SPEC_DRAFT_COMPLETE` | exact package/reuse、actual Backend/Inference/FS tests、Method Science |
 
 **Scope保証:** ENH-E11の68 Scope（DEC09）／41 Method（20+8+13）／新44 Requirements（19 FR、8 NFR、17 Scientific AR）、旧Product v2との共存・CLI-first・無Web/DB/Worker統合を維持。P1-M05のIV識別対象やMethod別Inference/Endpointの未確定を勝手に解消扱いにしない。
 

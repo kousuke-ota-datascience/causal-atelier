@@ -125,7 +125,7 @@
 - [30_51_security.md](30_detailed_design/30_51_security.md)
 - [30_52_failure_handling.md](30_detailed_design/30_52_failure_handling.md)
 - [30_60_cli_adapters.md](30_detailed_design/30_60_cli_adapters.md)
-- [30_61_e11_local_domain_ports.md](30_detailed_design/30_61_e11_local_domain_ports.md)
+- [30_61_causal_domain_ports.md](30_detailed_design/30_61_causal_domain_ports.md)
 - [30_62_local_execution_publication.md](30_detailed_design/30_62_local_execution_publication.md)
 - [30_63_causal_method_adapters.md](30_detailed_design/30_63_causal_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
