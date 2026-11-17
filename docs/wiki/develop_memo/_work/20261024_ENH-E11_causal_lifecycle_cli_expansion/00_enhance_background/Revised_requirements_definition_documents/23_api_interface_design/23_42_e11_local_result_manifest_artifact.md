@@ -1,8 +1,8 @@
-# 23_42_e11_local_result_manifest_artifact — E11 Local JSON / Parquet / Artifact Interface
+# 23_42_local_result_manifest_artifact
 
 ## 1. 公開される契約と責務
 
-E11 Local file bundleはProduct DBのResult/Artifact/Lineage Resourceではない。ファイルの作成者・参照者は検証済みsame-UID、non-delegated OS Principalとprivate TrustedRootの範囲で責務を持つ。共有・委譲主体を無条件には許さない。ProductのProjectMembership OWNER/EDITOR/VIEWERを、DB未接続のlocal CLIへ擬似適用しない。
+Local runのFile BundleはProduct DBのResult/Artifact/Lineage Resourceと異なる永続化Interfaceであり、同じ科学的Resultの意味を共有する。ファイルの作成者・参照者は検証済みsame-UID、non-delegated OS Principalとprivate TrustedRootの範囲で責務を持つ。共有・委譲主体を無条件には許さない。ProductのProjectMembership OWNER/EDITOR/VIEWERを、DB未接続のFile Interfaceへ擬似適用しない。
 
 公開ディレクトリは `ROOT/runs/{run_id}/` の一単位で不変とする。Readerは `manifest.json` と `_COMMITTED.json` を検証して初めてbundleを受け付け、個々のArtifactの存在だけを成功と解釈しない。公開Manifestは科学的結果の内容、Artifactは物理bytes、statusは実行事実を表す別権威である。
 
@@ -133,7 +133,7 @@ ROOT/
 
 ## 4. AR Confidence Setの損失ない表現
 
-B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む場合も、非連結や非有界の場合も単一区間とは限らない。Finite CI schemaへの丸め込み禁止。これはStatistical confidence setであり、D06のPartial Identification Setではない。
+B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む場合も、非連結や非有界の場合も単一区間とは限らない。Finite CI schemaへの丸め込み禁止。これはStatistical confidence setであり、Partial Identificationの識別集合とは異なる（その区別は科学的推論契約に属する）。
 
 ~~~json
 {
@@ -184,7 +184,7 @@ Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、
 | identity | `manifest_version=e11-local-manifest/1`、run_id、operation、request_hash、schema dispatch |
 | lineage | question/design/graph/dataset/upstream Identification refs＋hash、effective Estimand |
 | execution | technical/result science axis、actual backend and method、inference config、analysis mode |
-| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、SBOM ref、**E11 canonical_codec_version** |
+| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、SBOM ref、**canonical_codec_version** |
 | stochastic | effective seed、stream derivation、split/partition hash、fold、Bootstrap config、retries |
 | artifacts | canonical relative key、type、size bytes、sha256、privacy classification、visibility |
 | review | method Reference／Science evidence refs（未実行ならnull）、legal delivery status別記 |
@@ -229,12 +229,18 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 | IO-E11-06 | Restricted CATE Parquet/summary/CLI leakage | opt-in無しの個票公開 |
 | IO-E11-07 | Backend/env/lock/SBOM readback | 適用不能Versionや不明依存の成功扱い |
 | IO-E11-08 | immutable run／partial Manifest rejection | stale hashes、non-atomic backend |
-| IO-E11-09 | Product v2 reader regression | legacy ManifestのE11誤解釈 |
+| IO-E11-09 | Product v2 reader regression | legacy Manifestを新Bundle Schemaとして誤解釈 |
 
-参照：[E11 CLI/Port](23_41_e11_local_cli_scientific_ports.md)、[E11関連BD](../22_product_basic_design/22_09_results_artifacts_lineage.md)、[Existing Product Artifact Port](../30_detailed_design/30_50_persistence_artifacts.md)。
+参照：[CLI / Scientific Port](23_41_e11_local_cli_scientific_ports.md)、[Results/Artifacts/LineageのBD](../22_product_basic_design/22_09_results_artifacts_lineage.md)、[Existing Product Artifact Port](../30_detailed_design/30_50_persistence_artifacts.md)。
 
 ### AR・Privacyの意味的検証
 
 AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5分類。`EMPTY`は数学的に正常に反転した0成分で`AVAILABLE + inversion_evidence`と共存しうる一方、計算失敗は`FAILED + reason`。端点で双方openの接触区間はgapを保存する。非退化なB0/B1 HC1 ARの非空条件はMethod固有Validatorで判定し、CodecやSchemaの検証を統計的Coverageの証明としない。
 
 行出力に対する独立Policy trust anchorはStudy YAMLの自己宣言と区別し、権限不足なら個票を生成せずexit3。出版前の検証だけでなく、ReaderもMarker/Manifest/Filesの実bytes・size/type、private Artifactの権限とLineageを再検証する。
+
+### 9.1. Class・Portとの単一Authority／互換性
+
+`ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`はManifest ValueのSchemaとstrict bytes射影を所有し、`ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader`が発行済みBundleの独立readbackを担当する。`LocalArtifactPublisher`は同一FS run単位のatomic publicationを担い、既存`product.ports.artifact_store.ArtifactStorePort`の単一File/Object storeを置換しない。`GraphEvidence`と`EffectOutcome`の科学的意味はCausal Domain側のValue/Validatorで検証する。
+
+Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wire識別子であり、文書名に含まれるEnhancement番号とは別の**Version互換契約**として維持する。将来改訂する際は明示的Version dispatch／migrationと旧Readerの回帰検証を必要とし、表示上のファイル改名だけで変更しない。

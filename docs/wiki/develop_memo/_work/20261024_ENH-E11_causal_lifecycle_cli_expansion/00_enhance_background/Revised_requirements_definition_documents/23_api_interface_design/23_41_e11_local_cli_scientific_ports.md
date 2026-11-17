@@ -1,23 +1,23 @@
-# 23_41_e11_local_cli_scientific_ports — E11 Local CLI / Scientific Port Interface
+# 23_41_cli_scientific_ports
 
 ## 1. 境界・Compatibility
 
-本InterfaceはCLI-firstの追加実行系だけを対象とする。既存ProductのWeb API（/api/v1）、Worker、Product DB、Execution/Result正本、browser navigationを追加・変更しない。既存Ariadneの旧 `ariadne-identify`／`ariadne-estimate`／`ariadne-refute`／`ariadne-sensitivity`、`causal-analysis-spec/2`、`CliManifest(manifest_version="2.0")`のreaderと挙動は独立した旧laneとして保護する。
+本InterfaceはFile I/OとCLI entrypointを介して因果分析UseCaseを実行する公開契約を規定する。ProductのWeb API（/api/v1）、Worker、DB/Execution/Result永続化とは別の公開境界だが、科学的Domain／Estimatorは共通であり、CLI専用の数理ロジックを定義しない。既存Ariadneの `ariadne-identify`／`ariadne-estimate`／`ariadne-refute`／`ariadne-sensitivity`、`causal-analysis-spec/2`、`CliManifest(manifest_version="2.0")`のReaderと呼出し互換性を維持する。
 
-DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。CLI composition rootはversion dispatchを所有し、`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`が順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、E11の型付きEffect/AR集合を無検証で同型へキャストしない。
+DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。CLI composition rootはversion dispatchを所有し、`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`が順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、新しい型付きEffect/AR集合を無検証で同型へキャストしない。
 
-本書はLocal CLI/Scientific Portのwireと意味的な契約を規定する。実装の適合性は独立Contract Testで確認する。
+本書はCLIのVersion/Request/Statusと、入口に依存しないScientific Portの型境界を規定する。実装の適合性は独立Contract Testで確認する。
 
 ## 2. Versionと入口
 
 | Interface | Interface／互換規則 | 禁止する曖昧性 |
 |---|---|---|
-| E11 CLI | `ariadne-causal-local` | 既存 `ariadne-estimate` の引数をE11解釈に変更しない |
-| E11 config | `e11-local-study/1` | `causal-analysis-spec/2` をE11へ自動upgradeしない |
-| E11 effect result | `e11-local-effect-result/1` | Product `TREATMENT_EFFECT_RESULT` payloadを無断拡張しない |
-| E11 graph evidence | `e11-local-graph/1` | PAG/CPDAGをDAGへ暗黙変換しない |
-| E11 run manifest | `e11-local-manifest/1` | 旧 `manifest_version=2.0` に新Fieldを黙示追加しない |
-| E11 contract status | `e11-local-status/1` | Technical statusとScientific statusを一軸へ併合しない |
+| Local causal CLI | `ariadne-causal-local` | 既存 `ariadne-estimate` の引数を異なるStudy解釈に変更しない |
+| Study request | `e11-local-study/1` | `causal-analysis-spec/2`を別Schemaとして明示dispatchし、暗黙upgradeしない |
+| Effect result | `e11-local-effect-result/1` | Product `TREATMENT_EFFECT_RESULT` payloadを無断拡張しない |
+| Graph evidence | `e11-local-graph/1` | PAG/CPDAGをDAGへ暗黙変換しない |
+| Run manifest | `e11-local-manifest/1` | 旧 `manifest_version=2.0` に新Fieldを黙示追加しない |
+| Run status | `e11-local-status/1` | Technical statusとScientific statusを一軸へ併合しない |
 
 CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`。
 - `--config`：必須。ファイル読取、版識別、schema validationをしてからpath解決を行う。
@@ -25,11 +25,11 @@ CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [
 - `--check-only`：実行・出力publish無しでconfig／path／hash／静的capability／eligibilityを検査。外部Backendが必要な深い科学実行のPASSを主張しない。
 - `--json`：stdoutへ機械可読の制御Envelopeのみ。個票・秘匿データをstdoutへ流さない。
 - `--allow-row-level-export`：個票CATEの生成を**明示的に要求する一条件**。入力privacy policy、OS主体・出力ディレクトリと別の承認条件を満たさなければ拒否。
-- 5つの`e11-local-*/1`識別子は固定。Marker`e11-commit/1`は別の内部versionである。無版入力をE11と推測しない。
+- 5つの`e11-local-*/1`識別子は固定。Marker`e11-commit/1`は別の内部versionである。無版入力を既定Versionとして推測しない。
 
 ## 3. Config request（Schema contract）
 
-次はF06のstrict v1 wire（JSON Schema）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形をE11 v1で暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
+次はF06のstrict v1 wire（JSON Schema）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形を本Schema Versionで暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
 
 ~~~yaml
 schema_version: e11-local-study/1
@@ -52,7 +52,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 - `operation` は`DISCOVER / IDENTIFY / ESTIMATE / REFUTE / SENSITIVITY / DIAGNOSE`の**操作型**でありMethod IDの別名ではない。41 Methodは認可済みMethod registryにおける固定IDにより選択し、対応するOperation／Estimand／Backendを別途検証する。
 - `analysis_mode` は `EXPLORATORY / CONFIRMATORY`。CONFIRMATORYにはMethod・対象Estimandに適合した認定済み推論方式と、要求する検証Evidenceが必要。点推定が有限であるだけではScience PASSにしない。
 - `sha256` はファイルbytesのSHA-256小文字hex64。表現の正規化方法が識別子に影響するJSON等は読み込み時にcanonicalization spec/decoder版を照合する。pathの改名だけで同一内容とすることは許されるが、上流のDesign/Question/Graph identityはhashと別途保持する。
-- `identification` はEstimation／下流Refutation等の該当操作で必須。元ResultのGraph/Question/Design/Dataset/Estimand hashを再照合し、旧v2 ManifestをE11 proofとして黙認しない。
+- `identification` はEstimation／下流Refutation等の該当操作で必須。元ResultのGraph/Question/Design/Dataset/Estimand hashを再照合し、旧v2 Manifestを本Versionの識別証拠として無検証受理しない。
 - 設定自体のlogical snapshot hashと実効Backend/Method config hashを出力Manifestへ保存する。Overrideは適格なWARNの列挙済みreasonに限定し、識別未成立・Graph未確定・hash不一致を解除できない。
 
 ## 4. Port contractとauthority
@@ -70,7 +70,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
-`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。sync実行は初期仕様とし、E11のWeb Worker/DB lifecycleは対象外。
+`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。このCLI interfaceの同期実行はContractとし、Product Web Worker/DB lifecycleは本IFの所有範囲外。
 
 ### 4.1. Port間の正規署名と相互整合
 
@@ -78,9 +78,19 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
-`ContentRef`=`ariadne.shared.content_ref.ContentRef`、`LocalStudySpec`=`ariadne.interfaces.cli.local_causal.study.LocalStudySpec`、`GraphEvidence`=`ariadne.causal.discovery.graph_evidence.GraphEvidence`、`BackendCapabilityRecord`=`ariadne.scientific.capabilities.BackendCapabilityRecord`。各ClassのField/Constructor/Method・検証の7区分は30_60 §11〜12、30_61 §1〜5、30_62 §8が所有する。
+`ContentRef`=`ariadne.shared.content_ref.ContentRef`、CLI wire DTO `LocalStudySpec`=`ariadne.interfaces.cli.local_causal.study.LocalStudySpec`、Application受理型 `ValidatedStudy`=`ariadne.causal.design.study.ValidatedStudy`、`GraphEvidence`=`ariadne.causal.discovery.graph_evidence.GraphEvidence`、`BackendCapabilityRecord`=`ariadne.scientific.capabilities.BackendCapabilityRecord`。各ClassのField/Constructor/Method・検証の7区分は30_60 §11〜12、30_61 §1〜5、30_62 §7が所有する。
 
 GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所有する。`GraphEvidence`はVersion writerではなく、`make_revision`は定義しない。Domain側のEstimator適格性は既存`ScientificValidationService`の判定を共通pure policyに統合し、Backend availabilityは`MethodCapabilityPort.resolve(request)`で独立検査する。
+
+### 4.3. 既存Classとの再利用・依存方向
+
+| 公開Contract | 再利用する既存Owner | 分離すべき責務 |
+|---|---|---|
+| CLI Decoder → `ValidatedStudy` | `ariadne.causal.design.schemas.CausalDesign`、既存`AnalysisSpecification` Validator | YAML/JSON構文・CLI FlagはCLI、Method/Estimand科学的不変条件はCausal側の共通Policy |
+| Scientific typed Ports | 旧`product.ports.scientific_core.ScientificCorePort`と`scientific.core_adapter.ScientificCoreAdapter` | 旧v2の5 Operation署名は維持し、共通Scientific KernelへBridge。別の推定器を二重化しない |
+| Method Capability | 既存`ScientificValidationService`とMethod Registry | Method×Estimand/Inferenceと実効Backend probeは分け、唯一のMethod適格性規則を使う |
+| Graph Evidence | 既存`GraphVersionService`とGraph意味Validator | ProductのGraphVersion/EDIT/FIXはProduct側。CLI Graph作成時に架空のVersionを発行しない |
+| Local Publication/Reader | 既存`ArtifactStorePort`のbyte/hash処理 | 完全run単位のatomic no-clobber・Marker/Manifest/Privacy readbackは独立File Bundle Contract |
 
 ## 5. Status／error／exit envelope
 
