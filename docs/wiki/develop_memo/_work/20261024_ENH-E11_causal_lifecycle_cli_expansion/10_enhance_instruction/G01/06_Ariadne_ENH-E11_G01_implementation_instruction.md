@@ -28,14 +28,18 @@
 ```text
 src/ariadne/
   shared/content_ref.py                # ContentRef; bytes identity, not Product ResourceRef
+  shared/local_fs.py                # TrustedLocalRoot/LocalPrincipal: independent of CLI concrete
   shared/serialization/jcs.py         # strict JCS canonical codec
   causal/discovery/graph_evidence.py   # GraphEvidence; no GraphVersion writer
   causal/design/schemas.py            # reuse existing CausalDesign
-  scientific/ports/causal.py           # Identification/Estimator/Diagnostic Ports
+  scientific/ports/causal.py           # Discovery/Identification/Estimator/Diagnostic Ports
   scientific/ports/capability.py       # MethodCapabilityPort
   scientific/capabilities.py           # BackendCapabilityRecord
-  scientific/causal_methods/fci.py     # P1-M06 adapter; lazy backend import
+  scientific/causal_methods/discovery.py # FciDiscoveryAdapter; lazy backend import
   capabilities/causal/local_execution.py  # LocalCausalUseCase
+  capabilities/causal/ports/local_io.py      # Publication/Reader Port facades
+  capabilities/causal/ports/local_policy.py  # independent PolicyVerifier Port
+  capabilities/causal/ports/local_privacy.py # LocalPrivacyPolicyPort
   capabilities/causal/method_registry.py   # MethodCapabilityRegistry
   interfaces/cli/local_causal/
     study.py           # LocalStudySpec; CLI envelope
@@ -61,7 +65,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | **G01-P02** | 30_62 `3/5：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
 | **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `4：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
 | **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
-| **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
+| **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
 **実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
 
@@ -75,9 +79,9 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_60 `11 `ContentRef.from_payload` / 30_60 `10 `ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
 | 30_60 `9 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
 | 30_61 `1 `GraphEvidence.from_canonical_json/canonical_payload` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、immutable Graph Evidence。PAG→DAG拒否、Product Version IDを偽造しない | 03/04/07 |
-| 30_62 `1 `LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
+| 30_62 `1 `LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight(spec,context)`は実File/CI/静的capabilityのみ。`run(spec,context)`は`DISCOVER+P1-M06`のみを`DiscoveryPort.discover`で実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
 | 30_62 `2 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
-| 30_63 `4.4 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
+| 30_63 `4.4 `DiscoveryPort.discover(request,*,sink)`→`FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-DISC01〜03、METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
 | 30_62 `3 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
 | 30_62 `4/8.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
 | 30_62 `5/8.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
@@ -100,7 +104,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 - Study `schema_version=e11-local-study/1`、`operation=DISCOVER`、`analysis_mode=EXPLORATORY`。CONFIRMATORYは、FCI Graphを効果推定の確定証拠と扱わないためG01では`METHOD_COMBINATION_UNSUPPORTED`（exit2）。
 - Required `inputs.question/design/dataset`は既存のE11 ContentRef 5 field。G01 DISCOVERの`inputs.graph=null`・`inputs.identification=null`（未作成Graphを入力に要求しない）。Question/Designはsemantic validationの対象で、実際のbytes hashを再計算する。OutputGraphは別run artifact。Datasetは`text/csv`または`application/vnd.apache.parquet`。列順と名前の一意性、データ行の順序を保持。
-- G01専用の[Question入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json)と[Design入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json)を厳格検証する。両者は**G01内部のMethod別入力バリデーション**であり、Owner採用済み5つの公開payload versionを増やすものではない。`ContentRef.schema_version=null`で参照し、`question.question_id=design.question_id=Study.inputs.question.identity`および`design.variables[].name`とDataset列名/列順の完全一致を必須とする。`design.assumptions`は研究者の事前宣言であり、Markov/faithfulness/acyclicityの成立証明ではない。`design.background_knowledge`と`Study.method.config.background_knowledge`はJCS同値であることを求め、勝手に条件を差し替えない。`fisherz`の場合すべての`measurement_scale=CONTINUOUS`、`chisq/gsq`はすべて`CATEGORICAL`。混合型はG01では`METHOD_COMBINATION_UNSUPPORTED`で拒否し、勝手な変換をしない。GraphVersionの初版生成はCLI `DISCOVER`で行い、編集操作はG01のDomain factory / component検証まで（新CLI editサブコマンドは追加しない）。
+- G01専用の[Question入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json)と[Design入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json)を厳格検証する。両者は**G01内部のMethod別入力バリデーション**であり、Owner採用済み5つの公開payload versionを増やすものではない。`ContentRef.schema_version=null`で参照し、`question.question_id=design.question_id=Study.inputs.question.identity`および`design.variables[].name`とDataset列名/列順の完全一致を必須とする。`design.assumptions`は研究者の事前宣言であり、Markov/faithfulness/acyclicityの成立証明ではない。`design.background_knowledge`と`Study.method.config.background_knowledge`はJCS同値であることを求め、勝手に条件を差し替えない。`fisherz`の場合すべての`measurement_scale=CONTINUOUS`、`chisq/gsq`はすべて`CATEGORICAL`。混合型はG01では`METHOD_COMBINATION_UNSUPPORTED`で拒否し、勝手な変換をしない。GraphEvidenceはCLI `DISCOVER`で生成するが、Product GraphVersion IDは発行しない。Product Versionの初版生成・編集・FIXは既存GraphVersionServiceのみが所有する。CLIはGraph ValueのFactory/round-tripを検証する（新CLI editサブコマンドは追加しない）。
 - 現行共通Study schemaは`estimand`必須なので、G01では`family=GRAPH_STRUCTURE`、`population=OBSERVED_VARIABLES`、`contrast=NOT_APPLICABLE`を**Discovery-onlyの非効果Target**として使用する。ATE等のDummy Effectを作らない。 `inference.requested=false`, `confidence_level=null`, `privacy.classification=AGGREGATE`, `row_export_requested=false`, `policy_ref=null`。違反時は明示的に拒否。
 - `Study.method.config`は[FCI専用JSON Schema](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_method_config_v1.schema.json)をMethod registryが選択して厳格検証。**Method configの未知Fieldと別Method用Fieldは拒否**。全Fieldを明示させ、Backend既定値への依存を禁止。
 - `indep_test`は`fisherz`（complete continuous numeric、非定数、検定のGaussian条件を記録）、`chisq/gsq`（事前に整数カテゴリ符号化・有効カテゴリsupport確認）の3方式。自動quantile binning、勝手な欠測補完、未申告の標準化は禁止。`alpha∈(0,1)`、`depth/max_path_length`は`-1`または0以上の整数、`background_knowledge`は`null`またはrequired/forbidden ordered pairs。 `show_progress=false,verbose=false`はCLI Adapter固定。
@@ -148,9 +152,11 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 - Node ordering: 学習入力の列名/順序→Backendの内部Node識別子の対応を明示的に検査。Backendが`X1`等を返す場合も無検証の文字列置換は禁止。対応不能なら`BACKEND_GRAPH_NODE_MISMATCH`。Graph `nodes`は入力観測変数のみを許す。
 - Endpoint pair: Backend `edge.get_endpoint1/2()`と`edge.get_node1/2()`を**同じ端点位置**でマップし、`TAIL/ARROW/CIRCLE`のペアをlossless保持。無向ペアはnode名の安定順に並べ、順序反転した場合はmarkも入替。重複edge・Self-loop・未知mark・missing nodesを拒否する。`ARROW/ARROW`は双方向**endpoint**であり二本の有向因果効果ではない。PAGからDAGを合成しない。
-- `e11-local-graph/1`: `kind=PAG`、`temporal=null`、全G01 `edges[].lag=null`、`version_id`は不変、初版`parent_version_id=null`。Graph `content_hash=SHA256(JCS(Graph without content_hash))`、外部`ContentRef.sha256=SHA256(actual complete graph.json bytes)`。Graph `provenance`にeffective Backend, CI-test, alpha, n, columns, runtime/library version, Graph uncertainty, permitted background knowledge, reasonsを残す。Backend固有edge propertyの取りこぼしは科学的意味を確認し、必要なら`provenance`内でキー付きに保存する。
+- `e11-local-graph/1`: `kind=PAG`、`temporal=null`、全G01 `edges[].lag=null`、CLI standalone時は`version_id=null`、`parent_version_id=null`。Product GraphVersionを実際に参照した場合のみ両者の実在IDを記録し、架空のProduct Version IDを作らない。Graph `content_hash=SHA256(JCS(Graph without content_hash))`、外部`ContentRef.sha256=SHA256(actual complete graph.json bytes)`。Graph `provenance`にeffective Backend, CI-test, alpha, n, columns, runtime/library version, Graph uncertainty, permitted background knowledge, reasonsを残す。Backend固有edge propertyの取りこぼしは科学的意味を確認し、必要なら`provenance`内でキー付きに保存する。
 - GRAPH-A: 生成DAGを唯一のPAG oracleとして用いない。潜在変数を含む小Graphから観測MAG・同値類の制約を**独立に**導出し、強制されない方向は未確定のまま評価する。PAGのどの円端点も「潜在交絡が証明された」という意味ではない。
 - BackgroundKnowledge: `required_edges`／`forbidden_edges`は変数の存在、矛盾、自己辺、cycle/precedenceの妥当性を検査。Backend内部のBK適用には**禁止方向から不要なTAILを確定させる可能性**が報告されている（[上流#266](https://github.com/py-why/causal-learn/issues/266)）。G01ではBK指定時に独立Graph motifのendpoint非過剰確定RegressionがGreenとなるまで`BACKEND_SEMANTICS_UNVERIFIED`で拒否し、結果をPAGとしてPublishしない。修正が必要ならG01内のversioned adapterに限定し、外部ライブラリの無断Patch/依存更新はしない。
+
+**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flagを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
 
 ## 5. G01 Operation別Bundle・状態・Publication
 
@@ -181,6 +187,8 @@ ROOT/runs/{run_id}/
 | 5 | staging/publish/collision/readback/fsync破損 | no false complete; typed PUBLICATION |
 
 **`--check-only`の正常結果はReference/PAG精度のPASSではない。** `stdout --json`は1つのJSON制御object。stderrはsecret／個票／生Pathの不要な公開を避けた識別子とReasonのみ。
+
+**Cross-document acceptance：** 23_42 §2.1の全Operation Bundle matrixを恒久設計Authorityとする。G01はDISCOVERのみ実装し、Graph成功時はstudy/status/graph、科学的Graph無しnegativeではstudy/status/diagnosticsとnonempty reasonを持つ。どちらもEffect Resultは禁止し、Graph/Status/Manifest/Markerの全readbackが必要。未実装Methodの内部config/profile未登録は実行許可ではない。
 
 ## 7. Coding Entry前のセルフチェック（追加承認手続きではない）
 

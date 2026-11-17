@@ -21,7 +21,7 @@ DISCOVER-only CLIの全経路を統合し、Product v2を回帰保護する。
 G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分離し旧CLI/Web/API/DB/Workerは改変しない。strict version/Method/EstimatorとJCSのハッシュ対象を検証し、PAGをDAG/ATEへ変換しない。OS root/Privacy/Atomic Publishの不適格はfail-closed、SCI不確実性をPASSに変換しない。Coding Authorization前の実装は禁止。
 
 ## 3. In scope
-`E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`interfaces.cli.e11.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
+`LocalCausalUseCase.preflight/run(spec,context)`、`LocalPrivacyPolicy.assert_export_allowed`、`interfaces.cli.local_causal.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
 
 ## 4. Explicitly out of scope
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
@@ -32,7 +32,7 @@ Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends o
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
 ## 6. Required implementation
-`E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`interfaces.cli.e11.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
+`LocalCausalUseCase.preflight/run(spec,context)`、`LocalPrivacyPolicy.assert_export_allowed`、`interfaces.cli.local_causal.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
 
 ## 7. Focused verification
 
