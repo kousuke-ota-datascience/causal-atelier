@@ -95,3 +95,170 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 **評価上の制約：** 実行時Gateway、依存注入override、middlewareまたは運用上の認証機構が追加され得るため、これだけでデプロイ環境の侵害可能性を断定しない。ただし**CURRENT Route→ServiceでOwner Requirementへの実装追跡が成立していない**ことはSourceから検証可能。要求仕様を緩和するのではなく、Product Security backlog（DEC09のGAP-C群／#14との紐付け要精査）と修正責任を切り出す。CLI-onlyのE11新機能を実装することによって本Gapが自動解消したと扱わない。
 
 **独立確認用Negative Test:** 非Member→Project GET/PATCH/DELETEとContext GET/PATCH/FIX/USAGEはdeny、VIEWER→mutation deny、ARCHIVED→mutation 409、missing／same／different Idempotency Key、他ProjectのContext ID、unauthenticated principalのOwner登録を、固定Source／Integration環境で検証。現状はNOT_RUN。
+
+## PREP-01 — Operation別 Request / Response / Errors 詳細（Owner方針 2026-11-17）
+
+対象は**Operation別の入力（path/query/header/body + field type/required/null/constraints）、成功HTTP statusとresponse field、失敗HTTP status/error code/条件**に限定する。すべてのPathは `/api/v1` 以下である。SOURCEで実証できないError到達・Service由来Fieldは推測せず `UNVERIFIED` とする。
+
+共通Error Handlerが処理するDomain/RequestValidationErrorのCURRENT envelope は `{"error":{"code":"…","message":"…","details":{},"request_id":"…"}}`（JSON）、**Notion例のproblem+jsonではない**。RequestValidationErrorは400 `INVALID_REQUEST`、EntityNotFoundは404 `ENTITY_NOT_FOUND`、ProjectArchivedは409 `PROJECT_ARCHIVED`、ProjectAccessDeniedは403 `PROJECT_ACCESS_DENIED`、InvalidSchemaは422 `INVALID_SCHEMA`。これらはHandlerのMappingであり**各Operationが必ずそのエラーを送出するという意味ではない**。Source: `src/ariadne/interfaces/web_api/error_handlers.py`。未捕捉例外やHTTPException等の全error surfaceは別途照合が必要。
+
+### ProjectResponse Field Contract（Source: schemas/__init__.py）
+
+`ProjectResponse`: `project_id:string`, `name:string`, `topic/objective/memo:string|null`, `status:string`, `created_at/updated_at:datetime|null`. `ProjectListResponse`: `items:ProjectResponse[]`, `next_cursor:string|null` (default null).
+
+### OP-PROJECT-01 — `POST /projects`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `POST /api/v1/projects` |
+| Success | HTTP **201**, ProjectResponse |
+| Request | ProjectCreate JSON body |
+| Error (observed handler / reachability) | 400 INVALID_REQUEST; other domain errors UNVERIFIED |
+
+Request fields:
+
+| Field | Type | Required | Nullable | Constraint |
+|---|---|---|---|---|
+| `name` | string | yes | no | 1..200 characters |
+| `topic`, `objective` | string | no | yes | 0..4000 characters |
+| `memo` | string | no | yes | 0..8000 characters |
+
+CURRENT: required `name`; optional string fields as above. `X-User-Id` is read as owner identity (defaults to `anonymous`); not a verified authentication mechanism.
+
+### OP-PROJECT-02 — `GET /projects`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `GET /api/v1/projects` |
+| Success | HTTP **200**, ProjectListResponse |
+| Request | query: status (ProjectStatus enum or null; default ACTIVE) |
+| Error (observed handler / reachability) | 400 INVALID_REQUEST for invalid query; other errors UNVERIFIED |
+
+No JSON request body. Enum literal set: inspect Product ProjectStatus definition before publishing values.
+
+### OP-PROJECT-03 — `GET /projects/{project_id}`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `GET /api/v1/projects/{project_id}` |
+| Success | HTTP **200**, ProjectResponse |
+| Request | path project_id:string |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND conditional on domain not-found |
+
+No JSON body.
+
+### OP-PROJECT-04 — `PATCH /projects/{project_id}`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `PATCH /api/v1/projects/{project_id}` |
+| Success | HTTP **200**, ProjectResponse |
+| Request | path project_id:string; ProjectUpdate JSON |
+| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404 ENTITY_NOT_FOUND if Service raises not-found; other errors UNVERIFIED |
+
+Request fields:
+
+| Field | Type | Required | Nullable | Constraint |
+|---|---|---|---|---|
+| `name` | string | no | yes | if present non-null length 1..200 |
+| `topic`, `objective` | string | no | yes | length <=4000 |
+| `memo` | string | no | yes | length <=8000 |
+
+All body fields optional in DTO. Whether explicit null clears a field or denotes unchanged is Service-dependent: UNVERIFIED.
+
+### OP-PROJECT-05 — `DELETE /projects/{project_id}`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `DELETE /api/v1/projects/{project_id}` |
+| Success | HTTP **204**, empty body |
+| Request | path project_id:string; X-User-Id header read (default anonymous) |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 409 PROJECT_ARCHIVED if raised; authorization enforcement source GAP |
+
+Archive endpoint; request body absent.
+
+### OP-PROJECT-06 — `POST /projects/{project_id}/research-contexts`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `POST /api/v1/projects/{project_id}/research-contexts` |
+| Success | HTTP **201**, dict[str,Any] (no explicit response_model) |
+| Request | path project_id:string; ResearchContextCreate JSON |
+| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404/409/422 only if raised by Service: UNVERIFIED |
+
+Request fields:
+
+| Field | Type | Required | Nullable | Constraint |
+|---|---|---|---|---|
+| `context_key` | string | yes | no | no Field constraint in router DTO |
+| `problem_statement` | string | no | no | default empty string |
+| `research_questions`, `hypotheses` | array[string] | no | no | default [] |
+| `significance` | string | no | yes | default null |
+| `decision_context` | object | no | no | default {} |
+| `relations` | array[object(string)] | no | no | default [] |
+
+X-User-Id defaults anonymous. Exact Service output keys require Service inspection; cannot claim fixed JSON schema.
+
+### OP-PROJECT-07 — `GET /projects/{project_id}/research-contexts`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `GET /api/v1/projects/{project_id}/research-contexts` |
+| Success | HTTP **200**, object: items=service list |
+| Request | path project_id:string |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND etc conditional; operation mappings UNVERIFIED |
+
+Elements of items not response_model typed in Router. No JSON body.
+
+### OP-PROJECT-08 — `GET /projects/{project_id}/research-contexts/{context_id}`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}` |
+| Success | HTTP **200**, dict[str,Any] from Service |
+| Request | path project_id:string; context_id:string |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 422 PROJECT_BOUNDARY_VIOLATION if raised; UNVERIFIED |
+
+Fields UNVERIFIED; no declared response_model.
+
+### OP-PROJECT-09 — `PATCH /projects/{project_id}/research-contexts/{context_id}`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `PATCH /api/v1/projects/{project_id}/research-contexts/{context_id}` |
+| Success | HTTP **200**, dict[str,Any] from Service |
+| Request | path project_id:string; context_id:string; ResearchContextPatch JSON |
+| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404 ENTITY_NOT_FOUND / 409 RESOURCE_IMMUTABLE if emitted; mapping UNVERIFIED |
+
+Request fields:
+
+| Field | Type | Required | Nullable |
+|---|---|---|---|
+| `problem_statement`, `significance` | string | no | yes |
+| `research_questions`, `hypotheses` | array[string] | no | yes |
+| `decision_context` | object | no | yes |
+| `relations` | array[object(string)] | no | yes |
+
+Body sent via `model_dump(exclude_unset=True)`: omitted and explicit null distinguishable. Exact Service response fields UNVERIFIED.
+
+### OP-PROJECT-10 — `POST /projects/{project_id}/research-contexts/{context_id}/fix`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `POST /api/v1/projects/{project_id}/research-contexts/{context_id}/fix` |
+| Success | HTTP **200**, dict[str,Any] from Service |
+| Request | path project_id:string; context_id:string; no JSON body |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 409 RESOURCE_IMMUTABLE if emitted; mapping UNVERIFIED |
+
+FIX transition side effects and Service response shape require Source review.
+
+### OP-PROJECT-11 — `GET /projects/{project_id}/research-contexts/{context_id}/usage`
+
+| Key | CURRENT contract |
+|---|---|
+| Method / path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}/usage` |
+| Success | HTTP **200**, dict[str,Any] from Service |
+| Request | path project_id:string; context_id:string |
+| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND if raised; mapping UNVERIFIED |
+
+Historical Family execution/result projection; not canonical full usage. Exact keys UNVERIFIED.
