@@ -238,7 +238,7 @@ P00は存在してもoptional authoring / audit artifactであり、preflight / 
 
 **受入Authority:** Gate 06=Implementation WHAT、Gate 07=Independent Verification WHAT、P00=計画、各Pxx=実装Execution Unit、40 Operator=テスト実配置/発見/Command、999=正式独立判定。後続Gateの06/07とPxxは同じGate IDを使用する。
 
-| Gate | Functional boundary | Method count | [Gate 06](#) | [Gate 07](#) | [P00](#) | Previous 06 package proposal | Current Pxx count |
+| Gate | Functional boundary | Method count | Gate 06 | Gate 07 | P00 | Previous 06 package proposal | Current Pxx count |
 |---|---|---:|---|---|---|---:|---:|
 | G02 | Identification / DoWhy / FD-A | 6 | [06](G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md) | [07](G02/07_Ariadne_ENH-E11_G02_test_instruction.md) | [P00](G02/06_G02_P00_work_package_plan.md) | 4 | 4 |
 | G03 | Native Effects / Refutation / Sensitivity | 13 | [06](G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md) | [07](G03/07_Ariadne_ENH-E11_G03_test_instruction.md) | [P00](G03/06_G03_P00_work_package_plan.md) | 5 | 6 |
