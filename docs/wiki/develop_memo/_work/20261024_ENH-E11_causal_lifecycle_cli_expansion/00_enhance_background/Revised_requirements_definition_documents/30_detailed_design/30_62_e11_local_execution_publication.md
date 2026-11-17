@@ -11,7 +11,7 @@ Local causal executionは独立したversioned local laneであり、既存Produ
 - **Class:** `causal.local_application.use_case.E11LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
 - **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
 - **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
-- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1/5〜8。
+- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §3〜7。
 
 ### 2.2. フィールド
 

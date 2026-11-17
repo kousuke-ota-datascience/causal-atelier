@@ -5,7 +5,7 @@
 **Execution Mode: WORK_PACKAGE / Required packages: P01,P02,P03,P04,P05**  
 **対象Gate：G01（Local Question/Design/Graph＋P1-M06 FCI/PAG）**  
 **基準：`prototype/ariadne_mvp` の本書・07と共通契約の同一Commitを、後続のCoding Entryで固定する。**  
-**根拠：** [PREP-02 Common Design Baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Requirement 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_local_domain_ports.md)・[30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)・[30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)・[23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)／[G01 07](07_Ariadne_ENH-E11_G01_test_instruction.md)。
+**根拠：** [PREP-02 Common Design Baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Requirement 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)・[30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)・[30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)・[23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)／[G01 07](07_Ariadne_ENH-E11_G01_test_instruction.md)。
 
 ## 0. Gate ID / execution contract authority
 
@@ -56,9 +56,9 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
-| **G01-P01** | 30_61 `2/3/4：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-P01** | 30_61 `1/3/4：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
 | **G01-P02** | 30_62 `4/5.2：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
-| **G01-P03** | 30_61 `4：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-P03** | 30_61 `3：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
 | **G01-P04** | 30_62 `3：CAP01/04/05；30_63 `2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
 | **G01-P05** | 30_62 `2/6/7：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
@@ -67,13 +67,13 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
 
-正本となる詳細設計：[30_61 Domain/Port `2〜4/`8.1](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_local_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
+正本となる詳細設計：[30_61 Domain/Port `2〜4/`8.1](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
 
 | Class.Method / DD検証ID | Precondition・必須動作（06） | Postcondition／失敗 | 07 |
 |---|---|---|---|
-| 30_61 `2 `ContentRef.from_payload`・`ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
-| 30_61 `3 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
-| 30_61 `4 `GraphEvidence.from_canonical_json/canonical_payload/make_revision` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
+| 30_61 `1 `ContentRef.from_payload` / 30_60 `10 `ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
+| 30_60 `9 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
+| 30_61 `3 `GraphEvidence.from_canonical_json/canonical_payload/make_revision` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
 | 30_62 `2 `E11LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
 | 30_62 `3 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
 | 30_63 `4.4 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
