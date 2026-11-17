@@ -98,13 +98,13 @@ Browser E2Eがformal FAILのtriggerである場合、実装開始前にfailed 99
 - original contract の改変
 - literal input だけを hard-code して拒否する workaround
 
-### 4.1. ENH-E11 test placement / rework-specific scope
+### 4.1. ENH-E11 G01〜G10共通 Remediation Test Policy
 
-**適用条件:** formal FAIL、承認済みcurrent 08、定義済みremediation scopeだけ。test-side-only BLOCKEDならproduction reworkを開始しない。テストはlifecycle (enhancement/regression/characterization/benchmark/support/legacy) とverification layer (unit/contract/integration/frontend/browser_e2e) を別々に分類する。`regression-like assertion != tests/regression lifecycle authority`。08はWHAT、本40はWHERE/HOW。
+本Promptは`GATE_ID`で特定された正式Gate G01〜G10の**正式FAILと承認済みcurrent 08**がある場合のみ適用する。Test-side-only BLOCKEDならproduction remediationを実行しない。08がWHAT、本40がWHERE/HOW。Lifecycle (`enhancement/regression/characterization/benchmark/support/legacy`)とLayer (`unit/contract/integration/frontend/browser_e2e`)は独立。`regression-like assertion != tests/regression lifecycle authority`。
 
-- 08で必要とされる新規/materially rebuilt testsのみ`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）に置く。G01の初期layerはunit/contract/integration、`component/`/`scientific/`ディレクトリをGate-local layerにしない。実Linux/Backend/独立PAG scienceはmockだけでPASSにしない。
-- 旧Product v2保護は実在するlegacy suite（例: `tests/product/`、既存`tests/integration/`等）を現物からdiscoverして実行、無断migration/archive/`tests/regression/`昇格を禁止。PROMOTEは永続current invariantの独立semantic decision、E11全repo移行はE12+。許可された移動はimport/fixtures/collection/CI/Docker/evidenceの依存を同一batchで更新。
-- 08/DD/ACに対応する実行可能テストのpath、pytest collection、fixture/runnerを確認し、lifecycle/layer、exact command、source/fixture SHA、observed/expectedを記録。Test-side/UNKNOWNでproduct violation未実証なら`BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE`。Independent Test Agent自身には修理権限なし。Test-only diffはCandidateを自動refreezeせず意味への影響を分類する。
+- 承認08のScope内で新規/materially rebuiltしたTestは`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_IDをlowercase）へ置き、Layerは当該08/06/07で要求された証明対象に従う。`component/`・`scientific/`を新Gate-local標準Layerにしない。G01ではCLI/実FS/FCIが対象だが、**G02〜G10ではそれを強制しない**。UI Gateで必要なfrontend/Browser E2Eは当該Gateのcritical journeyに限定する。
+- 当該Gateの旧Product invariantsを保護する`tests/product/`等の現存Suiteを現配置で実行。`tests/regression/`への無断PROMOTE、archive、全repo Test migrationは禁止。昇格は恒久Invariantの別semantic判断、全件整理はE12以降。必要なTest移動ではimport/fixture/collection/CI/Docker/evidence pathをAtomicに更新する。
+- 08/DD/ACと現行Checkoutのcollected Testを照合し、実Path、Command、Lifecycle、Layer、Source/Fixture SHAとObserved結果を記録。Test-side defectやUNKNOWNでProduct違反未証明なら`BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE`。独立Test Agentは修理しない。Test-only差分でProduct Candidateを自動再Freezeしない。
 
 ## 5. Semantic Implementation Checkpoint
 

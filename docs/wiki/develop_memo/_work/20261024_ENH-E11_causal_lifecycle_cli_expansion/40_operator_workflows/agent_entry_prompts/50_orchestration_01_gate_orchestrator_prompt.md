@@ -51,13 +51,15 @@ Candidate Assembly Agent
 
 各 Package は1回の Agent execution につき1 Package とする。
 
-### 3.1. ENH-E11 test architecture routing guard
+### 3.1. ENH-E11 G01〜G10共通 Routing / Test Readiness
 
-**二軸:** lifecycle=enhancement/regression/characterization/benchmark/support/legacy、layer=unit/contract/integration/frontend/browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。Gate06/Pxx/07はWHAT、instantiated 40 PromptはWHERE/HOW。G01の正式なWORK_PACKAGEルートはP01〜P05→Candidate Assembly→Independent Test、Single Executionを代用しない。
+**実行範囲:** 正式Gate IDはG01〜G10。`GATE_ID`ごとに当該GateのFreeze済み06から`Execution mode`、Required Package Set、依存関係を解決する。**G01はWORK_PACKAGE/P01〜P05だが、G02〜G10が同じPackage数・Mode・検証対象であるとは推定しない。** 当該Gateの06/07/Packageが未作成・未Freeze、Owner Coding Authorization未発行なら`BLOCKED_EXECUTION_UNRESOLVABLE`で停止し、G01の契約を流用しない。
 
-- assigned Coding Agentへ新規test初期配置`tests/enhancement/enh_e11/<gate>/<layer>/`（小文字GATE_ID）、既存Product v2 suite現配置維持、current checkout discovery/collectionを内包したpromptを渡す。G01はunit/contract/integrationで`component/`と`scientific/`をGate-local layerとしない。詳細Correctnessと独立Scienceは必要なreal Backend/FS contract/integrationで検証。
-- Candidate Assemblyが実際のsource+test checkoutからTest Item/DD coverage、実効runner/fixture/OS/FS/Backendを確認し、20 Reportへ実path/command/evidenceを記録したか確認する。独立Test AgentのPromptは現物test discoveryとtest-side failure分類/非修理責務を内包させる。
-- old Product v2 testsを勝手に移動・archiveせず、`tests/regression/`昇格は明示的PROMOTE判断のみ。E11の全repo移行はE12+。Test-side failureは`BLOCKED`とrepair ownerに割当、Production semantic defect実証時だけFAIL。E9 G02用31 repair promptをE11標準として生成しない。No Gate PASS by Orchestrator。
+テスト分類はLifecycle (`enhancement/regression/characterization/benchmark/support/legacy`)とLayer (`unit/contract/integration/frontend/browser_e2e`)の二軸。`regression-like assertion != tests/regression lifecycle authority`。各Gateの06/Pxx/07がWHAT、40がWHERE/HOW。
+
+- Work Package modeのGateだけにassigned Pxx Coding Agentを割り当てる。Single Execution Gateは別の正規PromptへRouteする。各Coding AgentのPromptが`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）を初期配置とし、現行RepositoryからTestと既存Product Suiteをdiscover/collectする規則を内包していることを確認する。G01のCLI-only/no Browser制約はG01限定。G02〜G10のfrontend/Browser E2E要否は各Gate07に従う。
+- Candidate AssemblyとIndependent Testに当該Gateの固定SHA/実行Evidencesを渡す。historical test Path/commandを受入Authorityにせず、Test-side不具合はBLOCKED/Repair ownerとして切り出し、独立Test Agentに修理させない。
+- 旧Suiteの無条件移動・archive・`tests/regression/`PROMOTEを禁止。昇格はProduct invariantの別semantic決定、全repo migrationはE12以降。Gate Orchestrator自身はGate PASS/FAILを出さず、形式的なG01 Gate完了を他Gate完了と混同しない。
 
 ## 4. Stop / retry rule
 

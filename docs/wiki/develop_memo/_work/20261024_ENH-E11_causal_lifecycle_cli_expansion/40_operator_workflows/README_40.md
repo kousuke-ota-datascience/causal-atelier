@@ -291,48 +291,46 @@ canonical naming functionは以下とする。
 Template migration/apply tooling、instantiation tooling、validatorは同一規則を使用し、別々の命名ロジックを持たない。
 <!-- END MANAGED: README_NAMING_CONVENTION -->
 
-## 5. ENH-E11 test architecture transition — operator placement/discovery policy
+## 5. ENH-E11 G01〜G10共通 Test Architecture — 40 Operatorの責務
 
-**Origin:** [ENH-E9 → ENH-E11 active test architecture handoff](../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md). This section is **WHERE/HOW**, not product acceptance semantics. ENH-E11 does not wait for repository-wide migration (deferred to ENH-E12+).
+**根拠:** [ENH-E9 → ENH-E11 test architecture handoff](../../20260905_ENH-E9_workflow_stabilization/00_enhance_background/08_test_architecture_migration/09_handoff_to_enh_e11.md)。本`5は**正式Gate G01〜G10すべて**に適用する実行規約であり、各Gate 06/Pxx/07の検証要求を代替しない。
 
-### 5.1. Classify each test along two independent axes
+`GATE_ID`は実行時変数。40は全Gate共通の **WHERE / HOW**（Test配置・発見・実行・Evidence・Test-side障害処理）を規定し、各Gateの06/Pxx/07が **WHAT**（実装対象、受入条件、保護するInvariant、必要なVerification layer、Browser E2E要否）を定める。G01のFCI/PAG、Linux publication、CLI-onlyという事情をG02〜G10へ一般化してはならない。
 
-| Axis | Values | Meaning |
+### 5.1. 直交する二つのTest分類軸
+
+| 軸 | 分類 | 規定する内容 |
 | --- | --- | --- |
-| Lifecycle / authority | `regression`, `enhancement`, `characterization`, `benchmark`, `support`, `legacy` | Long-term protection, provenance, and disposition |
-| Verification layer | `unit`, `contract`, `integration`, `frontend`, `browser_e2e` | Technical boundary actually exercised |
+| Lifecycle / authority | `regression`, `enhancement`, `characterization`, `benchmark`, `support`, `legacy` | Provenance・長期保護対象・昇格/廃止のAuthority |
+| Verification layer | `unit`, `contract`, `integration`, `frontend`, `browser_e2e` | 何をどの境界・実環境で実証するか |
 
-An assertion protecting old Product behavior may live in an **enhancement-lifecycle** G01 test until formally promoted; `regression-like assertion != tests/regression lifecycle authority`. The name "scientific" describes test evidence/domain, not a sixth G01 verification-layer folder.
+`regression-like assertion != tests/regression lifecycle authority`。既存Product behaviorの不変条件を検証する新規E11テストであっても、最初のLifecycleはenhancementでよい。回帰観点があるだけで物理的な`tests/regression/`移動を命じてはならない。
 
-### 5.2. New or rebuilt G01 tests: placement
+### 5.2. G01〜G10の共通配置・発見ルール
 
-- For new/materially rebuilt, Gate-specific tests, begin with `tests/enhancement/enh_e11/<gate>/<layer>/` and the five recognized layers. In CLI-only G01 use `unit`, `contract`, `integration`; no UI/Browser E2E is mandatory.
-- The earlier suggested `component/` and `scientific/` G01 subdirectories are **not target architecture**. A deterministic component Protocol/API verification maps to `contract`; an actual FCI/real OS syscall to `integration`. Independently derived fixed MAG/PAG oracle constraints can be contract cases; FCI statistical recovery is independent scientific execution evidence.
-- Scientific `characterization` and `benchmark` are distinct lifecycle purposes. Use `tests/characterization/scientific/` or `tests/benchmarks/scientific/` only for explicitly classified durable characterization/benchmark work, not as default storage for a G01-specific T2/T3 acceptance experiment. Shared `tests/support/fixtures` / `factories` / `helpers` require a real reuse need.
-- Existing current Product v2 regression tests in transition paths (e.g. `tests/product/`, `tests/integration/`, `tests/scientific/`, `tests/browser_e2e/`) may remain. Do not move or archive a test merely because it is old or not executed in G01. Do not create empty `tests/regression/` as a compliance gesture.
-- `tests/regression/` becomes authority only for a **recorded promotion of an enduring product invariant**. Newly developed G01 JCS, Graph endpoint fidelity, atomic no-clobber, privacy no-row and Product v2 tests may be **promotion candidates**, not automatically promoted cases. At enhancement closure decide `PROMOTE / REWRITE / MERGE / SPLIT / RETIRE / ARCHIVE / KEEP_ENHANCEMENT`; repository-wide classification remains E12+.
+1. **新規またはmaterially rebuiltしたGate固有Test**は原則 `tests/enhancement/enh_e11/<gate>/<layer>/` に置く。`<gate>` は実行時`GATE_ID`のlowercase（G01→g01、G10→g10）、`<layer>` は`5.1の5種から、そのGateのPxx/06/07が要求する証明レイヤーを選ぶ。`component/`と`scientific/`を新しいGate-local標準レイヤーとして追加しない。
+2. **G01限定の例:** G01はCLI-onlyなのでunit/contract/integrationが主でBrowser E2Eは不要。PAG/Graph/JCSの純粋意味検証、実Linux atomic publication、実FCI API/独立科学OracleはG01の07が所有する。**G02〜G10は各Gate 07によってfrontendやBrowser E2Eが必要になる場合があり、G01のCLI-only制約を適用してはならない。** Browser E2Eを要求するGateではcritical cross-layer connectivityだけに限定し、細部のcorrectnessはlower deterministic layerで証明する。
+3. **既存Testの共存:** `tests/product/`、`tests/integration/`、`tests/scientific/`、`tests/browser_e2e/` 等の既存Suiteはcurrent invariantが有効なら現配置のまま利用する。対象Gateに必要でないという理由だけでは移動・archiveしない。事実上obsoleteと判断した場合だけ`legacy_archive`を検討する。
+4. **`tests/regression/`への昇格:** 将来のProduct invariantを継続的に守るという個別のsemantic promotion decisionがあるときに限る。E11完了時のDisposition候補は `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`。`tests/characterization/scientific/`、`tests/benchmarks/scientific/`、`tests/support/`の採用も用途と再利用根拠がある場合だけ。ENH-E11中のrepository-wide移行は必須ではなく、包括的再構成はENH-E12以降。
+5. **Gate existence/readiness:** `GATE_ID`はG01〜G10の範囲で指定する。対応する06/07/Pxx/08が未作成・未Freeze・一意でない・Coding Authorizationがない場合、該当実行フェーズは`BLOCKED_*`で停止する。後続Gateの文書をG01の06/07から推測生成してはならない。
 
-### 5.3. Agent execution (propagated to instantiated 40 prompts)
+### 5.3. 実体化済み40 Promptへの共通実行規則
 
-**Coding Agent:** Each Work Package assigned Pxx fixes WHAT (behavior, DD IDs, negative cases and DoD). Its instantiated 40 entry prompt fixes the initial lifecycle+layer, selected current paths, collection/runner/evidence rule; no out-of-Gate repo-wide migration. Agent-visible prompt must be self-contained and include this WHERE/HOW rule, rather than asking the Agent to derive it from this README.
+**Coding Agent:** Assigned 06/Pxxを唯一の実装WHATにして、new/rebuiltテストのinitial lifecycleとverification layerを判断。current checkoutでfile存在、collection、fixture/conftest、dependency、runner適格性を確認してfocused verificationを実行。Agent-visible entry prompt内にこの規則を直接持ち、READMEの再参照を必須にしない。
 
-**Independent Test Agent:** Discover current implemented tests from actual checkout: start `tests/enhancement/enh_e11/<gate>/`, then relevant current legacy Product/integration/scientific suites, and formally promoted regression/benchmark suites if any. Confirm exact file existence, pytest collection and actual environment/runner before execution. Do not infer authority from a filename in a prior report or from historical G01 07 text. Record `DD_ID / Gate test ID / lifecycle / layer / resolved_path / actual_command / source_SHA / fixture_SHA / environment / result / evidence`. Missing required runnable evidence is `BLOCKED`, not PASS.
+**Candidate Assembly:** Gate06のrequired package/実行modeを確認し、current checkoutのTest/Runnerと既存Protected Suiteを発見。Gate-wide self-verificationとProduct Candidate SHAの固定のみ行い、独立07/999のPASSを代行しない。
 
-**Test-side failure:** Independent Test Agent diagnoses but never unilaterally repairs product/test code. Separate `PRODUCT_DEFECT`, `TEST_IMPLEMENTATION_DEFECT`, `TEST_ORCHESTRATION_DEFECT`, `TEST_ENVIRONMENT_DEFECT` and `UNKNOWN`. Only demonstrated product semantic failure justifies Product FAIL; inability to assess due to test-side problems -> BLOCKED with distinct repair owner.
+**Independent Test Agent:** まず当該Gateの`tests/enhancement/enh_e11/<gate>/`、次に関連既存Suiteをcurrent candidate SHAから発見。存在・pytest collection・runner/environmentを確認して実行し、`Gate Item / DD ID / lifecycle / layer / actual path / command / source SHA / fixture SHA / result`をEvidenceに保存。テスト不具合の診断は行えるがtest/production codeを修復しない。
 
-**Post-Fixed Candidate:** Classify changes as `PRODUCT_SEMANTIC_CHANGE`, `TEST_IMPLEMENTATION_CHANGE`, `TEST_ORCHESTRATION_CHANGE`, `TEST_INFRASTRUCTURE_CHANGE` or `DOCUMENTATION_ONLY`. Test-side-only change does not automatically re-freeze Product candidate; unresolved semantic impact blocks candidate identity.
+**Failure classification:** `PRODUCT_DEFECT / TEST_IMPLEMENTATION_DEFECT / TEST_ORCHESTRATION_DEFECT / TEST_ENVIRONMENT_DEFECT / UNKNOWN`。Product違反未実証でTest側が評価不能なら`BLOCKED`。Repairを別責務へ切り出し、ENH-E9 G02専用31を無条件コピーしない。
 
-**Atomic moves:** When approved, move the test and update imports, conftest/fixtures, repo root resolution, collection/markers, CI commands, Dockerfile COPY / build context / .dockerignore / compose and evidence paths in one batch. Avoid brittle `Path(__file__).parents[N]`. Never weaken frozen 07 AC to fix a historical runner; ENH-E9 G02-only test repair prompt is not a general E11 prompt.
+**Fixed Candidate:** Test-side-onlyの変更でProduct Candidateを無条件に再Freezeせず、`PRODUCT_SEMANTIC_CHANGE / TEST_IMPLEMENTATION_CHANGE / TEST_ORCHESTRATION_CHANGE / TEST_INFRASTRUCTURE_CHANGE / DOCUMENTATION_ONLY`を分類する。Product意味変更の可能性を除外できないときだけCandidate identity BLOCKED。
 
-### 5.4. G01 proof-to-layer examples (NOT physical-file authority)
+**Atomic move:** Test移動が承認された場合はpath/import/fixture/conftest/pytest marker/CI/Dockerfile COPY/.dockerignore/compose/Browser build context/evidence pathを同一Batchで整合させる。`Path(__file__).parents[N]`などの階層固定依存を避け、07のACをRunner不調のために緩和しない。
 
-| Behavior | Primary proof | Initial lifecycle |
-| --- | --- | --- |
-| Strict Study, JCS, ContentRef, Graph Value | unit + contract | enhancement |
-| Cross-Port Manifest/Reader contract, deterministic independent MAG/PAG reference | contract; real backend comparison where needed | enhancement |
-| Real Linux atomicity, effective FCI API, CLI/privacy, protected Product v2 behavior | integration + relevant contracts; existing legacy tests in place | enhancement for new tests; historical for old suites |
-| T2/T3 stochastic scientific performance | independent preregistered scientific evidence; reuse-specific benchmark only by explicit decision | enhancement until separately classified |
+### 5.4. 正本と実行状況
 
-**Instantiation record (2026-11-17):** ENH-E11の `40_operator_workflows/agent_entry_prompts/` にWork Package Coding、Candidate Assembly、Independent Test、Single Execution、Remediation、Orchestratorの6つの実行Promptと変数規約・READMEを作成し、§5.2–5.3の実行責務を直接組み込んだ。G01はWORK_PACKAGE方式であり、Single Executionは適用しない。E9 G02用31 repair Promptは設置していない。
+- 実体化された6種のAgent Promptと変数規約は`40_operator_workflows/agent_entry_prompts/`に存在し、**G01〜G10共通で使用する**。Gate別実装契約は`10_enhance_instruction/<GATE_ID>/`側に存在する場合だけ有効。
+- **現時点で06/07/Pxxが実際に用意されているのはG01のみ**。これはG02〜G10をGate範囲から除外する意味ではない。
+- G01はWORK_PACKAGE方式の草案で、Coding Authorization未発行。Promptの存在はOwner承認・06/07 Freeze・readiness validator・実装着手権限を意味しない。
 
-**Readiness boundary:** 本READMEはAuthoring GuideであってCoding Authorizationではない。Prompt実体化と静的内容監査は完了したが、06/07 Freeze、Owner承認、実効branch/remote/environmentのpreflight、readiness validatorの実行と実装Coding Entryは未実施。

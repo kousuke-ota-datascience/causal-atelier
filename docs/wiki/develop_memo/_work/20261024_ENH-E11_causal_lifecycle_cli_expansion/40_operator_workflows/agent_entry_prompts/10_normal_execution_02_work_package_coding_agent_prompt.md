@@ -174,16 +174,18 @@ assigned Pxx の acceptance criteria を満たす状態に到達できない場�
 
 ---
 
-### 6.1. ENH-E11 Test Architecture — Assigned Packageの配置・検証ルール
+### 6.1. ENH-E11 G01〜G10共通 Test Architecture — Assigned Package
 
-**Authority separation:** assigned Pxxは検証すべきWHAT（Class.Method、DD検証ID、正例/負例、DoD）、本40 entry promptはWHERE/HOWを規定する。Pxx/07中のhistorical test filenameや過去実行commandをphysical authorityとして扱わない。テストは必ず二軸で分類する: lifecycle = enhancement / regression / characterization / benchmark / support / legacy、verification layer = unit / contract / integration / frontend / browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。
+本PromptはG01〜G10のうち**当該Gate06がWORK_PACKAGE方式で、assigned Pxxが一意かつFreeze済み**の場合のみ使う。`GATE_ID`と`PACKAGE_ID`から当該GateのPxxを解決し、他Gateの06/Pxx/07から実装条件を推測しない。Assigned PxxがWHAT（Method、DD ID、正/負例、DoD）、本40はWHERE/HOWを所有する。独立テストの07をCoding Agentの仕様補完に使わない。
 
-1. **新規・実質再構築するassigned Gate/Pxxのテスト:** 初期配置を `tests/enhancement/enh_e11/<gate>/<layer>/` とする。`<gate>` は実行時GATE_IDをlowercaseにした文字列（G01→g01）。CLI-only G01では `unit`, `contract`, `integration` を利用し、`component/` や `scientific/` をGate-localのlayerとして増設しない。Frontend/Browser E2EはG01で不要。
-2. **適切なLayer:** 純粋なStudy/ContentRef/JCS/Graph Value→unit+contract。Port/Reader/Manifest/独立固定PAG oracle→contract。Linuxの実filesystem syscall/rename/fsync、実Backend FCI/CI/BK、CLIのE2E・privacy→integration。実測科学的T2/T3は別科学Evidenceであり、Backend自身の結果をPAG正解としてはならない。reusable characterizationまたはbenchmarkのcanonical pathは、該当lifecycleの明示採用時のみ作る。
-3. **既存testとの共存:** Product v2を保護するcurrent testsは `tests/product/` 等の既存配置で発見・実行し、Pxxだけを理由に移動・archive・全面書換しない。G01の新規テストに回帰的なassertionがあっても初期authorityはenhancement。`tests/regression/` へのPROMOTEは、Enhancement provenanceを超えるcurrent invariantをOwner/適格なAuthorityが意味上採用した場合のみ。E11終了時の候補Dispositionは `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`。全repo再編はE12以降。
-4. **探索・実行:** assigned Pxxの全DD ID/受入ケースを対象に現行checkoutからテストを作成・探索し、file existence、pytest collection、conftest/fixtures、marker、現行runner suitabilityを確認してからcommandを確定。歴史的なfilename、固定階層 `Path(__file__).parents[N]`、出所不明runnerを信用しない。G01の実FS/backend証明をmock-onlyで代用しない。
-5. **scope内だけ変更:** テスト移動が本Packageの明示scope内にある場合のみ、path/import/fixtures/conftest/pytest/CI/Dockerfile COPY/.dockerignore/build context/compose/evidence referencesを同一batchでatomic修正。unrelated existing testsのmigrationやtest deletion、skip/xfail、期待値緩和は不可。
-6. **Package evidence:** `DD-ID / Gate Test ID / test lifecycle / layer / actual file / collected command / observed result / fixture SHA / implementation SHA / effective runtime / PASS-FAIL-BLOCKED理由`を記録。unavailable FS/Backend/required evidenceやcollection不備をPASSにしない。他Packageやtest-side scope外の修正が必要なら `BLOCKED_*` を返し、Independent Test Agentに修理を代行させない。Package完了をGate/科学PASSと混同しない。
+TestはLifecycle (`enhancement/regression/characterization/benchmark/support/legacy`) とLayer (`unit/contract/integration/frontend/browser_e2e`) の二軸で分類する。`regression-like assertion != tests/regression lifecycle authority`。
+
+1. **配置:** 新規/materially rebuiltした担当Gate/Pxx Testは`tests/enhancement/enh_e11/<gate>/<layer>/`へ初期配置する。`<gate>`は実行時`GATE_ID`の小文字（G01→g01、G10→g10）。Layerは**担当Pxxが要求する証明対象**で選択し、`component/`と`scientific/`をGate-local標準Layerとして増設しない。`frontend`と`browser_e2e`はGate06/PxxがUI検証を要求する場合だけ使い、Browser E2Eはcritical connectivityに限定。
+2. **Gate依存:** G01の場合はCLI-onlyでunit/contract/integration、FCI/Graph/Atomic FSが適用対象でありBrowser E2E不要。**G02〜G10で同じ制約や同じ科学的Method/Filesystemテストを要求してはならない**。他Gateは対応するassigned PxxにあるRequirement/DD/受入条件に従う。科学的Oracleが必要な場合も、Backendの自己出力を独立正解としない。
+3. **既存Suite:** 担当Gateのprotected Product invariantを保護する`tests/product/`等の既存Suiteを現物から発見・実行し、関係のない旧Testを移動・archive・大量再編しない。新E11 Testの初期Lifecycleはenhancementで、`tests/regression/`に昇格するには明示的に恒久Product invariantを認定するPROMOTE decisionが必要。E11終了時Dispositionは`PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`、repo-wide整理はE12以降。
+4. **実行:** Assigned Pxxの必要DD/Test IDごとに、current checkoutでFile存在・pytest collection・fixtures/conftest・marker・runner/依存/必要環境を確認して実行commandを確定する。過去のfilename/commandは受入Authorityではない。必須の実FS/Backend/Browser確認がmock-onlyや故障Runnerで実証できなければPASSとしない。
+5. **変更境界:** Test moveはPxx scopeで許されたときだけpath/import/fixture/conftest/pytest/CI/Docker/build context/evidence pathを同一Batchで更新。Expectation緩和、skip/xfail、Scope外migration、独立Test Agentの修復権限代行は禁止。
+6. **Evidence:** DD ID・Gate Test ID・Lifecycle・Layer・実Path/command・implementation/fixture/env SHA・正例/負例の観測結果・PASS/FAIL/BLOCKEDを記録。必須証拠が不足する場合は`BLOCKED_*`を記録し、Package completeをGate PASSやScience PASSと混同しない。
 
 ## 7. Package checkpoint commit
 
