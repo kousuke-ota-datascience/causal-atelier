@@ -8,7 +8,7 @@
 
 #### 1.1.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.identification.NativeIdentificationAdapter`。**状態：PROPOSED（Source未実装）。** IdentificationのMethod実行Adapter。担当Method：`P1-M01, P1-M02`。**再利用:** 既存ariadne.scientific.identification.adapter.IdentificationAdapterのrandomized/backdoor処理・証拠表現。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.identification.NativeIdentificationAdapter`。 IdentificationのMethod実行Adapter。担当Method：`P1-M01, P1-M02`。**再利用:** 既存ariadne.scientific.identification.adapter.IdentificationAdapterのrandomized/backdoor処理・証拠表現。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.1.2. フィールド
 
@@ -52,7 +52,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.2.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.identification.DoWhyIdentificationAdapter`。**状態：PROPOSED（Source未実装）。** IdentificationのMethod実行Adapter。担当Method：`P1-M03, P1-M04, P1-M05`。**再利用:** 既存IdentificationAdapterのDTO・Graph意味を再利用しDoWhy固有識別を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.identification.DoWhyIdentificationAdapter`。 IdentificationのMethod実行Adapter。担当Method：`P1-M03, P1-M04, P1-M05`。**再利用:** 既存IdentificationAdapterのDTO・Graph意味を再利用しDoWhy固有識別を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.2.2. フィールド
 
@@ -97,7 +97,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.3.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.discovery.FciDiscoveryAdapter`。**状態：PROPOSED（Source未実装）。** Graph DiscoveryのMethod実行Adapter。担当Method：`P1-M06`。**再利用:** 既存DiscoveryAdapterのGraph意味Validatorとnode/edge変換を共有。PCをFCIとみなさない。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.discovery.FciDiscoveryAdapter`。 Graph DiscoveryのMethod実行Adapter。担当Method：`P1-M06`。**再利用:** 既存DiscoveryAdapterのGraph意味Validatorとnode/edge変換を共有。PCをFCIとみなさない。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.3.2. フィールド
 
@@ -115,12 +115,10 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 | Signature | Return | Contract |
 |---|---|---|
-| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
-| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
 | `preflight(self, request: ValidatedDiscoveryRequest)` | `CapabilityOrEligibilityResult` | P1-M06固有CI/Data/BK/Backend適格性 |
 | `execute(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSink)` | `DiscoveryGraphOutcome` | PAG endpoint/lag/latentをlossless保持 |
 
-公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+FCIのAdapter実装署名は`ValidatedDiscoveryRequest`と`DiscoveryGraphOutcome`に統一し、汎用`ValidatedMethodRequest`と同名overloadを作らない。`DiscoveryPort.discover`のConcreteが同一Method Registryの選択済CapabilityでAdapterをロードし、preflight後にexecuteする。旧`ScientificCorePort.run_discovery`はversioned Bridgeで別の公開署名を維持する。
 
 #### 1.3.5. 処理仕様
 
@@ -142,7 +140,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.4.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.frontdoor.FrontdoorLinearAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M07`。**再利用:** 既存CausalDesign・回帰推定器を再利用。数値FD-A固有契約を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.frontdoor.FrontdoorLinearAdapter`。 EstimationのMethod実行Adapter。担当Method：`P1-M07`。**再利用:** 既存CausalDesign・回帰推定器を再利用。数値FD-A固有契約を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.4.2. フィールド
 
@@ -185,7 +183,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.5.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.estimation.NativeEffectAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M08, P1-M09`。**再利用:** 既存EstimationAdapterとcausal.inference.estimators.treatment_effectの計算。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.estimation.NativeEffectAdapter`。 EstimationのMethod実行Adapter。担当Method：`P1-M08, P1-M09`。**再利用:** 既存EstimationAdapterとcausal.inference.estimators.treatment_effectの計算。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.5.2. フィールド
 
@@ -229,7 +227,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.6.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.estimation.WeightingEffectAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M10, P1-M11`。**再利用:** 既存IPW/AIPWとpropensity・balance診断。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.estimation.WeightingEffectAdapter`。 EstimationのMethod実行Adapter。担当Method：`P1-M10, P1-M11`。**再利用:** 既存IPW/AIPWとpropensity・balance診断。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.6.2. フィールド
 
@@ -273,7 +271,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.7.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M12, P1-M13, P1-M14, P1-M15`。**既存Sourceの実装済みはP1-M12（PLACEBO_TREATMENT）とP1-M13（DATA_SUBSET）のみ。P1-M14（RANDOM_COMMON_CAUSE）とP1-M15（BOOTSTRAP）は本Class/Facadeでの新規実装が必要で、既存機能と称さない。****再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M12, P1-M13, P1-M14, P1-M15`。**既存Sourceの実装済みはP1-M12（PLACEBO_TREATMENT）とP1-M13（DATA_SUBSET）のみ。P1-M14（RANDOM_COMMON_CAUSE）とP1-M15（BOOTSTRAP）は本Class/Facadeでの新規実装が必要で、既存機能と称さない。 **再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.7.2. フィールド
 
@@ -304,7 +302,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.7.6. I/O・連携・失敗処理
 
-既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は互換Bridgeから共通計算を再利用し、`StagingArtifactSink`以外への直接File書込・旧DTOからの無検証CASTを禁止。Scientific Negativeとtechnical errorを分離。
+既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は共通の純粋計算Kernelを抽出する互換Bridgeから再利用し、新Portが旧Path writerを直接呼んでStaging制約を迂回してはならない。旧v2は従来のPath出力、新型付きAdapterは`StagingArtifactSink`だけに書く。旧DTOからの無検証CASTは禁止。Scientific Negativeとtechnical errorを分離。
 
 #### 1.7.7. 検証
 
@@ -314,7 +312,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.8.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M16, P1-M17`。既存SourceはADJUSTMENT_SETとPROPENSITY_CLIPPINGの実装を持つが、新契約で必要な適格性・実効推論・Codecの再検証は別途必要。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M16, P1-M17`。既存SourceはADJUSTMENT_SETとPROPENSITY_CLIPPINGの実装を持つが、新契約で必要な適格性・実効推論・Codecの再検証は別途必要。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.8.2. フィールド
 
@@ -343,7 +341,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.8.6. I/O・連携・失敗処理
 
-既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は互換Bridgeから共通計算を再利用し、`StagingArtifactSink`以外への直接File書込・旧DTOからの無検証CASTを禁止。Scientific Negativeとtechnical errorを分離。
+既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は共通の純粋計算Kernelを抽出する互換Bridgeから再利用し、新Portが旧Path writerを直接呼んでStaging制約を迂回してはならない。旧v2は従来のPath出力、新型付きAdapterは`StagingArtifactSink`だけに書く。旧DTOからの無検証CASTは禁止。Scientific Negativeとtechnical errorを分離。
 
 #### 1.8.7. 検証
 
@@ -353,7 +351,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.9.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNceAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M18`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCEを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNceAdapter`。 DiagnosticのMethod実行Adapter。担当Method：`P1-M18`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCEを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.9.2. フィールド
 
@@ -396,7 +394,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.10.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNcoAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M19`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCOを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNcoAdapter`。 DiagnosticのMethod実行Adapter。担当Method：`P1-M19`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCOを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.10.2. フィールド
 
@@ -439,7 +437,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.11.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.sensitivity.OlsRvAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M20`。**再利用:** 既存OLS推定の係数・SE・dfを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.sensitivity.OlsRvAdapter`。 DiagnosticのMethod実行Adapter。担当Method：`P1-M20`。**再利用:** 既存OLS推定の係数・SE・dfを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.11.2. フィールド
 
@@ -482,7 +480,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.12.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlCateAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M01, P2-M02, P2-M03, P2-M04`。**再利用:** 既存CausalDesign・propensity/overlap検証を再利用しEconML固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlCateAdapter`。 EstimationのMethod実行Adapter。担当Method：`P2-M01, P2-M02, P2-M03, P2-M04`。**再利用:** 既存CausalDesign・propensity/overlap検証を再利用しEconML固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.12.2. フィールド
 
@@ -528,7 +526,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.13.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.MetaLearnerAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M05, P2-M06, P2-M07`。**再利用:** 既存CausalDesignとOutcome modelを再利用しS/T/X適格性を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.MetaLearnerAdapter`。 EstimationのMethod実行Adapter。担当Method：`P2-M05, P2-M06, P2-M07`。**再利用:** 既存CausalDesignとOutcome modelを再利用しS/T/X適格性を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.13.2. フィールド
 
@@ -573,7 +571,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.14.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlDrivAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M08`。**再利用:** 共通IV/Estimandの識別検証を再利用しDRIV固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlDrivAdapter`。 EstimationのMethod実行Adapter。担当Method：`P2-M08`。**再利用:** 共通IV/Estimandの識別検証を再利用しDRIV固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.14.2. フィールド
 
@@ -616,7 +614,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.15.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.temporal.TigramiteTemporalAdapter`。**状態：PROPOSED（Source未実装）。** Graph DiscoveryのMethod実行Adapter。担当Method：`P3-M01, P3-M02, P3-M03`。**再利用:** 既存Graph endpoint意味とlag規約の共通Validatorを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.temporal.TigramiteTemporalAdapter`。 Graph DiscoveryのMethod実行Adapter。担当Method：`P3-M01, P3-M02, P3-M03`。**再利用:** 既存Graph endpoint意味とlag規約の共通Validatorを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.15.2. フィールド
 
@@ -661,7 +659,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.16.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.quasi.PanelQuasiAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M04, P3-M05`。**再利用:** 共通Estimand/Design/Time validationを再利用しDiD/Event Study推定を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.PanelQuasiAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M04, P3-M05`。**再利用:** 共通Estimand/Design/Time validationを再利用しDiD/Event Study推定を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.16.2. フィールド
 
@@ -705,7 +703,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.17.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.quasi.InterruptedTsAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M06`。**再利用:** 共通Time/Design検証を再利用しITS HAC推論を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.InterruptedTsAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M06`。**再利用:** 共通Time/Design検証を再利用しITS HAC推論を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.17.2. フィールド
 
@@ -748,7 +746,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.18.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.quasi.RddAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M07, P3-M08`。**再利用:** 共通IV/EstimandとScientific CIを再利用しSharp/Fuzzyを明示区別。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.RddAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M07, P3-M08`。**再利用:** 共通IV/EstimandとScientific CIを再利用しSharp/Fuzzyを明示区別。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.18.2. フィールド
 
@@ -792,7 +790,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.19.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.iv.WaldRatioAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M09`。**再利用:** 共通IV適格性を再利用、Waldとweak-IV negativeを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.iv.WaldRatioAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M09`。**再利用:** 共通IV適格性を再利用、Waldとweak-IV negativeを追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.19.2. フィールド
 
@@ -835,7 +833,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.20.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.iv.TwoSlsAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M10, P3-M11`。**再利用:** 共通IV適格性を再利用、B0/B1識別対象・AR反転を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.iv.TwoSlsAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M10, P3-M11`。**再利用:** 共通IV適格性を再利用、B0/B1識別対象・AR反転を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.20.2. フィールド
 
@@ -879,7 +877,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.21.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticControlAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M12`。**再利用:** 共通Panel/Time/Donor適格性とpoint-only inferenceを利用。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticControlAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M12`。**再利用:** 共通Panel/Time/Donor適格性とpoint-only inferenceを利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.21.2. フィールド
 
@@ -922,7 +920,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.22.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticDidAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M13`。**再利用:** 共通Panel/Time/Donor適格性とunit/time weightsを利用。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticDidAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M13`。**再利用:** 共通Panel/Time/Donor適格性とunit/time weightsを利用。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.22.2. フィールド
 
@@ -1009,6 +1007,12 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | P3-M13 | `SyntheticDidAdapter` / panel average effect | donor and time weights、preperiod/variance method |
 
 **41 Method：** P1=20、P2=8、P3=13。ここでの`P1/P2/P3`はMethod catalogのPhase接頭辞であり、Enhance Workflowの`P01〜Pxx` Work Package IDとは異なる。P1-M05の対象EstimandをMethod labelからLATEと推定せず、識別対象未確定は型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
+
+### 2.1. Method Schemaと受理範囲
+
+41 Method IDは固定Catalog識別子であり、各IDにOperation、Estimand、Backend/Profile、Method Config Schema、Question/Design Evidence Profile、Inference Policy、Output Artifact Profileを登録する。Class割当があることだけでは実行可能性を意味しない。`ValidatedMethodRequest`は登録済みstrict Method Schemaとcross-asset semantic Validatorの双方に成功した場合のみFactoryから生成する。
+
+P1-M06は`e11_p1_m06_fci_method_config_v1.schema.json`、専用Question/Design internal profilesを使用する。他のMethodについてconfig/profile未定義のまま`config={}`やBackend defaultで通すことを禁止し、`METHOD_PROFILE_UNAVAILABLE`等のtyped reasonでfail-closedにする。各Method提供前に対応Gateで正規Schema、条件付き必須項目、negative fixturesを確定し登録する。Gate IDはSchema dispatchのキーにしない。
 
 ## 3. 共通Adapter Contract
 
@@ -1134,7 +1138,7 @@ Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.ca
 
 ## 10. Class配置・既存Scientific Coreとの互換契約
 
-22 Adapter Class中、`ariadne.scientific.refutation.adapter.RefutationAdapter`と`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`は既存実装であり、旧`run(input_,output_dir)`署名を変更しない。その他20 ClassはPROPOSED。いずれも入口専用の独立数値実装を持つことは認めず、既存`causal.discovery`/`causal.inference`と`scientific.*`の関数・validationを再利用する。
+22 Adapter Class中、`ariadne.scientific.refutation.adapter.RefutationAdapter`と`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`は既存実装であり、旧`run(input_,output_dir)`署名を変更しない。その他のClassはMethodごとのClass契約として定義し、既存ClassのABIを無条件に変更しない。いずれも入口専用の独立数値実装を持つことは認めず、既存`causal.discovery`/`causal.inference`と`scientific.*`の関数・validationを再利用する。
 
 `MethodDescriptor`の唯一のOwnerは`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。`StageRunnerRegistry`のStageType registryと同一視しない。旧Product `ScientificCorePort`の5 Operation署名を維持し、Method別typed Portが同じ科学的Kernelを利用する明示Bridgeを介する。新しいFCI、LATE/AR、CATE、Temporal、Quasiは既存の科学実装で不足する部分だけを別Method Adapterとして追加する。
 
