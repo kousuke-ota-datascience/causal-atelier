@@ -20,8 +20,19 @@ DISCOVER-only CLIの全経路を統合し、Product v2を回帰保護する。
 
 G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分離し旧CLI/Web/API/DB/Workerは改変しない。strict version/Method/EstimatorとJCSのハッシュ対象を検証し、PAGをDAG/ATEへ変換しない。OS root/Privacy/Atomic Publishの不適格はfail-closed、SCI不確実性をPASSに変換しない。Coding Authorization前の実装は禁止。
 
-## 3. In scope
-`LocalCausalUseCase.preflight/run(spec,context)`（`LocalRunContext`はTrustedRoot・Principal・CLI row flag・独立Policy Anchor（G01ではnullable）を保持）、`LocalPrivacyPolicyPort.authorize`、`interfaces.cli.local_causal.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
+## 3. In scope — implementation ownership
+
+| Class / module | Owned by P05 | Boundary |
+| --- | --- | --- |
+| `ariadne.capabilities.causal.local_execution.LocalRunContext` | immutable trusted execution Context | TrustedRoot/Principal factory belongs to P02 composition |
+| `ariadne.capabilities.causal.local_execution.LocalCausalUseCase` | Port injection; `preflight` / `run`; typed outcome; Operation-specific pipeline | No separate scientific estimator or FS publication algorithm |
+| `ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort` | independent trusted preauthorization Interface / no self-approval | G01 row level explicitly disallowed |
+| `ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort` | typed authorization interface | Concrete is CLI layer, not Application import |
+| `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | stateless privacy decisions, G01 aggregate-only | signed row release / columns out of G01 (G05) |
+| `ariadne.interfaces.cli.local_causal.command.main` | new explicit local CLI, error/JSON response | no changes to Product v2 entrypoints |
+| Integration and Product regression | G01 complete DISCOVER vertical slice and legacy safeguards | Independent 07/999 decides Gate PASS |
+
+P05 depends on P02, P03 and P04. P01 has already provided strict parser, Codec and Manifest DTO. Complete all actual cross-asset joins here; do not mistake the P01 pure decoder for a filesystem verifier.
 
 ## 4. Explicitly out of scope
 他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
@@ -31,14 +42,139 @@ Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends o
 
 dependency checkpoint / source state等はfactとして外部参照してよい。Entry rule自体は本書内に記載する。
 
-## 6. Required implementation
-`LocalCausalUseCase.preflight/run(spec,context)`（`LocalRunContext`はTrustedRoot・Principal・CLI row flag・独立Policy Anchor（G01ではnullable）を保持）、`LocalPrivacyPolicyPort.authorize`、`interfaces.cli.local_causal.command.main`を実装。CLIのcheck-onlyは実科学計算/Publishともゼロ。`DISCOVER+P1-M06`でQuestion/Design/Dataset→FCI PAG→Graph/Study/Status→Publisher→Reader、Effect Resultなし。Study行要求かCLI row flagならG01ではexit3で拒否、暗黙aggregate fallback禁止。Schema exit2、input/Privacy exit3、Backend exit4、publication/readback exit5。旧Product CLI/Result/Manifest/DB/Web/Workerは改変せず既存テストを回帰実行する。
+## 6. Required implementation — orchestration, Privacy and CLI
 
-## 7. Focused verification
+### 6.1. `LocalRunContext` and trusted CLI composition (30_62 `1.2/1.3)
 
-| Check | Command / method | Required result |
-|---|---|---|
-| G01-07-07/11/12；RUN01/03/04/06/07、PRIV01〜06、PUB10/MAN04〜06/READ06 | `uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01 -q` | strict CLI envelope、no row/secret leakage、old Product v2 regression、no false COMMITTED/Science PASS。 |
+**Module:** `ariadne.capabilities.causal.local_execution`. An immutable Context with fields:
+
+| Field | Type | Construction/Trust |
+| --- | --- | --- |
+| `root` | `TrustedLocalRoot` | P02 verified root dirfd, owner/ACL/mount |
+| `principal` | `LocalPrincipal` | actual effective OS actor, not Study claim |
+| `cli_row_flag` | `bool` | explicit CLI intent, never merged into Study YAML |
+| `policy_anchor` | `TrustedPolicyAnchor|None` | independently trusted runtime config; null allowed for G01 aggregate-only |
+
+Only CLI composition root creates Context from verified capabilities. The User-supplied `--output-root` path is **not** itself a TrustedLocalRoot; reject unsafe root before using it. Input ContentRefs and output Bundle belong under same verified root but disjoint relative keys. Never import CLI Concrete into Application, never persist row/credential secrets in Context/Manifest. P05 refuses row release even when an anchor is present.
+
+### 6.2. `LocalCausalUseCase` field/constructor contract (30_62 `1 / RUN01,03,04,06,07)
+
+**Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`; stateless reusable Application orchestration. Only immutable Constructor-injected Port fields:
+
+| Field | Type | Role |
+| --- | --- | --- |
+| `refs` | `ContentReferencePort` | actual FD-bound input validation |
+| `capabilities` | `MethodCapabilityPort` | validated Method/Backend/Profile |
+| `discovery` | `DiscoveryPort` | selected FCI/PAG execution |
+| `identifier` | `IdentificationPort` | downstream later Gate, no G01 call |
+| `estimators` | `EstimatorPort` | downstream later Gate, no G01 call |
+| `diagnostics` | `DiagnosticPort` | downstream later Gate, no G01 call |
+| `publisher` | `LocalPublicationPort` | all output staging and single atomic commit |
+| `reader` | `LocalManifestReaderPort` | independently verified committed readback |
+| `policy_verifier` | `LocalPolicyVerifierPort` | verified non-self Policy; G01 can be null on aggregate-only |
+| `privacy` | `LocalPrivacyPolicyPort` | typed no-row decision |
+| `runtime` | `RuntimeEnvironmentPort` | real runtime/lock/environment facts |
+| `clock` | `ClockPort` | injected time; no invented timestamps |
+
+~~~python
+def __init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort,
+             discovery: DiscoveryPort, identifier: IdentificationPort,
+             estimators: EstimatorPort, diagnostics: DiagnosticPort,
+             publisher: LocalPublicationPort, reader: LocalManifestReaderPort,
+             policy_verifier: LocalPolicyVerifierPort, privacy: LocalPrivacyPolicyPort,
+             runtime: RuntimeEnvironmentPort, clock: ClockPort): ...
+def preflight(self, spec: ValidatedStudy, context: LocalRunContext) -> PreflightReport: ...
+def run(self, spec: ValidatedStudy, context: LocalRunContext) -> LocalRunOutcome: ...
+~~~
+
+**Constructor:** require every Port, no optional Backend import, no filesystem creation, no runtime scientific fit. Request-specific sink, status, graph, policy and run metadata remain local to `run`, not instance fields. `preflight`/`run` accept only common `ValidatedStudy`; never Application-import `LocalStudySpec`.
+
+### 6.3. `preflight` processing and `--check-only` (RUN03/04/07)
+
+**Precondition:** strict P01 `ValidatedStudy` and P02 `LocalRunContext`. Steps:
+1. Validate run_id, E11 version, requested `DISCOVER` + `P1-M06` + `causal-learn` and `EXPLORATORY` + non-Effect GRAPH_STRUCTURE; identify unsupported combination without fallback.
+2. Revalidate TrustedRoot/Principal, input ContentRef identities, actual Question/Design/Dataset bytes through `refs.verify` with P02 safe same-FD hash. P01 decoder is insufficient to verify these files.
+3. Decode verified Question/Design with P1-M06 strict JSON profiles; check `question.question_id=design.question_id=Study.inputs.question.identity`, declared Dataset columns/order = Design variables, all CI measurement scales and BK JCS equivalence. Reject duplicates, unknown scales and inappropriate data; no auto-fix/imputation.
+4. Resolve Method Capability via validated full `ValidatedCapabilityRequest` and `MethodCapabilityPort.resolve`; inspect static CI eligibility and effective Backend metadata without executing FCI or publishing any file. Unsupported/missing Backend must be typed; no substitute method.
+5. Enforce G01 aggregate-only: **either** Study row request **or** CLI row flag -> explicit PRIVACY_DENIED (exit3); no silent downgrade. For aggregate requests, check effective Root/Principal eligibility; independent Policy Anchor is permitted to be null. `--check-only` never probes row release as if allowed.
+6. Return `PreflightReport` with actual verified inputs, typed errors, capability and assumptions; `science_acceptance=NOT_EVALUATED`. **No scientific fit, staging directory, artifact, Manifest or Marker creation.**
+
+### 6.4. `run` — one DISCOVER vertical slice (RUN01/03/04/06/07; DISC01–03)
+
+**Algorithm (preserve this order and single-writer responsibilities):**
+
+1. Execute `preflight(spec,context)` and fail closed on invalid Study, Reference, CI eligibility, Privacy or root. Reuse validated actual-byte evidence only if its FD/snapshot is still valid; otherwise reverify before scientific execution. No Model work before input security.
+2. Bind approved Method/Backend/Profile, effective runtime evidence and seed to a `ValidatedDiscoveryRequest` (`ariadne.causal.discovery.contracts`) with the verified Question/Design/Dataset and input hashes. Check the selected Capability equals the Method that will execute.
+3. Evaluate `LocalPrivacyPolicyPort.authorize` **before row-producing or staging side effects** (G01 aggregate-only). No independent Policy is demanded for valid aggregate-only request; row release never authorized in G01 even with an anchor.
+4. Obtain `StagingArtifactSink` through `LocalPublicationPort.begin(*,run_id,request_hash,root)`; sink must be bound to exact root/run/hash. Do not allocate final `runs/{run_id}` or hand final Path to scientific Adapter.
+5. Call `DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink)`, through P04's selected FCI Adapter. The Result is a typed `GraphEvidence` (P03) or a justified scientific Graph-negative with nonempty reasons. Technical Backend/graph errors abort/leave uncommitted staging and map exit4; they are not "valid negative Graph" and cannot be published as SCI-negative.
+6. Build G01 `study.json`, `status.json` and either `graph.json` (success) or `diagnostics.json` (valid Graph-negative). Build `LocalRunManifest.from_run_evidence` from exact bytes inventory. For both cases `schema_dispatch.result=null`, no `result.json`. Success `schema_dispatch.graph="e11-local-graph/1"`; scientific negative `graph=null` + mandatory diagnostics/reason. `Study.inputs.graph=null` remains input request; output Graph is separate.
+7. Status axes remain independent: `identification_status=NOT_APPLICABLE`, `point_availability=NOT_REQUESTED`, `inference_availability=NOT_REQUESTED`, `science_acceptance=NOT_EVALUATED`. This CLI run cannot declare independent Science PASS. Actual technical completion is conditional on committed Reader result.
+8. Seal via `LocalPublicationPort.seal(*,sink,manifest,privacy)`, publish via `publish(*,bundle,root)`; P02 alone owns staging/Marker/filesync/rename/readback and EEXIST reuse semantics. Use `LocalManifestReaderPort.verify(*,root,run_id)` for post-publication independent verification (idempotent second read is permitted); **return** `LocalRunOutcome(COMPLETED, verified ref, scientific axes)` only after success.
+9. If post-rename outcome indeterminate, return typed publication failure (CLI exit5), never delete or repair a possibly published run. On pre-rename failure, abort scoped staging only. Incorrect request_hash on existing run -> conflict, no overwrite. Never conflate science-negative result (may be technical exit0 when fully published) with backend exception (exit4).
+
+**Operation dispatch:** Other operations (`IDENTIFY/ESTIMATE/REFUTE/SENSITIVITY/DIAGNOSE`) have defined ports but are **not implemented in G01**. Reject them as typed `UNSUPPORTED_COMBINATION` before anything executes, not as successful fallback to FCI. Subsequent Gate implementations will use `IdentifierPort/EstimatorPort/DiagnosticPort` and 23_42 Bundle matrix; preserve constructor API now without implementing their scientific methods.
+
+### 6.5. `LocalPolicyVerifierPort` / `LocalPrivacyPolicyPort` and Concrete (30_62 `6/8.4; PRIV01–06)
+
+**Port modules:** `ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort` and `ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`. Concrete `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy`, **stateless**, `__init__(self) -> None`, no per-run Instance Fields. Effective Principal/Root/Policy are call inputs, not stored between runs.
+
+~~~python
+def verify(self, *, policy_ref, study, root, anchor) -> VerifiedStudyPolicyEvidence: ...  # independent authority
+def authorize(self, *, study: ValidatedStudy, cli_row_flag: bool,
+              root: TrustedLocalRoot, principal: LocalPrincipal,
+              policy: VerifiedStudyPolicyEvidence|None, output_shape: OutputShape) -> PrivacyDecision: ...
+def filter_export_columns(self, frame_schema: ColumnSchema, *,
+                          decision: PrivacyDecision) -> ColumnSelection: ...
+~~~
+
+**G01 rules:** Study `privacy.row_export_requested=false` + CLI `--allow-row-level-export=false` + effective same-UID private TrustedRoot and verified output shape with **zero rows** are mandatory. Any row intent, unauthorized Principal, unsafe mount/ACL/delegation, inconsistent classification, secret or row leakage -> typed input/security/privacy denial, CLI exit3; never implicit aggregate fallback. `policy_anchor` from secure runtime configuration is not a substitute for consent or actual `VerifiedStudyPolicyEvidence`; Study `policy_ref` or CLI flag alone cannot self-authorize. G01 does not implement authorized row release, signed Policy format or `filter_export_columns`'s G05 positive capability: expose a fail-closed unsupported behavior if invoked for row release. For aggregate-only, absent Policy evidence is normal; require no invented authorization.
+
+**Release invariant:** neither Publisher staging nor stdout/stderr/log stores individual rows/secret raw data; input Dataset may contain rows but only aggregate Graph/Diagnostics/Status is published. Test report should not contain row-level fixture payloads.
+
+### 6.6. CLI `command.main` and version compatibility (30_62 `8.5; RUN06/07, PUB10/MAN06/READ06)
+
+**Module/entrypoint:** `ariadne.interfaces.cli.local_causal.command.main(argv: list[str]|None) -> int` registered **only** as new `ariadne-causal-local` in `pyproject.toml`. Preserve old `ariadne-identify`, `ariadne-estimate`, `ariadne-refute`, `ariadne-sensitivity`, legacy `causal-analysis-spec/2`, `CliManifest(manifest_version="2.0")` and Product DB/Web/Worker path.
+
+**CLI syntax:** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`. File format must be explicitly determined and validated (not silently reinterpret Product v2). Construct Decoder, TrustedRoot Factory, Port adapters, selected FCI Method Registry and UseCase through **one** composition root; never import optional Method during ordinary CLI parsing.
+
+| Exit | Trigger | Required stdout/stderr and persistence |
+| --- | --- | --- |
+| 0 | valid check-only static preflight, or full run with independently verified complete Bundle, **including legitimate scientific negative** | sanitized run_id/technical/science/manifest reference; check-only no write |
+| 2 | unknown/legacy/versionless schema, method/Operation/Estimand/config inconsistency, duplicate YAML | config phase reason, no final run |
+| 3 | invalid physical input/path/hash/root/owner/mount, Study row intent or CLI row flag, independent authorization denial | security/privacy reason, no rows or leak |
+| 4 | selected Backend missing/version/API invalid or technical FCI error, malformed Backend graph | engine phase, no false committed marker |
+| 5 | staging/FS syscall/rename collision/readback corruption/indeterminate result | publication phase; no false completed status, no overwrite |
+
+For `--json` stdout emit exactly one syntactically valid sanitized JSON control envelope (no raw Dataset/secret/path). stderr uses typed upper-case reason code and phase, without raw row content. Exit0 **never** implies scientific PASS. Do not change old CLI exit/error semantics.
+
+### 6.7. Reuse/negative/rollback boundaries and DD ownership
+
+| Owner | Reuse | Never do |
+| --- | --- | --- |
+| P01 DTO/Codec | strict E11 study, JCS, typed Manifest | reparse into a second looser Schema |
+| P02 Port/FS | trusted FD verification, one run-atomic publisher, independent reader | direct `Path.rename` or file writes from UseCase |
+| P03 Graph value | PAG/endpoint/Version/null/digest evidence | Product GraphVersion issuance or automatic identification |
+| P04 Method/Discovery | selected FCI and typed negative, science Oracle | PC fallback, backend-specified arbitrary output path |
+| P05 Application/CLI | ordered orchestration, no-row policy, status/exit | Web/API/DB/Worker or existing Product CLI rewrite |
+
+Errors have typed `phase` and stable reason codes, no unbounded path/row values. Use `PreflightReport` for check-only, `LocalRunOutcome` for run result. On retry verify same request hash and existing run fully via P02; do not regenerate scientific truth or presume exactly-once execution. Package success is not G01_999 PASS.
+
+## 7. Focused verification — CLI, Privacy and regression
+
+| DD / 07 | Test target | Assertions |
+| --- | --- | --- |
+| RUN01/03/04/07, MAN04, DISC01–03; 07-07 | `integration/test_g01_cli.py` | valid DISCOVER Graph/negative separate, Graph vs Diagnostics inventory, no Effect, target/version/Status axes |
+| PRIV01–06; 07-11 | same, `component/test_g01_bundle_reader.py` | --check-only zero Fit/zero staging/zero publish, Study row or CLI row intent exit3; unsafe Root/Principal, zero row/log leakage |
+| RUN06, PUB10, MAN06, READ06; 07-12 | `tests/product/test_cli_contract.py` and old discovery/identify/estimate/refute/sensitivity checks | legacy v2 unchanged and old CLI results byte/semantic-compatible |
+| PUB07/READ03; 07-11 | CLI + real-P02 integration | exception exit4/5 phase separation, post-rename indeterminate no false COMMITTED |
+
+~~~bash
+uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/integration/test_g01_cli.py -q
+uv run --no-sync python -m pytest tests/product/test_cli_contract.py -q
+~~~
+
+Use actual P01/P02/P03/P04 Package checkpoints; mocked Backend/Publisher tests are supplementary, not evidence of real Linux atomicity or independent Graph science. P05 COMPLETE requires end-to-end integration tests, a full v2 regression run, exact source/fixture/lock SHA and DD-ID-specific actual results. Gate-wide 07/999 remains independently executed on a fixed candidate SHA.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
