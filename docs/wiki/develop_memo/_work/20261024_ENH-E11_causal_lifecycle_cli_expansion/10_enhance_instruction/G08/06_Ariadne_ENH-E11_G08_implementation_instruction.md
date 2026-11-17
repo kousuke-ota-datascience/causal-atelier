@@ -3,11 +3,11 @@
 **Document class:** Gate Coding Contract — Reviewer DRAFT  
 **Gate:** G08 — 正式Enhance Workflow Gate  
 **Contract status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
-**Depends on:** G02 PASS （依存DAGは提案、Owner決定待ち）  
+**Depends on:** G01 PASS, G02 PASS （既存07と依存Edgeを整合、Owner決定待ち）  
 **Execution mode:** WORK_PACKAGE （提案）  
 **Required packages:** P01,P02,P03,P04 （提案）  
 **Trial:** NOT_STARTED  
-**Gate07:** `07_Ariadne_ENH-E11_G08_test_instruction.md` — NOT_CREATED / NOT_FROZEN。今回の作成対象外。  
+**Gate07:** [07独立テスト指示書案](07_Ariadne_ENH-E11_G08_test_instruction.md) — DRAFT / NOT_FROZEN / TESTS_NOT_RUN（既存GitHub Commitで作成済み・Owner未承認）。  
 **Baseline SHA:** 未固定（Coding Authorization時に取得）。  
 **Authority/reference:** [Gate decomposition](../../40_operator_workflows/architecture_review/03_gate_decomposition.md)／[PREP-02 freeze](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[RD 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)／[DD 30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md)／[DD 30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md)／[IF 23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)
 
@@ -21,7 +21,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**本Gate固有のBackend/Meth
 
 **受入命題:** Sharp/Fuzzy RDDとB0/B1 IV/2SLSを局所Estimand・弱IV AR集合付きで提供する。
 
-**候補依存:** `G02`のlatest canonical 999 PASS。設計上の前提と実行DAGは同義とは限らず、全依存EdgeをFreeze前にOwner Reviewする。Issue追跡は999の代替でない。
+**候補依存:** `G01`・`G02`のlatest canonical 999 PASS。設計上の前提と実行DAGは同義とは限らず、全依存EdgeをFreeze前にOwner Reviewする。Issue追跡は999の代替でない。
 
 **科学的失敗モードと未決事項:** B0 complier LATEとB1 structural slopeを区別。HC1 AR集合をfinite gridだけで判定しない。
 
@@ -90,7 +90,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**本Gate固有のBackend/Meth
 1. OwnerがGate依存・Acceptance Boundary・WORK_PACKAGE/Pxx順序を採否する。
 2. `10_32`のMethod config、Estimand、DGP、NEG、Reference、実効Backend/API/Inferenceの適格性を検証する。特に本Gateの未決事項 B0 complier LATEとB1 structural slopeを区別。HC1 AR集合をfinite gridだけで判定しない。
 3. 06/PxxのClass.Field/Constructor/Signature/Result authorityと既存Source、共有Port/Bridgeを整合させ、必要な設計欠落を閉じる。
-4. **Gate07を作成**し、Method別AC/独立科学閾値・負例・固定Fixture/Runtime・No PASS条件を確定して06/07をともにFreezeする。
+4. **既存Gate07 DRAFTを本06/Pxxと照合・修正し**、Method別AC/独立科学閾値・負例・固定Fixture/Runtime・No PASS条件を確定して06/07をともにFreezeする。
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
