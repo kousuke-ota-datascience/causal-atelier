@@ -275,17 +275,17 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.7.2. フィールド
 
-**EXISTING:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
+**既存ABI契約:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
 
 #### 1.7.3. Constructor / Factory
 
-**EXISTING:** ariadne.scientific.refutation.adapter.RefutationAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。将来のtyped Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
+**既存ABI契約:** ariadne.scientific.refutation.adapter.RefutationAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。typed Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
 
 #### 1.7.4. メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
-| `run(self, input_: RefutationInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **EXISTING v2 API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
+| `run(self, input_: RefutationInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **既存v2公開API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
@@ -316,17 +316,17 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.8.2. フィールド
 
-**EXISTING:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
+**既存ABI契約:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
 
 #### 1.8.3. Constructor / Factory
 
-**EXISTING:** ariadne.scientific.sensitivity.adapter.SensitivityAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。将来のtyped Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
+**既存ABI契約:** ariadne.scientific.sensitivity.adapter.SensitivityAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。typed Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
 
 #### 1.8.4. メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
-| `run(self, input_: SensitivityInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **EXISTING v2 API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
+| `run(self, input_: SensitivityInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **既存v2公開API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
