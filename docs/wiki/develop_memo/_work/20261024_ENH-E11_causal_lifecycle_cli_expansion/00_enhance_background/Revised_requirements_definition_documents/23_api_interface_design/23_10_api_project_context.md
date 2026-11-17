@@ -449,10 +449,47 @@ Content-Type: `application/json`、型 `ResearchContextCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（未型付け）。
+- HTTP **201**。BodyはServiceのResearchContext JSON。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| 項目 | 型 | 根拠 |
+|---|---|---|
+| `research_context_version_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `project_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `context_key` | `string` | `WorkspaceLifecycleService._context_response` |
+| `version_number` | `integer` | `WorkspaceLifecycleService._context_response` |
+| `status` | `string` | `WorkspaceLifecycleService._context_response` |
+| `schema_version` | `string` | `WorkspaceLifecycleService._context_response` |
+| `problem_statement` | `string` | `WorkspaceLifecycleService._context_response` |
+| `research_questions` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `significance` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `hypotheses` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `decision_context` | `object` | `WorkspaceLifecycleService._context_response` |
+| `relations` | `array[object]` | `WorkspaceLifecycleService._context_response` |
+| `canonical_hash` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `created_by` | `string` | `WorkspaceLifecycleService._context_response` |
+| `created_at` | `datetime` | `WorkspaceLifecycleService._context_response` |
+| `fixed_at` | `datetime|null` | `WorkspaceLifecycleService._context_response` |
 
+```json
+{
+  "research_context_version_id": "{context_id}",
+  "project_id": "{project_id}",
+  "context_key": "string",
+  "version_number": 1,
+  "status": "DRAFT",
+  "schema_version": "research-context/1",
+  "problem_statement": "",
+  "research_questions": [],
+  "significance": null,
+  "hypotheses": [],
+  "decision_context": {},
+  "relations": [],
+  "canonical_hash": null,
+  "created_by": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "fixed_at": null
+}
+```
 
 #### Errors
 
@@ -462,6 +499,8 @@ Content-Type: `application/json`、型 `ResearchContextCreate`
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Service確認済み追加制約:** `context_key`は空文字不可・trim後100文字以内。ACTIVE Projectの下で新VersionをDRAFT作成。
 
 #### 根拠・未検証事項
 
@@ -501,15 +540,32 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: JSON object。
+- HTTP **200**。Bodyは`items`を含むJSON Object。
 
-| 項目 | 型 |
+| Field | Type |
 |---|---|
-| `items` | array[Service resource] |
+| `items` | array[ResearchContext] |
 
-要素FieldはService由来。Routerにresponse_model未宣言。
+items各要素:
 
-**Response JSON構造例（説明用）**
+| 項目 | 型 | 根拠 |
+|---|---|---|
+| `research_context_version_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `project_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `context_key` | `string` | `WorkspaceLifecycleService._context_response` |
+| `version_number` | `integer` | `WorkspaceLifecycleService._context_response` |
+| `status` | `string` | `WorkspaceLifecycleService._context_response` |
+| `schema_version` | `string` | `WorkspaceLifecycleService._context_response` |
+| `problem_statement` | `string` | `WorkspaceLifecycleService._context_response` |
+| `research_questions` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `significance` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `hypotheses` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `decision_context` | `object` | `WorkspaceLifecycleService._context_response` |
+| `relations` | `array[object]` | `WorkspaceLifecycleService._context_response` |
+| `canonical_hash` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `created_by` | `string` | `WorkspaceLifecycleService._context_response` |
+| `created_at` | `datetime` | `WorkspaceLifecycleService._context_response` |
+| `fixed_at` | `datetime|null` | `WorkspaceLifecycleService._context_response` |
 
 ```json
 {"items":[]}
@@ -562,10 +618,47 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。BodyはServiceのResearchContext JSON。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| 項目 | 型 | 根拠 |
+|---|---|---|
+| `research_context_version_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `project_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `context_key` | `string` | `WorkspaceLifecycleService._context_response` |
+| `version_number` | `integer` | `WorkspaceLifecycleService._context_response` |
+| `status` | `string` | `WorkspaceLifecycleService._context_response` |
+| `schema_version` | `string` | `WorkspaceLifecycleService._context_response` |
+| `problem_statement` | `string` | `WorkspaceLifecycleService._context_response` |
+| `research_questions` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `significance` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `hypotheses` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `decision_context` | `object` | `WorkspaceLifecycleService._context_response` |
+| `relations` | `array[object]` | `WorkspaceLifecycleService._context_response` |
+| `canonical_hash` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `created_by` | `string` | `WorkspaceLifecycleService._context_response` |
+| `created_at` | `datetime` | `WorkspaceLifecycleService._context_response` |
+| `fixed_at` | `datetime|null` | `WorkspaceLifecycleService._context_response` |
 
+```json
+{
+  "research_context_version_id": "{context_id}",
+  "project_id": "{project_id}",
+  "context_key": "string",
+  "version_number": 1,
+  "status": "DRAFT",
+  "schema_version": "research-context/1",
+  "problem_statement": "",
+  "research_questions": [],
+  "significance": null,
+  "hypotheses": [],
+  "decision_context": {},
+  "relations": [],
+  "canonical_hash": null,
+  "created_by": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "fixed_at": null
+}
+```
 
 #### Errors
 
@@ -629,10 +722,47 @@ Content-Type: `application/json`、型 `ResearchContextPatch`
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。BodyはServiceのResearchContext JSON。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| 項目 | 型 | 根拠 |
+|---|---|---|
+| `research_context_version_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `project_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `context_key` | `string` | `WorkspaceLifecycleService._context_response` |
+| `version_number` | `integer` | `WorkspaceLifecycleService._context_response` |
+| `status` | `string` | `WorkspaceLifecycleService._context_response` |
+| `schema_version` | `string` | `WorkspaceLifecycleService._context_response` |
+| `problem_statement` | `string` | `WorkspaceLifecycleService._context_response` |
+| `research_questions` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `significance` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `hypotheses` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `decision_context` | `object` | `WorkspaceLifecycleService._context_response` |
+| `relations` | `array[object]` | `WorkspaceLifecycleService._context_response` |
+| `canonical_hash` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `created_by` | `string` | `WorkspaceLifecycleService._context_response` |
+| `created_at` | `datetime` | `WorkspaceLifecycleService._context_response` |
+| `fixed_at` | `datetime|null` | `WorkspaceLifecycleService._context_response` |
 
+```json
+{
+  "research_context_version_id": "{context_id}",
+  "project_id": "{project_id}",
+  "context_key": "string",
+  "version_number": 1,
+  "status": "DRAFT",
+  "schema_version": "research-context/1",
+  "problem_statement": "",
+  "research_questions": [],
+  "significance": null,
+  "hypotheses": [],
+  "decision_context": {},
+  "relations": [],
+  "canonical_hash": null,
+  "created_by": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "fixed_at": null
+}
+```
 
 #### Errors
 
@@ -642,6 +772,8 @@ Content-Type: `application/json`、型 `ResearchContextPatch`
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Service確認済み追加制約:** ACTIVE Projectと同ProjectのContextが必要。FIXED Contextは変更不可。
 
 #### 根拠・未検証事項
 
@@ -682,10 +814,47 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。BodyはServiceのResearchContext JSON。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| 項目 | 型 | 根拠 |
+|---|---|---|
+| `research_context_version_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `project_id` | `string` | `WorkspaceLifecycleService._context_response` |
+| `context_key` | `string` | `WorkspaceLifecycleService._context_response` |
+| `version_number` | `integer` | `WorkspaceLifecycleService._context_response` |
+| `status` | `string` | `WorkspaceLifecycleService._context_response` |
+| `schema_version` | `string` | `WorkspaceLifecycleService._context_response` |
+| `problem_statement` | `string` | `WorkspaceLifecycleService._context_response` |
+| `research_questions` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `significance` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `hypotheses` | `array[string]` | `WorkspaceLifecycleService._context_response` |
+| `decision_context` | `object` | `WorkspaceLifecycleService._context_response` |
+| `relations` | `array[object]` | `WorkspaceLifecycleService._context_response` |
+| `canonical_hash` | `string|null` | `WorkspaceLifecycleService._context_response` |
+| `created_by` | `string` | `WorkspaceLifecycleService._context_response` |
+| `created_at` | `datetime` | `WorkspaceLifecycleService._context_response` |
+| `fixed_at` | `datetime|null` | `WorkspaceLifecycleService._context_response` |
 
+```json
+{
+  "research_context_version_id": "{context_id}",
+  "project_id": "{project_id}",
+  "context_key": "string",
+  "version_number": 1,
+  "status": "DRAFT",
+  "schema_version": "research-context/1",
+  "problem_statement": "",
+  "research_questions": [],
+  "significance": null,
+  "hypotheses": [],
+  "decision_context": {},
+  "relations": [],
+  "canonical_hash": null,
+  "created_by": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "fixed_at": null
+}
+```
 
 #### Errors
 
@@ -695,6 +864,8 @@ Request JSON Bodyなし（Router未定義）。
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Service確認済み追加制約:** ACTIVE Projectが必要。同ProjectのRelationを検査し、自己参照を禁止してFIXED化。
 
 #### 根拠・未検証事項
 
@@ -735,10 +906,19 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。BodyはUsage projection。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| Field | Type |
+|---|---|
+| `research_context_version_id` | string |
+| `analysis_specification_ids` | array[string] |
+| `analysis_families` | array[string] |
+| `execution_ids` | array[string] |
+| `result_ids` | array[string] |
 
+```json
+{"research_context_version_id":"{context_id}","analysis_specification_ids":[],"analysis_families":[],"execution_ids":[],"result_ids":[]}
+```
 
 #### Errors
 

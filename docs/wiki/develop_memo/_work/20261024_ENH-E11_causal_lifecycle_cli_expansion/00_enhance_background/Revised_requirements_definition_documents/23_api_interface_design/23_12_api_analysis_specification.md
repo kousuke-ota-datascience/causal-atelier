@@ -154,6 +154,8 @@ Content-Type: `application/json`、型 `AnalysisSpecificationCreate`
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
 
+**Source確認済み追加制約:** `specification_key`はtrim後1〜100文字。ProjectはACTIVE。ResearchContextとDatasetは同Projectに存在が必要。AnalysisView指定時はFIXEDかつ同Dataset参照が必要。新規作成はDRAFTで、作成時点でFamily Specを科学的に検証済みとは扱わない。
+
 #### 根拠・未検証事項
 
 - Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `AnalysisSpecificationCreate`、Response Model: `未宣言`。
@@ -235,6 +237,8 @@ itemsの要素:
 | 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Source確認済み追加制約:** Project存在を要求し、全Versionをspecification_key昇順→version_number降順に列挙する。Family/Context/DatasetのQuery Filterは受け付けない。
 
 #### 根拠・未検証事項
 
@@ -332,6 +336,8 @@ Request JSON Bodyなし（Router未定義）。
 | 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Source確認済み追加制約:** ProjectとSpecificationの紐付けを確認する。他Projectのspec_idはEntityNotFound扱い。
 
 #### 根拠・未検証事項
 
@@ -449,6 +455,8 @@ Content-Type: `application/json`、型 `AnalysisSpecificationPatch`
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
 
+**Source確認済み追加制約:** DRAFTのみ編集可能（FIXEDは409 RESOURCE_IMMUTABLE）。analysis_view_idとrevision_context以外の明示nullは禁止（422 INVALID_SCHEMA）。未知Fieldも422。参照のProject/AnalysisView/Dataset整合性を再検査する。
+
 #### 根拠・未検証事項
 
 - Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `AnalysisSpecificationPatch`、Response Model: `未宣言`。
@@ -511,6 +519,8 @@ Request JSON Bodyなし（Router未定義）。
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Source確認済み追加制約:** ResearchContextはFIXED必須。AnalysisViewがある場合はFIXEDで同Datasetを参照する。Family/Schemaの整合性を検証し、成功時valid=true/canonical_hash/warningsを返す。Validation自体はFIXED化を行わない。
 
 #### 根拠・未検証事項
 
@@ -609,6 +619,8 @@ Request JSON Bodyなし（Router未定義）。
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Source確認済み追加制約:** ProjectはACTIVE、ResearchContextはFIXEDが必要。Domain.fixは既FIXEDなら早期returnする一方、Serviceはfixed_atを更新するため、再呼出時のmetadata不変性は未保証。
 
 #### 根拠・未検証事項
 
@@ -722,6 +734,8 @@ Content-Type: `application/json`、型 `AnalysisSpecificationRevise`
 | 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
 | 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 | 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+**Source確認済み追加制約:** 元SpecificationはFIXED必須。違反時422 INVALID_SCHEMA。change_reasonはtrim後1〜2000文字。許可Fieldとnull制約はPATCHに準拠。元Versionを更新せず、新Version DRAFTとrevision_context（base ID/hash/reason）を発行する。
 
 #### 根拠・未検証事項
 
