@@ -315,3 +315,8 @@ P00は存在してもoptional authoring / audit artifactであり、preflight / 
 Final Audit record: [PREP03_final_audit.md](PREP03_final_audit.md) (review only, no runtime authority). G02–G10の36 Pxxに対してClass subsection header正規化、他Gateの未決を本GateのSTOPに一律適用しない修正、Publisher実署名の記載、40 READMEのCLI-only scope/文書実在状況更新を実施した。
 
 **Final static disposition:** `STATIC_CORRECTIONS_APPLIED / OPEN_CONTRACT_DECISIONS / NOT_READY_FOR_FREEZE`。06/P00/Pxx/07のPxx依存・Method集合・G10 41 Method表は静的照合済み。科学実測や独立Reference未生成、G02 IV target/G05 independent Authority/Row Writer未決、未承認Gate DAGがあるため「全36件Coding-ready」や「全Gate PASS」を宣言しない。Owner reviewは[Audit OD-01〜OD-07](PREP03_final_audit.md)に限定して整理する。Freeze/Coding Authorization/Source/Test/999は未実施。
+
+### 12.6. PREP-03 Owner consolidated review approval（2026-11-18 JST）
+**Owner directive:** `Owner一括レビュー：承認する`（2026-11-18 07:57:48 JST）。[PREP-03 Final Audit §6](PREP03_final_audit.md)に承認範囲・非承認範囲・Control Plane判定を記録。**承認対象はFinal Static Audit、G02〜G10の依存DAG、WORK_PACKAGE実行方式、全36 Pxx構成、既決意味論の継承である。** OD-04=OWNER_APPROVED/CLOSED。G02〜G10 06/P00/07にはOwner Reviewを反映し、`DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED`を保持。
+
+**Open Decisions remain:** OD-01（P1-M05 IV Target）、OD-02（G05 independent Row Approval Authority/Verifier）、OD-03（G05 Row Writer Class/Factory/Method）、OD-05の真のMethod Config/Inference Profile gaps。独立Science/Backend/License evidence（OD-06/07）は実行／Legal段階で取得する。**レビュー承認は未決の値を補完せず、Freeze、Coding Authorization、Source/Test変更、999 PASSを許可しない。** 正本への昇格も未実施。

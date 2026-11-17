@@ -1,6 +1,7 @@
 # Ariadne ENH-E11 G06 — 07 独立テスト指示書：PCMCI・PCMCI+・LPCMCI
 
 **Verification contract status: DRAFT / NOT_FROZEN / TESTS_NOT_RUN**
+**Owner review: 2026-11-18 JST — PREP-03 audit and G06 Gate-level verification plan reviewed/accepted, with open Method/Profile/Evidence decisions preserved. This is NOT Contract Freeze, Independent Test execution, Gate999 PASS, or Coding Authorization.**
 **Gate: G06 / Independent Test Agent / Trial01 NOT_STARTED**
 **Dependencies: G01 PASS (canonical upstream 999)**
 **Normative WHAT:** 本書のAC/Test Itemsのみ。テストの実physical path・command・runner discoveryは40 Operatorが所有。

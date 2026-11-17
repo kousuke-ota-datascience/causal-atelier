@@ -3,25 +3,27 @@
 **Document class:** Gate Coding Contract — Reviewer DRAFT  
 **Gate:** G09 — 正式Enhance Workflow Gate  
 **Contract status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
-**Depends on:** G01 PASS （依存DAGは提案、Owner決定待ち）  
-**Execution mode:** WORK_PACKAGE （提案）  
-**Required packages:** P01,P02,P03 （提案）  
+**Depends on:** G01 PASS （Owner一括レビュー承認済み・未Freeze）  
+**Execution mode:** WORK_PACKAGE （Owner一括レビュー承認済み・未Freeze）  
+**Required packages:** P01,P02,P03 （Owner一括レビュー承認済み・未Freeze）  
 **Trial:** NOT_STARTED  
-**Gate07:** [07独立テスト指示書案](07_Ariadne_ENH-E11_G09_test_instruction.md) — DRAFT / NOT_FROZEN / TESTS_NOT_RUN（既存GitHub Commitで作成済み・Owner未承認）。  
+**Gate07:** [07独立テスト指示書案](07_Ariadne_ENH-E11_G09_test_instruction.md) — DRAFT / NOT_FROZEN / TESTS_NOT_RUN（Owner一括レビュー承認済み・ただしOpen Decision残存、未Freeze）。  
 **Baseline SHA:** 未固定（Coding Authorization時に取得）。  
 **Authority/reference:** [Gate decomposition](../../40_operator_workflows/architecture_review/03_gate_decomposition.md)／[PREP-02 freeze](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[RD 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)／[DD 30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md)／[DD 30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md)／[IF 23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)
+
+**Owner review record:** 2026-11-18 JST、PREP-03 Final Auditの静的レビュー、G09のGate DAG・WORK_PACKAGE mode・Required packagesをOwner承認。06/07/Pxxの実装・科学的未決を補完して承認したものではない。NOT_FROZEN / CODING_NOT_AUTHORIZED / TESTS_NOT_RUNを維持。参照：[`PREP03_final_audit.md`](../PREP03_final_audit.md) §6。
 
 ## 0. Contract Boundary and PREP-03 Status
 
 Gateの06は実装WHAT、07は独立Verification WHAT、40 Operatorは物理Test配置・実行HOW、999は唯一の正式Gate Verdict。P00はPlan、Pxxはbounded Coding Unitであり、Pxx/06の作成はGate PASS、Coding Authorization、Method Science PASS、07 Freezeを意味しない。
 
-PREP-02のCommon Design BaselineはFreeze済み。**本Gate固有のBackend/Method config、実装Class存在、Science Oracle、07/Acceptance Criteria、Gate Dependency/Packagesは未承認DRAFT。** 本文内の`Gxx PASS`は現在達成された状態ではない。
+PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE/Required Packagesの構成はOwner一括レビュー承認済み。ただし本Gate固有の未決Method config、実効Backend、独立Science Oracle、06/07/Pxxは引き続きDRAFT・NOT_FROZENで、実装開始不可。** 本文内の`Gxx PASS`は現在達成された状態ではない。
 
 ## 1. Gate Acceptance Claim and Scope
 
 **受入命題:** Donor Designに基づきSCM point-onlyとSDID point/inferenceを区別する。
 
-**候補依存:** `G01`のlatest canonical 999 PASS。設計上の前提と実行DAGは同義とは限らず、全依存EdgeをFreeze前にOwner Reviewする。Issue追跡は999の代替でない。
+**候補依存:** `G01`のlatest canonical 999 PASS。この依存DAGはOwner一括レビューで承認済み。各上流Gateのlatest canonical 999 PASSは実行時に別途検証する。Issue追跡は999の代替でない。
 
 **科学的失敗モードと未決事項:** Donor汚染・pre-fit・time support負例必須。SCMに未検証CIを付けない。
 

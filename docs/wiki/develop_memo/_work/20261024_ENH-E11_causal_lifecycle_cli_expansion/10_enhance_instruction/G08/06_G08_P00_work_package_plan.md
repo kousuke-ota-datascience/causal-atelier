@@ -2,11 +2,13 @@
 
 **Gate:** G08 / Official Enhance Workflow Gate  
 **Class:** Planning/Operator Artifact, not Coding Agent's normative package  
-**Plan status:** DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED  
+**Plan status:** OWNER_REVIEW_APPROVED / NOT_FROZEN / CODING_NOT_AUTHORIZED  
 **Gate06:** [Implementation Contract](06_Ariadne_ENH-E11_G08_implementation_instruction.md)  
 **Gate07:** [Independent Verification Draft](07_Ariadne_ENH-E11_G08_test_instruction.md) / DRAFT / NOT_FROZEN / TESTS_NOT_RUN  
-**Execution mode proposal:** WORK_PACKAGE / P01,P02,P03,P04  
-**Upstream dependency proposal:** G01 PASS, G02 PASS。未承認のEdgeとしてまとめReviewする。
+**Owner-approved execution mode:** WORK_PACKAGE / P01,P02,P03,P04  
+**Owner-approved upstream dependency:** G01 PASS, G02 PASS。2026-11-18 JST Owner一括レビューで承認。各上流canonical 999 PASSは未成立、Runtimeで別途検証する。
+
+**Owner review:** PREP-03 Final AuditのOD-04（G08 Gate Dependency / Required Packages / Package DAG）を承認。Planの承認はGate06/07 Freeze、Owner Coding Authorization、Agent実行を許可しない。科学Method・Privacy Authority・Row Writer等のOpen Decisionを維持する。参照：[`PREP03_final_audit.md`](../PREP03_final_audit.md) §6。
 
 ## 1. Gate semantic acceptance
 
