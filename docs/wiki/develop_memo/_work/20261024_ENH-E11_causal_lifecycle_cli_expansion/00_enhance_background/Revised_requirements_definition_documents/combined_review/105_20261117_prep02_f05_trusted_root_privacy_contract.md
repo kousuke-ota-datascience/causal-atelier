@@ -46,7 +46,7 @@ Then **row output permit = S ∧ F ∧ P ∧ R ∧ C**. On any false/unknown, no
 | 1 | 1 | 1 | valid | 0/unknown | DENY row export |
 | 1 | 1 | 1 | valid | 1 | Restricted Parquet artifact only, no console/JSON/log rows |
 
-The initial document does not decide whether a requested but denied row export should abort the complete execution or yield an aggregate-only result; **recommend deny explicit request rather than silently downgrade**, so the caller knows the requested delivery did not occur.
+Owner adopted D-F06-ROW-EXIT A: requested row export denied for any privacy/authorization reason **aborts requested delivery with CLI exit code 3** (no silent aggregate-only success, no row artifact even in staging). Aggregate-only execution with `S=0` is a separate valid operation if Trusted Root checks pass.
 
 ## 4. Candidate typed interfaces
 
@@ -89,3 +89,10 @@ Test ARCH-F05-01〜04 (plus an explicit policy-spoof negative) must verify:
 - secrets/path/rows redacted on invalid parser, exception or failed publication; effective reader enforces privacy before bytes return.
 
 **Not run.** F05 cannot be frozen until trusted Policy authority, mount/ACL algorithm, deny behavior and Security review are ratified, along with real system tests.
+
+
+## 6. Owner採用 D-F05-POLICY A（2026-11-17）
+
+[DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md)：`RowExportAuthorization.policy_ref`はStudy YAML内に自己申告で記載可能な**参照情報にすぎない**。許可の成立には、①Study identity・run scope・許可列・最大行数・分類・有効期限／失効状態に束縛された別のPolicy artifact、②そのPolicyが実行者の自己申告とは独立して事前承認されたことを証明できるTrust Anchor／承認記録、③ContentRef bytes hashと実際のPolicy bytesの一致、④実行時のowner/root証跡を検証する。`row_export_authorized=true`は単体で拒否。実行前に`VerifiedStudyPolicyEvidence`（検証済み型）の生成に成功しない限り、行をstagingにも書かない。
+
+**Authority具体方式は未Freeze**（例：署名付き承認記録、独立した書込権限を持つlocal policy store等）。同一UIDが自己発行したPolicyをそのまま信頼する構成は「別の事前承認」の保証にはならない。単一UID権限モデルでも承認者の独立性とPolicy変更権限を設計・検証する。拒否はEXIT 3で、logやManifestへ個票・secretを出さない。F05 Security review・negative test未実施。

@@ -30,8 +30,8 @@ Interval representation: `{"lower": endpoint, "upper": endpoint, "lower_closed":
 
 1. NEG_INFINITY only as lower and POS_INFINITY only as upper. Infinite endpoints are always open. Finite lower <= finite upper; equality only for one-point interval when both ends are closed.
 2. Components canonicalized by lower endpoint, then upper; duplicate/overlapping intervals merge. Touching intervals merge exactly when the common endpoint belongs to at least one interval; if both exclude it, keep the single-point gap (DISCONNECTED).
-3. Nonempty components are mandatory for normal `AVAILABLE` AR. Reject an empty set as a successful normal AR output **under the adopted E11 initial contract**; inversion/test failure must produce `FAILED + reason`. This is an E11 implementation policy, **not a claim that statistical confidence-set inversion can never mathematically yield an empty set**.
-4. `ALL_REAL` iff the normalized union is (-∞,+∞). `DISCONNECTED` iff normalized component count >= 2. `UNBOUNDED` iff a single component has at least one infinite endpoint but is not ALL_REAL; otherwise `BOUNDED`.
+3. **Owner採用 D-F07-EMPTY A:** `topology=EMPTY` iff `components=[]`。これは検定反転によって数学的な空集合が**正常に計算された**結果であり、`inference.availability=AVAILABLE`・`inversion_evidence`必須。`topology!=EMPTY`なら正規化後成分は1個以上。数値計算・反転証拠の失敗は `availability=FAILED`, `confidence_set=null`, typed reason として区別する。B0/B1の**特定のjust-identified数理モデル**で空集合が起こらないことを前提とする場合は、Method別ValidatorがEMPTYを科学的不整合として拒否し、汎用Codecは破壊しない。
+4. `EMPTY` iff 成分数0。`ALL_REAL` iff 正規化集合が (-∞,+∞)。`DISCONNECTED` iff 非空の正規化成分が2個以上。`UNBOUNDED` iff 単一成分で無限端点を持ちALL_REALではない。その他の非空集合は`BOUNDED`。空集合を失敗と誤読したり、グリッドが狭すぎて観測された疑似EMPTYを数学的EMPTYと断定したりしない。
 5. `confidence_level` is a finite number strictly between 0 and 1. An `AR_CONFIDENCE_SET` must include a verified `inversion_evidence` ContentRef (confidence level, test statistic/critical value, grid/solver policy and diagnostic trace inside referenced artifact). Do not infer coverage from JSON validity.
 6. `contains(beta)` accepts finite beta only; compare endpoints and closed flags exactly; null/NaN/Infinity inputs are not meaningful membership queries.
 7. For `inference.availability = AVAILABLE`, require exactly one of `FINITE_INTERVAL` and `AR_CONFIDENCE_SET`, matching the Method's approved inference strategy. Other availability values force interval and confidence_set both null, reason non-null. `NOT_REQUESTED` may use a stable typed reason like `NOT_REQUESTED_BY_USER`; no success CI is implied.
@@ -49,19 +49,24 @@ Interval representation: `{"lower": endpoint, "upper": endpoint, "lower_closed":
 {"confidence_level":0.95,"topology":"DISCONNECTED","components":[{"lower":{"kind":"NEG_INFINITY"},"upper":{"kind":"FINITE","value":-1.25},"lower_closed":false,"upper_closed":true},{"lower":{"kind":"FINITE","value":1.75},"upper":{"kind":"POS_INFINITY"},"lower_closed":true,"upper_closed":false}],"inversion_evidence":{"identity":"ar-proof-2","relative_key":"diagnostics/ar-proof.json","sha256":"0000000000000000000000000000000000000000000000000000000000000000","media_type":"application/json","schema_version":null}}
 ~~~
 
+**Mathematically EMPTY AR set（Owner採用、説明用）:**
+~~~json
+{"confidence_level":0.95,"topology":"EMPTY","components":[],"inversion_evidence":{"identity":"ar-proof-empty","relative_key":"diagnostics/ar-proof-empty.json","sha256":"0000000000000000000000000000000000000000000000000000000000000000","media_type":"application/json","schema_version":null}}
+~~~
+
 **Unavailable inferential evidence:** `{"availability":"UNSUPPORTED","kind":null,"interval":null,"confidence_set":null,"reason":{"code":"INFERENCE_UNSUPPORTED"}}`. This must not silently become an invented finite interval or `science_acceptance=PASS`.
 
 ## 4. F07 acceptance tests to implement and run at authorized Gate
 
 | ID | Oracle / rejection |
 |---|---|
-| F07-01 | ALL_REAL, bounded, unbounded, two-ray disconnected strict JSON decode→encode→decode preserves mathematical set |
+| F07-01 | EMPTY, ALL_REAL, bounded, unbounded, two-ray disconnected strict JSON decode→encode→decode preserves mathematical set |
 | F07-02 | Interval sort/merge normalized; gap at both-open common endpoint remains disconnected |
 | F07-03 | Open/closed boundary membership; finite singleton; negative infinity only lower; positive infinity only upper |
-| F07-04 | NaN/Infinity literal, numeric strings, empty successful AR, inverted endpoints, incorrect topology reject |
+| F07-04 | NaN/Infinity literal、数値文字列、逆転端点、`EMPTY`に非空成分、非EMPTYに空成分、topology不整合をreject。EMPTY正常結果と計算`FAILED`を独立にroundtripする |
 | F07-05 | AVAILABLE requires kind/one payload/inversion ref; UNAVAILABLE/FAILED/UNSUPPORTED/NOT_REQUESTED force null evidence and typed reason |
 | F07-06 | CI null + science acceptance != PASS; valid point and missing CI do not imply science acceptance |
-| F07-07 | B0/B1 weak-IV AR inversion agrees with independent reference and method-specific coverage targets (separate Gate07; not passed by roundtrip) |
+| F07-07 | B0/B1 weak-IV AR inversionの独立Referenceと対象識別仮定・coverageを検証。該当just-identified Methodで数学的EMPTYが生成された場合、normal outputとして受け入れず科学的不整合として検出する（汎用CodecのEMPTYは有効） |
 | F07-08 | Legacy `causal-analysis-spec/2` / `CliManifest(2.0)` decoding and payload unchanged; E11 explicit dispatcher rejects old version |
 
 The machine-readable schema candidate under `23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json` checks shape only. Interval ordering, canonical union, method inference eligibility, numeric coverage and reference provenance are additional semantic validators; their absence blocks F07 Freeze.
@@ -71,3 +76,8 @@ The machine-readable schema candidate under `23_api_interface_design/schema_draf
 - Exact reason code registry, error-to-exit mapping, and the science result/Manifest schema composition need a unified F06/F07 review.
 - Distinguish AR **mathematical-set shape** proof from **statistical coverage** proof. No independent reference implementation or Monte Carlo run was executed.
 - Do not promote draft schema to a deployed API or publish it as final until coupled Port/DTO/Serializer contracts and independent review are complete.
+
+
+## 6. Owner Adoption supersedes original nonempty draft（2026-11-17）
+
+[DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md)で D-F07-EMPTY Aを採用。§2の改訂後規則が有効であり、古い「EMPTYはすべて計算失敗」という設計解釈は破棄した。汎用JSON SchemaとEffect schemaの双方は`EMPTY` + `components=[]`を許可し、非EMPTYでは非空を要求する。**Method別のjust-identified非空性、AR検定反転の科学的証拠、EMPTY時のmodel-misspecification判断は別途検証する。** Owner決定≠数値・Science Gate PASS。

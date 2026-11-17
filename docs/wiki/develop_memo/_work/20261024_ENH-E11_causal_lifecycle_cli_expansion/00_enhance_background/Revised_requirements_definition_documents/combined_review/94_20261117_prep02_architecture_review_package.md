@@ -96,3 +96,8 @@ This package is a review input, **not** an independent review artifact or Owner 
 - [F05 privacy contract](105_20261117_prep02_f05_trusted_root_privacy_contract.md)：EUID、ACL/mount、Policy authority、allowlist/row limitとFail closed。
 - [F06 version+codec+errors](106_20261117_prep02_f06_dispatch_codec_error_contract.md)：厳格なStudy/Graph/Result/Manifest/Status discriminatorとCommit Marker。6 machine-readable draft schemasが`23_api_interface_design/schema_drafts/`に存在し、Canonical JSON Bytes/Privacy Error exit/F07 EMPTY等は未Freeze。
 - **Reviewer request:** F03/F04/F05/F06/F07の上記指摘をResolution別に承認/差戻しし、独立のSource SHA署名付き判定を残す。OS/profiles/scientific proof無しでF03/F05/F07 Runtime PASSを宣言しない。
+
+
+## 9. Owner 4-choice closure and remaining Freeze blockers（2026-11-17）
+
+[DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md) confirms four A recommendations (generic AR EMPTY, independently attested policy, strict versioned JSON codec, privacy denial exit3). Prior recommendations in §8 are now approved choices, not undecided Owner items. Mechanisms remain open: AR Math/Science and B0/B1 invariant, Policy trust anchor, RFC8785 codec candidate+cross-runtime hashes, class signature/error/schema completeness, F03/F05 OS proof, and independent reviewer. **Architecture Freeze not declared.**

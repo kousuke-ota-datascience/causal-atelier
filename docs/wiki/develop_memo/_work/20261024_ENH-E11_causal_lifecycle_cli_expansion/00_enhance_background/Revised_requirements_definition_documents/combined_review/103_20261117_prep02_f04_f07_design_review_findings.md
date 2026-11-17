@@ -41,3 +41,8 @@
 - Architecture reviewer: F04-01/02/03, F06-01 and Protocol/DTO wire consistency.
 - Security reviewer: F03-01/F05-01 trusted root, no-replace, durability, race/ACL/namespace negative evidence.
 - All findings: capture immutable source SHA, approval/disposition, test/fixture SHA, no self-declared independent PASS.
+
+
+## 5. Owner decision on review findings（2026-11-17）
+
+[DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md) adopts A on D-F07-EMPTY, D-F05-POLICY, D-F06-CODEC, D-F06-ROW-EXIT. **REV-F07-01 design choice closed by Owner**; generic AR Schema+Effect Schema now encode EMPTY as a legitimate computed set. Other prior self-review findings remain historical evidence; F04/F05/F06 mechanical implementation, B0/B1 Method-specific science, and independent reviewer disposition are OPEN. No claim of independent PASS or runtime evidence.

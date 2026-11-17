@@ -25,7 +25,7 @@ The five version **values** are Owner-adopted. Property name `manifest_version` 
 - Study input fields `inputs.question/design/dataset` required; `graph/identification` conditional on Operation. E11 validates method, Estimand and provenance hashes separately from JSON syntax.
 - Default-free strict parser: YAML safe scalar/list/map, duplicate-key rejection, deep nesting/alias bounds, forbid arbitrary Python tags; canonical JSON strict no NaN/Infinity, keys and null types explicit. No implicit numeric-string coercion, no extra critical keys, unknown version fail-closed.
 - `src/ariadne/infrastructure/config/hashing.py::hash_mapping()` currently uses `json.dumps(default=str,sort_keys=True,...)`. That is a **CURRENT Product helper**, **not** a valid strict E11 canonical identity implementation: unknown objects become strings, which loses type distinctions. Adopt a distinct versioned E11 canonical codec only after cross-language/float/Unicode/hash fixtures define its exact bytes; no change to Product helper without regression.
-- Candidate hash identity: `sha256(canonical_json_utf8)` for a validated **logical** Study object and `sha256(actual_file_bytes)` for ContentRef raw artifacts. Canonical JSON version and string/float normalization are **unresolved**. Hash equality of file bytes is not a substitute for Design/Graph/Estimand identity.
+- **Owner採用D-F06-CODEC A**：E11は独立したstrict canonical encoderを使用する。設計方式は[RFC 8785 (JCS)](https://www.rfc-editor.org/rfc/rfc8785.html)の実装を推奨し、内部候補Codec IDは`e11-json-jcs-rfc8785/1`。これはOwner承認済みの**A方針を具体化した技術選定案**であり、選定方式そのものの独立Review/Freezeは未完了。Validated logical Studyのrequest hashは`SHA256(JCS_UTF8(typed Study JSON object))`、ContentRefは`SHA256(actual verified file bytes)`、Manifest markerは保存済みManifestの実bytes SHA256。元YAMLの空白やkey順はhashへ入れない。既存`hash_mapping(default=str)`は使用禁止。 Hash equality of file bytes is not a substitute for Design/Graph/Estimand identity.
 
 ## 3. Schema and Port boundary map
 
@@ -48,7 +48,7 @@ All files are **drafts**, and a structural JSON Schema check cannot prove runtim
 | `INPUT_NOT_FOUND`, `INPUT_HASH_MISMATCH`, `PATH_CONFINEMENT_FAILED`, `ROOT_NOT_PRIVATE`, `ROOT_OWNER_MISMATCH`, `MOUNT_UNTRUSTED` | INPUT_SECURITY | 3 | unsafe or unverified input/output root, no trusted source |
 | `CAPABILITY_UNAVAILABLE`, `BACKEND_API_MISMATCH`, `SCIENTIFIC_EXECUTION_FAILED` | BACKEND | 4 | optional module absent / API not supported / scientific computation technical exception |
 | `RUN_ID_CONFLICT`, `ATOMIC_PUBLISH_UNAVAILABLE`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `NOT_COMMITTED`, `STAGING_DURABILITY_FAILED`, `PUBLICATION_INDETERMINATE` | PUBLICATION | 5 | existing run not corrupted/overwritten; no false success |
-| `PRIVACY_POLICY_UNVERIFIED`, `ROW_EXPORT_NOT_AUTHORIZED`, `ROW_EXPORT_COLUMNS_DENIED`, `ROW_EXPORT_LIMIT_EXCEEDED` | SECURITY | **unresolved (2 vs 3)** | explicit denied requested row export never silently published |
+| `PRIVACY_POLICY_UNVERIFIED`, `ROW_EXPORT_NOT_AUTHORIZED`, `ROW_EXPORT_COLUMNS_DENIED`, `ROW_EXPORT_LIMIT_EXCEEDED` | SECURITY | **3 (Owner採用)** | Explicit row export denied; no silent aggregate success, no private bytes staged |
 
 Scientific results such as `NOT_IDENTIFIED`, `PARTIALLY_IDENTIFIED`, `REQUIRES_REVIEW`, `INFERENCE_UNSUPPORTED`, `INFERENCE_EMPTY` must **not** be mapped mechanically to error exits; if packaged as a complete scientifically negative result, technical exit 0 is possible. Distinguish negative science from a syntactically invalid request. F07 EMPTY classification is pending Science/Owner review.
 
@@ -60,4 +60,16 @@ Scientific results such as `NOT_IDENTIFIED`, `PARTIALLY_IDENTIFIED`, `REQUIRES_R
 - v2 `causal-analysis-spec/2`/old `CliManifest` on E11 path rejected, legacy v2 reader still handles existing input untouched.
 - Record actual serializer output bytes hash plus schema/codec version and run provenance, fixture sha and immutable Source SHA.
 
-**Open freeze blockers:** canonical codec bytes, exact typed full schema composition and module Port signatures, privacy error exit map/policy authority, F07 EMPTY science rule, F03/F05 real system proof, independent Architecture Review. No coding or original canonical promotion.
+**Open freeze blockers:** JCS reference implementation/Python parity・golden bytes/hash vectors, exact typed Method/Port schemas, preauthorized Policy trust anchor, Method-specific B0/B1 EMPTY science invariant, F03/F05 real system proof and independent Architecture Review。**Four Owner choice points are CLOSED**; implementation-level mechanisms remain OPEN. No coding or original canonical promotion.
+
+
+## 6. Codec候補の実装拘束とConformance（Owner A方針を具体化）
+
+- **推奨方式 RFC 8785 JCS:** I-JSON（duplicate property name禁止、IEEE754 double、有限number、正当Unicode）に変換可能な厳格型付きJSONを対象とする。型不明Python object、`default=str`、非有限number、余分なField、YAML arbitrary tags/merge aliasは拒否。
+- **Property順:** raw Unicode名をUTF-16 code unitのunsigned辞書順で**再帰的**に整列。Array順は変更しない。
+- **String:** Unicode code pointsを保持し、NFC/NFDの正規化を**実施しない**。制御文字・escapeはRFC8785に一致させ、lone surrogateは禁止。
+- **Number:** ECMAScript Number-to-string/JSON.stringifyに一致させる（`-0`は`0`、指数表記の閾値・小数の表記も規範に準拠）。IEEE754で正確に扱えない整数／高精度decimalは契約上のstring等の適切な型で表現しない限り拒否する。
+- **Output:** 余分なWhitespace/BOM/終端改行なしのUTF-8 bytes。`canonical_codec_version`をManifestに記録し、`e11-json-jcs-rfc8785/1`を暫定IDとする。SHA256はその**実bytes**に対して計算し、Filename/Source String表現を混同しない。
+- **Vector:** [JCS golden vector候補](107_20261117_prep02_jcs_codec_vectors.md)でkey order、array順、NFC/NFD非統合、-0/指数表記、control escape、JSON同型・異型negativeを示す。Python・ECMAScriptの独立実装の一致、Schema Decoderとruntime wire testは**未実施**。
+
+採用済みのCLI exit3は入力Hash/Root/Privacy/Policy拒否に適用する。Typed ErrorのHTTP互換性は範囲外。F07 EMPTYは有効な`AVAILABLE` AR集合であり、`INFERENCE_EMPTY`を理由に自動exit4や5にしない。対象MethodがEMPTYを科学的に禁じる場合はMethod-level validatorの負例として独立に扱う。

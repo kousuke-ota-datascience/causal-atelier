@@ -12,23 +12,23 @@
 |---|---|---|---|---|
 | F03 | Linux `renameat2(RENAME_NOREPLACE)` API, no fallback, staging + file/dirfsync, complete readback, EEXIST retry, post-rename indeterminate recovery | Tested FS/kernel/mount/errno mapping and trusted dirfd implementation absent | barrier concurrency, unsupported FS, injected crashes before/after rename/fsync, readback | DRAFTED / OPEN |
 | F04 | Product/Local independent Ports, 5 Product methods and 4 ArtifactStore methods mapped, typed Protocol candidates + staging-only sink, trusted root updated in DD | Concrete DTO constructors/return types, error types, regression test suite and independent reviewer pending | mypy/static Port integration, Product v2/legacy Regression, all 41 Method registry matching | REVIEWED_BY_AUTHOR / OPEN |
-| F05 | Threat model, UID/owner + ACL/mount/namespace checks, root capability, `S∧F∧P∧R∧C` row gate, private output | Source/authority of preauthorized Study policy; mount allowlist/ACL algorithm; deny-as-failure vs aggregate fallback | threat model security review, OS/mount/ACL negative tests, sentinel-row leak tests | DRAFTED / OPEN |
-| F06 | 5 Owner-adopted discriminators + marker; 6 machine schema drafts; strict input dispatch; old-v2 isolation; error→exit candidate | exact canonical JSON bytes/hash, incomplete nested method-specific DTOs, row denial exit 2 vs 3, formal JSON Schema validation | real Draft2020-12 validation with fixtures, decoder Error/Version negative, legacy v2 regression | STATIC_SUBSET_QA_PASS / OPEN |
-| F07 | tagged extended-real AR endpoints, 4-set topology draft, typed point/inference/science axes, schema embedded into Effect | **EMPTY** generic AR representation decision, Method-specific just-ID restriction, mathematical union semantics, independent numeric oracle | 4/5-topology decision, mathematical set property tests, independent weak-IV scientific tests, exact science acceptance policy | AUTHOR_FINDING_HIGH / OPEN |
+| F05 | Owner A: independently verifiable preauthorized Study Policy bound to study/scope; UID/ACL/mount/namespace, `S∧F∧P∧R∧C` | Concrete Policy trust anchor/approval/expiry/revocation, mount allowlist/ACL algorithm remain unverified | Security review; policy spoof/root/ACL negative tests; sentinel-row leak tests | OWNER_POLICY_ADOPTED / MECHANISM_OPEN |
+| F06 | Owner A: strict versioned Canonical JSON; suggested RFC8785 JCS implementation, exit3 for Privacy/Policy denial; five version IDs + marker | Exact JCS Python/ECMAScript conformance, full Method DTOs, formal Draft2020-12/legacy v2 negative tests remain | Golden UTF-8 bytes/hash vectors + independent codec; CLI exit3/legacy integration tests | OWNER_CHOICES_ADOPTED / MECHANISM_OPEN |
+| F07 | Owner A: generic 5-topology AR (including mathematically EMPTY), distinct from failure; common and embedded Effect schema updated | Method-specific B0/B1 just-ID nonempty invariant, mathematical union, inversion proof and independent reference tests outstanding | EMPTY/other sets property tests, B0/B1 negative and weak-IV science oracle | OWNER_EMPTY_ADOPTED / SCIENCE_VALIDATION_OPEN |
 | F12 | reviewer package with finding matrix and current source/draft links | No independent reviewer has assessed committed snapshot | independent written F03–F07 verdict against frozen SHA and documented corrections | NOT_RUN |
 
 ## 2. Proposed bounded Owner/Science decisions (not yet adopted)
 
 | ID | Choice to ratify | Recommendation | Existing policy impacted |
 |---|---|---|---|
-| D-F07-EMPTY | A: Generic AR `EMPTY` is a valid mathematically computed set, while specific B0/B1 just-identified execution can reject EMPTY by Method-specific invariant. B: retain blanket EMPTY-as-failure policy. | **A**. Prevents treating a mathematically meaningful empty set as failed computation. Requires Science Reviewer; adjust `topology`, `components.minItems`, F07 acceptance and null reasons together | F07 draft only; no Owner adoption of EMPTY semantics yet |
-| D-F05-POLICY | A: Verify separately bound preauthorized Study Policy artifact/authority; B: trust `row_export_authorized: true` in caller's Study YAML. | **A**, consistent with Owner's “preauthorized” AND requirement; finalize what constitutes authority on a single-UID host | DEC-PREP02-A unchanged |
-| D-F06-CODEC | A: fix a strict versioned canonical JSON encoding (fully specified float/string/Unicode/ordering) with cross-runtime fixtures; B: reuse Product `hash_mapping(default=str)`. | **A**; B violates strict typed wire and risks collisions. Exact algorithm and dependencies to be reviewed | DEC-PREP02-C unchanged |
-| D-F06-ROW-EXIT | A: privacy/authorization denial uses CLI exit 3 security class; B: classify as invalid config exit 2. | **A**, but only after consistent CLI error taxonomy and Owner signoff | New mechanical decision only |
+| D-F07-EMPTY | A: Generic mathematical `EMPTY` with `components=[]`; Method-specific B0/B1 just-ID invariant separately. | **OWNER ADOPTED A**, see [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md) | Mathematical/Science tests remain |
+| D-F05-POLICY | A: Separately bound preauthorized Study Policy authority, not a self-declared boolean. | **OWNER ADOPTED A** | Trust anchor/approval protocol/negative proof remain |
+| D-F06-CODEC | A: Independent strict versioned Canonical JSON, not Product default=str. | **OWNER ADOPTED A**; RFC8785 JCS candidate under review | Python/ECMAScript conformance and runtime fixtures remain |
+| D-F06-ROW-EXIT | A: Privacy/authorization denial exits with CLI 3. | **OWNER ADOPTED A** | CLI behavior and redaction integration tests remain |
 
 ## 3. Freeze/implementation sequencing
 
-1. Owner/Science ratify F07 EMPTY and F05 Policy authority; fix F06 codec/Error/Schema completeness and validated DTO signatures; publish a single frozen Port+Schema snapshot SHA.
+1. **Owner decisions ratified (4/4, DEC-PREP02-D)**. Specify F05 Policy trust anchor, prove chosen strict Codec implementation/bytes, complete Method-specific DTO and B0/B1 EMPTY invariants; after review publish one frozen Port+Schema SHA.
 2. Independent Architecture Reviewer assesses F03–F07 and F12 findings, exact Root/FS/Privacy threat model, scientific representability and old Product compatibility.
 3. Execute required runtime FS/OS/schema smoke and per-Gate science acceptance at the correct authorized Gate; no stage is deemed PASS from this matrix.
 4. PREP-01 remains open (class seven-section inventory and API runtime Contract checks). Full ENH-E11 scope is not reduced to initial Gate. Owner Coding Authorization is a separate explicit step.
@@ -41,3 +41,8 @@
 - [Static subset QA](108_20261117_prep02_schema_static_subset_qa.md)
 - [Prior F03/F05/F06 acceptance matrix](95_20261117_prep02_f03_f05_f06_acceptance_matrix.md)
 - [Owner decision](decisions/94_20261117_dec_prep02_owner_architecture_choices.md)
+
+
+## 5. Owner Decision Closure（2026-11-17）
+
+The four decisions in §2 are now **OWNER_ADOPTED A/A/A/A**; [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md). This closes **decision selection only**. Remaining blockers are technical/Scientific/Security review & Runtime proof. Generic AR `EMPTY` and B0/B1 scientific negative are distinguishable; Privacy denial CLI exit=3. Overall **NOT_FROZEN / CODING_NOT_AUTHORIZED**.
