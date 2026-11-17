@@ -2,16 +2,16 @@
 
 ## 1. Scopeと既存コードの境界
 
-Local CLI executionは既存Productの`causal-analysis-spec/2`、Web API/DB/Worker、`CliManifest(2.0)`の振る舞いを変更しない。入口とPublication実装はversionedな別Adapterを採用するが、CLIのみであることを根拠にDomainやScientific Coreを二重化しない。既存型との互換・拡張・再利用は30_61 §8の統合判断対象であり、未決定の独立`local_contract`を既成事実としない。ProductのArtifactStorePortはmulti-file immutable publicationの代替ではない。本書はClass/Constructor/Method、状態遷移、Port/Privacy/Publicationの永続的動作契約を定義する。
+Local CLI executionは既存Productの`causal-analysis-spec/2`、Web API/DB/Worker、`CliManifest(2.0)`の振る舞いを変更しない。入口とPublication実装はversionedな別Adapterを採用するが、CLIのみであることを根拠にDomainやScientific Coreを二重化しない。既存型との互換・拡張・再利用は30_61 §6の統合判断対象であり、未決定の独立`local_contract`を既成事実としない。ProductのArtifactStorePortはmulti-file immutable publicationの代替ではない。本書はClass/Constructor/Method、状態遷移、Port/Privacy/Publicationの永続的動作契約を定義する。
 
-## 2. `E11LocalCausalUseCase`
+## 2. `LocalCausalUseCase`
 
 ### 2.1. 識別情報・責務
 
-- **Class:** `causal.local_application.use_case.E11LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
+- **Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
 - **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
 - **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
-- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §3〜7。
+- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1〜5、30_60 §11〜12、30_62 §8。
 
 ### 2.2. フィールド
 
@@ -32,7 +32,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 
 ### 2.3. Constructor / Factory
 
-配置：`causal.local_application.use_case.E11LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
+配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
 注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
 - **Constructor signature:** `__init__(self, *, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
@@ -94,14 +94,14 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.1. 識別情報・責務
 
-- **Class:** `causal.local_application.capability_registry.MethodCapabilityRegistry`。Product ScientificCoreAdapterとは別契約である。
+- **Class:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Product ScientificCoreAdapterとは別契約である。
 - **責務:** 41 Method IDごとのOperation/Estimand/Eligibility/Inference/Backend/Profileをstrictに選択し、Version/API capabilityを検証し、Adapter importを遅延させる。外部Libraryの既定推論を黙認しない。
 - **責務外:** Estimator計算、Local FS publication、Customer Delivery LegalのPASS。
 - **関連契約:** 30_63 Method41 allocation、23_41 §6〜7。
 
 ### 3.2. フィールド
 
-配置：`causal.local_application.capability_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
+配置：`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。Method IDごとにOperation、Estimand Family、Design/Eligibility、Backend ID、推論方式、Profile/Extra、Adapter Factoryを宣言。外部libraryはresolution後にlazy import。Methodが同じでも対象Estimand・inference configが異なれば別個の互換性判断を要する。
 
 | Field | Type | 生成元 | 可変性／制約 |
 | --- | --- | --- | --- |
@@ -161,7 +161,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.1. 識別情報・責務
 
-- **Module / Class:** `interfaces.cli.e11.publication.LocalArtifactPublisher`
+- **Module / Class:** `interfaces.cli.local_causal.publication.LocalArtifactPublisher`
 - **責務:** 同一local filesystem上の複数Artifactをrun単位で検証・原子的に公開し、readback成功を確認する。新E11のLocal authorityでありProductの`ArtifactStorePort`ではない。
 - **責務外:** Scientific Estimator、HTTP/DB、顧客配布Legal、外部FSのcross-device atomicity。
 - **関連設計:** 23_42 §2/6/7。Product ArtifactStorePortは別のauthorityである。
@@ -207,7 +207,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.6. I/O・連携・失敗処理
 
-- **Caller:** E11LocalCausalUseCase。`StagingArtifactSink`はScientific Adapterにのみ渡し、final `runs` pathを渡さない。
+- **Caller:** LocalCausalUseCase。`StagingArtifactSink`はScientific Adapterにのみ渡し、final `runs` pathを渡さない。
 - **Artifact schema:** 23_42のResult、Graph、Parquet、Manifest、commit marker。それぞれrelative POSIX key＋media_type＋size＋SHA256＋Privacy class。
 - **Transaction:** local same-FS staging → validate → no-clobber directory publication → durable parent sync → readback。DB UoWやProduct ArtifactStoreのtransactionとは無関係。
 - **Failure classes（意味）:** Invalid path、Permission、HASH_MISMATCH、SCHEMA_INVALID、RUN_ID_CONFLICT、NON_ATOMIC_FILESYSTEM、PUBLICATION_FAILED、READBACK_FAILED。
@@ -237,7 +237,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 #### 5.1.1. 識別情報・責務
 
-- **Class/Module:** `interfaces.cli.e11.manifest.LocalRunManifest`、immutable typed DTO。
+- **Class/Module:** `interfaces.cli.local_causal.manifest.LocalRunManifest`、immutable typed DTO。
 - **責務:** 1 Local runのidentity、lineage、Method/Science/Runtime、artifact inventoryをversioned schemaで保持し、canonical bytesのauthorityを定義する。
 - **責務外:** file open、hash verificationのI/O、実効科学計算、Local OS permission enforcement。
 - **参照:** IF `23_42` §6、`23_41` §5。Existing Product CliManifestとは別schema。
@@ -291,7 +291,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 #### 5.2.1. 識別情報・責務
 
-- **Class/Module:** `interfaces.cli.e11.manifest_reader.LocalManifestReader`。
+- **Class/Module:** `interfaces.cli.local_causal.manifest_reader.LocalManifestReader`。
 - **責務:** already-published runをMarker→Manifest→Artifactの順に検証し、`VerifiedLocalRun`を返す。存在だけでCOMMITTEDと判断しない。
 - **責務外:** publish、legacy v2の無断E11解釈、科学的Oracle計算、実Artifactの編集。
 - **参照:** IF `23_42` §6〜8。
@@ -343,7 +343,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 6.1. 識別情報・責務
 
-- **Class/Module:** `interfaces.cli.e11.privacy.LocalPrivacyPolicy`。
+- **Class/Module:** `interfaces.cli.local_causal.privacy.LocalPrivacyPolicy`。
 - **責務:** row-level exportのrelease条件をANDで評価し、aggregated defaultと最小限の出力対象を固定する。Product RBACをLocal OSへ擬似的に持ち込まない。
 - **責務外:** 研究対象者の同意獲得、Product ProjectMembership、Backend numerical inference、Customer Legal approval。
 
@@ -395,6 +395,47 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ## 7. CLI entrypoint / Error bridge
 
-`interfaces.cli.e11.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path/**privacy/authorization denial**、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
+`interfaces.cli.local_causal.command.main(argv: list[str]|None) -> int`。IFに従い0=technical complete（負のScience含む）、2=config、3=input/hash/path/**privacy/authorization denial**、4=backend/technical、5=publish。`--check-only`はArtifact無し、Static PreflightでありScience PASSではない。stderrには個票や秘匿入力を含めない。旧`ariadne-estimate`等の既存entrypoint・v2 override挙動は維持する。
 
 Error envelopeはreason `code`と発生`phase`を区別する。入力Schema=exit2、入力path/hash/認可=exit3、Backend/Capability=exit4、出版/readback=exit5。科学的negativeは完全に検証されたBundleのときのみexit0となり得る。
+
+
+## 8. `BackendCapabilityRecord` — Runtime Capability Evidence（PROPOSED）
+
+
+### 8.1. 識別情報・責務
+
+**Class / module:** `ariadne.scientific.capabilities.BackendCapabilityRecord`（Runtime能力値としてScientific層が所有）。実効Backend適格性の証拠を保持し、silent fallbackを禁止する。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
+
+### 8.2. フィールド
+
+| Field | 制約 |
+|---|---|
+| `method_id, backend_id` | 明示指定した組 |
+| `distribution_version, adapter_version, api_signature_hash` | 観測された実効版とAPI |
+| `extra, profile` | effective environment/profile |
+| `available, reason` | boolと欠落時のtyped reason |
+
+### 8.3. Constructor / Factory
+
+Constructorは観測証拠から作成。未実測値を使用可能とするdefault/fallback禁止。
+
+### 8.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `check(self, request: ValidatedCapabilityRequest)` | typed compatibility decision | version/Method/API/Inference照合 | unsupported/unavailable typed reason |
+
+### 8.5. 処理仕様
+
+静的Registryと実効Probeから指定Methodと推論方式の可用性を検証。Probeの取得はConcrete Registry/Runtime Port側で行い、Value自身がoptional Backendをimportしない。`load_adapter`時だけBackend import可能。
+
+### 8.6. I/O・連携・失敗処理
+
+RecordはI/Oなし。Runtime probe、distribution inspection、optional importは30_62のCapability Registryと30_63のAdapter実装の責務。
+
+### 8.7. 検証
+
+`DD-E11-EFF03` version/API mismatch、`DD-E11-CAP01〜06` profile isolation/inference availability、no silent fallback。
+
+**能力の単一Authority：** `ariadne.scientific.capabilities.BackendCapabilityRecord`が実効Distribution/API/probeを表現し、`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`がMethod×Estimand×Inferenceの唯一のRegistryになる。Productの既存`ESTIMATOR_CAPABILITIES`を独立した二重Rules表にしない。

@@ -56,7 +56,7 @@
 
 #### 9.1.1. 識別情報・責務
 
-**Protocol / planned concrete module:** `causal.local_contract.ports.LocalConfigDecoder`と`interfaces.cli.e11.config_decoder`。raw YAML/JSONからstrict Validation済みのStudyを生成。Application内で再parseしない。**PROPOSED（未実装）。**
+**Protocol / planned concrete module:** `ariadne.interfaces.cli.local_causal.decoder.LocalConfigDecoder`と`ariadne.interfaces.cli.local_causal.config_decoder`。raw YAML/JSONからstrict Validation済みのStudyを生成。Application内で再parseしない。**PROPOSED（未実装）。**
 
 #### 9.1.2. フィールド
 
@@ -92,7 +92,7 @@ Raw bytesからのparse以外のI/Oはない。外部Ref実bytes確認は`Conten
 
 #### 10.1.1. 識別情報・責務
 
-**Protocol / planned module:** `causal.local_contract.ports.ContentReferencePort`。trusted root内のRefを実際に検証・読み出すI/O interface。`ContentRef`そのものを信頼済みbytes扱いしない。**PROPOSED（未実装）。**
+**Protocol / planned module:** `ariadne.interfaces.cli.local_causal.content_io.ContentReferencePort`。trusted root内のRefを実際に検証・読み出すI/O interface。`ContentRef`そのものを信頼済みbytes扱いしない。**PROPOSED（未実装）。**
 
 #### 10.1.2. フィールド
 
@@ -122,3 +122,84 @@ File読み取りあり、書き込みはしない。Root外read・未知mount・
 
 
 これらは科学的Domain Modelではなく、入力とtrusted file I/OのInterface境界。CLIを理由にGraph・Estimand・Inferenceの別Domainを作らない。
+
+
+## 11. `ContentRef` — Portable content reference value（PROPOSED）
+
+
+### 11.1. 識別情報・責務
+
+**Class / module:** `ariadne.shared.content_ref.ContentRef`。immutable value object。Dataset・Question・Design・Graph・Identification等の内容参照を識別し、物理bytesの検証結果を**保持しない**。外部絶対pathやaccess tokenを保存しない。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
+
+### 11.2. フィールド
+
+| Field | Python型 | 必須/default | 制約 |
+|---|---|---|---|
+| `identity` | `str` | 必須 | 非空の論理identity |
+| `relative_key` | `str` | 必須 | safe relative POSIX key。絶対・dotdot・NUL・drive等を拒否 |
+| `sha256` | `str` | 必須 | 完成ファイル実bytesのSHA256小文字hex64 |
+| `media_type` | `str` | 必須 | Schema/Readerとの整合必須 |
+| `schema_version` | `str|None` | 必須／nullable | unknown versionを無条件に推測しない |
+
+### 11.3. Constructor / Factory
+
+`from_payload(payload: Mapping[str, JsonValue]) -> ContentRef`（設計上のFactory）。strict key／型／hash文字種／relative pathを検査。invalid payloadは型付きvalidation error。mutableな入力Mappingを保持しない。
+
+### 11.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `from_payload(payload: Mapping[str, JsonValue])` | `ContentRef` | strict parse; I/Oなし | Schema／relative-key／digest validation error |
+
+### 11.5. 処理仕様
+
+Pathの文法検査は実filesystem参照の安全性証明ではない。dotdot、absolute path、drive letter、NUL、backslash区切り混在、不正Unicode正規化を拒否し、HashはコンテンツIDと別に保持。
+
+### 11.6. I/O・連携・失敗処理
+
+I/Oなし。Root閉じ込めとTOCTOUの防止、same-fd bytes hashは`ContentReferencePort.verify`の実装責務。Transaction/Retry/Rollbackは該当しない（immutable value）。
+
+### 11.7. 検証
+
+`DD-E11-REF01`有効Ref、`REF02` traversal/symlink/race、`REF03` input差替え/TOCTOU、`REF04` metadata-only同ID別bytes拒否。FR-185、NFR-029/031。
+
+
+## 12. `LocalStudySpec` — CLI execution request envelope（PROPOSED）
+
+
+### 12.1. 識別情報・責務
+
+**Class / module:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`。Operation、Method、Estimand、Input refs、Inference、Privacy要求を保持するimmutable CLI execution envelope DTO。Parse/FS I/O/Backend呼出しは責務外。科学的DesignとEstimandは既存CausalDesign/共通validatorを再利用する。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
+
+### 12.2. フィールド
+
+| Field | Type | 制約 |
+|---|---|---|
+| `schema_version` | `Literal["e11-local-study/1"]` | 既存v2へのfallback禁止 |
+| `run_id, operation, analysis_mode` | `str, LocalOperation, AnalysisMode` | safe run ID・enum |
+| `question, design, dataset` | `ContentRef` | Operationごとの必須性をvalidate |
+| `graph, identification` | `ContentRef|None` | DISCOVERで未生成参照を要求しない |
+| `estimand, method, inference` | `EstimandRef, MethodRequest, InferenceRequest` | Operation×Method×Target整合 |
+| `randomness, privacy` | `RandomnessSpec, LocalPrivacySpec` | seedおよび行出力要求を明示 |
+
+### 12.3. Constructor / Factory
+
+ValidatedStudy生成はStrict Decoder/Validatorを経由する。直接constructorまたはfactoryで型・必須フィールド・Operationの整合を検査する必要があり、単なるdataclass生成を`ValidatedStudy`の証明としない。
+
+### 12.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `validate_local_invariants(self)` | `tuple[Reason,...]` | pure Operation/Method/Target/Privacy検査 | 実行不適格理由を列挙 |
+
+### 12.5. 処理仕様
+
+`DISCOVER`は探索Target `{family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`をタグ付き非Effect値として扱い、ATE/ATTを偽造しない。`ESTIMATE`等のEffect Operationには効果Estimandと適格なIdentification参照が必要。
+
+### 12.6. I/O・連携・失敗処理
+
+I/Oなし。Studyの意味射影をcanonical encodingしたbytesからrequest hashを作り、Codec versionをManifestで追跡する。Hashは物理File参照とは区別。
+
+### 12.7. 検証
+
+`DD-E11-SPEC01` strict valid/schema、`SPEC02` legacy dispatch、`SPEC03` confirmatory/inference、`SPEC04` Method/Estimand mismatch。FR-185/201、AR-034、NFR-029/036。
