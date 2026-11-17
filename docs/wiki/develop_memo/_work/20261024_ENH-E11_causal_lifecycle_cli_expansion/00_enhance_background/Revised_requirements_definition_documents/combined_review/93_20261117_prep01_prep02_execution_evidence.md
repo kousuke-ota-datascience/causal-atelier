@@ -152,3 +152,12 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 - 共通記述ルールは`23_01`§11に明示。既存のDomain規範を第6章に保持し、旧文書blob SHAで変更前を追跡可能にした。
 
 **未完了:** dynamic Service Responseの残余、Domain/Service別のError到達条件、GET/PATCH/POST実リクエストとOpenAPI一致性、Contract Test、外部Gatewayを含む認可検証。構造整合=完了/Runtime PASSではない。`PREP01_IN_PROGRESS / PREP02_IN_PROGRESS / CODING_NOT_AUTHORIZED`。元のrequirement_definition正本は未変更。
+
+
+## 13. API Response Service-trace closeout and consistency QA（2026-11-17）
+
+2026-11-17の前段で一時的に`response_model`未宣言を理由に23 API OperationのResponse Shapeを未確定としたが、Service/Router Sourceを再追跡してFieldセットを補完した（Commit `2e9668087261f64b0e1745322c472da5705bfa26`）。対象: 23_13=3、23_15=9、23_17=5、23_18=5、23_19=1。`WorkspaceLifecycleService`のContext/Specification Responseは別Commit `ac46717871ec1da86373d24f1e9039073d5f4992`で補完済み。Predictive ExecutionはCanonical/FamilyでConditional Fieldがあり、合同のUnionを単一の全Field必須Schemaとは解釈しない。
+
+**Automated structural recheck:** 23_10〜19の全10文書に章1〜7が順序どおり1回ずつ存在。合計101 distinct HTTP Method+Path、重複0。各EndpointのRequest/Response/Errors見出し数は101/101/101。旧`Service output（response_model未宣言）`等の定型未確定Placeholderは0。相対リンクの存在検査では対象10文書にファイルリンクなし。**Static structure PASS**であり、Runtime API/Contract/Security Test PASSではない。
+
+**Remaining evidence and limitations:** Effective OpenAPI/Service return variants（特にcanonical/Family）, operation-specific domain error reachability and exact null/error invariants, binary response security header/bytes verification, JSON examples validity against live scientific-family schemas, static-doc-to-live-OpenAPI diff, full HTTP integration and negative tests. Owner-approved scope remains Request/Response/Errors and document consistency; Product Web API implementation, local CLI src, pyproject, uv.lock, and original canonical requirement docs not changed. PREP01/02 still IN_PROGRESS; CODING_NOT_AUTHORIZED.
