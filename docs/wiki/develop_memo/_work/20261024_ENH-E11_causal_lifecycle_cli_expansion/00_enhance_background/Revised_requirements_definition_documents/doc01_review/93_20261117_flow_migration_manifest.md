@@ -33,3 +33,12 @@
 - Historical Audit paragraphs quoting old relative path literals are intentionally preserved as historical identifiers; **Markdown targets are rebased**, literal inline code is not treated as a live link.
 - Full-repo link/Anchor scanning and semantic integrity 122 clauses are pending. This migration is a **structural improvement**, not PREP-01 DONE or independent verification PASS.
 - The Owner-approved canonical promotion criterion remains: **no original canonical update until every ENH-E11 related test PASS**.
+
+
+## Post-migration readback & scope-limited link QA（2026-11-17）
+
+- **Physical tree:** commit `cd4e73856b89bee2be2db4e5c5a50976f431bd91` でRoot旧8件と5群Change Log旧5件を削除。新13件すべて実在、旧13件はtreeから消滅。5群のMarkdown件数は **22/17/18/21/27 = 105**。この数字は「Stockの内容品質PASS数」を意味しない。
+- **Additional repair:** `5955ff7eede5c527c3f4f56c3d02933351cb8faa` にて、RD-04移管記録/BD source snapshotsに残っていた旧階層参照19箇所を修正。
+- **Internal file existence check:** 新Flow13件のrelative Markdown links 68、RD04移管台帳/BD snapshots等12件の245、5文書群のStock105件の39、Root READMEの164を走査した。合計**516 link occurrences**のうち、改訂Working Copy**内部に解決する参照のbroken=0**。残る**11 link occurrences**は改訂Root外であり、参照する4つのdistinct targets（DEC09 working_note、SR04 trace working_note、enhancement concept、元canonical requirement）を`fetch_file`で存在確認した。件数は複数文書から同一targetを参照する重複を含む。
+- **Limits:** 本検査はMarkdownの`[label](relative-path)`形式の**file target existence**を中心とする。Fragment`#anchor`、HTML/画像/参照形式link、CodeSpan文字列、GitHub上の他Enhancement・Notion外部backlinks、semantic accuracyを網羅しない。Github PagesレンダラのslugやCase Sensitivity差は別検証。**Full repo link QA PASSやPREP-01 DONEは宣言しない。**
+- **Review:** [Independent Architecture review package](../combined_review/94_20261117_prep02_architecture_review_package.md)は**提出用Draft**、独立Reviewerの判定やOwnerの新たなFreezeではない。

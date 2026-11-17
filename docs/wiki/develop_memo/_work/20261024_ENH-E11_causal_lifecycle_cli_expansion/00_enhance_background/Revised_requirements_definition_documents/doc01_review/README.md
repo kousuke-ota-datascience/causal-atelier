@@ -89,4 +89,4 @@ Rootの90〜98監査・Owner決定8件と、10/21/22/23/30各`*_99_change_log.md
 - [Owner決定：Canonical Promotion Policy](../combined_review/decisions/93_enh_e11_canonical_promotion_policy.md)
 - [歴史的Change Logs](history/10_99_change_log.md) / [21](history/21_99_change_log.md) / [22](history/22_99_change_log.md) / [23](history/23_99_change_log.md) / [30](history/30_99_change_log.md)
 
-履歴の原BlobはGit historyに保存される。旧Rootや各5群の旧Pathは移管の完了確認後に除去する。移管は**Owner承認の有無、Science PASS、元canonical昇格の条件を変更しない**。
+履歴の原BlobはGit historyに保存される。旧Rootおよび5群の旧PathはGit `cd4e738`で除去済み。[移管の元Blob・修正参照・QA](93_20261117_flow_migration_manifest.md)で追跡する。移管は**Owner承認の有無、Science PASS、元canonical昇格の条件を変更しない**。

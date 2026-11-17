@@ -130,7 +130,7 @@
 - [30_63_e11_method_adapters.md](30_detailed_design/30_63_e11_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
 
-**構造監査上の注記:** 上記105件は移管後の5群番号付きファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。移管・Backlink/Anchor整合が完了するまで元Pathを維持し、[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で追跡する。
+**構造監査上の注記:** 上記105件は移管後の5群番号付きファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。Root8件とChange Log5件は[移管台帳](doc01_review/93_20261117_flow_migration_manifest.md)に基づきFlowへ物理移管済み。Markdownファイルリンクは対象範囲で検査済みだが、全Anchor／非Markdown／Repo外のリンク監査は未完。[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で残件を追跡する。
 
 ## 2. RD-03 formal requirement publication
 
@@ -221,11 +221,11 @@ DOC-01 Owner承認／IF-01・DD-01設計案採用の後、[横断監査](combine
 - 30_62のE11 Local UseCase/MethodRegistry/Publisher/Manifest/Reader/Privacyについて、Owner指定7区分のPhysical Design記述へ部分修正。30_20のExisting PlanValidator/StageRunnerRegistry、30_21のExisting ExecutionOutcome/GenericExecutor、30_10のProduct GraphVersionをSourceと照合した7区分へ更新。**30系全Classの7区分完了ではない。**
 - 23_42と22_15にはAtomic Manifest Publish、no-clobber、version/Schema/Port/PrivacyのFreeze確認事項を追加。実FS/Backend/Science/Independent Architecture Reviewは未実施。
 - 既存WorkflowのGate用語を一意化するため、Stockの旧「Gate06/07」の全体段階としての表現を局所修正した。過去のOwner採択のScientfic/Architecture要件は維持。
-- Root Flow8件、5 Change Log、23/30の全ての番号・Anchor/Link、改訂122条文とMethod41全セル、Backend5環境の実効証拠は引き続き未完。[本ページの進捗authorityはNotion](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)。
+- Root Flow8件・5 Change LogのFlow移管は完了。残る23/30の全番号・Anchor、全API/Class、改訂122条文とMethod41全セル、Backend5環境の実効証拠は未完。[本ページの進捗authorityはNotion](https://app.notion.com/p/41ae5855be39805388acef85a77b2279)。
 
 ## 12. 別保管する歴史記録・変更ログ（Flow）
 
-Rootに残した監査・Owner判断の実体は移管対象。移管中は旧Pathが一時的に残り得る。次のリンクが移管後の正規参照先である（全対象テストPASS前の元正本昇格は行わない）。
+Rootの監査・Owner判断8件と変更ログ5件は、2026-11-17の移管で以下のFlow領域へ配置し、旧Pathを削除した（Git `cd4e738`）。参照の静的検査は[移管台帳](doc01_review/93_20261117_flow_migration_manifest.md)に記録する。元canonicalへの昇格はENH-E11の全対象テストPASS後のみ。
 
 - [90_structural_split_verification.md](doc01_review/structural_migration/90_structural_split_verification.md)
 - [92_rd02_restructure_verification.md](doc01_review/rd02_migration/92_rd02_restructure_verification.md)

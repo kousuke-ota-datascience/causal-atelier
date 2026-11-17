@@ -115,3 +115,14 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 **未実施のExit blocker（継続）:** Root 8 Flowと5 Change Logの安全な移管・Backlinks全数修復、23/30の残る見出し・Class/Protocol/DTO全数、23 API 101 OperationのService/DTO/Error/Auth/Idempotency contract実効Coverage、122既存条文意味照合、Method41科学ACの全セル、5 ProfileのFresh実行、BD01-F03〜09/F12の独立審査・Schema/Port Freeze。**PREP-01/02は双方IN_PROGRESSであってDONEではない。**
 
 **補足:** Product Project/ResearchContextのSource gapはE11新Local CLIの実装障害であると即断しない。DEC09のE11 CLI-only／Product別Backlog境界に従い、依存するGateに関係する場合だけCoding blockerかを判断する。
+
+
+## 9. PREP-01/02 latest follow-up and authority distinction
+
+**Migration:** Root Flow8＋ChangeLog5件はGit `cd4e738` で物理移管済み（元Blob SHAは[DOC01台帳](../doc01_review/93_20261117_flow_migration_manifest.md)）。README／Stock105件／移管Flow13件／歴史的移管/Source Snapshot12件におけるrelative Markdown file link計516件を確認し、**改訂Root内broken 0**。この完了事項は初期の§3/§8「移管未完」という当時の状態記録を更新するものであり、別件のSchema/Anchor/Code/Science PASSを意味しない。
+
+**Class design:** Existing Product8件＋Proposed Local6件＝**14 Class**のOwner 7区分を記述済み（[DD01 class delta](../dd01_review/92_class_contract_conformance.md)）。残る`30_61` Domain DTO/Port と`30_63` Method-specific adapter Classesは未完成。
+
+**Architecture review readiness:** [PREP-02 reviewer package](94_20261117_prep02_architecture_review_package.md)にBD01-F03〜F13の11 OPENを共通設計／Method Gate／Product別／Deliveryへ仮分類し、Owner判断が必要なLocal row privacy/no-clobber/Schema Versionの案を明示。**Owner未承認、Independent Reviewer NOT_RUN、Port/Schema未Freeze。**
+
+**Overall:** `PREP01_IN_PROGRESS / PREP02_IN_PROGRESS / CODING_NOT_AUTHORIZED`。全122既存改訂条文の独立意味監査、101 API Operationの9欄、残Class、Method41の科学ACと5 ENV実効Probeは引き続き未完。
