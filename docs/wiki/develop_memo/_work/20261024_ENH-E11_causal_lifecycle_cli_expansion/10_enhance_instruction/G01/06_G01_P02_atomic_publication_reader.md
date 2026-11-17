@@ -136,21 +136,16 @@ Never return private row bytes without independent authorization; default G01 is
 
 P02 never claims scientific accuracy from a well-formed Graph file. P01 owns canonical bytes/DTO; P03 owns Graph semantics; P04 scientific Oracle; P05 integrates UseCase and actual Privacy eligibility. Preserve Product `ArtifactStorePort` and legacy `CliManifest(2.0)` contracts.
 
-## 7. Focused verification — real Linux and fault injection
+## 7. Focused verification — WHAT and primary layer; real Linux mandatory
 
-| DD / 07 | Focused file | Required evidence |
+| DD / Gate item | Primary layer | Observable positive and negative evidence |
 | --- | --- | --- |
-| REF01–04, PRIV03/04/06; 07-02 | `component/test_g01_bundle_reader.py` plus `integration/test_g01_atomic_publication.py` | actual FD bytes, symlink/hardlink/race/owner/ACL/mount negatives, no root escape |
-| PUB01–04; 07-05 | `integration/test_g01_atomic_publication.py` | ENOSPC, marker before/after, crash/kill around rename/fsync; zero false COMMITTED |
-| PUB05–09; 07-05 | same integration file | two-process same/different request hash, syscall unsupported, no-clobber 0 overwrite, real dir fsync/readback |
-| READ01–07, MAN03–06; 07-06 | `component/test_g01_bundle_reader.py` | marker->manifest->artifact cross-ref, corrupt bytes/size/version, privacy denial; only verified result |
+| REF01–04, PRIV03/04/06; 07-02 | contract + real Linux integration | same-FD actual bytes, directory symlink/hardlink/race, owner/ACL/mount negatives, zero root escape |
+| PUB01–04; 07-05 | real Linux integration | ENOSPC, marker-before/after, SIGKILL around rename/fsync; false COMMITTED count 0 |
+| PUB05–09; 07-05 | real Linux integration | competing writers, same/different request hash, unsupported syscall and actual no-clobber + durable directory fsync |
+| READ01–07, MAN03–06; 07-06 | contract + real Linux integration | Marker→Manifest→Artifact hash/size/lineage/privacy/version; only valid complete bundle yields VerifiedLocalRun |
 
-~~~bash
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/component/test_g01_bundle_reader.py -q
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/integration/test_g01_atomic_publication.py -q
-~~~
-
-Tests must assert real syscall path on supported Linux private temp FS, not just monkeypatched methods; environment/FS unavailable -> BLOCKED, never "atomic PASS" from an in-memory mock. Fault injection must not touch real user/Project output. Evidence per DD ID: source/fixture/env SHA, actual syscall/exit and expected result. P02 COMPLETE needs verified no-clobber, fully checked Reader and negative failure cases; Gate-wide real scientific validity is P04/07, not a P02 assertion.
+**Required Package check:** Discover/create focused tests from current checkout through 40 Operator execution policy, initially G01 enhancement lifecycle. Test filename or command is not P02 acceptance authority. Fault injection must use a supported isolated local filesystem and observe real syscall behavior; a mock can check branch logic but cannot establish production atomicity. Absent mandatory FS/environment evidence => BLOCKED (not mock-only PASS). Record each DD ID's failure point, real syscall/exit, source/fixture/env SHA and independent readback. Existing Product ArtifactStore/v2 suite is protected, not moved here.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -171,7 +166,7 @@ Package completion時:
 - [ ] `LocalPublicationPort.begin/seal/publish` wraps exactly one run-scoped `LocalArtifactPublisher`; method signatures, field/state transitions, ownership, abort-before-rename restriction implemented.
 - [ ] Real local Linux `renameat2(RENAME_NOREPLACE)`, staged and parent fsync, marker/Manifest inventory/hash rules, concurrency and post-rename indeterminate behavior verified on supported private FS; overwrite and false COMMITTED counts zero.
 - [ ] Stateless `LocalManifestReader.read_run` and public `verify` reject corrupt marker/manifest/artifacts, unsafe root and legacy v2; only independent complete readback yields `VerifiedLocalRun`.
-- [ ] Tests in `component/test_g01_bundle_reader.py` and `integration/test_g01_atomic_publication.py` executed for P02 DD IDs; unsupported/unavailable required FS evidence -> PACKAGE_BLOCKED rather than mock-only PASS.
+- [ ] Focused contract + real Linux integration cases executed for all P02 DD IDs; unsupported/unavailable required FS evidence -> PACKAGE_BLOCKED rather than mock-only PASS.
 - [ ] No Product `ArtifactStorePort`/old CLI behavioral changes. Full SHA, fixture/env/real syscall results, report, and checkpoint recorded. No FCI/PAG scientific PASS claimed.
 
 ## 11. External reference policy

@@ -160,21 +160,16 @@ For `--json` stdout emit exactly one syntactically valid sanitized JSON control 
 
 Errors have typed `phase` and stable reason codes, no unbounded path/row values. Use `PreflightReport` for check-only, `LocalRunOutcome` for run result. On retry verify same request hash and existing run fully via P02; do not regenerate scientific truth or presume exactly-once execution. Package success is not G01_999 PASS.
 
-## 7. Focused verification — CLI, Privacy and regression
+## 7. Focused verification — integration, Privacy and protected legacy behavior
 
-| DD / 07 | Test target | Assertions |
+| DD / Gate item | Primary layer | Positive and negative assertions |
 | --- | --- | --- |
-| RUN01/03/04/07, MAN04, DISC01–03; 07-07 | `integration/test_g01_cli.py` | valid DISCOVER Graph/negative separate, Graph vs Diagnostics inventory, no Effect, target/version/Status axes |
-| PRIV01–06; 07-11 | same, `component/test_g01_bundle_reader.py` | --check-only zero Fit/zero staging/zero publish, Study row or CLI row intent exit3; unsafe Root/Principal, zero row/log leakage |
-| RUN06, PUB10, MAN06, READ06; 07-12 | `tests/product/test_cli_contract.py` and old discovery/identify/estimate/refute/sensitivity checks | legacy v2 unchanged and old CLI results byte/semantic-compatible |
-| PUB07/READ03; 07-11 | CLI + real-P02 integration | exception exit4/5 phase separation, post-rename indeterminate no false COMMITTED |
+| RUN01/03/04/07, MAN04, DISC01–03; 07-07 | contract + integration | DISCOVER Graph-positive/typed negative inventory, no Effect, typed Status/target/version |
+| PRIV01–06; 07-11 | contract + integration | check-only fit/staging/publish all zero, either row intent rejected, unsafe root denied, stdout/staging no leaks |
+| RUN06, PUB10, MAN06, READ06; 07-12 | actual existing Product v2 contract/integration suite + G01 enhancement checks | v2 CLI/result/manifest behavior unchanged and semantic/bytes compatibility |
+| PUB07/READ03; 07-11 | real publication + CLI integration | exit4 vs exit5, no false COMMITTED after indeterminate/failed readback |
 
-~~~bash
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/integration/test_g01_cli.py -q
-uv run --no-sync python -m pytest tests/product/test_cli_contract.py -q
-~~~
-
-Use actual P01/P02/P03/P04 Package checkpoints; mocked Backend/Publisher tests are supplementary, not evidence of real Linux atomicity or independent Graph science. P05 COMPLETE requires end-to-end integration tests, a full v2 regression run, exact source/fixture/lock SHA and DD-ID-specific actual results. Gate-wide 07/999 remains independently executed on a fixed candidate SHA.
+**Required Package check:** Actual code test paths/pytest commands are resolved by 40 from candidate checkout; newly implemented cases start in G01 enhancement lifecycle. Existing Product v2 tests may remain in historical `tests/product/` or other current locations and are executed in place; no automatic mass migration or `tests/regression` promotion. All focused DD cases and current legacy suites must be collected and observed, with full source/fixture/env SHA, actual exit and failure phase. This Package cannot declare G01 Gate PASS or Science PASS without independent 07/999 evidence.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -196,7 +191,7 @@ Package completion時:
 - [ ] `LocalPrivacyPolicyPort.authorize` and stateless CLI Concrete deny either row request or CLI row flag, unsafe owner/mount/ACL/Principal, with no aggregate fallback and zero row/secret leak; null Policy Anchor permitted for aggregate-only.
 - [ ] Graph-positive vs valid science-negative Operation Bundle rules, Status axis separation, JCS/lineage/dual hash, no dummy Effect and no false COMMITTED implemented.
 - [ ] New `ariadne-causal-local` command maps exits 0/2/3/4/5 by phase and emits sanitized single JSON response; old Product v2 CLI/contracts unchanged.
-- [ ] P01–P04 dependency checkpoints confirmed; `integration/test_g01_cli.py` and `tests/product/test_cli_contract.py` focused/regression tests and full SHA/fixture/env/DD-ID evidence recorded. P05 PACKAGE_COMPLETE alone is not G01_999 PASS.
+- [ ] P01–P04 dependency checkpoints confirmed; focused CLI integration and existing Product v2 contract/regression cases and full SHA/fixture/env/DD-ID evidence recorded. P05 PACKAGE_COMPLETE alone is not G01_999 PASS.
 
 ## 11. External reference policy
 

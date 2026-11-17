@@ -124,20 +124,16 @@ def to_canonical_bytes(self) -> bytes: ...
 
 P01 outputs `ContentRef`, `ValidatedStudy`, strict JCS/Manifest DTO and pure Profile validation; P02 verifies real File bytes and owns publication/readback, P03 owns `GraphEvidence`, P04 owns FCI runtime and P05 orchestrates. Do not make pure Decoder read files, do not let App import CLI concrete, do not modify Product v2 Reader/Writer or duplicate scientific eligibility logic.
 
-## 7. Focused verification — P01 completion evidence
+## 7. Focused verification — WHAT and primary layer; no file-path authority
 
-| Test / DD | Target and positive/negative evidence | PASS requirement |
+| DD ID / Gate test | Primary layer | Positive and negative evidence required |
 | --- | --- | --- |
-| `unit/test_g01_spec_schema_codec.py` / REF01/04 lexical; REF02/03 real FD cases reserved for P02 | strict ContentRef five fields, path/null/extra/duplicate + same identity mismatched digest | lexical validity only, no unverified FD claim or physical REF02/03 PASS |
-| Same / SPEC01–04 | Study, Method profile, YAML/JSON duplicates, forbidden v2, non-Effect estimand, malformed Config | deterministic typed reject, no Backend import |
-| Same / MAN01–03 | Manifest schemas, unique Inventory, request/Graph/Manifest hash projections, JCS golden vectors | actual bytes match independent reference; absent oracle = BLOCKED |
-| Same / MAN04–06 | DISCOVER graph-success vs negative, Science NOT_EVALUATED, no dummy Effect, legacy isolation | no false completed result or v2 upgrade |
+| REF01/04; 07-01/02 lexical | unit + contract | 5-field ContentRef, safe POSIX path, hash grammar, distinct bytes/digest claims; no actual-FD validity claimed |
+| SPEC01–04; 07-01 | unit + contract | E11 dispatch vs legacy/unknown, YAML/JSON duplicate/unknown, Method Config/Estimand/inference/privacy failures; typed reason and no Backend import |
+| MAN01–03; 07-04 | unit + contract | strict JCS independent 7+7 vectors, stable exact bytes, 4 distinct digest projections, no self hash/inventory |
+| MAN04–06; 07-07/12 | contract | typed DISCOVER Graph-positive versus scientific-negative inventory/status, no Effect, no silent Product v2 upgrade |
 
-~~~bash
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/unit/test_g01_spec_schema_codec.py -q
-~~~
-
-Create test file if absent. Test each applicable DD ID; record fixture hash, actual value/error, source SHA, no mocked "independent" JS conformance. No filesystem crash or scientific oracle PASS claimed at P01. P01 COMPLETE requires contract-focused tests and checkpoint report, while 07 full-Gate verification remains independent.
+**Required Package check:** Coding Agent creates or discovers G01-focused tests according to *instantiated 40 Operator placement policy*; current filename/pytest command is selected only after checkout/collection. No filename is normative here. Unit or synthetic typed evidence does not pass P02 physical REF02/03, P04 science, or P05 cross-asset trusted-byte joins. Verify each DD ID's relevant positive/negative cases, source SHA, fixture SHA, observed error/bytes and status. P01 DoD requires scoped focused tests and checkpoint evidence; unrun or unproved independent JCS reference stays BLOCKED.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -159,7 +155,7 @@ Package completion時:
 - [ ] Strict JCS bytes/digest and immutable `LocalRunManifest` factories/invariant/serialization complete; independently verified golden vectors or explicit evidence-backed BLOCKED.
 - [ ] G01 Operation success vs scientific-negative typed bundle shapes, MAN01–06 pure constraints, no Effect/Manifest self-hash are covered by focused tests.
 - [ ] **P01 covers REF01/04 lexical components; REF02/03 actual symlink/race/FD security are P02-owned and cannot be marked passed by P01.** Full cross-asset Question/Design/Dataset byte validation is P05-owned.
-- [ ] Focused `unit/test_g01_spec_schema_codec.py` result, fixture/version/commit full SHA, DD-ID case-by-case evidence, package checkpoint report and `*_in_progress.md` recorded. Remaining P02/P03/P04/P05/G01-999 checks are not promoted to P01 PASS.
+- [ ] Focused unit/contract verification cases and actual resolved test evidence, fixture/version/commit full SHA, DD-ID case-by-case evidence, package checkpoint report and `*_in_progress.md` recorded. Remaining P02/P03/P04/P05/G01-999 checks are not promoted to P01 PASS.
 
 ## 11. External reference policy
 

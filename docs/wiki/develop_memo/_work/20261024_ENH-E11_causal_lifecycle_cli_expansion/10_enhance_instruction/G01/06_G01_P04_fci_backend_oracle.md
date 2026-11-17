@@ -133,21 +133,17 @@ def execute(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSi
 
 G01 does not implement other 40 Methods, Product v2 GraphVersion edit, PCMCI or effect identification. Unregistered Method-specific Profile -> fail-closed.
 
-## 7. Focused verification — tests and science evidence
+## 7. Focused verification — contract/integration/scientific evidence
 
-| DD / G01-07 | Focused file / method | Assertion |
+| DD / G01-07 | Primary proof layer | Required observable assertions |
 | --- | --- | --- |
-| CAP01/04/05, DISC01; 07-08 | `component/test_g01_fci_method.py` | ENV-BASE missing extra isolated; correct Method/Profile/Operation; no fallback and lazy import |
-| METH-P106, DISC02/03; 07-08 | same file | fisherz/chisq/gsq positive eligibility and missing/constant/ordinal/category support/BK negatives; selected Graph vs typed negative |
-| METH-P106, GRAPH01/03; 07-09 | `scientific/test_g01_fci_graph_oracle.py` | independent MAG/PAG reference, not backend-derived expected, compelled/uncertain edge matches |
-| METH-P106; 07-10 | same scientific file | 2-node latent no unique claim, BK overorientation/contradiction reject, no silent override |
+| CAP01/04/05, DISC01; 07-08 | contract + effective Backend integration | Env isolation, selected Method/Profile/Operation, no fallback, optional import lazy |
+| METH-P106, DISC02/03; 07-08 | contract + effective Backend integration | fisherz/chisq/gsq positive eligibility and data/missing/constant/category/BK negatives; typed outcome |
+| METH-P106, GRAPH01/03; 07-09 | deterministic independent Graph contract + actual Backend integration | independent DAG→MAG→PAG reference, compelled/uncertain endpoints, not backend self-oracle |
+| METH-P106; 07-10 | contract + effective Backend integration | 2-node latent nonidentifiability, BK overorientation/contradiction refusal, no silent correction |
+| T2/T3 science acceptance | independent quantitative scientific evaluation | preregistered cell/K/R/seed/compute; empirical data distinct from deterministic contract and Pilot distinct from T3 |
 
-~~~bash
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/component/test_g01_fci_method.py -q
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/scientific/test_g01_fci_graph_oracle.py -q
-~~~
-
-If independent Oracle/T2/T3 cannot yet execute, record `BLOCKED` at the applicable Gate07 scientific acceptance cells; **T2/T3 do not block the P04 coding checkpoint** when the scientific test harness and independent reference construction contract are implemented. Pure component checks may complete without falsely claiming Science PASS. All evidence includes effective distribution/API, source/fixture SHA, observed graph/CI values, seed and whether reference is independent. Scientific independent Gate verification remains 07/999, not self-certified in P04.
+**Required Package check:** New G01 tests begin in enhancement lifecycle, with `contract` for deterministic scientific reference and `integration` for actual selected FCI/backend invocation. The separate reusable `characterization/benchmark` lifecycle is selected only by explicit decision; no `scientific` G01 layer directory is mandated. Current physical test paths/commands are resolved by 40 at execution, after existence and collection checks. Missing independent science or runtime evidence => individual Gate07 scientific cell BLOCKED; **T2/T3 performance execution does not block P04 coding checkpoint**, but cannot be reported PASS without actual independent evidence. Include real effective library/API and source/fixture/env SHA.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -167,7 +163,7 @@ Package completion時:
 - [ ] `MethodCapabilityRegistry` Field/Constructor/`describe/resolve/load_adapter` and `BackendCapabilityRecord`/`MethodCapabilityPort.resolve` honor one Method authority, effective Backend/API evidence, lazy optional import and no fallback.
 - [ ] `DiscoveryPort.discover`, `ValidatedDiscoveryRequest` and `FciDiscoveryAdapter.__init__/preflight/execute` have typed selected-Method dispatch, G01 CI/BK/Data admissibility, 1:1 Backend node/endpoint translation and staging-only output.
 - [ ] Component-level actual `causal-learn` API/eligibility positive/negative tests run where the approved Backend is available. Unavailable runtime/API yields a typed BLOCKED/ENGINE result, not fabricated Backend availability.
-- [ ] Independent GRAPH-A fixture/test harness specifies latent projection/MAG/PAG compelled/uncertain endpoints and BK/2-node negative cases, independently of FCI output; `scientific/test_g01_fci_graph_oracle.py` implemented, with current evidence honestly labeled.
+- [ ] Independent GRAPH-A fixture/test harness specifies latent projection/MAG/PAG compelled/uncertain endpoints and BK/2-node negative cases, independently of FCI output; independent Graph-A Oracle contract cases and harness implemented, with current evidence honestly labeled.
 - [ ] **T2 Pilot/T3 quantitative acceptance belongs to independent G01-07/999 on a fixed Trial Candidate SHA, not a precondition for P04 coding checkpoint.** If no scientific Oracle evidence exists, no Science PASS; record precise remaining BLOCKED cells.
 - [ ] P04 focused component code/tests and checkpoint report (full source/fixture/env SHA) are complete; Product ScientificCorePort ABI unchanged, no hidden PC/other-Method fallback.
 

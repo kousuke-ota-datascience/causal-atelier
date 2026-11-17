@@ -108,18 +108,14 @@ def canonical_payload(self) -> Mapping[str, JsonValue]: ...
 
 ## 7. Focused verification — Graph identity, not science PASS
 
-| DD / 07 | Test file | Positive and negative assertions |
+| DD / Gate | Primary layer | Positive and negative assertions |
 | --- | --- | --- |
-| GRAPH01; 07-03/04 | `unit/test_g01_graph_roundtrip.py` | all legal G01 PAG endpoint combinations, reverse orientation swap, JCS semantic/content byte digest, 100% lossless |
-| GRAPH03; 07-03 | same | duplicate edge (including reverse), self loop, wrong mark, unknown node, illegal lag/temporal, implicit PAG→DAG conversion rejected |
-| GRAPH04; 07-03 | same | standalone null/null, parent without Version rejection, Product version/parent preservation, no `make_revision` |
-| MAN03/04; 07-07 | same, `unit/test_g01_spec_schema_codec.py` | Graph-success/negative inventory shape, no dummy Effect, correct Graph/ContentRef/hash provenance |
+| GRAPH01; 07-03/04 | unit + contract | all G01 PAG endpoint pairs/reverse orientation, JCS semantic/file digests, lossless 100% |
+| GRAPH03; 07-03 | unit + contract | duplicate (including reversed), self loop, illegal mark, unknown node, lag/temporal and implicit PAG→DAG rejection |
+| GRAPH04; 07-03 | contract | standalone null/null, parent-without-version reject, verified Product parent preservation, no GraphEvidence version writer |
+| MAN03/04; 07-07 | contract | Graph-success vs legitimate negative inventory and diagnostics, no Effect, correct Graph/ContentRef lineage |
 
-~~~bash
-uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/unit/test_g01_graph_roundtrip.py -q
-~~~
-
-Use independent expected endpoint fixtures; avoid comparing Backend output to itself as an Oracle. Real FCI MAG/PAG equivalence is `G01-07-09` (P04) and remains BLOCKED until independently proven. P03 reports per-DD-ID PASS/FAIL/BLOCKED with fixture SHA and real vs synthetic flag; never claims a Product GraphVersion persisted without the Product authority.
+**Required Package check:** Implement focused tests in an appropriate G01 enhancement layer under the 40 placement rule; resolve actual test files and collection during execution, not in P03 acceptance semantics. Use independent expected endpoint fixtures, not a self-generated backend Oracle. Scientific MAG/PAG recovery remains G01-07-09 (P04) and BLOCKED until independently proven. Report per DD ID PASS/FAIL/BLOCKED, actual endpoint/digest evidence, fixture and source SHA; do not claim a persisted Product GraphVersion.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -140,7 +136,7 @@ Package completion時:
 - [ ] All G01 PAG endpoint pair orientations round-trip losslessly, malformed/self-loop/duplicate/reverse/unknown/lag negatives rejected; shared Product Graph validator mapping uses `endpoint_source/target` vs E11 `source_mark/target_mark` correctly.
 - [ ] Standalone `version_id=null,parent_version_id=null` and optional real Product parent lineage retained; invented Version and parent-without-version are rejected.
 - [ ] Graph semantic JCS self-excluded digest and external exact-file-byte ContentRef digest distinguished; success vs scientific-negative Bundle has `result=null` and mandatory diagnostics on negative.
-- [ ] `unit/test_g01_graph_roundtrip.py` focused Graph DD ID checks executed and checkpoint/fixture/source full SHA recorded. Graph serialization PASS is not independent MAG/PAG scientific accuracy PASS.
+- [ ] Focused unit/contract Graph DD-ID verification cases executed and checkpoint/fixture/source full SHA recorded. Graph serialization PASS is not independent MAG/PAG scientific accuracy PASS.
 
 ## 11. External reference policy
 
