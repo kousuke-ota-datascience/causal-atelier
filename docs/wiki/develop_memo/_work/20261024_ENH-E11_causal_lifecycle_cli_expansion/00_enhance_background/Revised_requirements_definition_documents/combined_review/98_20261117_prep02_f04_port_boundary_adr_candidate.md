@@ -77,3 +77,8 @@ All names and Protocol signatures are **candidate**, to be frozen only after sou
 - F04-P06: distinguish code-level Protocol typing PASS, independent Architecture review disposition, runtime backend Science Gate PASS.
 
 **Open:** exact module path, typed error registry, real backend API probes, all 41 Method Gate cells and Independent Architecture Reviewer verdict. This document does not approve code entry.
+
+
+## 5. PREP-02 cross-Port signature reconciliation（2026-11-17）
+
+[F03–F07 definitive review **candidate**](112_20261117_prep02_f03_f07_shared_port_signature_contract.md) supersedes the earlier illustrative Protocol forms in §2 as the **single common review input**. `ValidatedStudy` is constructed by CLI `LocalConfigDecoder` outside Application; `ValidatedCapabilityRequest` and other verified types flow into Ports; `EstimatorPort`/`DiagnosticPort` take keyword-only `sink`. `LocalPublicationPort.begin/seal/publish` is a Façade over per-run `LocalArtifactPublisher` handles, not an alias to Product `ArtifactStorePort`. `LocalPrivacyPolicyPort.authorize` verifies signed/independent Policy before any internal `LocalPrivacyPolicy.assert_export_allowed` guard. The exact Python module ABI and runtime type checking remain unproven.

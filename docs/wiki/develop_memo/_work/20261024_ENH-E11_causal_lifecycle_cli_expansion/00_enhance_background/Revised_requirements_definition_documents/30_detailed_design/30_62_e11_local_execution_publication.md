@@ -21,7 +21,6 @@ E11では新しいversioned Local laneへ分ける。既存の `causal-analysis-
 
 | Field | Type | Value origin | Mutable / constraint |
 | --- | --- | --- | --- |
-| `decoder` | `LocalConfigDecoder` | composition root | immutable; strict E11 version dispatch |
 | `refs` | `ContentReferencePort` | composition root | immutable; trusted-root hash-bound read |
 | `capabilities` | `MethodCapabilityPort` | composition root | immutable; effective profile and no silent fallback |
 | `identifier` | `IdentificationPort` | composition root | immutable; Domain proof/negative outcome |
@@ -35,30 +34,30 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 
 ### 2.3. Constructor / Factory
 
-候補：`causal.local_application.use_case.E11LocalCausalUseCase`。
-注入Port：`decoder: LocalConfigDecoder`、`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
+候補：`causal.local_application.use_case.E11LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
+注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
-- **Proposed signature:** `__init__(self, *, decoder, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
+- **Proposed signature:** `__init__(self, *, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. Any actual exception class/type is Freeze pending.
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
 ### 2.4. メソッド
 
 ~~~python
-def preflight(self, spec: LocalStudySpec) -> PreflightReport: ...
-def run(self, spec: LocalStudySpec) -> LocalRunOutcome: ...
+def preflight(self, spec: ValidatedStudy) -> PreflightReport: ...
+def run(self, spec: ValidatedStudy) -> LocalRunOutcome: ...
 ~~~
 
 preflightはversion／secure Input Ref／static capability／privacy／pathと科学的適格性の検証可能範囲を返す。DGPや独立科学受入済みであると報告しない。
 
 | Signature | Returns | Side effects / errors |
 | --- | --- | --- |
-| `preflight(self, spec: LocalStudySpec) -> PreflightReport` | capability/eligibility/input diagnostic | trusted input read permitted, **no** scientific execution or bundle publication; invalid version/refs typed |
-| `run(self, spec: LocalStudySpec) -> LocalRunOutcome` | technical + scientific axes, committed ref or typed negative | backend execution only after validated eligibility; publication only via Publisher; errors preserve kind |
+| `preflight(self, spec: ValidatedStudy) -> PreflightReport` | capability/eligibility/input diagnostic | trusted input read permitted, **no** scientific execution or bundle publication; invalid version/refs typed |
+| `run(self, spec: ValidatedStudy) -> LocalRunOutcome` | technical + scientific axes, committed ref or typed negative | backend execution only after validated eligibility; publication only via Publisher; errors preserve kind |
 
 ### 2.5. 処理仕様
 
-1. `schema_version`を明示dispatchし、strict YAML/JSON parse。旧v2と無版はE11解釈禁止。
+1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。
 2. Trusted Root配下でQuestion/Design/Graph/Dataset/Upstream Refをsecure openし、bytes hash・Graph/Estimand/Designの意味上の一致を検査。
 3. Method IDのOperation/Estimand/Backend/extra/API versionをresolve。他Method/Backendへのsilent fallback禁止。
 4. Identificationを実行又は上流proofを検証。未確定Graphやunsupported strategyを成功へ変更しない。
@@ -420,3 +419,8 @@ Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科�
 実装候補のPort署名は[統合Port契約](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)を唯一のCross-Portレビュー入力とし、原文の各Class候補署名との差異をFreeze前に整合させる。`TrustedLocalRoot`はOS/ACL/mountを検証済みのcapabilityであり、単なる`Path`/self-reported Principal Evidenceではない。個票出力Policyは**実行EUIDに書換え権限のない独立Trust Anchor**で検証する必要がある。Ed25519署名付き事前承認artifactと管理者制御の公開鍵登録を[具体候補](../combined_review/113_20261117_prep02_f05_policy_trust_anchor_candidate.md)とするが、署名主体・鍵配布・失効の制度設計とSecurity reviewer判定はまだ未Freeze。
 
 `E11Error`はreason codeと**phase**を保持する。同じSCHEMA_INVALIDでも入力時はCLI exit2、公開済みBundle readback破損時はexit5。Privacy/authorization denialはOwner採用済みexit3。科学的なNegative Outcomeは、正しいManifestを公開完了できる場合に限ってExit0となり得る。
+
+
+## 13. Façade Port署名とConcrete Classの区別
+
+本書§4の`LocalArtifactPublisher`は1 runの具体的な内部Class候補で、constructorにrun_id/rootを保持する設計案である。一方、E11 Applicationが依存する**公開Port**は[112 Cross-Port contract](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)の`LocalPublicationPort.begin(run_id,request_hash,root)`/`seal`/`publish`であり、Façadeはrun毎のConcrete handleを生成する。`LocalArtifactPublisher.begin(self)`は**その内部HandleのLifecycle Method**であって同名のPort methodを置き換えるものではない。最終freeze前にClass Factory/Concrete Adapterに同一契約のUnit Testが必要。`LocalPrivacyPolicy.assert_export_allowed`もFacade `LocalPrivacyPolicyPort.authorize`による事前承認検証後の内部Guardであり、前者だけでPolicy署名／ACLを省略しない。

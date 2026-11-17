@@ -73,3 +73,10 @@ Scientific results such as `NOT_IDENTIFIED`, `PARTIALLY_IDENTIFIED`, `REQUIRES_R
 - **Vector:** [JCS golden vector候補](107_20261117_prep02_jcs_codec_vectors.md)でkey order、array順、NFC/NFD非統合、-0/指数表記、control escape、JSON同型・異型negativeを示す。Python・ECMAScriptの独立実装の一致、Schema Decoderとruntime wire testは**未実施**。
 
 採用済みのCLI exit3は入力Hash/Root/Privacy/Policy拒否に適用する。Typed ErrorのHTTP互換性は範囲外。F07 EMPTYは有効な`AVAILABLE` AR集合であり、`INFERENCE_EMPTY`を理由に自動exit4や5にしない。対象MethodがEMPTYを科学的に禁じる場合はMethod-level validatorの負例として独立に扱う。
+
+
+## 7. Strict Schema operation bundles / self-digest collision prevention
+
+The machine-readable Manifest Schema draft now permits `schema_dispatch.result=null` when an Operation does not produce an Effect Result. **No dummy Effect Result** for DISCOVER/IDENTIFY or other non-Effect operations. Exact allowable output per Operation must be approved by Method/Operation-specific Bundle validator. Graph JSON `content_hash` is a JCS hash of the Graph **excluding the content_hash field itself**; external `ContentRef.sha256` separately hashes full bytes. Never conflate `Study.request_hash`, `Graph.content_hash`, file `ContentRef.sha256`, or `Marker.manifest_sha256`.
+
+`ErrorPhase` is an essential part of typed error semantics: Input `SCHEMA_INVALID`=exit2; persisted corrupt Bundle readback `SCHEMA_INVALID`=exit5. Privacy authorization denial=exit3. See [112](112_20261117_prep02_f03_f07_shared_port_signature_contract.md) and [114](114_20261117_prep02_f06_schema_semantic_invariants.md). The structures are design candidates; E11 Code/Schema implementation and independent reviewer proof are pending.

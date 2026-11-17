@@ -154,22 +154,22 @@ class IdentificationPort(Protocol):
 class EstimatorPort(Protocol):
     def estimate(
         self, request: ValidatedEstimatorRequest,
-        sink: StagingArtifactSink
+        *, sink: StagingArtifactSink
     ) -> EffectOutcome: ...
 
 class MethodCapabilityPort(Protocol):
     def resolve(
-        self, method_id: str, backend_id: str, profile: str
+        self, request: ValidatedCapabilityRequest
     ) -> BackendCapabilityRecord: ...
 
 class DiagnosticPort(Protocol):
     def run(
         self, request: ValidatedDiagnosticRequest,
-        sink: StagingArtifactSink
+        *, sink: StagingArtifactSink
     ) -> DiagnosticOutcome: ...
 ~~~
 
-型はこのLocal lane内部のDomain DTOとProtocolであり、外部ライブラリを戻り値にしない。Port adapterは契約上認定したMethodごとに実効APIを検証する。同一 `MethodID` でも別のEstimandやInferenceを暗黙選択しない。Port実装に生成されるArtifactは必ずstaging sinkに出力し、Backendが勝手に最終dirへ書くことは禁止。
+**Cross-Port正規署名は[112](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)を優先する**（F04 Freeze候補）。本節の4 Portはその部分集合であり、ContentRef/Privacy/Publisher/Readerを追加する。型はこのLocal lane内部のDomain DTOとProtocolであり、外部ライブラリを戻り値にしない。Port adapterは契約上認定したMethodごとに実効APIを検証する。同一 `MethodID` でも別のEstimandやInferenceを暗黙選択しない。Port実装に生成されるArtifactは必ずstaging sinkに出力し、Backendが勝手に最終dirへ書くことは禁止。
 
 ## 9. 実装時の順序と検証マッピング
 
