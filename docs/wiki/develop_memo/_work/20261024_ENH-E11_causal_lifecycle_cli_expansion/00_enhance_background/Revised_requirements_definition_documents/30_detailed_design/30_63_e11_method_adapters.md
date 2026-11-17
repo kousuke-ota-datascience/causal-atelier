@@ -46,7 +46,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.1.7. 検証
 
-`DD-E11-METH-P1M01`（`P1-M01`）、`DD-E11-METH-P1M02`（`P1-M02`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P101`（`P1-M01`）、`DD-E11-METH-P102`（`P1-M02`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.2. `DoWhyIdentificationAdapter`
 
@@ -91,7 +91,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.2.7. 検証
 
-`DD-E11-METH-P1M03`（`P1-M03`）、`DD-E11-METH-P1M04`（`P1-M04`）、`DD-E11-METH-P1M05`（`P1-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P103`（`P1-M03`）、`DD-E11-METH-P104`（`P1-M04`）、`DD-E11-METH-P105`（`P1-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.3. `FciDiscoveryAdapter`
 
@@ -136,7 +136,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.3.7. 検証
 
-`DD-E11-METH-P1M06`（`P1-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P106`（`P1-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.4. `FrontdoorLinearAdapter`
 
@@ -179,7 +179,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.4.7. 検証
 
-`DD-E11-METH-P1M07`（`P1-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P107`（`P1-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.5. `NativeEffectAdapter`
 
@@ -223,7 +223,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.5.7. 検証
 
-`DD-E11-METH-P1M08`（`P1-M08`）、`DD-E11-METH-P1M09`（`P1-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P108`（`P1-M08`）、`DD-E11-METH-P109`（`P1-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.6. `WeightingEffectAdapter`
 
@@ -267,13 +267,13 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.6.7. 検証
 
-`DD-E11-METH-P1M10`（`P1-M10`）、`DD-E11-METH-P1M11`（`P1-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P110`（`P1-M10`）、`DD-E11-METH-P111`（`P1-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.7. `RefutationAdapter`
 
 #### 1.7.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M12, P1-M13, P1-M14, P1-M15`。**再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method：`P1-M12, P1-M13, P1-M14, P1-M15`。**再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.7.2. フィールド
 
@@ -312,13 +312,13 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.7.7. 検証
 
-`DD-E11-METH-P1M12`（`P1-M12`）、`DD-E11-METH-P1M13`（`P1-M13`）、`DD-E11-METH-P1M14`（`P1-M14`）、`DD-E11-METH-P1M15`（`P1-M15`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P112`（`P1-M12`）、`DD-E11-METH-P113`（`P1-M13`）、`DD-E11-METH-P114`（`P1-M14`）、`DD-E11-METH-P115`（`P1-M15`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.8. `SensitivityAdapter`
 
 #### 1.8.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M16, P1-M17`。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method：`P1-M16, P1-M17`。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.8.2. フィールド
 
@@ -355,7 +355,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.8.7. 検証
 
-`DD-E11-METH-P1M16`（`P1-M16`）、`DD-E11-METH-P1M17`（`P1-M17`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P116`（`P1-M16`）、`DD-E11-METH-P117`（`P1-M17`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.9. `ObservedNceAdapter`
 
@@ -398,7 +398,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.9.7. 検証
 
-`DD-E11-METH-P1M18`（`P1-M18`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P118`（`P1-M18`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.10. `ObservedNcoAdapter`
 
@@ -441,7 +441,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.10.7. 検証
 
-`DD-E11-METH-P1M19`（`P1-M19`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P119`（`P1-M19`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.11. `OlsRvAdapter`
 
@@ -484,7 +484,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.11.7. 検証
 
-`DD-E11-METH-P1M20`（`P1-M20`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P120`（`P1-M20`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.12. `EconmlCateAdapter`
 
@@ -530,7 +530,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.12.7. 検証
 
-`DD-E11-METH-P2M01`（`P2-M01`）、`DD-E11-METH-P2M02`（`P2-M02`）、`DD-E11-METH-P2M03`（`P2-M03`）、`DD-E11-METH-P2M04`（`P2-M04`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P201`（`P2-M01`）、`DD-E11-METH-P202`（`P2-M02`）、`DD-E11-METH-P203`（`P2-M03`）、`DD-E11-METH-P204`（`P2-M04`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.13. `MetaLearnerAdapter`
 
@@ -575,7 +575,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.13.7. 検証
 
-`DD-E11-METH-P2M05`（`P2-M05`）、`DD-E11-METH-P2M06`（`P2-M06`）、`DD-E11-METH-P2M07`（`P2-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P205`（`P2-M05`）、`DD-E11-METH-P206`（`P2-M06`）、`DD-E11-METH-P207`（`P2-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.14. `EconmlDrivAdapter`
 
@@ -618,7 +618,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.14.7. 検証
 
-`DD-E11-METH-P2M08`（`P2-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P208`（`P2-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.15. `TigramiteTemporalAdapter`
 
@@ -663,7 +663,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.15.7. 検証
 
-`DD-E11-METH-P3M01`（`P3-M01`）、`DD-E11-METH-P3M02`（`P3-M02`）、`DD-E11-METH-P3M03`（`P3-M03`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P301`（`P3-M01`）、`DD-E11-METH-P302`（`P3-M02`）、`DD-E11-METH-P303`（`P3-M03`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.16. `PanelQuasiAdapter`
 
@@ -707,7 +707,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.16.7. 検証
 
-`DD-E11-METH-P3M04`（`P3-M04`）、`DD-E11-METH-P3M05`（`P3-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P304`（`P3-M04`）、`DD-E11-METH-P305`（`P3-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.17. `InterruptedTsAdapter`
 
@@ -750,7 +750,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.17.7. 検証
 
-`DD-E11-METH-P3M06`（`P3-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P306`（`P3-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.18. `RddAdapter`
 
@@ -794,7 +794,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.18.7. 検証
 
-`DD-E11-METH-P3M07`（`P3-M07`）、`DD-E11-METH-P3M08`（`P3-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P307`（`P3-M07`）、`DD-E11-METH-P308`（`P3-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.19. `WaldRatioAdapter`
 
@@ -837,7 +837,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.19.7. 検証
 
-`DD-E11-METH-P3M09`（`P3-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P309`（`P3-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.20. `TwoSlsAdapter`
 
@@ -881,7 +881,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.20.7. 検証
 
-`DD-E11-METH-P3M10`（`P3-M10`）、`DD-E11-METH-P3M11`（`P3-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P310`（`P3-M10`）、`DD-E11-METH-P311`（`P3-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.21. `SyntheticControlAdapter`
 
@@ -924,7 +924,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.21.7. 検証
 
-`DD-E11-METH-P3M12`（`P3-M12`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P312`（`P3-M12`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 1.22. `SyntheticDidAdapter`
 
@@ -967,7 +967,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.22.7. 検証
 
-`DD-E11-METH-P3M13`（`P3-M13`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+`DD-E11-METH-P313`（`P3-M13`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 
 ## 2. 全41件のAdapter allocation
