@@ -34,7 +34,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `IdentificationOutcome` | `ariadne.causal.identification.contracts.IdentificationOutcome` | Port/Value/Facade integration (no duplicate implementation) | from_evidence(evidence:ValidatedIdentificationEvidence) -> IdentificationOutcome |
 | `IdentificationPort` | `ariadne.scientific.ports.causal.IdentificationPort` | Port/Value/Facade integration (no duplicate implementation) | identify(self, request:ValidatedIdentificationRequest) -> IdentificationOutcome |
 
-**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Constructor/Instance Fields/Factoryは本Pxx§3.1以降に内包したClass契約が規範であり、外部DD参照はprovenanceのみとする。未知のConcrete引数を追加しない。
+**Class/Method signature authority:** 本Pxx §3.1以降の埋込契約が各ClassのFields/Constructor/Public Method/Pre-Post/Failureの一次規範である。Method Adapterを本Packageが所有する場合のみそのMethodのpreflight/executeを実装し、既存run ABIは変更しない。統合専用Packageが新Adapterを創作してはならず、DomainからCLI Concreteへ逆依存しない。
 
 **Responsibility:** Method Adapterを担当するClassは `NativeIdentificationAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -46,11 +46,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `NativeIdentificationAdapter` — embedded executable class contract
 
-#### 1.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.causal_methods.identification.NativeIdentificationAdapter`。 IdentificationのMethod実行Adapter。担当Method：`P1-M01, P1-M02`。**再利用:** 既存ariadne.scientific.identification.adapter.IdentificationAdapterのrandomized/backdoor処理・証拠表現。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.1.2. フィールド
+#### フィールド
 
 | Field / dependency | Type | 制約 |
 |---|---|---|
@@ -58,11 +58,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
 | `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
 
-#### 1.1.3. Constructor / Factory
+#### Constructor / Factory
 
 `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
 
-#### 1.1.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -71,7 +71,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.1.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -80,21 +80,21 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本PackageのMethod固有実装・検証節に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
 
-#### 1.1.7. 検証
+#### 検証
 
 `DD-E11-METH-P101`（`P1-M01`）、`DD-E11-METH-P102`（`P1-M02`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageに明記したMethod/Science義務を優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `IdentificationOutcome` — embedded executable class contract
 
-#### 2.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.identification.contracts.IdentificationOutcome`。識別状態・対象Estimand・Proof・lineageを保持するValue。DoWhy内部ラベルをDomainの推定対象と混同しない。
 
-#### 2.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -104,58 +104,58 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | `strategy, proof` | Strategy、`IdentificationProof|None` |
 | `upstream, reasons` | `UpstreamHashSet, tuple[ScientificReason,...]` |
 
-#### 2.1.3. Constructor / Factory
+#### Constructor / Factory
 
 `from_evidence(evidence:ValidatedIdentificationEvidence)->IdentificationOutcome`。BackendのStatus、assumption、GraphVersion、Estimand、Upstreamを意味検証して正規化。未提供Proofを生成しない。
 
-#### 2.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `from_evidence(evidence:ValidatedIdentificationEvidence)` | `IdentificationOutcome` | pure status/proof normalization | proof/estimand/upstream不整合 |
 
-#### 2.1.5. 処理仕様
+#### 処理仕様
 
 `NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED`を点推定許可へ自動昇格しない。緩和可能な列挙WARNだけに理由付きoverrideを許可。
 
-#### 2.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 外部I/Oなし。実際のBackend識別計算は`IdentificationPort`、Proof/File readbackは別Port。Retry/RollbackはN/A。
 
-#### 2.1.7. 検証
+#### 検証
 
 `DD-E11-ID01` B0/B1/DRIV mislabel、`ID02` lineage差、`ID03` nonidentified override拒否、`ID04` GraphVersion再識別。FR-187/194/199、AR-029/039/043。
 
 ### 3.3. `IdentificationPort` — embedded executable class contract
 
-#### 5.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Protocol配置：ariadne.scientific.ports.causal.IdentificationPort。** 既存Product `ScientificCorePort`のv2メソッドを保持し、旧APIと型付きPortは共通科学計算を用いる互換Bridgeで接続する。
 
-#### 5.1.2. フィールド
+#### フィールド
 
 N/A：Protocol自身はinstance fieldを所有しない。
 
-#### 5.1.3. Constructor / Factory
+#### Constructor / Factory
 
 N/A：Protocolに具体Factoryはない。Concreteの依存関係注入はAdapterの責務。
 
-#### 5.1.4. メソッド
+#### メソッド
 
 ```python
 class IdentificationPort(Protocol):
     def identify(self, request: ValidatedIdentificationRequest) -> IdentificationOutcome: ...
 ```
 
-#### 5.1.5. 処理仕様
+#### 処理仕様
 
 IdentificationとEvidenceの意味を守り、非識別をIDENTIFIEDと偽装しない。科学的PreconditionはWeb/CLI共通であり、CLI optionやHTTP状態ではない。
 
-#### 5.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
-#### 5.1.7. 検証
+#### 検証
 
 DD-E11-ID01〜04。
 
