@@ -495,14 +495,45 @@ Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_e11_method_adapters.m
 
 DD-E11-METH-P101〜P313。実装未完・runtime/science verification未実施。
 
-## 8. 既存Domainとの統合と入口固有責務の分離
+## 8. 既存Classとの責務境界・拡張原則
 
-**CLIは実行入口であり、別の因果Domainの根拠にならない。** Web/API/CUI等の入口を増やす場合も、共通の識別・推定・Graph・推論ロジックを複製しない。
+本章は、科学的概念の責務とProduct/Scientific/Interfaceの関係を定義する。実行入口がCLIのみであることは、独立したDomain Model、Scientific Core、Method Registryをもう1組作る理由にならない。Web/HTTP、CLI/YAML等の表示・伝送事項はInterface Adapterの責務であり、Estimand・識別成立・Graph・Confidence Setの不変条件は入口に依存しない。
 
-- 既存再利用候補：`ariadne.product.domain.graph_version.GraphVersion`、`graph_semantics`、`analysis_spec`、`ariadne.product.ports.scientific_core.ScientificCorePort`。現行sourceには存在するが、新たなPAG/temporal、LATE/AR、Science status等への意味的適合は未確認。
-- 新Classを必要とするのは、既存Classの拡張/共有では型安全性・識別対象・推論形式・lineageを保持できない場合のみ。**入口の相違は新Domain Class作成の理由としない。**
-- 本文に残る `causal.local_contract.*` は**暫定module配置**であり、独立したLocal Domain packageを承認したものではない。既存型への統合、共通Causal Domainへの配置、新規型の必要性をArchitectureで判定するまでmodule名をFROZENにしない。
-- CLI config/YAML/parser/option/exit codeは[30_60](30_60_cli_adapters.md)と[23_41](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)。TrustedRootとI/O/File publicationは[30_62](30_62_e11_local_execution_publication.md)、[23_42](../23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)。
-- Graph endpoint・識別成立・Estimand適格性・推論証拠などはCLIでもWebでも共通のDomain/Application不変条件とする。Web固有のHTTP認可・browser状態はDomainに入れない。
+### 8.1. 既存の責務と変更対象
 
-**状態：PROPOSED / SOURCE_NOT_PRESENT / architecture integration unresolved。** Class 7区分が埋まっていても、既存型と統合すべきかの判断や科学的検証が済んだことを意味しない。
+| 責務の所有先 | 既存の実装（source） | 本書との境界 |
+|---|---|---|
+| Product resource/lifecycle | `product.domain.AnalysisSpecification`、`Execution`、`GraphVersion`、`Result` | Project所属・Version固定・Execution state・Product上の保存とlineageを所有。Scientific DTOはProduct Entityを複製しない |
+| Causal science meaning | `causal.design.schemas.CausalDesign`、`Estimand`、`product.domain.graph_semantics` | Estimand、Graph endpoint、科学的妥当性を共通化する。既存ATE/ATTやPAGを超える契約は既存validatorの意味を維持して拡張 |
+| Scientific execution | `product.ports.scientific_core.ScientificCorePort`、`scientific.core_adapter.ScientificCoreAdapter` | Backend実行の入口は共通。新Request/Output型は既存Portとの明示的な互換Adapter・versioned evolutionを前提とする |
+| Product eligibility | `product.application.scientific_validation_service.ScientificValidationService` | Method×Estimand×Identification適格性の規則が分裂しないよう共通sourceに統合 |
+| CLI/file interface | `interfaces.cli.config_schema`、`interfaces.cli.manifest`、Local Reader/Publisher | config YAML/JSON parse、filesystem認可、exit code等を保有。科学的なDomain Typeの権威にはならない |
+
+### 8.2. Class単位の責務境界
+
+| 本書のClass/Port | 既存の対応 | 新たに必要な契約と重複禁止事項 |
+|---|---|---|
+| `ContentRef` | `product.domain.lineage.ResourceRef`、`product.domain.artifact.Artifact` | immutable file bytes identity。Product resource identity／Filesystem verifierを同一Classへ混ぜない |
+| `LocalStudySpec` | `AnalysisSpecification`、`causal.design.schemas.CausalDesign` | 科学的Study意味情報とCLI run envelopeを分離し、同じEligibility/Estimand validatorを共有 |
+| `GraphEvidence` | `GraphVersion`、`GraphVersionService`、`graph_semantics.canonical_graph` | PAG/temporalの科学的Evidence。Product GraphVersionの生成・FIX・Project所属を二重所有しない |
+| `IdentificationOutcome` | `ScientificResultDescriptor`、`IdentificationAdapter` | Proof、上流Hash、typed理由の科学的表現。Product Result/状態へのMappingを明示 |
+| `EstimatorRequest` | `EstimationInput`、`ScientificValidationService` | validated RequestとIV/CATE等のEligibility。既存Estimator/Validation規則を重複させない |
+| `ARConfidenceSet` | `TreatmentEffectResult.ci_low/ci_high` | EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDEDをlosslessに扱う独立科学Value。有限CIへの縮約禁止 |
+| `InferenceEvidence` | `TreatmentEffectResult`、`ScientificResultDescriptor` | availability・reason・AR集合・推論の可否を独立に表す |
+| `EffectOutcome` | `TreatmentEffectResult`、`ScientificResultDescriptor`、Product `Result` | Point/Inference/Science/Technicalの状態軸を維持。Product Result Entityを複製しない |
+| `BackendCapabilityRecord` | `ScientificValidationService.ESTIMATOR_CAPABILITIES`、`StageRunnerRegistry` | 実効Backend/Method/Inferenceのcapability evidence。Environment probeとRegistryはApplication/Scientific layerに置く |
+| `IdentificationPort` | `ScientificCorePort.run_identification` | 既存Portをversionedに発展させ、typed evidenceをBridge。無根拠なParallel execution owner禁止 |
+| `EstimatorPort` | `ScientificCorePort.run_estimation` | 同様にtyped request・staging sinkに対応し、旧Path-based契約の互換性を保持 |
+| `MethodCapabilityPort` | `ESTIMATOR_CAPABILITIES`、`StageRunnerRegistry` | Stage-level登録とMethod-level適格性を分けつつ、唯一のMethod capability authorityへ統合 |
+| `DiagnosticPort` | `ScientificCorePort.run_refutation/run_sensitivity`、`DesignDiagnostics` | Operation/Method別diagnosticと既存Refutation・Sensitivityを対応させ、重複実装を避ける |
+
+### 8.3. 配置・利用上の不変条件
+
+- `causal.local_contract.*`という旧設計候補Pathは、本書のClass識別欄に残る場合も**確定した独立Domain packageの意味を持たない**。共通の科学的意味と既存Classの責務差分に基づき配置する。
+- `GraphEvidence.make_revision`はGraph内容から新しいEvidence値を導出する操作候補としてのみ解釈し、Product `GraphVersionService`のProject/Version writer権威を置き換えない。これが保証できない場合、このsignature自体を再設計する。
+- `BackendCapabilityRecord`のRuntime probeとoptional scientific library importはDomain Valueの生成処理ではなく、Capability Registry/Scientific Adapter側の責務とする。
+- `ContentRef`のpath表現検証はfilesystem安全性検証ではない。TrustedRoot内same-fd read/hashはI/O Adapterが所有する。
+- Scientific Resultの`AVAILABLE`、Identificationの`IDENTIFIED`、Productの`Execution.SUCCEEDED`、Science Acceptanceは別状態であり、単一`ScientificStatus`への無検証圧縮は禁止する。
+- Product `schemas.canonical_bytes`／`infrastructure.config.hash_mapping(default=str)`と、外部Wireが要求するJCS/RFC8785を機械的に同一視しない。Hash Versionを含むCodecを独立検証する。
+- 新規Portは既存`ScientificCorePort`のinterface version・Bridgeと実行経路が定義されるまで、別Runtimeの並行Authorityとして実装しない。
+- 科学的な値型を追加すること自体は可能だが、具体的なModule配置・Port version・統合方法はClass Method signatureと既存Product contractの整合を保証した上で定める。
