@@ -153,9 +153,12 @@ filenameは手作業で決めず、`40_operator_workflows/tools/readme_naming.py
 <!-- END MANAGED: AGENT_ENTRY_PROMPT_CONTROL -->
 
 
-## ENH-E11 execution preparation status
+## ENH-E11 G01〜G10共通Prompt — Execution Preparation
 
-- Prompt instance materialized; G01 06/07 DRAFT, NOT_FROZEN, CODING_NOT_AUTHORIZED. Creating prompts is not authorization to execute.
-- G01 normal route: Work Package Coding (P01–P05) → Candidate Assembly → Independent Test. Single Execution prompt is not applicable to G01.
-- ENH-E9 test architecture: lifecycle and verification layer are independent; see self-contained execution rules in each agent prompt. No automatic tests/regression promotion or repository-wide migration.
-- Actual branch/remote/clean worktree and Git permissions must be checked at runtime; REMOTE_NAME is an ENH-E11 declared setting, not a verified live local git remote.
+- **正式GateはG01〜G10の10件。** 本directoryの6実行Promptは全Gate共通で、`GATE_ID`から各GateのFreeze済み06/07/08/Pxxを解決する。未作成Gateの仕様をG01の資料から推測してはならない。
+- **現存するGate別06/07/PxxはG01だけ。** G01の06/07はDRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZEDであり、Promptの存在は実装実行を許可しない。G02〜G10も、各Gateの正式契約・実行mode・Owner Approval/Coding Authorizationを個別に成立させるまで起動禁止。
+- **G01正常時の想定経路:** Work Package Coding (P01–P05) → Candidate Assembly → Independent Test。`GATE_ID`がWORK_PACKAGEの別GateでもRequired Packagesは対象Gate06が所有し、P01〜P05と決め打ちしない。`SINGLE_EXECUTION`のGateでは専用Single Execution Promptを使い、Work Package Orchestratorを起動しない。
+- **ENH-E9 Test Architecture:** LifecycleとLayerは別軸。新規testは`tests/enhancement/enh_e11/<gate>/<layer>/`から開始、具体LayerとBrowser E2E要否はGate06/Pxx/07に従う。G01 CLI-onlyをG02〜G10へ一般化しない。既存Product testsは現配置に残し、`tests/regression/`の昇格は個別PROMOTE決定。
+- **E9 G02専用31修復Promptは非適用。** Test-side BLOCKEDは別のHuman-controlled repair scopeを定め、Independent Test Agentには修理権限を渡さない。
+- **未実施のRuntime確認:** branch/remote/clean worktree/actual HEAD、Git permissions、readiness validator、06/07 Freeze、Owner Coding Authorization。`REMOTE_NAME`は設定値であり、現在のGit remoteが使用可能であると検証された事実ではない。
+

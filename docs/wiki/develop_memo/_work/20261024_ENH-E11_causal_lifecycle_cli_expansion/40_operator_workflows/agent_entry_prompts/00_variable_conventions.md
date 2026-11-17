@@ -1,7 +1,7 @@
 # Variable規約
 
 実行ごとにHumanが与える値:
-- `GATE_ID` = Gate ID（例: `G00`）
+- `GATE_ID` = ENH-E11正式Gate ID（`G01`〜`G10`のいずれか）。Gate別06/07/08/Pxxが存在・Freeze済みかは実行時に検証し、未作成GateへG01の契約を流用しない。
 - `TRIAL_NO` = 2桁 Trial number（例: `01`）
 - `PACKAGE_ID` = Package ID（例: `P01`。Work Package coding時のみ）
 
@@ -54,6 +54,8 @@ WORK_DIR_NAME
 ```
 
 Enhancement-side `agent_entry_prompts/` に上記の未解決placeholderが1件でも残る場合、Agent execution readinessは `BLOCKED_ENHANCEMENT_IDENTITY_UNRESOLVED` とする。
+
+**ENH-E11 Gate scope:** GateはG01〜G10の10件。40 Promptは全Gate共通で、対象Gateの実行mode/Required PackageをGate06から解決する。G01だけに現在具体的な06/07/Pxxが存在し、G02〜G10の実装内容・Gate readinessを推定しない。
 
 ### 2.3. Runtime variables
 

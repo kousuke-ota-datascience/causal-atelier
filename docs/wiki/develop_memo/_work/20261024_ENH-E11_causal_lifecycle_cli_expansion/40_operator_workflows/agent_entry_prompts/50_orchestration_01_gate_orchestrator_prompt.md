@@ -57,7 +57,7 @@ Candidate Assembly Agent
 
 テスト分類はLifecycle (`enhancement/regression/characterization/benchmark/support/legacy`)とLayer (`unit/contract/integration/frontend/browser_e2e`)の二軸。`regression-like assertion != tests/regression lifecycle authority`。各Gateの06/Pxx/07がWHAT、40がWHERE/HOW。
 
-- Work Package modeのGateだけにassigned Pxx Coding Agentを割り当てる。Single Execution Gateは別の正規PromptへRouteする。各Coding AgentのPromptが`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）を初期配置とし、現行RepositoryからTestと既存Product Suiteをdiscover/collectする規則を内包していることを確認する。G01のCLI-only/no Browser制約はG01限定。G02〜G10のfrontend/Browser E2E要否は各Gate07に従う。
+- 本Gate Orchestrator自身はWORK_PACKAGE mode専用。対象Gate06がSINGLE_EXECUTIONを指定したら、**このOrchestratorでは起動せず** `BLOCKED_EXECUTION_MODE_MISMATCH`で停止し、Humanに単一実行用の`10_normal_execution_01_single_execution_coding_agent_prompt.md`を指定するよう報告する。WORK_PACKAGEなら対象Gate06のRequired Packagesのみassigned Pxxに割り当てる。各Coding AgentのPromptが`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）を初期配置とし、現行RepositoryからTestと既存Product Suiteをdiscover/collectする規則を内包していることを確認する。G01のCLI-only/no Browser制約はG01限定。G02〜G10のfrontend/Browser E2E要否は各Gate07に従う。
 - Candidate AssemblyとIndependent Testに当該Gateの固定SHA/実行Evidencesを渡す。historical test Path/commandを受入Authorityにせず、Test-side不具合はBLOCKED/Repair ownerとして切り出し、独立Test Agentに修理させない。
 - 旧Suiteの無条件移動・archive・`tests/regression/`PROMOTEを禁止。昇格はProduct invariantの別semantic決定、全repo migrationはE12以降。Gate Orchestrator自身はGate PASS/FAILを出さず、形式的なG01 Gate完了を他Gate完了と混同しない。
 
