@@ -394,3 +394,28 @@ Product `GraphVersionService`はGraph Versionの唯一のWriter。`GraphEvidence
 | `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | 既存Refutation/Sensitivity/DesignDiagnosticsを再利用 |
 
 `ContentRef`および`LocalStudySpec`は[30_60](30_60_cli_adapters.md) §11/12、`BackendCapabilityRecord`は[30_62](30_62_e11_local_execution_publication.md) §8のClass仕様をOwnerとする。共通JCS Encoderは`ariadne.shared.serialization.jcs`へ新設し、既存Product `canonical_bytes`/`hash_mapping(default=str)`をRFC8785と同一視しない。
+
+## 7. メソッド引数・戻り値の補助型と依存方向
+
+| 補助DTO / Protocol | 定義Module | 型と不変条件のOwner |
+|---|---|---|
+| `ValidatedStudy` | `ariadne.causal.design.study` | 共通の検証済み分析要求。CLI DTOから変換するがCLIの具体型をimportしない |
+| `ValidatedIdentificationEvidence` | `ariadne.causal.identification.contracts` | Adapterで正規化・Graph/Estimand/lineageとProofを検証した識別入力 |
+| `ValidatedIdentificationRequest` | `ariadne.causal.identification.contracts` | Verified Study/Graph/Targetを含むtyped識別要求 |
+| `ValidatedEstimatorRequest` | `ariadne.causal.inference.contracts` | Identification/Estimand/Designを共通policyで照合済みの要求 |
+| `EstimandEligibilityPolicy` | `ariadne.causal.inference.eligibility` | 既存ScientificValidationServiceのMethod×Estimand適格性を共通化 |
+| `ValidatedDiagnosticRequest` | `ariadne.causal.inference.diagnostics.contracts` | Method×Operationと上流Resultを検証済みの診断要求 |
+| `DiagnosticOutcome` | `ariadne.causal.inference.diagnostics.contracts` | 既存Refutation/Sensitivityとのtyped結果境界 |
+| `ValidatedCapabilityRequest` | `ariadne.scientific.capabilities` | Method/Backend/Profile/Inferenceとenvironmentの確認要求 |
+| `StagingArtifactSink` | `ariadne.scientific.ports.artifacts` | 科学的Portが使う書込Protocol。CLI Publisher Concreteが実装する。科学層はCLIをimportしない |
+| `TypedEffectResult` | `ariadne.causal.inference.contracts` | EffectOutcome.to_result_payloadの型付き純粋射影 |
+| `InferenceValidation` | `ariadne.causal.inference.contracts` | Method/AnalysisModeに対する推論利用可否と理由 |
+| `GraphSemanticsValidator` | `ariadne.shared.graph_semantics` | 旧product.domain.graph_semanticsのPAG・DAG・CPDAG検証を同一処理へ集約、既存Exportは互換wrapper |
+
+**依存制約：** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`が受け取る`ValidatedStudy`は`ariadne.causal.design.study`の純粋な共通型である。CLIの`LocalStudySpec`（`ariadne.interfaces.cli.local_causal.study`）をApplicationに渡さない。Decoderは厳格なVersion/Field/Ref検証と共通科学Validatorを通して`ValidatedStudy`を構築する。型の名前だけでverifiedと判断しない。
+
+**既存Graph互換：** `product.domain.graph_semantics.validate_graph_document/canonical_graph`が持つDAG/CPDAG/PAGの意味を`shared.graph_semantics`の共通純関数に移し、Productの既存importを互換wrapperで維持する。PAG端点の科学的検証は1箇所の実装を使い、`GraphEvidence`側ではtemporal lag/Version参照の追加不変条件を検証する。
+
+**Backend independence：** `StagingArtifactSink`のProtocolは`scientific.ports.artifacts`へ置き、Local PublisherはそのConcreteを提供する。Domain ValueはOS/FS/CLI/HTTPやBackend objectをimportしない。
+
+**Version／wire compatibility：** Method Signatureの補助型は設計上の確定配置だが、旧Product `ScientificCorePort`・`GraphVersionService`のSource/ABIをこの設計記述で変更したことにはならない。Methodの具象Type factory、科学計算、wire round-tripの実証は別の実装・検証工程で行う。

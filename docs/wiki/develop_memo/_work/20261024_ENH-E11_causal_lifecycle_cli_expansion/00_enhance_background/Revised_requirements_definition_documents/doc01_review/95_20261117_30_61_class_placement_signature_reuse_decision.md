@@ -59,3 +59,22 @@
 ## 5. 決定範囲と残条件
 
 この記録により13件の配置・メソッド署名・再利用方式を選定した。設計の型境界とModule構造は作業上の正規ベースラインとするが、既存コードとの完全なABI互換、Method Schema網羅、OS/FS・Codec・科学的実行は未実証。特にG01の06/07は**DRAFT/NOT_FROZEN**であり、Gate分割レビュー・Coding Authorization・試験PASS・正本昇格とは独立した状態を維持する。
+
+## 6. 補助DTOの定義Ownerと依存規則
+
+| 補助型 | 配置Module | 根拠 |
+|---|---|---|
+| `ValidatedStudy` | `ariadne.causal.design.study` | 共通の検証済み分析要求。CLI DTOから変換するがCLIの具体型をimportしない |
+| `ValidatedIdentificationEvidence` | `ariadne.causal.identification.contracts` | Adapterで正規化・Graph/Estimand/lineageとProofを検証した識別入力 |
+| `ValidatedIdentificationRequest` | `ariadne.causal.identification.contracts` | Verified Study/Graph/Targetを含むtyped識別要求 |
+| `ValidatedEstimatorRequest` | `ariadne.causal.inference.contracts` | Identification/Estimand/Designを共通policyで照合済みの要求 |
+| `EstimandEligibilityPolicy` | `ariadne.causal.inference.eligibility` | 既存ScientificValidationServiceのMethod×Estimand適格性を共通化 |
+| `ValidatedDiagnosticRequest` | `ariadne.causal.inference.diagnostics.contracts` | Method×Operationと上流Resultを検証済みの診断要求 |
+| `DiagnosticOutcome` | `ariadne.causal.inference.diagnostics.contracts` | 既存Refutation/Sensitivityとのtyped結果境界 |
+| `ValidatedCapabilityRequest` | `ariadne.scientific.capabilities` | Method/Backend/Profile/Inferenceとenvironmentの確認要求 |
+| `StagingArtifactSink` | `ariadne.scientific.ports.artifacts` | 科学的Portが使う書込Protocol。CLI Publisher Concreteが実装する。科学層はCLIをimportしない |
+| `TypedEffectResult` | `ariadne.causal.inference.contracts` | EffectOutcome.to_result_payloadの型付き純粋射影 |
+| `InferenceValidation` | `ariadne.causal.inference.contracts` | Method/AnalysisModeに対する推論利用可否と理由 |
+| `GraphSemanticsValidator` | `ariadne.shared.graph_semantics` | 旧product.domain.graph_semanticsのPAG・DAG・CPDAG検証を同一処理へ集約、既存Exportは互換wrapper |
+
+`LocalCausalUseCase`の入力は`causal.design.study.ValidatedStudy`であり、CLI DTOをApplicationへ直接持ち込まない。Graph共通Validatorは既存Product Graph検証と単一実装、旧Product importは互換wrapper。科学Portが扱う`StagingArtifactSink`はCLI packageではなくScientific PortのProtocolとし、CLI Publisher ConcreteだけがFileを書く。
