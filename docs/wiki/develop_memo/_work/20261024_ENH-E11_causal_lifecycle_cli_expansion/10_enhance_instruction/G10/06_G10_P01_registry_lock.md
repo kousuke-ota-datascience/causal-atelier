@@ -33,7 +33,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `MethodCapabilityRegistry` | `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry` | Port/Value/Facade integration (no duplicate implementation) | describe(method_id) / resolve(method_id,backend_id,profile) / load_adapter(capability) |
 | `BackendCapabilityRecord` | `ariadne.scientific.capabilities.BackendCapabilityRecord` | Port/Value/Facade integration (no duplicate implementation) | check(self,request:ValidatedCapabilityRequest) |
 
-**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Constructor/FieldsはDD30_61〜63のClass sectionを守り、未知のConcrete引数を創作しない。
+**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。本Pxx§3.1以降に埋め込んだClass Field/Constructor/Public Methodが実装の一次規範。外部DDは履歴/Provenanceのみであり、unknown Concrete型/Backend/Runtime値を補完しない。
 
 **Responsibility:** 本PackageはScientific Adapter数値本体を新規所有しない。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -149,14 +149,14 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 2. 41 MethodのMethod ID/operation/estimand/backend/profile/method-schema/inference availability/versionをMethodCapabilityRegistryのsingle ownerへ登録し、StageRunnerRegistryやCLI専用の第2 Registryを作らない。
 3. 各optional Backendの実効installed distribution/API/signature、extra/lock/profile/licenseをProbeし、未導入は該当Method unavailableで全Ariadneのimport/startupを壊さない。
 4. 変更がある場合はMethod DescriptorのSchema Hashと実行Audit Evidenceを更新し、Version/Operation/Estimand/Inferenceの一致しないMatchはtyped reject。G01〜G09 Methodに新たな数理Kernelを作らない。
-7. **Boundaries:** Value/Scientific typed Ports→G01 StagingSink/Atomic Publisher/Readerを使い、CLI専用Scientific Kernel、未承認Row export、old v2破壊、Unknown Backendへのfallbackを禁止。科学的・技術的Statusは独立。
-8. **Output/Evidence:** Method/Operation/Version/Backend/Profile/Source/Fixture/Oracle/seed/CI/Privacy/Manifest/Result SHA、実行時のenvironment、negativeとaccepted/rejected Reasonを残す。Independent 07/999は本Packageが代行しない。
+5. **Boundaries:** Value/Scientific typed Ports→G01 StagingSink/Atomic Publisher/Readerを使い、CLI専用Scientific Kernel、未承認Row export、old v2破壊、Unknown Backendへのfallbackを禁止。科学的・技術的Statusは独立。
+6. **Output/Evidence:** Method/Operation/Version/Backend/Profile/Source/Fixture/Oracle/seed/CI/Privacy/Manifest/Result SHA、実行時のenvironment、negativeとaccepted/rejected Reasonを残す。Independent 07/999は本Packageが代行しない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。
 
-**Proof:** 正例は10_32のDGP/ACに基づく独立Reference、負例は10_32のNEG/Reasonで検証。Backend自身の出力を真値にしてはならない。FWER=.05、K/R/Compute/MC-SE/CI coverageはMethod-specific 07/independent Pilotが確定してから測定する。未確定状態はMUSTの省略理由にならずBLOCKED/Openとして引き継ぐ。
+**Proof boundary:** G10の全41 Methodの§5 DGP/NEG/REF/ACは検証対象であり、Listが存在するだけで実Fixture/Oracle生成済みやScience PASSを意味しない。独立Reference/Generatorを事前固定し、FWER=.05とMethod別K/R/compute/MC-SE/coverageをFreeze前に確定する。未測定はBLOCKEDであり、Backendの出力を真値にしない。
 
 ## 6. Focused Verification Contract — WHAT, not physical filename
 
