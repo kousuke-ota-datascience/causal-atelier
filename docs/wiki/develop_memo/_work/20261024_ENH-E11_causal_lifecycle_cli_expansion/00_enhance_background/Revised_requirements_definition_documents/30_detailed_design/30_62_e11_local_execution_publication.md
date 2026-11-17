@@ -2,7 +2,7 @@
 
 ## 1. Scopeと既存コードの境界
 
-Local causal executionは独立したversioned local laneであり、既存Productの`causal-analysis-spec/2`、Web API/DB/Worker、`CliManifest(2.0)`の振る舞いを変更しない。ProductのArtifactStorePortはmulti-file immutable publicationの代替ではない。本書はClass/Constructor/Method、状態遷移、Port/Privacy/Publicationの永続的動作契約を定義する。
+Local CLI executionは既存Productの`causal-analysis-spec/2`、Web API/DB/Worker、`CliManifest(2.0)`の振る舞いを変更しない。入口とPublication実装はversionedな別Adapterを採用するが、CLIのみであることを根拠にDomainやScientific Coreを二重化しない。既存型との互換・拡張・再利用は30_61 §8の統合判断対象であり、未決定の独立`local_contract`を既成事実としない。ProductのArtifactStorePortはmulti-file immutable publicationの代替ではない。本書はClass/Constructor/Method、状態遷移、Port/Privacy/Publicationの永続的動作契約を定義する。
 
 ## 2. `E11LocalCausalUseCase`
 

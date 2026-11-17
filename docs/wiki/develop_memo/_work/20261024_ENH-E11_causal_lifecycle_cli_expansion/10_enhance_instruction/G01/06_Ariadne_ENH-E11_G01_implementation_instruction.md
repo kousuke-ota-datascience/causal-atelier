@@ -56,7 +56,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
-| **G01-P01** | 30_61 `1/3/4：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-P01** | 30_61 `1/2/3：REF01〜04、SPEC01〜04、GRAPH01/03/04（CLI decode は30_60 §9）；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
 | **G01-P02** | 30_62 `4/5.2：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
 | **G01-P03** | 30_61 `3：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
 | **G01-P04** | 30_62 `3：CAP01/04/05；30_63 `2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
@@ -67,7 +67,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
 
-正本となる詳細設計：[30_61 Domain/Port `2〜4/`8.1](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
+正本となる詳細設計：[30_61 Domain/Port `1〜3/`7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
 
 | Class.Method / DD検証ID | Precondition・必須動作（06） | Postcondition／失敗 | 07 |
 |---|---|---|---|
