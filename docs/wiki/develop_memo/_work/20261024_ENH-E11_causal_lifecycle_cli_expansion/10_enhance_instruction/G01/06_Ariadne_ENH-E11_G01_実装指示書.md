@@ -34,6 +34,8 @@ src/ariadne/
     command.py       # ariadne-causal-local entrypoint
     config_decoder.py
     publication.py   # TrustedRoot, staging, no-replace
+    manifest.py      # LocalRunManifest value (no I/O)
+    privacy.py       # LocalPrivacyPolicy (aggregate-only G01)
     manifest_reader.py
 tests/enhancement/enh_e11/g01/
     unit/             # pure Schema / value / graph / codec
@@ -44,15 +46,44 @@ tests/enhancement/enh_e11/g01/
 
 Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; new E11 modules may use shorter names if the same single responsibility is preserved. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
 
-| WP | Required implementation | Completion criterion (07 IDs) |
-| --- | --- | --- |
-| **G01-WP01** Pure Domain + Decoder/JCS | Typed ContentRef, Study/Graph/Status/Manifest, strict YAML/JSON decoder, Method dispatcher and RFC8785 byte encoder | G01-07-01/02/03/04 |
-| **G01-WP02** Local FS transaction | Verified descriptor-based root, secure input open, immutable staging, marker/manifest, Linux `renameat2(RENAME_NOREPLACE)`, fsync, independent Reader | G01-07-05/06 |
-| **G01-WP03** Graph Context/Version | Question/Design identity, Graph semantic JCS digest and outer ContentRef byte hash, endpoint roundtrip, revision parent proof | G01-07-02/03/07 |
-| **G01-WP04** FCI/PAG P1-M06 | FCI preflight, explicit CI test configuration, constraints, backend capability, PAG conversion, scientific status/reasons | G01-07-08/09/10 |
-| **G01-WP05** CLI / integration / v2 | new `ariadne-causal-local`, `DISCOVER` aggregate-only flow, check-only, exit phase, run idempotence, old Product CLI regression | G01-07-07/11/12 |
+| WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
+| --- | --- | --- | --- |
+| **G01-WP01** | 30_61 `2/3/4/16：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-WP02** | 30_62 `4/5.2/14：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
+| **G01-WP03** | 30_61 `4/16：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-WP04** | 30_62 `3/14：CAP01/04/05；30_63 `2/10：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
+| **G01-WP05** | 30_62 `2/6/7/14：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
 **実装順：** WP01 → WP02+WP03 → WP04 → WP05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
+
+
+### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
+
+正本となる詳細設計：[30_61 Domain/Port `2〜4/`16](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_e11_local_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7/`14](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`10](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
+
+| Class.Method / DD検証ID | Precondition・必須動作（06） | Postcondition／失敗 | 07 |
+|---|---|---|---|
+| 30_61 `2/16 `ContentRef.from_payload`・`ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
+| 30_61 `3/16 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
+| 30_61 `4/16 `GraphEvidence.from_canonical_json/canonical_payload/make_revision` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
+| 30_62 `2/14 `E11LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
+| 30_62 `3/14 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
+| 30_63 `10 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
+| 30_62 `4/14 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
+| 30_62 `5.1/14 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
+| 30_62 `5.2/14 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
+| 30_62 `6/14 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
+| 30_62 `7/14 `interfaces.cli.e11.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
+
+**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph revision factoryだけG01）、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
+
+### 2.2 Method不変条件の実装順序（曖昧性防止）
+
+1. `ContentRef.from_payload → LocalConfigDecoder.decode`：入力のVersion/Schema/Methodを検証した後、同一Rootのfile bytes/lineageをverifyする。`ValidatedStudy`を経由せずApplicationを呼び出さない。
+2. `E11LocalCausalUseCase.preflight`：実行前にStudy/Question/Design/CI Eligibilityと安全なRootを調べるが、Fit・Staging・Manifest書込なし（07-11）。`run`はFCIが返すGraphとScience結果の型を維持。
+3. `FciDiscoveryAdapter.execute`：Dataset列順↔Backend node IDを検査。source/target順を換えればmarkも同時swap。曖昧なPAG endpointの方向を創作しない（07-03/09/10）。
+4. `LocalArtifactPublisher`：`begin→stage_bytes→validate(seal)→commit`が唯一の書込経路。`renameat2(RENAME_NOREPLACE)`と両parent sync＋独立Reader readback後だけCOMPLETED。abortはrename**前**だけ、結果不定時の削除/repair禁止（07-05/06）。
+5. `LocalRunManifest/Reader`：DISCOVERではEffect Resultを作らず、`manifest.schema_dispatch.result=null`。実ファイルBytes HashとGraph意味Hashを区別し、StatusのScience NOT_EVALUATEDを誤ってPASSに変更しない（07-04/06/07）。
 
 ## 3. G01専用の入力契約
 
@@ -144,6 +175,6 @@ ROOT/runs/{run_id}/
 
 ## 7. Coding Entry前のセルフチェック（追加承認手続きではない）
 
-G01 06は**実装方法の設計として完結**。必要なRuntime適合性・API probes/Graph oracle・JCS実装・FS crash試験は07の責務であり、この文書を増殖させる必要はない。Coding AgentはG01のWPに着手する前に、環境がPython3.12/Linux、既存`uv.lock`の`causal-learn 0.1.4.8`であること、Source/Contractに破壊的差異がないことを確認する。真に未対応ならsilent fallbackではなくTyped Blockerを出す。
+G01 06は**詳細設計Class.Method・不変条件・DD検証IDに対応付け済みの実装契約**。必要なRuntime適合性・API probes/Graph oracle・JCS実装・FS crash試験は07の責務であり、この文書を増殖させる必要はない。Coding AgentはG01のWPに着手する前に、環境がPython3.12/Linux、既存`uv.lock`の`causal-learn 0.1.4.8`であること、Source/Contractに破壊的差異がないことを確認する。真に未対応ならsilent fallbackではなくTyped Blockerを出す。
 
 **最終判定:** `G01_06_IMPLEMENTATION_CONTRACT_READY / G01_07_VERIFICATION_CONTRACT_READY / TESTS_NOT_RUN / CODING_NOT_AUTHORIZED`。
