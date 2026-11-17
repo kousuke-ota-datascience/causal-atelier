@@ -122,7 +122,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ResultResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `result_id` | `str` | 必須 | 不可 | — |
 | `execution_id` | `str` | 必須 | 不可 | — |
@@ -135,7 +135,7 @@ Request JSON Bodyなし（Router未定義）。
 | `artifact_ids` | `list[str]` | 任意 | 不可 | Field(default_factory=list) |
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -147,6 +147,7 @@ Request JSON Bodyなし（Router未定義）。
   "payload": {},
   "diagnostics": {},
   "warnings": [],
+  "artifact_ids": [],
   "created_at": "2026-11-17T00:00:00Z"
 }
 ```
@@ -193,12 +194,12 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `ComparisonQueryRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `project_id` | `str` | 必須 | 不可 | — |
 | `result_ids` | `list[str]` | 必須 | 不可 | min_length=2, max_length=20 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -211,7 +212,7 @@ Content-Type: `application/json`、型 `ComparisonQueryRequest`
 
 - HTTP **200**。Body schema: `ComparisonResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `operation` | `str` | 必須 | 不可 | — |
 | `common_conditions` | `dict[str, Any]` | 必須 | 不可 | — |
@@ -220,7 +221,7 @@ Content-Type: `application/json`、型 `ComparisonQueryRequest`
 | `warnings` | `list[str]` | 必須 | 不可 | — |
 | `lineage_summary` | `dict[str, Any]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -281,13 +282,13 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `LineageResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `root_result_id` | `str` | 必須 | 不可 | — |
 | `nodes` | `list[LineageNodeResponse]` | 必須 | 不可 | — |
 | `edges` | `list[LineageEdgeResponse]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -578,11 +579,11 @@ Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの�
 
 Content-Type: `application/json`、型 `ComparisonCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `result_ids` | `list[str]` | 必須 | 不可 | min_length=2, max_length=20 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -760,22 +761,22 @@ Request JSON Bodyなし（Router未定義）。
 
 Content-Type: `application/json`、型 `LineageLinkCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `source_type` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
 | `source_id` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
-| `relation_type` | `Literal[` | 必須 | 不可 | — |
+| `relation_type` | `Literal[ "USED_INPUT", "GENERATED", "DERIVED_FROM", "REVISED_FROM", "SUPPORTED_BY", "MOTIVATED", "SELECTED", "REJECTED",` | 必須 | 不可 | — |
 | `target_type` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
 | `target_id` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
 | `evidence` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
   "source_type": "string",
   "source_id": "{source_id}",
-  "relation_type": "ENUM",
+  "relation_type": "USED_INPUT",
   "target_type": "string",
   "target_id": "{target_id}"
 }

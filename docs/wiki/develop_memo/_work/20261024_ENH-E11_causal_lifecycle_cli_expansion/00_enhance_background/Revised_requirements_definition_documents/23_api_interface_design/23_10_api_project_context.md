@@ -66,14 +66,14 @@ CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json
 
 Content-Type: `application/json`、型 `ProjectCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `name` | `str` | 必須 | 不可 | min_length=1, max_length=200 |
 | `topic` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
 | `objective` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
 | `memo` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -85,7 +85,7 @@ Content-Type: `application/json`、型 `ProjectCreate`
 
 - HTTP **201**。Body schema: `ProjectResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `project_id` | `str` | 必須 | 不可 | — |
 | `name` | `str` | 必須 | 不可 | — |
@@ -96,7 +96,7 @@ Content-Type: `application/json`、型 `ProjectCreate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -158,16 +158,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ProjectListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[ProjectResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -217,7 +218,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ProjectResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `project_id` | `str` | 必須 | 不可 | — |
 | `name` | `str` | 必須 | 不可 | — |
@@ -228,7 +229,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -286,14 +287,14 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `ProjectUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `name` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=200 |
 | `topic` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
 | `objective` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
 | `memo` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -303,7 +304,7 @@ Content-Type: `application/json`、型 `ProjectUpdate`
 
 - HTTP **200**。Body schema: `ProjectResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `project_id` | `str` | 必須 | 不可 | — |
 | `name` | `str` | 必須 | 不可 | — |
@@ -314,7 +315,7 @@ Content-Type: `application/json`、型 `ProjectUpdate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -428,7 +429,7 @@ Response bodyなし。
 
 Content-Type: `application/json`、型 `ResearchContextCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `context_key` | `str` | 必須 | 不可 | — |
 | `problem_statement` | `str` | 任意 | 不可 | "" |
@@ -438,7 +439,7 @@ Content-Type: `application/json`、型 `ResearchContextCreate`
 | `decision_context` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 | `relations` | `list[dict[str, str]]` | 任意 | 不可 | Field(default_factory=list) |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -611,7 +612,7 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `ResearchContextPatch`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `problem_statement` | `str \| None` | 任意 | 許可 | None |
 | `research_questions` | `list[str] \| None` | 任意 | 許可 | None |
@@ -620,7 +621,7 @@ Content-Type: `application/json`、型 `ResearchContextPatch`
 | `decision_context` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 | `relations` | `list[dict[str, str]] \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}

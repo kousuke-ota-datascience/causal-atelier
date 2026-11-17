@@ -183,14 +183,14 @@ Request JSON Bodyなし（Router未定義）。
 
 Content-Type: `application/json`、型 `WorkspaceSelectionUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `research_context_version_id` | `str \| None` | 任意 | 許可 | None |
 | `dataset_version_id` | `str \| None` | 任意 | 許可 | None |
 | `analysis_view_id` | `str \| None` | 任意 | 許可 | None |
 | `unsaved_draft` | `bool \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -251,11 +251,11 @@ Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの�
 
 Content-Type: `application/json`、型 `ProjectMemberUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `role` | `Literal["OWNER", "EDITOR", "VIEWER"]` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -321,12 +321,12 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `AnalysisNavigationResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `schema_version` | `Literal["analysis-navigation/1"]` | 必須 | 不可 | — |
 | `families` | `list[FamilyNavigationResponse]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {

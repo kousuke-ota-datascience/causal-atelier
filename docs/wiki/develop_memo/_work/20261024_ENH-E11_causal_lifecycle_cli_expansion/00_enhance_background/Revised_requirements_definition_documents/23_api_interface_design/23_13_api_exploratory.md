@@ -69,13 +69,13 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `AnalysisViewCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `view_key` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
 | `name` | `str` | 必須 | 不可 | min_length=1, max_length=200 |
 | `spec` | `dict[str, Any]` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -89,7 +89,7 @@ Content-Type: `application/json`、型 `AnalysisViewCreate`
 
 - HTTP **201**。Body schema: `AnalysisViewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `analysis_view_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -106,7 +106,7 @@ Content-Type: `application/json`、型 `AnalysisViewCreate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `fixed_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -176,16 +176,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `AnalysisViewListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[AnalysisViewResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -238,7 +239,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `AnalysisViewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `analysis_view_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -255,7 +256,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `fixed_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -321,12 +322,12 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `AnalysisViewUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `name` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=200 |
 | `spec` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -336,7 +337,7 @@ Content-Type: `application/json`、型 `AnalysisViewUpdate`
 
 - HTTP **200**。Body schema: `AnalysisViewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `analysis_view_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -353,7 +354,7 @@ Content-Type: `application/json`、型 `AnalysisViewUpdate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `fixed_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -477,7 +478,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `AnalysisViewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `analysis_view_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -494,7 +495,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `fixed_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -560,13 +561,13 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `ExplorationRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `analysis_view_id` | `str \| None` | 任意 | 許可 | None |
 | `family_spec` | `dict[str, Any]` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -579,7 +580,7 @@ Content-Type: `application/json`、型 `ExplorationRequest`
 
 - HTTP **200**。Body schema: `ExplorationPreviewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `schema_version` | `str` | 必須 | 不可 | — |
 | `analysis_family` | `Literal["EXPLORATORY"]` | 必須 | 不可 | — |
@@ -591,7 +592,7 @@ Content-Type: `application/json`、型 `ExplorationRequest`
 | `view_manifest` | `dict[str, Any]` | 必須 | 不可 | — |
 | `saved` | `Literal[False]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -603,7 +604,7 @@ Content-Type: `application/json`、型 `ExplorationRequest`
   "payload": {},
   "warnings": [],
   "view_manifest": {},
-  "saved": "ENUM"
+  "saved": null
 }
 ```
 
@@ -652,13 +653,13 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `ExplorationRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `analysis_view_id` | `str \| None` | 任意 | 許可 | None |
 | `family_spec` | `dict[str, Any]` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -671,7 +672,7 @@ Content-Type: `application/json`、型 `ExplorationRequest`
 
 - HTTP **202**。Body schema: `FamilyExecutionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `execution_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -687,7 +688,7 @@ Content-Type: `application/json`、型 `ExplorationRequest`
 | `finished_at` | `datetime \| None` | 必須 | 許可 | — |
 | `last_error` | `dict[str, Any] \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -756,16 +757,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `FamilyExecutionListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[FamilyExecutionResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -818,7 +820,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `FamilyExecutionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `execution_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -834,7 +836,7 @@ Request JSON Bodyなし（Router未定義）。
 | `finished_at` | `datetime \| None` | 必須 | 許可 | — |
 | `last_error` | `dict[str, Any] \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -902,16 +904,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `FamilyResultListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[FamilyResultResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -964,7 +967,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `FamilyResultResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `result_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -980,7 +983,7 @@ Request JSON Bodyなし（Router未定義）。
 | `warnings` | `list[Any]` | 必須 | 不可 | — |
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -1045,38 +1048,20 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `CreateDraftRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `target_family` | `Literal["CAUSAL", "PREDICTIVE"]` | 必須 | 不可 | — |
 | `analysis_mode` | `Literal["EXPLORATORY", "CONFIRMATORY"]` | 必須 | 不可 | — |
 | `research_context_version_id` | `str \| None` | 任意 | 許可 | None |
 | `family_spec_schema_version` | `str \| None` | 任意 | 許可 | None |
 | `family_spec` | `dict[str, Any] \| None` | 任意 | 許可 | None |
-| `project_id` | `str, body: AnalysisViewCreate, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, analysis_view_id: str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, analysis_view_id: str, body: AnalysisViewUpdate,` | 必須 | 不可 | — |
-| `svc` | `ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, analysis_view_id: str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, analysis_view_id: str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, body: ExplorationRequest, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, body: ExplorationRequest,` | 必須 | 不可 | — |
-| `svc` | `ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, execution_id: str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, result_id: str, svc: ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, result_id: str, body: CreateDraftRequest,` | 必須 | 不可 | — |
-| `svc` | `ExploratoryWorkspaceServiceDep,` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
   "target_family": "CAUSAL",
-  "analysis_mode": "EXPLORATORY",
-  "project_id": "{project_id}",
-  "svc": "string"
+  "analysis_mode": "EXPLORATORY"
 }
 ```
 

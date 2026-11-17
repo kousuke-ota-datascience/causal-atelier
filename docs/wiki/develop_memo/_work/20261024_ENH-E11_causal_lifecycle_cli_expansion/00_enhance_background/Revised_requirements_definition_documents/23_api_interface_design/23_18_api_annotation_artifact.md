@@ -136,9 +136,9 @@ Service返却要素のField型は追加照合対象。
 
 Content-Type: `application/json`、型 `WorkspaceAnnotationCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
-| `target_type` | `Literal[` | 必須 | 不可 | — |
+| `target_type` | `Literal[ "Project", "ResearchContextVersion", "AnalysisView", "AnalysisSpecification", "Execution", "Result", "GraphVersion",` | 必須 | 不可 | — |
 | `target_id` | `str` | 必須 | 不可 | min_length=1, max_length=100 |
 | `statement` | `str` | 必須 | 不可 | min_length=1, max_length=8000 |
 | `rationale` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
@@ -147,11 +147,11 @@ Content-Type: `application/json`、型 `WorkspaceAnnotationCreate`
 | `decision` | `Literal["SELECTED", "REJECTED", "DEFERRED"] \| None` | 任意 | 許可 | None |
 | `next_actions` | `list[Any]` | 任意 | 不可 | Field(default_factory=list) |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
-  "target_type": "ENUM",
+  "target_type": "Project",
   "target_id": "{target_id}",
   "statement": "string"
 }
@@ -213,7 +213,7 @@ Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの�
 
 Content-Type: `application/json`、型 `WorkspaceAnnotationUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `statement` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=8000 |
 | `rationale` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
@@ -222,7 +222,7 @@ Content-Type: `application/json`、型 `WorkspaceAnnotationUpdate`
 | `decision` | `Literal["SELECTED", "REJECTED", "DEFERRED"] \| None` | 任意 | 許可 | None |
 | `next_actions` | `list[Any] \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -391,57 +391,15 @@ HTTP Body: binary。Content-Type/Content-Disposition等はRouter内Response構�
 
 Content-Type: `application/json`、型 `ExportCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `result_ids` | `list[str]` | 必須 | 不可 | min_length=1, max_length=100 |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `resource_type` | `str \| None` | 任意 | 許可 | None, resource_id: str \| None=None, |
-| `route` | `str \| None` | 任意 | 許可 | None, |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, body: WorkspaceSelectionUpdate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, user_id: str, body: ProjectMemberUpdate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, result_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `include_sensitive` | `bool` | 任意 | 不可 | lt=False |
-| `project_id` | `str, body: ComparisonCreate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, result_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, body: LineageLinkCreate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, request: Request, service: ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `target_type` | `str \| None` | 任意 | 許可 | lt=None |
-| `target_id` | `str \| None` | 任意 | 許可 | lt=None |
-| `project_id` | `str, body: WorkspaceAnnotationCreate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep, idempotency: IdempotencyServiceDep,` | 必須 | 不可 | — |
-| `idempotency_key` | `str \| None` | 任意 | 許可 | lt=None |
-| `project_id` | `str, annotation_id: str, body: WorkspaceAnnotationUpdate,` | 必須 | 不可 | — |
-| `request` | `Request, service: ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, artifact_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, artifact_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, body: ExportCreate, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep, idempotency: IdempotencyServiceDep,` | 必須 | 不可 | — |
-| `idempotency_key` | `str \| None` | 任意 | 許可 | lt=None |
-| `project_id` | `str, export_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, export_id: str, request: Request,` | 必須 | 不可 | — |
-| `service` | `ProductClosureServiceDep,` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
-  "result_ids": [],
-  "project_id": "{project_id}",
-  "service": "string",
-  "request": "string"
+  "result_ids": []
 }
 ```
 
@@ -608,7 +566,7 @@ HTTP Body: binary。Content-Type/Content-Disposition等はRouter内Response構�
 
 Content-Type: `application/json`、型 `AnnotationCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `target_result_id` | `str \| None` | 任意 | 許可 | None |
 | `target_graph_version_id` | `str \| None` | 任意 | 許可 | None |
@@ -617,7 +575,7 @@ Content-Type: `application/json`、型 `AnnotationCreate`
 | `assumptions` | `list[Any]` | 任意 | 不可 | Field(default_factory=list) |
 | `limitations` | `list[Any]` | 任意 | 不可 | Field(default_factory=list) |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -629,7 +587,7 @@ Content-Type: `application/json`、型 `AnnotationCreate`
 
 - HTTP **201**。Body schema: `AnnotationResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `annotation_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -643,7 +601,7 @@ Content-Type: `application/json`、型 `AnnotationCreate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -709,7 +667,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `AnnotationResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `annotation_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -723,7 +681,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -784,14 +742,14 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `AnnotationUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `statement` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=8000 |
 | `rationale` | `str \| None` | 任意 | 許可 | None |
 | `assumptions` | `list[Any] \| None` | 任意 | 許可 | None |
 | `limitations` | `list[Any] \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -801,7 +759,7 @@ Content-Type: `application/json`、型 `AnnotationUpdate`
 
 - HTTP **200**。Body schema: `AnnotationResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `annotation_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -815,7 +773,7 @@ Content-Type: `application/json`、型 `AnnotationUpdate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `updated_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -881,7 +839,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ArtifactResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `artifact_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -895,7 +853,7 @@ Request JSON Bodyなし（Router未定義）。
 | `metadata` | `dict[str, Any]` | 必須 | 不可 | — |
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {

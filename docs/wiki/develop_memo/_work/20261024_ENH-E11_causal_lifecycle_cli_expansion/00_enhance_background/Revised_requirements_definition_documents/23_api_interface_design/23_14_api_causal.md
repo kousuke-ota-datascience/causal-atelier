@@ -70,7 +70,7 @@ CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json
 
 Content-Type: `application/json`、型 `GraphVersionCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `source_result_id` | `str \| None` | 任意 | 許可 | None |
 | `parent_graph_version_id` | `str \| None` | 任意 | 許可 | None |
@@ -83,7 +83,7 @@ Content-Type: `application/json`、型 `GraphVersionCreate`
 | `edit_rationale` | `str \| None` | 任意 | 許可 | None |
 | `fix_immediately` | `bool` | 任意 | 不可 | False |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -99,7 +99,7 @@ Content-Type: `application/json`、型 `GraphVersionCreate`
 
 - HTTP **201**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -118,7 +118,7 @@ Content-Type: `application/json`、型 `GraphVersionCreate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -136,7 +136,8 @@ Content-Type: `application/json`、型 `GraphVersionCreate`
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -189,7 +190,7 @@ Content-Type: `application/json`、型 `GraphVersionCreate`
 
 Content-Type: `application/json`、型 `GraphEditDraftCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `base_candidate_kind` | `Literal["DISCOVERY_RESULT", "GRAPH_VERSION"]` | 必須 | 不可 | — |
 | `base_candidate_id` | `str` | 必須 | 不可 | — |
@@ -197,7 +198,7 @@ Content-Type: `application/json`、型 `GraphEditDraftCreate`
 | `name` | `str` | 必須 | 不可 | min_length=1, max_length=200 |
 | `edit_rationale` | `str` | 必須 | 不可 | min_length=1, max_length=8000 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -213,7 +214,7 @@ Content-Type: `application/json`、型 `GraphEditDraftCreate`
 
 - HTTP **201**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -232,7 +233,7 @@ Content-Type: `application/json`、型 `GraphEditDraftCreate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -250,7 +251,8 @@ Content-Type: `application/json`、型 `GraphEditDraftCreate`
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -304,16 +306,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphVersionListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[GraphVersionResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -365,7 +368,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -384,7 +387,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -402,7 +405,8 @@ Request JSON Bodyなし（Router未定義）。
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -455,7 +459,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -474,7 +478,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -492,7 +496,8 @@ Request JSON Bodyなし（Router未定義）。
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -540,14 +545,14 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `GraphVersionUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph` | `dict[str, Any]` | 必須 | 不可 | — |
 | `edit_rationale` | `str \| None` | 任意 | 許可 | None |
 | `designated_outcome_node` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=200 |
 | `expected_content_hash` | `str \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -559,7 +564,7 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -578,7 +583,7 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -596,7 +601,8 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -645,14 +651,14 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `GraphVersionUpdate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph` | `dict[str, Any]` | 必須 | 不可 | — |
 | `edit_rationale` | `str \| None` | 任意 | 許可 | None |
 | `designated_outcome_node` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=200 |
 | `expected_content_hash` | `str \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -664,7 +670,7 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -683,7 +689,7 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -701,7 +707,8 @@ Content-Type: `application/json`、型 `GraphVersionUpdate`
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -754,7 +761,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -773,7 +780,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -791,7 +798,8 @@ Request JSON Bodyなし（Router未定義）。
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -844,7 +852,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `graph_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -863,7 +871,7 @@ Request JSON Bodyなし（Router未定義）。
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 | `allowed_actions` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -881,7 +889,8 @@ Request JSON Bodyなし（Router未定義）。
   "edit_rationale": "string",
   "status": "string",
   "created_by": "string",
-  "created_at": "2026-11-17T00:00:00Z"
+  "created_at": "2026-11-17T00:00:00Z",
+  "allowed_actions": {}
 }
 ```
 
@@ -934,16 +943,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphCandidateListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[GraphCandidateResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -996,7 +1006,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `GraphCandidateResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `candidate_kind` | `str` | 必須 | 不可 | — |
 | `candidate_id` | `str` | 必須 | 不可 | — |
@@ -1014,7 +1024,7 @@ Request JSON Bodyなし（Router未定義）。
 | `allowed_actions` | `dict[str, Any]` | 必須 | 不可 | — |
 | `graph` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -1031,7 +1041,8 @@ Request JSON Bodyなし（Router未定義）。
   "designated_outcome_node": "string",
   "summary": {},
   "warnings": [],
-  "allowed_actions": {}
+  "allowed_actions": {},
+  "graph": {}
 }
 ```
 
@@ -1078,11 +1089,11 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `GraphCandidateComparisonRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `candidate_refs` | `list[CandidateRef]` | 必須 | 不可 | min_length=2, max_length=20 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -1094,14 +1105,14 @@ Content-Type: `application/json`、型 `GraphCandidateComparisonRequest`
 
 - HTTP **200**。Body schema: `GraphCandidateComparisonResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `candidates` | `list[GraphCandidateResponse]` | 必須 | 不可 | — |
 | `compatibility` | `dict[str, Any]` | 必須 | 不可 | — |
 | `differences` | `list[dict[str, Any]]` | 必須 | 不可 | — |
 | `warnings` | `list[str]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {

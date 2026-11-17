@@ -64,7 +64,7 @@ CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json
 
 Content-Type: `application/json`、型 `AnalysisSpecificationCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `schema_version` | `Literal["analysis-specification/1"]` | 必須 | 不可 | — |
 | `specification_key` | `str` | 必須 | 不可 | — |
@@ -78,7 +78,7 @@ Content-Type: `application/json`、型 `AnalysisSpecificationCreate`
 | `revision_context` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 | `warnings` | `list[dict[str, Any]]` | 任意 | 不可 | Field(default_factory=list) |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -370,7 +370,7 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `AnalysisSpecificationPatch`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `analysis_family` | `Literal["EXPLORATORY", "CAUSAL", "PREDICTIVE"] \| None` | 任意 | 許可 | None |
 | `research_context_version_id` | `str \| None` | 任意 | 許可 | None |
@@ -382,7 +382,7 @@ Content-Type: `application/json`、型 `AnalysisSpecificationPatch`
 | `revision_context` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 | `warnings` | `list[dict[str, Any]] \| None` | 任意 | 許可 | None |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {}
@@ -649,51 +649,16 @@ Request JSON Bodyなし（Router未定義）。
 
 Content-Type: `application/json`、型 `AnalysisSpecificationRevise`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `change_reason` | `str` | 必須 | 不可 | — |
 | `changes` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `body` | `ResearchContextCreate,` | 必須 | 不可 | — |
-| `request` | `Request,` | 必須 | 不可 | — |
-| `svc` | `WorkspaceLifecycleServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, context_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `context_id` | `str,` | 必須 | 不可 | — |
-| `body` | `ResearchContextPatch,` | 必須 | 不可 | — |
-| `svc` | `WorkspaceLifecycleServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, context_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, context_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `body` | `AnalysisSpecificationCreate,` | 必須 | 不可 | — |
-| `request` | `Request,` | 必須 | 不可 | — |
-| `svc` | `WorkspaceLifecycleServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, spec_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `spec_id` | `str,` | 必須 | 不可 | — |
-| `body` | `AnalysisSpecificationPatch,` | 必須 | 不可 | — |
-| `svc` | `WorkspaceLifecycleServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str, spec_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str, spec_id: str, svc: WorkspaceLifecycleServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `spec_id` | `str,` | 必須 | 不可 | — |
-| `body` | `AnalysisSpecificationRevise,` | 必須 | 不可 | — |
-| `request` | `Request,` | 必須 | 不可 | — |
-| `svc` | `WorkspaceLifecycleServiceDep,` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
-  "change_reason": "string",
-  "project_id": "{project_id}",
-  "body": "string",
-  "request": "string",
-  "svc": "string",
-  "context_id": "{context_id}",
-  "spec_id": "{spec_id}"
+  "change_reason": "string"
 }
 ```
 

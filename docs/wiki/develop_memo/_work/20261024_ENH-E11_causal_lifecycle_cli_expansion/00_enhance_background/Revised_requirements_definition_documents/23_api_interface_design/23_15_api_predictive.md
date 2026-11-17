@@ -123,13 +123,13 @@ Router固有の必須Header宣言なし
 
 Content-Type: `application/json`、型 `PredictiveSplitRequest`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `analysis_view_id` | `str \| None` | 任意 | 許可 | None |
 | `family_spec` | `dict[str, Any]` | 必須 | 不可 | — |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -142,7 +142,7 @@ Content-Type: `application/json`、型 `PredictiveSplitRequest`
 
 - HTTP **201**。Body schema: `PredictiveSplitResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `schema_version` | `Literal["predictive-split-validation/1"]` | 必須 | 不可 | — |
 | `status` | `Literal["VALID"]` | 必須 | 不可 | — |
@@ -152,15 +152,8 @@ Content-Type: `application/json`、型 `PredictiveSplitRequest`
 | `partition_counts` | `dict[str, int]` | 必須 | 不可 | — |
 | `partition_artifact` | `PartitionArtifactResponse` | 必須 | 不可 | — |
 | `source_snapshot` | `dict[str, Any]` | 必須 | 不可 | — |
-| `project_id` | `str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `body` | `PredictiveSplitRequest,` | 必須 | 不可 | — |
-| `svc` | `PredictiveSplitServiceDep,` | 必須 | 不可 | — |
-| `project_id` | `str,` | 必須 | 不可 | — |
-| `artifact_id` | `str,` | 必須 | 不可 | — |
-| `svc` | `PredictiveSplitServiceDep,` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -170,12 +163,14 @@ Content-Type: `application/json`、型 `PredictiveSplitRequest`
   "task_type": "string",
   "strategy": "string",
   "partition_counts": {},
-  "partition_artifact": "string",
-  "source_snapshot": {},
-  "project_id": "{project_id}",
-  "body": "string",
-  "svc": "string",
-  "artifact_id": "{artifact_id}"
+  "partition_artifact": {
+    "artifact_id": "{artifact_id}",
+    "schema_version": "partition-artifact/1",
+    "content_hash": "string",
+    "size_bytes": 0,
+    "selection_contract": {}
+  },
+  "source_snapshot": {}
 }
 ```
 

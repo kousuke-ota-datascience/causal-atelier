@@ -73,7 +73,7 @@ Content-Type: `multipart/form-data`（JSONではない）
 
 - HTTP **201**。Body schema: `DatasetVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -82,14 +82,14 @@ Content-Type: `multipart/form-data`（JSONではない）
 | `name` | `str` | 必須 | 不可 | — |
 | `version_label` | `str` | 必須 | 不可 | — |
 | `content_hash` | `str` | 必須 | 不可 | — |
-| `column_schema` | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
+| `schema`（Python: `column_schema`） | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
 | `profile_summary` | `dict[str, Any]` | 必須 | 不可 | — |
 | `row_count` | `int` | 必須 | 不可 | — |
 | `column_count` | `int` | 必須 | 不可 | — |
 | `source_note` | `str \| None` | 必須 | 許可 | — |
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -100,7 +100,7 @@ Content-Type: `multipart/form-data`（JSONではない）
   "name": "string",
   "version_label": "string",
   "content_hash": "string",
-  "column_schema": {},
+  "schema": {},
   "profile_summary": {},
   "row_count": 0,
   "column_count": 0,
@@ -159,16 +159,17 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `DatasetVersionListResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `items` | `list[DatasetVersionResponse]` | 必須 | 不可 | — |
 | `next_cursor` | `str \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
-  "items": []
+  "items": [],
+  "next_cursor": "string"
 }
 ```
 
@@ -219,7 +220,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `DatasetVersionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -228,14 +229,14 @@ Request JSON Bodyなし（Router未定義）。
 | `name` | `str` | 必須 | 不可 | — |
 | `version_label` | `str` | 必須 | 不可 | — |
 | `content_hash` | `str` | 必須 | 不可 | — |
-| `column_schema` | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
+| `schema`（Python: `column_schema`） | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
 | `profile_summary` | `dict[str, Any]` | 必須 | 不可 | — |
 | `row_count` | `int` | 必須 | 不可 | — |
 | `column_count` | `int` | 必須 | 不可 | — |
 | `source_note` | `str \| None` | 必須 | 許可 | — |
 | `created_at` | `datetime \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -246,7 +247,7 @@ Request JSON Bodyなし（Router未定義）。
   "name": "string",
   "version_label": "string",
   "content_hash": "string",
-  "column_schema": {},
+  "schema": {},
   "profile_summary": {},
   "row_count": 0,
   "column_count": 0,
@@ -304,14 +305,14 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `DatasetPreviewResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
 | `columns` | `list[str]` | 必須 | 不可 | — |
 | `rows` | `list[dict[str, Any]]` | 必須 | 不可 | — |
 | `limit` | `int` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {

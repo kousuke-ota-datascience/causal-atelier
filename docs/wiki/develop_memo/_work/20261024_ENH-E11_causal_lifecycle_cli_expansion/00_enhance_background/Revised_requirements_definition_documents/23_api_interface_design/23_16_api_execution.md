@@ -64,7 +64,7 @@ CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json
 
 Content-Type: `application/json`、型 `ExecutionBatchCreate`
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `operation` | `Literal["DISCOVERY", "IDENTIFICATION", "ESTIMATION", "REFUTATION", "SENSITIVITY"]` | 必須 | 不可 | — |
 | `analysis_family` | `Literal["CAUSAL", "EXPLORATORY", "PREDICTIVE"]` | 任意 | 不可 | "CAUSAL" |
@@ -80,7 +80,7 @@ Content-Type: `application/json`、型 `ExecutionBatchCreate`
 | `base_execution_id` | `str \| None` | 任意 | 許可 | None |
 | `change_reason` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
 
-**Request JSON例（説明用）**
+**Request JSON例（schema由来の説明用）**
 
 ```json
 {
@@ -97,12 +97,12 @@ Content-Type: `application/json`、型 `ExecutionBatchCreate`
 
 - HTTP **202**。Body schema: `ExecutionBatchResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `batch_key` | `str` | 必須 | 不可 | — |
 | `executions` | `list[ExecutionAccepted]` | 必須 | 不可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -219,7 +219,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ExecutionResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `execution_id` | `str` | 必須 | 不可 | — |
 | `project_id` | `str` | 必須 | 不可 | — |
@@ -242,7 +242,7 @@ Request JSON Bodyなし（Router未定義）。
 | `scientific_warnings` | `list[dict[str, Any]]` | 任意 | 不可 | Field(default_factory=list) |
 | `revision_context` | `dict[str, Any] \| None` | 任意 | 許可 | None |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
@@ -262,7 +262,10 @@ Request JSON Bodyなし（Router未定義）。
   "requested_at": "2026-11-17T00:00:00Z",
   "started_at": "2026-11-17T00:00:00Z",
   "finished_at": "2026-11-17T00:00:00Z",
-  "last_error_summary": "string"
+  "last_error_summary": "string",
+  "analysis_mode": "string",
+  "scientific_warnings": [],
+  "revision_context": {}
 }
 ```
 
@@ -313,7 +316,7 @@ Request JSON Bodyなし（Router未定義）。
 
 - HTTP **200**。Body schema: `ExecutionPrefillResponse`。
 
-| 項目 | 型 | 必須 | null | 制約・既定値 |
+| 項目（wire） | 型 | 必須 | null | 制約・既定値 |
 |---|---|---|---|---|
 | `operation` | `str` | 必須 | 不可 | — |
 | `dataset_version_id` | `str` | 必須 | 不可 | — |
@@ -326,7 +329,7 @@ Request JSON Bodyなし（Router未定義）。
 | `parameters` | `dict[str, Any]` | 必須 | 不可 | — |
 | `random_seed` | `int \| None` | 必須 | 許可 | — |
 
-**Response JSON構造例（説明用）**
+**Response JSON構造例（schema由来の説明用）**
 
 ```json
 {
