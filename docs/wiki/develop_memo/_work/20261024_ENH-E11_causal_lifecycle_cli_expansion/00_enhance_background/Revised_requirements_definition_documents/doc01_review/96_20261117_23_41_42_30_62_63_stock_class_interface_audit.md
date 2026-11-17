@@ -52,7 +52,7 @@ FciDiscoveryAdapterの`preflight(ValidatedDiscoveryRequest)`／`execute(Validate
 
 1. 既存`ScientificCorePort`のv2 Adapterと新typed Portを共通Kernelに接続するBridgeの具体Data mappingとException整合、Regression実証。
 2. Method Registry単一authorityへ既存Estimand Validatorを移す際の依存循環と旧Product Exportの互換検証。
-3. 新Method20/既存Refutation2追加分のImplementationとDGP/Reference/Inference/CI/AR/Graph scientific validation。
+3. PROPOSED Adapter 20 ClassのImplementationと、既存RefutationAdapterで未対応のP1-M14/M15の追加実装とDGP/Reference/Inference/CI/AR/Graph scientific validation。
 4. 23_42のstrict Schema/Hash/Privacy/Marker/readbackと各OperationのBundle全件対応、実効FS fault-injection。
 5. G01の06/07 Gate単位のFreezeとCoding Authorizationは別工程で、**未発行**。原正本`docs/wiki/requirement_definition/`への昇格は全GateテストPASSまで禁止。
 
