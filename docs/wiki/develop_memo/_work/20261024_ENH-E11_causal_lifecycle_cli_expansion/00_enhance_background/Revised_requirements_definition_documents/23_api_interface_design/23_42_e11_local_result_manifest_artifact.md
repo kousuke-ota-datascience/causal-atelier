@@ -257,6 +257,6 @@ F03：`ValidatedStagedBundle`だけをLocal Publisherへ渡し、`renameat2(...R
 
 F05：default row-level Parquetなし。明示Study request ∧ CLI flag ∧ 別に証拠を持つ事前Study Policy ∧ private TrustedLocalRoot ∧ column/row制限が一致した場合のみ行出力。Unknown ACL/mount/namespaceは拒否。[F05契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)。
 
-F06：5種類の採用済みVersion文字列と独立`e11-commit/1` markerを厳格dispatch。[F06契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)、[機械可読Schemaドラフト](schema_drafts/)参照。例の`ContentRef`は5キー形式。旧`id/sha256`例・`path/sha256`例を新v1正規値として暗黙解釈しない。
+F06：5種類の採用済みVersion文字列と独立`e11-commit/1` markerを厳格dispatch。[F06契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)、[機械可読Schemaドラフト](schema_drafts/README.md)参照。例の`ContentRef`は5キー形式。旧`id/sha256`例・`path/sha256`例を新v1正規値として暗黙解釈しない。
 
 F07：汎用ARの`EMPTY`表現は[設計レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md)の`REV-F07-01`として**未決定**。既存`arConfidenceSet.components.minItems=1`ドラフトのまま統計的に空集合が不可能と一般化しない。最終Schema Freeze前にOwner/Science判断が必要。

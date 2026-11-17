@@ -161,5 +161,5 @@ Portの候補署名/Negative case/Regression obligationsは[F04 ADR候補](../co
 
 - [F03 Atomic no-replace出版契約](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)：Linux `renameat2(RENAME_NOREPLACE)`を必須とし、ロックや普通のrenameで代替しない。Producerは`ValidatedStagedBundle`、Readerは`VerifiedLocalRun`を返す。未検証・競合・crash時に成功を主張しない。
 - [F05 Trusted Root/Privacy契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Local Principal、ACL/mount、Owner一致と事前承認済みPolicyの証跡を検証。Study自己申告boolのみで個票を許可しない。
-- [F06 Dispatch/Codec/Error契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：採用済み5種のversionと`e11-commit/1` markerを厳格dispatch。Unknown/legacyはfail-closed。構造は[Schema draft一覧](schema_drafts/)に対応。
+- [F06 Dispatch/Codec/Error契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：採用済み5種のversionと`e11-commit/1` markerを厳格dispatch。Unknown/legacyはfail-closed。構造は[Schema draft一覧](schema_drafts/README.md)に対応。
 - **状態:** `CANDIDATE / OWNER_AAA_ADOPTED / SCHEMAS_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN`。`23_41`内の旧候補表現はA/A/A採用済みversion値を撤回するものではない。
