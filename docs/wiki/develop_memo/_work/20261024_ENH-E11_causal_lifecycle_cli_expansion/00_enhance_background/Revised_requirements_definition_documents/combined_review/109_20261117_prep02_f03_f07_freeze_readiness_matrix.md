@@ -46,3 +46,8 @@
 ## 5. Owner Decision Closure（2026-11-17）
 
 The four decisions in §2 are now **OWNER_ADOPTED A/A/A/A**; [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md). This closes **decision selection only**. Remaining blockers are technical/Scientific/Security review & Runtime proof. Generic AR `EMPTY` and B0/B1 scientific negative are distinguishable; Privacy denial CLI exit=3. Overall **NOT_FROZEN / CODING_NOT_AUTHORIZED**.
+
+
+## 6. DEC-PREP02-D decision adoption trace and implementation conditions
+
+Owner 2026-11-17 accepted all four A choices. See [Owner Decision record](decisions/95_20261117_dec_prep02_four_owner_choices.md). F07 Generic AR EMPTY wire updated in both schemas, D-F05 Policy reference requires independently authorized trust anchor, strict RFC8785 JCS is **engineering candidate** not an extra Owner ratification, D-F06-ROW-EXIT exit3 frozen as behavioral intention. Manifest `canonical_codec_version` is a draft machine-level field; await independent schema & cross-language validation. **Four Owner choices DONE, common Port/Schema Freeze NOT_DONE**.

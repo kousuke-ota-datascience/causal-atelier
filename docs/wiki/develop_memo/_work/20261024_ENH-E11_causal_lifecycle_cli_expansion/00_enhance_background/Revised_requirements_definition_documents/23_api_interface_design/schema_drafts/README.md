@@ -25,3 +25,10 @@ The current schemas are structurally strict at top-level and some subobjects, bu
 - Privacy/authorization denialはExit 3。No silent aggregate-only fallback。
 
 [Owner決定記録](../../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Schema drafts**でありFreeze済みではない。
+
+
+## F07 EMPTY and E11 Canonical Codec — Owner four-choice update
+
+- [DEC-PREP02-D](../../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md) adopted generic mathematically `EMPTY` AR confidence sets. The `e11_ar_inference_defs` and embedded Effect Result `$defs` both contain `EMPTY`/`components=[]` and require nonempty components for nonEMPTY topologies. Semantic set validation and just-ID Method-specific nonempty assertions are separate.
+- Owner adopted an **independent strict canonical Codec**, not a specific implementation standard. RFC8785 JCS is the engineering candidate, with [7 positive / 7 negative golden vectors](e11_jcs_golden_vectors.json) and [design reasoning](../../combined_review/107_20261117_prep02_jcs_codec_vectors.md). Proposed `canonical_codec_version=e11-json-jcs-rfc8785/1` has been added to the Manifest Schema draft; Python↔ECMAScript bytes conformance is **not verified**.
+- Privacy authorization denial = CLI exit3; Policy proof must derive from independent preauthorization authority. The Study's `privacy.policy_ref` is only a reference and not standalone authorization.
