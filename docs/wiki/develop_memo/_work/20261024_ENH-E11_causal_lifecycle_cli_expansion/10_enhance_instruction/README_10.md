@@ -230,3 +230,37 @@ Package dependency          = each assigned Pxx `Depends on`
 
 P00は存在してもoptional authoring / audit artifactであり、preflight / Candidate Assembly / Orchestratorのruntime authorityにはしない。
 <!-- END MANAGED: V005_LOCAL_AUTHORITY -->
+
+
+## 12. G02-G10 implementation draft review register (2026-11-17)
+
+**状態:** PREP-03 review DRAFT。G01〜G10はいずれもCODING_NOT_AUTHORIZED。G02〜G10の06/P00/Pxxと07は作成済みだが未Freeze、未承認、試験未実施。各Gateの依存/Required PackagesはOwner未承認の提案で、現行Pxxの実装着手を許可しない。正本`docs/wiki/requirement_definition/`への昇格は行わない。
+
+**受入Authority:** Gate 06=Implementation WHAT、Gate 07=Independent Verification WHAT、P00=計画、各Pxx=実装Execution Unit、40 Operator=テスト実配置/発見/Command、999=正式独立判定。後続Gateの06/07とPxxは同じGate IDを使用する。
+
+| Gate | Functional boundary | Method count | [Gate 06](#) | [Gate 07](#) | [P00](#) | Previous 06 package proposal | Current Pxx count |
+|---|---|---:|---|---|---|---:|---:|
+| G02 | Identification / DoWhy / FD-A | 6 | [06](G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md) | [07](G02/07_Ariadne_ENH-E11_G02_test_instruction.md) | [P00](G02/06_G02_P00_work_package_plan.md) | 4 | 4 |
+| G03 | Native Effects / Refutation / Sensitivity | 13 | [06](G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md) | [07](G03/07_Ariadne_ENH-E11_G03_test_instruction.md) | [P00](G03/06_G03_P00_work_package_plan.md) | 5 | 6 |
+| G04 | CATE / EconML / DRIV | 8 | [06](G04/06_Ariadne_ENH-E11_G04_implementation_instruction.md) | [07](G04/07_Ariadne_ENH-E11_G04_test_instruction.md) | [P00](G04/06_G04_P00_work_package_plan.md) | 5 | 4 |
+| G05 | HTE Diagnostics / Privacy / authorized row | 0 | [06](G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md) | [07](G05/07_Ariadne_ENH-E11_G05_test_instruction.md) | [P00](G05/06_G05_P00_work_package_plan.md) | 4 | 4 |
+| G06 | Temporal Discovery / PCMCI | 3 | [06](G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md) | [07](G06/07_Ariadne_ENH-E11_G06_test_instruction.md) | [P00](G06/06_G06_P00_work_package_plan.md) | 4 | 3 |
+| G07 | DiD / Event Study / ITS | 3 | [06](G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md) | [07](G07/07_Ariadne_ENH-E11_G07_test_instruction.md) | [P00](G07/06_G07_P00_work_package_plan.md) | 4 | 3 |
+| G08 | RDD / IV / AR | 5 | [06](G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md) | [07](G08/07_Ariadne_ENH-E11_G08_test_instruction.md) | [P00](G08/06_G08_P00_work_package_plan.md) | 5 | 4 |
+| G09 | SCM / SDID | 2 | [06](G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md) | [07](G09/07_Ariadne_ENH-E11_G09_test_instruction.md) | [P00](G09/06_G09_P00_work_package_plan.md) | 4 | 3 |
+| G10 | Full Replay / Science / Compatibility | All 41 | [06](G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md) | [07](G10/07_Ariadne_ENH-E11_G10_test_instruction.md) | [P00](G10/06_G10_P00_work_package_plan.md) | 4 | 5 |
+
+### 12.1. Review重点（先行06との差分）
+
+- **旧提案の保存/差分Authority:** G02〜G10の先行06/P00/07案は[Git commit `9ec6e198`](https://github.com/kousuke-ota-datascience/causal-atelier/commit/9ec6e198d3d621a27fe8210adf8bf5808ed434f2)、今回の54件Gate06/P00/Pxx具体化は[Git commit `4bf03058`](https://github.com/kousuke-ota-datascience/causal-atelier/commit/4bf03058382203e94059624111958017660ae950)。06とP00は両案の差分をOwner Review対象とし、新Package数を自動承認済みと扱わない。
+- **Work Package数の変更:** G03=5→6、G04=5→4、G06=4→3、G07=4→3、G08=5→4、G09=4→3、G10=4→5。G02/G05=4のまま。各案の実装Class ownership、DAG、DoD、Science受入と互換性を比較し、最終06/P00/Pxxを確定する。
+- **Gate07は既存DRAFT:** 全9 Gateに07は存在するが未Freeze。Method ID・DD・positive/negative・Science条件の整合は形式的作成では完了しない。今回作成したPxx/06に追随させて独立照合する。
+- **G07/G08依存修正:** 両07の依存先`G01 PASS, G02 PASS`に合わせ、今回06/P00も修正済み。先行G01の実装確定や999 PASSを意味しない。
+- **未決の明示対象:** G02 P1-M05 IV target、G03 AIPW/NCE/NCO/RV実測Science、G04 EconML Inference/DRIV、G05独立Policy Authority・row Writer Class、G06 Temporal Oracle、G07 DiD/ITS Covariance、G08 AR HC1独立Reference、G09 SCM point-only/SDID、G10全41科学BenchmarkとLicense境界。
+
+### 12.2. Review・Freeze・Coding Authorizationの順序
+
+1. 全Gateの06/P00/Pxxと既存07のMethod/DGP/NEG/REF/AC/依存/実装Class/Source再利用をまとめて監査・Owner判断する。
+2. 対象Gateの06/07/PxxにOwner判断を反映し、正本ではなくEnhancement worktree内で正式Freezeする。
+3. 対象Gateのupstream canonical 999、実装Source/lock full SHA、依存環境、40 preflightを確認し、**対象Gateごとに**Coding Authorizationを明示する。
+4. Authorized GateでのみCoding Agent→Candidate Assembly→Independent Test→999。文書作成や静的整合確認をScience PASSとしない。

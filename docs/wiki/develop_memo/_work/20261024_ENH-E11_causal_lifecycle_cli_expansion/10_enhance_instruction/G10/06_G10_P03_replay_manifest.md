@@ -15,7 +15,7 @@
 
 **科学/Designの必須制約:** 各GateのScience999を省略しない。GPLの顧客個別License判断は別。
 
-Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未策定のGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
+Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
 ## 2. Effective Common Contract (Self-contained)
 
