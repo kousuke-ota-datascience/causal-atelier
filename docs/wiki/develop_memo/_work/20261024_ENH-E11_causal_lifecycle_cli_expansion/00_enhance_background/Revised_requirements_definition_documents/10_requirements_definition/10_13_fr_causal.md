@@ -17,7 +17,7 @@
 | FR-042 | Causal | Graph、Question、DesignからIdentification Resultを生成する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-043 | Causal | 識別判断に確定的不整合がある場合はそれを明示し、レビュー待ちとして誤表示しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-044 | Causal | 型、欠測、post-treatment、sample size、overlapをData Eligibilityとして評価する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
-| FR-045 | Causal | Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
+| FR-045 | Causal | 【設計制約移管・Legacy Trace】FR-044の実現に係る既存設計制約。具体的な実装契約は下位設計とRD-04移管台帳で管理し、元ID・MUST・Statusの追跡を維持する | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-046 | Causal | Identification、Eligibility、Estimator互換性を満たす場合のみEstimationを受け付ける | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-047 | Causal | ATEまたはATTと区間推定を生成できる | MUST | ACTIVE | IMPLEMENTED | BASELINE |
 | FR-048 | Causal | 推定手法に適合した診断を提示し、適用不能な診断を強制しない | MUST | ACTIVE | IMPLEMENTED | BASELINE |
