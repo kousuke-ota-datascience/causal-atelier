@@ -114,7 +114,7 @@ CLI exit code：`0`＝制御上正常終了（科学的負結果を含む）、`
 - P2：非IV CATE7方式と別DRIV-AのIV heterogeneous structural slopeを区別する。Method-specific nuisance/fold/seed/inference registryを保持。点推定のみの探索と確認的CI主張を分離。
 - P3 B0：二値Z/A無調整complier LATE。B1：単一二値Z/A・事前指定Cの加法線形IV構造係数。通常Wald CIとAR反転集合を区別する。
 - P3 Graph：FCI/PAGとPCMCI系の未確定端点・contemporaneous関係・lagの方向を保持。Graphの固定化は科学的真を意味しない。
-- P3 Quasi：DiD、Event Study、ITS、Sharp/Fuzzy RD、SCM、SDIDは別Estimand／時刻、誤差相関、donor/cutoff条件を持つ。初期SCMはpoint-only。
+- P3 Quasi：DiD、Event Study、ITS、Sharp/Fuzzy RD、SCM、SDIDは別Estimand／時刻、誤差相関、donor/cutoff条件を持つ。SCMの本Method contractはpoint-onlyであり、認定されたInference Method Versionへの明示変更なしにCIを主張しない。
 - Negative Control NCE/NCOとOLS partial R²/point RV(q=1)は明示opt-inかつ限定モデルで実行し、non-significantを無交絡の証明としない。
 
 Method-specific confidence intervalの欠落は `null + reason`。推論Registryが未承認の方式や外部Backend defaultを採用済みCIとして報告しない。
@@ -132,7 +132,7 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 
 `pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版、SBOMは成果物集合、Legal Reviewは受領者別の配布可否。全Profileはfresh isolated venvで `uv lock --check / uv sync --locked / uv pip check` とMethod API smokeを実施する。未実測版を実効値として出力しない。GPLに係る特定顧客へのDeliveryは法務承認前 `CUSTOMER_DELIVERY_BLOCKED` とする。
 
-## 8. 受入契約（IF-01）
+## 8. 恒久Interface Contract Test
 
 | ID | Contract test | 負例と判定 |
 |---|---|---|

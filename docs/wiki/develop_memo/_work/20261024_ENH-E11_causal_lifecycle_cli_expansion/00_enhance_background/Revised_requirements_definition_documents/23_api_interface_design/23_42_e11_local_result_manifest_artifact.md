@@ -217,7 +217,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 - Local OS PrincipalはProduct ProjectMembershipを代替する認証ではない。共有端末/CI/container-root-accessible mountと不明ACL/namespaceは別の信頼可能な契約がない限り拒否する。stdout/stderr/log/exception traceに個票やsecretを出さない。
 - Customer delivery可否は科学的結果・内部実行の状態とは別。GPL系Backendを含む受領者別Bundleの法務レビュー未完は `CUSTOMER_DELIVERY_BLOCKED` として扱う。
 
-## 9. IFテスト
+## 9. 恒久Interface Contract Test
 
 | ID | Test | 失敗なら拒否する条件 |
 |---|---|---|

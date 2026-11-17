@@ -6,7 +6,7 @@ Method IDの正本は[10_32_scientific_method_scope.md](../10_requirements_defin
 
 Method Descriptorは `method_id, operation, estimand_family, design_kind, backend_id, extra, config_schema, eligibility_predicate, inference_registry_entry, result_schema, negative_reason_codes, reference_ids` を保持する。1 Methodで異なる構成がある場合はVersion付きvariantにより区別し、対象EstimandをMethod表示名だけで推測しない。
 
-各Adapterは `class.method(request: ValidatedRequest, sink: StagingArtifactSink) -> TypedScientificOutcome` を契約とする。ConstructorはResourceの参照とBackend factoryのみを持ち、外部Estimatorの具体Objectは永続化しない。Runtimeのeffective Method/API/seed/fold/CI configを出力する。Backendの自動fallback禁止。
+各Adapterは `class.method(request: ValidatedRequest, *, sink: StagingArtifactSink) -> TypedScientificOutcome` を契約とする。ConstructorはResourceの参照とBackend factoryのみを持ち、外部Estimatorの具体Objectは永続化しない。Runtimeのeffective Method/API/seed/fold/CI configを出力する。Backendの自動fallback禁止。
 
 ## 2. 全41件のAdapter allocation
 
@@ -54,7 +54,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 | P3-M12 | `SyntheticControlAdapter` / treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only |
 | P3-M13 | `SyntheticDidAdapter` / panel average effect | donor and time weights、preperiod/variance method |
 
-**41 Method：** P1=20、P2=8、P3=13。P1-M05の対象EstimandをMethod labelからLATEと推定せず、識別対象未確定は型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
+**41 Method：** P1=20、P2=8、P3=13。ここでの`P1/P2/P3`はMethod catalogのPhase接頭辞であり、Enhance Workflowの`P01〜Pxx` Work Package IDとは異なる。P1-M05の対象EstimandをMethod labelからLATEと推定せず、識別対象未確定は型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
 
 ## 3. 共通Adapter Contract
 
@@ -62,9 +62,9 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 `scientific.local_adapters.*`：
 - `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
-- `run(request, sink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
+- `run(request, *, sink: StagingArtifactSink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
 - `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
-- `serialize(result) -> ArtifactBundle`：Graph/Result/Diagnosticsを型付きSchemaへ保存。Finite/not-finiteを判定しnull+reasonを保存。
+- `serialize(result) -> ArtifactBundle`：Graph/Result/Diagnosticsを型付きSchemaに純粋変換する。File I/Oはしない。保存はAdapterが渡された`StagingArtifactSink`を通じて行い、Finite/not-finiteを判定しnull+reasonを記録する。
 
 ### 3.2. Failure semantics
 
@@ -92,6 +92,16 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 ### 4.3. Tests
 
 `DD-E11-METH-P101`〜`P120`：各Method IDに対応する必須positive、unsupported config、negative（DGP/NEG/REF/ACは10_32に従う）。特にFR-188、FR-189/190/191/192、AR-030/031/032/033/044。
+
+### 4.4. P1-M06 `FciDiscoveryAdapter`のMethod固有契約
+
+`FciDiscoveryAdapter.preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的な適格性判定、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果のPAGへの正規化である。Product `ScientificCorePort.run_discovery`やPC Adapterへのaliasを禁止。
+
+[FCI Method config schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)に従い`fisherz/chisq/gsq`、明示alpha/depth/max_path_length、null/required/forbidden directed BackgroundKnowledgeを検証する。DatasetとDesignの列名・順序、finite complete observations、CI別measurement scale、categorical support、観測独立性・標本規模、BK矛盾を確認し、未承認の欠損補完・離散化・CI代替をしない。特定の`causal-learn`版を科学的Method定義に固定せず、effective distribution/API/signature/endpoint accessorとlockをRuntimeで照合し、不一致は`BACKEND_API_MISMATCH`。
+
+Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpoint markの順序を保持する。PAG circle/bidirectedをDAGへ確定せず、重複・不正node/markを拒否し、GraphVersion/dual hashをDomainへ渡す。BKがPAGの不確定endpointを過剰確定する場合は独立motif検証なしに成功としない。2観測変数の潜在交絡を一意識別したとは報告しない。
+
+`DD-E11-METH-P106`は実効API/eligibility、独立MAG/PAG同値類Oracle、BK/latent negativeの検証契約。Backendの出力を自らの正解Oracleにしない。
 
 ## 5. P2 CATE / DRIV
 
@@ -122,16 +132,6 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 ### 6.2. Tests
 
 `DD-E11-METH-P301`〜`P303`：DGP-009〜011、Graph Oracle、NEG-021/028、round-trip、sample ordering。対応FR-186/196、AR-028/036。
-
-### 6.3. P1-M06 `FciDiscoveryAdapter`のMethod固有契約
-
-`FciDiscoveryAdapter.preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的な適格性判定、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果のPAGへの正規化である。Product `ScientificCorePort.run_discovery`やPC Adapterへのaliasを禁止。
-
-[FCI Method config schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)に従い`fisherz/chisq/gsq`、明示alpha/depth/max_path_length、null/required/forbidden directed BackgroundKnowledgeを検証する。DatasetとDesignの列名・順序、finite complete observations、CI別measurement scale、categorical support、観測独立性・標本規模、BK矛盾を確認し、未承認の欠損補完・離散化・CI代替をしない。特定の`causal-learn`版を科学的Method定義に固定せず、effective distribution/API/signature/endpoint accessorとlockをRuntimeで照合し、不一致は`BACKEND_API_MISMATCH`。
-
-Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpoint markの順序を保持する。PAG circle/bidirectedをDAGへ確定せず、重複・不正node/markを拒否し、GraphVersion/dual hashをDomainへ渡す。BKがPAGの不確定endpointを過剰確定する場合は独立motif検証なしに成功としない。2観測変数の潜在交絡を一意識別したとは報告しない。
-
-`DD-E11-METH-P106`は実効API/eligibility、独立MAG/PAG同値類Oracle、BK/latent negativeの検証契約。Backendの出力を自らの正解Oracleにしない。
 
 ## 7. P3 Quasi / IV / SCM
 

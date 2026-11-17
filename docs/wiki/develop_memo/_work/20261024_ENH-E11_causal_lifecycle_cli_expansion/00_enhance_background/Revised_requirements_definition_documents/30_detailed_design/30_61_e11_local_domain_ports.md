@@ -128,7 +128,7 @@ PAGのTAIL/ARROW/CIRCLE、双方向矢印、Node identity、lagとTemporalConven
 
 ### 6.2. メソッド・不変条件
 
-- `ARConfidenceSet.from_components(level, components, evidence) -> ARConfidenceSet`：有限性、順序、重複と接触するintervalの正規化、topology分類（ALL_REAL > DISCONNECTED > UNBOUNDED > BOUNDED）を行う。
+- `ARConfidenceSet.from_components(level, components, evidence) -> ARConfidenceSet`：有限性、順序、重複と接触するintervalの正規化、topology分類（EMPTY > ALL_REAL > DISCONNECTED > UNBOUNDED > BOUNDED）を行う。
 - `ARConfidenceSet.contains(beta: float) -> bool`：endpoint open/closedと∞を尊重。ALL_REALは任意有限betaを含む。
 - `ARConfidenceSet.to_payload() / from_payload()`はJSON Infinity/NaNを使わず同じ数学集合に往復。
 - 汎用AR Setは`EMPTY`（成分0）もlosslessに表現する。B0/B1でjust-identifiedかつ採用Methodの前提により非空集合が数学的に保証される場合のみ、**Method-specific validator**でEMPTYを科学的不整合として検出する。未確認の識別条件へ一律に非空を仮定しない。反転失敗は `FAILED + typed reason`、数学的EMPTYは `AVAILABLE + inversion_evidence`で区別する。
@@ -154,7 +154,7 @@ B0/B1 just-identified HC1 ARで`g_A≠0`かつ`Var_HC1(βhat)>0`等の非退化�
 ### 7.2. メソッド
 
 - `EffectOutcome.validate_consistency()`：nonfinite point拒否、null reason必須、point≠Science acceptance、CI/AR型とEstimand不一致を拒否。
-- `BackendCapabilityRecord.check(request)`：実効Backend・Method・推論API・Versionを静的Registry＋runtime probeと照合し、変更時はfail-closed。optional depsのimportはresolve時のみ。
+- `BackendCapabilityRecord.check(request)`：実効Backend・Method・推論API・Versionを静的Registry＋runtime probeと照合し、変更時はfail-closed。optional depsのimportは、Capability解決に成功した後の`load_adapter`時に限る。`describe`/`resolve`でoptional scientific libraryをimportしない。
 - `EffectOutcome.to_canonical_result()`：Projectの `ScientificResultDescriptor` や旧v2 manifestへ強制転換しない。
 
 ### 7.3. 検証
