@@ -35,6 +35,21 @@ ROOT/
 - `.staging`は完成bundleでない。staging rootとfinal rootの同一デバイス／同一FileSystem／atomic directory rename可能性をpreflightで確認する。NFS/object-store/Windows/異FSで同等性を前提化しない。
 - 同じ `run_id` の再実行は既存Manifest/request hashが一致し、readbackも成功する場合のみその結果を参照できる。異なるhashは `RUN_ID_CONFLICT`。上書き禁止。
 
+### 2.1. Operation別Bundleとcross-schema不変条件
+
+`manifest.schema_dispatch.result`はEffect Resultを判別するだけであり、IDENTIFYや診断の結果を代替しない。OperationごとにManifest/Status/Artifact inventory/Method/上流hashを連結して検証する。
+
+| Operation | 正常な必須Artifact | 条件・禁止項目 |
+|---|---|---|
+| DISCOVER | `study.json`、`status.json`、Graph生成成功なら`graph.json` | 科学的なGraph無し負結果では`diagnostics.json`とnonempty reasonが必須。Graph無しは`schema_dispatch.graph=null`。いずれも`result.json`は禁止 |
+| IDENTIFY | `study.json`、`status.json`、`identification.json` | 識別Proof、Graph/Design/Estimandと上流hashを検証。非識別もtyped negativeとして保持。Effect Resultは禁止 |
+| ESTIMATE | `study.json`、`status.json`、`result.json` | `schema_dispatch.result=e11-local-effect-result/1`。Point不在はnull+reason。Estimator未呼出のnegativeを架空の推定値に置換しない |
+| REFUTE / SENSITIVITY / DIAGNOSE | `study.json`、`status.json`、`diagnostics.json` | Method別診断のtyped result、上流Effect/Graph/Design hash、seed、適用条件を検証。Effectを再発行しない |
+
+全Operationで`manifest.json`と`_COMMITTED.json`が必要で、どちらもartifact inventory外に置く。Inventoryは実在するstudy/status/Graph/Identification/Effect/Diagnosticsと対応するbytes hash、size、MediaType、Privacyを全件列挙する。各Operation/Method固有の内部JSON profileをstrictに検証し、Method profile未登録を実行許可としない。内部profileは5種類の公開payload versionを増やさない。
+
+DISCOVER成功時はGraphが必須。科学的に正当なGraph無しnegativeを技術的Backend失敗と区別し、後者を成功Bundleに変換しない。その他OperationのMethod-specific profileは当該Method提供前に厳格化してpositive/negative fixturesを検証する。
+
 ## 3. Result JSON
 
 本節のEffect ResultはEffectを生むOperationにだけ適用する。`DISCOVER/IDENTIFY`ではダミーEffectを生成せず、Manifestの`schema_dispatch.result=null`とOperation別ValidatorでGraph/Identification成果物を検証する。
@@ -137,7 +152,6 @@ B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む�
 
 ~~~json
 {
-  "kind": "ANDERSON_RUBIN_INVERSION",
   "confidence_level": 0.95,
   "topology": "DISCONNECTED",
   "components": [
@@ -154,10 +168,11 @@ B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む�
       "upper_closed": false
     }
   ],
-  "inversion_evidence_ref": "artifact:ar-grid-and-brackets"
+  "inversion_evidence": {"identity": "ar-grid-and-brackets", "relative_key": "artifacts/ar-grid.json", "sha256": "0000000000000000000000000000000000000000000000000000000000000000", "media_type": "application/json", "schema_version": null}
 }
 ~~~
 
+- 上例はAR集合のサブオブジェクトであり、外側の`uncertainty.kind=AR_CONFIDENCE_SET`に配置する。`inversion_evidence`は必須ContentRef。ゼロdigestは実測でないダミーであり実行時には拒否する。
 - 各endpointは `FINITE(value) / NEG_INFINITY / POS_INFINITY` のtagged union。JSONに `NaN / Infinity / -Infinity` numberを含めない。
 - Componentは下界昇順・空でないintervalで、重複・接続する成分は数学的に和集合として正規化する。真のdisconnectedは成分数2以上。有限・無限端点のclosed flagは規定値に一致すること。
 - `topology` は **`EMPTY / ALL_REAL / DISCONNECTED / UNBOUNDED / BOUNDED`**。優先順位はEMPTY（`components=[]`）→ALL_REAL→DISCONNECTED→UNBOUNDED→BOUNDEDとし、DISCONNECTEDには非有界componentが混在し得る。全実数は `topology=ALL_REAL; components=[(-∞,+∞)]` の一意表現。**数学的EMPTYは汎用Codecで正常な推論結果として表現可能**。B0/B1のjust-identified MethodでEMPTYが科学的不整合ならMethod-specific validatorで拒否し、計算`FAILED`と混同しない。
@@ -166,7 +181,7 @@ B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む�
 
 ## 5. Graph／temporal evidenceの往復
 
-Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、必要なlatent/temporal variants）、edge endpoint pairs（tail/arrow/circle）、lag付き向き、time index policy、optional Product GraphVersion参照（存在時のparent/version provenanceを含む）、assumptionとsource reference/hashを保存する。`GraphEvidence`はimmutable科学Valueであり、CLIのGraph生成はProduct GraphVersion発行を必要としない。Graph編集/新Version作成/FIXはProduct連携時に既存`GraphVersionService`だけが実施する。
+Graph JSONは `e11-local-graph/1`。`version_id`／`parent_version_id`は実在するProduct GraphVersionへの参照であり、CLI単独生成時は両方`null`とする。架空Product IDを発行しない。Graph自身のimmutable identityは`content_hash`と外部ContentRefで識別する。頂点ID、graph kind（DAG、CPDAG、PAG、必要なlatent/temporal variants）、edge endpoint pairs（tail/arrow/circle）、lag付き向き、time index policy、optional Product GraphVersion参照（存在時のparent/version provenanceを含む）、assumptionとsource reference/hashを保存する。`GraphEvidence`はimmutable科学Valueであり、CLIのGraph生成はProduct GraphVersion発行を必要としない。Graph編集/新Version作成/FIXはProduct連携時に既存`GraphVersionService`だけが実施する。
 
 禁止する可逆でない変換：
 - PAG circle-circle、circle-arrow、bidirected等をDAG単一向きへ丸める。
@@ -189,7 +204,7 @@ Graph JSONは `e11-local-graph/1`。頂点ID、graph kind（DAG、CPDAG、PAG、
 | artifacts | canonical relative key、type、size bytes、sha256、privacy classification、visibility |
 | review | method Reference／Science evidence refs（未実行ならnull）、legal delivery status別記 |
 
-`_COMMITTED.json` は `{"marker_version":"e11-commit/1","run_id":"...","manifest_sha256":"...","request_hash":"..."}`。Manifestは自身のhashを含めず、markerがManifestのbytes hashを指す。Markerはartifact一覧の外側にあり循環hash参照を作らない。Readerは marker→Manifest→各Artifact hash/size/MediaType→cross-refを検証する。外部からの上流参照もtrusted root＋hashの範囲で再照合する。
+`_COMMITTED.json` は `{"marker_version":"e11-commit/1","run_id":"...","manifest_sha256":"...","request_hash":"..."}`。Manifestは自身のhashを含めず、markerがManifestのbytes hashを指す。Markerはartifact一覧の外側にあり循環hash参照を作らない。Readerは marker→Manifest→各Artifact hash/size/MediaType→Operation別必須/禁止Artifact、schema_dispatch、Status、Method、upstream lineage cross-refを検証する。外部からの上流参照もtrusted root＋hashの範囲で再照合する。
 
 Manifestに全source pathを生の絶対パスで記録せず、再現に必要な参照とdigest、非機微な環境要約を格納する。SBOMへの内部referenceは秘密やライセンス未承認状態を解除しない。個票Parquetをdefault summary／console／JSONに含めない。
 

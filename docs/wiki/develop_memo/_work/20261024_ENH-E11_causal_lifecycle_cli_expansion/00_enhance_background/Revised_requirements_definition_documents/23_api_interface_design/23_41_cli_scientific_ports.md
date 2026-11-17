@@ -29,7 +29,7 @@ CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [
 
 ## 3. Config request（Schema contract）
 
-次はF06のstrict v1 wire（JSON Schema）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形を本Schema Versionで暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
+次はF06のstrict v1 wire（JSON Schema）に沿った構造例。P1-M08の個別config/eligibilityはMethod Registry側で別途判定するため、例だけでは実行可能としない。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形を本Schema Versionで暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
 
 ~~~yaml
 schema_version: e11-local-study/1
@@ -62,6 +62,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `LocalConfigDecoder.decode(raw, *, declared_format)` | `ValidatedStudy` | strict version/key/Method Profile、旧v2 fallback禁止 |
 | `ContentReferencePort.verify(ref, *, root)` | `VerifiedContent` | root閉じ込めの実bytes/hash・race/symlink拒否 |
 | `MethodCapabilityPort.resolve(request)` | `BackendCapabilityRecord` | Operation/Estimand/Backend/Inferenceと実効API、no fallback |
+| `DiscoveryPort.discover(request, *, sink)` | `DiscoveryGraphOutcome` | P1-M06等の検証済Discovery RequestとPAG/CPDAG・科学的negativeを型付き返却。Staging限定 |
 | `IdentificationPort.identify(request)` | `IdentificationOutcome` | validated proof・Graph/upstream hash |
 | `EstimatorPort.estimate(request, *, sink)` | `EffectOutcome` | validated eligibility、stagingだけに出力 |
 | `DiagnosticPort.run(request, *, sink)` | `DiagnosticOutcome` | Validated upstream/Method |
@@ -70,11 +71,11 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
-`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。このCLI interfaceの同期実行はContractとし、Product Web Worker/DB lifecycleは本IFの所有範囲外。
+`DiscoveryPort`・`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。このCLI interfaceの同期実行はContractとし、Product Web Worker/DB lifecycleは本IFの所有範囲外。
 
 ### 4.1. Port間の正規署名と相互整合
 
-上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
@@ -91,6 +92,13 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 | Method Capability | 既存`ScientificValidationService`とMethod Registry | Method×Estimand/Inferenceと実効Backend probeは分け、唯一のMethod適格性規則を使う |
 | Graph Evidence | 既存`GraphVersionService`とGraph意味Validator | ProductのGraphVersion/EDIT/FIXはProduct側。CLI Graph作成時に架空のVersionを発行しない |
 | Local Publication/Reader | 既存`ArtifactStorePort`のbyte/hash処理 | 完全run単位のatomic no-clobber・Marker/Manifest/Privacy readbackは独立File Bundle Contract |
+
+### 4.4. Discovery・Port間の呼出経路
+
+- `LocalCausalUseCase.run(spec,context)`は`MethodCapabilityPort.resolve(ValidatedCapabilityRequest)`でOperation/Estimand/Backend/Inference/Method configを確認し、選択済`BackendCapabilityRecord`を`ValidatedDiscoveryRequest`等に結合する。具体Scientific Portは同一Method Registryの`load_adapter(capability)`を利用し、別Methodへのfallbackを禁止する。
+- `DISCOVER`は`DiscoveryPort.discover(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink)->DiscoveryGraphOutcome`へdispatchする。IDENTIFYはIdentificationPort、ESTIMATEはEstimatorPort、REFUTE/SENSITIVITY/DIAGNOSEはDiagnosticPortへdispatchする。Resultの型とOperation別Publication義務は23_42 §2.1に従う。
+- `LocalPolicyVerifierPort.verify(*,policy_ref,study,root,anchor)`はStudy外の事前承認Authorityで証拠を検証する。`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,policy,output_shape)`は実効主体・許可範囲も照合する。G01では行出力要求またはFlag単独でも拒否。
+- `LocalPublicationPort`と`LocalManifestReaderPort`はApplication Portであり、Concrete CLI Publisher/Readerへ委譲する。独立Readerが`VerifiedLocalRun`を返す前にCOMPLETEDへ昇格しない。
 
 ## 5. Status／error／exit envelope
 

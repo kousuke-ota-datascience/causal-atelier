@@ -25,8 +25,16 @@
       "minLength": 1
     },
     "version_id": {
-      "type": "string",
-      "minLength": 1
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Existing Product GraphVersion ID, or null for standalone local discovery. Never invent a Product GraphVersion ID."
     },
     "parent_version_id": {
       "oneOf": [
@@ -37,7 +45,8 @@
         {
           "type": "null"
         }
-      ]
+      ],
+      "description": "Existing Product parent GraphVersion ID; null when no Product parent, including standalone CLI graph."
     },
     "nodes": {
       "type": "array",
