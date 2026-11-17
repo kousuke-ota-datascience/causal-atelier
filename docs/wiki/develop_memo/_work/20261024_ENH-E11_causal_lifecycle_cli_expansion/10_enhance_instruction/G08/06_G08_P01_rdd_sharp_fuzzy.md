@@ -26,6 +26,21 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** cutoff/bandwidth/densityとFuzzy first stage、RBC CI API availabilityを検証。
 
+### 2A. Existing Source verified vs E11 RDD/IV API（`2cf28f59a324`）
+- **現行ABI:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(self, input_: EstimationInput, output_dir: Path)->list[ScientificResultDescriptor]`は旧Product Path API。 `src/ariadne/causal/inference/estimators/treatment_effect.py`の`TreatmentEffectEstimator`は既存diff/OLS/IPW/AIPW数値Kernelだが、Sharp/Fuzzy RD、Wald、B0/B1 2SLS、Anderson–Rubinの実装済み証拠ではない。旧APIを変更・無検証castせず新Typed EstimatorPortへ共有純粋Kernelを接続する。
+- **新規科学境界:** `RddAdapter/WaldRatioAdapter/TwoSlsAdapter`は§3/§4の設計Class。P3-M09/M10のB0 binary Z/A complier LATE、P3-M11のB1 C調整付きstructural IV slopeを混同しない。HC1 Anderson–Rubinは各候補βの`Y-βA ~ [Q,Z]`でZ係数のzero testを反転し、全実数/非有界/非連結/退化を含む集合をlossless保存。有限gridは全実数tailの証明でない。Independent REF、分散/退化処理・推論受入の未決は`BLOCKED_SCIENCE_REFERENCE_UNRESOLVED`、Agent独断で閾値を選択しない。
+- **Ownership:** G01 Registry/GraphVersion/Publisher/Reader、G03 Scientific Coreを二重実装しない。既存Method内の共通計算が新Estimandと一致しない場合は使い回さない。
+
+### 2B. Standalone Operation/Result/Manifest契約
+| Operation | 必須Artifact | 禁止・Negative |
+|---|---|---|
+| DISCOVER | `study.json`・`status.json`・Graph成功なら`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`と理由必須、`schema_dispatch.graph=null`。Backend失敗との混同禁止 |
+| IDENTIFY | `study.json`・`status.json`・`identification.json` | Effect `result.json`禁止。非識別もtypedでGraph/Design/Estimand/Proofのhash照合 |
+| ESTIMATE | `study.json`・`status.json`・`result.json` | `schema_dispatch.result=e11-local-effect-result/1`。Point無しはnull＋reason、科学PASSと混同禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`・`status.json`・`diagnostics.json` | Effectの再発行禁止、元Effect/Graph/Design hash、seed/適用条件の照合 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS atomic no-clobber publish、個票bytesはG05独立承認以前に生成禁止。各Methodのpoint/uncertainty/science_acceptance/statusを別軸で保持し、計算成功はScience PASSでない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
@@ -113,7 +128,7 @@ class EstimatorPort(Protocol):
 
 #### 5.2.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+ProtocolはI/O無し。Concreteは本Pxx§3/§4の所有Class/Factoryのみ、単一MethodCapabilityPortで厳格選択。validated Request→typed outcomeを守り、実装時に外部DDの規範を推測補完しない。Concrete Owner/ABIが本書で確定しなければBLOCKED。
 
 #### 5.2.7. 検証
 

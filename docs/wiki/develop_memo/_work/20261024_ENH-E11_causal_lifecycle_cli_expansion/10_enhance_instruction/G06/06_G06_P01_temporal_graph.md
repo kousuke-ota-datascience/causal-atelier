@@ -26,6 +26,20 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** G01 GraphValueを再利用しTemporalConvention/lag sign/time order/CI条件を検証。
 
+### 2A. 既存Discovery ABIとTemporal Kernel境界（`2cf28f59a324`）
+- **既存:** `src/ariadne/scientific/discovery/adapter.py`の`DiscoveryAdapter.run(self, input_: DiscoveryInput, output_dir: Path) -> list[ScientificResultDescriptor]`と`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_discovery(self, input_: DiscoveryInput, output_dir: Path)`は公開Product Path API。E11 `DiscoveryPort.discover(self, request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`とは入力・出力・Publication契約が異なる。変更・無検証Cast・旧Path writerの直接利用は禁止。
+- **新規境界:** Tigramite PCMCI/PCMCI+/LPCMCIの実効API・CI test・Temporal endpointとlag sign/時刻原点をMethod別に検証。既存DiscoveryAdapterの存在だけをTigramite Method実装済み証拠としない。Design-only TemporalGraphEvidenceとTyped Portは§3で所有Class/方法を確定し、G01 GraphVersionService/Publisher/MethodRegistryを複製せず共有する。lag/time index、latent marks、CI kernelが不明なら`BLOCKED_CONTRACT_AMBIGUITY`。
+
+### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
+| Operation | 必須Artifact | 禁止・negative条件 |
+|---|---|---|
+| DISCOVER | `study.json`, `status.json`, Graph成功時`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`＋nonempty reason、`schema_dispatch.graph=null`。Backend失敗との混同は禁止 |
+| IDENTIFY | `study.json`, `status.json`, `identification.json` | Effect `result.json`禁止。識別negativeもtyped、Graph/Design/Estimand/Proof hashを照合 |
+| ESTIMATE | `study.json`, `status.json`, `result.json` | `schema_dispatch.result=e11-local-effect-result/1`。point欠落はnull＋理由で表し、非識別への推定値偽装禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Effect再発行禁止。上流Effect/Graph/Design hash、seed・適用条件の検証が必須 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）を置くが、両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key・size bytes・SHA256・MediaType・Privacyを列挙。`request_hash=SHA256(JCS(validated typed Study JSON))`、Manifestに自己hashを入れずMarkerがManifestの実bytes SHA256を保持。Readerはmarker→manifest→artifact→Operation Profile→upstream hashをTrustedRoot内で検証。staging→atomic no-clobber publishを既存G01 Publisherで行い、Row Parquetは独立承認証拠の検証前にbytes生成すら禁止。Publication不正・欠損をScience negativeに変換しない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |

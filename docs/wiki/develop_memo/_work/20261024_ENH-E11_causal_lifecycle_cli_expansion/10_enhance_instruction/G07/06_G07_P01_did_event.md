@@ -26,6 +26,20 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** Cohort/adoption timing/parallel trend/pretrend、reference period、cluster covarianceを保持。
 
+### 2A. Product Scientific Coreとの再利用境界（`2cf28f59a324`）
+- **実在:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(self, input_: EstimationInput, output_dir: Path)->list[ScientificResultDescriptor]`は旧Product Path API。`src/ariadne/causal/inference/estimators/treatment_effect.py`の`TreatmentEffectEstimator`はdiff/OLS/IPW/AIPW等の既存数値Kernelであり、DiD/Event/ITSの実装済み証拠ではない。旧API・DTO・WriterのABIを変更しない。
+- **新規:** PanelQuasiAdapter/InterruptedTsAdapterは§3のDesign Classとして実装。Panel単位・処置開始時点・staggered cohort・参照期・cluster/NW-HAC covarianceの対象/単位を明示した合法的Request→typed Effectを作る。旧Kernel再利用は同一estimand/varianceで数理的に適合する場合のみ。E11 `EstimatorPort.estimate(..., *, sink:StagingArtifactSink)`へのBridgeは共通Scientific Kernelを経由し、G01 Registry/Publisherを新規生成しない。Owner未承認のEstimator/Inference Policyは`BLOCKED_CONTRACT_AMBIGUITY`。
+
+### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
+| Operation | 必須Artifact | 禁止・negative条件 |
+|---|---|---|
+| DISCOVER | `study.json`, `status.json`, Graph成功時`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`＋nonempty reason、`schema_dispatch.graph=null`。Backend失敗との混同は禁止 |
+| IDENTIFY | `study.json`, `status.json`, `identification.json` | Effect `result.json`禁止。識別negativeもtyped、Graph/Design/Estimand/Proof hashを照合 |
+| ESTIMATE | `study.json`, `status.json`, `result.json` | `schema_dispatch.result=e11-local-effect-result/1`。point欠落はnull＋理由で表し、非識別への推定値偽装禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Effect再発行禁止。上流Effect/Graph/Design hash、seed・適用条件の検証が必須 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）を置くが、両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key・size bytes・SHA256・MediaType・Privacyを列挙。`request_hash=SHA256(JCS(validated typed Study JSON))`、Manifestに自己hashを入れずMarkerがManifestの実bytes SHA256を保持。Readerはmarker→manifest→artifact→Operation Profile→upstream hashをTrustedRoot内で検証。staging→atomic no-clobber publishを既存G01 Publisherで行い、Row Parquetは独立承認証拠の検証前にbytes生成すら禁止。Publication不正・欠損をScience negativeに変換しない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
@@ -113,7 +127,7 @@ class EstimatorPort(Protocol):
 
 #### 5.2.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+Protocol自体はI/Oを持たない。Concrete Adapterは本書§3/§4で所有が割り当てられたClassのみが実装し、単一MethodCapabilityPort経由で選択する。validated Request→typed outcome/staging sinkを守り、外部DDを未記載の実装規範の代用としない。Owner/ABIが未確定なら新Facadeを創作せずBLOCKED。
 
 #### 5.2.7. 検証
 

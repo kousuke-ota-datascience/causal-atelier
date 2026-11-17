@@ -26,6 +26,21 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** G04推定器を再実装せずMethod別support/calibration/uncertaintyを型付き診断。算法/Result owner不足ならDESIGN_GAP。
 
+### 2A. 既存SourceとRow Release authorityの境界（`2cf28f59a324`）
+- **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。
+- **Design-only:** `LocalPrivacyPolicy`の純粋`authorize/filter_export_columns`と、独立承認機関が発行する証拠を検証するVerifier、認可後に初めてrow bytesを生成するParquet Writerは別責務。現在の§3契約のうちAuthorityの署名・Key Owner・Scope・期限・失効・Anti-replay、Row Writer Class/Factory/Methodが**未決**であり、Agentが作成したPolicyRef/bool/CLI flagは認可として無効。承認前のrow materialize/serialize/publishは禁止。`LocalCausalUseCase`・G01 Publisher/Reader/RegistryをG05で複製しない。
+- **Freeze blocker:** Row許可のOwner決定後、本Pxxの設計中Class/API・G05 Gate06/07の同一Authorityを改訂/Freezeするまでは、個票処理パスは`BLOCKED_PRIVACY_AUTHORITY_UNRESOLVED`。mockは実認可証拠を代替せず、無断でパスを実装しない。
+
+### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
+| Operation | 必須Artifact | 禁止・negative条件 |
+|---|---|---|
+| DISCOVER | `study.json`, `status.json`, Graph成功時`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`＋nonempty reason、`schema_dispatch.graph=null`。Backend失敗との混同は禁止 |
+| IDENTIFY | `study.json`, `status.json`, `identification.json` | Effect `result.json`禁止。識別negativeもtyped、Graph/Design/Estimand/Proof hashを照合 |
+| ESTIMATE | `study.json`, `status.json`, `result.json` | `schema_dispatch.result=e11-local-effect-result/1`。point欠落はnull＋理由で表し、非識別への推定値偽装禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Effect再発行禁止。上流Effect/Graph/Design hash、seed・適用条件の検証が必須 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）を置くが、両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key・size bytes・SHA256・MediaType・Privacyを列挙。`request_hash=SHA256(JCS(validated typed Study JSON))`、Manifestに自己hashを入れずMarkerがManifestの実bytes SHA256を保持。Readerはmarker→manifest→artifact→Operation Profile→upstream hashをTrustedRoot内で検証。staging→atomic no-clobber publishを既存G01 Publisherで行い、Row Parquetは独立承認証拠の検証前にbytes生成すら禁止。Publication不正・欠損をScience negativeに変換しない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
@@ -147,7 +162,7 @@ class DiagnosticPort(Protocol):
 
 #### I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+Protocol自体はI/Oを持たない。Concrete Adapterは本書§3/§4で所有が割り当てられたClassのみが実装し、単一MethodCapabilityPort経由で選択する。validated Request→typed outcome/staging sinkを守り、外部DDを未記載の実装規範の代用としない。Owner/ABIが未確定なら新Facadeを創作せずBLOCKED。
 
 #### 検証
 

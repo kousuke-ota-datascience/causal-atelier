@@ -264,3 +264,31 @@ P00は存在してもoptional authoring / audit artifactであり、preflight / 
 2. 対象Gateの06/07/PxxにOwner判断を反映し、正本ではなくEnhancement worktree内で正式Freezeする。
 3. 対象Gateのupstream canonical 999、実装Source/lock full SHA、依存環境、40 preflightを確認し、**対象Gateごとに**Coding Authorizationを明示する。
 4. Authorized GateでのみCoding Agent→Candidate Assembly→Independent Test→999。文書作成や静的整合確認をScience PASSとしない。
+
+### 12.3. PREP-03 document independency 再監査・是正台帳（2026-11-17）
+
+**Audit scope / source baseline:** `prototype/ariadne_mvp` @ `2cf28f59a3248ee89c12ba8f541846a0b3245f82`。G02〜G10の**36 Pxxを全件確認**し、各Gateの06/P00/07（各9件）、G01 P04/README、`src/ariadne/scientific/{core_adapter,discovery,identification,inference,refutation,sensitivity}/adapter.py`、`product/ports/scientific_core.py`、`causal/inference/estimators/treatment_effect.py`、`product/application/graph_version_service.py`の現行ABIと照合した。Git treeでの文書是正はこの節を含むCommitに収録する。ここでの「確認」は静的文書レビュー／実Source署名照合であり、実行確認・Backend実測・科学Referenceの実証を含まない。
+
+| ID | 発見事象 | 静的是正 | 未証明・Freezeへの影響 |
+|---|---|---|---|
+| IND-01 | 36 Pxx中、設計中ClassやTyped Portを既存Sourceと混同し得る。旧Product `run(input_,output_dir)`とE11 StagingSinkの違いが委譲先のDDに依存 | 全36 Pxxの§2AにGate/Methodごとの既存Source署名・Design-only境界・reuse/owner/bridgeの禁止事項を本文へ記載 | Concrete Bridge、effective Backend、独立Science契約は別途確定。ABI一意性のテスト未実行 |
+| IND-02 | Protocol仕様内の「具体Adapter/Runtimeは30_63/30_62参照」がprimary contractの外部規範依存になっていた | 該当句を各Pxxにて本文内の所有・validated request・typed result・staging・停止規則へ置換 | 所有者/具体署名が未決のものは推測せずBLOCKED |
+| IND-03 | LocalCausalUseCaseを含むPxxでOperation別Artifact契約を`23_42 §2.1`へ外部委譲 | 全36 Pxxの§2Bに6 Operationの必須/禁止Artifact、schema_dispatch、JCS request_hash、manifest/marker/readback/privacy規則を自己完結で記載。該当Class処理の規範参照を§2Bへ変更 | Method別内部Profile Schemaの詳細未承認は引き続きBLOCKED |
+| IND-04 | GateごとのPxx数/依存/Method coverageの相互参照 | 06↔P00のPxx集合・依存をG02〜G10で照合。G02=4/G03=6/G04=4/G05=4/G06=3/G07=3/G08=4/G09=3/G10=5。G02〜G09の07 Method IDs、G10/07の41 ID表を再確認 | 提案DAGのOwner承認未実施 |
+| IND-05 | DGP/NEG/REF/AC IDだけでは数値的oracleと閾値の仕様を保証できない | 未生成Fixture、未承認Config、K/R/MC-SE/coverage/Licenseを推測させずSTOPする既存規則を保持 | **meaningful executable standalone / Freeze PASSは未証明**。Methodごとの事前登録・独立Referenceを確定後、再監査が必要 |
+
+**Quality classification:** 全36件は`REVISED_DRAFT`。静的な既存ABI・Operation Bundleの外部規範依存は是正したが、**「36件すべてがCoding Agentへそのまま投入できる」や「Document Independency全数PASS」は宣言しない**。未承認のMethod Schema/Backend/Inference/DGP truth/negative expected outcome/quantitative thresholdやG05のPrivacy Authority/Writerは、実装に必要な規範的空白であり、単なる文面展開で埋まらない。
+
+| Gate | 要Owner判断・追加調停（未解消なら対象ScopeはBLOCKED） |
+|---|---|
+| G02 | P1-M05 IV targetとDoWhy Backend実効API、FD-A conditional estimation/variance |
+| G03 | AIPW nuisance/crossfit/CI、OLS contrast/covariance、refutation/sensitivity kernel Bridge、NCE/NCO null、RV適格範囲 |
+| G04 | EconML method config/fit/inference 実効API、X/W roles、DRIV独立IV slope reference |
+| G05 | **独立Approval Authority：署名・鍵Owner・Scope・有効期限・失効・anti-replay・Verifier Class/Method、Parquet Row Writer Class/Factory/Method**。deny時row bytesゼロ |
+| G06 | Temporal lag/time index、Tigramite実効API、PCMCI+/LPCMCI endpoint独立Oracle |
+| G07 | DiD 2x2/staggeredとEvent reference/cluster covariance、ITS HAC/serial-correlation policy |
+| G08 | RD bandwidth/kernel/inference、B0/B1別Target、HC1 Anderson–Rubin全実数集合・退化・独立Oracle |
+| G09 | SCM point-only policy、SDID estimator/inferenceとdonor contamination/pre-fit/weights |
+| G10 | 41 Method×10 UCのT2/T3 prereg K/R/MC-SE・coverage・FWER=.05・fixed candidate replay・SBOM/License・Product v2互換 |
+
+**Owner review rule:** 個別未決は(1) Owner意思決定、(2)設計修正、(3)effective Runtime実測、(4)Independent Testでしか確証できない事項、(5)後続Gate依存に分類し、無関係Gateを一律BLOCKしない。判定後は該当06/07/Pxx内に完全な採用値・positive/negative・failure semanticsを戻し、self-containedの再監査を行う。未承認のFreeze、Coding Authorization、Source/test/uv.lock変更、独立07/999の代行は禁止。

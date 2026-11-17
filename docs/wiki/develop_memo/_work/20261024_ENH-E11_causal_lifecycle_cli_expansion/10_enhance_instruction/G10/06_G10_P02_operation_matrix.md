@@ -26,6 +26,21 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** DISCOVER/IDENTIFY/ESTIMATE/REFUTE/SENSITIVITY/DIAGNOSEのMethod×Estimand×Backend×CI。
 
+### 2A. 41 Method横断Reuseと既存ABIの実在確認（`2cf28f59a324`）
+- **実在:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter`は`run_discovery(DiscoveryInput, Path)`、`run_identification(IdentificationInput, Path)`、`run_estimation(EstimationInput, Path)`、`run_refutation(RefutationInput, Path)`、`run_sensitivity(SensitivityInput, Path)`の公開ABI（返値はいずれも`list[ScientificResultDescriptor]`）。対応実体は`scientific/discovery|identification|inference|refutation|sensitivity/adapter.py`の各`run(input_, output_dir)`。これらは旧Product Path APIであり、E11の`Discovery/Identification/Estimator/DiagnosticPort`のtyped Request/Outcomeとは互換性を自動仮定しない。
+- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifest/Licenseの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05独立Privacy Authorityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。
+- **科学的Boundary:** G10の横断テストには全41 MethodのDGP/NEG/独立REF、実効Backend/lock/fixture/SBOM SHA、Source/Environment/seed、preregistered K/R/MC-SE/coverage/threshold、FWER=.05とMethod別Inference profileが必要。未決は該当MethodのBLOCKED、G10全体のGate PASS禁止。
+
+### 2B. Standalone Operation/Result/Manifest契約
+| Operation | 必須Artifact | 禁止・Negative |
+|---|---|---|
+| DISCOVER | `study.json`・`status.json`・Graph成功なら`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`と理由必須、`schema_dispatch.graph=null`。Backend失敗との混同禁止 |
+| IDENTIFY | `study.json`・`status.json`・`identification.json` | Effect `result.json`禁止。非識別もtypedでGraph/Design/Estimand/Proofのhash照合 |
+| ESTIMATE | `study.json`・`status.json`・`result.json` | `schema_dispatch.result=e11-local-effect-result/1`。Point無しはnull＋reason、科学PASSと混同禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`・`status.json`・`diagnostics.json` | Effectの再発行禁止、元Effect/Graph/Design hash、seed/適用条件の照合 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS atomic no-clobber publish、個票bytesはG05独立承認以前に生成禁止。各Methodのpoint/uncertainty/science_acceptance/statusを別軸で保持し、計算成功はScience PASSでない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
@@ -109,7 +124,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 23_42 §2.1のOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。
+7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -161,7 +176,7 @@ IdentificationとEvidenceの意味を守り、非識別をIDENTIFIEDと偽装し
 
 #### 5.1.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+ProtocolはI/O無し。Concreteは本Pxx§3/§4の所有Class/Factoryのみ、単一MethodCapabilityPortで厳格選択。validated Request→typed outcomeを守り、実装時に外部DDの規範を推測補完しない。Concrete Owner/ABIが本書で確定しなければBLOCKED。
 
 #### 5.1.7. 検証
 
@@ -194,7 +209,7 @@ class EstimatorPort(Protocol):
 
 #### 5.2.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+ProtocolはI/O無し。Concreteは本Pxx§3/§4の所有Class/Factoryのみ、単一MethodCapabilityPortで厳格選択。validated Request→typed outcomeを守り、実装時に外部DDの規範を推測補完しない。Concrete Owner/ABIが本書で確定しなければBLOCKED。
 
 #### 5.2.7. 検証
 
@@ -227,7 +242,7 @@ class DiagnosticPort(Protocol):
 
 #### 5.4.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
+ProtocolはI/O無し。Concreteは本Pxx§3/§4の所有Class/Factoryのみ、単一MethodCapabilityPortで厳格選択。validated Request→typed outcomeを守り、実装時に外部DDの規範を推測補完しない。Concrete Owner/ABIが本書で確定しなければBLOCKED。
 
 #### 5.4.7. 検証
 

@@ -26,6 +26,21 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **This package rules:** Donor weights/pre-treatment RMSPE/fit・counterfactual gap。SCMは初期point-only。
 
+### 2A. Existing Source ABIと合成対照Methodの所有（`2cf28f59a324`）
+- **実在:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(self, input_: EstimationInput, output_dir: Path)->list[ScientificResultDescriptor]`は旧Product Path API。 `src/ariadne/causal/inference/estimators/treatment_effect.py`の数値KernelはSCM/SDIDの実装済み証拠でない。
+- **Design-only:** `SyntheticControlAdapter/SyntheticDidAdapter`は§3/§4のE11新規Scientific Adapter、`EstimatorPort.estimate(ValidatedEstimatorRequest, *, sink:StagingArtifactSink)->EffectOutcome`は型付きPort。旧Path API/旧Writerの公開ABIを維持し、共有純粋Kernelでのみ接続する。SCM point-onlyに未検証CIを付与しない。SDIDはunit/time weights、pre-period fit、donor eligibilityとadopted variance/inferenceを別検証。受入済みのEstimator Policyと独立REFがないMethodはBLOCKED。
+- **Ownership:** G01共通Registry/Publisher/Reader、G07 Panel処理とScience Kernelの重複実装は禁止。Group/Unit/Timeのsupportが不足ならfallbackで推定成功にしない。
+
+### 2B. Standalone Operation/Result/Manifest契約
+| Operation | 必須Artifact | 禁止・Negative |
+|---|---|---|
+| DISCOVER | `study.json`・`status.json`・Graph成功なら`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`と理由必須、`schema_dispatch.graph=null`。Backend失敗との混同禁止 |
+| IDENTIFY | `study.json`・`status.json`・`identification.json` | Effect `result.json`禁止。非識別もtypedでGraph/Design/Estimand/Proofのhash照合 |
+| ESTIMATE | `study.json`・`status.json`・`result.json` | `schema_dispatch.result=e11-local-effect-result/1`。Point無しはnull＋reason、科学PASSと混同禁止 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`・`status.json`・`diagnostics.json` | Effectの再発行禁止、元Effect/Graph/Design hash、seed/適用条件の照合 |
+
+全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS atomic no-clobber publish、個票bytesはG05独立承認以前に生成禁止。各Methodのpoint/uncertainty/science_acceptance/statusを別軸で保持し、計算成功はScience PASSでない。
+
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
