@@ -55,7 +55,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 | `media_type` | `str` | nonempty explicit MIME |
 | `schema_version` | `str\|None` | key required, may be null |
 
-**Factory:** `from_payload(payload: Mapping[str,JsonValue]) -> ContentRef`. Exactly five fields, no unknown/missing; reject bad types, dot/dotdot, leading slash, Windows drive/UNC, backslash, empty components, NUL and unsafe Unicode/path grammar. Copy into immutable fields; do not retain user-provided mutable mapping.
+**Constructor/Factory:** Public ingress is `from_payload(payload: Mapping[str,JsonValue]) -> ContentRef`; frozen value construction cannot bypass schema/lexical validation. No mutable input references are retained. Exactly five fields, no unknown/missing; reject bad types, dot/dotdot, leading slash, Windows drive/UNC, backslash, empty components, NUL and unsafe Unicode/path grammar. Copy into immutable fields; do not retain user-provided mutable mapping.
 
 **Pre/Post:** never open a file or assert content authenticity. A syntactically valid SHA string is not hash verification; `ContentReferencePort.verify(ref,*,root)` in P02 performs FD-bound actual-byte/hash validation. Errors are typed schema/path violations, not successful Ref with warning. No retry or I/O side effects.
 
@@ -63,7 +63,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 **Module/Class:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`; immutable CLI envelope. Fields: `schema_version:Literal["e11-local-study/1"]`, `run_id:str`, `operation:LocalOperation`, `analysis_mode:AnalysisMode`, `question/design/dataset:ContentRef`, `graph/identification:ContentRef|None`, `estimand:EstimandRef`, `method:MethodRequest`, `inference:InferenceRequest`, `randomness:RandomnessSpec`, `privacy:LocalPrivacySpec`.
 
-**Method:** `validate_local_invariants(self) -> tuple[Reason,...]`, pure; check version, safe run_id, required/ref-null rules, Operation/Estimand and Privacy intent. DTO construction alone is not `ValidatedStudy` proof. Convert using common scientific validator; Application cannot import this CLI DTO. Existing `CausalDesign.Estimand` supports ATE/ATT only: do not force the non-Effect GRAPH_STRUCTURE Target into it.
+**Constructor/Factory:** Immutable LocalStudySpec is constructed only after strict Study DTO decoding, with all declared fields set. **Method:** `validate_local_invariants(self) -> tuple[Reason,...]`, pure; check version, safe run_id, required/ref-null rules, Operation/Estimand and Privacy intent. DTO construction alone is not `ValidatedStudy` proof. Convert using common scientific validator; Application cannot import this CLI DTO. Existing `CausalDesign.Estimand` supports ATE/ATT only: do not force the non-Effect GRAPH_STRUCTURE Target into it.
 
 **G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false,policy_ref:null}`. Row request is a denial in P05 (exit3); malformed structural combination is exit2. Never fabricate ATE, Effect Result, Identification or Science PASS.
 
@@ -103,7 +103,7 @@ Run the repository's `e11_jcs_golden_vectors.json` (7 positive/7 negative) again
 
 ### 6.5. `LocalRunManifest` — 30_62 §4 / MAN01–06
 
-**Module/Class:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`; immutable DTO. Logical fields `manifest_version:Literal["e11-local-manifest/1"]`, `run_id`, `operation`, `request_hash`, `lineage` (typed refs), `execution_status` (technical and science independent), `runtime` (actual runtime evidence), `artifacts:tuple[ArtifactDescriptor,...]` and `review`. These are logical groups: public serialized keys must conform to `e11_local_manifest_v1.schema.json`, not a newly invented representation.
+**Module/Class:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`; immutable DTO. **Constructor/Factory:** Use the strict `from_payload` or `from_run_evidence` factories below; no raw dict cast can substitute for validation. Logical fields `manifest_version:Literal["e11-local-manifest/1"]`, `run_id`, `operation`, `request_hash`, `lineage` (typed refs), `execution_status` (technical and science independent), `runtime` (actual runtime evidence), `artifacts:tuple[ArtifactDescriptor,...]` and `review`. These are logical groups: public serialized keys must conform to `e11_local_manifest_v1.schema.json`, not a newly invented representation.
 
 ~~~python
 @classmethod
