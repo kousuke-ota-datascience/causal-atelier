@@ -76,3 +76,8 @@ Ariadne Interface Contracts
 - **含まない:** Application内部のclass layout、DB storage実装、推定器の統計手順。
 - **E11境界:** 追加はlocal CLIとScientific Port/Artifact Interfaceのみ。既存`/api/v1`に新E11 endpointを追加しない。旧v2 spec/read-backを暗黙更新しない。
 
+
+
+## 3. Web API仕様書標準構造（2026-11-17）
+
+Web APIの`23_10〜23_19`は`23_01_common_conventions.md`§11で定める**7章共通構造**を用いる。最優先はOperation別のRequest/Response/Error詳細であり、CLI-only E11を理由にWeb/API実装を改変しない。Product元正本`docs/wiki/requirement_definition/`への昇格は全ENH-E11関連テストPASS後とする。

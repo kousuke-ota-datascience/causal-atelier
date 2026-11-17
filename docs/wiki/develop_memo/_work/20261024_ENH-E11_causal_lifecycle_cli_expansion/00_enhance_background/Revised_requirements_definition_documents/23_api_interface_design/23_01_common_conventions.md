@@ -102,7 +102,7 @@ Analytical Navigation Metadataのcanonical endpoint、schema、catalog authority
 
 ## 10. API Operation契約の最低記述粒度（PREP-01 共通規約）
 
-23_10〜23_19の各HTTP Operationについて、以下の9欄を記録する。これは**記述規範**であり、現行Source未確認のAPI挙動を確定するものではない。
+下表の9欄はInterface全体の**広義の整合性監査観点**を示す。ただし、Ownerの2026-11-17決定により、23_10〜23_19の今回優先対象は**Operation別Request／Response／Errorsの詳細仕様**のみとする。残りの観点を今回の各Endpoint詳細節に一律強制しない。既存の承認済み要求・安全性契約は緩和しない。
 
 | 欄 | 必須記載内容 |
 | --- | --- |
@@ -119,3 +119,22 @@ Analytical Navigation Metadataのcanonical endpoint、schema、catalog authority
 各欄には DEFINED（Sourceまたは承認規範で確定）／INHERITED（共通規範への特定参照）／N_A（理由付き非適用）／NOT_SPECIFIED（未確定）を付す。空欄や例示JSONを完全なSchemaとみなさない。Sourceで確認できないResponse/Errorを推測しない。
 
 この共通規約の追記**だけでは**Operation別Coverageが完了したことにならない。個別23_10〜19と現行Router/DTOのSource突合、負例、レビューは未完として追跡する。
+
+
+## 11. Web API詳細仕様書の統一構成（Owner採用 2026-11-17）
+
+適用対象は`23_10〜23_19`のHTTP API仕様書（全101 Router Operation）。Browser/Worker/CLI/Scientific Portの`23_20/30/40/41/42`へHTTP書式を強制しない。
+
+| 章 | 必須内容 |
+|---|---|
+| 1. API概要 | 対象責務、Base path、契約の確認範囲 |
+| 2. エンドポイント一覧 | Method、完全Path、Handler、Success HTTP |
+| 3. 共通Error形式 | 現行error envelope。`application/problem+json`への無断変換禁止 |
+| 4. エンドポイント詳細 | **全Operationごとに**基本情報、Request（Path/Query/Header/Body、型・必須・null・制約）、Response（Status/Body Field/型/例）、Errors（Status/Code/条件）、Source Trace |
+| 5. 検証状況 | Source Static CheckとRuntime Contract Testを分離 |
+| 6. 既存Domain・設計制約 | 旧版の規範を保持する。旧Route表よりSourceに一致する2章を優先 |
+| 7. 改訂記録 | 変更内容・更新日 |
+
+品質ルール：Router/DTO/Serviceが返すFieldを追跡する。`response_model`未宣言でもServiceのreturn dictを点検する。Methodの仮引数をPydanticのFieldに混入させない。Request/Responseの説明用JSONサンプルは実行時成功保証を意味せず、特にFamily Specの `{}` は無条件にvalidとは扱わない。Error Handlerの共有Mappingから個別Operationの到達可能性を推定しない。未確認部分は推測せず検証条件を示す。
+
+**状態:** 10文書の7章構造と101件の操作節はSource静的照合ベースで整備した。Serviceが返す未型付けResponseの残部、Operation固有Error条件、統合Contract Testは未完了であり、PREP-01完了とは判定しない。

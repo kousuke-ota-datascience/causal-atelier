@@ -140,3 +140,15 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 **Implemented first batch:** `23_10`: 11 Project/Research Context endpoints, `23_11`: 4 DatasetVersion endpoints, `23_12`: 7 AnalysisSpecification endpoints = **22/101** Router operations receive individually named detail sections. Sources: concrete Router signatures, shared Pydantic DTOs, Error Handler, Idempotency service. Mark gaps where Service-returned `dict[str,Any]` does not provide typed Response Schema or Error reachability cannot be asserted. Crucially Dataset upload is `multipart/form-data`, not JSON; current shared Error envelope is `error{code,message,details,request_id}`, not sample `application/problem+json`.
 
 **Remaining:** 79 Router operations in `23_13〜23_19` require operation-by-operation request/response/error detail, and existing 22 need complete Service-specific response/error verification where `UNVERIFIED`. Exact required vs current Auth changes not inferred and Product requirements not altered. **PREP01_IN_PROGRESS / CODING_NOT_AUTHORIZED**. No tests executed or original canonical document modified.
+
+
+## 12. Owner API仕様書修正指示への対応（2026-11-17）
+
+前回の§11で簡易追加した22/101 Endpoint節は利用可能な詳細仕様の完成ではなかった。Owner指摘により、`23_10〜23_19`の**全10文書・全101 Operationを同一7章構造へ全面再編**し、Method/Path、Path/Query/Header/Body、Request model fields、Response status/body/field、Error codeとSource TraceをOperation単位で配置した。
+
+- 2026-11-17 Source上のRouter 13ファイル（multi-line decorator含む）を全件抽出し、各文書のOperation数11/4/7/14/12/17/6/12/13/5を照合した。
+- Generated Pydantic tableへのfunction argument混入を発見し、`ce027aaf4b296ba2dc43447b0026217556346b79`で除去した。ネストしたModelもJSON例に反映した。
+- `23_10`では`WorkspaceLifecycleService._context_response`の16 Fieldsとusage/list形状を補完し、`23_12`では`_specification_response`の19 Fieldsと7 OperationのService上の制約を補完した。
+- 共通記述ルールは`23_01`§11に明示。既存のDomain規範を第6章に保持し、旧文書blob SHAで変更前を追跡可能にした。
+
+**未完了:** dynamic Service Responseの残余、Domain/Service別のError到達条件、GET/PATCH/POST実リクエストとOpenAPI一致性、Contract Test、外部Gatewayを含む認可検証。構造整合=完了/Runtime PASSではない。`PREP01_IN_PROGRESS / PREP02_IN_PROGRESS / CODING_NOT_AUTHORIZED`。元のrequirement_definition正本は未変更。
