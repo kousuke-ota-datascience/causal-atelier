@@ -198,3 +198,36 @@ class DiagnosticPort(Protocol):
 ## PREP-02 adopted cross-Port invariants (2026-11-17)
 
 [Owner decision](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) is A/A/A. `LocalStudySpec`, `GraphEvidence`, `EffectOutcome`, Manifest and Status have adopted strict `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1` discriminators. Domain DTOs must never silently read Product legacy v2. File-backed Content Ports must preserve verified same-root boundaries; Publication Port must require a Linux same-filesystem no-replace commit and fail-closed unsupported FS. Privacy-restricted outputs require the non-delegated owner-UID/Study-authorization/CLI-opt-in conjunction. **Unresolved:** formal Port signatures, DTO/JSON Schema, errors, effective FS capability inspection, independent review and verification. Option selection is not freeze.
+
+
+
+## 11. F04：Product/Local Port・DTO 互換性境界（設計契約案）
+
+### 11.1 既存Portからの意味変換を禁止する境界
+
+既存Product `ScientificCorePort`は`run_discovery/run_identification/run_estimation/run_refutation/run_sensitivity`から`list[ScientificResultDescriptor]`を返す。ResultType/ScientificStatusはProduct Resourceの型であり、E11のGraphEvidence・IdentificationOutcome・EffectOutcome、及びunbounded/disconnected AR集合の損失ない表現ではない。**E11 Local DomainはProduct Portを直接継承・単純alias・無検証castしない**。既存`ArtifactStorePort.store/retrieve/exists/delete`はmulti-file immutable run publishの代替としない。旧`CliManifest(manifest_version=2.0, snapshot_schema_version=causal-analysis-spec/2)`は新E11 strict decoderへ変換しない。
+
+### 11.2 Local Port/DTO signatures の実装候補
+
+`ContentReferencePort.verify(ref: ContentRef, root: TrustedLocalRoot) -> VerifiedContent`：実効Trusted Rootでsecure open→同一FDからbytes/hash→参照内容を固定。`MethodCapabilityPort.resolve(method_id, backend_id, profile) -> BackendCapabilityRecord`：real API/version/profile/inference supportを記録。`IdentificationPort.identify(request: ValidatedIdentificationRequest) -> IdentificationOutcome`、`EstimatorPort.estimate(request: ValidatedEstimatorRequest, sink: StagingArtifactSink) -> EffectOutcome`、`DiagnosticPort.run(request: ValidatedDiagnosticRequest, sink: StagingArtifactSink) -> DiagnosticOutcome`はE11 Local DTOを使用し、optional library object・Product Result/Status・任意出力Pathを返さない。`LocalPublicationPort.publish(staged: ValidatedStagedBundle, root: TrustedLocalRoot) -> CommittedLocalRun`はF03 no-replace規則の責務でありScientific Portには公開を許さない。`LocalManifestReaderPort.verify(ref: LocalRunRef, root: TrustedLocalRoot) -> VerifiedLocalRun`はmarker→manifest→artifact hashとE11 explicit version dispatchを検査する。
+
+`Validated*Request`はquestion/design/graph/dataset/estimand/method/upstream hashesを検証済みの内部型とする。外部入力から直接インスタンス化された未検証値をeligibleとして扱わない。Method別のEstimator/Inferenceの有効性は41 Methodの独立科学契約がAuthority。外部Calculation Primitiveの共有は、Method/Estimand/inferenceと負例が一致することを示したExplicit Adapterに限る。
+
+### 11.3 F04拒否条件と検証義務
+
+- Product `ESTIMATED`をE11 `science_acceptance=PASS`へ変換しない。DoWhy識別名からLATE/B0/B1/DRIVを推定しない。
+- Identificationが未成立またはGraphVersion/Hash不整合ならEstimatorを呼ばない。ScientificNegativeOutcomeを技術障害や偽の点推定へ変換しない。
+- Legacy Productの5 run signature・v2 reader・Product Result/Artifact schemaを回帰試験で保持する。Optional backendがないENV-BASEでもE11 Local Domainをimport可能にする。
+- 型署名とModule配置、Error code及びABIの最終freezeは独立Architecture Review前には宣言しない。実装後のtests/科学受入PASSとは別。
+
+設計判断候補および各検証項目：[F04 review input](../combined_review/98_20261117_prep02_f04_port_boundary_adr_candidate.md)。Owner採用済みA/A/Aの規則を変更しない。
+
+## 12. F07：AR・Inferenceのlossless DTO規範
+
+`ARConfidenceSet`は`confidence_level∈(0,1)`、非空のcanonical `components: tuple[ExtendedRealInterval,...]`、`topology`および検証可能な`inversion_evidence: ContentRef`で構成する。各Endpointは有限値または`NEG_INFINITY/POS_INFINITY`のタグ付きJSON型とし、裸のNaN/±Infinityやnullへの置換は禁止。負∞はlower専用、正∞はupper専用、無限端点は開区間。二つの成分が端点で接していても両者がその端点を除外する場合、そこに1点のgapが残るためDISCONNECTEDを保つ。
+
+分類はcanonical unionで、全実数なら`ALL_REAL`、成分数が2以上なら`DISCONNECTED`、単一区間でいずれか無限端点なら`UNBOUNDED`、残り`BOUNDED`。通常の成功ARで`EMPTY`を出さず、反転失敗は`InferenceAvailability.FAILED + typed reason`として保持する。これはE11初期契約の結果表現規則であって、一般の統計的反転で空集合が数学的に不可能という主張ではない。
+
+`InferenceEvidence.availability=AVAILABLE`では、承認された推論型と一致する`FiniteInterval`または`ARConfidenceSet`ちょうど1つを持つ。他のAvailabilityでは両方nullかつreason必須。点推定とScienceAcceptanceは独立。CONFIRMATORY結果にはMethod別に受入済み推論証拠を要求し、`NOT_EVALUATED`を`PASS`として表示しない。
+
+Wire shape candidateと証明範囲は[F07 review input](../combined_review/99_20261117_prep02_f07_ar_inference_schema_candidate.md)及び[JSON Schema draft](../23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json)。JSON Schemaだけでは成分順序/結合、統計的Coverage、Methodの適格性は証明されない。`F07_DESIGN_REFINED / SCHEMA_NOT_FROZEN / SCIENCE_NOT_RUN`。

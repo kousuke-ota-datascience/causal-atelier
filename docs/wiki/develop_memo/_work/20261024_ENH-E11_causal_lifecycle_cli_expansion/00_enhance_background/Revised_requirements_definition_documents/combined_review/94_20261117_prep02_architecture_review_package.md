@@ -78,3 +78,12 @@ This package is a review input, **not** an independent review artifact or Owner 
 ## 6. Owner decisions adopted (2026-11-17; supersedes the pending status in §3/5)
 
 **DEC-PREP02-A/B/C = Option A / Option A / Option A, ADOPTED by Owner.** Decision authority and residual obligations: [DEC-PREP02 record](decisions/94_20261117_dec_prep02_owner_architecture_choices.md). In §3, options are preserved as historical review alternatives, **not current pending choices**. Explicitly: non-delegated same-UID local row export, Linux same-FS atomic no-replace publish with fail-closed unsupported filesystem, and strict E11 version namespace are approved policy. F03/F05/F06 remain OPEN for actual schema, port, security, runtime proof and independent reviewer. The §5 token `OWNER_FREEZE_CHOICES_PENDING` was the state when originally authored, now superseded by `OWNER_CHOICES_ADOPTED / PORT_SCHEMA_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED`. Reviewer must inspect decision record and exact latest commit SHA; this update itself is not a review PASS.
+
+
+
+## 7. F04/F07 shared contract resolution input (2026-11-17)
+
+- F04: [Product/Local Port + DTO ADR candidate](98_20261117_prep02_f04_port_boundary_adr_candidate.md)。Existing Product ScientificCorePort（5 methods）、ScientificResultDescriptor、ArtifactStorePort（4 methods）、CliManifest v2に対し、E11 Local Protocol/DTOの隔離、staging sink、explicit pure-computation reuse condition、negative casesを記載。
+- F07: [AR/Inference serialization + scientific-state ADR candidate](99_20261117_prep02_f07_ar_inference_schema_candidate.md) と [machine-readable internal JSON Schema $defs draft](../23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json)。Extended-real tagged endpoint、interval normalization、ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED topology、typed non-availability reason、Science Acceptance独立を具体化。
+- Reconciled Stock: `30_61` `11/12、`23_41` `9、`23_42` `12、`22_15` `18.3。Reviewer must validate identical meaning and still audit exact Protocol method/error signatures, schema composition into Result/Manifest, F03/F05/F06 runtime proof, Product v2 regression and Science Oracle.
+- **Disposition:** DESIGN_SPEC_DRAFTED / SCHEMA_PORT_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED. This is a reviewer *input*, not self-approval.

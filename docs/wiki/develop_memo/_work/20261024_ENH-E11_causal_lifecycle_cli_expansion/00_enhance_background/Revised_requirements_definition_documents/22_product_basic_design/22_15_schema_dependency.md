@@ -49,3 +49,11 @@
 | Backend/Env | 現行`pyproject.toml`のE11 extrasは未宣言 | DEC08 5 profile＋conditional ENV-RD | locked distribution/API/ABI、fresh isolated import、SBOM、配布Legal separate |
 
 **依存順序:** (1) Scope/Estimand/Graph意味契約 → (2) Schema version・enum/codec → (3) Port signature・failure → (4) File publish/readback → (5) Backend Profileの実効検証 → (6) 独立Architecture Review。必要なContractをfreezeする前に、設計済みの文章を実装成功の証拠として扱わない。BD01-F03〜09/F12は対応する独立証拠が揃うまでOPEN。
+
+
+
+### 18.3. F04/F07 の具体化とFreeze境界（2026-11-17）
+
+現行Product `ScientificCorePort` / `ScientificResultDescriptor` / `ArtifactStorePort`とE11 Local Port/DTOを同一interfaceへ合流させない。E11は独立したTyped Identification、Effect、Inference、AR Confidence Set、Technical/Scientific statesと、staging→atomic no-replace publicationを要求する。旧Product v2の実効挙動を変更せず、必要な純計算だけを互換性と科学的意味が証明されたexplicit Adapterで再利用する。
+
+F07の区間表現はextended-real tagged endpoints・nonempty canonical component union・lossless topology、CI不在のtyped reason、ScienceAcceptanceの独立を守る。詳細は`30_61` `11/12、`23_41` `9、`23_42` `12。Draft Schema/ABIは独立Architecture Reviewまで未Freeze。F03/F05/F06/環境/Method Scienceの未証明も残る。

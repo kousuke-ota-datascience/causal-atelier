@@ -190,3 +190,11 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 ## 11. DEC-PREP02 Owner-approved interface constraints (2026-11-17)
 
 [Decision](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): A/B/C all Option A **ADOPTED**. For IO-E11-01/02/03/06/08/09, normative initial support is non-delegated same-UID owner-controlled trusted root; restricted row export requires both Study authorization and explicit CLI opt-in; shared/CI/container-root/delegated accessible volumes denied until separately approved. Publish must use effective Linux same-FS atomic **no-replace** directory operation and fail closed when not supported. Version identifiers `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1` are adopted; unknown/legacy v2 cannot be silently parsed as E11. §10's 'unfrozen' label now applies to **mechanical schema/signatures/FS proof**, not Owner's selected policy. `OWNER_POLICY_ADOPTED / JSON_SCHEMA_NOT_FROZEN / TESTS_NOT_RUN`.
+
+
+
+## 12. F07 AR Confidence Set/Inference wire詳細規範（2026-11-17）
+
+`e11-local-effect-result/1`の`uncertainty`内で`availability`・`kind`・`interval/confidence_set`・`reason`を独立に表す。Confidence Setの成分は`lower/upper`に`{"kind":"FINITE","value":...}` / `{"kind":"NEG_INFINITY"}` / `{"kind":"POS_INFINITY"}`を使用し、無限区間の端点の開閉を真偽値で表す。`ALL_REAL`、`DISCONNECTED`、`UNBOUNDED`、`BOUNDED`を`topology`で明示し、成分の完全な配列を保存する。`JSON Infinity/NaN`は禁止。`AR_CONFIDENCE_SET`には`inversion_evidence`のContentRefとconfidence levelが必要。正常な`AVAILABLE`と、`UNSUPPORTED/UNAVAILABLE/FAILED/NOT_REQUESTED`による推論不在は相互排他的であり、後者には理由コードを残す。`EffectOutcome.point`、`science_acceptance`、`technical_status`は推論可用性から独立。
+
+機械可読な**内部$defsドラフト**：[e11_ar_inference_defs.schema.json](schema_drafts/e11_ar_inference_defs.schema.json)。[F07 review input](../combined_review/99_20261117_prep02_f07_ar_inference_schema_candidate.md)`2〜4をsemantic validation・positive/negative test条件として併用する。これは正式なE11 Result JSON Schema全体のFreezeではない。Interval unionの正規化や科学的CoverageはJSON Schema検証だけで確定できない。Method別推論とIndependent Reviewが残る。

@@ -158,3 +158,11 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 ## PREP-02 Owner-approved Version/Privacy boundary (2026-11-17)
 
 [DEC-PREP02](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) adopts Options A/A/A. The five literal `e11-local-*/1` identifiers in §2 are **now adopted identifiers**, while CLI signatures, Protocol typing, exact JSON Schema and implementation are still not frozen. Unknown/versionless/legacy-v2 input must fail closed in E11 decoder; legacy reader behavior stays separate. `--allow-row-level-export` does not confer authorization: same-UID, private owner-controlled trusted local root, preauthorized Study policy and explicit flag are jointly required; delegated/shared/CI/container-root-accessible paths are outside initial scope. Publisher is constrained to same-FS Linux atomic no-replace with unsupported platforms rejected. This supersedes the 'candidate until Owner snapshot adoption' qualification **only for version identifiers and three selected policies**.
+
+
+
+## 9. F04 Port境界契約の具体化（2026-11-17）
+
+`E11LocalApplication`から見た`ContentReferencePort/MethodCapabilityPort/IdentificationPort/EstimatorPort/DiagnosticPort`はProduct `ScientificCorePort`の子型ではない。新E11のDTOはScientific status・Estimand・Proof・Inferenceの意味を独立に持ち、既存`ResultType`や`ScientificStatus`へ無断で射影しない。Backendに任意最終Pathの書込みを許すことなく`StagingArtifactSink`へ出力する。Local `Publisher/Reader`は既存Product `ArtifactStorePort`の`store/exists/retrieve/delete`では実現できない同一FS immutable multi-file publicationを提供する。E11版と旧`CliManifest(2.0)`は別Readerでstrict dispatchする。
+
+Portの候補署名/Negative case/Regression obligationsは[F04 ADR候補](../combined_review/98_20261117_prep02_f04_port_boundary_adr_candidate.md)、値型とAdapter境界は[30_61](../30_detailed_design/30_61_e11_local_domain_ports.md)`11。**候補Port署名はFreeze未了であり、現行実装のAPIではない。**
