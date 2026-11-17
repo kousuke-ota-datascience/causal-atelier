@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:manifest:1",
   "title": "E11 manifest v1 schema — PREP-02 review draft only",
-  "description": "Manifest is a separate canonical object with no self hash; marker externally references its exact bytes. Artifact uniqueness, cross-ref and privacy checks require semantic validation.",
+  "description": "Manifest is a separate canonical object with no self hash; marker externally references its exact bytes. Artifact uniqueness, cross-ref and privacy checks require semantic validation. The Result discriminator can be null for non-Effect operations; an operation-specific bundle validator must enforce expected outputs rather than fabricate Effect files.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -65,7 +65,15 @@
           ]
         },
         "result": {
-          "const": "e11-local-effect-result/1"
+          "oneOf": [
+            {
+              "const": "e11-local-effect-result/1"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null only for operations without an Effect Result; operation-specific bundle semantics must enforce whether Effect is required, forbidden or optional."
         },
         "status": {
           "const": "e11-local-status/1"

@@ -268,3 +268,10 @@ F07：[DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_ow
 - F05: Study `privacy.policy_ref`の提出は**未信頼**。別の事前承認Authorityと照合して`VerifiedStudyPolicyEvidence`ができた場合のみ個票出力を許可。Row拒否ではCLI exit3、暗黙のAggregate fallback禁止。
 - F06: F06 codecの候補版`e11-json-jcs-rfc8785/1`をManifest `canonical_codec_version`に保存する設計案（[F06詳細](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)）。`request_hash`はTyped Studyのcanonical JSON bytes、`manifest_sha256`は保存Manifestの**実bytes**、ContentRefはFile実bytesのSHA256。全て異なるHashの対象であり混同しない。
 - 形式・Reason/StatusはSchemaドラフトに同期済み。Method-specific科学的適格性、Policy trust anchor、Codec/FS/Schema正式試験は未完了。
+
+
+## 15. Graph自己Digest・Operation別Bundle・科学的Stateの整合規則
+
+Graph JSON内の`content_hash`をGraph JSON全体のSHA256と定義すると自己参照になるため、候補仕様は**`content_hash = SHA256(JCS(Graphからcontent_hashを除いた意味射影))`**とし、外側の`ContentRef.sha256`はGraph JSON実bytes全体を検証する。両者を照合し、一方だけでTrustedとしない。Result/Status/Manifest/Marker間のrun_id・request_hash・Method・Estimand一致は個別Schemaだけでは証明できない。[Cross-schema規範](../combined_review/114_20261117_prep02_f06_schema_semantic_invariants.md)を参照。
+
+`DISCOVER/IDENTIFY`等の非Effect操作でEffect Resultをダミー生成しない。Manifestの`schema_dispatch.result`はOperationごとの実際のResult有無に応じnullを許すSchema候補とし、実効Bundle validatorが必須/禁止を判定する。実行時のOperation別DTO契約・strict Schema、数値科学・Privacy・FS受入は独立Review/各Gate検証が必要。

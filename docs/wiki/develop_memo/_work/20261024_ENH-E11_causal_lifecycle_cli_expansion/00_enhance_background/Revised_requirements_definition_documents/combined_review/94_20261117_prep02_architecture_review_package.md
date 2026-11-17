@@ -101,3 +101,8 @@ This package is a review input, **not** an independent review artifact or Owner 
 ## 9. Owner 4-choice closure and remaining Freeze blockers（2026-11-17）
 
 [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md) confirms four A recommendations (generic AR EMPTY, independently attested policy, strict versioned JSON codec, privacy denial exit3). Prior recommendations in §8 are now approved choices, not undecided Owner items. Mechanisms remain open: AR Math/Science and B0/B1 invariant, Policy trust anchor, RFC8785 codec candidate+cross-runtime hashes, class signature/error/schema completeness, F03/F05 OS proof, and independent reviewer. **Architecture Freeze not declared.**
+
+
+## 10. F03-F07 candidate contracts and Science verifier input（2026-11-17）
+
+Cross-Port reviewer input is [112 unified signature/ErrorPhase](112_20261117_prep02_f03_f07_shared_port_signature_contract.md). F05 [113 signed preauthorization authority candidate](113_20261117_prep02_f05_policy_trust_anchor_candidate.md) remains security review item. F06 [114 graph digest/operation bundle](114_20261117_prep02_f06_schema_semantic_invariants.md) separates semantic projection hash from raw File ContentRef and avoids dummy Effect on DISCOVER. F07 [111 HC1 AR algebra](111_20261117_prep02_b0_b1_ar_science_method_contract.md) with [115 synthetic algebra parity](115_20261117_prep02_f07_f06_limited_numeric_qa.md) is a reviewer input, not per-Method science acceptance. No independent verdict and no Coding Authorization.

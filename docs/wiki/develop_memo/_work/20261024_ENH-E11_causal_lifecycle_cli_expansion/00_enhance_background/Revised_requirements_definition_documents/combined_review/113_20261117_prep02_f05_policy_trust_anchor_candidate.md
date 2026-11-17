@@ -20,7 +20,7 @@ Initial executor is a nondelegated Linux effective UID operating in its own priv
   "issuer_id": "admin-policy-authority",
   "key_id": "provisioned-public-key-001",
   "subject_study_identity": "study-id-pinned",
-  "subject_study_request_hash": "sha256-of-typed-study-request",
+  "subject_study_approval_digest": "sha256-of-study-approval-projection",
   "approved_scope": ["ROW_EFFECT_PARQUET"],
   "classification": "RESTRICTED_ROW_LEVEL",
   "allowed_columns": ["row_id", "estimated_effect"],
@@ -31,7 +31,7 @@ Initial executor is a nondelegated Linux effective UID operating in its own priv
 }
 ~~~
 
-**Sample values are illustrative, not accepted identities.** Signature is a detached binary value authenticated over **domain-separated, versioned canonical Policy bytes**. The Policy envelope is not itself the verification key. Prevent policy↔Study request-hash cycles by excluding the untrusted `privacy.policy_ref` (and any signature/derived approval fields) from the **Study approval-subject digest**, while separately hashing and validating the complete typed Study for request identity. A blind signature over `study.request_hash` that includes its own `policy_ref` must define how those references are bound and cannot be presumed correct. The exact domain-separation and digest-projection contract require Architecture/Security review.
+**Sample values are illustrative, not accepted identities.** Signature is a detached binary value authenticated over **domain-separated, versioned canonical Policy bytes**. The Policy envelope is not itself the verification key. Define `subject_study_approval_digest = SHA256(JCS(typed Study with privacy.policy_ref replaced by null))`. **This digest is deliberately distinct from** the full `request_hash = SHA256(JCS(typed Study including privacy.policy_ref))`. The signature covers `subject_study_approval_digest` (plus scope and issuer claims). Reader recomputes both independently; do not confuse the approval-subject digest and the run request hash. A blind signature over `study.request_hash` that includes its own `policy_ref` must define how those references are bound and cannot be presumed correct. The exact domain-separation and digest-projection contract require Architecture/Security review.
 
 ## 3. Port contract and fail-closed algorithm
 

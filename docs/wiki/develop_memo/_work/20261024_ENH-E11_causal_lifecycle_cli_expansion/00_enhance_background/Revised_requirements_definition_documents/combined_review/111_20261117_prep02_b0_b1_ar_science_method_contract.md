@@ -25,9 +25,9 @@ For n independent rows, column `Y` outcome, `A` endogenous binary treatment, `Z`
 3. `C_AR = {β∈R : T_AR(β) ≤ χ²_(1,1−α)}`, including equality at finite boundaries where variance is well-defined. Confidence level is `1−α∈(0,1)`; retain exactly what is inverted.
 4. To support lossless unbounded/disconnected/ALL_REAL topologies, **do not** infer the set from a finite β grid. Use algebraic quadratic inversion, with certified numeric error bounds/root and boundary checks or an independently verified full-real-domain solver.
 
-For reproducible algebraic inversion let `M_Q=I−Q(Q'Q)^{-1}Q'`, `\u007ez = M_Q Z`, `gY=\u007ez'Y`, `gA=\u007ez'A`. Let `M_X=I−X(X'X)^{-1}X'`, `eY=M_X Y`, `eA=M_X A`; and `k=rank(X)`, `h=n/(n−k)` (HC1 factor, n>k). Then
+For reproducible algebraic inversion let `M_Q=I−Q(Q'Q)^{-1}Q'`, `z_tilde = M_Q Z`, `gY=z_tilde'Y`, `gA=z_tilde'A`. Let `M_X=I−X(X'X)^{-1}X'`, `eY=M_X Y`, `eA=M_X A`; and `k=rank(X)`, `h=n/(n−k)` (HC1 factor, n>k). Then
 
-`s0=Σ_i \u007ez_i² eY_i²`, `s1=Σ_i \u007ez_i² eY_i eA_i`, `s2=Σ_i \u007ez_i² eA_i²`;
+`s0=Σ_i z_tilde_i² eY_i²`, `s1=Σ_i z_tilde_i² eY_i eA_i`, `s2=Σ_i z_tilde_i² eA_i²`;
 
 `q(β)=(gY−β gA)²−c·h·(s0−2βs1+β²s2)`, where `c=χ²_(1,1−α)`.
 

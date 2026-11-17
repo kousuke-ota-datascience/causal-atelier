@@ -413,3 +413,10 @@ Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科�
 [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)により、行出力許可は別に事前承認されたPolicy authority（self-declared boolean不可）、明示Study request、CLI flag、OS Trusted Root、column/max_rows全件AND。`RowExportAuthorization.policy_ref`だけでは権限証明にならず、`VerifiedStudyPolicyEvidence`とtrust anchor確認が必要。要求された行出力が不許可なら**exit3**、aggregate出力へ黙ってfallbackしない。Rowをstaging・ログへ漏洩しない。
 
 `LocalRunManifest.to_canonical_bytes()`はProductの`hash_mapping(default=str)`を呼ばず、独立E11 strict canonical Codecを用いる。候補RFC 8785 JCS版ID・cross-runtime vectorsは[F06](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)に規定。Canonical bytesの完全適合・Policy署名/承認機構とOS適格性を含むFreezeは未完了。
+
+
+## 12. Common Port とPolicy Trust Anchorの物理境界
+
+実装候補のPort署名は[統合Port契約](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)を唯一のCross-Portレビュー入力とし、原文の各Class候補署名との差異をFreeze前に整合させる。`TrustedLocalRoot`はOS/ACL/mountを検証済みのcapabilityであり、単なる`Path`/self-reported Principal Evidenceではない。個票出力Policyは**実行EUIDに書換え権限のない独立Trust Anchor**で検証する必要がある。Ed25519署名付き事前承認artifactと管理者制御の公開鍵登録を[具体候補](../combined_review/113_20261117_prep02_f05_policy_trust_anchor_candidate.md)とするが、署名主体・鍵配布・失効の制度設計とSecurity reviewer判定はまだ未Freeze。
+
+`E11Error`はreason codeと**phase**を保持する。同じSCHEMA_INVALIDでも入力時はCLI exit2、公開済みBundle readback破損時はexit5。Privacy/authorization denialはOwner採用済みexit3。科学的なNegative Outcomeは、正しいManifestを公開完了できる場合に限ってExit0となり得る。

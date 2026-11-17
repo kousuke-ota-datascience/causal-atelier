@@ -51,3 +51,13 @@ The four decisions in §2 are now **OWNER_ADOPTED A/A/A/A**; [DEC-PREP02-D](deci
 ## 6. DEC-PREP02-D decision adoption trace and implementation conditions
 
 Owner 2026-11-17 accepted all four A choices. See [Owner Decision record](decisions/95_20261117_dec_prep02_four_owner_choices.md). F07 Generic AR EMPTY wire updated in both schemas, D-F05 Policy reference requires independently authorized trust anchor, strict RFC8785 JCS is **engineering candidate** not an extra Owner ratification, D-F06-ROW-EXIT exit3 frozen as behavioral intention. Manifest `canonical_codec_version` is a draft machine-level field; await independent schema & cross-language validation. **Four Owner choices DONE, common Port/Schema Freeze NOT_DONE**.
+
+
+## 7. Specific F03-F07 mechanical/scientific contract update（2026-11-17）
+
+- [112 Cross-Port signatures & ErrorPhase](112_20261117_prep02_f03_f07_shared_port_signature_contract.md)：common validated object types, Publisher/Reader signatures, phase-aware CLI exit. `phase` distinguishes input Schema invalid exit2 vs stored readback invalid exit5.
+- [113 F05 Trust Anchor](113_20261117_prep02_f05_policy_trust_anchor_candidate.md)：admin-bound verification key + signed preauthorized policy proposed; actual provisioning/key revocation/independent Security review OPEN. Same-UID self-approved policy remains invalid.
+- [114 F06 Schema semantic joins](114_20261117_prep02_f06_schema_semantic_invariants.md)：Graph self-hash recursion resolved as projection-hash **candidate**; Manifest Effect discriminator may be null for non-Effect operations (with operation-specific validator required). 41 Method config schemas still OPEN.
+- [111 F07 B0/B1 AR](111_20261117_prep02_b0_b1_ar_science_method_contract.md)：proposed HC1 AR statistic/quadratic inversion and conditional just-ID nonempty property; [115 limited numerical parity](115_20261117_prep02_f07_f06_limited_numeric_qa.md) shows B0/B1 8-point max difference ~7.1e-14 with statsmodels OLS HC1; **no Monte Carlo/Science PASS**.
+
+**Gate:** common Mechanical/Scientific design has concrete review contracts. Exact FS, Security trust, schema/codec/Method41 runtime and F12 independent Architecture Review are outstanding. `PREP02_IN_PROGRESS / NO_FREEZE / NO_CODING_AUTHORIZATION`.

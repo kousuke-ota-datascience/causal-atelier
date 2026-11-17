@@ -69,3 +69,8 @@ F07の区間表現はextended-real tagged endpoints・nonempty canonical compone
 ### 18.5. DEC-PREP02-D Owner採用結果
 
 4件A案（F07 generic EMPTY、F05 independently approved Policy、F06 strict versioned canonical JSON、F06 privacy denial exit3）を[DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)として採用。これにより『Owner未決定』という分類は終了。ただしF05の信頼Anchor/F06のRFC8785適合・有限精度/F07のB0/B1 Scienceは実装・独立review対象であり、Port/Schema Freezeは未完了。
+
+
+### 18.6. E11 Cross Port・Scientific/Schema不変条件
+
+Typed Local Port/DTOの境界は[共通契約](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)に統合。Graphのsemantic hashと外部File hashは別計算として扱い、ManifestはOperation別のEffect存在性を厳格判定する。B0/B1のARは一律EMPTY拒否ではなくjust-ID**非退化条件**を伴うMethod固有validatorを設計する。個票の事前Policyの独立Trust AnchorとOSの実効Principalを別検証する。詳細：[F06 semantic join](../combined_review/114_20261117_prep02_f06_schema_semantic_invariants.md)、[F07統計量](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)、[F05信頼Anchor](../combined_review/113_20261117_prep02_f05_policy_trust_anchor_candidate.md)。これらはmechanical/scientific review inputsであり、Port/Schema Freezeを宣言しない。

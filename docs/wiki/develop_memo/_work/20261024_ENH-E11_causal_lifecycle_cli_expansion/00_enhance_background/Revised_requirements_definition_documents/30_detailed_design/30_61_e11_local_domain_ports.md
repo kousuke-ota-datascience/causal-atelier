@@ -247,3 +247,8 @@ Wire shape candidateと証明範囲は[F07 review input](../combined_review/99_2
 4. Privacy・Row認可拒否はCLI exit3。`0`はscience PASSの意味ではない。
 
 Authority: [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Owner決定済み≠Port/Schema Freeze済み**。
+
+
+## 15. B0/B1 ARの非退化条件と推論結果型（共通規範）
+
+ARの汎用Confidence Setは`EMPTY`を含むが、B0/B1 just-identifiedで`gA≠0`かつβhat点のHC分散が正で有限なら、その点で`T_AR=0`となり集合は非空。first-stage=0やrank/HC退化を自動的に通常EMPTY、正常PASS又は計算失敗へ潰さない。Method別の確定試験は[統計量・退化条件](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)、合成データ照合は[限定数値証跡](../combined_review/115_20261117_prep02_f07_f06_limited_numeric_qa.md)を参照。数学的な成立条件の定義と、実際のMethod適格性・弱IV被覆率・独立受入は区別する。
