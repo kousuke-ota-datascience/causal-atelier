@@ -1,205 +1,46 @@
-# 30_60_cli_adapters
+# PREP-02 → PREP-03 | ENH-E11 Common Design Baseline
 
+**状態:** `PREP02_COMPLETE_FOR_GATE_PLANNING / COMMON_DESIGN_BASELINE_FROZEN / PER_GATE_SCHEMA_AND_TESTS_OPEN / PREP03_STARTED / CODING_NOT_AUTHORIZED`
+**基準日:** 2026-11-17 JST
+**Owner意思:** 独立レビュー完了・承認（Owner申告）を工程上の承認として受け入れる。別途GitHub上の詳細なレビュー証跡をPREP-03の開始条件にしない。
+**参照実装前Snapshot:** `13d6c08021b56e86373dc4912d5a6d734bcde7db` / `prototype/ariadne_mvp`（本記録と06/07の追加直前）
+**区分:** この記録だけがPREP-02→PREP-03境界の最新の工程判断。過去のcombined_reviewにある`NOT_FROZEN`は作成当時の履歴であり、本書の**範囲限定のFreeze**を打ち消さない。過去の自己レビューを独立PASSと偽称しない。
 
----
+## 1. 今回Freezeする共通設計契約
 
-## 7. `CliManifest` — Existing v2 CLI DTO（Owner 7区分）
+以下は設計・interface contractの**変更基準**として確定。実行試験の合格を意味しない。
 
-### 7.1. 識別情報・責務
-- **Class/Module:** `ariadne.interfaces.cli.manifest.CliManifest`、`src/ariadne/interfaces/cli/manifest.py` blob `97216eca9d777e97f7a5ebd4e248afd31c6b4de0`。**EXISTING**。
-- **Responsibility:** Existing v2 CLI manifest fieldsの構造保持と`to_dict` serialization。E11 typed Graph/PAG、AR集合、Local commit marker、独立Science acceptanceのAuthorityではない。
-- **Reuse:** E11新結果をこのv2 DTOへ暗黙拡張しない。FR-120b/NFR-005/NFR-010bをE11の既成機能と扱わない。
-
-### 7.2. フィールド
-| Field group | Existing Python fields / defaults | Invariant / risk |
-| --- | --- | --- |
-| Identity | `manifest_version: str`, `operation: str`, `algorithm_or_estimator: str` | mandatory、constructorでversion whitelist判定なし |
-| Input | `dataset: dict[str,Any]`, `graph: dict[str,Any]|None`, `parameters: dict[str,Any]`, `analysis_spec: dict[str,Any]` | shallow frozenの内側のdictはmutable |
-| Runtime | `random_seed: int|None`, `code_version: str`, `runtime_versions: dict[str,str]`, `backend_version: str|None=None` | Provenance値の実効性をClass自身は検証しない |
-| Status | `scientific_status: str`, `result_summary: dict[str,Any]` | Science PASSと実測を結びつけるVerifierは本Classには存在しない |
-| Artifacts/Warnings | `artifacts: list[dict[str,Any]]=field(default_factory=list)`, `warnings: list[Any]=field(default_factory=list)`, `scientific_warnings: list[dict[str,Any]]=field(default_factory=list)` | Instance毎独立list、nested mutable |
-| Legacy compat | `snapshot_schema_version: str="causal-analysis-spec/2"` | Old v2 schema defaultを変更しない |
-| Optional | `analysis_mode: str|None`, `causal_question_hash: str|None`, `graph_origin: str|None`, `upstream_result_reference: str|None`, `identification_status: str|None`, `eligibility_status: str|None` | New E11 confirmation/identification validationは自動実施されない |
-
-### 7.3. Constructor / Factory
-- `@dataclass(frozen=True)`生成`__init__`。上記mandatory fieldsを位置引数で受け、3 listは各Instanceにdefault_factoryで生成する。Optional fieldsは宣言済みdefault。
-- **N/A:** custom `__post_init__`やstrict Schema Parser/validator、Builder/Factoryは存在しない。Constructor引数と`to_dict()`だけではE11 schema supportを証明しない。
-- **Postcondition:** top-level fieldへの再代入は拒否。ただしdict/listのnested mutationは可能。
-
-### 7.4. メソッド
-| Method | Return | Behavior / side effect / failure |
-| --- | --- | --- |
-| `to_dict(self) -> dict[str,Any]` | nested mapping | `dataclasses.asdict(self)`のdeep-copy recursionによるJSON準備。File I/Oなし、Schema/Scientific correctnessは未検査 |
-
-### 7.5. 処理仕様
-`CliManifest`は既存`scientific_stage.py`などのWriter側から生成し、`to_dict()`で辞書化する。外部`manifest.json`のFile書込はCallerの責務。Old v2のScientific/Technical statusと新E11の識別・推定・区間・Science Acceptance axesを混同しない。
-
-### 7.6. I/O・連携・失敗処理
-- **I/O:** Class自身にfile read/writeなし。Outputは通常のPython辞書。Payloadに非JSON型がある場合の`json.dump`失敗は実Writer側の扱い。
-- **Transaction/Retry/Rollback:** N/A（DTO）。`asdict`の生成失敗以外に明示Exceptionはない。
-- **Compatibility:** `manifest_version=2.0`など既存Version semanticsを変更せず、E11 `e11-local-manifest/1`は独立Reader/DTOで扱う。
-
-### 7.7. 検証
-既存manifestのlist default instance分離、`to_dict` nested mapping、legacy v2 reader/roundtrip、unknown new E11 schema拒否、JSON file write失敗/partial publish時の取り扱いはWriterの負例。Product/E9/E10と旧CLI全回帰が対象。テスト実行**NOT_RUN**。
-
-**Requirement trace:** `FR-120b`（DEFERRED）、`NFR-005`、`NFR-010b`（DEFERRED）、`NFR-014`（legacy reader compatibility）。
-
-## 8. 既存CLI DTOと拡張CLIの互換境界
-
-旧`CliManifest`実装と旧Product Portは上記§7の正規source contractを維持し、新E11の型付きResult／AR集合へ暗黙移行しない。因果Domain型と科学Portは[30_61](30_61_causal_domain_ports.md)、Local Application／Atomic Publisher/Reader/Privacyは[30_62](30_62_e11_local_execution_publication.md)、全41 MethodのAdapter割当と受入制約は[30_63](30_63_e11_method_adapters.md)を参照する。
-
-新候補Classを現行コードに実在するClassとして扱わず、Method/Backend/Scienceの実測受入を別途要求する。
-
-## 9. Local CLI Decoder（Interface adapter / PROPOSED）
-
-### 9.1. `LocalConfigDecoder`
-
-#### 9.1.1. 識別情報・責務
-
-**Protocol / planned concrete module:** `ariadne.interfaces.cli.local_causal.decoder.LocalConfigDecoder`と`ariadne.interfaces.cli.local_causal.config_decoder`。raw YAML/JSONからstrict Validation済みのStudyを生成。Application内で再parseしない。**PROPOSED（未実装）。**
-
-#### 9.1.2. フィールド
-
-Protocol instance fieldはN/A。入力`raw: bytes`、`declared_format: Literal["yaml","json"]`。Schema Registry/Method profileはConcrete Decoder注入の読み取り専用依存。
-
-#### 9.1.3. Constructor / Factory
-
-`decode`はstrict version dispatch後だけValidatedStudy factoryへ渡す。Decoder内の`decode_yaml(raw:bytes)->LocalStudySpec`は内部helperであり公開Portの別Contractにはしない。
-
-#### 9.1.4. メソッド
-
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `decode(self, raw:bytes, *, declared_format:Literal["yaml","json"])` | `ValidatedStudy` | pure strict parse/schema/method profile | unknown version、duplicate key、invalid profile |
-| `decode_yaml(raw:bytes)` | `LocalStudySpec` | Concrete内部helper | 同上 |
-
-#### 9.1.5. 処理仕様
-
-重複Key、YAML Python Tag、過大alias/nesting、不明key、legacy/無版を拒否。P1-M06の[Question](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json)・[Design](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json)は**当該Method内部のprofile**で、全Discoveryへ一般化しない。Dataset列名/順序、BK、CI family/measurement scaleは意味Validatorも使う。
-
-#### 9.1.6. I/O・連携・失敗処理
-
-Raw bytesからのparse以外のI/Oはない。外部Ref実bytes確認は`ContentReferencePort`で行う。Malformed configはCLI exit2へ、input/hash/path不一致はexit3へ正規化。
-
-#### 9.1.7. 検証
-
-`DD-E11-SPEC01〜04`、invalid YAML/JSON duplicate、P1-M06 ProfileとStudyのcross-asset join、untrusted refを検証する。FR-185、**FR-201**、NFR-029/036。
-
-
-## 10. Trusted File Reference I/O（Interface adapter / PROPOSED）
-
-### 10.1. `ContentReferencePort`
-
-#### 10.1.1. 識別情報・責務
-
-**Protocol / planned module:** `ariadne.interfaces.cli.local_causal.content_io.ContentReferencePort`。trusted root内のRefを実際に検証・読み出すI/O interface。`ContentRef`そのものを信頼済みbytes扱いしない。**PROPOSED（未実装）。**
-
-#### 10.1.2. フィールド
-
-Protocol自身にmutable fieldなし（N/A）。引数`ref: ContentRef`、`root: TrustedLocalRoot`をcall単位で受け取り、返却`VerifiedContent`は検証されたbytes/digestを保持する。
-
-#### 10.1.3. Constructor / Factory
-
-Protocolに具体constructorはない（N/A）。TrustedLocalRootの生成とrootfd所有は具体I/O Adapterの責務。
-
-#### 10.1.4. メソッド
-
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `verify(self, ref: ContentRef, *, root: TrustedLocalRoot)` | `VerifiedContent` | 安全なopenとsame-fd hash/size照合 | path/race、digest、permission、read failure |
-
-#### 10.1.5. 処理仕様
-
-Rootのdirfdなどを用いてsymlink traversalとraceを防ぎ、実際に開いた同一FDからdigestを計算。mime/schema等の意味検証はDomain validatorに委ね、Ref上のself-asserted hashだけで成功としない。
-
-#### 10.1.6. I/O・連携・失敗処理
-
-File読み取りあり、書き込みはしない。Root外read・未知mount・FD置換はfail-closed。Retry時も再読込／再hash検証必須、cached未検証bytes禁止。
-
-#### 10.1.7. 検証
-
-`DD-E11-REF01〜04`、特にTOCTOU/hardlink/symlink攻撃と実bytes改変を独立Contract/Negative testで検査。FR-185、NFR-029、**NFR-031**。
-
-
-これらは科学的Domain Modelではなく、入力とtrusted file I/OのInterface境界。CLIを理由にGraph・Estimand・Inferenceの別Domainを作らない。
-
-
-## 11. `ContentRef` — Portable content reference value（PROPOSED）
-
-
-### 11.1. 識別情報・責務
-
-**Class / module:** `ariadne.shared.content_ref.ContentRef`。immutable value object。Dataset・Question・Design・Graph・Identification等の内容参照を識別し、物理bytesの検証結果を**保持しない**。外部絶対pathやaccess tokenを保存しない。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
-
-### 11.2. フィールド
-
-| Field | Python型 | 必須/default | 制約 |
-|---|---|---|---|
-| `identity` | `str` | 必須 | 非空の論理identity |
-| `relative_key` | `str` | 必須 | safe relative POSIX key。絶対・dotdot・NUL・drive等を拒否 |
-| `sha256` | `str` | 必須 | 完成ファイル実bytesのSHA256小文字hex64 |
-| `media_type` | `str` | 必須 | Schema/Readerとの整合必須 |
-| `schema_version` | `str|None` | 必須／nullable | unknown versionを無条件に推測しない |
-
-### 11.3. Constructor / Factory
-
-`from_payload(payload: Mapping[str, JsonValue]) -> ContentRef`（設計上のFactory）。strict key／型／hash文字種／relative pathを検査。invalid payloadは型付きvalidation error。mutableな入力Mappingを保持しない。
-
-### 11.4. メソッド
-
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `from_payload(payload: Mapping[str, JsonValue])` | `ContentRef` | strict parse; I/Oなし | Schema／relative-key／digest validation error |
-
-### 11.5. 処理仕様
-
-Pathの文法検査は実filesystem参照の安全性証明ではない。dotdot、absolute path、drive letter、NUL、backslash区切り混在、不正Unicode正規化を拒否し、HashはコンテンツIDと別に保持。
-
-### 11.6. I/O・連携・失敗処理
-
-I/Oなし。Root閉じ込めとTOCTOUの防止、same-fd bytes hashは`ContentReferencePort.verify`の実装責務。Transaction/Retry/Rollbackは該当しない（immutable value）。
-
-### 11.7. 検証
-
-`DD-E11-REF01`有効Ref、`REF02` traversal/symlink/race、`REF03` input差替え/TOCTOU、`REF04` metadata-only同ID別bytes拒否。FR-185、NFR-029/031。
-
-
-## 12. `LocalStudySpec` — CLI execution request envelope（PROPOSED）
-
-
-### 12.1. 識別情報・責務
-
-**Class / module:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`。Operation、Method、Estimand、Input refs、Inference、Privacy要求を保持するimmutable CLI execution envelope DTO。Parse/FS I/O/Backend呼出しは責務外。科学的DesignとEstimandは既存CausalDesign/共通validatorを再利用する。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
-
-### 12.2. フィールド
-
-| Field | Type | 制約 |
+| 区分 | Freezeする不変条件 | 設計参照 |
 |---|---|---|
-| `schema_version` | `Literal["e11-local-study/1"]` | 既存v2へのfallback禁止 |
-| `run_id, operation, analysis_mode` | `str, LocalOperation, AnalysisMode` | safe run ID・enum |
-| `question, design, dataset` | `ContentRef` | Operationごとの必須性をvalidate |
-| `graph, identification` | `ContentRef|None` | DISCOVERで未生成参照を要求しない |
-| `estimand, method, inference` | `EstimandRef, MethodRequest, InferenceRequest` | Operation×Method×Target整合 |
-| `randomness, privacy` | `RandomnessSpec, LocalPrivacySpec` | seedおよび行出力要求を明示 |
+| F03 Local publish | TrustedLocalRoot/dirfd制約、同一FS、`renameat2(RENAME_NOREPLACE)`のみでno-clobber、durable staging→manifest→marker→parent fsync→readback、post-rename結果不定ならCOMPLETED禁止。既存の正常runを上書き・削除しない | [104](104_20261117_prep02_f03_atomic_publish_contract.md)、DD [30_62](../30_detailed_design/30_62_e11_local_execution_publication.md) |
+| F04 Port | CLI Decoder→ValidatedStudy→Application→Local typed Ports→Scientific Adapters。既存Product Port/ScientificStatus/legacy v2とは型・状態の契約が別。ただし科学計算Kernelを別系統に複製しない。ContentReferencePort/Capability/Identification/Estimator/Diagnostic/Policy/Publication/Readerの責務および [112](112_20261117_prep02_f03_f07_shared_port_signature_contract.md) §2のProtocol**論理署名**を共通設計基準とする | IF [23_41](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、DD [30_61](../30_detailed_design/30_61_causal_domain_ports.md) |
+| F05 Privacy | 非委譲・effective UID=private root owner、root ACL/mount/namespaceはfail-closed。個票はStudy要求∧CLI flag∧**独立の事前承認authority**∧OS適格∧行・列制限を全件AND。self-authored bool/PolicyRefは認可ではない。拒否時はrow bytesを作成しない | [105](105_20261117_prep02_f05_trusted_root_privacy_contract.md)、[113](113_20261117_prep02_f05_policy_trust_anchor_candidate.md) |
+| F06 Codec/Version | `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1`; marker `e11-commit/1`。E11の独立Codecの**実装規範をRFC8785 JCS**とする（PREP02技術設計選択）。`default=str`/未知v2の暗黙変換禁止。UTF8 bytes→SHA256、ContentRefはraw file bytesのSHA256。Graph内`content_hash`は当該fieldを除くJCS意味射影hash、外部ContentRefは全Graph実file bytes。Manifest self hashは禁止、Markerが実Manifest bytesを参照 | [106](106_20261117_prep02_f06_dispatch_codec_error_contract.md)、[107](107_20261117_prep02_jcs_codec_vectors.md)、[114](114_20261117_prep02_f06_schema_semantic_invariants.md) |
+| F06 Error/Bundle | CLI exit `0`=技術完了（科学的負結果もあり得る）、`2`=入力Schema、`3`=path/hash/Privacy認可、`4`=実行/Backend、`5`=publish/readback。入力`SCHEMA_INVALID`と保存Bundle破損をphaseで区分。`DISCOVER/IDENTIFY`に偽のEffect Resultを生成しない（Manifest result discriminator `null`とOperation validator）。 | [112](112_20261117_prep02_f03_f07_shared_port_signature_contract.md)、[114](114_20261117_prep02_f06_schema_semantic_invariants.md) |
+| F07 Science semantics | Identification/Point/Inference/Science acceptance/Technical outcomeは独立軸。AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`を損失なく保持。数理EMPTY≠計算FAILED。B0 complier LATE／B1加法線形IV構造係数を混同しない。 | [111](111_20261117_prep02_b0_b1_ar_science_method_contract.md)、DD [30_63](../30_detailed_design/30_63_e11_method_adapters.md) |
 
-### 12.3. Constructor / Factory
+**Port/Schema Freezeの正確な意味:** 共通Version・型境界・Field意味・Error/Hash/Privacy/Publish不変条件を**Architecture baselineとしてFreeze**。Schemaファイルの全プロパティと41 Methodのconfigを実装済み・完全Freezeとみなさない。各Methodの詳細Config・Operation別Bundle検証・backend capabilityは**該当Gnnの06/07で閉じる**。この境界なら、未実施のRuntimeテストを前倒し強制せず、コード実装で使う共通契約を安定させられる。
 
-ValidatedStudy生成はStrict Decoder/Validatorを経由する。直接constructorまたはfactoryで型・必須フィールド・Operationの整合を検査する必要があり、単なるdataclass生成を`ValidatedStudy`の証明としない。
+## 2. 保留を該当するGateへ振り分ける
 
-### 12.4. メソッド
+| 残りの具体化・実証 | 配分 | Gate前に必要な判断 / 実施時のテスト |
+|---|---|---|
+| F03 no-replace/kernel/mount/fault injection、JCS/JSON Schema実装互換、Graph/Marker readback | **G01基盤（06/07）**、G10で再統合 | G01 06にテスト実装条件を固定し、G01 07で実FS・厳格Schema・v2回帰を実測 |
+| FCI/PAGのedge endpoint・latent/同値類oracle、Local Graph Context/Version、CI test | **G01（P1-M06）06/07** | 多変数Graphで独立PAG oracleを選び、単純な2 node latent識別を正解として捏造しない |
+| Method別`config_schema`・Backend/API・Dataset eligibility・結果型 | **該当G01〜G09の06/07** | Method41を勝手に減らさない。未実装を成功偽装しない |
+| F05 independent preauthorization署名/鍵/失効・ACL/secret/row leak | **G05個票発行前の06/07**（G01〜G04にrow exportを含めない） | Ed25519＋管理者鍵Storeは候補。実装までに現実のApproval authority/管理者運用を確定し、偽造／不適格輸出を拒否する |
+| F07 HC1 ARの独立reference・全実数反転・弱IV/invalid IV・coverage | **G08（P3-M10/M11）06/07** | 具体HC1統計量は設計候補。科学的referenceと退化例を受入仕様に固定する |
+| Optional dependency version/lock、license、5 Env Profile | **各Method初回Gateの06**、G10全体統合 | lock/CI/実効APIの検証。未認可ライブラリを黙ってimportしない |
+| ENH-E11正本`docs/wiki/requirement_definition/`へ反映 | **全E11試験PASS後のOwner判断** | 現時点では一切移行しない |
 
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `validate_local_invariants(self)` | `tuple[Reason,...]` | pure Operation/Method/Target/Privacy検査 | 実行不適格理由を列挙 |
+## 3. PREP-03の着手条件と現在地
 
-### 12.5. 処理仕様
+- **着手承認:** Ownerが「次進めて」と指示。PREP-02のレビュー結果はOwner承認済みとして扱い、Issue #25は完了クローズ。レビュー証跡追跡を前提にしない。
+- **PREP-03 Scope:** G01〜G10の作業分割、依存/共通基盤の負担範囲、最初のG01**06実装指示書／07テスト指示書**を完成させる。各Gateの`06`はCoding Contract、`07`はIndependent Verification Contract、`999`はGate Verdict。G01〜G10番号と各Gate文書の06/07を混同しない。
+- **PREP-01:** 既存RD/IF/Class全数レビューの残項目は並行管理するが、G01計画**策定そのもの**を阻害しない。PREP-04 Coding Authorization前に、実装対象へ影響する重大な不整合を閉じる。
+- **現在の次の作業:** [G01 06実装指示書](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md)・[G01 07テスト指示書](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md) を参照して内容・適格性/negative/old v2回帰を校正し、実装着手前にそのGate固有の条件を確定する。
+- **このCommitは実装許可ではない:** `PREP03_IN_PROGRESS / G01_06_07_DRAFT / E11_CODING_NOT_AUTHORIZED / NO_RUNTIME_OR_SCIENCE_PASS`。
 
-`DISCOVER`は探索Target `{family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`をタグ付き非Effect値として扱い、ATE/ATTを偽造しない。`ESTIMATE`等のEffect Operationには効果Estimandと適格なIdentification参照が必要。
+### 2026-11-17 Class配置・署名統合の調停
 
-### 12.6. I/O・連携・失敗処理
-
-I/Oなし。Studyの意味射影をcanonical encodingしたbytesからrequest hashを作り、Codec versionをManifestで追跡する。Hashは物理File参照とは区別。
-
-### 12.7. 検証
-
-`DD-E11-SPEC01` strict valid/schema、`SPEC02` legacy dispatch、`SPEC03` confirmatory/inference、`SPEC04` Method/Estimand mismatch。FR-185/201、AR-034、NFR-029/036。
+[設計決定記録](../doc01_review/95_20261117_30_61_class_placement_signature_reuse_decision.md)の13件のClass Module/Method署名を現時点の実装向け設計契約とする。PREP-02のPort共通論理署名を維持したまま、Product `ScientificCorePort`の既存v2契約と型付き科学Portの明示Bridgeを採用。`GraphEvidence`はProduct GraphVersion管理を再実装しない。独立Method契約・Code・Runtime検証・Coding Authorizationはここから推認しない。
