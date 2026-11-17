@@ -160,6 +160,15 @@ Browser E2E failureの場合、修正前に最低限 `failure point / actual obs
 
 ---
 
+### 6.1. ENH-E11 test architecture / coding-side execution
+
+**Gate-specific caution:** G01は`WORK_PACKAGE`であり、このSINGLE_EXECUTION Promptでは実装しない。Gate06が`SINGLE_EXECUTION`と承認・Freeze済みの場合に限り本経路を使う。テストの二軸はlifecycle `enhancement/regression/characterization/benchmark/support/legacy` とlayer `unit/contract/integration/frontend/browser_e2e`。`regression-like assertion != tests/regression lifecycle authority`。06/07はWHAT、本40はWHERE/HOW。
+
+- 新規/materially rebuilt Gate testsは原則`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）、existing `tests/product/`等は現行配置のままdiscoverして保護する。CLI-only G01にはBrowser E2Eは不要で、unit/contract/integrationを使う。`component/`や`scientific/`をGate-local layerとして作らない。科学的characterization/benchmarkは別のlifecycle採用が必要。
+- Gate06のDD/AC/positive/negativeを維持し、current checkout上の実効file existence、pytest collection、fixtures/conftest、test runner/OS/FS/Backend suitabilityを確認してcommandを解決する。歴史的テストファイル名やCompletion Reportのcommandをauthorityにしない。実Linux/Backendをmockのみで証明したと宣言しない。
+- 既存Product v2 testsを勝手にmove/archiveしない。`tests/regression/`には永続current invariantの明示PROMOTE決定が必要。全repo test estate migrationはE12以降。移動が承認された場合、imports/fixtures/pytest/CI/Docker/evidence pathsをatomic修正する。
+- 検証evidenceはDD/Gate ID、lifecycle/layer、actual file/command、source/fixture/env SHA、実測結果、PASS/FAIL/BLOCKEDを保持する。test-side defectをProduct FAILと同一視せず、不明なFS/Backend環境をPASSにしない。独立Test Agentによるテスト修理やGate受入を代行しない。
+
 ## 7. Fixed Trial Candidate commit
 
 実装および self-verification が完了したら、変更内容を確認する。

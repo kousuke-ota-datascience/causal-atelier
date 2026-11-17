@@ -242,6 +242,15 @@ BLOCKED_INTEGRATION_VERIFICATION
 
 ---
 
+### 8.1. ENH-E11 test discovery / lifecycle audit (operator responsibility)
+
+**二軸分類:** lifecycle = enhancement/regression/characterization/benchmark/support/legacy、verification layer = unit/contract/integration/frontend/browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。Gate 06/Pxx/07はWHAT（required behavior, DD/AC）、40はWHERE/HOWと実効Test discoveryを規定する。過去のpath/pytest commandは物理配置のAuthorityではない。
+
+1. **実行時発見:** assigned GATE_IDの新規テストは原則 `tests/enhancement/enh_e11/<gate>/<layer>/`（gateはGATE_ID小文字）から探し、current checkoutで実在・collection・fixture/conftest・runner/依存を照合する。G01はCLI-only、unit/contract/integrationが対象。`component/`、`scientific/`をGate-local layerに追加しない。実Linux publication、FCI、CLI統合は実integration、Codec/Port/独立PAG固定Oracleはunit/contractをprimary proofとする。
+2. **Legacyも現物:** 既存Product v2 contractの保護に必要な現行 `tests/product/` 等の既存suiteを再探索・実行し、Enhancementの都合だけで移動・archive・`tests/regression/`へPROMOTEしない。新規回帰的assertionは初期enhancement lifecycle。End-of-E11 disposition `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`は別のsemantic decision、全repo移行はE12+。
+3. **Gate-wide self-verification evidence:** Test Item/DD ID、lifecycle/layer、actual collected path/command、fixture/source/env SHA、effective OS/FS/Backend、negative/positive、observed resultを20 Completion Reportへ記録。Mock-onlyでreal syscall/独立科学の達成を宣言しない。必要なRunner/FS/Backend/collectionが不明なら `BLOCKED_INTEGRATION_VERIFICATION` とし、原因・repair owner・必要操作を明記する。Candidate Assembly Agentがtest code/runner/CIを修理しない。
+4. **Fixed identity:** Package checkpoint SHA, Frozen Candidate SHA, Test-side evidence commit SHAを混同しない。Test実装変更だけでProduct Candidateを無条件にrefreezeしない。`PRODUCT_SEMANTIC_CHANGE / TEST_IMPLEMENTATION_CHANGE / TEST_ORCHESTRATION_CHANGE / TEST_INFRASTRUCTURE_CHANGE / DOCUMENTATION_ONLY`に分類し、Product意味変更の可能性が除外できないときだけCandidate identityをBLOCKED。Independent 07/999を自身のself verificationで代替しない。
+
 ## 9. Fixed Trial Candidate Freeze
 
 すべての Package audit と Gate-wide self-verification が成功した場合、Gate / Trial の semantic implementation state を表す exact Git SHA を一つ確定する。

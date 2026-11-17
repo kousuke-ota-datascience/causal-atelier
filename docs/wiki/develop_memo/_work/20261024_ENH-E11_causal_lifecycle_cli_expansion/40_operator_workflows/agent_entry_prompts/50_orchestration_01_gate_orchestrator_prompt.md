@@ -51,6 +51,14 @@ Candidate Assembly Agent
 
 各 Package は1回の Agent execution につき1 Package とする。
 
+### 3.1. ENH-E11 test architecture routing guard
+
+**二軸:** lifecycle=enhancement/regression/characterization/benchmark/support/legacy、layer=unit/contract/integration/frontend/browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。Gate06/Pxx/07はWHAT、instantiated 40 PromptはWHERE/HOW。G01の正式なWORK_PACKAGEルートはP01〜P05→Candidate Assembly→Independent Test、Single Executionを代用しない。
+
+- assigned Coding Agentへ新規test初期配置`tests/enhancement/enh_e11/<gate>/<layer>/`（小文字GATE_ID）、既存Product v2 suite現配置維持、current checkout discovery/collectionを内包したpromptを渡す。G01はunit/contract/integrationで`component/`と`scientific/`をGate-local layerとしない。詳細Correctnessと独立Scienceは必要なreal Backend/FS contract/integrationで検証。
+- Candidate Assemblyが実際のsource+test checkoutからTest Item/DD coverage、実効runner/fixture/OS/FS/Backendを確認し、20 Reportへ実path/command/evidenceを記録したか確認する。独立Test AgentのPromptは現物test discoveryとtest-side failure分類/非修理責務を内包させる。
+- old Product v2 testsを勝手に移動・archiveせず、`tests/regression/`昇格は明示的PROMOTE判断のみ。E11の全repo移行はE12+。Test-side failureは`BLOCKED`とrepair ownerに割当、Production semantic defect実証時だけFAIL。E9 G02用31 repair promptをE11標準として生成しない。No Gate PASS by Orchestrator。
+
 ## 4. Stop / retry rule
 
 `PACKAGE_READY` 以外の場合、次 Package へ進んではならない。

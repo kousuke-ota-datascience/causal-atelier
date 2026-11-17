@@ -98,6 +98,14 @@ Browser E2Eがformal FAILのtriggerである場合、実装開始前にfailed 99
 - original contract の改変
 - literal input だけを hard-code して拒否する workaround
 
+### 4.1. ENH-E11 test placement / rework-specific scope
+
+**適用条件:** formal FAIL、承認済みcurrent 08、定義済みremediation scopeだけ。test-side-only BLOCKEDならproduction reworkを開始しない。テストはlifecycle (enhancement/regression/characterization/benchmark/support/legacy) とverification layer (unit/contract/integration/frontend/browser_e2e) を別々に分類する。`regression-like assertion != tests/regression lifecycle authority`。08はWHAT、本40はWHERE/HOW。
+
+- 08で必要とされる新規/materially rebuilt testsのみ`tests/enhancement/enh_e11/<gate>/<layer>/`（GATE_ID小文字）に置く。G01の初期layerはunit/contract/integration、`component/`/`scientific/`ディレクトリをGate-local layerにしない。実Linux/Backend/独立PAG scienceはmockだけでPASSにしない。
+- 旧Product v2保護は実在するlegacy suiteを現物からdiscoverして実行、無断migration/archive/`tests/regression/`昇格を禁止。PROMOTEは永続current invariantの独立semantic decision、E11全repo移行はE12+。許可された移動はimport/fixtures/collection/CI/Docker/evidenceの依存を同一batchで更新。
+- 08/DD/ACに対応する実行可能テストのpath、pytest collection、fixture/runnerを確認し、lifecycle/layer、exact command、source/fixture SHA、observed/expectedを記録。Test-side/UNKNOWNでproduct violation未実証なら`BLOCKED_REMEDIATION_HANDOFF_INCOMPLETE`。Independent Test Agent自身には修理権限なし。Test-only diffはCandidateを自動refreezeせず意味への影響を分類する。
+
 ## 5. Semantic Implementation Checkpoint
 
 semantic change を commit し、exact SHA を implementation checkpoint として固定する。
