@@ -1,15 +1,355 @@
-# 23_11_api_dataset_view
+# 23_11_api_dataset_view — Dataset Version Web API仕様
 
+## 1. API概要
 
----
+- 対象: Dataset Version のHTTP契約。
+- Base path: `/api/v1`。
+- 本改訂はOwner採用の**Operation単位Request/Response/Errors定義**を対象とする。実行時PASSや要件変更を含まない。
+- Source snapshot: `89d4f135d8c680805731934e715b079ea0f72f2b`。Currentに対する未検証事項を明示する。
 
-## 5. Web API Interface
+## 2. エンドポイント一覧
 
-### 5.2 Dataset / Analysis View API
+| No. | HTTP | Path | Handler | HTTP Success |
+|---:|---|---|---|---|
+| 1 | `POST` | `/api/v1/projects/{project_id}/dataset-versions` | `register_dataset_version` | `201` |
+| 2 | `GET` | `/api/v1/projects/{project_id}/dataset-versions` | `list_dataset_versions` | `200` |
+| 3 | `GET` | `/api/v1/dataset-versions/{dataset_version_id}` | `get_dataset_version` | `200` |
+| 4 | `GET` | `/api/v1/dataset-versions/{dataset_version_id}/preview` | `preview_dataset` | `200` |
+
+## 3. 共通Error Response形式
+
+CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json`ではなく、以下のJSON envelope。
+
+```json
+{"error":{"code":"INVALID_REQUEST","message":"Request validation failed.","details":{},"request_id":"{request_id}"}}
+```
+
+共通Handlerに定義されたErrorがすべてのOperationから発生するとは限らない。下表の条件付きErrorはテストPASS済みという意味ではない。
+
+## 4. エンドポイント詳細
+
+### 4.1 `POST /api/v1/projects/{project_id}/dataset-versions`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-11-01` |
+| Method / Path | `POST /api/v1/projects/{project_id}/dataset-versions` |
+| Handler | `dataset_versions.py::register_dataset_version` |
+| Success Status | HTTP 201 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `Idempotency-Key` | 該当IdempotencyServiceの再送契約に依存 |
+
+**Request Body / Field定義**
+
+Content-Type: `multipart/form-data`（JSONではない）
+
+| Field | 型 | 必須 | 制約 |
+|---|---|---|---|
+| `dataset_key` | `str` | 必須 | Router Form定義 |
+| `name` | `str` | 必須 | Router Form定義 |
+| `version_label` | `str` | 必須 | Router Form定義 |
+| `source_note` | `str | None` | 任意 | Router Form定義 |
+| `file` | `UploadFile` | 必須 | CSV/Parquet拡張子・空ファイル禁止 |
+
+#### Response
+
+- HTTP **201**。Body schema: `DatasetVersionResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `dataset_version_id` | `str` | 必須 | 不可 | — |
+| `project_id` | `str` | 必須 | 不可 | — |
+| `source_artifact_id` | `str` | 必須 | 不可 | — |
+| `dataset_key` | `str` | 必須 | 不可 | — |
+| `name` | `str` | 必須 | 不可 | — |
+| `version_label` | `str` | 必須 | 不可 | — |
+| `content_hash` | `str` | 必須 | 不可 | — |
+| `column_schema` | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
+| `profile_summary` | `dict[str, Any]` | 必須 | 不可 | — |
+| `row_count` | `int` | 必須 | 不可 | — |
+| `column_count` | `int` | 必須 | 不可 | — |
+| `source_note` | `str \| None` | 必須 | 許可 | — |
+| `created_at` | `datetime \| None` | 必須 | 許可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "dataset_version_id": "{dataset_version_id}",
+  "project_id": "{project_id}",
+  "source_artifact_id": "{source_artifact_id}",
+  "dataset_key": "string",
+  "name": "string",
+  "version_label": "string",
+  "content_hash": "string",
+  "column_schema": {},
+  "profile_summary": {},
+  "row_count": 0,
+  "column_count": 0,
+  "source_note": "string",
+  "created_at": "2026-11-17T00:00:00Z"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 400 / 409 | IDEMPOTENCY_KEY_REQUIRED / IDEMPOTENCY_CONFLICT | Key欠落／同一Key・異なる要求内容 | IdempotencyService |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+| 422 | INVALID_DATASET_FILE | CSV/Parquet拡張子違反、空ファイル、parse失敗、列名不正 | Router実装 |
+
+#### 根拠・未検証事項
+
+- Router Source: `dataset_versions.py`（blob `1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c`）。Request DTO: `none`、Response Model: `DatasetVersionResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.2 `GET /api/v1/projects/{project_id}/dataset-versions`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-11-02` |
+| Method / Path | `GET /api/v1/projects/{project_id}/dataset-versions` |
+| Handler | `dataset_versions.py::list_dataset_versions` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: `DatasetVersionListResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `items` | `list[DatasetVersionResponse]` | 必須 | 不可 | — |
+| `next_cursor` | `str \| None` | 任意 | 許可 | None |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "items": []
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `dataset_versions.py`（blob `1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c`）。Request DTO: `none`、Response Model: `DatasetVersionListResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.3 `GET /api/v1/dataset-versions/{dataset_version_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-11-03` |
+| Method / Path | `GET /api/v1/dataset-versions/{dataset_version_id}` |
+| Handler | `dataset_versions.py::get_dataset_version` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `dataset_version_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: `DatasetVersionResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `dataset_version_id` | `str` | 必須 | 不可 | — |
+| `project_id` | `str` | 必須 | 不可 | — |
+| `source_artifact_id` | `str` | 必須 | 不可 | — |
+| `dataset_key` | `str` | 必須 | 不可 | — |
+| `name` | `str` | 必須 | 不可 | — |
+| `version_label` | `str` | 必須 | 不可 | — |
+| `content_hash` | `str` | 必須 | 不可 | — |
+| `column_schema` | `dict[str, Any]` | 必須 | 不可 | Field(alias="schema") |
+| `profile_summary` | `dict[str, Any]` | 必須 | 不可 | — |
+| `row_count` | `int` | 必須 | 不可 | — |
+| `column_count` | `int` | 必須 | 不可 | — |
+| `source_note` | `str \| None` | 必須 | 許可 | — |
+| `created_at` | `datetime \| None` | 必須 | 許可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "dataset_version_id": "{dataset_version_id}",
+  "project_id": "{project_id}",
+  "source_artifact_id": "{source_artifact_id}",
+  "dataset_key": "string",
+  "name": "string",
+  "version_label": "string",
+  "content_hash": "string",
+  "column_schema": {},
+  "profile_summary": {},
+  "row_count": 0,
+  "column_count": 0,
+  "source_note": "string",
+  "created_at": "2026-11-17T00:00:00Z"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `dataset_versions.py`（blob `1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c`）。Request DTO: `none`、Response Model: `DatasetVersionResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.4 `GET /api/v1/dataset-versions/{dataset_version_id}/preview`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-11-04` |
+| Method / Path | `GET /api/v1/dataset-versions/{dataset_version_id}/preview` |
+| Handler | `dataset_versions.py::preview_dataset` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `dataset_version_id` | string | 必須 |
+
+**Query parameters**
+
+| 項目 | 型 | default |
+|---|---|---|
+| `limit` | `int` | `20` |
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: `DatasetPreviewResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `dataset_version_id` | `str` | 必須 | 不可 | — |
+| `columns` | `list[str]` | 必須 | 不可 | — |
+| `rows` | `list[dict[str, Any]]` | 必須 | 不可 | — |
+| `limit` | `int` | 必須 | 不可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "dataset_version_id": "{dataset_version_id}",
+  "columns": [],
+  "rows": [],
+  "limit": 0
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `dataset_versions.py`（blob `1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c`）。Request DTO: `none`、Response Model: `DatasetPreviewResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+## 5. 検証状況
+
+- Route/Method/Path: 4 件 Source確認。
+- Request: Router/Pydanticモデルの静的制約を反映。Response: 型付きモデルは全Fieldを表記。Service無型応答は一部未確定。
+- HTTP Contract Test: NOT_RUN。Endpoint詳細の完全性・認可・実行時エラー網羅は未検証。
+- 元の`docs/wiki/requirement_definition/`への昇格: NOT_DONE。
+
+## 6. 既存Domain・設計制約（旧仕様本文から保持）
+
+以下は既存のDomain規範・補足情報を保持したもの。重複する旧Route一覧より§2（Source基準）を優先する。改訂前の原本文はGit Blob `871af739f0a1d8ef78b004cb5cc1f81c9c87b7d8`で追跡可能。
+
+### Dataset / Analysis View API
 
 Dataset Version / Analysis ViewはFamily横断のProject-level analytical inputである。
 
-#### 5.2.1 DatasetVersion
+#### DatasetVersion
 
 Current public routes:
 
@@ -40,7 +380,7 @@ created_at
 
 現行実装に`/dataset-versions/{id}/profile`専用endpointはない。profile summaryはDataset metadata response内の`profile_summary`として取得する。
 
-#### 5.2.2 AnalysisView
+#### AnalysisView
 
 Current public routes:
 
@@ -74,64 +414,6 @@ Family tab切替だけでDatasetVersionやAnalysisViewを複製しない。
 
 - **`FR-015`**：AnalysisViewのsource Dataset logical type × operator × value compatibilityをdomain/application validationで検証し、type mismatchを`FILTER_TYPE_MISMATCH`として返す
 
-## PREP-01: Router operation source inventory
+## 7. 改訂記録
 
-Evidence: dataset_versions.py source blob 1b0a202a4fb8b6f43248eaa7cf577c4d8c05676c. Static decorator inventory only; /api/v1 is the app router prefix. 200* = default declared FastAPI code, not a runtime assertion.
-
-| HTTP | Route | Handler | Declared success | Response model |
-| --- | --- | --- | --- | --- |
-| POST | `/api/v1/projects/{project_id}/dataset-versions` | `register_dataset_version` | 201 | DatasetVersionResponse |
-| GET | `/api/v1/projects/{project_id}/dataset-versions` | `list_dataset_versions` | 200* | DatasetVersionListResponse |
-| GET | `/api/v1/dataset-versions/{dataset_version_id}` | `get_dataset_version` | 200* | DatasetVersionResponse |
-| GET | `/api/v1/dataset-versions/{dataset_version_id}/preview` | `preview_dataset` | 200* | DatasetPreviewResponse |
-
-Observed 4 operations. Identity/path is DEFINED from the router; request DTO, auth, lifecycle, error mapping, idempotency, compatibility and operation-specific tests remain NOT_SPECIFIED until source/DTO/service/OpenAPI verification. This annex is not a complete Contract, nor an Independent Verification PASS.
-
-## PREP-01 — DatasetVersion全4 EndpointのRequest / Response / Errors（Owner採用 2026-11-17）
-
-**Source:** `routers/dataset_versions.py`, `schemas/__init__.py`, `error_handlers.py`, `idempotency.py`。全Pathは `/api/v1` 以下。ここでは4 Router Operationを記載する。既存§5.2.2のAnalysisViewとRouter棚卸しの対象が異なるため、**AnalysisView 6 Operationsを本4件の実装済みRouterとは認定しない**。API契約のHTTP エラー形式は `{"error":{"code":string,"message":string,"details":object,"request_id":string}}` であり、Notionサンプルのproblem+jsonはCURRENTではない。
-
-### OP-DATASET-01 — `POST /api/v1/projects/{project_id}/dataset-versions`
-
-| 項目 | CURRENT 契約 |
-|---|---|
-| HTTP success | 201 + `DatasetVersionResponse` |
-| Path | `project_id:string` (必須) |
-| Content type | **multipart/form-data**、JSONではない |
-| Header | `Idempotency-Key:string`（Router引数optionalだがServiceが非空必須） |
-| Body | `dataset_key:string`、`name:string`、`version_label:string`はForm必須。 `source_note:string|null`はForm任意。 `file:UploadFile`は必須 |
-| File constraints | 拡張子 `.csv` または `.parquet`、空ファイル不可、parseable、1列以上、非空・重複なしの列名 |
-| Idempotency | same `(project_id, dataset-version, key)` + same semantic request hash → recorded response replay。別payload → conflict |
-
-**Response fields:** `dataset_version_id:string`, `project_id:string`, `source_artifact_id:string`, `dataset_key:string`, `name:string`, `version_label:string`, `content_hash:string`, `schema:object`（Pydantic内部名`column_schema`のalias）、`profile_summary:object`, `row_count:int`, `column_count:int`, `source_note:string|null`, `created_at:datetime|null`。ここで `schema` はJSON property名であり `column_schema` ではない。
-
-**Error mappings confirmed at shared handler:** 400 `INVALID_REQUEST`（Form/Pathのvalidation）、400 `IDEMPOTENCY_KEY_REQUIRED`（空/欠落key）、409 `IDEMPOTENCY_CONFLICT`（key再利用payload不一致）、409 `PROJECT_ARCHIVED`（archive Project）、422 `INVALID_DATASET_FILE`（拡張子/parse/列）、422 `INVALID_DATASET_METADATA`（domain metadataに該当した場合）。その他の実際の到達可能性、authは未検証。
-
-### OP-DATASET-02 — `GET /api/v1/projects/{project_id}/dataset-versions`
-
-| 項目 | CURRENT 契約 |
-|---|---|
-| Request | 必須path `project_id:string`。Query/Body無し（Router宣言） |
-| Success | 200 `DatasetVersionListResponse` |
-| Response | `items:DatasetVersionResponse[]`、`next_cursor:string|null`（model default null） |
-| Errors | 404 `ENTITY_NOT_FOUND` / 409 `PROJECT_ARCHIVED`等はService送出次第。Operation別の実到達はUNVERIFIED |
-
-### OP-DATASET-03 — `GET /api/v1/dataset-versions/{dataset_version_id}`
-
-| 項目 | CURRENT 契約 |
-|---|---|
-| Request | 必須path `dataset_version_id:string`。Query/Body無し |
-| Success | 200 `DatasetVersionResponse`（全FieldはOP-DATASET-01参照） |
-| Errors | 404 `ENTITY_NOT_FOUND` if Service raises EntityNotFound。その他はUNVERIFIED |
-
-### OP-DATASET-04 — `GET /api/v1/dataset-versions/{dataset_version_id}/preview`
-
-| 項目 | CURRENT 契約 |
-|---|---|
-| Request | 必須path `dataset_version_id:string`、Query `limit:int`（任意、default **20**） |
-| Success | 200 `DatasetPreviewResponse` |
-| Response | `dataset_version_id:string`, `columns:string[]`, `rows:object[]`, `limit:int` |
-| Error | Queryの型不正→400 `INVALID_REQUEST`。Limit範囲やService権限/NotFoundはUNVERIFIED |
-| Privacy | rowsは実データを含む。認可・機微列制限の実効確認は未完了。安全性PASSではない |
-
-**Verification boundary:** 上記はRouter+DTO+Handlerの静的Source contractであり、Runtime Contract TestとAuth/Service完全性は未実施。HTTP 200はFastAPI defaultで、実稼働呼び出し結果ではない。ExtensionやDTO制約を未確認の追加規格へ書き換えない。
+- 2026-11-17: 全23_10〜23_19共通フォーマットへ再構成。Request/Response/ErrorsをOperation別に記載し、Source確認と未検証を分離。

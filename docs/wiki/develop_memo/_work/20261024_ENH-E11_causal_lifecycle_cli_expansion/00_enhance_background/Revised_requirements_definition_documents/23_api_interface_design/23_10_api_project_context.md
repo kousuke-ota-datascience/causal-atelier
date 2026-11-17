@@ -1,11 +1,769 @@
-# 23_10_api_project_context
+# 23_10_api_project_context — Project / Research Context Web API仕様
+
+## 1. API概要
+
+- 対象: Project / Research Context のHTTP契約。
+- Base path: `/api/v1`。
+- 本改訂はOwner採用の**Operation単位Request/Response/Errors定義**を対象とする。実行時PASSや要件変更を含まない。
+- Source snapshot: `89d4f135d8c680805731934e715b079ea0f72f2b`。Currentに対する未検証事項を明示する。
+
+## 2. エンドポイント一覧
+
+| No. | HTTP | Path | Handler | HTTP Success |
+|---:|---|---|---|---|
+| 1 | `POST` | `/api/v1/projects` | `create_project` | `201` |
+| 2 | `GET` | `/api/v1/projects` | `list_projects` | `200` |
+| 3 | `GET` | `/api/v1/projects/{project_id}` | `get_project` | `200` |
+| 4 | `PATCH` | `/api/v1/projects/{project_id}` | `update_project` | `200` |
+| 5 | `DELETE` | `/api/v1/projects/{project_id}` | `archive_project` | `204` |
+| 6 | `POST` | `/api/v1/projects/{project_id}/research-contexts` | `create_research_context` | `201` |
+| 7 | `GET` | `/api/v1/projects/{project_id}/research-contexts` | `list_research_contexts` | `200` |
+| 8 | `GET` | `/api/v1/projects/{project_id}/research-contexts/{context_id}` | `get_research_context` | `200` |
+| 9 | `PATCH` | `/api/v1/projects/{project_id}/research-contexts/{context_id}` | `patch_research_context` | `200` |
+| 10 | `POST` | `/api/v1/projects/{project_id}/research-contexts/{context_id}/fix` | `fix_research_context` | `200` |
+| 11 | `GET` | `/api/v1/projects/{project_id}/research-contexts/{context_id}/usage` | `research_context_usage` | `200` |
+
+## 3. 共通Error Response形式
+
+CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json`ではなく、以下のJSON envelope。
+
+```json
+{"error":{"code":"INVALID_REQUEST","message":"Request validation failed.","details":{},"request_id":"{request_id}"}}
+```
+
+共通Handlerに定義されたErrorがすべてのOperationから発生するとは限らない。下表の条件付きErrorはテストPASS済みという意味ではない。
+
+## 4. エンドポイント詳細
+
+### 4.1 `POST /api/v1/projects`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-01` |
+| Method / Path | `POST /api/v1/projects` |
+| Handler | `projects.py::create_project` |
+| Success Status | HTTP 201 |
+
+#### Request
+
+**Path parameters**
+
+なし
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `X-User-Id` | Routerから参照。認証方式の確証ではない |
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `ProjectCreate`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `name` | `str` | 必須 | 不可 | min_length=1, max_length=200 |
+| `topic` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
+| `objective` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
+| `memo` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "name": "string"
+}
+```
+
+#### Response
+
+- HTTP **201**。Body schema: `ProjectResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `project_id` | `str` | 必須 | 不可 | — |
+| `name` | `str` | 必須 | 不可 | — |
+| `topic` | `str \| None` | 必須 | 許可 | — |
+| `objective` | `str \| None` | 必須 | 許可 | — |
+| `memo` | `str \| None` | 必須 | 許可 | — |
+| `status` | `str` | 必須 | 不可 | — |
+| `created_at` | `datetime \| None` | 必須 | 許可 | — |
+| `updated_at` | `datetime \| None` | 必須 | 許可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "project_id": "{project_id}",
+  "name": "string",
+  "topic": "string",
+  "objective": "string",
+  "memo": "string",
+  "status": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "updated_at": "2026-11-17T00:00:00Z"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `projects.py`（blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`）。Request DTO: `ProjectCreate`、Response Model: `ProjectResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.2 `GET /api/v1/projects`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-02` |
+| Method / Path | `GET /api/v1/projects` |
+| Handler | `projects.py::list_projects` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+なし
+
+**Query parameters**
+
+| 項目 | 型 | default |
+|---|---|---|
+| `status` | `ProjectStatus \| None` | `ProjectStatus.ACTIVE` |
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: `ProjectListResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `items` | `list[ProjectResponse]` | 必須 | 不可 | — |
+| `next_cursor` | `str \| None` | 任意 | 許可 | None |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "items": []
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| — | 未確定 | Handlerで当該Operationに固有のError code未確認 | 追加Source照合要 |
+
+#### 根拠・未検証事項
+
+- Router Source: `projects.py`（blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`）。Request DTO: `none`、Response Model: `ProjectListResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.3 `GET /api/v1/projects/{project_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-03` |
+| Method / Path | `GET /api/v1/projects/{project_id}` |
+| Handler | `projects.py::get_project` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: `ProjectResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `project_id` | `str` | 必須 | 不可 | — |
+| `name` | `str` | 必須 | 不可 | — |
+| `topic` | `str \| None` | 必須 | 許可 | — |
+| `objective` | `str \| None` | 必須 | 許可 | — |
+| `memo` | `str \| None` | 必須 | 許可 | — |
+| `status` | `str` | 必須 | 不可 | — |
+| `created_at` | `datetime \| None` | 必須 | 許可 | — |
+| `updated_at` | `datetime \| None` | 必須 | 許可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "project_id": "{project_id}",
+  "name": "string",
+  "topic": "string",
+  "objective": "string",
+  "memo": "string",
+  "status": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "updated_at": "2026-11-17T00:00:00Z"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `projects.py`（blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`）。Request DTO: `none`、Response Model: `ProjectResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.4 `PATCH /api/v1/projects/{project_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-04` |
+| Method / Path | `PATCH /api/v1/projects/{project_id}` |
+| Handler | `projects.py::update_project` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `ProjectUpdate`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `name` | `str \| None` | 任意 | 許可 | lt=None, min_length=1, max_length=200 |
+| `topic` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
+| `objective` | `str \| None` | 任意 | 許可 | lt=None, max_length=4000 |
+| `memo` | `str \| None` | 任意 | 許可 | lt=None, max_length=8000 |
+
+**Request JSON例（説明用）**
+
+```json
+{}
+```
+
+#### Response
+
+- HTTP **200**。Body schema: `ProjectResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `project_id` | `str` | 必須 | 不可 | — |
+| `name` | `str` | 必須 | 不可 | — |
+| `topic` | `str \| None` | 必須 | 許可 | — |
+| `objective` | `str \| None` | 必須 | 許可 | — |
+| `memo` | `str \| None` | 必須 | 許可 | — |
+| `status` | `str` | 必須 | 不可 | — |
+| `created_at` | `datetime \| None` | 必須 | 許可 | — |
+| `updated_at` | `datetime \| None` | 必須 | 許可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "project_id": "{project_id}",
+  "name": "string",
+  "topic": "string",
+  "objective": "string",
+  "memo": "string",
+  "status": "string",
+  "created_at": "2026-11-17T00:00:00Z",
+  "updated_at": "2026-11-17T00:00:00Z"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+
+#### 根拠・未検証事項
+
+- Router Source: `projects.py`（blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`）。Request DTO: `ProjectUpdate`、Response Model: `ProjectResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.5 `DELETE /api/v1/projects/{project_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-05` |
+| Method / Path | `DELETE /api/v1/projects/{project_id}` |
+| Handler | `projects.py::archive_project` |
+| Success Status | HTTP 204 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `X-User-Id` | Routerから参照。認証方式の確証ではない |
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **204**。Body schema: なし（204 No Content）。
+
+Response bodyなし。
 
 
----
+#### Errors
 
-## 5. Web API Interface
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
 
-### 5.1 Project / Research Context API
+#### 根拠・未検証事項
+
+- Router Source: `projects.py`（blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.6 `POST /api/v1/projects/{project_id}/research-contexts`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-06` |
+| Method / Path | `POST /api/v1/projects/{project_id}/research-contexts` |
+| Handler | `workspace_lifecycle.py::create_research_context` |
+| Success Status | HTTP 201 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `X-User-Id` | Routerから参照。認証方式の確証ではない |
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `ResearchContextCreate`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `context_key` | `str` | 必須 | 不可 | — |
+| `problem_statement` | `str` | 任意 | 不可 | "" |
+| `research_questions` | `list[str]` | 任意 | 不可 | Field(default_factory=list) |
+| `significance` | `str \| None` | 任意 | 許可 | None |
+| `hypotheses` | `list[str]` | 任意 | 不可 | Field(default_factory=list) |
+| `decision_context` | `dict[str, Any]` | 任意 | 不可 | Field(default_factory=dict) |
+| `relations` | `list[dict[str, str]]` | 任意 | 不可 | Field(default_factory=list) |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "context_key": "string"
+}
+```
+
+#### Response
+
+- HTTP **201**。Body schema: Service output（未型付け）。
+
+**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `ResearchContextCreate`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.7 `GET /api/v1/projects/{project_id}/research-contexts`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-07` |
+| Method / Path | `GET /api/v1/projects/{project_id}/research-contexts` |
+| Handler | `workspace_lifecycle.py::list_research_contexts` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object。
+
+| 項目 | 型 |
+|---|---|
+| `items` | array[Service resource] |
+
+要素FieldはService由来。Routerにresponse_model未宣言。
+
+**Response JSON構造例（説明用）**
+
+```json
+{"items":[]}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.8 `GET /api/v1/projects/{project_id}/research-contexts/{context_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-08` |
+| Method / Path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}` |
+| Handler | `workspace_lifecycle.py::get_research_context` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `context_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（未型付け）。
+
+**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.9 `PATCH /api/v1/projects/{project_id}/research-contexts/{context_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-09` |
+| Method / Path | `PATCH /api/v1/projects/{project_id}/research-contexts/{context_id}` |
+| Handler | `workspace_lifecycle.py::patch_research_context` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `context_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `ResearchContextPatch`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `problem_statement` | `str \| None` | 任意 | 許可 | None |
+| `research_questions` | `list[str] \| None` | 任意 | 許可 | None |
+| `significance` | `str \| None` | 任意 | 許可 | None |
+| `hypotheses` | `list[str] \| None` | 任意 | 許可 | None |
+| `decision_context` | `dict[str, Any] \| None` | 任意 | 許可 | None |
+| `relations` | `list[dict[str, str]] \| None` | 任意 | 許可 | None |
+
+**Request JSON例（説明用）**
+
+```json
+{}
+```
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（未型付け）。
+
+**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `ResearchContextPatch`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.10 `POST /api/v1/projects/{project_id}/research-contexts/{context_id}/fix`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-10` |
+| Method / Path | `POST /api/v1/projects/{project_id}/research-contexts/{context_id}/fix` |
+| Handler | `workspace_lifecycle.py::fix_research_context` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `context_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（未型付け）。
+
+**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE | ARCHIVEDまたはFIXEDに対する不適格変更の際、該当例外を送出した場合 | Handlerで確定、Operationごとの到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.11 `GET /api/v1/projects/{project_id}/research-contexts/{context_id}/usage`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-10-11` |
+| Method / Path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}/usage` |
+| Handler | `workspace_lifecycle.py::research_context_usage` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `context_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（未型付け）。
+
+**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗した場合 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 指定Resourceがない・別Projectである等、ServiceがEntityNotFoundを送出 | Handlerで確定、実到達は要確認 |
+| 422 | INVALID_SCHEMA | Study/Family/Referencesの整合性、FIXED Context/Analysis View要件、revision前提等でServiceのInvalidSchemaが発生 | Service/Domainで具体化 |
+
+#### 根拠・未検証事項
+
+- Router Source: `workspace_lifecycle.py`（blob `eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+## 5. 検証状況
+
+- Route/Method/Path: 11 件 Source確認。
+- Request: Router/Pydanticモデルの静的制約を反映。Response: 型付きモデルは全Fieldを表記。Service無型応答は一部未確定。
+- HTTP Contract Test: NOT_RUN。Endpoint詳細の完全性・認可・実行時エラー網羅は未検証。
+- 元の`docs/wiki/requirement_definition/`への昇格: NOT_DONE。
+
+## 6. 既存Domain・設計制約（旧仕様本文から保持）
+
+以下は既存のDomain規範・補足情報を保持したもの。重複する旧Route一覧より§2（Source基準）を優先する。改訂前の原本文はGit Blob `86589acb8ca6cd4873134dd7775ddcd0943b14ee`で追跡可能。
+
+### Project / Research Context API
 
 Project / Research ContextはFamily切替とは独立したProject-scoped resourceである。Project Managementがresource lifecycleを所有し、Family tab操作でresource identityを変更しない。
 
@@ -33,232 +791,6 @@ Navigation routeはProject / Research Contextのidentity authorityではない�
 
 - **`FR-121`**：全project-scoped routeでpersisted ProjectMembership role（OWNER/EDITOR/VIEWER）に基づくauthorizationをservice action前に検証する
 
+## 7. 改訂記録
 
-#### 5.1.1 CURRENT API Operation × Source照合（PREP-01）
-
-以下のpathは**相対pathではなくAPIルート全体**。2026-11-17 Source静的照合により、`app.py`が`/api/v1`をrouter prefixとし、`projects.py`が`/projects`を持つことを確認した。Research Contextは`workspace_lifecycle.py`で直接`/projects/{project_id}/research-contexts`を宣言する。HTTP error、Service内部の権限、実行時Responseの完全性は静的Router宣言のみでは確定できない。
-
-**固定Source Blob:**
-
-- `src/ariadne/interfaces/web_api/app.py`：API root `/api/v1`（branch 2026-11-17）。
-- `src/ariadne/interfaces/web_api/routers/projects.py`：`6fc9aa297aba3f89d57613a1b1c203f4de071a8c`。
-- `src/ariadne/interfaces/web_api/routers/workspace_lifecycle.py`：`eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`。
-- `src/ariadne/interfaces/web_api/schemas/__init__.py`：`b2235aed012b954a5b19531f68a9aa2039201781`。
-
-##### 既存Routerの操作表（11件／11件のRoute宣言を観測）
-
-| HTTP | Canonical path (`/api/v1`以降) | Request contract from Router | Success from Router | Source |
-| --- | --- | --- | --- | --- |
-| POST | `/projects` | `ProjectCreate` body: name 1..200、topic/objective/memo optional | **201**、`ProjectResponse` | projects.py |
-| GET | `/projects` | `status: ProjectStatus|None`、default `ACTIVE` | 200（FastAPI既定）、`ProjectListResponse` | projects.py |
-| GET | `/projects/{project_id}` | `project_id: str` | 200、`ProjectResponse` | projects.py |
-| PATCH | `/projects/{project_id}` | `ProjectUpdate` body: optional name/topic/objective/memo | 200、`ProjectResponse` | projects.py |
-| DELETE | `/projects/{project_id}` | `project_id: str`、`X-User-Id` request header（未指定時anonymous） | **204**、empty body | projects.py |
-| POST | `/projects/{project_id}/research-contexts` | `ResearchContextCreate` body：context_key、problem_statement、research_questions、significance、hypotheses、decision_context、relations | **201**、`dict[str,Any]`（固定Response Schema未宣言） | workspace_lifecycle.py |
-| GET | `/projects/{project_id}/research-contexts` | project_id | 200、`items` list of service results | workspace_lifecycle.py |
-| GET | `/projects/{project_id}/research-contexts/{context_id}` | project_id、context_id | 200、Service result dict（固定Response Schema未宣言） | workspace_lifecycle.py |
-| PATCH | `/projects/{project_id}/research-contexts/{context_id}` | `ResearchContextPatch` body、exclude_unset | 200、Service result dict（固定Response Schema未宣言） | workspace_lifecycle.py |
-| POST | `/projects/{project_id}/research-contexts/{context_id}/fix` | project_id、context_id | 200、Service result dict（固定Response Schema未宣言） | workspace_lifecycle.py |
-| GET | `/projects/{project_id}/research-contexts/{context_id}/usage` | project_id、context_id | 200、Service usage dict（固定Response Schema未宣言） | workspace_lifecycle.py |
-
-##### 共通FieldのCoverageと未検証点
-
-| Field | Coverage | 根拠・未完了 |
-| --- | --- | --- |
-| Identity / HTTP Method / Path | **DEFINED** | 上記Router Decorator + app prefixで11件 |
-| Request | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | Project DTO/ResearchContext Modelの宣言は確認。全Field制約、service-level invariantは未検証 |
-| Success | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | ProjectはPydantic response_model、Research Contextは宣言`dict[str,Any]`。Body実形状の独立確認が必要 |
-| Authorization | **NOT_SPECIFIED** | FR-121の期待はOwner要件。Router引数だけから全service pathのrole enforcementを証明しない |
-| State and side effects | **NOT_SPECIFIED** | create/update/archive/fixの名称は存在。UoW commit・DRAFT/FIXED前提はServiceの実コードと負例が必要 |
-| Error / HTTP code | **NOT_SPECIFIED** | shared Error HandlerがあるがOperation別404/403/409/422の実効対応は未照合 |
-| Idempotency / Retry | **NOT_SPECIFIED** | mutationの再送・Idempotency-Key規則を未確認 |
-| Compatibility / Version | **DEFINED（prefix） / NOT_SPECIFIED（意味互換）** | `/api/v1` prefixはSource確認。旧v2とLocal E11の意味的互換は個別確認が必要 |
-| Test / FR | **DEFINED（Router宣言） / NOT_SPECIFIED（後続Service等）** | FR-121の追跡は本文に存在。Operation別Contract/Negative Testとの1:1追跡は未完 |
-
-**解釈上の制約:** 本表はRouteとDTOのSource突合というPREP-01の部分是正であり、9欄の完成を意味しない。`NOT_SPECIFIED`を暗黙の成功としない。Service/Handler/Testの確認後に最終Contractとする。
- 
-
-#### 5.1.2 Router→Application Service→Error Handlerの実装差分（2026-11-17 PREP-01）
-
-**根拠Sourceの範囲（静的照合）**：`routers/projects.py` (blob `6fc9aa297aba3f89d57613a1b1c203f4de071a8c`)、`routers/workspace_lifecycle.py` (`eb90bd940fc7a35b84cda0e3fa58235a738cb0a1`)、`product/application/project_data_service.py` (`639ef15494e6244282b670aa36d53e9beb92e526`)、`product/application/workspace_lifecycle_service.py` (`ee84e914f8bc5136b9f9fee7323814a552a5d68a`)、`web_api/error_handlers.py` (`c8cd02be0aebd1a6e5399098b6594e3f57d06f15`)、`web_api/idempotency.py` (`12ff23e5bf9dd39a5de59a135eef4e874f047505`)。実行時のGateway/OIDC設定は対象外。
-
-| 観点・操作 | CURRENT Sourceで観測したこと | REQUIRED（Owner採用Requirement） | 判定 |
-| --- | --- | --- | --- |
-| Project POST | `create_project`が`ProjectDataService.create_project`の後、`X-User-Id`／anonymousを使い`ProductClosureService.register_project_owner`を呼ぶ | Authenticated principalによるOwner登録／失敗時の整合性 | AUTH/atomicity NOT_VERIFIED |
-| Project GET list/get, PATCH | `ProjectDataService`のこれらのmethodにはactor ID・Membership評価の引数がなく、RouterでのMembership認可も観測できない | FR-121: 対象ProjectのOWNER/EDITOR/VIEWERをservice action前に検証 | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
-| Project DELETE | `X-User-Id`は`ArchiveProjectCommand.requested_by`へ渡るが、`ProjectDataService.archive_project`はMembership検証を呼んでいない | FR-121: WRITEはOWNER/EDITORのみ | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
-| ResearchContext POST/GET/PATCH/FIX/USAGE | `WorkspaceLifecycleService`の各methodは`project_id`や`created_by`を受けるが、`_project/_active_project`はprojectの存在／ARCHIVEDのみ判定。MembershipのRoleは評価していない | FR-121: Actor/Project/Membershipの一致とRole境界 | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
-| ResearchContext POST | Routeは`IdempotencyServiceDep`や`Idempotency-Key`を使用せず、Serviceは新versionを作成してcommitする | FR-114a/b、23_51: durable createのIdempotency Keyとreplay semantics | **CONTRACT_IMPLEMENTATION_GAP（静的）** |
-| Service error | `EntityNotFound`→404、`ProjectAccessDenied`→403、`ProjectArchived`→409、`InvalidSchema`→422、Request validationは**400** `INVALID_REQUEST` | HTTPごとの型付きError／safe response | Handler mapping DEFINED、Operation別到達はNOT_VERIFIED |
-| Version | FastAPI `app.py`が`/api/v1`として公開 | Product v1とE11 Local CLI versionを分離 | Router prefix DEFINED、E11 compatibilityは未実装 |
-
-**評価上の制約：** 実行時Gateway、依存注入override、middlewareまたは運用上の認証機構が追加され得るため、これだけでデプロイ環境の侵害可能性を断定しない。ただし**CURRENT Route→ServiceでOwner Requirementへの実装追跡が成立していない**ことはSourceから検証可能。要求仕様を緩和するのではなく、Product Security backlog（DEC09のGAP-C群／#14との紐付け要精査）と修正責任を切り出す。CLI-onlyのE11新機能を実装することによって本Gapが自動解消したと扱わない。
-
-**独立確認用Negative Test:** 非Member→Project GET/PATCH/DELETEとContext GET/PATCH/FIX/USAGEはdeny、VIEWER→mutation deny、ARCHIVED→mutation 409、missing／same／different Idempotency Key、他ProjectのContext ID、unauthenticated principalのOwner登録を、固定Source／Integration環境で検証。現状はNOT_RUN。
-
-## PREP-01 — Operation別 Request / Response / Errors 詳細（Owner方針 2026-11-17）
-
-対象は**Operation別の入力（path/query/header/body + field type/required/null/constraints）、成功HTTP statusとresponse field、失敗HTTP status/error code/条件**に限定する。すべてのPathは `/api/v1` 以下である。SOURCEで実証できないError到達・Service由来Fieldは推測せず `UNVERIFIED` とする。
-
-共通Error Handlerが処理するDomain/RequestValidationErrorのCURRENT envelope は `{"error":{"code":"…","message":"…","details":{},"request_id":"…"}}`（JSON）、**Notion例のproblem+jsonではない**。RequestValidationErrorは400 `INVALID_REQUEST`、EntityNotFoundは404 `ENTITY_NOT_FOUND`、ProjectArchivedは409 `PROJECT_ARCHIVED`、ProjectAccessDeniedは403 `PROJECT_ACCESS_DENIED`、InvalidSchemaは422 `INVALID_SCHEMA`。これらはHandlerのMappingであり**各Operationが必ずそのエラーを送出するという意味ではない**。Source: `src/ariadne/interfaces/web_api/error_handlers.py`。未捕捉例外やHTTPException等の全error surfaceは別途照合が必要。
-
-### ProjectResponse Field Contract（Source: schemas/__init__.py）
-
-`ProjectResponse`: `project_id:string`, `name:string`, `topic/objective/memo:string|null`, `status:string`, `created_at/updated_at:datetime|null`. `ProjectListResponse`: `items:ProjectResponse[]`, `next_cursor:string|null` (default null).
-
-### OP-PROJECT-01 — `POST /projects`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `POST /api/v1/projects` |
-| Success | HTTP **201**, ProjectResponse |
-| Request | ProjectCreate JSON body |
-| Error (observed handler / reachability) | 400 INVALID_REQUEST; other domain errors UNVERIFIED |
-
-Request fields:
-
-| Field | Type | Required | Nullable | Constraint |
-|---|---|---|---|---|
-| `name` | string | yes | no | 1..200 characters |
-| `topic`, `objective` | string | no | yes | 0..4000 characters |
-| `memo` | string | no | yes | 0..8000 characters |
-
-CURRENT: required `name`; optional string fields as above. `X-User-Id` is read as owner identity (defaults to `anonymous`); not a verified authentication mechanism.
-
-### OP-PROJECT-02 — `GET /projects`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `GET /api/v1/projects` |
-| Success | HTTP **200**, ProjectListResponse |
-| Request | query: status (ProjectStatus enum or null; default ACTIVE) |
-| Error (observed handler / reachability) | 400 INVALID_REQUEST for invalid query; other errors UNVERIFIED |
-
-No JSON request body. Enum literal set: inspect Product ProjectStatus definition before publishing values.
-
-### OP-PROJECT-03 — `GET /projects/{project_id}`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `GET /api/v1/projects/{project_id}` |
-| Success | HTTP **200**, ProjectResponse |
-| Request | path project_id:string |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND conditional on domain not-found |
-
-No JSON body.
-
-### OP-PROJECT-04 — `PATCH /projects/{project_id}`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `PATCH /api/v1/projects/{project_id}` |
-| Success | HTTP **200**, ProjectResponse |
-| Request | path project_id:string; ProjectUpdate JSON |
-| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404 ENTITY_NOT_FOUND if Service raises not-found; other errors UNVERIFIED |
-
-Request fields:
-
-| Field | Type | Required | Nullable | Constraint |
-|---|---|---|---|---|
-| `name` | string | no | yes | if present non-null length 1..200 |
-| `topic`, `objective` | string | no | yes | length <=4000 |
-| `memo` | string | no | yes | length <=8000 |
-
-All body fields optional in DTO. Whether explicit null clears a field or denotes unchanged is Service-dependent: UNVERIFIED.
-
-### OP-PROJECT-05 — `DELETE /projects/{project_id}`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `DELETE /api/v1/projects/{project_id}` |
-| Success | HTTP **204**, empty body |
-| Request | path project_id:string; X-User-Id header read (default anonymous) |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 409 PROJECT_ARCHIVED if raised; authorization enforcement source GAP |
-
-Archive endpoint; request body absent.
-
-### OP-PROJECT-06 — `POST /projects/{project_id}/research-contexts`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `POST /api/v1/projects/{project_id}/research-contexts` |
-| Success | HTTP **201**, dict[str,Any] (no explicit response_model) |
-| Request | path project_id:string; ResearchContextCreate JSON |
-| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404/409/422 only if raised by Service: UNVERIFIED |
-
-Request fields:
-
-| Field | Type | Required | Nullable | Constraint |
-|---|---|---|---|---|
-| `context_key` | string | yes | no | no Field constraint in router DTO |
-| `problem_statement` | string | no | no | default empty string |
-| `research_questions`, `hypotheses` | array[string] | no | no | default [] |
-| `significance` | string | no | yes | default null |
-| `decision_context` | object | no | no | default {} |
-| `relations` | array[object(string)] | no | no | default [] |
-
-X-User-Id defaults anonymous. Exact Service output keys require Service inspection; cannot claim fixed JSON schema.
-
-### OP-PROJECT-07 — `GET /projects/{project_id}/research-contexts`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `GET /api/v1/projects/{project_id}/research-contexts` |
-| Success | HTTP **200**, object: items=service list |
-| Request | path project_id:string |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND etc conditional; operation mappings UNVERIFIED |
-
-Elements of items not response_model typed in Router. No JSON body.
-
-### OP-PROJECT-08 — `GET /projects/{project_id}/research-contexts/{context_id}`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}` |
-| Success | HTTP **200**, dict[str,Any] from Service |
-| Request | path project_id:string; context_id:string |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 422 PROJECT_BOUNDARY_VIOLATION if raised; UNVERIFIED |
-
-Fields UNVERIFIED; no declared response_model.
-
-### OP-PROJECT-09 — `PATCH /projects/{project_id}/research-contexts/{context_id}`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `PATCH /api/v1/projects/{project_id}/research-contexts/{context_id}` |
-| Success | HTTP **200**, dict[str,Any] from Service |
-| Request | path project_id:string; context_id:string; ResearchContextPatch JSON |
-| Error (observed handler / reachability) | 400 INVALID_REQUEST; 404 ENTITY_NOT_FOUND / 409 RESOURCE_IMMUTABLE if emitted; mapping UNVERIFIED |
-
-Request fields:
-
-| Field | Type | Required | Nullable |
-|---|---|---|---|
-| `problem_statement`, `significance` | string | no | yes |
-| `research_questions`, `hypotheses` | array[string] | no | yes |
-| `decision_context` | object | no | yes |
-| `relations` | array[object(string)] | no | yes |
-
-Body sent via `model_dump(exclude_unset=True)`: omitted and explicit null distinguishable. Exact Service response fields UNVERIFIED.
-
-### OP-PROJECT-10 — `POST /projects/{project_id}/research-contexts/{context_id}/fix`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `POST /api/v1/projects/{project_id}/research-contexts/{context_id}/fix` |
-| Success | HTTP **200**, dict[str,Any] from Service |
-| Request | path project_id:string; context_id:string; no JSON body |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND / 409 RESOURCE_IMMUTABLE if emitted; mapping UNVERIFIED |
-
-FIX transition side effects and Service response shape require Source review.
-
-### OP-PROJECT-11 — `GET /projects/{project_id}/research-contexts/{context_id}/usage`
-
-| Key | CURRENT contract |
-|---|---|
-| Method / path | `GET /api/v1/projects/{project_id}/research-contexts/{context_id}/usage` |
-| Success | HTTP **200**, dict[str,Any] from Service |
-| Request | path project_id:string; context_id:string |
-| Error (observed handler / reachability) | 404 ENTITY_NOT_FOUND if raised; mapping UNVERIFIED |
-
-Historical Family execution/result projection; not canonical full usage. Exact keys UNVERIFIED.
+- 2026-11-17: 全23_10〜23_19共通フォーマットへ再構成。Request/Response/ErrorsをOperation別に記載し、Source確認と未検証を分離。
