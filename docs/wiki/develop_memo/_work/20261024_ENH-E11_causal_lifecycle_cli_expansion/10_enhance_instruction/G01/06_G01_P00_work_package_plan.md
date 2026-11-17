@@ -8,7 +8,7 @@
 **P00 is not an implementation package.**
 
 ## 1. Gate acceptance claim and unresolved boundary
-G01の予定範囲はstrict Local Study/ContentRef、GraphVersion/PAG、P1-M06 FCI、Linux Atomic Publication/Reader、non-effect DISCOVER CLI。これはGraph科学とOS/FS安全性という異なるacceptance authorityを含むため、単一Gateとして適切かは**未確定**。分割再審査とOwner承認・06/07 FreezeまでPxxを開始しない。
+**PREPARATION-03 技術評価：G01単一Gateを維持（Owner承認待ち）。** 対象はstrict Local Study/ContentRef、PAG/GraphEvidence、P1-M06 FCI、Linux Atomic Publication/Reader、non-effect DISCOVER CLIが一体となったrun-scoped垂直スライス。科学的Graphの正当性とFile Publicationの安全性は別個の必須受入軸として、それぞれP04/07-08〜10とP02/07-02/05/06の独立証跡を要求し、P05/07-07/11/12で共通Fixed Candidate SHAの統合動作を証明する。部分完成をGate PASSにしない。この構成で依存循環はなく、G01を分割する技術的必要性はない。Ownerの境界承認・06/07 Freeze・Coding AuthorizationまではPxx着手禁止。
 
 ## 2. Required package map
 | Package | Purpose | Depends on | Focused verification |
@@ -28,3 +28,10 @@ P01 ─┬─ P02 ──────────┐
 
 ## 4. Checkpoint / restart / candidate semantics
 各Pxxはbounded Coding Unit。dependencyのcheckpoint・承認済み06/07と実効Sourceに不整合があればBLOCKED。中断・局所修正ではTrial番号を増やさず、checkpoint full SHA、focused test、Package status/checkpoint reportを残す。Pxx COMPLETEはGate PASSでもFixed Trial Candidateでもない。全required Pxx完了後Candidate Assembly Agentがsource連鎖とGate-wide regressionを検査しFixed SHAと20系Completion Reportを作成する。独立Agentは07をauthorityに30系Test Item/999を記録する。formal FAIL後のみ08、contract defectは09へ。
+
+## 5. PREPARATION-04 Coding Authorizationの判定条件
+
+- **技術判定（Owner決裁ではない）：G01をP01→P02/P03→P04→P05とした現行Work Package構成で実装可能。** Graph/FCIの科学的受入とOS/FS Publicationの受入は独立実証するが、G01_999はAND条件で判断する。
+- **現時点のCoding AuthorizationはNOT_AUTHORIZEDを維持。** 独立設計監査・06/07追随のGitHub反映はCoding Entry許可ではない。OwnerによるGate境界・06/07 Coding/Verification Contractの承認とFreeze、実装基準full SHA、実行環境/依存の確認を揃えた後にPREPARATION-04で明示的に許可する。
+- **Coding EntryとScience Gate PASSは異なる。** T2 Pilot/T3本検証、実Filesystem crash試験、実FCI API適合、独立PAG Oracleの科学的結果はCoding Entry前の実施完了条件ではなく、G01の独立07/999で必要な証拠である。Coding Entry時にはテスト計画・Oracle構築方法・FAIL/BLOCKED/INCONCLUSIVE条件を固定し、科学的PASSを前倒し宣言しない。
+- **Scope除外:** G02以降のIDENTIFY/ESTIMATE/REFUTE/SENSITIVITY/DIAGNOSEのMethod固有Schema/Scienceは、G01が全41件の完成を主張しない限りG01の着手阻害ではない。未登録Method Profileはfail-closed。

@@ -11,7 +11,7 @@
 
 `G01`は正式Gate IDでありWorkstream番号ではない。`06`はCoding Contract、`07`はVerification Contract、`999`は独立Gate Decisionである。P00は計画、P01〜P05はCoding Work Package。Package完了はGate PASSではない。
 
-**重要な再審査:** Domain/Graph/FCI ScienceとOS/FS Publicationが一つのGateであることは未証明。この06はDRAFTであり、Coding Authorization前にGate分割の適否・owner承認・06/07 Freezeが必要。Candidate Assemblyは全Package checkpoint→Gate-wide regression→Fixed Trial Candidate SHA→20系Completion ReportでREADY_FOR_TESTとし、30系独立999が最終判定する。
+**Gate境界の技術判定（PREPARATION-03、Owner承認前）：G01を分割しない。** G01の受入対象は`DISCOVER+P1-M06`が科学的に妥当なPAG/typed negativeを生成し、それを厳格Privacy・atomic publication・独立readback経由で一つのLocal Runとして安全に完成させる**垂直スライス**である。分離したGateで片側だけPASSさせると公開されたGraphの科学的信頼性または公開完全性の証拠が欠ける。代わりにP02の**OS/FS・Publication独立受入軸**（07-02/05/06）、P04の**FCI・PAG科学独立受入軸**（07-08/09/10）、P05の**統合・Privacy・v2回帰受入軸**（07-07/11/12）を別々に判定し、いずれか未検証ならG01_999はBLOCKEDとする。Gate ID G01とP00〜P05は変更しない。**これは技術評価でありOwnerのGate境界承認、06/07 Freeze、Coding Authorizationを代行しない。** Candidate Assemblyは全Package checkpoint→Gate-wide regression→Fixed Trial Candidate SHA→20系Completion ReportでREADY_FOR_TESTとし、30系独立999が最終判定する。
 
 ## 1. Coding Agentの責務と実装境界
 

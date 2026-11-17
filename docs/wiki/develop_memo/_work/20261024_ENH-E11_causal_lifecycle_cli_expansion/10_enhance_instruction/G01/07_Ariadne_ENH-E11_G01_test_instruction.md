@@ -9,6 +9,8 @@
 
 07はGate Acceptance Criteria authority。Test Item 001はFixed Trial Candidateのfull SHA対checkoutのidentity audit、002〜013は本書G01-07-01〜12に対応。独立Test Agentはproduct/test code、migrations、dependencies、ACを変更せず、実効コマンド・exit・raw evidence・固定SHA・DD ID/ACを記録する。999のみが正式Gate PASS/FAIL/BLOCKEDを判定する。現状の受入境界は再審査中で、本書は未Freeze。
 
+**Gate境界の技術判定（Owner承認前）：** G01は単一のLocal scientific DISCOVER垂直スライスとして保持する。独立した受入軸を混同しない：(A) JCS/FS/atomic publication/Reader（G01-07-01〜06）、(B) FCI/backend適格性と独立MAG/PAG科学Reference（07-08〜10）、(C) Study/Graph/Status Bundle・CLI privacy・既存v2回帰（07-07/11/12）。P02/P04の個別検証成功や科学的negativeをG01全体のPASSへ昇格せず、**共通のFixed Trial Candidate full SHAで全必須受入軸に実測が揃った場合のみ999 PASS候補**。T2 Pilot・T3の定量科学検証はGate PASS前に必要だが、07の設計・独立Oracleの計画が成立していればCoding Authorizationの前提にはしない。**実行・Owner承認・06/07 Freezeは未実施**。
+
 ## 1. テスト着手・判定原則
 
 - 06のCoding Entry後、**実際に実装されたSource SHA**に対して独立に実施する。07を先に策定したことをPASSとしない。テストAgentは合否を改善するためにSourceを無断変更しない。
