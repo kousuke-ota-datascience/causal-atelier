@@ -17,78 +17,79 @@
 
 この06は**Coding Authorizationの対象とする契約**であり、本書のコミットだけではコード変更を開始しない。OwnerがG01 Coding Entryを承認した後、Coding Agentは以下の五つのWPを順番に実装し、07の自動テストを作る。Gate PASS／科学的PASSの自己宣言は禁止。
 
-**対象：** UC-01、`P1-M06`、Local causal context／GraphVersion／FCI/PAG fidelity、最低限の新Local CLI・安全なArtifact Publication・Reader・JCS・Manifest。G02以降のための共通基盤はG01で一度だけ作り、各Gateで複製しない。
+**対象：** UC-01、`P1-M06`、Local causal context／GraphVersion／FCI/PAG fidelity、最低限の新Local CLI・安全なArtifact Publication・Reader・JCS・Manifest。G02以降のための共通基盤はG01で共通の入口Adapterを一度だけ作り、各Gateで複製しない。
 
 **対象外：** `P1-M01〜05, P1-M07〜20, P2-*, P3-*`の科学的Method実装（既存Productとの互換回帰は例外）。PAGからの自動識別・効果推定、Temporal PCMCI（G06）、個票CATE／署名付き行認可（G05）、AR推論（G08）、Web/API/Worker/DB、Product migration、正本`docs/wiki/requirement_definition/`、配布・顧客利用判断。
 
-**現行Source照合：** `src/ariadne/causal/discovery/algorithms.py`の`run_pc`はPC専用でありFCI実装ではない。`src/ariadne/causal/discovery/graph.py`はlossless endpointをCSVに正規化できるがE11 GraphVersionではない。`src/ariadne/interfaces/cli/discovery.py`と`src/ariadne/interfaces/cli/manifest.py`はProduct v2 CLIであり書換禁止。`tests/product/test_cli_contract.py`は回帰必須。`pyproject.toml`はPython`>=3.12,<3.13`、`uv.lock`は`causal-learn 0.1.4.8`を含む。E11新CLI scriptを追加する場合だけ[project.scripts]変更可、既存登録は保持する。
+**現行Source照合：** `src/ariadne/causal/discovery/algorithms.py`の`run_pc`はPC専用でありFCI実装ではない。`src/ariadne/causal/discovery/graph.py`はlossless endpointをCSVに正規化できるがE11 GraphVersionの新しいwriterではない。`src/ariadne/interfaces/cli/discovery.py`と`src/ariadne/interfaces/cli/manifest.py`はProduct v2 CLIであり書換禁止。`tests/product/test_cli_contract.py`は回帰必須。`pyproject.toml`はPython`>=3.12,<3.13`、`uv.lock`は`causal-learn 0.1.4.8`を含む。E11新CLI scriptを追加する場合だけ[project.scripts]変更可、既存登録は保持する。
 
 ## 2. ディレクトリ・Port・開発順序
 
 ```text
 src/ariadne/
-  causal/local_contract/
-    references.py    # ContentRef, ValidatedContent
-    study.py         # strict typed Study/ValidatedStudy
-    graph.py         # GraphEvidence, GraphVersion, EndpointEdge
-    ports.py         # Protocol; no scientific imports
-    codec.py         # JCS byte canonicalization, SHA256
-  causal/local_application/
-    use_case.py      # E11LocalCausalUseCase
-    capability_registry.py
-  scientific/local_adapters/
-    fci.py           # lazy backend import, P1-M06 only
-  interfaces/cli/e11/
-    command.py       # ariadne-causal-local entrypoint
-    config_decoder.py
-    publication.py   # TrustedRoot, staging, no-replace
-    manifest.py      # LocalRunManifest value (no I/O)
-    privacy.py       # LocalPrivacyPolicy (aggregate-only G01)
-    manifest_reader.py
-tests/enhancement/enh_e11/g01/
-    unit/             # pure Schema / value / graph / codec
-    component/        # method dispatch / FCI adapter mocks / Reader
-    integration/      # real Linux filesystem / subprocess CLI
-    scientific/       # independent Graph oracle and pilot
+  shared/content_ref.py                # ContentRef; bytes identity, not Product ResourceRef
+  shared/serialization/jcs.py         # strict JCS canonical codec
+  causal/discovery/graph_evidence.py   # GraphEvidence; no GraphVersion writer
+  causal/design/schemas.py            # reuse existing CausalDesign
+  scientific/ports/causal.py           # Identification/Estimator/Diagnostic Ports
+  scientific/ports/capability.py       # MethodCapabilityPort
+  scientific/capabilities.py           # BackendCapabilityRecord
+  scientific/causal_methods/fci.py     # P1-M06 adapter; lazy backend import
+  capabilities/causal/local_execution.py  # LocalCausalUseCase
+  capabilities/causal/method_registry.py   # MethodCapabilityRegistry
+  interfaces/cli/local_causal/
+    study.py           # LocalStudySpec; CLI envelope
+    config_decoder.py  # LocalConfigDecoder
+    content_io.py      # ContentReferencePort; TrustedRoot
+    command.py         # ariadne-causal-local entrypoint
+    publication.py     # TrustedRoot/staging/no-replace
+    manifest.py        # LocalRunManifest value
+    privacy.py         # LocalPrivacyPolicy
+    manifest_reader.py # Reader/verification
+ tests/enhancement/enh_e11/g01/
+    unit/
+    component/
+    integration/
+    scientific/
 ```
 
-Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; new E11 modules may use shorter names if the same single responsibility is preserved. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
+Where these paths conflict with an already implemented eligible shared abstraction, reuse by explicit adapter rather than copy-paste; modules named above are the selected design destinations; no parallel causal.local_contract tree. Public Port signatures are those in [112 Cross-Port](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md), including keyword-only`sink` and `ValidatedStudy` constructed in CLI composition root. No return of live external model/library objects across Ports.
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
-| **G01-P01** | 30_61 `1/2/3：REF01〜04、SPEC01〜04、GRAPH01/03/04（CLI decode は30_60 §9）；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-P01** | 30_60 §11/12：REF01〜04・SPEC01〜04；30_61 §1：GRAPH01/03/04（CLI Decoder=30_60 §9）；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
 | **G01-P02** | 30_62 `4/5.2：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
-| **G01-P03** | 30_61 `3：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
 | **G01-P04** | 30_62 `3：CAP01/04/05；30_63 `2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
-| **G01-P05** | 30_62 `2/6/7：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
+| **G01-P05** | 30_62 `2/6/7：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
 **実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
 
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）
 
-正本となる詳細設計：[30_61 Domain/Port `1〜3/`7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
+正本となる詳細設計：[30_61 Domain/Port `1〜5](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[30_62 UseCase/Publisher/Reader/Privacy `2〜7](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)、[30_63 Method `2/`6.3](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)。以下は**詳細設計から抽出したG01用メソッド単位の義務**。06側で独立した設計正本を増やさない。
 
 | Class.Method / DD検証ID | Precondition・必須動作（06） | Postcondition／失敗 | 07 |
 |---|---|---|---|
-| 30_61 `1 `ContentRef.from_payload` / 30_60 `10 `ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
+| 30_60 `11 `ContentRef.from_payload` / 30_60 `10 `ContentReferencePort.verify` / REF01〜04 | 5 field strict。TrustedRootのdirfd・file FDでactual bytes/SHA確認。Path文法だけで安全宣言しない | mismatch/TOCTOU/symlink/同一identity別bytesは許可しない | 01/02 |
 | 30_60 `9 `LocalConfigDecoder.decode(raw,declared_format)` / SPEC01〜04 | version・Operation・Method・Question/Design Profile・Method Configを検証し`ValidatedStudy`を作る（`decode_yaml`はprivate helper） | Product v2/unknown/CONFIRMATORY/不適格をexit2で拒否 | 01/08/11 |
-| 30_61 `3 `GraphEvidence.from_canonical_json/canonical_payload/make_revision` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
-| 30_62 `2 `E11LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
+| 30_61 `1 `GraphEvidence.from_canonical_json/canonical_payload` / GRAPH01/03/04 | endpoint・lag・node/parent不変、Graph semantic hashとFile hashを別検証 | lossless PAG、旧Graph不変。PAG→DAG、偽version編集拒否 | 03/04/07 |
+| 30_62 `2 `LocalCausalUseCase.preflight/run` / RUN01/03/04/06/07 | `preflight`は実File/CI/静的capabilityのみ。`run`は`DISCOVER+P1-M06`だけ実行 | check-onlyはFit0回・publish0件。run完了はverified Reader必須 | 01/07/11/12 |
 | 30_62 `3 `MethodCapabilityRegistry.describe/resolve/load_adapter` / CAP01/04/05 | P1-M06 metadata検証、実効Distribution/API検査。`load_adapter`だけが科学Engine import | 未対応Method/Backend/versionはtyped unavailable、fallback無し | 08/12 |
 | 30_63 `4.4 `FciDiscoveryAdapter.preflight/execute(request,*,sink)` / DD-E11-METH-P106 | CI適格性・BK矛盾・Backend Node/Endpoint対応を検証、StagingSink以外に出力しない | 有効PAGまたはtyped unavailable、engine errorはexit4。独立Science Oracle別 | 08/09/10 |
 | 30_62 `4 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
 | 30_62 `5.1/5.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
 | 30_62 `5.2/5.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
 | 30_62 `6/6.8 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
-| 30_62 `7 `interfaces.cli.e11.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
+| 30_62 `7 `interfaces.cli.local_causal.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
-**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph revision factoryだけG01）、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
+**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidence純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
 
 ### 2.2 Method不変条件の実装順序（曖昧性防止）
 
 1. `ContentRef.from_payload → LocalConfigDecoder.decode`：入力のVersion/Schema/Methodを検証した後、同一Rootのfile bytes/lineageをverifyする。`ValidatedStudy`を経由せずApplicationを呼び出さない。
-2. `E11LocalCausalUseCase.preflight`：実行前にStudy/Question/Design/CI Eligibilityと安全なRootを調べるが、Fit・Staging・Manifest書込なし（07-11）。`run`はFCIが返すGraphとScience結果の型を維持。
+2. `LocalCausalUseCase.preflight`：実行前にStudy/Question/Design/CI Eligibilityと安全なRootを調べるが、Fit・Staging・Manifest書込なし（07-11）。`run`はFCIが返すGraphとScience結果の型を維持。
 3. `FciDiscoveryAdapter.execute`：Dataset列順↔Backend node IDを検査。source/target順を換えればmarkも同時swap。曖昧なPAG endpointの方向を創作しない（07-03/09/10）。
 4. `LocalArtifactPublisher`：`begin→stage_bytes→validate(seal)→commit`が唯一の書込経路。`renameat2(RENAME_NOREPLACE)`と両parent sync＋独立Reader readback後だけCOMPLETED。abortはrename**前**だけ、結果不定時の削除/repair禁止（07-05/06）。
 5. `LocalRunManifest/Reader`：DISCOVERではEffect Resultを作らず、`manifest.schema_dispatch.result=null`。実ファイルBytes HashとGraph意味Hashを区別し、StatusのScience NOT_EVALUATEDを誤ってPASSに変更しない（07-04/06/07）。

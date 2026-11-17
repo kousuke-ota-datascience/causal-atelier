@@ -4,7 +4,7 @@
 
 本InterfaceはCLI-firstの追加実行系だけを対象とする。既存ProductのWeb API（/api/v1）、Worker、Product DB、Execution/Result正本、browser navigationを追加・変更しない。既存Ariadneの旧 `ariadne-identify`／`ariadne-estimate`／`ariadne-refute`／`ariadne-sensitivity`、`causal-analysis-spec/2`、`CliManifest(manifest_version="2.0")`のreaderと挙動は独立した旧laneとして保護する。
 
-DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。Local applicationはversion dispatch、順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、E11の型付きEffect/AR集合を無検証で同型へキャストしない。
+DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。CLI composition rootはversion dispatchを所有し、`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`が順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、E11の型付きEffect/AR集合を無検証で同型へキャストしない。
 
 本書はLocal CLI/Scientific Portのwireと意味的な契約を規定する。実装の適合性は独立Contract Testで確認する。
 
@@ -70,11 +70,17 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
-`IdentificationPort`や`EstimatorPort`のinterface型はE11 Domainから定義する。既存Product `ScientificCorePort`への単純aliasは禁止し、backendのoptional importをProtocol／Port import時に実行しない。sync実行は初期仕様とし、E11のWeb Worker/DB lifecycleは対象外。
+`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。sync実行は初期仕様とし、E11のWeb Worker/DB lifecycleは対象外。
 
 ### 4.1. Port間の正規署名と相互整合
 
 上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+
+### 4.2. Class配置・署名のAuthoritative Owner
+
+`ContentRef`=`ariadne.shared.content_ref.ContentRef`、`LocalStudySpec`=`ariadne.interfaces.cli.local_causal.study.LocalStudySpec`、`GraphEvidence`=`ariadne.causal.discovery.graph_evidence.GraphEvidence`、`BackendCapabilityRecord`=`ariadne.scientific.capabilities.BackendCapabilityRecord`。各ClassのField/Constructor/Method・検証の7区分は30_60 §11〜12、30_61 §1〜5、30_62 §8が所有する。
+
+GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所有する。`GraphEvidence`はVersion writerではなく、`make_revision`は定義しない。Domain側のEstimator適格性は既存`ScientificValidationService`の判定を共通pure policyに統合し、Backend availabilityは`MethodCapabilityPort.resolve(request)`で独立検査する。
 
 ## 5. Status／error／exit envelope
 

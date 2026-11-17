@@ -60,7 +60,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 ### 3.1. Module-level関数とResult処理
 
-`scientific.local_adapters.*`：
+`ariadne.scientific.causal_methods.*`：
 - `check_design(request) -> EligibilityOutcome`：Method固有のRequired Columns、missing、Temporal/Panel units、instrument support、positivity等のReasonを収集。
 - `run(request, *, sink: StagingArtifactSink) -> TypedScientificOutcome`：数値計算。返却するのはportable Result DTO、external library instanceは禁止。日時・randomnessは注入されたContextのみから取得。
 - `describe_effective_backend() -> BackendEvidence`：実効Library/distribution、Python API、solver/nuisance/fold/CI config/seedを返す。
@@ -95,7 +95,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 ### 4.4. P1-M06 `FciDiscoveryAdapter`のMethod固有契約
 
-`FciDiscoveryAdapter.preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的な適格性判定、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果のPAGへの正規化である。Product `ScientificCorePort.run_discovery`やPC Adapterへのaliasを禁止。
+`FciDiscoveryAdapter.preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的な適格性判定、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果のPAGへの正規化である。Product `ScientificCorePort.run_discovery`やPC Adapterへの単純aliasを禁止。ただし既存のGraph意味検証・PC計算ヘルパーなど科学的に同義の処理は再利用し、別エンジンを重複実装しない。
 
 [FCI Method config schema](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_method_config_v1.schema.json)に従い`fisherz/chisq/gsq`、明示alpha/depth/max_path_length、null/required/forbidden directed BackgroundKnowledgeを検証する。DatasetとDesignの列名・順序、finite complete observations、CI別measurement scale、categorical support、観測独立性・標本規模、BK矛盾を確認し、未承認の欠損補完・離散化・CI代替をしない。特定の`causal-learn`版を科学的Method定義に固定せず、effective distribution/API/signature/endpoint accessorとlockをRuntimeで照合し、不一致は`BACKEND_API_MISMATCH`。
 
@@ -173,3 +173,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 - 顧客Deliveryは実際のBundleのSBOM/Licenseと受領者別法務判定を別途必要とする。
 
 参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_e11_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
+
+## 9. 科学計算の共通実装とVersion付き互換Bridge
+
+Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.causal.discovery`・`ariadne.causal.inference`内の既存計算を意味互換で再利用する。新しいFCI/IV/CATE等はMethod固有の新実装が必要な場合のみ追加する。Typed Port=`ariadne.scientific.ports.causal`、Capability Port=`ariadne.scientific.ports.capability`、BackendEvidence=`ariadne.scientific.capabilities`。旧Product `ScientificCorePort.run_*`は公開v2 DTO/Pathの署名を維持し、実装移行時は明示Bridgeから同一科学Kernelを呼ぶ。旧v2の型へAR/PAG/識別状態を損失変換してはいけない。
