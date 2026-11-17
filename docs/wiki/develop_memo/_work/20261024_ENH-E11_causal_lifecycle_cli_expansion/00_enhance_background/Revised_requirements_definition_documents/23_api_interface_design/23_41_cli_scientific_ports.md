@@ -60,7 +60,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | Port / Operation | 論理署名／返却 | Authority・拒否条件 |
 | --- | --- | --- |
 | `LocalConfigDecoder.decode(raw, *, declared_format)` | `ValidatedStudy` | strict version/key/Method Profile、旧v2 fallback禁止 |
-| `ContentReferencePort.verify(ref, *, root)` | `VerifiedContent` | root閉じ込めの実bytes/hash・race/symlink拒否 |
+| `ContentReferencePort.verify(ref, *, root)` | `VerifiedContent` | Application Port: `ariadne.capabilities.causal.ports.content_ref`、Concrete: `ariadne.interfaces.cli.local_causal.content_io.LocalContentReferenceAdapter`。root閉じ込めの実bytes/hash・race/symlink拒否 |
 | `MethodCapabilityPort.resolve(request)` | `BackendCapabilityRecord` | Operation/Estimand/Backend/Inferenceと実効API、no fallback |
 | `DiscoveryPort.discover(request, *, sink)` | `DiscoveryGraphOutcome` | P1-M06等の検証済Discovery RequestとPAG/CPDAG・科学的negativeを型付き返却。Staging限定 |
 | `IdentificationPort.identify(request)` | `IdentificationOutcome` | validated proof・Graph/upstream hash |

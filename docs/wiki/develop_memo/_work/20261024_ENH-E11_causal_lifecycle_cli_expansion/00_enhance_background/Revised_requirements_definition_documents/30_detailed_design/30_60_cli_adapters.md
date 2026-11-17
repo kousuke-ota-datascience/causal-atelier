@@ -50,13 +50,13 @@
 
 新候補Classを現行コードに実在するClassとして扱わず、Method/Backend/Scienceの実測受入を別途要求する。
 
-## 9. Local CLI Decoder（Interface adapter / PROPOSED）
+## 9. Local CLI Decoder（Interface adapter）
 
 ### 9.1. `LocalConfigDecoder`
 
 #### 9.1.1. 識別情報・責務
 
-**Protocol / planned concrete module:** `ariadne.interfaces.cli.local_causal.decoder.LocalConfigDecoder`と`ariadne.interfaces.cli.local_causal.config_decoder`。raw YAML/JSONから`ariadne.causal.design.study.ValidatedStudy`を生成。CLI DTOの`LocalStudySpec`はParserの内部入力であり、ApplicationはCLI DTOに依存しない。Application内で再parseしない。**PROPOSED（未実装）。**
+**Protocol / planned concrete module:** `ariadne.interfaces.cli.local_causal.config_decoder.LocalConfigDecoder`。raw YAML/JSONから`ariadne.causal.design.study.ValidatedStudy`を生成。CLI DTOの`LocalStudySpec`はParserの内部入力であり、ApplicationはCLI DTOに依存しない。Application内で再parseしない。
 
 #### 9.1.2. フィールド
 
@@ -86,13 +86,13 @@ Raw bytesからのparse以外のI/Oはない。外部Ref実bytes確認は`Conten
 `DD-E11-SPEC01〜04`、invalid YAML/JSON duplicate、P1-M06 ProfileとStudyのcross-asset join、untrusted refを検証する。FR-185、**FR-201**、NFR-029/036。
 
 
-## 10. Trusted File Reference I/O（Interface adapter / PROPOSED）
+## 10. Trusted File Reference I/O（Application Port / CLI Adapter）
 
 ### 10.1. `ContentReferencePort`
 
 #### 10.1.1. 識別情報・責務
 
-**Protocol / planned module:** `ariadne.interfaces.cli.local_causal.content_io.ContentReferencePort`。trusted root内のRefを実際に検証・読み出すI/O interface。`ContentRef`そのものを信頼済みbytes扱いしない。**PROPOSED（未実装）。**
+**Application Port / module:** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`。**CLI Concrete / module:** `ariadne.interfaces.cli.local_causal.content_io.LocalContentReferenceAdapter`。TrustedRoot内のRefを実bytes検証するPortへ、CLI adapterを依存注入する。ApplicationがCLI Concreteをimportしない。`ContentRef`は自己証明する値ではない。
 
 #### 10.1.2. フィールド
 
@@ -100,7 +100,7 @@ Protocol自身にmutable fieldなし（N/A）。引数`ref: ContentRef`、`root:
 
 #### 10.1.3. Constructor / Factory
 
-Protocolに具体constructorはない（N/A）。TrustedLocalRootの生成とrootfd所有は具体I/O Adapterの責務。
+Protocolに具体constructorはない（N/A）。`TrustedLocalRoot`と`LocalPrincipal`の型Authorityは`ariadne.shared.local_fs`。TrustedRoot Factory／CLI composition rootはOS subject・dirfd・owner・ACL/mountを検証し、CLI Concreteに引き渡す。
 
 #### 10.1.4. メソッド
 
@@ -124,12 +124,12 @@ File読み取りあり、書き込みはしない。Root外read・未知mount・
 これらは科学的Domain Modelではなく、入力とtrusted file I/OのInterface境界。CLIを理由にGraph・Estimand・Inferenceの別Domainを作らない。
 
 
-## 11. `ContentRef` — Portable content reference value（PROPOSED）
+## 11. `ContentRef` — Portable content reference value
 
 
 ### 11.1. 識別情報・責務
 
-**Class / module:** `ariadne.shared.content_ref.ContentRef`。immutable value object。Dataset・Question・Design・Graph・Identification等の内容参照を識別し、物理bytesの検証結果を**保持しない**。外部絶対pathやaccess tokenを保存しない。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
+**Class / module:** `ariadne.shared.content_ref.ContentRef`。immutable value object。Dataset・Question・Design・Graph・Identification等の内容参照を識別し、物理bytesの検証結果を**保持しない**。外部絶対pathやaccess tokenを保存しない。
 
 ### 11.2. フィールド
 
@@ -164,12 +164,12 @@ I/Oなし。Root閉じ込めとTOCTOUの防止、same-fd bytes hashは`ContentRe
 `DD-E11-REF01`有効Ref、`REF02` traversal/symlink/race、`REF03` input差替え/TOCTOU、`REF04` metadata-only同ID別bytes拒否。FR-185、NFR-029/031。
 
 
-## 12. `LocalStudySpec` — CLI execution request envelope（PROPOSED）
+## 12. `LocalStudySpec` — CLI execution request envelope
 
 
 ### 12.1. 識別情報・責務
 
-**Class / module:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`。Operation、Method、Estimand、Input refs、Inference、Privacy要求を保持するimmutable CLI execution envelope DTO。Parse/FS I/O/Backend呼出しは責務外。科学的DesignとEstimandは既存CausalDesign/共通validatorを再利用する。**実装状態：PROPOSED（Source未実装）。配置先を定義する設計契約。**
+**Class / module:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`。Operation、Method、Estimand、Input refs、Inference、Privacy要求を保持するimmutable CLI execution envelope DTO。Parse/FS I/O/Backend呼出しは責務外。科学的DesignとEstimandは既存CausalDesign/共通validatorを再利用する。
 
 ### 12.2. フィールド
 

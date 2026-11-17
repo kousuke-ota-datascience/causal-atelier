@@ -8,7 +8,7 @@
 
 #### 1.1.1. 識別情報・責務
 
-**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。
+**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
 
 #### 1.1.2. フィールド
 
@@ -18,7 +18,8 @@
 | `nodes` | `tuple[Node,...]` | unique identity |
 | `edges` | `tuple[EndpointEdge,...]` | endpoint/lag/identityをlossless |
 | `temporal` | `TemporalConvention|None` | lagの符号・基準時刻 |
-| `source_graph_version_id` | `str|None` | 存在する場合にProduct GraphVersionを参照。自身はVersionを発行しない |
+| `source_graph_version_id` | `str|None` | 実在するProduct GraphVersionを参照。自身はVersionを発行しない |
+| `source_graph_parent_version_id` | `str|None` | 実在する親GraphVersion ID。source_graph_version_idがnullなら必ずnull |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
 #### 1.1.3. Constructor / Factory
@@ -42,7 +43,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 1.1.7. 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Product GraphVersion整合と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirectedおよびstandalone両Version null、`GRAPH04` Product参照時に親IDが実在すること、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Product GraphVersion整合と再識別。FR-186/196、AR-028/036/043。
 
 ## 2. Identification / Estimation
 
