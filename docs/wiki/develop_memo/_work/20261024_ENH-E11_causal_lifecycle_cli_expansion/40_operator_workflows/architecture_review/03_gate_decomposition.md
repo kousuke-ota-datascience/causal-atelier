@@ -1,7 +1,7 @@
-# ENH-E11 — G01〜G10 Workstream分割（Owner計画承認／Gate別06・07未確定）
+# ENH-E11 — G01〜G10 Gate Decomposition (Enhance Workflow Gate IDs)
 
 **文書区分:** 計画・Operator資料  
-**状態:** DRAFT／Architecture Review・Human承認待ち  
+**状態:** Gate計画Owner承認済み／個別06・07はFreeze前。G01境界は再審査対象  
 **前提資料:** 事前調査`../../00_enhance_background/00_01_foundation_gap_reconciliation.md`→`../../00_enhance_background/00_02_foundation_gap_closure_assessment.md`→`../../00_enhance_background/00_03_phase1_to_phase3_reconciliation.md`→`../../00_enhance_background/00_04_phase1_to_phase3_cli_scope_proposal.md`。残存Foundation Gapと8月Phase 1〜3候補を照合してから、承認後のGate境界を判断する。
 
 ## 1. 分割原則
@@ -44,11 +44,16 @@ Phase 1〜3の必須手法が、再利用済みであることを証拠で示す
 - G07〜G09を共通Design authorityのGateへ統合し、Work Packageを分けるべきか。
 - G10でのManifest検証は最終統合だけでなく各Gateの必須ACとすべきか。
 
-**2026-11-16 DEC-SR04-09によりG01〜G10のWorkstream配置・受入境界をOwnerが計画承認**。個別のGate 06実装契約・07独立検証契約は順次完成させるため、細部の依存・方法別閾値は未Freeze。G01〜G10のWorkstream番号と、各Gate内の`06`/`07`/`999`を混同しない。
+**2026-11-16 DEC-SR04-09によりG01〜G10のGate配置・受入境界をOwnerが計画承認**。個別のGate 06実装契約・07独立検証契約は順次完成させるため、細部の依存・方法別閾値は未Freeze。G01〜G10のGate IDと、各Gate内の`06`/`07`/`999`を混同しない。
 
 
 ## PREP-03：初期実施内容（2026-11-17）
 
-[PREP-02共通設計baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)に基づき、初回対象は**G01（UC-01 Local Question/Design/Graph／FCI/PAG）**。G01の[06実装指示書案](../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)と[07テスト指示書案](../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)を作成済み。G01では共通値・Graph/PAG・Safe Local Publishの最小基盤を構築し、G02以降は同じ共通契約を再使用する。個票出力Policy認可はG05、IV/ARのHC1推論科学試験はG08、最終全体回帰・配布適格性はG10に配分する。
+[PREP-02共通設計baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)に基づき、初回対象は**G01（UC-01 Local Question/Design/Graph／FCI/PAG）**。G01の[06実装指示書案](../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md)と[07テスト指示書案](../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md)を作成済み。G01では共通値・Graph/PAG・Safe Local Publishの最小基盤を構築し、G02以降は同じ共通契約を再使用する。個票出力Policy認可はG05、IV/ARのHC1推論科学試験はG08、最終全体回帰・配布適格性はG10に配分する。
 
 **状態:** `PREP03_G01_06_07_DRAFT / PREP02_COMMON_DESIGN_FROZEN / G01_CODING_AUTHORIZATION_NOT_YET_ISSUED`。各Gateの正式06/07に対象MethodのDGP/NEG/独立Reference/環境を定め、科学的対象を変更しない。
+
+
+## 7. 用語訂正と未解決のGate受入境界
+
+G01〜G10は正式Enhance Workflow Gate IDであり、独自Workstream IDではない。06/07/999はGate内の契約・判定文書、P00は計画、P01〜Pxxは実装Execution Unit。旧G01-WP01〜05はG01/P01〜P05へ変更する。10 Gateの計画は存在するが全件999未実施。現在のG01はGraph/FCI Science、Linux Atomic Publication/Privacy等の独立authorityを跨ぐため、1 Gateに収める論拠をCoding Authorization前に再審査し、必要なら再分割とOwner承認を行う。06/07はDRAFT。

@@ -1,5 +1,8 @@
 # ENH-E11 — Causal LifecycleのCLI-first拡張
 
+**2026-11-17優先訂正:** `G01〜G10`は正式Enhance WorkflowのGate ID。独自の「Gxx Workstream」は廃止する。Gate内部`06/07/999`は契約/判定で、`P00/P01〜Pxx`は作業計画/実装単位。G01受入境界は再審査待ち、06/07はDRAFT、Coding Authorization未発行。文書は`10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md`と`07_Ariadne_ENH-E11_G01_test_instruction.md`を使用。
+
+
 **現在状態（2026-11-16）:** DEC09 Owner承認済み、RD-04/BD-01改訂済み、**DOC-01 Owner承認、IF-01/DD-01設計案Owner採用済み**。独立Architecture Review、Schema/Port Freeze、Gate06/07、Coding Authorization、Science/Legal、正本昇格はいずれも未完。
 
 本ディレクトリはENH-E11のWorkflow資料を格納する。適用規約は`../agentic_enhancement_workflow_template/README.md`と`../agentic_enhancement_workflow_template/README_Appendix_HowToUse.md`。

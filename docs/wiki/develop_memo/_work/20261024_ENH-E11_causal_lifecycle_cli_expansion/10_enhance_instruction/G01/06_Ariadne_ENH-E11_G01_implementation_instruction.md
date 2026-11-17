@@ -1,9 +1,17 @@
 # Ariadne ENH-E11 / G01 — 06 実装指示書
 
-**状態：PREP-03 G01 実装契約 READY_FOR_CODING_AUTHORIZATION／CODING_NOT_AUTHORIZED**  
+**Contract status: DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED**  
+**Gate ID: G01 (Enhance Workflow Gate)**  
+**Execution Mode: WORK_PACKAGE / Required packages: P01,P02,P03,P04,P05**  
 **対象Gate：G01（Local Question/Design/Graph＋P1-M06 FCI/PAG）**  
 **基準：`prototype/ariadne_mvp` の本書・07と共通契約の同一Commitを、後続のCoding Entryで固定する。**  
-**根拠：** [PREP-02 Common Design Baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Requirement 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_e11_local_domain_ports.md)・[30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)・[30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)・[23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)／[G01 07](07_Ariadne_ENH-E11_G01_テスト指示書.md)。
+**根拠：** [PREP-02 Common Design Baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Requirement 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_e11_local_domain_ports.md)・[30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_e11_local_execution_publication.md)・[30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_e11_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)・[23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)／[G01 07](07_Ariadne_ENH-E11_G01_test_instruction.md)。
+
+## 0. Gate ID / execution contract authority
+
+`G01`は正式Gate IDでありWorkstream番号ではない。`06`はCoding Contract、`07`はVerification Contract、`999`は独立Gate Decisionである。P00は計画、P01〜P05はCoding Work Package。Package完了はGate PASSではない。
+
+**重要な再審査:** Domain/Graph/FCI ScienceとOS/FS Publicationが一つのGateであることは未証明。この06はDRAFTであり、Coding Authorization前にGate分割の適否・owner承認・06/07 Freezeが必要。Candidate Assemblyは全Package checkpoint→Gate-wide regression→Fixed Trial Candidate SHA→20系Completion ReportでREADY_FOR_TESTとし、30系独立999が最終判定する。
 
 ## 1. Coding Agentの責務と実装境界
 
@@ -48,13 +56,13 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 | WP | 30系詳細設計 / DD検証ID | Class.Methodの実装操作 | 07テスト |
 | --- | --- | --- | --- |
-| **G01-WP01** | 30_61 `2/3/4：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
-| **G01-WP02** | 30_62 `4/5.2：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
-| **G01-WP03** | 30_61 `4：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
-| **G01-WP04** | 30_62 `3：CAP01/04/05；30_63 `2/6.3：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
-| **G01-WP05** | 30_62 `2/6/7：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
+| **G01-P01** | 30_61 `2/3/4：REF01〜04、SPEC01〜04、GRAPH01/03/04；30_62 `5.1：MAN01/02 | `ContentRef.from_payload`、`LocalConfigDecoder.decode`、`GraphEvidence.from_canonical_json`、`LocalRunManifest.to_canonical_bytes`。Strict Study/Question/Design/Method Config/JCS | G01-07-01〜04 |
+| **G01-P02** | 30_62 `4/5.2：PUB01〜09、READ01〜07、PRIV03/04/06 | `ContentReferencePort.verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
+| **G01-P03** | 30_61 `4：GRAPH01/03/04；30_62 `5：MAN03/04 | `GraphEvidence.canonical_payload/make_revision`、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
+| **G01-P04** | 30_62 `3：CAP01/04/05；30_63 `2/6.3：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
+| **G01-P05** | 30_62 `2/6/7：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `E11LocalCausalUseCase.preflight/run`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
-**実装順：** WP01 → WP02+WP03 → WP04 → WP05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
+**実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
 
 
 ### 2.1 Class.Methodによる正規の実装契約（06↔詳細設計↔07）

@@ -1,8 +1,13 @@
 # Ariadne ENH-E11 / G01 — 07 テスト・独立検証指示書
 
-**状態：PREP-03 G01 検証契約 READY_FOR_CODING_AUTHORIZATION／TESTS_NOT_RUN**  
-**対象：G01（Graph/PAG/Local CLI基盤）**。本07は**G01の独立検証**であり、Workstream G07（DiD/Event/ITS）ではない。  
-**Authority:** [G01 06](06_Ariadne_ENH-E11_G01_実装指示書.md)／[PREP-02 baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Owner DEC07 定量受入](../../working_notes/20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)／[GRAPH-A判断](../../working_notes/20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)。
+**Contract status: DRAFT / NOT_FROZEN / TESTS_NOT_RUN**  
+**Gate ID: G01 (Enhance Workflow Gate)**  
+**対象：G01（Graph/PAG/Local CLI基盤）**。本07は**G01の独立検証**であり、Gate G07（DiD/Event/ITS）ではない。  
+**Authority:** [G01 06](06_Ariadne_ENH-E11_G01_implementation_instruction.md)／[PREP-02 baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Owner DEC07 定量受入](../../working_notes/20261116_sr04_dec07_quant_mc_compute_budget_owner_decision_proposal.md)／[GRAPH-A判断](../../working_notes/20261116_sr04_dec04_graph_oracle_graph_a_owner_decision.md)。
+
+## 0. Template verification authority
+
+07はGate Acceptance Criteria authority。Test Item 001はFixed Trial Candidateのfull SHA対checkoutのidentity audit、002〜013は本書G01-07-01〜12に対応。独立Test Agentはproduct/test code、migrations、dependencies、ACを変更せず、実効コマンド・exit・raw evidence・固定SHA・DD ID/ACを記録する。999のみが正式Gate PASS/FAIL/BLOCKEDを判定する。現状の受入境界は再審査中で、本書は未Freeze。
 
 ## 1. テスト着手・判定原則
 
@@ -102,3 +107,17 @@ defect_or_reason | evidence_relative_key
 ### G01内部Question/Design入力の検証追加（2026-11-17）
 
 [Question evidence profile](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)、[Design evidence profile](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)は、5つの公開E11 payload version以外に新しいwire versionを追加するものではない。G01-07-01/08で`question_id`・Study ContentRef identity・Design同一性、Design列名/順序/型とDataset、Method config背景知識の同値、unknown/duplicate field・混合尺度不適格、宣言された仮定を科学的真と誤表示しないことを確認する。
+
+
+## 6. Gate Acceptance Criteria / template Test Items
+
+| AC | MUST acceptance claim | Primary test layer |
+| --- | --- | --- |
+| AC-01 | Study/ContentRef/Version/Method Config strict integrity | UNIT_DOMAIN, COMPONENT |
+| AC-02 | Lossless PAG/GraphVersion and strict JCS hashes | UNIT_DOMAIN |
+| AC-03 | Linux same-FS no-replace atomic publish/readback/privacy | REAL_FS_INTEGRATION |
+| AC-04 | Effective FCI/CI/BK validity and independent MAG/PAG oracle | COMPONENT, SCIENTIFIC |
+| AC-05 | DISCOVER-only status/result semantics; v2 regression | INTEGRATION, REGRESSION |
+| AC-06 | Candidate identity, protected contracts, full evidence | META |
+
+Test Item 001 = Candidate identity audit; 002〜013 = G01-07-01〜12 in §3; 999 = independent Gate Decision. CLI-onlyでBrowser E2Eは対象外。固定候補/環境/独立Referenceを検証できないならBLOCKED、MUST違反を実証したらFAIL、全MUST実測成立の場合のみPASS。
