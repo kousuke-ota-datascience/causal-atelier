@@ -1,0 +1,119 @@
+{
+  "title": "PREP02 E11 RFC8785 JCS golden vectors (candidate; no implementation)",
+  "codec_version": "e11-json-jcs-rfc8785/1",
+  "positive": [
+    {
+      "id": "JCS-01",
+      "label": "recursive key order",
+      "input": {
+        "b": 2,
+        "a": 1
+      },
+      "expected_canonical_utf8_json": "{\"a\":1,\"b\":2}",
+      "expected_sha256": "43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777"
+    },
+    {
+      "id": "JCS-02",
+      "label": "nested keys and array order",
+      "input": {
+        "b": {
+          "x": null,
+          "a": false
+        },
+        "a": [
+          3,
+          1,
+          2
+        ]
+      },
+      "expected_canonical_utf8_json": "{\"a\":[3,1,2],\"b\":{\"a\":false,\"x\":null}}",
+      "expected_sha256": "fb4b9242c68ddb389a89f1c29290dacc45fe8856e495f8dfeb924208564fd66c"
+    },
+    {
+      "id": "JCS-03",
+      "label": "Unicode NFC",
+      "input": {
+        "name": "é"
+      },
+      "expected_canonical_utf8_json": "{\"name\":\"é\"}",
+      "expected_sha256": "2f16b8477146a1b2ba7d6bb7cf7c9979c191cc2838a107dbf5f0d920b4cb3ba1"
+    },
+    {
+      "id": "JCS-04",
+      "label": "Unicode NFD",
+      "input": {
+        "name": "é"
+      },
+      "expected_canonical_utf8_json": "{\"name\":\"é\"}",
+      "expected_sha256": "6a547588c4055916e090ed61467326046dd52810679d03bfb84d862a7123522e"
+    },
+    {
+      "id": "JCS-05",
+      "label": "numeric -0 / exponent",
+      "input": {
+        "whole": 100000000000000000000,
+        "small": 1e-7,
+        "n": 0
+      },
+      "expected_canonical_utf8_json": "{\"n\":0,\"small\":1e-7,\"whole\":100000000000000000000}",
+      "expected_sha256": "705f738a525b8cfabf278db1bdb8fa3a0097e3687820d26803274d05cf0d5a0e"
+    },
+    {
+      "id": "JCS-06",
+      "label": "escaped characters",
+      "input": {
+        "z": "\u0000",
+        "a": "x\ny"
+      },
+      "expected_canonical_utf8_json": "{\"a\":\"x\\ny\",\"z\":\"\\u0000\"}",
+      "expected_sha256": "6830f6845782b6844062beda598a7f64a53b32263ad5213e26726c5519415ce3"
+    },
+    {
+      "id": "JCS-07",
+      "label": "UTF16 key order",
+      "input": {
+        "": "private",
+        "😀": "smile"
+      },
+      "expected_canonical_utf8_json": "{\"😀\":\"smile\",\"\":\"private\"}",
+      "expected_sha256": "52b750f422a4624687ca1a14d19c97b40bc7678a129cce462934c47b3227966a"
+    }
+  ],
+  "negative": [
+    {
+      "id": "JCS-N01",
+      "input_description": "NaN Infinity -Infinity",
+      "expect": "REJECT"
+    },
+    {
+      "id": "JCS-N02",
+      "input_description": "duplicate object or YAML keys before mapping construction",
+      "expect": "REJECT"
+    },
+    {
+      "id": "JCS-N03",
+      "input_description": "unpaired surrogate U+D800",
+      "expect": "REJECT"
+    },
+    {
+      "id": "JCS-N04",
+      "input_description": "decimal integer literal exceeding exact IEEE754 safe range in an integer-typed field",
+      "expect": "REJECT_OR_TYPE_AS_STRING"
+    },
+    {
+      "id": "JCS-N05",
+      "input_description": "unknown Python object, default=str coercion",
+      "expect": "REJECT"
+    },
+    {
+      "id": "JCS-N06",
+      "input_description": "Unicode NFC/NFD normalization during encode",
+      "expect": "REJECT"
+    },
+    {
+      "id": "JCS-N07",
+      "input_description": "unknown or legacy schema_version",
+      "expect": "REJECT_BEFORE_HASH"
+    }
+  ]
+}
