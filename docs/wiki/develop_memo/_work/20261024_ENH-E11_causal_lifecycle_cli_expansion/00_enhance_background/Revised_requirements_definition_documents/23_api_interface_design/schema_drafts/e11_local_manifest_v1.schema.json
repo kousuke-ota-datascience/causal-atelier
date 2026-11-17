@@ -1,0 +1,337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:draft:manifest:1",
+  "title": "E11 manifest v1 schema — PREP-02 review draft only",
+  "description": "Manifest is a separate canonical object with no self hash; marker externally references its exact bytes. Artifact uniqueness, cross-ref and privacy checks require semantic validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "run_id",
+    "operation",
+    "request_hash",
+    "schema_dispatch",
+    "lineage",
+    "estimand",
+    "execution",
+    "runtime",
+    "stochastic",
+    "artifacts",
+    "review"
+  ],
+  "properties": {
+    "manifest_version": {
+      "const": "e11-local-manifest/1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "operation": {
+      "enum": [
+        "DISCOVER",
+        "IDENTIFY",
+        "ESTIMATE",
+        "REFUTE",
+        "SENSITIVITY",
+        "DIAGNOSE"
+      ]
+    },
+    "request_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "schema_dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "study",
+        "result",
+        "status"
+      ],
+      "properties": {
+        "study": {
+          "const": "e11-local-study/1"
+        },
+        "graph": {
+          "oneOf": [
+            {
+              "const": "e11-local-graph/1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result": {
+          "const": "e11-local-effect-result/1"
+        },
+        "status": {
+          "const": "e11-local-status/1"
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question",
+        "design",
+        "dataset"
+      ],
+      "properties": {
+        "question": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "design": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "dataset": {
+          "$ref": "#/$defs/contentRef"
+        },
+        "graph": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identification": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "estimand": {
+      "type": "object"
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "technical_status",
+        "analysis_mode",
+        "method",
+        "backend",
+        "inference_config"
+      ],
+      "properties": {
+        "technical_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "analysis_mode": {
+          "enum": [
+            "EXPLORATORY",
+            "CONFIRMATORY"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inference_config": {
+          "type": "object"
+        },
+        "scientific_axes": {
+          "type": "object"
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repo_commit",
+        "dirty",
+        "python_version",
+        "platform",
+        "uv_lock_sha256",
+        "distributions",
+        "api_probes"
+      ],
+      "properties": {
+        "repo_commit": {
+          "type": "string"
+        },
+        "dirty": {
+          "type": "boolean"
+        },
+        "python_version": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "uv_lock_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "distributions": {
+          "type": "object"
+        },
+        "api_probes": {
+          "type": "object"
+        },
+        "sbom_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "stochastic": {
+      "type": "object"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "science_evidence_ref",
+        "legal_delivery_status"
+      ],
+      "properties": {
+        "science_evidence_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "legal_delivery_status": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "sha256",
+        "size_bytes",
+        "media_type",
+        "privacy_class",
+        "visibility"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "privacy_class": {
+          "enum": [
+            "AGGREGATE",
+            "RESTRICTED_ROW_LEVEL"
+          ]
+        },
+        "visibility": {
+          "enum": [
+            "PRIVATE",
+            "RESTRICTED"
+          ]
+        }
+      }
+    }
+  }
+}

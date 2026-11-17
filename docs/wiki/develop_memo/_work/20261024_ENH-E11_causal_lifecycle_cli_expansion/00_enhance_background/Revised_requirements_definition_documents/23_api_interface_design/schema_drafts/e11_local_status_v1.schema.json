@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:draft:status:1",
+  "title": "E11 status v1 schema — PREP-02 review draft only",
+  "description": "Machine-readable control/status envelope; absence of PASS evidence cannot be inferred as PASS. The technical/commit relationship requires semantic verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "technical_status",
+    "identification_status",
+    "point_availability",
+    "inference_availability",
+    "science_acceptance",
+    "reason_codes",
+    "manifest_relative_path"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-local-status/1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "technical_status": {
+      "enum": [
+        "COMPLETED",
+        "VALIDATION_FAILED",
+        "CAPABILITY_UNAVAILABLE",
+        "EXECUTION_FAILED",
+        "PUBLICATION_FAILED"
+      ]
+    },
+    "identification_status": {
+      "enum": [
+        "IDENTIFIED",
+        "NOT_IDENTIFIED",
+        "REQUIRES_REVIEW",
+        "PARTIALLY_IDENTIFIED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "point_availability": {
+      "enum": [
+        "AVAILABLE",
+        "NOT_AVAILABLE",
+        "NOT_REQUESTED"
+      ]
+    },
+    "inference_availability": {
+      "enum": [
+        "AVAILABLE",
+        "UNSUPPORTED",
+        "UNAVAILABLE",
+        "FAILED",
+        "NOT_REQUESTED"
+      ]
+    },
+    "science_acceptance": {
+      "enum": [
+        "NOT_EVALUATED",
+        "PASS",
+        "FAIL",
+        "INCONCLUSIVE",
+        "BLOCKED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "manifest_relative_path": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^runs/[A-Za-z0-9_-]{1,128}/manifest\\.json$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$defs": {}
+}

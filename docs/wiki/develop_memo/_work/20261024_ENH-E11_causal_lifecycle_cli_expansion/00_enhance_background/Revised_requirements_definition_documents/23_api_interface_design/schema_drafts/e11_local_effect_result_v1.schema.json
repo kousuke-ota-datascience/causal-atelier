@@ -1,0 +1,679 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:draft:effect-result:1",
+  "title": "E11 effect-result v1 schema — PREP-02 review draft only",
+  "description": "F07 typed effect schema candidate. EMPTY AR set currently restricted by embedded F07 draft; generic mathematical EMPTY is an unresolved scientific decision. Semantic method eligibility, reference hashes, science evidence require independent verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "result_id",
+    "run_id",
+    "estimand",
+    "design_ref",
+    "question_ref",
+    "graph_ref",
+    "identification",
+    "point",
+    "uncertainty",
+    "science_acceptance",
+    "diagnostics",
+    "method",
+    "privacy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-local-effect-result/1"
+    },
+    "result_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "estimand": {
+      "$ref": "#/$defs/estimand"
+    },
+    "design_ref": {
+      "$ref": "#/$defs/contentRef"
+    },
+    "question_ref": {
+      "$ref": "#/$defs/contentRef"
+    },
+    "graph_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/contentRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identification": {
+      "$ref": "#/$defs/identification"
+    },
+    "point": {
+      "$ref": "#/$defs/point"
+    },
+    "uncertainty": {
+      "$ref": "#/$defs/inferenceEvidence"
+    },
+    "science_acceptance": {
+      "$ref": "#/$defs/science"
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "method": {
+      "$ref": "#/$defs/method"
+    },
+    "privacy": {
+      "$ref": "#/$defs/privacy"
+    }
+  },
+  "$defs": {
+    "finiteEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "FINITE"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "negativeInfinity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "NEG_INFINITY"
+        }
+      }
+    },
+    "positiveInfinity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "POS_INFINITY"
+        }
+      }
+    },
+    "lowerEndpoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/finiteEndpoint"
+        },
+        {
+          "$ref": "#/$defs/negativeInfinity"
+        }
+      ]
+    },
+    "upperEndpoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/finiteEndpoint"
+        },
+        {
+          "$ref": "#/$defs/positiveInfinity"
+        }
+      ]
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower",
+        "upper",
+        "lower_closed",
+        "upper_closed"
+      ],
+      "properties": {
+        "lower": {
+          "$ref": "#/$defs/lowerEndpoint"
+        },
+        "upper": {
+          "$ref": "#/$defs/upperEndpoint"
+        },
+        "lower_closed": {
+          "type": "boolean"
+        },
+        "upper_closed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "finiteInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower",
+        "upper",
+        "confidence_level"
+      ],
+      "properties": {
+        "lower": {
+          "type": "number"
+        },
+        "upper": {
+          "type": "number"
+        },
+        "confidence_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "arConfidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confidence_level",
+        "topology",
+        "components",
+        "inversion_evidence"
+      ],
+      "properties": {
+        "confidence_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "topology": {
+          "enum": [
+            "ALL_REAL",
+            "DISCONNECTED",
+            "UNBOUNDED",
+            "BOUNDED"
+          ]
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/interval"
+          }
+        },
+        "inversion_evidence": {
+          "$ref": "#/$defs/contentRef"
+        }
+      }
+    },
+    "inferenceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability",
+        "kind",
+        "interval",
+        "confidence_set",
+        "reason"
+      ],
+      "properties": {
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "UNSUPPORTED",
+            "UNAVAILABLE",
+            "FAILED",
+            "NOT_REQUESTED"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "FINITE_INTERVAL",
+            "AR_CONFIDENCE_SET",
+            null
+          ]
+        },
+        "interval": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/finiteInterval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence_set": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/arConfidenceSet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/reason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "AVAILABLE"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "null"
+              }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "kind": {
+                    "const": "FINITE_INTERVAL"
+                  },
+                  "interval": {
+                    "$ref": "#/$defs/finiteInterval"
+                  },
+                  "confidence_set": {
+                    "type": "null"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "AR_CONFIDENCE_SET"
+                  },
+                  "interval": {
+                    "type": "null"
+                  },
+                  "confidence_set": {
+                    "$ref": "#/$defs/arConfidenceSet"
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "properties": {
+              "kind": {
+                "type": "null"
+              },
+              "interval": {
+                "type": "null"
+              },
+              "confidence_set": {
+                "type": "null"
+              },
+              "reason": {
+                "$ref": "#/$defs/reason"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability",
+        "value",
+        "unit",
+        "reason"
+      ],
+      "properties": {
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "NOT_AVAILABLE",
+            "NOT_REQUESTED"
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/reason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "AVAILABLE"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "reason": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {
+                "type": "null"
+              },
+              "reason": {
+                "$ref": "#/$defs/reason"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "science": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "evidence_ref"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "NOT_EVALUATED",
+            "PASS",
+            "FAIL",
+            "INCONCLUSIVE",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "PASS"
+              }
+            },
+            "required": [
+              "state"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_ref": {
+                "$ref": "#/$defs/contentRef"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "estimand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "population",
+        "contrast"
+      ],
+      "properties": {
+        "family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "population": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contrast": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "identification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "proof_ref",
+        "reasons"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "IDENTIFIED",
+            "NOT_IDENTIFIED",
+            "REQUIRES_REVIEW",
+            "PARTIALLY_IDENTIFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "proof_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reason"
+          }
+        }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "backend",
+        "config",
+        "inference_method"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^P[123]-M[0-9]{2}$"
+        },
+        "backend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "config": {
+          "type": "object"
+        },
+        "inference_method": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "backend_version": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "row_level_export"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "AGGREGATE",
+            "RESTRICTED_ROW_LEVEL"
+          ]
+        },
+        "row_level_export": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:draft:graph:1",
+  "title": "E11 graph v1 schema — PREP-02 review draft only",
+  "description": "Endpoint and temporal shape only; graph kind semantics, node reference integrity, DAG/PAG/CPDAG edge constraints and hash binding require semantic validators.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "version_id",
+    "parent_version_id",
+    "nodes",
+    "edges",
+    "temporal",
+    "provenance",
+    "content_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-local-graph/1"
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parent_version_id": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/graphEdge"
+      }
+    },
+    "temporal": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "time_index_policy",
+            "lag_direction"
+          ],
+          "properties": {
+            "time_index_policy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "lag_direction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "lag_unit": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "graphEdge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "target",
+        "source_mark",
+        "target_mark",
+        "lag"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_mark": {
+          "enum": [
+            "TAIL",
+            "ARROW",
+            "CIRCLE"
+          ]
+        },
+        "target_mark": {
+          "enum": [
+            "TAIL",
+            "ARROW",
+            "CIRCLE"
+          ]
+        },
+        "lag": {
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

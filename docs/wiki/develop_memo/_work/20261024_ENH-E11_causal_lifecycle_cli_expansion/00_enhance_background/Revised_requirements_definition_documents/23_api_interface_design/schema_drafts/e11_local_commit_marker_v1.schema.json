@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:draft:commit-marker:1",
+  "title": "E11 commit-marker v1 schema — PREP-02 review draft only",
+  "description": "Marker is outside Manifest artifact list, binds bytes of manifest.json with no cyclic self-hash. Reader checks actual bytes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "marker_version",
+    "run_id",
+    "manifest_sha256",
+    "request_hash"
+  ],
+  "properties": {
+    "marker_version": {
+      "const": "e11-commit/1"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "request_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {}
+}
