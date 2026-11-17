@@ -174,6 +174,17 @@ assigned Pxx の acceptance criteria を満たす状態に到達できない場�
 
 ---
 
+### 6.1. ENH-E11 Test Architecture — Assigned Packageの配置・検証ルール
+
+**Authority separation:** assigned Pxxは検証すべきWHAT（Class.Method、DD検証ID、正例/負例、DoD）、本40 entry promptはWHERE/HOWを規定する。Pxx/07中のhistorical test filenameや過去実行commandをphysical authorityとして扱わない。テストは必ず二軸で分類する: lifecycle = enhancement / regression / characterization / benchmark / support / legacy、verification layer = unit / contract / integration / frontend / browser_e2e。`regression-like assertion != tests/regression lifecycle authority`。
+
+1. **新規・実質再構築するassigned Gate/Pxxのテスト:** 初期配置を `tests/enhancement/enh_e11/<gate>/<layer>/` とする。`<gate>` は実行時GATE_IDをlowercaseにした文字列（G01→g01）。CLI-only G01では `unit`, `contract`, `integration` を利用し、`component/` や `scientific/` をGate-localのlayerとして増設しない。Frontend/Browser E2EはG01で不要。
+2. **適切なLayer:** 純粋なStudy/ContentRef/JCS/Graph Value→unit+contract。Port/Reader/Manifest/独立固定PAG oracle→contract。Linuxの実filesystem syscall/rename/fsync、実Backend FCI/CI/BK、CLIのE2E・privacy→integration。実測科学的T2/T3は別科学Evidenceであり、Backend自身の結果をPAG正解としてはならない。reusable characterizationまたはbenchmarkのcanonical pathは、該当lifecycleの明示採用時のみ作る。
+3. **既存testとの共存:** Product v2を保護するcurrent testsは `tests/product/` 等の既存配置で発見・実行し、Pxxだけを理由に移動・archive・全面書換しない。G01の新規テストに回帰的なassertionがあっても初期authorityはenhancement。`tests/regression/` へのPROMOTEは、Enhancement provenanceを超えるcurrent invariantをOwner/適格なAuthorityが意味上採用した場合のみ。E11終了時の候補Dispositionは `PROMOTE/REWRITE/MERGE/SPLIT/RETIRE/ARCHIVE/KEEP_ENHANCEMENT`。全repo再編はE12以降。
+4. **探索・実行:** assigned Pxxの全DD ID/受入ケースを対象に現行checkoutからテストを作成・探索し、file existence、pytest collection、conftest/fixtures、marker、現行runner suitabilityを確認してからcommandを確定。歴史的なfilename、固定階層 `Path(__file__).parents[N]`、出所不明runnerを信用しない。G01の実FS/backend証明をmock-onlyで代用しない。
+5. **scope内だけ変更:** テスト移動が本Packageの明示scope内にある場合のみ、path/import/fixtures/conftest/pytest/CI/Dockerfile COPY/.dockerignore/build context/compose/evidence referencesを同一batchでatomic修正。unrelated existing testsのmigrationやtest deletion、skip/xfail、期待値緩和は不可。
+6. **Package evidence:** `DD-ID / Gate Test ID / test lifecycle / layer / actual file / collected command / observed result / fixture SHA / implementation SHA / effective runtime / PASS-FAIL-BLOCKED理由`を記録。unavailable FS/Backend/required evidenceやcollection不備をPASSにしない。他Packageやtest-side scope外の修正が必要なら `BLOCKED_*` を返し、Independent Test Agentに修理を代行させない。Package完了をGate/科学PASSと混同しない。
+
 ## 7. Package checkpoint commit
 
 Package implementation と focused verification が完了したら、変更内容を確認する。
