@@ -165,8 +165,14 @@ Package completion時:
 4. `*_in_progress.md`へexecution statusを記録する。
 5. report-only commitが別ならcheckpoint SHAと区別する。
 
-## 10. Package completion criteria
-競合・fsync・crash・symlink・ACL負例でoverwrite0、偽COMMITTED0、未対応FSはfail-closed。 集中検証の証跡・実装checkpoint SHA・Package Reportを揃える。未検証はBLOCKEDで止める。
+## 10. Package completion criteria — Definition of Done
+
+- [ ] `TrustedLocalRoot` factory and `LocalContentReferenceAdapter.verify` preserve effective root/principal, same-FD actual bytes and error classification; REF02/03 physical race/TOCTOU cases exercised.
+- [ ] `LocalPublicationPort.begin/seal/publish` wraps exactly one run-scoped `LocalArtifactPublisher`; method signatures, field/state transitions, ownership, abort-before-rename restriction implemented.
+- [ ] Real local Linux `renameat2(RENAME_NOREPLACE)`, staged and parent fsync, marker/Manifest inventory/hash rules, concurrency and post-rename indeterminate behavior verified on supported private FS; overwrite and false COMMITTED counts zero.
+- [ ] Stateless `LocalManifestReader.read_run` and public `verify` reject corrupt marker/manifest/artifacts, unsafe root and legacy v2; only independent complete readback yields `VerifiedLocalRun`.
+- [ ] Tests in `component/test_g01_bundle_reader.py` and `integration/test_g01_atomic_publication.py` executed for P02 DD IDs; unsupported/unavailable required FS evidence -> PACKAGE_BLOCKED rather than mock-only PASS.
+- [ ] No Product `ArtifactStorePort`/old CLI behavioral changes. Full SHA, fixture/env/real syscall results, report, and checkpoint recorded. No FCI/PAG scientific PASS claimed.
 
 ## 11. External reference policy
 

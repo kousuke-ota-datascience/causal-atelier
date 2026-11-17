@@ -189,8 +189,14 @@ Package completion時:
 4. `*_in_progress.md`へexecution statusを記録する。
 5. report-only commitが別ならcheckpoint SHAと区別する。
 
-## 10. Package completion criteria
-strict CLI envelope、no row/secret leakage、old Product v2 regression、no false COMMITTED/Science PASS。 集中検証の証跡・実装checkpoint SHA・Package Reportを揃える。未検証はBLOCKEDで止める。
+## 10. Package completion criteria — Definition of Done
+
+- [ ] `LocalRunContext` trusted root/principal/row flag/independent optional Policy Anchor created by CLI composition, not Study YAML; `LocalCausalUseCase` 12 Port fields and exact `preflight/run` signatures implemented.
+- [ ] Preflight verifies actual Question/Design/Dataset bytes and Method/CI eligibility with zero fit/staging/publish; Run uses exact `CapabilityPort -> DiscoveryPort -> FCI -> LocalPublicationPort -> Reader` flow, no uncontrolled final Path write.
+- [ ] `LocalPrivacyPolicyPort.authorize` and stateless CLI Concrete deny either row request or CLI row flag, unsafe owner/mount/ACL/Principal, with no aggregate fallback and zero row/secret leak; null Policy Anchor permitted for aggregate-only.
+- [ ] Graph-positive vs valid science-negative Operation Bundle rules, Status axis separation, JCS/lineage/dual hash, no dummy Effect and no false COMMITTED implemented.
+- [ ] New `ariadne-causal-local` command maps exits 0/2/3/4/5 by phase and emits sanitized single JSON response; old Product v2 CLI/contracts unchanged.
+- [ ] P01–P04 dependency checkpoints confirmed; `integration/test_g01_cli.py` and `tests/product/test_cli_contract.py` focused/regression tests and full SHA/fixture/env/DD-ID evidence recorded. P05 PACKAGE_COMPLETE alone is not G01_999 PASS.
 
 ## 11. External reference policy
 

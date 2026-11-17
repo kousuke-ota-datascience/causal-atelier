@@ -128,7 +128,7 @@ P01 outputs `ContentRef`, `ValidatedStudy`, strict JCS/Manifest DTO and pure Pro
 
 | Test / DD | Target and positive/negative evidence | PASS requirement |
 | --- | --- | --- |
-| `unit/test_g01_spec_schema_codec.py` / REF01–04 | strict ContentRef five fields, path/null/extra/duplicate + same identity mismatched digest | lexical validity only, no unverified FD claim |
+| `unit/test_g01_spec_schema_codec.py` / REF01/04 lexical; REF02/03 real FD cases reserved for P02 | strict ContentRef five fields, path/null/extra/duplicate + same identity mismatched digest | lexical validity only, no unverified FD claim or physical REF02/03 PASS |
 | Same / SPEC01–04 | Study, Method profile, YAML/JSON duplicates, forbidden v2, non-Effect estimand, malformed Config | deterministic typed reject, no Backend import |
 | Same / MAN01–03 | Manifest schemas, unique Inventory, request/Graph/Manifest hash projections, JCS golden vectors | actual bytes match independent reference; absent oracle = BLOCKED |
 | Same / MAN04–06 | DISCOVER graph-success vs negative, Science NOT_EVALUATED, no dummy Effect, legacy isolation | no false completed result or v2 upgrade |
@@ -152,8 +152,14 @@ Package completion時:
 4. `*_in_progress.md`へexecution statusを記録する。
 5. report-only commitが別ならcheckpoint SHAと区別する。
 
-## 10. Package completion criteria
-Valid/invalid schemaとJCS independent vectorsについてlossless・strictを実証し、旧v2 E11誤認ゼロ。 集中検証の証跡・実装checkpoint SHA・Package Reportを揃える。未検証はBLOCKEDで止める。
+## 10. Package completion criteria — Definition of Done
+
+- [ ] `ContentRef` 5 fields and `from_payload`, `LocalStudySpec.validate_local_invariants`, `LocalConfigDecoder.decode` implement strict versions, error classification and pure handoffs.
+- [ ] Common `ValidatedStudy`/`EstimandRef` implements GRAPH_STRUCTURE without changing Product v2 ATE/ATT ABI or silently validating unread Question/Design files.
+- [ ] Strict JCS bytes/digest and immutable `LocalRunManifest` factories/invariant/serialization complete; independently verified golden vectors or explicit evidence-backed BLOCKED.
+- [ ] G01 Operation success vs scientific-negative typed bundle shapes, MAN01–06 pure constraints, no Effect/Manifest self-hash are covered by focused tests.
+- [ ] **P01 covers REF01/04 lexical components; REF02/03 actual symlink/race/FD security are P02-owned and cannot be marked passed by P01.** Full cross-asset Question/Design/Dataset byte validation is P05-owned.
+- [ ] Focused `unit/test_g01_spec_schema_codec.py` result, fixture/version/commit full SHA, DD-ID case-by-case evidence, package checkpoint report and `*_in_progress.md` recorded. Remaining P02/P03/P04/P05/G01-999 checks are not promoted to P01 PASS.
 
 ## 11. External reference policy
 

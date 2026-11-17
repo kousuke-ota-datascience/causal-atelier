@@ -134,8 +134,13 @@ Package completion時:
 4. `*_in_progress.md`へexecution statusを記録する。
 5. report-only commitが別ならcheckpoint SHAと区別する。
 
-## 10. Package completion criteria
-全部の定義済みPAG endpoint round-tripが100%で、PAG→DAG silent conversionも旧Graph mutateも0。 集中検証の証跡・実装checkpoint SHA・Package Reportを揃える。未検証はBLOCKEDで止める。
+## 10. Package completion criteria — Definition of Done
+
+- [ ] `GraphEvidence` field/constructor/Factory/`canonical_payload` matches 30_61 and strict E11 Schema with no Product Version Writer behavior.
+- [ ] All G01 PAG endpoint pair orientations round-trip losslessly, malformed/self-loop/duplicate/reverse/unknown/lag negatives rejected; shared Product Graph validator mapping uses `endpoint_source/target` vs E11 `source_mark/target_mark` correctly.
+- [ ] Standalone `version_id=null,parent_version_id=null` and optional real Product parent lineage retained; invented Version and parent-without-version are rejected.
+- [ ] Graph semantic JCS self-excluded digest and external exact-file-byte ContentRef digest distinguished; success vs scientific-negative Bundle has `result=null` and mandatory diagnostics on negative.
+- [ ] `unit/test_g01_graph_roundtrip.py` focused Graph DD ID checks executed and checkpoint/fixture/source full SHA recorded. Graph serialization PASS is not independent MAG/PAG scientific accuracy PASS.
 
 ## 11. External reference policy
 

@@ -147,7 +147,7 @@ uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/component/test_g
 uv run --no-sync python -m pytest tests/enhancement/enh_e11/g01/scientific/test_g01_fci_graph_oracle.py -q
 ~~~
 
-If independent Oracle/T2/T3 cannot yet execute, record explicit `BLOCKED` at relevant DD/test cells; pure component checks may still complete **without falsely claiming science PASS**. All evidence includes effective distribution/API, source/fixture SHA, observed graph/CI values, seed and whether reference is independent. Scientific independent Gate verification remains 07/999, not self-certified in P04.
+If independent Oracle/T2/T3 cannot yet execute, record `BLOCKED` at the applicable Gate07 scientific acceptance cells; **T2/T3 do not block the P04 coding checkpoint** when the scientific test harness and independent reference construction contract are implemented. Pure component checks may complete without falsely claiming Science PASS. All evidence includes effective distribution/API, source/fixture SHA, observed graph/CI values, seed and whether reference is independent. Scientific independent Gate verification remains 07/999, not self-certified in P04.
 
 ## 8. Protected contract / Transition Debt constraints
 Product v2の既存CLI/Manifest/Result contractを回帰保護する。未完成のGraph/Science/個票認可を完成と見なさない。PREPARATION-03の技術判定はG01単一Gate維持（Owner承認待ち）。P02のOS/FS Publication、P04の独立FCI/PAG Science、P05のCLI統合・Privacy/旧v2回帰は別々の必須受入軸であり、全軸が同じFixed Candidate SHAで実証されるまでG01_999 PASS不可。OwnerのGate境界承認・06/07 Freeze/Coding AuthorizationまではPxx着手禁止。
@@ -162,8 +162,14 @@ Package completion時:
 4. `*_in_progress.md`へexecution statusを記録する。
 5. report-only commitが別ならcheckpoint SHAと区別する。
 
-## 10. Package completion criteria
-Backend API/CI/BK invalid inputが拒否され、独立Oracle未完ならScience BLOCKEDを維持する。 集中検証の証跡・実装checkpoint SHA・Package Reportを揃える。未検証はBLOCKEDで止める。
+## 10. Package completion criteria — Definition of Done
+
+- [ ] `MethodCapabilityRegistry` Field/Constructor/`describe/resolve/load_adapter` and `BackendCapabilityRecord`/`MethodCapabilityPort.resolve` honor one Method authority, effective Backend/API evidence, lazy optional import and no fallback.
+- [ ] `DiscoveryPort.discover`, `ValidatedDiscoveryRequest` and `FciDiscoveryAdapter.__init__/preflight/execute` have typed selected-Method dispatch, G01 CI/BK/Data admissibility, 1:1 Backend node/endpoint translation and staging-only output.
+- [ ] Component-level actual `causal-learn` API/eligibility positive/negative tests run where the approved Backend is available. Unavailable runtime/API yields a typed BLOCKED/ENGINE result, not fabricated Backend availability.
+- [ ] Independent GRAPH-A fixture/test harness specifies latent projection/MAG/PAG compelled/uncertain endpoints and BK/2-node negative cases, independently of FCI output; `scientific/test_g01_fci_graph_oracle.py` implemented, with current evidence honestly labeled.
+- [ ] **T2 Pilot/T3 quantitative acceptance belongs to independent G01-07/999 on a fixed Trial Candidate SHA, not a precondition for P04 coding checkpoint.** If no scientific Oracle evidence exists, no Science PASS; record precise remaining BLOCKED cells.
+- [ ] P04 focused component code/tests and checkpoint report (full source/fixture/env SHA) are complete; Product ScientificCorePort ABI unchanged, no hidden PC/other-Method fallback.
 
 ## 11. External reference policy
 
