@@ -39,13 +39,174 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 **Responsibility:** Method Adapterを担当するClassは `EconmlDrivAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
-## 4. Execution Protocol
+### 3. Embedded class-level implementation contracts
 
-1. Gate/Trial/Package/Source SHAと依存Checkpoint(P01)を確認し、06/07/Pxx Freeze、Coding AuthorizationとBaselineを必須とする。
-2. Strict Study/Question/Design/Graph/Dataset/Method/Estimand/Inference/Backend capabilityを検証。Backend/Target/Optional dependencyへsilent fallbackしない。
-3. **実装本体:** Z/A/X/WのIV relevancy/weak-IVと構造係数Targetを確認し、LATE/ATEへcastしない。
-4. 出力は適格なTyped Value/Graph/Effect/Diagnostic/Manifestへ正規化し、StagingSinkを通してPublish。実効input hash・Method config・seed・upstream proof・science/technical reasonを保存する。
-5. 正例、invalid config、Method-specific negative、missing dependency、unsupported CI、危険なPrivacy/Filesystem条件を区別。旧v2公開ABIとProduct Regressionを保持。
+以下は本Pxxのnormative仕様。外部DDはprovenanceのみで、Agentに不足手順の補完を委譲しない。Designed Moduleの現物存在は未検証なので開始時にABI/Reuseを検査し、齟齬はBLOCKED。
+
+### 3.1. `EconmlDrivAdapter` — Constructor, fields, methods, invariants
+
+#### 1.14.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlDrivAdapter`。 EstimationのMethod実行Adapter。担当Method：`P2-M08`。**再利用:** 共通IV/Estimandの識別検証を再利用しDRIV固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.14.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
+
+#### 1.14.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.14.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.14.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P2-M08` | IV heterogeneous structural slope | Z/A/X/W、IV relevance/exclusion、inference |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Packageの科学的Target/推論/負例の節に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.14.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.14.7. 検証
+
+`DD-E11-METH-P208`（`P2-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageに記載したMethod別検証IDを優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 3.2. `IdentificationOutcome` — Constructor, fields, methods, invariants
+
+#### 2.1.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.identification.contracts.IdentificationOutcome`。識別状態・対象Estimand・Proof・lineageを保持するValue。DoWhy内部ラベルをDomainの推定対象と混同しない。
+
+#### 2.1.2. フィールド
+
+| Field | Type・制約 |
+|---|---|
+| `identification_id` | immutable identity |
+| `estimand` | `EstimandRef`。B0/B1/DRIV等の区別 |
+| `status` | `IdentificationStatus`。nonidentified/review/partialを型付け |
+| `strategy, proof` | Strategy、`IdentificationProof|None` |
+| `upstream, reasons` | `UpstreamHashSet, tuple[ScientificReason,...]` |
+
+#### 2.1.3. Constructor / Factory
+
+`from_evidence(evidence:ValidatedIdentificationEvidence)->IdentificationOutcome`。BackendのStatus、assumption、GraphVersion、Estimand、Upstreamを意味検証して正規化。未提供Proofを生成しない。
+
+#### 2.1.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `from_evidence(evidence:ValidatedIdentificationEvidence)` | `IdentificationOutcome` | pure status/proof normalization | proof/estimand/upstream不整合 |
+
+#### 2.1.5. 処理仕様
+
+`NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED`を点推定許可へ自動昇格しない。緩和可能な列挙WARNだけに理由付きoverrideを許可。
+
+#### 2.1.6. I/O・連携・失敗処理
+
+外部I/Oなし。実際のBackend識別計算は`IdentificationPort`、Proof/File readbackは別Port。Retry/RollbackはN/A。
+
+#### 2.1.7. 検証
+
+`DD-E11-ID01` B0/B1/DRIV mislabel、`ID02` lineage差、`ID03` nonidentified override拒否、`ID04` GraphVersion再識別。FR-187/194/199、AR-029/039/043。
+
+### 3.3. `EstimatorRequest` — Constructor, fields, methods, invariants
+
+#### 2.2.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.inference.contracts.EstimatorRequest`。Identification proofが適格な場合だけEstimatorへ渡すRequest Value。
+
+#### 2.2.2. フィールド
+
+| Field | Type・制約 |
+|---|---|
+| `method_id, estimand_family` | Method×target一致 |
+| `identification_ref` | 上流証拠参照 |
+| `question/design/graph/dataset_hashes` | 完全な上流digest集合 |
+| `method_config, inference_request` | Method/Inference適格なtyped config |
+
+#### 2.2.3. Constructor / Factory
+
+`validate_against(identification,design,policy)->ValidatedEstimatorRequest`は入力と上流証拠を照合する型付きvalidator。Validation前の生RequestをAdapterへ送らない。
+
+#### 2.2.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `validate_against(self, identification:IdentificationOutcome, design:CausalDesign, policy:EstimandEligibilityPolicy)` | `ValidatedEstimatorRequest` | pure eligibility check | scientific negative / schema validation区別 |
+
+#### 2.2.5. 処理仕様
+
+Method-specific assumptions、Mediator/Instrument/support、Data Eligibility、Graph/Design/Question/Dataset hash全一致、CI要求を検証。不適格は`ScientificNegativeOutcome`としてBackend未呼出。Path/schema mismatchはtechnical validationとする。
+
+#### 2.2.6. I/O・連携・失敗処理
+
+Value自身はI/Oなし。ScientificValidationServiceの既存適格性規則を共通pure policyとして再利用する。実Estimator I/O/Artifactは`EstimatorPort.estimate(...,sink)`を通す。
+
+#### 2.2.7. 検証
+
+`DD-E11-ID01〜04`およびMethod固有Negative Tests。
+
+### 3.4. `InferenceEvidence` — Constructor, fields, methods, invariants
+
+#### 3.2.1. 識別情報・責務
+
+**Class / module:** `ariadne.causal.inference.contracts.InferenceEvidence`。Inferenceの可用性と実際のFinite CI／AR集合を型付きで保持する。
+
+#### 3.2.2. フィールド
+
+| Field | Type | 制約 |
+|---|---|---|
+| `availability` | `InferenceAvailability` | AVAILABLE/UNAVAILABLE/FAILED/NOT_REQUESTED等 |
+| `kind` | Method-specific enum | 実効推論方式 |
+| `interval, confidence_set` | `FiniteInterval|None, ARConfidenceSet|None` | AVAILABLEなら正当な片方ちょうど1つ |
+| `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
+| `method_config` | typed config | Backend/Method/Estimandに適合 |
+
+#### 3.2.3. Constructor / Factory
+
+Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整合を検査。実行済みCIをデフォルト値で捏造しない。
+
+#### 3.2.4. メソッド
+
+| Signature | Return | 処理と副作用 | 例外 |
+|---|---|---|---|
+| `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
+
+#### 3.2.5. 処理仕様
+
+EXPLORATORY point-onlyとCONFIRMATORY inference要件を分離する。FiniteIntervalとARConfidenceSetを丸め合わせず、SCM point-onlyを確証CIと報告しない。
+
+#### 3.2.6. I/O・連携・失敗処理
+
+Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲。
+
+#### 3.2.7. 検証
+
+`DD-E11-AR04/AR05`、`DD-E11-EFF01/02`、Method-specific CI availability、independent coverage。
+
+## 4. Required Method implementation / Class delegation (G04/P03)
+
+1. **Preconditions:** 06/07/Pxx Freeze、G02/G03の要求されるlatest canonical 999、Owner Coding Authorization、fixed Source/lock、Pxx依存checkpointを検証。Method/Estimand/Inference/Backend/Graph/Design/Questionが不一致ならtyped reject。
+2. `P2-M08` DRIV-Aはinstrument Z、treatment A、effect modifier X、confounder W、heterogeneous structural slope θ_IV(x)をTargetにする。Non-IV CATE(x)やB0 complier LATE/B1 linear IV slopeへ型変換しない。
+3. IV relevance/exclusion/independence/overlapとInstrument/Treatment support・weak IVをpreflight。識別仮定の実証不能部分はEvidenceとして宣言し、未満たしをsilent fallbackにしない。
+4. EconML DRIV effective API、nuisance/fit/crossfit、pointwise inference availabilityをVersion/BackendごとにProbeし、異質なIV slope結果をTyped Resultに保存。
+6. **Sequence:** ValidatedStudy→LocalCausalUseCase→typed EstimatorPort/Adapter preflight→approved Backend computation→pure typed CATE/EffectOutcome→G01 StagingSink/atomic Publisher/Reader。Application/DomainからCLI DB/FSのConcreteへ逆依存しない。
+7. **Failure and privacy:** unsupported inference、effect support不足、missing optional Backendは別Reason。Numerical failureを科学的Negativeに偽装しない。G05以前個票書込無し、Model object/Secret出力無し、旧v2公開ABI不変。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -66,6 +227,13 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 TestはLifecycle（enhancement/regression/characterization/benchmark/support/legacy）とLayer（unit/contract/integration/frontend/browser_e2e）を独立分類。新規は`tests/enhancement/enh_e11/g04/<layer>/`に原則配置、実Path/command/pytest collectionは40 Operatorがcurrent checkoutからdiscover。受入07をpathの文字列で置き換えない。Mock-onlyでreal Backend/FS/ScienceをPASSにしない。
 
+### 6.1. Executable proof and invariant matrix
+
+- Targeted Method DD-IDとDGP/NEG/REFは§5に全件明記。§4のEstimator別のX/W/nuisance/fold/effective inference条件を正例・負例として検証する。
+- **Verification-specific contract:** `P2-M08` DRIV-Aはinstrument Z、treatment A、effect modifier X、confounder W、heterogeneous structural slope θ_IV(x)をTargetにする。Non-IV CATE(x)やB0 complier LATE/B1 linear IV slopeへ型変換しない。 IV relevance/exclusion/independence/overlapとInstrument/Treatment support・weak IVをpreflight。識別仮定の実証不能部分はEvidenceとして宣言し、未満たしをsilent fallbackにしない。 EconML DRIV effective API、nuisance/fit/crossfit、pointwise inference availabilityをVersion/BackendごとにProbeし、異質なIV slope結果をTyped Resultに保存。
+- Unitはpure Method/schema/result、不適格値、ContractはClass/Port/Inference RegistryとLineage、Integrationは実Backend/CLI/Pub-Readback/legacy regressionを実行。独立数値ReferenceはBackend自身から生成しない。
+- Evidenceはsource/lock/fixture SHA、expected/actual, effective Backend/API, seed/fold, support/overlap, CI policy, testcase collection/command。科学的Coverage/Pilotは未生成ならBLOCKEDでありPASSを推測しない。
+
 ## 7. Checkpoint / Handoff / Stop
 
 **Package Done:** 実SourceのClass/Method追加・Reuse・正例/負例/typed result/被影響Product Regression、focused test actual command/result、DD/Method coverage、Diff/Checkpoint full SHA、20 Package Status Reportを完備。科学的実測が未完ならScience PASSと報告しない。
@@ -73,3 +241,8 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Next:** P04。Pxx完了をGate 999 PASSにしない。
 
 **STOP:** 本文はまとめReview前のDRAFT。担当Pxx/06/07のFreeze、上流canonical Gate PASS、実行SHA、Optional Backend/Privacy/Design gap、Owner Coding Authorizationのいずれか欠ける場合は実装開始禁止（`BLOCKED_CONTRACT_AMBIGUITY`等、具体原因をEvidence化）。G05 Row Writer/Trust Anchor等の設計不在、G02 IV target、G08 AR独立reference等を推測で解決しない。
+
+
+## 8. Freeze-critical independent contract audit
+
+Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は§4、DGP/NEG/REF/Focused acceptanceは§5〜6に含み、外部Gate06/07/DDに実装指示を委譲しない。残未決: DRIV-Aの識別対象・IV assumptions・inference/weak IV評価の独立REF-E06を確定する。 Backend実効API/Science Pilot/Reference/Method Config未確定のまま実装しない。Ownerの一括レビューで調停する。
