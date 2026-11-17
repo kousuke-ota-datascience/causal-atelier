@@ -51,3 +51,8 @@ Required review oracles:
 - **No Product source, old `causal-analysis-spec/2`, `pyproject.toml`, `uv.lock`, original `docs/wiki/requirement_definition/` or E11 runtime implementation edited here.**
 
 **Recommendation for next step:** independent F03–F07 Architecture/Security/Science review against a pinned exact branch SHA, with method-specific test acceptance deferred to authorized Gate 06/07. Do **not** mark PREP-02 PASS or permit coding from this static report.
+
+
+## 5. Owner authorization to submit this checkpoint (2026-11-17)
+
+[DEC-PREP02-E process approval](decisions/96_20261117_dec_prep02_independent_review_submission_authorization.md) authorizes independent review of this exact snapshot. [GitHub Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) captures review scope, per-F03–F07 oracles, independent findings format, and test-evidence gaps. **Reviewer is not assigned and no independent verdict exists**. The original reviewer baseline remains `6dd45982e389ea57deabd4eef7871af3fe111aab`; this administration commit only records authorization and does not revise that frozen review snapshot.

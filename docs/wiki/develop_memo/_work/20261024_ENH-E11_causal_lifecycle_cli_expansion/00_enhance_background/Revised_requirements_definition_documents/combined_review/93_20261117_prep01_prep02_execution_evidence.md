@@ -189,3 +189,8 @@ Changes in work revision only: F07 common and embedded Effect Result draft schem
 [111 Scientific HC1 AR](111_20261117_prep02_b0_b1_ar_science_method_contract.md)、[112 Port/ErrorPhase](112_20261117_prep02_f03_f07_shared_port_signature_contract.md)、[113 Policy Trust](113_20261117_prep02_f05_policy_trust_anchor_candidate.md)、[114 semantic Schema joins](114_20261117_prep02_f06_schema_semantic_invariants.md)、[115 limited synthetic QA](115_20261117_prep02_f07_f06_limited_numeric_qa.md)を追加し、30_61/62/63・23_42・22_15へストック型の不変条件として反映。Graph `content_hash`は自己Hashを除く意味射影のDigest候補、外側ContentRefはFile実bytes。非Effect OperationでManifest result discriminator=nullを許し、dummy Effect Resultを生成禁止。Privacy事前Policyの署名AnchorはAdmin-controlled candidateであり実行者の自己承認不可。
 
 [116 Integrated review checkpoint](116_20261117_prep02_f03_f07_review_submission_checkpoint.md)：7 Schemaの61 refs/0 unresolved、41 Method ID一致、15文書123相対links/0 broken、B0/B1合成8点ずつHC1の最大誤差約7.1e-14（**実行ソフトE11の試験ではない**）、prepared JCS 7文字列のSHA256一致。**Independent Architecture Reviewer NOT_RUN / Port+Schema NOT_FROZEN / CODING_NOT_AUTHORIZED**。
+
+
+## 18. PREP-02 independent review submission approval (2026-11-17)
+
+Owner accepted next **process step**: submit F03–F07 to independent Architecture/Security/Science review. Authority: [DEC-PREP02-E](decisions/96_20261117_dec_prep02_independent_review_submission_authorization.md). [Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) opened with pinned reviewer source SHA `6dd45982e389ea57deabd4eef7871af3fe111aab`. No reviewer assigned or independent F12 review produced. **Review submission approved**, not Port/Schema Freeze, PREP PASS, Coding Authorization or canonical-original promotion.
