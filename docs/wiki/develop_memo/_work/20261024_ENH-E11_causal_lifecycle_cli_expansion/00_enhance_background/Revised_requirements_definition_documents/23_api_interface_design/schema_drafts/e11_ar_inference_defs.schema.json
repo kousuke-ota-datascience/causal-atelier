@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:ar-inference-definitions:1",
+  "title": "ENH-E11 AR inference definitions — PREP02 draft (not final dispatched schema)",
+  "description": "Internal $defs candidate to be embedded in e11-local-effect-result/1. Semantic set normalization and method eligibility require application validation.",
+  "$defs": {
+    "finiteEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "value"
+      ],
+      "properties": {
+        "kind": {
+          "const": "FINITE"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "negativeInfinity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "NEG_INFINITY"
+        }
+      }
+    },
+    "positiveInfinity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "POS_INFINITY"
+        }
+      }
+    },
+    "lowerEndpoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/finiteEndpoint"
+        },
+        {
+          "$ref": "#/$defs/negativeInfinity"
+        }
+      ]
+    },
+    "upperEndpoint": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/finiteEndpoint"
+        },
+        {
+          "$ref": "#/$defs/positiveInfinity"
+        }
+      ]
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower",
+        "upper",
+        "lower_closed",
+        "upper_closed"
+      ],
+      "properties": {
+        "lower": {
+          "$ref": "#/$defs/lowerEndpoint"
+        },
+        "upper": {
+          "$ref": "#/$defs/upperEndpoint"
+        },
+        "lower_closed": {
+          "type": "boolean"
+        },
+        "upper_closed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "finiteInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower",
+        "upper",
+        "confidence_level"
+      ],
+      "properties": {
+        "lower": {
+          "type": "number"
+        },
+        "upper": {
+          "type": "number"
+        },
+        "confidence_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "arConfidenceSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "confidence_level",
+        "topology",
+        "components",
+        "inversion_evidence"
+      ],
+      "properties": {
+        "confidence_level": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "topology": {
+          "enum": [
+            "ALL_REAL",
+            "DISCONNECTED",
+            "UNBOUNDED",
+            "BOUNDED"
+          ]
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/interval"
+          }
+        },
+        "inversion_evidence": {
+          "$ref": "#/$defs/contentRef"
+        }
+      }
+    },
+    "inferenceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability",
+        "kind",
+        "interval",
+        "confidence_set",
+        "reason"
+      ],
+      "properties": {
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "UNSUPPORTED",
+            "UNAVAILABLE",
+            "FAILED",
+            "NOT_REQUESTED"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "FINITE_INTERVAL",
+            "AR_CONFIDENCE_SET",
+            null
+          ]
+        },
+        "interval": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/finiteInterval"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence_set": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/arConfidenceSet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/reason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "AVAILABLE"
+              }
+            },
+            "required": [
+              "availability"
+            ]
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "null"
+              }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "kind": {
+                    "const": "FINITE_INTERVAL"
+                  },
+                  "interval": {
+                    "$ref": "#/$defs/finiteInterval"
+                  },
+                  "confidence_set": {
+                    "type": "null"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "AR_CONFIDENCE_SET"
+                  },
+                  "interval": {
+                    "type": "null"
+                  },
+                  "confidence_set": {
+                    "$ref": "#/$defs/arConfidenceSet"
+                  }
+                }
+              }
+            ]
+          },
+          "else": {
+            "properties": {
+              "kind": {
+                "type": "null"
+              },
+              "interval": {
+                "type": "null"
+              },
+              "confidence_set": {
+                "type": "null"
+              },
+              "reason": {
+                "$ref": "#/$defs/reason"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
