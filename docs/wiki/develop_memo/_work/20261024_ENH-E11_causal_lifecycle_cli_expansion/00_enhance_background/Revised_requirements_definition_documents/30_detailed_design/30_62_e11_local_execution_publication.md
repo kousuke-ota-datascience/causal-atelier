@@ -36,7 +36,7 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
 - **Constructor signature:** `__init__(self, *, refs, capabilities, identifier, estimators, diagnostics, publisher, runtime, clock)` with typed Ports above.
-- **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. Any actual exception class/type is .
+- **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
 ### 2.4. メソッド
@@ -94,7 +94,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 ### 3.1. 識別情報・責務
 
-- **Class:** `causal.local_application.capability_registry.MethodCapabilityRegistry`、。Product ScientificCoreAdapterとは別契約である。
+- **Class:** `causal.local_application.capability_registry.MethodCapabilityRegistry`。Product ScientificCoreAdapterとは別契約である。
 - **責務:** 41 Method IDごとのOperation/Estimand/Eligibility/Inference/Backend/Profileをstrictに選択し、Version/API capabilityを検証し、Adapter importを遅延させる。外部Libraryの既定推論を黙認しない。
 - **責務外:** Estimator計算、Local FS publication、Customer Delivery LegalのPASS。
 - **関連契約:** 30_63 Method41 allocation、23_41 §6〜7。
@@ -113,7 +113,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 ### 3.3. Constructor / Factory
 
 - **Constructor:** `__init__(self, descriptors, backend_factories, effective_env, inference_registry)`. Validate unique IDs, declared Operation/Estimand and versioned descriptor schema; do not import optional modules.
-- **Factory** is a collaborator of Registry, **not an additional implemented Class** by implication. 独立Factoryを設ける場合も同じMethod×Backend×Inference不変条件に従う。
+- **Factory** is a collaborator of Registry; 独立実装を置く場合も 独立Factoryを設ける場合も同じMethod×Backend×Inference不変条件に従う。
 - **Failure:** Invalid registry/duplicate ID/unsupported policy fails during preflight without selecting unrelated Method or importing missing Backend.
 
 ### 3.4. メソッド
@@ -151,7 +151,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 `DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
 
-**関連ID:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。ENV smoke/Science benchmarks are .
+**関連ID:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。
 
 ### 3.8. Capability FacadeとRegistryの役割
 
@@ -161,7 +161,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.1. 識別情報・責務
 
-- **Module / Class:** `interfaces.cli.e11.publication.LocalArtifactPublisher`（提案。Local契約）
+- **Module / Class:** `interfaces.cli.e11.publication.LocalArtifactPublisher`
 - **責務:** 同一local filesystem上の複数Artifactをrun単位で検証・原子的に公開し、readback成功を確認する。新E11のLocal authorityでありProductの`ArtifactStorePort`ではない。
 - **責務外:** Scientific Estimator、HTTP/DB、顧客配布Legal、外部FSのcross-device atomicity。
 - **関連設計:** 23_42 §2/6/7。Product ArtifactStorePortは別のauthorityである。
@@ -223,7 +223,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | DD-E11-PUB07〜09 | corruption、private 0700/0600、Reader roundtrip | 全bytes/hash/privacy/readback |
 | DD-E11-PUB10 | Legacy Product Portと旧v2 CLIの回帰 | E11 publicationをProductの永続authorityへ混入しない |
 
-**関連ID:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS fault injectionと独立Reviewは。
+**関連ID:** FR-185/201/203、NFR-029/031/032/036、BD01-F03/F05/F06/F12、IF IO-E11-01〜09。実FS Fault Injectionと科学的受入は、恒久的な検証義務として別に確認する。
 
 ### 4.8. 公開PortとConcrete handle
 
@@ -237,7 +237,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 #### 5.1.1. 識別情報・責務
 
-- **Class/Module:** `interfaces.cli.e11.manifest.LocalRunManifest`、immutable typed DTO。。
+- **Class/Module:** `interfaces.cli.e11.manifest.LocalRunManifest`、immutable typed DTO。
 - **責務:** 1 Local runのidentity、lineage、Method/Science/Runtime、artifact inventoryをversioned schemaで保持し、canonical bytesのauthorityを定義する。
 - **責務外:** file open、hash verificationのI/O、実効科学計算、Local OS permission enforcement。
 - **参照:** IF `23_42` §6、`23_41` §5。Existing Product CliManifestとは別schema。
@@ -260,7 +260,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 - **Factory:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
 - **Precondition:** strict schema/version + no unknown critical keys; content hash references are normalized; `Manifest` must **not** include its own bytes hash; marker is outside Artifact list. Factories do not read the filesystem.
-- **N/A:** runtime backend import is not part of this DTO. Factory naming and exact exception classes remain ADR/Schema .
+- **N/A:** runtime backend import is not part of this DTO. Factoryはstrict Schema違反を型付きErrorとして返す。
 
 #### 5.1.4. メソッド
 
@@ -285,13 +285,13 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 #### 5.1.7. 検証
 
-`DD-E11-MAN01` canonical bytes roundtrip; `MAN02` unknown version/unknown critical; `MAN03` marker outside artifact list; `MAN04` science negative vs technical outcome independent; `MAN05` absolute path/raw secret/row data rejection; `MAN06` legacy v2 readback isolation。****。Trace：FR-201/202/203、NFR-029/030/032、AR-040、BD01-F06/F07/F12。
+`DD-E11-MAN01` canonical bytes roundtrip; `MAN02` unknown version/unknown critical; `MAN03` marker outside artifact list; `MAN04` science negative vs technical outcome independent; `MAN05` absolute path/raw secret/row data rejection; `MAN06` legacy v2 readback isolation。関連要件：FR-201/202/203、NFR-029/030/032、AR-040、BD01-F06/F07/F12。
 
 ### 5.2. `LocalManifestReader`
 
 #### 5.2.1. 識別情報・責務
 
-- **Class/Module:** `interfaces.cli.e11.manifest_reader.LocalManifestReader`。****。
+- **Class/Module:** `interfaces.cli.e11.manifest_reader.LocalManifestReader`。
 - **責務:** already-published runをMarker→Manifest→Artifactの順に検証し、`VerifiedLocalRun`を返す。存在だけでCOMMITTEDと判断しない。
 - **責務外:** publish、legacy v2の無断E11解釈、科学的Oracle計算、実Artifactの編集。
 - **参照:** IF `23_42` §6〜8。
@@ -300,7 +300,7 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 | Field | Type | Origin | Constraint |
 | --- | --- | --- | --- |
-| Instance fields | N/A（stateless Reader） | N/A | trusted root/run IDはper-call引数。Cacheを設ける場合は別ADR |
+| Instance fields | N/A（stateless Reader） | N/A | trusted root/run IDはper-call引数。Cacheが必要なら原本Root・run IDとhash一致を保持し、未検証値の再利用を禁止 |
 
 #### 5.2.3. Constructor / Factory
 
@@ -326,12 +326,12 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 - **Caller:** E11 Local UseCaseのReadback／CLI status command、publisherのpublication verification。
 - **I/O:** Trusted Rootからread-only。symlink/TOCTOUとstale marker防止のためopenされた同一File Descriptorに対しhashを確認。
-- **Errors:** `NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`等を区分（）。
+- **Errors:** `NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`等を区分。
 - **Retry:** 不完全runを勝手に修復／削除しない。既存同hash runの再利用は完全Readback PASSに限定。
 
 #### 5.2.7. 検証
 
-`DD-E11-READ01` valid; `READ02` marker missing; `READ03` corrupted bytes/size; `READ04` wrong version; `READ05` individual export suppression; `READ06` old v2 not E11; `READ07` symlink/path race。****。Trace：IF IO-E11-01〜09、FR-201〜203、NFR-031/032、BD01-F03/F05/F06/F12。
+`DD-E11-READ01` valid; `READ02` marker missing; `READ03` corrupted bytes/size; `READ04` wrong version; `READ05` individual export suppression; `READ06` old v2 not E11; `READ07` symlink/path race。関連要件：IF IO-E11-01〜09、FR-201〜203、NFR-031/032、BD01-F03/F05/F06/F12。
 
 ### 5.3. Strict Codec・Operation dispatch・Readerの責務分離
 
@@ -387,7 +387,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 6.7. 検証
 
-`DD-E11-PRIV01` default no rows、`PRIV02` flag alone deny、`PRIV03` UID mismatch、`PRIV04` 0600/0700、`PRIV05` stdout/log leakage、`PRIV06` shared mount deny、`PRIV07` allowed-columns minimization。****。Trace：FR-194/195/203、NFR-031/032、AR-034/035、BD01-F05/F12。
+`DD-E11-PRIV01` default no rows、`PRIV02` flag alone deny、`PRIV03` UID mismatch、`PRIV04` 0600/0700、`PRIV05` stdout/log leakage、`PRIV06` shared mount deny、`PRIV07` allowed-columns minimization。関連要件：FR-194/195/203、NFR-031/032、AR-034/035、BD01-F05/F12。
 
 ### 6.8. 独立Policy Authority
 
