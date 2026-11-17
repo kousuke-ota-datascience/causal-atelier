@@ -423,10 +423,14 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| Field | Type | 根拠 |
+|---|---|---|
+| `valid` | `boolean` | Source上の返却Field |
+| `manifest` | `object` | Source上の返却Field |
 
+**条件:** ExploratoryWorkspaceService.validate_viewの結果
 
 #### Errors
 
@@ -1067,10 +1071,21 @@ Content-Type: `application/json`、型 `CreateDraftRequest`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（未型付け）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| Field | Type | 根拠 |
+|---|---|---|
+| `analysis_specification_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `analysis_view_id` | `string\|null` | Source上の返却Field |
+| `research_context_version_id` | `string` | Source上の返却Field |
+| `analysis_mode` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `warnings` | `array` | Source上の返却Field |
+| `source_relation` | `object` | Source上の返却Field |
 
+**条件:** ExploratoryWorkspaceService.create_analysis_draft。DRAFTとMOTIVATED lineageを作成
 
 #### Errors
 
@@ -1119,10 +1134,17 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（未型付け）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-**Routerにresponse_model未宣言。** Service返却項目は別途照合が必要。Type/keysが公開契約として確定したとはみなさない。
+| Field | Type | 根拠 |
+|---|---|---|
+| `schema_version` | `string` | Source上の返却Field |
+| `operations` | `array[string]` | Source上の返却Field |
+| `chart_marks` | `array[string]` | Source上の返却Field |
+| `result_label` | `string` | Source上の返却Field |
+| `semantic_warning` | `string` | Source上の返却Field |
 
+**条件:** exploration.pyの直接返却。schema_version=exploratory-capabilities/1
 
 #### Errors
 

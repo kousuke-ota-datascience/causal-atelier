@@ -159,10 +159,26 @@ Content-Type: `application/json`、型 `WorkspaceAnnotationCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（response_model未宣言）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `annotation_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `target_type` | `string` | Source上の返却Field |
+| `target_id` | `string` | Source上の返却Field |
+| `statement` | `string` | Source上の返却Field |
+| `rationale` | `string\|null` | Source上の返却Field |
+| `assumptions` | `array` | Source上の返却Field |
+| `limitations` | `array` | Source上の返却Field |
+| `decision` | `string\|null` | Source上の返却Field |
+| `next_actions` | `array` | Source上の返却Field |
+| `revision_history` | `array` | Source上の返却Field |
+| `created_by` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
+| `updated_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** ProductClosureService._annotation_value
 
 #### Errors
 
@@ -230,10 +246,26 @@ Content-Type: `application/json`、型 `WorkspaceAnnotationUpdate`
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `annotation_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `target_type` | `string` | Source上の返却Field |
+| `target_id` | `string` | Source上の返却Field |
+| `statement` | `string` | Source上の返却Field |
+| `rationale` | `string\|null` | Source上の返却Field |
+| `assumptions` | `array` | Source上の返却Field |
+| `limitations` | `array` | Source上の返却Field |
+| `decision` | `string\|null` | Source上の返却Field |
+| `next_actions` | `array` | Source上の返却Field |
+| `revision_history` | `array` | Source上の返却Field |
+| `created_by` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
+| `updated_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** ProductClosureService._annotation_value
 
 #### Errors
 
@@ -285,10 +317,24 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `artifact_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `source` | `string` | Source上の返却Field |
+| `execution_id` | `string\|null` | Source上の返却Field |
+| `result_id` | `string\|null` | Source上の返却Field |
+| `artifact_type` | `string` | Source上の返却Field |
+| `schema_version` | `string\|null` | Source上の返却Field |
+| `content_hash` | `string` | Source上の返却Field |
+| `media_type` | `string` | Source上の返却Field |
+| `size_bytes` | `integer` | Source上の返却Field |
+| `metadata` | `object` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** ProductClosureService._artifact_value。Legacy ArtifactResponseとは別Shape
 
 #### Errors
 
@@ -405,10 +451,23 @@ Content-Type: `application/json`、型 `ExportCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（response_model未宣言）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `export_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `schema_version` | `string` | Source上の返却Field |
+| `result_ids` | `array[string]` | Source上の返却Field |
+| `artifact_id` | `string` | Source上の返却Field |
+| `content_hash` | `string` | Source上の返却Field |
+| `media_type` | `string` | Source上の返却Field |
+| `size_bytes` | `integer` | Source上の返却Field |
+| `manifest_summary` | `object` | Source上の返却Field |
+| `created_by` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** ProductClosureService._export_value
 
 #### Errors
 
@@ -461,10 +520,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `export_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `schema_version` | `string` | Source上の返却Field |
+| `result_ids` | `array[string]` | Source上の返却Field |
+| `artifact_id` | `string` | Source上の返却Field |
+| `content_hash` | `string` | Source上の返却Field |
+| `media_type` | `string` | Source上の返却Field |
+| `size_bytes` | `integer` | Source上の返却Field |
+| `manifest_summary` | `object` | Source上の返却Field |
+| `created_by` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** ProductClosureService._export_value
 
 #### Errors
 

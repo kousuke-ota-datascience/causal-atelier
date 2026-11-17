@@ -69,10 +69,13 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `items` | `array[ResultResponse]` | Source上の返却Field |
 
+**条件:** ResultListResponse.items。ResultResponseにはresult_id,execution_id,result_type,scientific_status,summary,payload,diagnostics,warnings,artifact_ids,created_atがある
 
 #### Errors
 
@@ -346,10 +349,18 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `manifest_version` | `string` | Source上の返却Field |
+| `result` | `object` | Source上の返却Field |
+| `execution` | `object` | Source上の返却Field |
+| `dataset` | `object` | Source上の返却Field |
+| `graph` | `object\|null` | Source上の返却Field |
+| `artifacts` | `array` | Source上の返却Field |
 
+**条件:** ProductQueryService.export_resultのmanifest projection。manifest_version=1.0。binaryではない
 
 #### Errors
 
@@ -528,10 +539,30 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `result_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `execution_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `result_type` | `string` | Source上の返却Field |
+| `schema_version` | `string` | Source上の返却Field |
+| `analytical_status` | `string` | Source上の返却Field |
+| `summary` | `object` | Source上の返却Field |
+| `payload` | `object` | Source上の返却Field |
+| `diagnostics` | `object` | Source上の返却Field |
+| `warnings` | `array` | Source上の返却Field |
+| `artifact_ids` | `array` | Source上の返却Field |
+| `research_context_version_id` | `string\|null` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `analysis_view_id` | `string\|null` | Source上の返却Field |
+| `analysis_specification_id` | `string\|null` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
+| `sensitive_output_suppressed` | `boolean` | Source上の返却Field |
 
+**条件:** ProductClosureService._all_results→_public_result(detail=true)。include_sensitive=falseではpayload抑制。trueはOWNER/EDITORのみ
 
 #### Errors
 
@@ -593,10 +624,28 @@ Content-Type: `application/json`、型 `ComparisonCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（response_model未宣言）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `schema_version` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string\|null` | Source上の返却Field |
+| `result_type` | `string\|null` | Source上の返却Field |
+| `semantic_compatible` | `boolean` | Source上の返却Field |
+| `direct_metric_comparable` | `boolean` | Source上の返却Field |
+| `compatible` | `boolean` | Source上の返却Field |
+| `compatibility_reasons` | `array` | Source上の返却Field |
+| `direct_comparison_blockers` | `array` | Source上の返却Field |
+| `results` | `array` | Source上の返却Field |
+| `ranking` | `null` | Source上の返却Field |
+| `common_summary` | `object` | Source上の返却Field |
+| `differences` | `array` | Source上の返却Field |
+| `common_warnings` | `array` | Source上の返却Field |
+| `warning_differences` | `array` | Source上の返却Field |
+| `warnings` | `array` | Source上の返却Field |
 
+**条件:** ProductClosureService.compare_results。比較不能時はcommon_summary等を返さない。rankingはnull
 
 #### Errors
 
@@ -784,10 +833,22 @@ Content-Type: `application/json`、型 `LineageLinkCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（response_model未宣言）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `lineage_edge_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `source_type` | `string` | Source上の返却Field |
+| `source_id` | `string` | Source上の返却Field |
+| `relation_type` | `string` | Source上の返却Field |
+| `target_type` | `string` | Source上の返却Field |
+| `target_id` | `string` | Source上の返却Field |
+| `evidence` | `object` | Source上の返却Field |
+| `created_by` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** ProductClosureService._lineage_edge_value
 
 #### Errors
 

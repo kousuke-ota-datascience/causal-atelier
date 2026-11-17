@@ -198,10 +198,20 @@ Content-Type: `application/json`、型 `WorkspaceSelectionUpdate`
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `schema_version` | `string` | Source上の返却Field |
+| `project` | `object` | Source上の返却Field |
+| `current_role` | `string` | Source上の返却Field |
+| `research_context_version_id` | `string\|null` | Source上の返却Field |
+| `dataset_version_id` | `string\|null` | Source上の返却Field |
+| `analysis_view_id` | `string\|null` | Source上の返却Field |
+| `unsaved_draft` | `boolean` | Source上の返却Field |
+| `updated_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** ProductClosureService.update_workspace_state→workspace_state。schema_version=workspace-selection/1。projectはproject_id/name/status/topic/objective/memoを含む
 
 #### Errors
 

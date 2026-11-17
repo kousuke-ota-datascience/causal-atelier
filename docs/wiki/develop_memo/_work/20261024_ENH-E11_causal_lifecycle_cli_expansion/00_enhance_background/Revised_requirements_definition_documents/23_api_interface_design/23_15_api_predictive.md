@@ -74,10 +74,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `schema_version` | `string` | Source上の返却Field |
+| `gate` | `string` | Source上の返却Field |
+| `task_types` | `array` | Source上の返却Field |
+| `split_strategies` | `array` | Source上の返却Field |
+| `preprocessing_steps` | `array` | Source上の返却Field |
+| `task_defaults` | `object` | Source上の返却Field |
+| `model_registry` | `array` | Source上の返却Field |
+| `metrics` | `object` | Source上の返却Field |
+| `compatibility` | `object` | Source上の返却Field |
+| `model_explanation_compatibility` | `object` | Source上の返却Field |
+| `explanation_methods` | `array` | Source上の返却Field |
 
+**条件:** PredictiveWorkflowService.capabilities。schema_version=predictive-capabilities/1
 
 #### Errors
 
@@ -293,10 +306,23 @@ Content-Type: `application/json`、型 `ExecutionPlanCreate`
 
 #### Response
 
-- HTTP **201**。Body schema: Service output（response_model未宣言）。
+- HTTP **201**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_plan_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_specification_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `plan_schema_version` | `string` | Source上の返却Field |
+| `planner_id` | `string` | Source上の返却Field |
+| `planner_version` | `string` | Source上の返却Field |
+| `stages` | `array[object]` | Source上の返却Field |
+| `dependencies` | `array[object]` | Source上の返却Field |
+| `plan_hash` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** PredictiveWorkflowService._plan_response
 
 #### Errors
 
@@ -346,10 +372,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_plan_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_specification_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `plan_schema_version` | `string` | Source上の返却Field |
+| `planner_id` | `string` | Source上の返却Field |
+| `planner_version` | `string` | Source上の返却Field |
+| `stages` | `array[object]` | Source上の返却Field |
+| `dependencies` | `array[object]` | Source上の返却Field |
+| `plan_hash` | `string` | Source上の返却Field |
+| `created_at` | `datetime` | Source上の返却Field |
 
+**条件:** PredictiveWorkflowService._plan_response
 
 #### Errors
 
@@ -474,10 +513,30 @@ Content-Type: `application/json`、型 `PredictiveExecutionSubmit`
 
 #### Response
 
-- HTTP **202**。Body schema: Service output（response_model未宣言）。
+- HTTP **202**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
+| `analysis_specification_id` | `string` | Source上の返却Field |
+| `execution_plan_id` | `string` | Source上の返却Field |
+| `analysis_view_id` | `string\|null` | Source上の返却Field |
+| `snapshot_hash` | `string` | Source上の返却Field |
+| `snapshot` | `object` | Source上の返却Field |
+| `specification_schema_version` | `string` | Source上の返却Field |
+| `revision_kind` | `string\|null` | Source上の返却Field |
 
+**条件:** Canonical/Family 2種のExecution Responseを統合したField一覧。各Fieldの存在は実行laneに依存
 
 #### Errors
 
@@ -528,10 +587,30 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
+| `analysis_specification_id` | `string` | Source上の返却Field |
+| `execution_plan_id` | `string` | Source上の返却Field |
+| `analysis_view_id` | `string\|null` | Source上の返却Field |
+| `snapshot_hash` | `string` | Source上の返却Field |
+| `snapshot` | `object` | Source上の返却Field |
+| `specification_schema_version` | `string` | Source上の返却Field |
+| `revision_kind` | `string\|null` | Source上の返却Field |
 
+**条件:** Canonical/Family 2種のExecution Responseを統合したField一覧。各Fieldの存在は実行laneに依存
 
 #### Errors
 
@@ -824,10 +903,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** Cancel後のExecution projection。詳細Fieldはcanonical/family laneで異なる
 
 #### Errors
 
@@ -877,10 +969,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **200**。Body schema: Service output（response_model未宣言）。
+- HTTP **200**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** Retry後のExecution projection。詳細Fieldはcanonical/family laneで異なる
 
 #### Errors
 
@@ -932,10 +1037,23 @@ Request JSON Bodyなし（Router未定義）。
 
 #### Response
 
-- HTTP **202**。Body schema: Service output（response_model未宣言）。
+- HTTP **202**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** Rerunにより新たに作成したExecutionのprojection
 
 #### Errors
 
@@ -1037,10 +1155,23 @@ Content-Type: `application/json`、型 `PredictiveExecutionRevise`
 
 #### Response
 
-- HTTP **202**。Body schema: Service output（response_model未宣言）。
+- HTTP **202**。Response: Service/Router Sourceの返却Object。
 
-Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+| Field | Type | 根拠 |
+|---|---|---|
+| `execution_id` | `string` | Source上の返却Field |
+| `project_id` | `string` | Source上の返却Field |
+| `analysis_family` | `string` | Source上の返却Field |
+| `dataset_version_id` | `string` | Source上の返却Field |
+| `status` | `string` | Source上の返却Field |
+| `retry_count` | `integer` | Source上の返却Field |
+| `last_error` | `object\|null` | Source上の返却Field |
+| `requested_by` | `string` | Source上の返却Field |
+| `requested_at` | `datetime` | Source上の返却Field |
+| `started_at` | `datetime\|null` | Source上の返却Field |
+| `finished_at` | `datetime\|null` | Source上の返却Field |
 
+**条件:** Reviseにより新たに作成したExecutionのprojection
 
 #### Errors
 
