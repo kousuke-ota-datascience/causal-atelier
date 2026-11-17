@@ -45,7 +45,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ### 6.1. `MethodCapabilityRegistry` (30_62 §2 / CAP01,04,05)
 
-**Class/module:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`. Immutable Constructor fields:
+**Class/Module:** `ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`. Immutable Constructor fields:
 
 | Field | Type | Invariant |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.2. `BackendCapabilityRecord` and `MethodCapabilityPort` (30_62 §7/8.1; CAP04/05)
 
-**Record module:** `ariadne.scientific.capabilities.BackendCapabilityRecord`. Immutable fields `method_id`, `backend_id`, `distribution_version`, `adapter_version`, `api_signature_hash`, `extra`, `profile`, `available` and `reason`. Construct from *effective observed* versions/probes; no fake defaults. Method `check(self, request: ValidatedCapabilityRequest) -> typed compatibility decision`; pure request-vs-capability assertion.
+**Record Module:** `ariadne.scientific.capabilities.BackendCapabilityRecord`. Immutable fields `method_id`, `backend_id`, `distribution_version`, `adapter_version`, `api_signature_hash`, `extra`, `profile`, `available` and `reason`. Construct from *effective observed* versions/probes; no fake defaults. Method `check(self, request: ValidatedCapabilityRequest) -> typed compatibility decision`; pure request-vs-capability assertion.
 
 **Public Port:** `ariadne.scientific.ports.capability.MethodCapabilityPort.resolve(request: ValidatedCapabilityRequest) -> BackendCapabilityRecord`. Request includes Operation, Estimand, Design, Backend, profile and Inference constraints. Facade validates **all** and only then delegates to concrete `MethodCapabilityRegistry.resolve(method_id, backend_id, profile)`; do not pass a bare triple in lieu of a validated request. Same registry metadata and compatibility policy used by legacy `ScientificValidationService` via a common pure policy, not a fork.
 
@@ -75,7 +75,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.3. `DiscoveryPort` and selected-method dispatch (30_61 §5.5 / DISC01–03)
 
-**Protocol module:** `ariadne.scientific.ports.causal.DiscoveryPort`; no Protocol Instance Fields or direct Product DB/FS.
+**Protocol Module:** `ariadne.scientific.ports.causal.DiscoveryPort`; no Protocol Instance Fields or direct Product DB/FS.
 
 ~~~python
 def discover(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSink) -> DiscoveryGraphOutcome: ...
