@@ -273,19 +273,15 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 #### 1.7.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method：`P1-M12, P1-M13, P1-M14, P1-M15`。**再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M12, P1-M13, P1-M14, P1-M15`。**既存Sourceの実装済みはP1-M12（PLACEBO_TREATMENT）とP1-M13（DATA_SUBSET）のみ。P1-M14（RANDOM_COMMON_CAUSE）とP1-M15（BOOTSTRAP）は本Class/Facadeでの新規実装が必要で、既存機能と称さない。****再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.7.2. フィールド
 
-| Field / dependency | Type | 制約 |
-|---|---|---|
-| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
-| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
-| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+**EXISTING:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
 
 #### 1.7.3. Constructor / Factory
 
-既存`ariadne.scientific.refutation.adapter.RefutationAdapter`を直接改造して別Domainの状態を持たせない。v2 callerが使用する`run(input_,output_dir)`を変えず、型付きMethod Portからの変換は独立façade／Bridgeで行う。
+**EXISTING:** ariadne.scientific.refutation.adapter.RefutationAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。将来のtyped Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
 
 #### 1.7.4. メソッド
 
@@ -318,19 +314,15 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 #### 1.8.1. 識別情報・責務
 
-**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method：`P1-M16, P1-M17`。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** 共通Field/Constructor表はtyped Bridge側の依存候補であり、既存Classに未実装Fieldを既成事実として追加しない。 DiagnosticのMethod実行Adapter。担当Method仕様：`P1-M16, P1-M17`。既存SourceはADJUSTMENT_SETとPROPENSITY_CLIPPINGの実装を持つが、新契約で必要な適格性・実効推論・Codecの再検証は別途必要。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
 
 #### 1.8.2. フィールド
 
-| Field / dependency | Type | 制約 |
-|---|---|---|
-| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
-| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
-| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+**EXISTING:** 現行Classに宣言済みのInstance Fieldはない。MethodDescriptor/BackendFactory/ScientificContextは既存実装の属性ではなく、型付きPortから呼び出す新規Facade／Bridgeの依存として定義する。既存Classへの無断Field追加を前提にしない。
 
 #### 1.8.3. Constructor / Factory
 
-既存`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`を直接改造して別Domainの状態を持たせない。v2 callerが使用する`run(input_,output_dir)`を変えず、型付きMethod Portからの変換は独立façade／Bridgeで行う。
+**EXISTING:** ariadne.scientific.sensitivity.adapter.SensitivityAdapter に明示的`__init__`はない。公開`run(input_, output_dir)`は変更しない。将来のtyped Facadeは別Classに配置し、旧ClassのConstructor ABIにDescriptorを注入しない。
 
 #### 1.8.4. メソッド
 
