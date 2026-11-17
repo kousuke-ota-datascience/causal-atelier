@@ -2,7 +2,7 @@
 
 ## 1. Registryと実装責務
 
-Method IDの正本は[10_32_scientific_method_scope.md](../10_requirements_definition/10_32_scientific_method_scope.md)。本書は全41 IDの**実装責務／Adapter Class候補／適格性・推論・結果型／受入テスト**を対応付ける。Methodについての採用済み科学的限定はDEC01〜08およびDEC09を優先する。
+Method IDの正本は[10_32_scientific_method_scope.md](../10_requirements_definition/10_32_scientific_method_scope.md)。本書は全41 IDの**実装責務／Adapter Class／適格性・推論・結果型／受入テスト**を対応付ける。Methodの科学的限定は10_32のScope定義と整合させる。
 
 Method Descriptorは `method_id, operation, estimand_family, design_kind, backend_id, extra, config_schema, eligibility_predicate, inference_registry_entry, result_schema, negative_reason_codes, reference_ids` を保持する。1 Methodで異なる構成がある場合はVersion付きvariantにより区別し、対象EstimandをMethod表示名だけで推測しない。
 
@@ -10,51 +10,51 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 ## 2. 全41件のAdapter allocation
 
-| Method ID | 初期責務の候補Adapter / Estimand型 | 必須preflight／Result・Inference | Workstream |
-|---|---|---|---|
-| P1-M01 | `NativeIdentificationAdapter` / randomized identification | 割当機構・target、proofの型付き正規化 | G02 |
-| P1-M02 | `NativeIdentificationAdapter` / backdoor ATE | adjustment/backdoor、Graph・Design適格性 | G02 |
-| P1-M03 | `DoWhyIdentificationAdapter` / backdoor ATE | effective API、method-specific proof、Graph対応 | G02 |
-| P1-M04 | `DoWhyIdentificationAdapter` / frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 | G02 |
-| P1-M05 | `DoWhyIdentificationAdapter` / IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK | G02 |
-| P1-M06 | `FciDiscoveryAdapter` / PAG | circle/bidirected/latent・oracle、point estimation不可 | G01 |
-| P1-M07 | `FrontdoorLinearAdapter` / restricted FD-A ATE | 線形Mediator/Outcomeモデルとno direct path仮定、別Reference・CI | G02 |
-| P1-M08 | `NativeEffectAdapter` / randomized diff-in-means ATE | randomization、variance、seedとpopulation | G03 |
-| P1-M09 | `NativeEffectAdapter` / OLS adopted ATE/ATT | linear model/contrast、robust varianceの採否 | G03 |
-| P1-M10 | `WeightingEffectAdapter` / IPW ATE/ATT | propensity/overlap/balance/ESS/weights/CI | G03 |
-| P1-M11 | `WeightingEffectAdapter` / AIPW ATE/ATT | nuisance/DR claimの条件、crossfit/variance | G03 |
-| P1-M12 | `RefutationAdapter` / placebo treatment | 事前指定置換ルール、null診断、再現seed | G03 |
-| P1-M13 | `RefutationAdapter` / data subset | Subset規則、sample/support、差分の解釈 | G03 |
-| P1-M14 | `RefutationAdapter` / random common cause | 摂動DGP/seed、条件付き安定性 | G03 |
-| P1-M15 | `RefutationAdapter` / bootstrap refutation | resampling unit/CI可用性、同一DGP | G03 |
-| P1-M16 | `SensitivityAdapter` / adjustment set | Graph/Design/追加変数・post treatment適格性 | G03 |
-| P1-M17 | `SensitivityAdapter` / propensity clipping | trim threshold、estimand変化、ESS/sample loss | G03 |
-| P1-M18 | `ObservedNceAdapter` / negative control exposure | 実在Z・事前帰無・opt-in、条件付き関連/負結果 | G03 |
-| P1-M19 | `ObservedNcoAdapter` / negative control outcome | 実在W・事前帰無・opt-in、条件付き関連/負結果 | G03 |
-| P1-M20 | `OlsRvAdapter` / OLS partial R²、point RV(q=1) | 古典OLS係数/SE/df、非OLS拒否 | G03 |
-| P2-M01 | `EconmlCateAdapter` / LinearDML CATE | X/W/treatment/outcome、inference registry、fold | G04/G05 |
-| P2-M02 | `EconmlCateAdapter` / CausalForestDML CATE | leaf/support/nuisance/CI API、row privacy | G04/G05 |
-| P2-M03 | `EconmlCateAdapter` / DRLearner CATE | binary treatment/propensity、inference method | G04/G05 |
-| P2-M04 | `EconmlCateAdapter` / ForestDRLearner CATE | propensity+forest inference/support | G04/G05 |
-| P2-M05 | `MetaLearnerAdapter` / S-Learner CATE | counterfactual prediction、point/CI制限 | G04/G05 |
-| P2-M06 | `MetaLearnerAdapter` / T-Learner CATE | treated/control support、point/CI制限 | G04/G05 |
-| P2-M07 | `MetaLearnerAdapter` / X-Learner CATE | cross-model weights、point/CI制限 | G04/G05 |
-| P2-M08 | `EconmlDrivAdapter` / IV heterogeneous structural slope | Z/A/X/W、IV relevance/exclusion、inference | G04/G05 |
-| P3-M01 | `TigramiteTemporalAdapter` / PCMCI | CI test/lag window、time-series order、graph | G06 |
-| P3-M02 | `TigramiteTemporalAdapter` / PCMCI+ | contemporaneous endpoint、CPDAG-like oracle | G06 |
-| P3-M03 | `TigramiteTemporalAdapter` / LPCMCI | PAG/latent/endpoint fidelity、lag | G06 |
-| P3-M04 | `PanelQuasiAdapter` / DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster | G07 |
-| P3-M05 | `PanelQuasiAdapter` / Event Study | cohort/event time、pretrend、reference periods | G07 |
-| P3-M06 | `InterruptedTsAdapter` / level/slope change | intervention date、seasonality/autocorrelation/HAC | G07 |
-| P3-M07 | `RddAdapter` / Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI | G08 |
-| P3-M08 | `RddAdapter` / Fuzzy RD local complier effect | First stage、discontinuity ratio、local IV inference | G08 |
-| P3-M09 | `WaldRatioAdapter` / B0 complier LATE reference | binary Z/A、IV assumptions、first stage | G08 |
-| P3-M10 | `TwoSlsAdapter` / B0 just-identified LATE | zero controls、single Z/A、robust covariance、AR | G08 |
-| P3-M11 | `TwoSlsAdapter` / B1 additive linear IV slope | single binary Z/A、predeclared C、robust AR | G08 |
-| P3-M12 | `SyntheticControlAdapter` / treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only | G09 |
-| P3-M13 | `SyntheticDidAdapter` / panel average effect | donor and time weights、preperiod/variance method | G09 |
+| Method ID | 初期責務の候補Adapter / Estimand型 | 必須preflight／Result・Inference |
+| --- | --- | --- |
+| P1-M01 | `NativeIdentificationAdapter` / randomized identification | 割当機構・target、proofの型付き正規化 |
+| P1-M02 | `NativeIdentificationAdapter` / backdoor ATE | adjustment/backdoor、Graph・Design適格性 |
+| P1-M03 | `DoWhyIdentificationAdapter` / backdoor ATE | effective API、method-specific proof、Graph対応 |
+| P1-M04 | `DoWhyIdentificationAdapter` / frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
+| P1-M05 | `DoWhyIdentificationAdapter` / IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+| P1-M06 | `FciDiscoveryAdapter` / PAG | circle/bidirected/latent・oracle、point estimation不可 |
+| P1-M07 | `FrontdoorLinearAdapter` / restricted FD-A ATE | 線形Mediator/Outcomeモデルとno direct path仮定、別Reference・CI |
+| P1-M08 | `NativeEffectAdapter` / randomized diff-in-means ATE | randomization、variance、seedとpopulation |
+| P1-M09 | `NativeEffectAdapter` / OLS adopted ATE/ATT | linear model/contrast、robust varianceの採否 |
+| P1-M10 | `WeightingEffectAdapter` / IPW ATE/ATT | propensity/overlap/balance/ESS/weights/CI |
+| P1-M11 | `WeightingEffectAdapter` / AIPW ATE/ATT | nuisance/DR claimの条件、crossfit/variance |
+| P1-M12 | `RefutationAdapter` / placebo treatment | 事前指定置換ルール、null診断、再現seed |
+| P1-M13 | `RefutationAdapter` / data subset | Subset規則、sample/support、差分の解釈 |
+| P1-M14 | `RefutationAdapter` / random common cause | 摂動DGP/seed、条件付き安定性 |
+| P1-M15 | `RefutationAdapter` / bootstrap refutation | resampling unit/CI可用性、同一DGP |
+| P1-M16 | `SensitivityAdapter` / adjustment set | Graph/Design/追加変数・post treatment適格性 |
+| P1-M17 | `SensitivityAdapter` / propensity clipping | trim threshold、estimand変化、ESS/sample loss |
+| P1-M18 | `ObservedNceAdapter` / negative control exposure | 実在Z・事前帰無・opt-in、条件付き関連/負結果 |
+| P1-M19 | `ObservedNcoAdapter` / negative control outcome | 実在W・事前帰無・opt-in、条件付き関連/負結果 |
+| P1-M20 | `OlsRvAdapter` / OLS partial R²、point RV(q=1) | 古典OLS係数/SE/df、非OLS拒否 |
+| P2-M01 | `EconmlCateAdapter` / LinearDML CATE | X/W/treatment/outcome、inference registry、fold |
+| P2-M02 | `EconmlCateAdapter` / CausalForestDML CATE | leaf/support/nuisance/CI API、row privacy |
+| P2-M03 | `EconmlCateAdapter` / DRLearner CATE | binary treatment/propensity、inference method |
+| P2-M04 | `EconmlCateAdapter` / ForestDRLearner CATE | propensity+forest inference/support |
+| P2-M05 | `MetaLearnerAdapter` / S-Learner CATE | counterfactual prediction、point/CI制限 |
+| P2-M06 | `MetaLearnerAdapter` / T-Learner CATE | treated/control support、point/CI制限 |
+| P2-M07 | `MetaLearnerAdapter` / X-Learner CATE | cross-model weights、point/CI制限 |
+| P2-M08 | `EconmlDrivAdapter` / IV heterogeneous structural slope | Z/A/X/W、IV relevance/exclusion、inference |
+| P3-M01 | `TigramiteTemporalAdapter` / PCMCI | CI test/lag window、time-series order、graph |
+| P3-M02 | `TigramiteTemporalAdapter` / PCMCI+ | contemporaneous endpoint、CPDAG-like oracle |
+| P3-M03 | `TigramiteTemporalAdapter` / LPCMCI | PAG/latent/endpoint fidelity、lag |
+| P3-M04 | `PanelQuasiAdapter` / DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| P3-M05 | `PanelQuasiAdapter` / Event Study | cohort/event time、pretrend、reference periods |
+| P3-M06 | `InterruptedTsAdapter` / level/slope change | intervention date、seasonality/autocorrelation/HAC |
+| P3-M07 | `RddAdapter` / Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI |
+| P3-M08 | `RddAdapter` / Fuzzy RD local complier effect | First stage、discontinuity ratio、local IV inference |
+| P3-M09 | `WaldRatioAdapter` / B0 complier LATE reference | binary Z/A、IV assumptions、first stage |
+| P3-M10 | `TwoSlsAdapter` / B0 just-identified LATE | zero controls、single Z/A、robust covariance、AR |
+| P3-M11 | `TwoSlsAdapter` / B1 additive linear IV slope | single binary Z/A、predeclared C、robust AR |
+| P3-M12 | `SyntheticControlAdapter` / treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only |
+| P3-M13 | `SyntheticDidAdapter` / panel average effect | donor and time weights、preperiod/variance method |
 
-**41行のscope:** P1=20、P2=8、P3=13。未確定のP1-M05識別対象、実効Backend/CI・Monte Carlo結果はMethod名が載っただけでは解消しない。各IDは実装前に `MethodConfig/BackendVersion/Scientific Reference/Gate Cell` に結び直す。
+**41 Method：** P1=20、P2=8、P3=13。P1-M05の対象EstimandをMethod labelからLATEと推定せず、識別対象未確定は型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
 
 ## 3. 共通Adapter Contract
 
@@ -109,7 +109,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 
 ### 5.3. Tests
 
-`DD-E11-METH-P201`〜`P208`：Method別inference availability、effective API、DGP-003/004/008、negative control/misspecification、privacy、CI pointwise coverage、Reference E05/E06。対応FR-193/194/195、AR-034/035。実測・Science Gateは未実施。
+`DD-E11-METH-P201`〜`P208`：Method別inference availability、effective API、DGP-003/004/008、negative control/misspecification、privacy、CI pointwise coverage、Reference E05/E06。対応FR-193/194/195、AR-034/035。
 
 ## 6. P3 Graph / Temporal
 
@@ -122,6 +122,16 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 ### 6.2. Tests
 
 `DD-E11-METH-P301`〜`P303`：DGP-009〜011、Graph Oracle、NEG-021/028、round-trip、sample ordering。対応FR-186/196、AR-028/036。
+
+### 6.3. P1-M06 `FciDiscoveryAdapter`のMethod固有契約
+
+`FciDiscoveryAdapter.preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的な適格性判定、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果のPAGへの正規化である。Product `ScientificCorePort.run_discovery`やPC Adapterへのaliasを禁止。
+
+[FCI Method config schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)に従い`fisherz/chisq/gsq`、明示alpha/depth/max_path_length、null/required/forbidden directed BackgroundKnowledgeを検証する。DatasetとDesignの列名・順序、finite complete observations、CI別measurement scale、categorical support、観測独立性・標本規模、BK矛盾を確認し、未承認の欠損補完・離散化・CI代替をしない。特定の`causal-learn`版を科学的Method定義に固定せず、effective distribution/API/signature/endpoint accessorとlockをRuntimeで照合し、不一致は`BACKEND_API_MISMATCH`。
+
+Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpoint markの順序を保持する。PAG circle/bidirectedをDAGへ確定せず、重複・不正node/markを拒否し、GraphVersion/dual hashをDomainへ渡す。BKがPAGの不確定endpointを過剰確定する場合は独立motif検証なしに成功としない。2観測変数の潜在交絡を一意識別したとは報告しない。
+
+`DD-E11-METH-P106`は実効API/eligibility、独立MAG/PAG同値類Oracle、BK/latent negativeの検証契約。Backendの出力を自らの正解Oracleにしない。
 
 ## 7. P3 Quasi / IV / SCM
 
@@ -145,7 +155,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 - Anderson–Rubin：H0(β)の下で`Y - β A`のZとの関係を（B1では指定Cを条件付けて）検定、反転集合を作る。初期契約は独立観測・単一excluded Z・単一endogenous A・異分散頑健漸近推論の範囲。任意のcluster/HAC版へ自動拡張しない。β探索は有界gridだけではALL_REAL/非有界/非連結を判定できないためtail/bracketing/数値精度を別実装として検証。数学的にEMPTYなAR集合は汎用Codecで表現可能。ただし、非退化なB0/B1 just-identified HC1 AR反転では gA≠0、Var_HC1(βhat)>0 の条件からT_AR(βhat)=0で非空性が従う。そこでEMPTYが観測された場合はMethod別SCIENCE_INCONSISTENTとして検査する。first-stage=0、非正分散、rank欠損は別途型付き分岐にし、数値的な失敗と数学的EMPTYを混同しない。
 - AR testがIVのexclusion/independence/monotonicityを証明すると解釈しない。CI coverageは独立Simulationで計測する。
 
-**AR具体化（共通Source設計拘束）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を機械的候補とする。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは[共通科学契約](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)を参照。これは**採用済みI2の実装候補**であり、独立Science Reviewerによる統計量と数値解法の検証まではMethod Gate07 PASSとしない。
+**AR具体化（共通Source設計拘束）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を機械的候補とする。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは[共通科学契約](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)を参照。これはB0/B1の科学的な統計量・推論前提を規定するものであり、独立ReferenceとCoverage実測とは別である。
 
 ### 7.4. SCM / SDID
 
@@ -154,38 +164,12 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 
 ### 7.5. Tests
 
-`DD-E11-METH-P304`〜`P313`：DGP-012〜018/024、REF-Q01〜Q05/REF-E07/E08、weak-IV negative、Graph/temporal control、CI/AR shape、donor/pretrend/first stage。対応FR-197〜200、AR-037〜041。Method別実効Backend/InferenceとReferenceは該当Gateの07検証契約Freeze後に独立受入。
+`DD-E11-METH-P304`〜`P313`：DGP-012〜018/024、REF-Q01〜Q05/REF-E07/E08、weak-IV negative、Graph/temporal control、CI/AR shape、donor/pretrend/first stage。対応FR-197〜200、AR-037〜041。Method別実効Backend/InferenceとReferenceは独立検証の対象となる。
 
 ## 8. Verification strategy and science boundaries
 
-- Test Registryは41 Method ID全件に対して (a) positive DGP/REF、(b) negative Scenario、(c) Method×Estimand/Backend/CI Interface、(d) Canonical Result/Manifest readback、(e) legacy regression影響の有無をトレースする。
-- `DD-E11-METH-P101〜P120 / P201〜P208 / P301〜P313` は**受入テストID候補**であり、実行済みテストやPython test fileを捏造するものではない。
-- 該当Gateの07科学検証に使うK/R/Monte Carlo SE、FWER=0.05、Reference SHA、DGP version、CI coverage、Budget/Env SHAはSR04-Fで事前にOwner Freezeし、独立Reviewerが計測する。T2 PilotとT3を混ぜず、不適格Runを分母から消さない。
-- 顧客Deliveryには実際に配るArtifactのSBOM/License法務判断を必要とする。Science受入と配布認可を同一状態にしない。
+- `DD-E11-METH-P101〜P120 / P201〜P208 / P301〜P313`は41 Methodに対応する恒久的な受入義務ID。各Methodについてpositive DGP/独立Reference、negative Scenario、Method×Estimand/Backend/CI、canonical Result/Manifest readback、Product regression影響を検証する。
+- 独立検証ではDGP version・seed・Method-specific推論・Monte Carlo SE/Coverage/多重性と適格Run分母を定義する。型・Schema一致は科学的Coverageや識別の証明ではない。
+- 顧客Deliveryは実際のBundleのSBOM/Licenseと受領者別法務判定を別途必要とする。
 
-参照：[E11 Domain/Ports](30_61_e11_local_domain_ports.md)、[E11 runtime/publisher](30_62_e11_local_execution_publication.md)、[E11 Interface](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
-
-## 9. PREP-03 G01 P1-M06 implementation-facing Method config
-
-[Gate06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)により`P1-M06`のFCI Adapterに限って、`fisherz/chisq/gsq`、明示`alpha/depth/max_path_length`、BG知識（nullまたはrequired/forbidden directed pairs）、Graph PAG losslessと明示`causal-learn` Backendを構成契約とする。Method-specific JSON Schemaは[FCI schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)；Question/Design内部Profileは同Schema indexを参照。上流のBackgroundKnowledge endpoint過剰確定RegressionはG01-07で検査し、未検証の条件でPAG確定を偽装しない。
-
-
-## 10. G01 P1-M06 `FciDiscoveryAdapter` のMethod/科学的実装契約
-
-**`P1-M06`のみ**をG01で実装する。`2の他Method配置と`3の共通Port/Result/Negative規範は不変。G01 [06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)/[07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)のAuthoritative designは[30_61 `16](30_61_e11_local_domain_ports.md)及び[30_62 `14](30_62_e11_local_execution_publication.md)と本節。
-
-### 10.1 Class/Method/Preconditions
-
-- `scientific.local_adapters.fci.FciDiscoveryAdapter`：`preflight(request:ValidatedDiscoveryRequest) -> CapabilityOrEligibilityResult`は静的適格性のみ、`execute(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink) -> DiscoveryGraphOutcome`はFCI結果をDomain Graph（または理由付きunavailable）に正規化する。Product `ScientificCorePort.run_discovery` や既存`CausalDiscovery.run_pc`のaliasは禁止。
-- Configurationは[G01 FCI Method schema](../23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json)に固定。Study P1-M06/causal-learn/DISCOVER/GRAPH_STRUCTURE、CI `fisherz/chisq/gsq`、明示alpha/depth/max_path_length、BK（null/required/forbidden pair）を事前検証。列名/順序、finite complete observations、CI別measurement scale、カテゴリsupport、独立観測とサンプルサイズ、BK矛盾を検査。自動離散化・欠損補完・未知CI代替禁止。
-- Effective `causal-learn 0.1.4.8`で`causallearn.search.ConstraintBased.FCI.fci`の実際のimport・signature・return/object endpoint accessorをテスト。相違は`BACKEND_API_MISMATCH`、Fallback無し。module import時に外部Backendを先読みしない。
-
-### 10.2 Postconditions / Graph oracle
-
-- Backend Node IDsとDataset columnsは検査済み1:1 mapping。`edge.node1/node2`及び`endpoint1/2`は同じ位置で対応。node順序入替時はmarkも入替、dup/invalid node/endpointを拒否。Graphは`kind=PAG`・`temporal=null`・`lag=null`、circle/bidirected等lossless保持。GraphVersion/JCS dual hash/parentは30_61に委譲。
-- Background KnowledgeがPAGの非識別端点を過剰確定しうる場合は独立motif Regressionを通るまでは`BACKEND_SEMANTICS_UNVERIFIED`を返し、PAG成功として公開しない。
-- Method scientific PASSはGRAPH-A独立Oracle（真DAG→観測MAG→同値類PAG）と実測受入に依存。2観測変数の潜在交絡から「潜在原因を一意識別した」と誤表示しない。BackEnd invoke自体はScience PASSではない。
-
-### 10.3 DD Method test IDの割当
-
-`DD-E11-METH-P106`は`P1-M06`のMethod固有テストID（`4.3`の`P101〜P120`系列中）。G01の07-08（API/eligibility）、07-09（GRAPH-A oracle）、07-10（BKと潜在交絡の負例）で検証。科学的Oracle/Pilot未実施なら`G01-07-09=BLOCKED`を維持。
+参照：[E11 Domain/Ports](30_61_e11_local_domain_ports.md)、[Execution/Publisher](30_62_e11_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。

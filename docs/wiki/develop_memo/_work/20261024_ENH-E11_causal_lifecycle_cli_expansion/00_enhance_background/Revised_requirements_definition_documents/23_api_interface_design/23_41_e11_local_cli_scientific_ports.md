@@ -6,11 +6,11 @@
 
 DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を所有する。Local applicationはversion dispatch、順序・lineage gateを所有する。Scientific Port/AdapterはMethod-specific executionとBackend evidenceを所有する。CLI/File adapterは入力pathと成果物の安全な公開を所有する。Productの `ScientificCorePort` は既存 `ScientificStatus` のProduct型に依存するため、E11の型付きEffect/AR集合を無検証で同型へキャストしない。
 
-本書に記載する具体的なwire名は改訂版IFの**審査対象契約**であり、実装済みAPIの説明ではない。実装の一致性はContract Testで確認する。
+本書はLocal CLI/Scientific Portのwireと意味的な契約を規定する。実装の適合性は独立Contract Testで確認する。
 
 ## 2. Versionと入口
 
-| Interface | 新規候補／互換規則 | 禁止する曖昧性 |
+| Interface | Interface／互換規則 | 禁止する曖昧性 |
 |---|---|---|
 | E11 CLI | `ariadne-causal-local` | 既存 `ariadne-estimate` の引数をE11解釈に変更しない |
 | E11 config | `e11-local-study/1` | `causal-analysis-spec/2` をE11へ自動upgradeしない |
@@ -25,11 +25,11 @@ CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [
 - `--check-only`：実行・出力publish無しでconfig／path／hash／静的capability／eligibilityを検査。外部Backendが必要な深い科学実行のPASSを主張しない。
 - `--json`：stdoutへ機械可読の制御Envelopeのみ。個票・秘匿データをstdoutへ流さない。
 - `--allow-row-level-export`：個票CATEの生成を**明示的に要求する一条件**。入力privacy policy、OS主体・出力ディレクトリと別の承認条件を満たさなければ拒否。
-- Optionの正式名称・version IDは本契約をOwnerがSnapshot採用するまでは候補とする。未指定versionをE11として推測しない。
+- 5つの`e11-local-*/1`識別子は固定。Marker`e11-commit/1`は別の内部versionである。無版入力をE11と推測しない。
 
 ## 3. Config request（Schema contract）
 
-次はF06のstrict v1 wire（審査用JSON Schemaドラフト）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形をE11 v1で暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
+次はF06のstrict v1 wire（JSON Schema）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形をE11 v1で暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
 
 ~~~yaml
 schema_version: e11-local-study/1
@@ -57,22 +57,28 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ## 4. Port contractとauthority
 
-| Port / Operation | 主なRequest | Response | Fail-closed条件 |
-|---|---|---|---|
-| `LocalConfigDecoder.decode(bytes, expected_version)` | schema_version、YAML bytes | 構造化 `LocalStudySpec` | Unknown/versionless、余剰critical fields |
-| `ContentReferencePort.verify(ref, root)` | relative path、宣言hash | verified bytes/hash、安定入力descriptor | traversal、symlink、missing、TOCTOU/hash差 |
-| `MethodCapabilityPort.resolve(method_id, requested_backend, profile)` | Method registry／extra／環境 | `BackendCapability`、effective API/version | unsupported・missing extra・silent fallback |
-| `IdentificationPort.identify(request)` | versioned Question/Design/Graph/Estimand/metadata | normalized `IdentificationOutcome`、proof／reason | unvalidated backend label、invalid endpoints |
-| `EstimatorPort.estimate(request)` | IDENTIFIED proof・eligible design・method config・dataset | `EffectOutcome`、diagnostics・inference metadata | NONIDENTIFIED/REVIEW、estimand mismatch、invalid support |
-| `DiagnosticPort.run(request)` | valid upstream Result + Method | typed refutation/sensitivity/quality result | missing upstream/prohibited method |
-| `LocalPublicationPort.publish(bundle)` | staged immutable artifacts + manifest metadata | committed run reference | non-atomic path、integrity・privacy failure |
-| `LocalManifestReader.verify(run_ref)` | committed run directory | verified schema+provenance+artifact inventory | marker無し、checksum不一致、不完全bundle |
+| Port / Operation | 論理署名／返却 | Authority・拒否条件 |
+| --- | --- | --- |
+| `LocalConfigDecoder.decode(raw, *, declared_format)` | `ValidatedStudy` | strict version/key/Method Profile、旧v2 fallback禁止 |
+| `ContentReferencePort.verify(ref, *, root)` | `VerifiedContent` | root閉じ込めの実bytes/hash・race/symlink拒否 |
+| `MethodCapabilityPort.resolve(request)` | `BackendCapabilityRecord` | Operation/Estimand/Backend/Inferenceと実効API、no fallback |
+| `IdentificationPort.identify(request)` | `IdentificationOutcome` | validated proof・Graph/upstream hash |
+| `EstimatorPort.estimate(request, *, sink)` | `EffectOutcome` | validated eligibility、stagingだけに出力 |
+| `DiagnosticPort.run(request, *, sink)` | `DiagnosticOutcome` | Validated upstream/Method |
+| `LocalPolicyVerifierPort.verify(*, policy_ref, study, root, anchor)` | `VerifiedStudyPolicyEvidence` | Studyから独立した事前承認Authority |
+| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, policy, output_shape)` | `PrivacyDecision` | 独立承認・private Root・column/row上限 |
+| `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
+| `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
 `IdentificationPort`や`EstimatorPort`のinterface型はE11 Domainから定義する。既存Product `ScientificCorePort`への単純aliasは禁止し、backendのoptional importをProtocol／Port import時に実行しない。sync実行は初期仕様とし、E11のWeb Worker/DB lifecycleは対象外。
 
+### 4.1. Port間の正規署名と相互整合
+
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+
 ## 5. Status／error／exit envelope
 
-制御応答候補：
+制御応答：
 
 ~~~json
 {
@@ -88,17 +94,17 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 }
 ~~~
 
-| Axis | 有効値（審査対象） | 意味 |
+| Axis | 有効値 | 意味 |
 |---|---|---|
 | technical | `COMPLETED / VALIDATION_FAILED / CAPABILITY_UNAVAILABLE / EXECUTION_FAILED / PUBLICATION_FAILED` | プログラムとI/Oの状態 |
 | identification | `IDENTIFIED / NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED / NOT_APPLICABLE` | 科学的識別の状態 |
 | point | `AVAILABLE / NOT_AVAILABLE / NOT_REQUESTED` | 数値点推定の有無 |
 | inference | `AVAILABLE / UNSUPPORTED / UNAVAILABLE / FAILED / NOT_REQUESTED` | 妥当な推論証拠の可用性 |
-| science_acceptance | `NOT_EVALUATED / PASS / FAIL / INCONCLUSIVE / BLOCKED / NOT_APPLICABLE` | **該当Gateの07独立科学検証**に基づく証拠状態 |
+| science_acceptance | `NOT_EVALUATED / PASS / FAIL / INCONCLUSIVE / BLOCKED / NOT_APPLICABLE` | **独立した科学的検証**に基づく証拠状態 |
 
 理由コードは安定したsnake_case等に正規化し、Machine-readable statusとhuman messageを分ける。Scientific negative（例：NOT_IDENTIFIED、unsupported confirmatory CI、weak-IV warning）は正常にpublishされた**負の分析結果**であって、勝手にtechnical failureや成功Effectへ変換しない。
 
-CLI exit code候補：`0`＝制御上正常終了（科学的負結果を含む）、`2`＝config/schema/不適格request、**`3`＝input/hash/path/Privacy・Row Export認可拒否（Owner採用）**、`4`＝method/backend technical/capability、`5`＝publication/readback failure。`0`はScience PASSを意味しない。stdoutにrun/status/manifest参照を返し、stderrに操作可能なエラーのみ出す。既存CLIのexit codeは遡及変更しない。
+CLI exit code：`0`＝制御上正常終了（科学的負結果を含む）、`2`＝config/schema/不適格request、**`3`＝input/hash/path/Privacy・Row Export認可拒否**、`4`＝method/backend technical/capability、`5`＝publication/readback failure。`0`はScience PASSを意味しない。stdoutにrun/status/manifest参照を返し、stderrに操作可能なエラーのみ出す。既存CLIのexit codeは遡及変更しない。
 
 ## 6. Method別互換と推論契約
 
@@ -115,14 +121,14 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 
 ## 7. Environment capabilityとLicense
 
-| Profile | Eligible extras（案） | Interface上の扱い |
+| Profile | Eligible extras | Interface上の扱い |
 |---|---|---|
 | ENV-BASE | coreのみ | optional MethodはUNAVAILABLE。旧v2は動作継続 |
 | ENV-DOWHY | `e11-dowhy` | Method別実効DoWhy API／版本照合 |
 | ENV-ECONML | `e11-econml` | method-specific CATE/DRIV、CI availability |
 | ENV-TIGRAMITE | `e11-temporal` | PCMCI系、端点/lag、顧客配布Legalは別判定 |
 | ENV-COMBINED | 上記3 extras | universal lock、共存、旧CLI回帰 |
-| ENV-RD | `e11-rdd`候補（追加・条件付き） | RD Backend・GPLの個別採否と法務Gate必要 |
+| ENV-RD | `e11-rdd`（法務・配布条件付き） | RD Backend・GPLの個別採否と法務Gate必要 |
 
 `pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版、SBOMは成果物集合、Legal Gateは受領者別の配布可否。全Profileはfresh isolated venvで `uv lock --check / uv sync --locked / uv pip check` とMethod API smokeを実施する。未実測版を実効値として出力しない。GPLに係る特定顧客へのDeliveryは法務承認前 `CUSTOMER_DELIVERY_BLOCKED` とする。
 
@@ -143,28 +149,6 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 
 対応要件：FR-185〜203、NFR-029〜036、Scientific AR-028〜044のうち本Interfaceが担う箇所。全44件の責務対応は[BD-01 Trace](../bd01_review/91_requirement_architecture_trace.md)で確認する。Implementation ContractとIndependent Science Gateは別判定とする。
 
+### Publication・Privacy・Errorの恒久契約
 
-## PREP-02 Owner-approved Version/Privacy boundary (2026-11-17)
-
-[DEC-PREP02](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) adopts Options A/A/A. The five literal `e11-local-*/1` identifiers in §2 are **now adopted identifiers**, while CLI signatures, Protocol typing, exact JSON Schema and implementation are still not frozen. Unknown/versionless/legacy-v2 input must fail closed in E11 decoder; legacy reader behavior stays separate. `--allow-row-level-export` does not confer authorization: same-UID, private owner-controlled trusted local root, preauthorized Study policy and explicit flag are jointly required; delegated/shared/CI/container-root-accessible paths are outside initial scope. Publisher is constrained to same-FS Linux atomic no-replace with unsupported platforms rejected. This supersedes the 'candidate until Owner snapshot adoption' qualification **only for version identifiers and three selected policies**.
-
-
-
-## 9. F04 Port境界契約の具体化（2026-11-17）
-
-`E11LocalApplication`から見た`ContentReferencePort/MethodCapabilityPort/IdentificationPort/EstimatorPort/DiagnosticPort`はProduct `ScientificCorePort`の子型ではない。新E11のDTOはScientific status・Estimand・Proof・Inferenceの意味を独立に持ち、既存`ResultType`や`ScientificStatus`へ無断で射影しない。Backendに任意最終Pathの書込みを許すことなく`StagingArtifactSink`へ出力する。Local `Publisher/Reader`は既存Product `ArtifactStorePort`の`store/exists/retrieve/delete`では実現できない同一FS immutable multi-file publicationを提供する。E11版と旧`CliManifest(2.0)`は別Readerでstrict dispatchする。
-
-Portの候補署名/Negative case/Regression obligationsは[F04 ADR候補](../combined_review/98_20261117_prep02_f04_port_boundary_adr_candidate.md)、値型とAdapter境界は[30_61](../30_detailed_design/30_61_e11_local_domain_ports.md)`11。**候補Port署名はFreeze未了であり、現行実装のAPIではない。**
-
-
-## 10. F03/F05/F06共通Port・Version・Error契約（Freeze準備）
-
-- [F03 Atomic no-replace出版契約](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)：Linux `renameat2(RENAME_NOREPLACE)`を必須とし、ロックや普通のrenameで代替しない。Producerは`ValidatedStagedBundle`、Readerは`VerifiedLocalRun`を返す。未検証・競合・crash時に成功を主張しない。
-- [F05 Trusted Root/Privacy契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Local Principal、ACL/mount、Owner一致と事前承認済みPolicyの証跡を検証。Study自己申告boolのみで個票を許可しない。
-- [F06 Dispatch/Codec/Error契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：採用済み5種のversionと`e11-commit/1` markerを厳格dispatch。Unknown/legacyはfail-closed。構造は[Schema draft一覧](schema_drafts/README.md)に対応。
-- **状態:** `CANDIDATE / OWNER_AAA_ADOPTED / SCHEMAS_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN`。`23_41`内の旧候補表現はA/A/A採用済みversion値を撤回するものではない。
-
-
-## 11. DEC-PREP02-D：CLI Interface判断の適用
-
-[Owner採用](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)：個票出力のPrivacy/Authorization拒否は`exit 3`とし、明示されたrow export要求をAggregate-only成功に置き換えない。Policy自体の事前承認はStudy YAML booleanで自己証明させず、別のverifiable trust anchorに束縛する。`0`は科学的PASSと同義ではなく、**数学的にEMPTYなAR推論結果自体**はvalid inversion evidenceがあれば一般には科学的負結果の表現にとどまり、自動的なCLI error exitを意味しない。実装・Runtime負例・独立reviewは未実施。
+PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、CLI flag、独立事前Policy、same-UID private TrustedRoot、column/row制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。

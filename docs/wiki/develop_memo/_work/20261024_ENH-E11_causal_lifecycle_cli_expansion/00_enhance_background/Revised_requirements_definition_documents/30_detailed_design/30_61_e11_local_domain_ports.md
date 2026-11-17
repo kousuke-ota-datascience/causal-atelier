@@ -2,7 +2,7 @@
 
 ## 1. モジュール構成・依存方向
 
-以下はENH-E11の新Local laneの実装候補。既存`src/ariadne/product/`のDomain/Portを無制限に複製せず、共通純粋値とAdapterの分担を確認してから着手する。
+Local causal laneのDomain/Port配置と依存関係を定義する。既存ProductのDomain/PortとLocalのauthorityを分離し、共通化は意味と検証義務が一致する純粋値に限る。
 
 ~~~text
 src/ariadne/
@@ -26,7 +26,7 @@ src/ariadne/
 
 Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/content-refのみを通す。Package import時にoptional Backendをロードしない。
 
-## 2. ContentRef（PROPOSED）
+## 2. ContentRef
 
 ### 2.1. 識別とフィールド
 
@@ -48,7 +48,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 `DD-E11-REF01`：相対／hash valid。`REF02`：traversal/symlink/race。`REF03`：入力差替え/TOCTOU。`REF04`：metadata-only同一IDの別bytes禁止。FR-185、NFR-029、NFR-031に対応。
 
-## 3. LocalStudySpec / LocalConfigDecoder（PROPOSED）
+## 3. LocalStudySpec / LocalConfigDecoder
 
 ### 3.1. Class/fields
 
@@ -71,7 +71,13 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 `DD-E11-SPEC01`：valid schema／strict unknown field、`SPEC02`：旧v2 dispatch、`SPEC03`：confirmation requires inference、`SPEC04`：Method/estimand mismatch。FR-185、FR-201、NFR-029/036、AR-034。
 
-## 4. GraphEvidence / GraphVersion（PROPOSED）
+### 3.4. Operation別Target・Method固有の入力制約
+
+Study wireの`estimand`フィールドは必須だが、`DISCOVER`の`{family: GRAPH_STRUCTURE, population: OBSERVED_VARIABLES, contrast: NOT_APPLICABLE}`は効果Estimandではなく**非効果の探索Target**を表すタグ付き値である。Effect Estimatorに渡さず、ダミーATE/ATTも生成しない。DISCOVERでは未作成のInput Graph/Identificationを要求しない。ESTIMATE等では実際の効果Estimandと識別証拠を要求する。Operation×Method×Targetに応じてvalidatorを分ける。
+
+P1-M06の[Question Profile](../23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)、[Design Profile](../23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)は**FCIに対するMethod固有の内部検証**であって全Discovery Method共通の機能制限ではない。Question/Design/Studyのidentity、Design variablesとDataset列名・順序、Design/Method BackgroundKnowledge、CI familyとmeasurement scaleを照合する。Markov/faithfulness等のassumptionsは研究者の宣言であり、成立の証明ではない。
+
+## 4. GraphEvidence / GraphVersion
 
 ### 4.1. フィールド
 
@@ -83,13 +89,19 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 - `GraphEvidence.from_canonical_json(raw: bytes) -> GraphEvidence`：Graph Schema厳格照合、endpoint/temporal domain検証。隠れた潜在交絡情報の喪失を拒否。
 - `GraphEvidence.make_revision(edit: GraphEdit, rationale: str, assumptions: tuple[str,...]) -> GraphEvidence`：元を不変に保ち、新version ID／parent／edit rationaleを必須。DAGへの変換は新仮定の科学レビューが必要。
 - `GraphEvidence.canonical_payload() -> Mapping[str, JsonValue]`：Node/Edge/lag/endpointとprovenanceのlossless round-trip。Graphの「FIXED」は編集状態でありScientific Truthとは別。
-- 未確定Graphからの点推定は、別証明が独立受入されない限り不許可。D06将来の一般化識別自動実装は初期範囲外。
+- 未確定Graphから点推定へ進むには、対象Estimandに対する独立した識別証明を必要とする。DAGへの形式変換はその証明を代替しない。
 
 ### 4.3. 検証
 
 `DD-E11-GRAPH01`：FCI PAGのcircle/arrow/bidirected round-trip、`GRAPH02`：PCMCI系lag/contemporaneous、`GRAPH03`：PAG→DAG silent変換拒否、`GRAPH04`：版の不変性/再識別。FR-186/196、AR-028/036/043。
 
-## 5. IdentificationOutcome / EstimatorRequest（PROPOSED）
+### 4.4. PAG endpoint・GraphVersion・二種類のDigest
+
+PAGのTAIL/ARROW/CIRCLE、双方向矢印、Node identity、lagとTemporalConventionはlosslessに保存する。node順を反転するときendpoint markも対応して入れ替える。未定義node/不正mark/重複unordered edgeとsilent PAG→DAG変換を拒否する。`make_revision`は旧Graphを変更せず、新しいversion ID、parent version、rationale、assumptionsを保持する。
+
+内部`GraphEvidence.content_hash = SHA256(JCS(Graphからcontent_hash自身を除く意味射影))`、外部`ContentRef.sha256 = SHA256(完成Graph Fileの実bytes)`。両者を別々に検証し、一方だけで信用しない。
+
+## 5. IdentificationOutcome / EstimatorRequest
 
 ### 5.1. フィールド
 
@@ -107,7 +119,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 `DD-E11-ID01`：B0/B1/DRIVの誤label拒否、`ID02`：graph/design/hash差、`ID03`：nonidentified/review override拒否、`ID04`：新GraphVersionで再識別。FR-187/194/199、AR-029/039/043。
 
-## 6. ARConfidenceSet / InferenceEvidence（PROPOSED）
+## 6. ARConfidenceSet / InferenceEvidence
 
 ### 6.1. フィールド
 
@@ -119,14 +131,20 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 - `ARConfidenceSet.from_components(level, components, evidence) -> ARConfidenceSet`：有限性、順序、重複と接触するintervalの正規化、topology分類（ALL_REAL > DISCONNECTED > UNBOUNDED > BOUNDED）を行う。
 - `ARConfidenceSet.contains(beta: float) -> bool`：endpoint open/closedと∞を尊重。ALL_REALは任意有限betaを含む。
 - `ARConfidenceSet.to_payload() / from_payload()`はJSON Infinity/NaNを使わず同じ数学集合に往復。
-- **Owner採用 D-F07-EMPTY A:** 汎用AR Setは`EMPTY`（成分0）もlosslessに表現する。B0/B1でjust-identifiedかつ採用Methodの前提により非空集合が数学的に保証される場合のみ、**Method-specific validator**でEMPTYを科学的不整合として検出する。未確認の識別条件へ一律に非空を仮定しない。反転失敗は `FAILED + typed reason`、数学的EMPTYは `AVAILABLE + inversion_evidence`で区別する。
+- 汎用AR Setは`EMPTY`（成分0）もlosslessに表現する。B0/B1でjust-identifiedかつ採用Methodの前提により非空集合が数学的に保証される場合のみ、**Method-specific validator**でEMPTYを科学的不整合として検出する。未確認の識別条件へ一律に非空を仮定しない。反転失敗は `FAILED + typed reason`、数学的EMPTYは `AVAILABLE + inversion_evidence`で区別する。
 - `InferenceEvidence.validate_for(mode, method)`：EXPLORATORYのpoint-onlyとCONFIRMATORYの有効推論要件を区別。SCM初期point-onlyを確証的CIありと報告しない。
 
 ### 6.3. 検証
 
 `DD-E11-AR01`：EMPTY、ALL_REAL、two-ray DISCONNECTED、片側非有界、有限BOUNDED、`AR02`：generic EMPTYの成功出力とMethod別just-identified EMPTY拒否を分離、`AR03`：round-trip、`AR04`：CI unavailable reason、`AR05`：CONFIRMATORY fail-closed。FR-202、AR-040、NFR-036。
 
-## 7. EffectOutcome / BackendCapabilityRecord（PROPOSED）
+### 6.4. Lossless AR集合・Method別非退化条件
+
+ARConfidenceSetは`confidence_level∈(0,1)`を要し、`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5 topologyを持つ。`EMPTY`はcomponentsが0、ALL_REALは(-∞,+∞)の一成分。EndpointのNEG_INFINITYは下端、POS_INFINITYは上端のみで無限端点はopen。接触する2成分が共に端点を除けば1点のgapが残るため結合しない。成功した数学的EMPTYは`AVAILABLE + inversion_evidence`、反転失敗は`FAILED + typed reason`として別の状態にする。
+
+B0/B1 just-identified HC1 ARで`g_A≠0`かつ`Var_HC1(βhat)>0`等の非退化条件を満たすと`T_AR(βhat)=0`なので非空となる。Method固有validatorはこの条件下のEMPTYを科学的不整合として拒否し、first-stage/rank/分散退化や数値失敗はそれぞれ別typed reasonを返す。`InferenceEvidence.availability=AVAILABLE`では承認されたFiniteInterval又はARConfidenceSetちょうど1つ、それ以外は両方nullかつ理由必須。JSON数値としてNaN/Infinityを使用しない。
+
+## 7. EffectOutcome / BackendCapabilityRecord
 
 ### 7.1. フィールド
 
@@ -143,7 +161,11 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 `DD-E11-EFF01`：point-only・CI-null reason、`EFF02`：Science status独立、`EFF03`：wrong backend versionとfallback拒否、`EFF04`：Canonical JSON finite、`EFF05`：old Product result/CLI regression。FR-202、NFR-030/032/036、AR-034/040。
 
-## 8. Port interface signatures（候補）
+### 7.4. Canonical Codecと科学的状態
+
+`request_hash=SHA256(JCS(validated typed Study JSON))`、Graph semantic hashは自己fieldを除く意味射影、ContentRef/File/Marker参照は実bytesのSHA256で計算する。strict Codec `e11-json-jcs-rfc8785/1`を用い、Productの`hash_mapping(default=str)`へのfallback禁止。Identification/Point/Inference/ScienceAcceptance/technical statusは独立軸で、Product `ScientificStatus`／旧v2 Resultへの無検証castを禁止する。
+
+## 8. Port interface signatures
 
 ~~~python
 class IdentificationPort(Protocol):
@@ -169,106 +191,33 @@ class DiagnosticPort(Protocol):
     ) -> DiagnosticOutcome: ...
 ~~~
 
-**Cross-Port正規署名は[112](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)を優先する**（F04 Freeze候補）。本節の4 Portはその部分集合であり、ContentRef/Privacy/Publisher/Readerを追加する。型はこのLocal lane内部のDomain DTOとProtocolであり、外部ライブラリを戻り値にしない。Port adapterは契約上認定したMethodごとに実効APIを検証する。同一 `MethodID` でも別のEstimandやInferenceを暗黙選択しない。Port実装に生成されるArtifactは必ずstaging sinkに出力し、Backendが勝手に最終dirへ書くことは禁止。
+以下の4つの科学PortはLocalの論理Port群の部分集合であり、ContentRef/Privacy/Publisher/Readerと合わせて境界を構成する。型はこのLocal lane内部のDomain DTOとProtocolであり、外部ライブラリを戻り値にしない。Port adapterは契約上認定したMethodごとに実効APIを検証する。同一 `MethodID` でも別のEstimandやInferenceを暗黙選択しない。Port実装に生成されるArtifactは必ずstaging sinkに出力し、Backendが勝手に最終dirへ書くことは禁止。
 
-## 9. 実装時の順序と検証マッピング
+### 8.1. 共通論理Port署名とFacade境界
 
-1. Pure Domain Types/Codec（Graph/Estimand/AR）を実装しContract Round-tripを先にGreen。
-2. Version dispatcher／ContentRef I/Oをlegacy v2回帰とセットでGreen。
-3. Backend capability adapterをoptional env別にGreen。Runtime actual version/lockを記録。
-4. Scientific Method adapterは41 Method Scopeの個別適格性・Oracleを満たす順で実装。未受入Methodを擬似Resultで代用しない。
-5. 最後にApplication／Publisherとfault/privacy/Manifest readbackを統合する。
+```python
+class LocalConfigDecoder(Protocol):
+    def decode(self, raw: bytes, *, declared_format: Literal["yaml", "json"]) -> ValidatedStudy: ...
+class ContentReferencePort(Protocol):
+    def verify(self, ref: ContentRef, *, root: TrustedLocalRoot) -> VerifiedContent: ...
+class MethodCapabilityPort(Protocol):
+    def resolve(self, request: ValidatedCapabilityRequest) -> BackendCapabilityRecord: ...
+class LocalPolicyVerifierPort(Protocol):
+    def verify(self, *, policy_ref: ContentRef, study: ValidatedStudy,
+               root: TrustedLocalRoot, anchor: PolicyTrustAnchor) -> VerifiedStudyPolicyEvidence: ...
+class LocalPrivacyPolicyPort(Protocol):
+    def authorize(self, *, study: ValidatedStudy, cli_row_flag: bool,
+                  root: TrustedLocalRoot, policy: VerifiedStudyPolicyEvidence | None,
+                  output_shape: PlannedOutputShape) -> PrivacyDecision: ...
+class LocalPublicationPort(Protocol):
+    def begin(self, *, run_id: RunId, request_hash: Sha256Digest,
+              root: TrustedLocalRoot) -> StagingArtifactSink: ...
+    def seal(self, *, sink: StagingArtifactSink, manifest: LocalRunManifest,
+             privacy: PrivacyDecision) -> ValidatedStagedBundle: ...
+    def publish(self, *, bundle: ValidatedStagedBundle,
+                root: TrustedLocalRoot) -> CommittedLocalRun: ...
+class LocalManifestReaderPort(Protocol):
+    def verify(self, *, root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun: ...
+```
 
-参照：[IF-01 Local CLI/Ports](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[IF-01 Manifest](../23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)、[Existing Product Port](30_50_persistence_artifacts.md)。
-## 10. 既存実装とのPort/Manifest静的照合（PREP-02）
-
-固定Source観測ベースライン：af9cb0c51bb6faa55fd4e6fd170e547b5e6dd798。以下はSourceの署名と型の静的確認であり、Backend/Runtime/Science PASSではない。
-
-| Existing Component | Blob SHA / 観測Interface | Proposed E11との差分・対応 |
-| --- | --- | --- |
-| src/ariadne/product/ports/scientific_core.py | ccf89d307d626e7b4c82fe3f919230bb781d7f6a；ScientificCorePortの5 run_*メソッド、Product ScientificStatusのResultDescriptor | AR集合・部分識別等のtyped科学結果を旧Resultへ無断投影しない。新Portか明示bridgeを設計 |
-| src/ariadne/interfaces/cli/manifest.py | 97216eca9d777e97f7a5ebd4e248afd31c6b4de0；CliManifestのsnapshot_schema_version既定はcausal-analysis-spec/2 | E11 Local新Versionへ暗黙変換禁止。明示dispatchとroundtrip／負例 |
-| src/ariadne/product/ports/artifact_store.py | e5bb990f9b69ef68df46a1559560ffb67b64caaf；store / retrieve / exists / delete | multi-file Atomic Publishを保証しない。新Local Publisherとcommit-marker、readbackが必要 |
-| src/ariadne/product/domain/graph_version.py | 37ff76e001c8e269a00127e18d375f1dbc34c0e3；project-scoped GraphVersion | PAG circle endpoint、temporal lag、partial identificationを同一視しない |
-| src/ariadne/interfaces/cli/scientific_stage.py | 0467a56ceb0e95bd8e4e6a99b844d5f56c7f75c3；Product analysis_spec、ScientificCorePortをimport | Product／Localのauthorityを分離。旧v2 regression保護 |
-
-**未閉鎖:** Sourceに存在しないE11 Proposed Portの署名・Schema Version・typed statusの最終Freeze、security/atomic負例、独立Architecture Review。既存Classをこの静的一覧だけでOwnerの7区分完成と認定しない。
-
-
-## PREP-02 adopted cross-Port invariants (2026-11-17)
-
-[Owner decision](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) is A/A/A. `LocalStudySpec`, `GraphEvidence`, `EffectOutcome`, Manifest and Status have adopted strict `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1` discriminators. Domain DTOs must never silently read Product legacy v2. File-backed Content Ports must preserve verified same-root boundaries; Publication Port must require a Linux same-filesystem no-replace commit and fail-closed unsupported FS. Privacy-restricted outputs require the non-delegated owner-UID/Study-authorization/CLI-opt-in conjunction. **Unresolved:** formal Port signatures, DTO/JSON Schema, errors, effective FS capability inspection, independent review and verification. Option selection is not freeze.
-
-
-
-## 11. F04：Product/Local Port・DTO 互換性境界（設計契約案）
-
-### 11.1 既存Portからの意味変換を禁止する境界
-
-既存Product `ScientificCorePort`は`run_discovery/run_identification/run_estimation/run_refutation/run_sensitivity`から`list[ScientificResultDescriptor]`を返す。ResultType/ScientificStatusはProduct Resourceの型であり、E11のGraphEvidence・IdentificationOutcome・EffectOutcome、及びunbounded/disconnected AR集合の損失ない表現ではない。**E11 Local DomainはProduct Portを直接継承・単純alias・無検証castしない**。既存`ArtifactStorePort.store/retrieve/exists/delete`はmulti-file immutable run publishの代替としない。旧`CliManifest(manifest_version=2.0, snapshot_schema_version=causal-analysis-spec/2)`は新E11 strict decoderへ変換しない。
-
-### 11.2 Local Port/DTO signatures の実装候補
-
-`ContentReferencePort.verify(ref: ContentRef, root: TrustedLocalRoot) -> VerifiedContent`：実効Trusted Rootでsecure open→同一FDからbytes/hash→参照内容を固定。`MethodCapabilityPort.resolve(method_id, backend_id, profile) -> BackendCapabilityRecord`：real API/version/profile/inference supportを記録。`IdentificationPort.identify(request: ValidatedIdentificationRequest) -> IdentificationOutcome`、`EstimatorPort.estimate(request: ValidatedEstimatorRequest, sink: StagingArtifactSink) -> EffectOutcome`、`DiagnosticPort.run(request: ValidatedDiagnosticRequest, sink: StagingArtifactSink) -> DiagnosticOutcome`はE11 Local DTOを使用し、optional library object・Product Result/Status・任意出力Pathを返さない。`LocalPublicationPort.publish(staged: ValidatedStagedBundle, root: TrustedLocalRoot) -> CommittedLocalRun`はF03 no-replace規則の責務でありScientific Portには公開を許さない。`LocalManifestReaderPort.verify(ref: LocalRunRef, root: TrustedLocalRoot) -> VerifiedLocalRun`はmarker→manifest→artifact hashとE11 explicit version dispatchを検査する。
-
-`Validated*Request`はquestion/design/graph/dataset/estimand/method/upstream hashesを検証済みの内部型とする。外部入力から直接インスタンス化された未検証値をeligibleとして扱わない。Method別のEstimator/Inferenceの有効性は41 Methodの独立科学契約がAuthority。外部Calculation Primitiveの共有は、Method/Estimand/inferenceと負例が一致することを示したExplicit Adapterに限る。
-
-### 11.3 F04拒否条件と検証義務
-
-- Product `ESTIMATED`をE11 `science_acceptance=PASS`へ変換しない。DoWhy識別名からLATE/B0/B1/DRIVを推定しない。
-- Identificationが未成立またはGraphVersion/Hash不整合ならEstimatorを呼ばない。ScientificNegativeOutcomeを技術障害や偽の点推定へ変換しない。
-- Legacy Productの5 run signature・v2 reader・Product Result/Artifact schemaを回帰試験で保持する。Optional backendがないENV-BASEでもE11 Local Domainをimport可能にする。
-- 型署名とModule配置、Error code及びABIの最終freezeは独立Architecture Review前には宣言しない。実装後のtests/科学受入PASSとは別。
-
-設計判断候補および各検証項目：[F04 review input](../combined_review/98_20261117_prep02_f04_port_boundary_adr_candidate.md)。Owner採用済みA/A/Aの規則を変更しない。
-
-## 12. F07：AR・Inferenceのlossless DTO規範
-
-`ARConfidenceSet`は`confidence_level∈(0,1)`、**空集合も許す**canonical `components: tuple[ExtendedRealInterval,...]`、`topology`および検証可能な`inversion_evidence: ContentRef`で構成する。各Endpointは有限値または`NEG_INFINITY/POS_INFINITY`のタグ付きJSON型とし、裸のNaN/±Infinityやnullへの置換は禁止。負∞はlower専用、正∞はupper専用、無限端点は開区間。二つの成分が端点で接していても両者がその端点を除外する場合、そこに1点のgapが残るためDISCONNECTEDを保つ。
-
-分類はcanonical unionで、成分0なら`EMPTY`、全実数なら`ALL_REAL`、非空で成分数2以上なら`DISCONNECTED`、単一区間でいずれか無限端点なら`UNBOUNDED`、残り`BOUNDED`。正常に反転された`EMPTY`は`AVAILABLE`で、反転が技術的に失敗した場合は`InferenceAvailability.FAILED + typed reason`。特定B0/B1の非空条件はMethod別科学的受入で決定する。
-
-`InferenceEvidence.availability=AVAILABLE`では、承認された推論型と一致する`FiniteInterval`または`ARConfidenceSet`ちょうど1つを持つ。他のAvailabilityでは両方nullかつreason必須。点推定とScienceAcceptanceは独立。CONFIRMATORY結果にはMethod別に受入済み推論証拠を要求し、`NOT_EVALUATED`を`PASS`として表示しない。
-
-Wire shape candidateと証明範囲は[F07 review input](../combined_review/99_20261117_prep02_f07_ar_inference_schema_candidate.md)及び[JSON Schema draft](../23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json)。JSON Schemaだけでは成分順序/結合、統計的Coverage、Methodの適格性は証明されない。`F07_DESIGN_REFINED / SCHEMA_NOT_FROZEN / SCIENCE_NOT_RUN`。
-
-
-## 13. F04/F07レビュー是正による型・Science境界
-
-- F04 `TrustedLocalRoot`はraw `Path`ではなく、OS/ACL/mount/dirfdが検証されたCapability。`Validated*Request`はType Hintのみで科学的適格性を証明できないため、生成時とAdapter直前の不変条件を検証する。Product Portへの無検証cast禁止。[レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md) §1、[F05](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)。
-- [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)で汎用`EMPTY`をOwner採用し、AR02と両Schemaを更新した。科学的に正常な数学的空集合と`FAILED + reason`は別。B0/B1のjust-identified条件はMethod別Science Reviewで確認する。
-
-
-## 14. DEC-PREP02-Dの4採用事項（2026-11-17）
-
-1. 汎用`ARConfidenceSet`は5分類（`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`）。EMPTYは成分0・inversion_evidence必須で`AVAILABLE`の結果を取りうる。just-identified B0/B1のみMethod別否定ケースを検査。
-2. 個票はself-authored Study YAMLのflagだけでなく、当該Studyと出力Policyの独立した事前承認Evidenceに束縛。`VerifiedStudyPolicyEvidence`なしでは行出力なし。
-3. E11 hashはstrict canonical Codecで計算し、Product `hash_mapping(default=str)`を利用しない。実装方式はRFC 8785 JCS候補、適合性FreezeとRuntime testは別。
-4. Privacy・Row認可拒否はCLI exit3。`0`はscience PASSの意味ではない。
-
-Authority: [DEC-PREP02-D](../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md)。**Owner決定済み≠Port/Schema Freeze済み**。
-
-
-## 15. B0/B1 ARの非退化条件と推論結果型（共通規範）
-
-ARの汎用Confidence Setは`EMPTY`を含むが、B0/B1 just-identifiedで`gA≠0`かつβhat点のHC分散が正で有限なら、その点で`T_AR=0`となり集合は非空。first-stage=0やrank/HC退化を自動的に通常EMPTY、正常PASS又は計算失敗へ潰さない。Method別の確定試験は[統計量・退化条件](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)、合成データ照合は[限定数値証跡](../combined_review/115_20261117_prep02_f07_f06_limited_numeric_qa.md)を参照。数学的な成立条件の定義と、実際のMethod適格性・弱IV被覆率・独立受入は区別する。
-
-
-## 16. G01 Class/Method/Invariant（06/07のSource of Truth）
-
-G01の[06](../../../10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_実装指示書.md)と[07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_テスト指示書.md)は、本書`2〜8及び以下の**G01専用の制限**を実装・検証する。新しい公開E11 Schema Versionは作らない。
-
-### 16.1 ContentRef / LocalConfigDecoder / Question・Design
-
-- `ContentRef.from_payload`は5 field（identity/relative_key/sha256/media_type/schema_version）をstrictに検証。`ContentReferencePort.verify(ref,root:TrustedLocalRoot)`はdirfd/O_NOFOLLOWと同一File FDのbytes・SHA・regular file検証によりpath-traversal/raceを拒否（DD-E11-REF01〜04）。同一identityの異なるbytesを黙って同一証拠としない。
-- `LocalConfigDecoder.decode(raw, declared_format)`はE11 v1、Study必須field、strict YAML/JSON、Method Registry/Estimand/Operation、不正Version／旧v2を検査して`ValidatedStudy`を返す（DD-E11-SPEC01〜04）。`decode_yaml`は内部HelperでありCLIからApplicationへの公開境界を変更しない。
-- G01 `DISCOVER + P1-M06`はStudyのQuestion/Design/Dataset必須、input Graph/Identification = null、AnalysisMode = EXPLORATORY、`Estimand={GRAPH_STRUCTURE,OBSERVED_VARIABLES,NOT_APPLICABLE}`、Inference false、row_export false、PolicyRef null。`GRAPH_STRUCTURE`は**効果Estimandではなく探索対象**。その他Operation/Method・CONFIRMATORYはG01では不適格。
-- Input [Question Profile](../23_api_interface_design/schema_drafts/e11_g01_question_evidence_profile.schema.json)と[Design Profile](../23_api_interface_design/schema_drafts/e11_g01_design_evidence_profile.schema.json)をstrictに適用し`ContentRef.schema_version=null`を許容。`question.question_id = design.question_id = Study.inputs.question.identity`。Design variables（ユニークなname+scale）はDataset列名・**順序**と同じ。Design BKとMethod config BKはJCS同値、CI familyはscaleに適格。Markov/faithfulness等の`assumptions`は研究者の**宣言**であり成立の証明ではない。
-
-### 16.2 GraphEvidence / GraphVersion
-
-- `GraphEvidence.from_canonical_json`と`canonical_payload`で`e11-local-graph/1`のkind=PAG・`temporal=null`・G01 lag=null、各edgeのTAIL/ARROW/CIRCLE endpoint、node identity、unique undirected pairをlossless保持する（GRAPH01/03）。PAG→DAGへの暗黙変換、bidirectedを2本の因果辺と解釈する行為は禁止。
-- 内部`content_hash`はGraphの当該fieldを除くJCS意味射影SHA256、外側`ContentRef.sha256`は完成Fileの実bytes SHA256。`make_revision`は新version ID＋旧parent＋rationale/assumptionsを残し、旧Graphを変更しない（GRAPH04）。G01ではrevision factoryとround-tripのみ実装し、公開CLI edit操作・新Graph再識別は後続Gate。
-- `GRAPH02`のTemporal PCMCI lag oracleと処理はG06に割当。G01ではtemporal graph入力を不適格拒否し、G01のGRAPH02 PASSは付けない。
-
-G01で使う範囲: `DD-E11-REF01〜04`、`SPEC01〜04`、`GRAPH01/03/04`。`DD-E11-ID/AR/EFF`の科学的推定と`GRAPH02`は対象外（ただし旧Productと科学的Statusの境界を維持）。
+`TrustedLocalRoot`はOS principal/owner/ACL/mount/dirfdを検証したCapabilityであり生Pathではない。型注釈だけでValidated Requestを信頼せず生成時・Adapter直前に再検証する。Publication Facadeとrun-scoped Publisher、Reader Facadeの`verify`とConcreteの`read_run`は同一アルゴリズムの異なる責務である。
