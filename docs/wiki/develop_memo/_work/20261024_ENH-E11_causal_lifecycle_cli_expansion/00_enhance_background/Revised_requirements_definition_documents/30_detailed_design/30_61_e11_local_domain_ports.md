@@ -193,3 +193,8 @@ class DiagnosticPort(Protocol):
 | src/ariadne/interfaces/cli/scientific_stage.py | 0467a56ceb0e95bd8e4e6a99b844d5f56c7f75c3；Product analysis_spec、ScientificCorePortをimport | Product／Localのauthorityを分離。旧v2 regression保護 |
 
 **未閉鎖:** Sourceに存在しないE11 Proposed Portの署名・Schema Version・typed statusの最終Freeze、security/atomic負例、独立Architecture Review。既存Classをこの静的一覧だけでOwnerの7区分完成と認定しない。
+
+
+## PREP-02 adopted cross-Port invariants (2026-11-17)
+
+[Owner decision](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) is A/A/A. `LocalStudySpec`, `GraphEvidence`, `EffectOutcome`, Manifest and Status have adopted strict `e11-local-study/1`, `e11-local-graph/1`, `e11-local-effect-result/1`, `e11-local-manifest/1`, `e11-local-status/1` discriminators. Domain DTOs must never silently read Product legacy v2. File-backed Content Ports must preserve verified same-root boundaries; Publication Port must require a Linux same-filesystem no-replace commit and fail-closed unsupported FS. Privacy-restricted outputs require the non-delegated owner-UID/Study-authorization/CLI-opt-in conjunction. **Unresolved:** formal Port signatures, DTO/JSON Schema, errors, effective FS capability inspection, independent review and verification. Option selection is not freeze.
