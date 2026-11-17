@@ -333,34 +333,24 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.2. フィールド
 
-| Field | Type | 生成元 | 制約 |
-| --- | --- | --- | --- |
-| `principal_uid, root_owner_uid` | `int` | OS effective actor + trusted root | mismatch reject unless explicit delegated policy |
-| `classification` | `PrivacyClass` | Study Spec | default non-row / explicit restricted |
-| `row_export_requested` | `bool` | Study spec | flagだけで認可しない |
-| `authorization_evidence` | `VerifiedStudyPolicyEvidence|None` | Study要求と別の事前Policy権威に照合 | self-asserted Study boolは認可証跡にしない。authorize時のpolicyと同一hash・scopeを再照合 |
-| `allowed_columns` | `tuple[str,...]` | policy | whitelisted minimal fields |
-| `max_rows` | `int` | policy | bounded; enforce before output |
-| `audit_context` | `Mapping[str,JsonValue]` | local provenance | secrets/raw rows forbidden |
+**Instance Field：なし。** `LocalPrivacyPolicy`は単一の純粋なPolicy Evaluatorであり、runごとの`principal_uid`、`root_owner_uid`、`classification`、`row_export_requested`、`authorization_evidence`、`allowed_columns`、`max_rows`、`audit_context`を状態として保持しない。各値は信頼された`study`、`root`、`principal`、`policy`、`output_shape`からcall単位で得る。これによりApplicationの再利用可能なstateless UseCaseと両立する。
 
 ### 6.3. Constructor / Factory
 
-- **Constructor:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, authorization_evidence, allowed_columns, max_rows, audit_context)`。
-- **Preconditions:** OS effective identity＋permission sourceはruntime evidenceから採取。HeaderやCLI flagを信頼済principalの証拠に昇格しない。
-- **Postconditions:** policy object immutable。構築時に実outputを生成しない。Non-delegated same-UID/private Rootを標準とし、委譲・共有mount等は信頼できる別契約がない限り拒否する。
+`__init__(self) -> None`。外部I/O、run情報、Policy Snapshot、Backendを保持・読み込まない。ConcreteはCLI composition rootが`LocalPrivacyPolicyPort`へ依存注入する。実行時のactor/rootは`LocalRunContext`、事前承認は独立Policy verifierが生成する`VerifiedStudyPolicyEvidence`に由来し、CLI flagやStudy自身を信頼主体に昇格させない。
 
 ### 6.4. メソッド
 
 | Signature | Result | Side effect / failure |
 | --- | --- | --- |
-| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, policy: VerifiedStudyPolicyEvidence|None, output_shape: OutputShape) -> PrivacyDecision` | typed allow / reject | pure authorization check; no implicit file write |
-| `filter_export_columns(self, frame_schema: ColumnSchema) -> ColumnSelection` | bounded allowlist | pure; unknown or prohibited columns rejected |
+| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, policy: VerifiedStudyPolicyEvidence|None, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | 23_41の公開Portと完全同一署名。純粋Policy、File公開副作用なし |
+| `filter_export_columns(self, frame_schema: ColumnSchema, *, decision: PrivacyDecision) -> ColumnSelection` | bounded allowlist | 上記Decisionがrow releaseを許すときにのみ使用。未知・禁止列を拒否 |
 
-`filter_export_columns`はRaw DataFrameを受け取らずColumnSchemaから許可列集合を導出する。Unknown/unauthorized列は拒否し、max_rowsは出力実行側で強制する。
+`filter_export_columns`はRaw DataFrameではなくColumnSchemaと検証済みDecisionから許可列集合を導出する。行数制限はOutput writerとReaderの両方で再検証し、`PrivacyDecision`に上限・許可列・Policy digestを結び付ける。
 
 ### 6.5. 処理仕様
 
-`authorize`は個票出力を許可する場合、Studyからの明示request ∧ CLI flag ∧ Studyから独立した事前承認済み`VerifiedStudyPolicyEvidence`（scope/columns/row bound一致） ∧ OS Principal/owner/delegation適格 ∧ root permissions ∧ classification/column/minimum-row policy の全条件をrequire。Fail-closedで個票Parquetを生成しない。通常のResult/Manifest/stdout/logにrow valuesを含めない。Shared mount、root container、CI volumeにおける可視性はOS File Modeだけで推測しない。
+`authorize`は集計結果には個票を含まないこと、root/actorが適格であることを確認する。個票出力を許可する場合はStudyからの明示request ∧ CLI flag ∧ Studyから独立した事前承認済み`VerifiedStudyPolicyEvidence`（scope/columns/row bound一致） ∧ OS Principal/owner/delegation適格 ∧ root permissions ∧ classification/column/minimum-row policy の全条件をrequire。Fail-closedで個票Parquetを生成しない。通常のResult/Manifest/stdout/logにrow valuesを含めない。Shared mount、root container、CI volumeにおける可視性はOS File Modeだけで推測しない。
 
 ### 6.6. I/O・連携・失敗処理
 
