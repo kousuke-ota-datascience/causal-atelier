@@ -73,3 +73,8 @@
 `PREP02_REVIEW_PACKAGE_PREPARED / OWNER_FREEZE_CHOICES_PENDING / INDEPENDENT_REVIEW_NOT_RUN / SCHEMA_PORT_NOT_FROZEN / SCIENCE_AND_ENV_NOT_VERIFIED / CODING_NOT_AUTHORIZED`.
 
 This package is a review input, **not** an independent review artifact or Owner approval. PREP-02 remains IN_PROGRESS.
+
+
+## 6. Owner decisions adopted (2026-11-17; supersedes the pending status in §3/5)
+
+**DEC-PREP02-A/B/C = Option A / Option A / Option A, ADOPTED by Owner.** Decision authority and residual obligations: [DEC-PREP02 record](decisions/94_20261117_dec_prep02_owner_architecture_choices.md). In §3, options are preserved as historical review alternatives, **not current pending choices**. Explicitly: non-delegated same-UID local row export, Linux same-FS atomic no-replace publish with fail-closed unsupported filesystem, and strict E11 version namespace are approved policy. F03/F05/F06 remain OPEN for actual schema, port, security, runtime proof and independent reviewer. The §5 token `OWNER_FREEZE_CHOICES_PENDING` was the state when originally authored, now superseded by `OWNER_CHOICES_ADOPTED / PORT_SCHEMA_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED`. Reviewer must inspect decision record and exact latest commit SHA; this update itself is not a review PASS.
