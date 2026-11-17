@@ -8,7 +8,7 @@ Local causal laneのDomain DTO／Portを物理的なClass、署名、状態不�
 
 | 論理Package | Planned modules / responsibility | 依存上の境界 |
 |---|---|---|
-| `causal.local_contract` | `references.py`, `study.py`, `graph.py`, `identification.py`, `effect.py`, `ports.py` | 外部scientific library、Product DB/Worker/ORMへ依存しない |
+| `causal.local_contract` | `references.py`（`ContentRef`。`CanonicalRef`は元のModule配置候補名であり、別Classとしての仕様は未確定）、`study.py`, `graph.py`, `identification.py`, `effect.py`, `ports.py` | 外部scientific library、Product DB/Worker/ORMへ依存しない |
 | `causal.local_application` | `use_case.py`, `capability_registry.py` | Domain Portを呼び、per-run orchestrationを担う。詳細は30_62 |
 | `scientific.local_adapters` | `native.py`, `dowhy.py`, `econml.py`, `temporal.py`, `quasi.py` | Domain DTOへ結果を正規化。optional importsはAdapter load時のみ |
 | `interfaces.cli.e11` | `command.py`, `config_decoder.py`, `publication.py`, `manifest_reader.py` | version dispatchとtrusted file I/Oを所有。詳細は30_62/23_41/23_42 |
@@ -87,7 +87,7 @@ File読み取りあり、書き込みはしない。Root外read・未知mount・
 
 #### 2.2.7. 検証
 
-`DD-E11-REF01〜04`、特にTOCTOU/hardlink/symlink攻撃と実bytes改変を独立Contract/Negative testで検査。
+`DD-E11-REF01〜04`、特にTOCTOU/hardlink/symlink攻撃と実bytes改変を独立Contract/Negative testで検査。FR-185、NFR-029、**NFR-031**。
 
 
 ## 3. Study Specification / Decoder契約
@@ -164,7 +164,7 @@ Raw bytesからのparse以外のI/Oはない。外部Ref実bytes確認は`Conten
 
 #### 3.2.7. 検証
 
-`DD-E11-SPEC01〜04`、invalid YAML/JSON duplicate、P1-M06 ProfileとStudyのcross-asset join、untrusted refを検証する。
+`DD-E11-SPEC01〜04`、invalid YAML/JSON duplicate、P1-M06 ProfileとStudyのcross-asset join、untrusted refを検証する。FR-185、**FR-201**、NFR-029/036。
 
 
 ## 4. Graph Evidence / Version契約
@@ -391,7 +391,8 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 | `point_availability, point_value` | finite value または null + reason |
 | `inference` | `InferenceEvidence` |
 | `science_acceptance` | 推論可用性とは独立した審査状態 |
-| `diagnostics, method_evidence, upstream_hashes` | typed evidenceとlineage |
+| `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
+| `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
 #### 7.1.3. Constructor / Factory
 
@@ -507,7 +508,7 @@ class LocalManifestReaderPort(Protocol):
 
 | Port / Protocol | 物理Class詳細のOwner | 主要失敗／検証 |
 |---|---|---|
-| `IdentificationPort`, `EstimatorPort`, `DiagnosticPort` | [30_63 Method Adapters](30_63_e11_method_adapters.md) と[23_41 Scientific Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md) | 識別、Estimand、Backend結果、staging限定 |
+| `IdentificationPort`, `EstimatorPort`, `DiagnosticPort` | [30_63 Method Adapters](30_63_e11_method_adapters.md) と[23_41 Scientific Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md) | 識別、Estimand、Backend結果、staging限定。個別Protocolの完全な7区分は未確定であり、実装指示前に確認する |
 | `MethodCapabilityPort` | [30_62 MethodCapabilityRegistry](30_62_e11_local_execution_publication.md) | Method/Backend/ProfileとInference/API不整合 |
 | `LocalConfigDecoder` | 本書§3.2 | strict wire/version/method profile |
 | `ContentReferencePort` | 本書§2.2 | root閉じ込め、bytes hash、TOCTOU |
