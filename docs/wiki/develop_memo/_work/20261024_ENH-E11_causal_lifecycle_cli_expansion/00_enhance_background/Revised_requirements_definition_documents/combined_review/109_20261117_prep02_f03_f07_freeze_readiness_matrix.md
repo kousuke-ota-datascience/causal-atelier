@@ -17,7 +17,7 @@
 | F07 | Owner A: generic 5-topology AR (including mathematically EMPTY), distinct from failure; common and embedded Effect schema updated | Method-specific B0/B1 just-ID nonempty invariant, mathematical union, inversion proof and independent reference tests outstanding | EMPTY/other sets property tests, B0/B1 negative and weak-IV science oracle | OWNER_EMPTY_ADOPTED / SCIENCE_VALIDATION_OPEN |
 | F12 | reviewer package with finding matrix and current source/draft links | No independent reviewer has assessed committed snapshot | independent written F03–F07 verdict against frozen SHA and documented corrections | NOT_RUN |
 
-## 2. Proposed bounded Owner/Science decisions (not yet adopted)
+## 2. Owner-adopted four decisions (mechanical and scientific validation pending)
 
 | ID | Choice to ratify | Recommendation | Existing policy impacted |
 |---|---|---|---|
