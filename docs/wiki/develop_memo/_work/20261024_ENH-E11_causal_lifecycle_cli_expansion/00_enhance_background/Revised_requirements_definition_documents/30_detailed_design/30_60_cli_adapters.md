@@ -46,7 +46,7 @@
 
 ## 8. 既存CLI DTOと拡張CLIの互換境界
 
-旧`CliManifest`実装と旧Product Portは上記§7の正規source contractを維持し、新E11の型付きResult／AR集合へ暗黙移行しない。因果Domain型と科学Portは[30_61](30_61_causal_domain_ports.md)、Local Application／Atomic Publisher/Reader/Privacyは[30_62](30_62_e11_local_execution_publication.md)、全41 MethodのAdapter割当と受入制約は[30_63](30_63_e11_method_adapters.md)を参照する。
+旧`CliManifest`実装と旧Product Portは上記§7の正規source contractを維持し、新E11の型付きResult／AR集合へ暗黙移行しない。因果Domain型と科学Portは[30_61](30_61_causal_domain_ports.md)、Local Application／Atomic Publisher/Reader/Privacyは[30_62](30_62_local_execution_publication.md)、全41 MethodのAdapter割当と受入制約は[30_63](30_63_causal_method_adapters.md)を参照する。
 
 新候補Classを現行コードに実在するClassとして扱わず、Method/Backend/Scienceの実測受入を別途要求する。
 

@@ -271,7 +271,7 @@ IdentificationとEvidenceの意味を守り、非識別をIDENTIFIEDと偽装し
 
 #### 5.1.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_e11_method_adapters.md)、Runtime/Publicationは[30_62](30_62_e11_local_execution_publication.md)参照。
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
 #### 5.1.7. 検証
 
@@ -304,7 +304,7 @@ class EstimatorPort(Protocol):
 
 #### 5.2.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_e11_method_adapters.md)、Runtime/Publicationは[30_62](30_62_e11_local_execution_publication.md)参照。
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
 #### 5.2.7. 検証
 
@@ -337,7 +337,7 @@ Method/Estimand/Backend/Inferenceを検証し、silent fallbackをしない。�
 
 #### 5.3.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_e11_method_adapters.md)、Runtime/Publicationは[30_62](30_62_e11_local_execution_publication.md)参照。
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
 #### 5.3.7. 検証
 
@@ -370,7 +370,7 @@ class DiagnosticPort(Protocol):
 
 #### 5.4.6. I/O・連携・失敗処理
 
-Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_e11_method_adapters.md)、Runtime/Publicationは[30_62](30_62_e11_local_execution_publication.md)参照。
+Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
 #### 5.4.7. 検証
 
@@ -393,7 +393,7 @@ Product `GraphVersionService`はGraph Versionの唯一のWriter。`GraphEvidence
 | `MethodCapabilityPort` | `ariadne.scientific.ports.capability.MethodCapabilityPort` | Method Registry唯一のauthority。StageRunnerRegistryはStage登録専用 |
 | `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | 既存Refutation/Sensitivity/DesignDiagnosticsを再利用 |
 
-`ContentRef`および`LocalStudySpec`は[30_60](30_60_cli_adapters.md) §11/12、`BackendCapabilityRecord`は[30_62](30_62_e11_local_execution_publication.md) §8のClass仕様をOwnerとする。共通JCS Encoderは`ariadne.shared.serialization.jcs`へ新設し、既存Product `canonical_bytes`/`hash_mapping(default=str)`をRFC8785と同一視しない。
+`ContentRef`および`LocalStudySpec`は[30_60](30_60_cli_adapters.md) §11/12、`BackendCapabilityRecord`は[30_62](30_62_local_execution_publication.md) §7のClass仕様をOwnerとする。共通JCS Encoderは`ariadne.shared.serialization.jcs`へ新設し、既存Product `canonical_bytes`/`hash_mapping(default=str)`をRFC8785と同一視しない。
 
 ## 7. メソッド引数・戻り値の補助型と依存方向
 

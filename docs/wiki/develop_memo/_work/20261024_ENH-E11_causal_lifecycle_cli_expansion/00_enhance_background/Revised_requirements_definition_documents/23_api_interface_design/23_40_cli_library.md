@@ -44,6 +44,6 @@ ariadne-identify --navigation-stage identification --config ...
 
 ### 7.1. Local CLI / Scientific Portの追加Version契約
 
-追加Local E11のCLI／Portのversion dispatch、Method/Estimand/Backend capability、typed scientific negative、exit分類は[23_41](23_41_e11_local_cli_scientific_ports.md)をInterface Authorityとする。Result/Graph/ManifestのSchema、privacy、atomic bundle publish/readbackは[23_42](23_42_e11_local_result_manifest_artifact.md)を参照。
+追加Local E11のCLI／Portのversion dispatch、Method/Estimand/Backend capability、typed scientific negative、exit分類は[23_41](23_41_cli_scientific_ports.md)をInterface Authorityとする。Result/Graph/ManifestのSchema、privacy、atomic bundle publish/readbackは[23_42](23_42_local_result_manifest_artifact.md)を参照。
 
 E11は旧`ariadne-identify`等の`causal-analysis-spec/2`を再解釈せず、新しいCLI entrypointで明示的に分離する。E11新Local CLIの契約はPROPOSEDであり、現行Script entry pointとしての実装を意味しない。現行Product CLIとは別Version dispatchとNegative Testで保護する。

@@ -91,8 +91,8 @@
 - [23_19_api_frontend_support.md](23_api_interface_design/23_19_api_frontend_support.md)
 - [23_30_worker_runtime.md](23_api_interface_design/23_30_worker_runtime.md)
 - [23_40_cli_library.md](23_api_interface_design/23_40_cli_library.md)
-- [23_41_e11_local_cli_scientific_ports.md](23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)
-- [23_42_e11_local_result_manifest_artifact.md](23_api_interface_design/23_42_e11_local_result_manifest_artifact.md)
+- [23_41_cli_scientific_ports.md](23_api_interface_design/23_41_cli_scientific_ports.md)
+- [23_42_local_result_manifest_artifact.md](23_api_interface_design/23_42_local_result_manifest_artifact.md)
 - [23_50_error_contract.md](23_api_interface_design/23_50_error_contract.md)
 - [23_51_idempotency_contract.md](23_api_interface_design/23_51_idempotency_contract.md)
 - [23_52_versioning_compatibility.md](23_api_interface_design/23_52_versioning_compatibility.md)
@@ -126,8 +126,8 @@
 - [30_52_failure_handling.md](30_detailed_design/30_52_failure_handling.md)
 - [30_60_cli_adapters.md](30_detailed_design/30_60_cli_adapters.md)
 - [30_61_e11_local_domain_ports.md](30_detailed_design/30_61_e11_local_domain_ports.md)
-- [30_62_e11_local_execution_publication.md](30_detailed_design/30_62_e11_local_execution_publication.md)
-- [30_63_e11_method_adapters.md](30_detailed_design/30_63_e11_method_adapters.md)
+- [30_62_local_execution_publication.md](30_detailed_design/30_62_local_execution_publication.md)
+- [30_63_causal_method_adapters.md](30_detailed_design/30_63_causal_method_adapters.md)
 - [30_90_verification_traceability.md](30_detailed_design/30_90_verification_traceability.md)
 
 **構造監査上の注記:** 上記105件は移管後の5群番号付きファイル数であり、Stock適合PASS件数ではない。`10_99`、`21_99`、`22_99`、`23_99`、`30_99`のChange LogはFlowに分類される。Rootの`90〜98`監査記録もFlow。Root8件とChange Log5件は[移管台帳](doc01_review/93_20261117_flow_migration_manifest.md)に基づきFlowへ物理移管済み。Markdownファイルリンクは対象範囲で検査済みだが、全Anchor／非Markdown／Repo外のリンク監査は未完。[DOC-01横断監査](doc01_review/92_numbering_stockflow_and_class_template_audit.md)で残件を追跡する。

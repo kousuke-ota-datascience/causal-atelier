@@ -9,7 +9,7 @@
 - **Class:** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。既存Product Stage runnerとは別のLocal Class契約である。
 - **責務:** versioned Local Studyのpreflight→identification→method eligibility→adapter execution→staging→publish→readbackを順序付け、科学的Negativeとtechnical failureを混同しない。
 - **責務外:** Scientific Estimatorの数学本体、Product DB/UoW/Worker/Web API、実行済み独立Science PASSの宣言。
-- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1〜5、30_60 §11〜12、30_62 §8。
+- **関連契約:** 23_41 §3〜5、23_42 §2/6/7、30_61 §1〜5、30_60 §11〜12、30_62 §7。
 
 ### 1.2. フィールド
 
@@ -69,7 +69,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 `technical_status=COMPLETED`はVerified Manifestとcommit markerを持つ。Science negativeでも技術的には完了しうる。Config/入力/Backend/Publication exceptionをScientific Negativeに潰さない。途中失敗はcompleted marker無し。無効な上流proofではEstimatorを呼ばない。
 
 - **I/O:** reads via ContentReferencePort, writes only via StagingArtifactSink/LocalPublicationPort. Each run has pinned request/content hash and effective API/seed evidence.
-- **Transactions:** This is a Local FS unit, not a Product UoW. Publication atomicity and crash recovery specified in §4 and IF 23_42.
+- **Transactions:** This is a Local FS unit, not a Product UoW. Publication atomicity and crash recovery specified in §3 and IF 23_42.
 - **Errors:** invalid config/schema, missing/mismatched refs, unsupported capability, scientific negative, runtime failure and publication failure remain separately typed. **Retry/rollback:** idempotent same-hash readback allowed; another request hash with same run ID rejected; uncommitted staging never advertised as success.
 
 ### 1.7. 検証
@@ -443,4 +443,4 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 Error envelopeはreason `code`と発生`phase`を区別する。入力Schema=exit2、入力path/hash/認可=exit3、Backend/Capability=exit4、出版/readback=exit5。科学的negativeは完全に検証されたBundleのときのみexit0となり得る。
 
-CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)が所有し、数理的なestimand/identificationをCLI固有のDomainに移さない。
+CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design/23_41_cli_scientific_ports.md)が所有し、数理的なestimand/identificationをCLI固有のDomainに移さない。

@@ -1134,7 +1134,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 - 独立検証ではDGP version・seed・Method-specific推論・Monte Carlo SE/Coverage/多重性と適格Run分母を定義する。型・Schema一致は科学的Coverageや識別の証明ではない。
 - 顧客Deliveryは実際のBundleのSBOM/Licenseと受領者別法務判定を別途必要とする。
 
-参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_e11_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
+参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
 
 ## 9. 科学計算の共通実装とVersion付き互換Bridge
 

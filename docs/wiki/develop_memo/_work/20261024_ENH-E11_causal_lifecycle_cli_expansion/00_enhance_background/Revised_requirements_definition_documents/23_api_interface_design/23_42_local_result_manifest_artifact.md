@@ -231,7 +231,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 | IO-E11-08 | immutable run／partial Manifest rejection | stale hashes、non-atomic backend |
 | IO-E11-09 | Product v2 reader regression | legacy Manifestを新Bundle Schemaとして誤解釈 |
 
-参照：[CLI / Scientific Port](23_41_e11_local_cli_scientific_ports.md)、[Results/Artifacts/LineageのBD](../22_product_basic_design/22_09_results_artifacts_lineage.md)、[Existing Product Artifact Port](../30_detailed_design/30_50_persistence_artifacts.md)。
+参照：[CLI / Scientific Port](23_41_cli_scientific_ports.md)、[Results/Artifacts/LineageのBD](../22_product_basic_design/22_09_results_artifacts_lineage.md)、[Existing Product Artifact Port](../30_detailed_design/30_50_persistence_artifacts.md)。
 
 ### AR・Privacyの意味的検証
 
