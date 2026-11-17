@@ -34,7 +34,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `EstimatorPort` | `ariadne.scientific.ports.causal.EstimatorPort` | Port/Value/Facade integration (no duplicate implementation) | estimate(self, request:ValidatedEstimatorRequest, *, sink:StagingArtifactSink) -> EffectOutcome |
 | `InferenceEvidence` | `ariadne.causal.inference.contracts.InferenceEvidence` | Port/Value/Facade integration (no duplicate implementation) | validate_for(mode,method) |
 
-**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Constructor/FieldsはDD30_61〜63のClass sectionを守り、未知のConcrete引数を創作しない。
+**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Class Field/Constructor/Public Methodは本Pxx§3.1以降の埋込契約が規範であり、DDは設計Provenanceに過ぎない。Solver/Inference APIなど未確定事項を補完しない。
 
 **Responsibility:** Method Adapterを担当するClassは `SyntheticDidAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -172,7 +172,7 @@ Value操作I/Oなし。Backend provenance・coverageの計算は30_63へ委譲�
 |---|---|---|---|---|---|
 | `P3-M13` Synthetic DiD／panel平均介入効果 | `DD-E11-METH-P313` | DGP-018; NEG-024 | REF-Q05 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q05 | PLAN:G09 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 
-**Proof:** 正例は10_32のDGP/ACに基づく独立Reference、負例は10_32のNEG/Reasonで検証。Backend自身の出力を真値にしてはならない。FWER=.05、K/R/Compute/MC-SE/CI coverageはMethod-specific 07/independent Pilotが確定してから測定する。未確定状態はMUSTの省略理由にならずBLOCKED/Openとして引き継ぐ。
+**Proof boundary:** §5のDGP/NEG/REF/ACを独立science obligationsとして扱う。SCM Point-onlyとSDIDの条件付きInferenceを別にし、Backend outputを自己Referenceとしない。Generator/OracleやFWER=.05/K/R/Coverage/MC-SEが未確定ならBLOCKED。外部DDを参照して推測しない。
 
 ## 6. Focused Verification Contract — WHAT, not physical filename
 
