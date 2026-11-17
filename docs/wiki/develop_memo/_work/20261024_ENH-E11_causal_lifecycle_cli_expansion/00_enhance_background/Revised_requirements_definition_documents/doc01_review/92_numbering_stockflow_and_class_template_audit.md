@@ -57,8 +57,8 @@ GitHub上の退避Source Snapshotを照合した。
 
 | Path | 修正すべき性質 | 判定 |
 |---|---|---|
-| `23_41_e11_local_cli_scientific_ports.md` | CLI/Port/Version/Resultの恒常契約はStock。ただし`IF-01`という工程名、Owner候補版の採否経緯、実装前の状態表記はFlow | **MIXED** |
-| `23_42_e11_local_result_manifest_artifact.md` | JSON/Graph/AR/Manifest/Atomic/Privacyの契約はStock。ただしD03採用経緯、IF固有試験と候補状態はFlow | **MIXED** |
+| `23_41_cli_scientific_ports.md` | CLI/Port/Version/Resultの恒常契約はStock。ただし`IF-01`という工程名、Owner候補版の採否経緯、実装前の状態表記はFlow | **MIXED** |
+| `23_42_local_result_manifest_artifact.md` | JSON/Graph/AR/Manifest/Atomic/Privacyの契約はStock。ただしD03採用経緯、IF固有試験と候補状態はFlow | **MIXED** |
 | `23_90_interface_verification.md` | Interface全般の不変条件・Contract Testの「満たすべき条件」はStock（結果／実測証拠は別） | **STOCK** |
 | `23_99_change_log.md` | ENH-E2〜E10ごとの差分・変更経緯。現在有効なAPI定義の権威ではない | **FLOW：分離推奨** |
 | `23_10`〜`23_19` | 多くが`Method/Path/用途`の代表API一覧で、Input/Output/Auth/Validation/Failure/Idempotency/VersionがEndpoint単位で正規化されていない | **STOCKだが粒度欠落** |
@@ -78,8 +78,8 @@ GitHub上の退避Source Snapshotを照合した。
 | StoredArtifact / ArtifactStorePort | `30_50_persistence_artifacts.md` | Protocol方法別例外・I/O、N/A理由 |
 | CliManifest | `30_60_cli_adapters.md` | default factory/ネスト可変性、Method/Serialization、7区分 |
 | Local Domain/Port候補 | `30_61_e11_local_domain_ports.md` | 複数Classを1節で混在、7区分でのField/Constructor/Method非整合 |
-| Local UseCase/Publisher候補 | `30_62_e11_local_execution_publication.md` | Field table、Constructor、exceptionの明文化不足 |
-| Method Adapter候補 | `30_63_e11_method_adapters.md` | 41 Method ID表はClass定義ではない。具体Adapter Classごとの7区分が未定義 |
+| Local UseCase/Publisher候補 | `30_62_local_execution_publication.md` | Field table、Constructor、exceptionの明文化不足 |
+| Method Adapter候補 | `30_63_causal_method_adapters.md` | 41 Method ID表はClass定義ではない。具体Adapter Classごとの7区分が未定義 |
 
 また`30_30`〜`30_37`、`30_40`〜`30_43`にはStage/Navigationのプレゼンテーション上の責務説明が多く、**Class/Protocol/Moduleの物理仕様を記載したことにはならない**。これらはBasic DesignのUI/Navigation設計への移管候補、あるいは実コードへ対応付けた詳細処理仕様への再執筆対象である。
 

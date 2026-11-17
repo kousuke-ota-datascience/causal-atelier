@@ -2,7 +2,7 @@
 
 - Date: 2026-11-17 JST
 - Kind: FLOW / science-method design determination **for independent reviewer**, not a runtime scientific PASS
-- Authority: SR-03 S2/I2/G2, 41-Method mapping [10_32](../10_requirements_definition/10_32_scientific_method_scope.md), [30_63](../30_detailed_design/30_63_e11_method_adapters.md), [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md)
+- Authority: SR-03 S2/I2/G2, 41-Method mapping [10_32](../10_requirements_definition/10_32_scientific_method_scope.md), [30_63](../30_detailed_design/30_63_causal_method_adapters.md), [DEC-PREP02-D](decisions/95_20261117_dec_prep02_four_owner_choices.md)
 - Methods: `P3-M10` B0, `P3-M11` B1; `P3-M09` Wald ratio is a separate Method and is **not automatically guaranteed** an AR confidence set
 - Status: `SCIENTIFIC_FORMULAS_PROPOSED / ASSUMPTIONS_FIXED_TO_OWNER_SCOPE / NUMERIC_ORACLE_NOT_RUN / SCIENCE_ACCEPTANCE_NOT_PASSED`
 

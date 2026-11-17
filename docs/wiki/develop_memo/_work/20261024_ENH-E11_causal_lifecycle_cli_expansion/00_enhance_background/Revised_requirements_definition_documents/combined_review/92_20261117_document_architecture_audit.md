@@ -28,8 +28,8 @@
 
 | 文書 | 分類と具体所見 | 推奨処置 |
 |---|---|---|
-| `23_41_e11_local_cli_scientific_ports.md` | **MIXED**。E11固有Method/Version/IF-01テスト文言を含むが、Local CLI・Port/Status/Version/Capability contract本体は将来も必要な**Stock**。 | 公開・永続契約をStockへ保持し、IF-01進行状態／Reviewer判断／Gate検証証跡を`if01_review/`へ。正式contract identityとE11字句の恒久採用はSchema Freeze時に判断 |
-| `23_42_e11_local_result_manifest_artifact.md` | **MIXED**。Result/Graph/Manifest/Publish/Privacyの約束はStock、`## 9. IFテスト`等のテスト実施・工程根拠はFlowとして独立可能。 | 受入不変条件はStock、テストCase／実行証跡／未確定の実FS・法務事情はReview/Gateへ責務分離 |
+| `23_41_cli_scientific_ports.md` | **MIXED**。E11固有Method/Version/IF-01テスト文言を含むが、Local CLI・Port/Status/Version/Capability contract本体は将来も必要な**Stock**。 | 公開・永続契約をStockへ保持し、IF-01進行状態／Reviewer判断／Gate検証証跡を`if01_review/`へ。正式contract identityとE11字句の恒久採用はSchema Freeze時に判断 |
+| `23_42_local_result_manifest_artifact.md` | **MIXED**。Result/Graph/Manifest/Publish/Privacyの約束はStock、`## 9. IFテスト`等のテスト実施・工程根拠はFlowとして独立可能。 | 受入不変条件はStock、テストCase／実行証跡／未確定の実FS・法務事情はReview/Gateへ責務分離 |
 | `23_40_cli_library.md` | **MIXED**。既存CLIと新Localの互換性境界はStock。`新Interfaceのコード実装は別工程`等は進捗の説明。 | 有効契約のみStock、実装状況はFlow。さらに`## 7.1.`は親`## 7.`の直下なので`### 7.1`相当へ階層修正 |
 | `23_99_change_log.md` | **FLOW**。ENH-E2〜E10の変更過程／CHANGEPOINTを記録。現行Contract本文の権威ではないと明記済み。 | `if01_review/`ではなく、複数Enh共通の変更履歴用`history/`または`doc01_review/history/`へ隔離。差分だけが規範になる箇所は責務別Stockへ反映 |
 | `23_90_interface_verification.md` | **STOCK寄り**。実行結果ではなく恒常的なInterface verification obligationsを列挙。 | 不変条件・受入契約としてStock可。ただしテスト実施StatusはFlowに置く。文中の`§11〜12`など参照先の文書群を明示 |
@@ -82,8 +82,8 @@ Owner指定の例：`### 5.X. ClassName`の下に、`#### 5.X.1`識別/責務、
 | 対象 | 現状の実例 | 判定 |
 |---|---|---|
 | `30_61_e11_local_domain_ports.md` | `ContentRef`等を`## 2`〜`## 8`に分割。下位は「fields」「methods」「tests」など約3区分。複数Class／Portを一節に混載 | **FAIL**。7区分のClass/Protocol単位の表、責務外、Constructor invariants、Exception、State/transaction、Gateが未整理 |
-| `30_62_e11_local_execution_publication.md` | `E11LocalCausalUseCase`は5下位節、`LocalArtifactPublisher`は5節、`LocalPrivacyPolicy`は3節、ReaderとManifestを同節に混載 | **FAIL**。特にValidation、CommitとRecovery、実装Constructor/State、I/O/失敗を明確なClass単位に分類できていない |
-| `30_63_e11_method_adapters.md` | Method ID 41件のAllocation表、Backend別数理概要は存在。Adapter Classはまとまった責務記述で7区分なし | **FAIL**。Method IDの41行網羅とClassの実装仕様網羅は別物。実際のAdapter Class単位で必須7区分＋Method-specific設定・負例Traceが必要 |
+| `30_62_local_execution_publication.md` | `E11LocalCausalUseCase`は5下位節、`LocalArtifactPublisher`は5節、`LocalPrivacyPolicy`は3節、ReaderとManifestを同節に混載 | **FAIL**。特にValidation、CommitとRecovery、実装Constructor/State、I/O/失敗を明確なClass単位に分類できていない |
+| `30_63_causal_method_adapters.md` | Method ID 41件のAllocation表、Backend別数理概要は存在。Adapter Classはまとまった責務記述で7区分なし | **FAIL**。Method IDの41行網羅とClassの実装仕様網羅は別物。実際のAdapter Class単位で必須7区分＋Method-specific設定・負例Traceが必要 |
 | `30_20_planning_validation.md` | `PlanValidator`／`StageRunnerRegistry`をFields/Method/Negativeで要約 | **FAIL**。Classごとに7区分なし。Existing Source SHAや詳細検証Traceは別箇所に偏在 |
 | `30_21_execution_runtime.md` | `ExecutionOutcome`と`GenericExecutor`を一節に混載 | **FAIL**。Value objectとExecutorが同一Class Specになっている |
 | `30_10_domain_resources.md` | `GraphVersion`のClass仕様が`## 5`で簡略記載、他のDomain value objectも章内に集約 | **FAIL / 対象Class inventory精査必要** |

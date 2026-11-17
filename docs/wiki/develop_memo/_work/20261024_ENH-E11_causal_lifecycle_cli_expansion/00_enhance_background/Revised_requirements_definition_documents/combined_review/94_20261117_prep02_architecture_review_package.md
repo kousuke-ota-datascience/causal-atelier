@@ -12,11 +12,11 @@
 | --- | --- | --- |
 | [BD01 Findings](../bd01_review/90_architecture_consistency_review.md) | F01〜F13, 11 OPEN | Prior internal review, **not** independent sign-off |
 | [DD01 Class audit](../dd01_review/92_class_contract_conformance.md) | 7-section physical design and partial remediation | Source-linked spec coverage, not runtime behavior |
-| [CLI/Port IF](../23_api_interface_design/23_41_e11_local_cli_scientific_ports.md) | version/operation/Method/Status | PROPOSED, no Code |
-| [Manifest/Publisher IF](../23_api_interface_design/23_42_e11_local_result_manifest_artifact.md) | AR set/Graph/Atomic/Privacy/readback | PROPOSED; FS fault tests not executed |
+| [CLI/Port IF](../23_api_interface_design/23_41_cli_scientific_ports.md) | version/operation/Method/Status | PROPOSED, no Code |
+| [Manifest/Publisher IF](../23_api_interface_design/23_42_local_result_manifest_artifact.md) | AR set/Graph/Atomic/Privacy/readback | PROPOSED; FS fault tests not executed |
 | [Domain Ports](../30_detailed_design/30_61_e11_local_domain_ports.md) | 7-section gaps and Existing Product Port crosswalk | Source-inspected, E11 Port unimplemented |
-| [Local UseCase/Publisher DD](../30_detailed_design/30_62_e11_local_execution_publication.md) | 6 proposed classes, staged publication | Draft physical design; exact exceptions/schema pending |
-| [Method41 allocation](../30_detailed_design/30_63_e11_method_adapters.md) | Method-to-backend target & limitations | No per-method Science PASS; adapter class specifications incomplete |
+| [Local UseCase/Publisher DD](../30_detailed_design/30_62_local_execution_publication.md) | 6 proposed classes, staged publication | Draft physical design; exact exceptions/schema pending |
+| [Method41 allocation](../30_detailed_design/30_63_causal_method_adapters.md) | Method-to-backend target & limitations | No per-method Science PASS; adapter class specifications incomplete |
 | [Environment/Delivery BD](../22_product_basic_design/22_13_deployment.md) | DEC08 profiles, lock and legal boundary | E11 extras missing from current pyproject/lock |
 | [Flow migration manifest](../doc01_review/93_20261117_flow_migration_manifest.md) | 13 Flow relocations and original blobs | Structural migration, not full link/anchor PASS |
 | [PREP execution evidence](93_20261117_prep01_prep02_execution_evidence.md) | Scope of checked Source and unresolved gaps | Audit trail only |
