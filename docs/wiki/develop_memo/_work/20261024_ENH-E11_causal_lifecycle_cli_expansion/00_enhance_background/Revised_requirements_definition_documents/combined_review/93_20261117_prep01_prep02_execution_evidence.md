@@ -126,3 +126,8 @@ Enhancement Workflowの**Gate**はAcceptance Contractに対する独立検証・
 **Architecture review readiness:** [PREP-02 reviewer package](94_20261117_prep02_architecture_review_package.md)にBD01-F03〜F13の11 OPENを共通設計／Method Gate／Product別／Deliveryへ仮分類し、Owner判断が必要なLocal row privacy/no-clobber/Schema Versionの案を明示。**Owner未承認、Independent Reviewer NOT_RUN、Port/Schema未Freeze。**
 
 **Overall:** `PREP01_IN_PROGRESS / PREP02_IN_PROGRESS / CODING_NOT_AUTHORIZED`。全122既存改訂条文の独立意味監査、101 API Operationの9欄、残Class、Method41の科学ACと5 ENV実効Probeは引き続き未完。
+
+
+## 10. 2026-11-17 Owner decision and continuation checkpoint
+
+[DEC-PREP02 Owner record](decisions/94_20261117_dec_prep02_owner_architecture_choices.md): **A/A/A ADOPTED** for non-delegated same-UID private Local export; same-FS Linux atomic no-replace immutable run publication; strict `e11-local-*/1` discriminator namespace. Reflected into `22_12`, `23_41`, `23_42`, `30_61`, `30_62` and `94` Architecture Review pack. All earlier 'Owner decisions pending' snapshots in this history are superseded **only for these three selections**. No runtime or tests were executed. Remaining PREP01: 101 Operation x 9 fields, 122 changed clauses and full remaining Class inventory/trace. Remaining PREP02: F03/F04/F05/F06/F07 common contracts, strict schema/error/Port freeze, 41 Method Gate-specific science AC, five-profile environment probes and independent Architecture Review. `PREP01_IN_PROGRESS / PREP02_IN_PROGRESS / OWNER_CHOICES_ADOPTED / CODING_NOT_AUTHORIZED`.
