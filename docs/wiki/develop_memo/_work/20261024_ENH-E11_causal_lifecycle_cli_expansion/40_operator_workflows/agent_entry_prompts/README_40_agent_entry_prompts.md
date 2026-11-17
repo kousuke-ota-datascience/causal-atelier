@@ -89,9 +89,9 @@ Browser E2E が `TEST_IMPLEMENTATION_DEFECT` / `TEST_ORCHESTRATION_DEFECT` / `TE
 
 ### 2.1. Purpose
 
-このdirectoryはAgent execution entry pointのgeneric templateを保持する。
+このdirectoryはENH-E11専用に固定変数展開済みのAgent execution entry pointを保持する。
 
-**template directory上のpromptをAgentへ直接渡してはならない。** Enhancement開始時にEnhancement-specific instanceを `docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/` へ生成し、Enhancement-fixed variablesを全て展開してから使用する。
+**本directoryがENH-E11の実体化済みPrompt正本である。** 共通template directoryを直接Agentに渡してはならない。G01は06/07が未Freeze、Coding Authorization未発行のため、Promptの存在だけで実行を開始してはならない。
 
 ### 2.2. Prompt inventory
 
@@ -101,13 +101,13 @@ Browser E2E が `TEST_IMPLEMENTATION_DEFECT` / `TEST_ORCHESTRATION_DEFECT` / `TE
 | `10_normal_execution_02_work_package_coding_agent_prompt.md` | Work Package Coding Agent | `GATE_ID`, `PACKAGE_ID`, `TRIAL_NO` |
 | `20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md` | Fixed Trial Candidate Assembly | `GATE_ID`, `TRIAL_NO` |
 | `30_independent_verification_01_test_agent_prompt.md` | Independent Verification | `GATE_ID`, `TRIAL_NO` |
-| `31_blocked_test_repair_01_test_infrastructure_agent_prompt.md` | BLOCKED test-side SAME_TRIAL Repair | `GATE_ID`, `TRIAL_NO` |
+| （未設置）test-side BLOCKED repair | 個別事象に対してHuman-controlledな別責務を設計。E9 G02固有31は持ち込まない |
 | `40_fail_remediation_01_fail_rework_coding_agent_prompt.md` | Formal FAIL Remediation Coding | `GATE_ID`, `REMEDIATION_PACKAGE_ID`, `TRIAL_NO` |
 | `50_orchestration_01_gate_orchestrator_prompt.md` | Gate-wide Orchestration | `GATE_ID`, `TRIAL_NO` |
 
 ### 2.3. Instantiation MUST
 
-Enhancement開始時に `../tools/instantiate_agent_entry_prompts.py` または同等の手順でこのdirectoryをEnhancement work rootへinstance化する。
+ENH-E11向けのinstance化は実施済み（Prompt 6種＋README/変数規約）。以後の再生成時は同等の正規手順で固定変数と実行ルールの欠落がないことを再検証する。
 
 instance化完了条件:
 
@@ -129,7 +129,7 @@ Document/template complianceとAgent Execution Readinessを別判定する。
 | Execution resolvability | Human entryからEnhancement/Gate/Package/Trial等が一意 |
 | Information isolation | Agentが許可されたnormative sourceだけで実行可能 |
 
-template-side `40_operator_workflows/tools/validate_agent_execution_readiness.py` をnormal execution / assembly / independent verification / formal FAIL remediation / orchestrationのreadiness確認に使用する。`31` blocked-test-repairはcanonical 999がeligibility authorityなので、`31` prompt自身のMandatory repository preflightを必ず完遂してからrepairを開始する。
+template-side `40_operator_workflows/tools/validate_agent_execution_readiness.py` をnormal execution / assembly / independent verification / formal FAIL remediation / orchestrationのreadiness確認に使用する。ENH-E11では31 test-side repair promptは実体化していない。BLOCKEDが発生した場合は専用のrepair ownerと指示を別途確定する。
 
 ### 2.5. Information isolation
 

@@ -35,7 +35,7 @@ Enhancement-fixed identityは展開済み。Agent実行時にRuntime variableだ
 
 ### 2.1. Purpose
 
-`agent_entry_prompts/` は、template側のgeneric promptをEnhancement開始時に `docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/` へinstance化して使用する。
+`agent_entry_prompts/` はENH-E11用に実体化済みの実行Prompt正本であり、Enhancement-fixed変数は具体値へ展開済みである。実行時に未解決のRuntime変数だけHuman/Orchestratorが指定する。
 
 template directory上のpromptをAgent executionへ直接指定してはならない。
 

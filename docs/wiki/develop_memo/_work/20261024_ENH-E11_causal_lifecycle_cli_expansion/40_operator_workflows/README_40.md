@@ -312,7 +312,7 @@ An assertion protecting old Product behavior may live in an **enhancement-lifecy
 - Existing current Product v2 regression tests in transition paths (e.g. `tests/product/`, `tests/integration/`, `tests/scientific/`, `tests/browser_e2e/`) may remain. Do not move or archive a test merely because it is old or not executed in G01. Do not create empty `tests/regression/` as a compliance gesture.
 - `tests/regression/` becomes authority only for a **recorded promotion of an enduring product invariant**. Newly developed G01 JCS, Graph endpoint fidelity, atomic no-clobber, privacy no-row and Product v2 tests may be **promotion candidates**, not automatically promoted cases. At enhancement closure decide `PROMOTE / REWRITE / MERGE / SPLIT / RETIRE / ARCHIVE / KEEP_ENHANCEMENT`; repository-wide classification remains E12+.
 
-### 5.3. Agent execution (copy this rule into instantiated 40 prompts)
+### 5.3. Agent execution (propagated to instantiated 40 prompts)
 
 **Coding Agent:** Each Work Package assigned Pxx fixes WHAT (behavior, DD IDs, negative cases and DoD). Its instantiated 40 entry prompt fixes the initial lifecycle+layer, selected current paths, collection/runner/evidence rule; no out-of-Gate repo-wide migration. Agent-visible prompt must be self-contained and include this WHERE/HOW rule, rather than asking the Agent to derive it from this README.
 
@@ -333,4 +333,6 @@ An assertion protecting old Product behavior may live in an **enhancement-lifecy
 | Real Linux atomicity, effective FCI API, CLI/privacy, protected Product v2 behavior | integration + relevant contracts; existing legacy tests in place | enhancement for new tests; historical for old suites |
 | T2/T3 stochastic scientific performance | independent preregistered scientific evidence; reuse-specific benchmark only by explicit decision | enhancement until separately classified |
 
-**Important:** This README is an authoring guide, not an executable agent prompt. Propagate `5.2–5.3 into the **instantiated** ENH-E11 Work Package Coding Agent, Candidate Assembly and Independent Test Agent entry prompts before invoking those agents. An absent or unsynchronized instance is a readiness issue; this text alone does not authorize coding.
+**Instantiation record (2026-11-17):** ENH-E11の `40_operator_workflows/agent_entry_prompts/` にWork Package Coding、Candidate Assembly、Independent Test、Single Execution、Remediation、Orchestratorの6つの実行Promptと変数規約・READMEを作成し、§5.2–5.3の実行責務を直接組み込んだ。G01はWORK_PACKAGE方式であり、Single Executionは適用しない。E9 G02用31 repair Promptは設置していない。
+
+**Readiness boundary:** 本READMEはAuthoring GuideであってCoding Authorizationではない。Prompt実体化と静的内容監査は完了したが、06/07 Freeze、Owner承認、実効branch/remote/environmentのpreflight、readiness validatorの実行と実装Coding Entryは未実施。
