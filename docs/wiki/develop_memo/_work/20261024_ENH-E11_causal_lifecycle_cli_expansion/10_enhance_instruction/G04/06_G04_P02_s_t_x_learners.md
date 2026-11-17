@@ -34,7 +34,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `EstimatorPort` | `ariadne.scientific.ports.causal.EstimatorPort` | Port/Value/Facade integration (no duplicate implementation) | estimate(self, request:ValidatedEstimatorRequest, *, sink:StagingArtifactSink) -> EffectOutcome |
 | `EffectOutcome` | `ariadne.causal.inference.contracts.EffectOutcome` | Port/Value/Facade integration (no duplicate implementation) | validate_consistency() / to_result_payload() |
 
-**Method Adapter signature policy:** 新Adapterは原則`preflight(self,request:ValidatedMethodRequest)->EligibilityOutcome`／`execute(self,request:ValidatedMethodRequest,*,sink:StagingArtifactSink)->TypedScientificOutcome`。上表で指定された既存`run(self,input_,output_dir)`はその署名を保持。PortはApplication→Scientific kernelへ向かい、CLI Layerに別の科学数値実装を作らない。Constructor/Instance Fields/Factoryは本Pxx§3.1以降の埋込Class契約が一次規範である。外部DDは設計provenanceの照合先に限り、AgentにImplementation詳細の補完を委譲しない。
+**Class/Method authority:** 本Pxx §3.1以降のField/Constructor/公開Method/前後条件は本書が一次規範である。新規EconML/MetaLearner/DRIV Adapterは本Packageが担当する場合のみ実装し、実効Backend API/Inference availabilityをprobeする。既存v2の公開ABIを維持し、結果だけのPackageは独立数値Kernelを作らない。
 
 **Responsibility:** Method Adapterを担当するClassは `MetaLearnerAdapter`。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -44,11 +44,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 3.1. `MetaLearnerAdapter` — Constructor, fields, methods, invariants
 
-#### 1.13.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.MetaLearnerAdapter`。 EstimationのMethod実行Adapter。担当Method：`P2-M05, P2-M06, P2-M07`。**再利用:** 既存CausalDesignとOutcome modelを再利用しS/T/X適格性を追加。入口がCLIであることを科学的な別実装の根拠にしない。
 
-#### 1.13.2. フィールド
+#### フィールド
 
 | Field / dependency | Type | 制約 |
 |---|---|---|
@@ -56,11 +56,11 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
 | `policy` | `ScientificEligibilityPolicy` | 科学的適格性Policyの不変依存。ValidatedScientificContextはInstance Fieldにせずrequestごとに受け渡す |
 
-#### 1.13.3. Constructor / Factory
+#### Constructor / Factory
 
 `__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。`descriptor`引数を不変`method_descriptor` Fieldに保持し、`backend_factory`と`policy`もConstructor依存としてのみ保持する。`ValidatedScientificContext`は`request`のper-run evidenceであり、共有Instance Fieldに保持しない。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
 
-#### 1.13.4. メソッド
+#### メソッド
 
 | Signature | Return | Contract |
 |---|---|---|
@@ -69,7 +69,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
 
-#### 1.13.5. 処理仕様
+#### 処理仕様
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
@@ -79,54 +79,54 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Packageの科学的Target/推論/負例の節に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
-#### 1.13.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
 
-#### 1.13.7. 検証
+#### 検証
 
 `DD-E11-METH-P205`（`P2-M05`）、`DD-E11-METH-P206`（`P2-M06`）、`DD-E11-METH-P207`（`P2-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には本Packageに記載したMethod別検証IDを優先し、この7区分の記載だけで科学的PASSとはしない。
 
 ### 3.2. `EstimatorPort` — Constructor, fields, methods, invariants
 
-#### 5.2.1. 識別情報・責務
+#### 識別情報・責務
 
 **Protocol配置：ariadne.scientific.ports.causal.EstimatorPort。** 既存Product `ScientificCorePort`のv2メソッドを保持し、旧APIと型付きPortは共通科学計算を用いる互換Bridgeで接続する。
 
-#### 5.2.2. フィールド
+#### フィールド
 
 N/A：Protocol自身はinstance fieldを所有しない。
 
-#### 5.2.3. Constructor / Factory
+#### Constructor / Factory
 
 N/A：Protocolに具体Factoryはない。Concreteの依存関係注入はAdapterの責務。
 
-#### 5.2.4. メソッド
+#### メソッド
 
 ```python
 class EstimatorPort(Protocol):
     def estimate(self, request: ValidatedEstimatorRequest, *, sink: StagingArtifactSink) -> EffectOutcome: ...
 ```
 
-#### 5.2.5. 処理仕様
+#### 処理仕様
 
 識別・Method適格なRequestのみ実行し、ArtifactをStagingSinkへ限定。科学的PreconditionはWeb/CLI共通であり、CLI optionやHTTP状態ではない。
 
-#### 5.2.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 Protocol本体はI/Oなし。具体Adapterは[30_63](30_63_causal_method_adapters.md)、Runtime/Publicationは[30_62](30_62_local_execution_publication.md)参照。
 
-#### 5.2.7. 検証
+#### 検証
 
 DD-E11-EFF01〜05。
 
 ### 3.3. `EffectOutcome` — Constructor, fields, methods, invariants
 
-#### 4.1.1. 識別情報・責務
+#### 識別情報・責務
 
 **Class / module:** `ariadne.causal.inference.contracts.EffectOutcome`。点推定・Inference・ScienceAcceptance・lineageを別軸で保持する。Productの既存`ScientificResultDescriptor`へ無検証castしない。
 
-#### 4.1.2. フィールド
+#### フィールド
 
 | Field | Type・制約 |
 |---|---|
@@ -137,26 +137,26 @@ DD-E11-EFF01〜05。
 | `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
 | `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
 
-#### 4.1.3. Constructor / Factory
+#### Constructor / Factory
 
 Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成。不正なEffect/Estimand一致やfalse PASSを拒否。
 
-#### 4.1.4. メソッド
+#### メソッド
 
 | Signature | Return | 処理と副作用 | 例外 |
 |---|---|---|---|
 | `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
 | `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
 
-#### 4.1.5. 処理仕様
+#### 処理仕様
 
 Pointの存在≠Science PASS。Technical、Identification、Point、Inference、ScienceAcceptanceの状態を混同せず、Method固有estimand/CIを検査。
 
-#### 4.1.6. I/O・連携・失敗処理
+#### I/O・連携・失敗処理
 
 ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、Graph内部hash、ContentRef実bytes hash、Manifest bytes hashを分離。Codec`e11-json-jcs-rfc8785/1`、Productの`hash_mapping(default=str)` fallback禁止。
 
-#### 4.1.7. 検証
+#### 検証
 
 `DD-E11-EFF01` point-only、`EFF02` Science独立、`EFF03` backend mismatch、`EFF04` canonical finite、`EFF05` old Product regression。FR-202、NFR-030/032/036、AR-034/040。
 
