@@ -51,4 +51,4 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 
 ## 5. Test / owner follow-up
 
-ARC09-02/04/06/07、E11-A-02/04/06/07；FR-195/201/203、NFR-029/031/032/033/034/036。未完了の実効Pin/lock/5 Profile/Method API、OS policy、個票export authority、Legal Approvalは[BD-01 review](22_90_architecture_consistency_review.md)へ引き渡す。
+ARC09-02/04/06/07、E11-A-02/04/06/07；FR-195/201/203、NFR-029/031/032/033/034/036。未完了の実効Pin/lock/5 Profile/Method API、OS policy、個票export authority、Legal Approvalは[BD-01 review](../90_architecture_consistency_review.md)へ引き渡す。

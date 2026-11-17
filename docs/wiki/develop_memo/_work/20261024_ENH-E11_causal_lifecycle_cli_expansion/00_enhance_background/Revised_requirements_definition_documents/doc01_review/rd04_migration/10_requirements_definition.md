@@ -15,7 +15,7 @@
 - **E11特則:** 旧§11のDoWhy/EconML除外は、DEC09採用のE11機能別optional外部engineに限定して作業版§11.1で例外規定を反映済み。旧FR-161（E10 optional predictive engine）はこの許可の根拠として転用しない。
 - **受入:** Scope68行ごとのR/Q/N/D、E11-REQ仮ID→新正式ID、Method/UC/Issue/Architecture/Gate、旧条文との逐条diffを監査する。既存ProductのPARTIALを黙ってIMPLEMENTEDにしない。
 
-**E11旧草案（正式条文発行前）:** [_drafts/enh_e11_formal_requirement_publication_draft.md](_drafts/enh_e11_formal_requirement_publication_draft.md)（RD-03で条文化済み）
+**E11旧草案（正式条文発行前）:** [../prior_drafts/10_requirements_definition/enh_e11_formal_requirement_publication_draft.md](../prior_drafts/10_requirements_definition/enh_e11_formal_requirement_publication_draft.md)（RD-03で条文化済み）
 
 ## 91. ENH-E11正式要件の発行規則（RD-03）
 
@@ -23,7 +23,7 @@
 - `ACTIVE`は要求義務が有効なこと、`UNVERIFIED`は充足状態が未検証であることを示す。**実装完了、科学的受入、Gate PASS、Coding指示ではない。**
 - 既存の195 FR、36 NFR、27 Scientific ARのID・原文・Statusは変更していない。既存Productの保存済み契約と`causal-analysis-spec/2`も維持する。
 - E11-A-01〜07はArchitecture候補であり、Scientific Integrityの`AR`系列へ採番しない。22 BD/ADRへ移管し、外部観測可能な義務だけをFR/NFR/Scientific ARに反映する。
-- 新E11要件と草案の対応は[RD-03 traceability](../rd03_review/96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](10_32_scientific_method_scope.md)に保持する。
+- 新E11要件と草案の対応は[RD-03 traceability](../rd03_review/96_rd03_formal_requirement_traceability.md)を参照。Method固有の提供義務とEstimandの科学的制限は[10_32_scientific_method_scope.md](../../10_requirements_definition/10_32_scientific_method_scope.md)に保持する。
 - **Authority boundary:** OwnerはDEC09で要件の意味とScopeを承認した。今回、改訂版working-copyに正式条文・IDを発行した。**最終SHAのOwner確認・原正本への昇格・ADR/Schema Freeze・Gate06/07・Science/Legalは別途未完了**。
 
 ## 92. ENH-E11のCanonical昇格条件（Owner決定 2026-11-16）

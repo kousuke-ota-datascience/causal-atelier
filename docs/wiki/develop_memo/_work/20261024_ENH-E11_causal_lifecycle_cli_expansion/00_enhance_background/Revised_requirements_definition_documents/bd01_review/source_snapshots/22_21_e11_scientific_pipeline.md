@@ -58,7 +58,7 @@ flowchart TD
 | IV-B1 | 単一二値Z/A、事前指定Cを伴う加法線形IV構造係数 | B0や一般ATEと呼ばず、弱IVのAR反転に対応 | FR-199, AR-039/040 |
 | SCM／SDID | donor-based counterfactual/DiD | SCM初期は**point-only**、未検証CI禁止。donor leakage／fit／期間を検査 | FR-200, AR-041 |
 
-承認済みMethod一覧の**41件の義務とR/Q/N/Dの68 Scope**は [Scientific Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md) がauthority。本表はMethod採用範囲を変更しない。
+承認済みMethod一覧の**41件の義務とR/Q/N/Dの68 Scope**は [Scientific Method Scope](../../10_requirements_definition/10_32_scientific_method_scope.md) がauthority。本表はMethod採用範囲を変更しない。
 
 ## 4. Scientific outcome design invariants
 
@@ -70,4 +70,4 @@ flowchart TD
 
 ## 5. Verification boundary
 
-Method-specific identification/eligibility、DGP/negative/reference、Graph/IV/CATE/Quasi inference、FS coverage testは未実施。前提条件の数値と有効なconfigはIF-01/Method-specific ADR/Gate07でFreeze。[BD-01 review](22_90_architecture_consistency_review.md)を参照。
+Method-specific identification/eligibility、DGP/negative/reference、Graph/IV/CATE/Quasi inference、FS coverage testは未実施。前提条件の数値と有効なconfigはIF-01/Method-specific ADR/Gate07でFreeze。[BD-01 review](../90_architecture_consistency_review.md)を参照。

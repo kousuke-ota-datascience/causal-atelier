@@ -67,4 +67,4 @@ Product DB / Worker / Execution lifecycle           Local Scientific Domain / Id
 
 - ARC09-01/02/04/07、E11-A-01/02/04/07；FR-185/187/201/203、NFR-029/032/036、AR-028/029/042。
 - Positive: no Product DB、no navigation IDでLocal Methodを実行可能。Negative: v2 reinterpretation、cross-lane resource write、backend unavailable fallback、Product Worker起動がE11の必須条件になる挙動を拒否。
-- 実証・実効Portテストは未実施。[Architecture Review](22_90_architecture_consistency_review.md)を参照。
+- 実証・実効Portテストは未実施。[Architecture Review](../90_architecture_consistency_review.md)を参照。
