@@ -66,7 +66,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | **G01-P02** | 30_62 `3/5：PUB01〜09、READ01〜07、PRIV03/04/06 | `LocalContentReferenceAdapter(ContentReferencePort).verify`、`LocalPublicationPort.begin/seal/publish`→`LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`、`LocalManifestReader.read_run` | G01-07-02/05/06 |
 | **G01-P03** | 30_61 `1：GRAPH01/03/04；30_62 `4：MAN03/04 | `GraphEvidence.canonical_payload`（Product GraphVersionServiceがrevisionを所有。CLI standaloneのVersion/parent=null）、PAG端点・親子関係・Graph二種類のHash。CLIのGraph editは対象外 | G01-07-03/07 |
 | **G01-P04** | 30_62 `2：CAP01/04/05；30_63 `1.3/2/4.4：METH-P106 | `MethodCapabilityRegistry.describe/resolve/load_adapter`、`DiscoveryPort.discover`→`FciDiscoveryAdapter.preflight/execute`、CI test/BK・PAG独立Graph Oracle | G01-07-08〜10 |
-| **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicy.assert_export_allowed`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
+| **G01-P05** | 30_62 `1/6/8.5：RUN01/03/04/06/07、PRIV01〜06、PUB10、MAN04〜06、READ06 | `LocalCausalUseCase.preflight/run(spec,context)`、`DiscoveryPort.discover`、`LocalPrivacyPolicyPort.authorize`、`command.main`、DISCOVER-only Bundle、Exit・v2回帰 | G01-07-07/11/12 |
 
 **実装順：** P01 → P02+P03 → P04 → P05。WP単位でunit/componentをGreenにし、最後にreal FS・CLIとGraph Scienceを結合する。中断時は現在WP・変更ファイル・テスト実行結果を短く記録するだけでよい。
 
@@ -86,7 +86,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_62 `3 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
 | 30_62 `4/8.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
 | 30_62 `5/8.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
-| 30_62 `6/8.4 `LocalPrivacyPolicy.assert_export_allowed` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
+| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と署名認可はG05 | 02/11 |
 | 30_62 `8.5 `interfaces.cli.local_causal.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
 **G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07の署名付き行認可/列最小化→G05。未実装対象をG01でPASS扱いしない。
@@ -157,7 +157,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 - GRAPH-A: 生成DAGを唯一のPAG oracleとして用いない。潜在変数を含む小Graphから観測MAG・同値類の制約を**独立に**導出し、強制されない方向は未確定のまま評価する。PAGのどの円端点も「潜在交絡が証明された」という意味ではない。
 - BackgroundKnowledge: `required_edges`／`forbidden_edges`は変数の存在、矛盾、自己辺、cycle/precedenceの妥当性を検査。Backend内部のBK適用には**禁止方向から不要なTAILを確定させる可能性**が報告されている（[上流#266](https://github.com/py-why/causal-learn/issues/266)）。G01ではBK指定時に独立Graph motifのendpoint非過剰確定RegressionがGreenとなるまで`BACKEND_SEMANTICS_UNVERIFIED`で拒否し、結果をPAGとしてPublishしない。修正が必要ならG01内のversioned adapterに限定し、外部ライブラリの無断Patch/依存更新はしない。
 
-**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flagを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
+**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flag・Study外から取得したoptional Policy Anchorを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
 
 ## 5. G01 Operation別Bundle・状態・Publication
 

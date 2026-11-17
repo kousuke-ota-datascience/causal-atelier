@@ -67,7 +67,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `EstimatorPort.estimate(request, *, sink)` | `EffectOutcome` | validated eligibility、stagingだけに出力 |
 | `DiagnosticPort.run(request, *, sink)` | `DiagnosticOutcome` | Validated upstream/Method |
 | `LocalPolicyVerifierPort.verify(*, policy_ref, study, root, anchor)` | `VerifiedStudyPolicyEvidence` | Studyから独立した事前承認Authority |
-| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, policy, output_shape)` | `PrivacyDecision` | 独立承認・private Root・column/row上限 |
+| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, principal, policy, output_shape)` | `PrivacyDecision` | 独立承認・private Root・column/row上限 |
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
@@ -75,7 +75,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ### 4.1. Port間の正規署名と相互整合
 
-上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool, policy_anchor:TrustedPolicyAnchor|None)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
@@ -97,7 +97,7 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 
 - `LocalCausalUseCase.run(spec,context)`は`MethodCapabilityPort.resolve(ValidatedCapabilityRequest)`でOperation/Estimand/Backend/Inference/Method configを確認し、選択済`BackendCapabilityRecord`を`ValidatedDiscoveryRequest`等に結合する。具体Scientific Portは同一Method Registryの`load_adapter(capability)`を利用し、別Methodへのfallbackを禁止する。
 - `DISCOVER`は`DiscoveryPort.discover(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink)->DiscoveryGraphOutcome`へdispatchする。IDENTIFYはIdentificationPort、ESTIMATEはEstimatorPort、REFUTE/SENSITIVITY/DIAGNOSEはDiagnosticPortへdispatchする。Resultの型とOperation別Publication義務は23_42 §2.1に従う。
-- `LocalPolicyVerifierPort.verify(*,policy_ref,study,root,anchor)`はStudy外の事前承認Authorityで証拠を検証する。`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,policy,output_shape)`は実効主体・許可範囲も照合する。G01では行出力要求またはFlag単独でも拒否。
+- `LocalPolicyVerifierPort.verify(*,policy_ref,study,root,anchor)`のanchorはCLI composition rootがStudy外のsecure runtime trust configurationから取得した`context.policy_anchor`である。行出力には検証済みanchorが必須で、null/自己申告はfail-closedとする。G01の集計専用動作ではnullを許す。`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,policy,output_shape)`は実効主体・許可範囲も照合する。G01では行出力要求またはFlag単独でも拒否。
 - `LocalPublicationPort`と`LocalManifestReaderPort`はApplication Portであり、Concrete CLI Publisher/Readerへ委譲する。独立Readerが`VerifiedLocalRun`を返す前にCOMPLETEDへ昇格しない。
 
 ## 5. Status／error／exit envelope
