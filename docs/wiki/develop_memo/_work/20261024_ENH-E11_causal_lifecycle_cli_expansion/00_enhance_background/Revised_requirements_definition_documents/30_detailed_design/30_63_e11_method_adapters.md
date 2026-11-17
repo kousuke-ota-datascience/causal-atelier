@@ -1,12 +1,974 @@
-# 30_63_e11_method_adapters — E11全41 Method物理実装契約
+# 30_63_causal_method_adapters
 
-## 1. Registryと実装責務
+---
 
-Method IDの正本は[10_32_scientific_method_scope.md](../10_requirements_definition/10_32_scientific_method_scope.md)。本書は全41 IDの**実装責務／Adapter Class／適格性・推論・結果型／受入テスト**を対応付ける。Methodの科学的限定は10_32のScope定義と整合させる。
+## 1. Scientific Adapter Class詳細
 
-Method Descriptorは `method_id, operation, estimand_family, design_kind, backend_id, extra, config_schema, eligibility_predicate, inference_registry_entry, result_schema, negative_reason_codes, reference_ids` を保持する。1 Methodで異なる構成がある場合はVersion付きvariantにより区別し、対象EstimandをMethod表示名だけで推測しない。
+### 1.1. `NativeIdentificationAdapter`
 
-各Adapterは `class.method(request: ValidatedRequest, *, sink: StagingArtifactSink) -> TypedScientificOutcome` を契約とする。ConstructorはResourceの参照とBackend factoryのみを持ち、外部Estimatorの具体Objectは永続化しない。Runtimeのeffective Method/API/seed/fold/CI configを出力する。Backendの自動fallback禁止。
+#### 1.1.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.identification.NativeIdentificationAdapter`。**状態：PROPOSED（Source未実装）。** IdentificationのMethod実行Adapter。担当Method：`P1-M01, P1-M02`。**再利用:** 既存ariadne.scientific.identification.adapter.IdentificationAdapterのrandomized/backdoor処理・証拠表現。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.1.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.1.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.1.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.1.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M01` | randomized identification | 割当機構・target、proofの型付き正規化 |
+| `P1-M02` | backdoor ATE | adjustment/backdoor、Graph・Design適格性 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.1.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.1.7. 検証
+
+`DD-E11-METH-P1M01`（`P1-M01`）、`DD-E11-METH-P1M02`（`P1-M02`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.2. `DoWhyIdentificationAdapter`
+
+#### 1.2.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.identification.DoWhyIdentificationAdapter`。**状態：PROPOSED（Source未実装）。** IdentificationのMethod実行Adapter。担当Method：`P1-M03, P1-M04, P1-M05`。**再利用:** 既存IdentificationAdapterのDTO・Graph意味を再利用しDoWhy固有識別を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.2.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.2.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.2.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.2.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M03` | backdoor ATE | effective API、method-specific proof、Graph対応 |
+| `P1-M04` | frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
+| `P1-M05` | IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.2.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.2.7. 検証
+
+`DD-E11-METH-P1M03`（`P1-M03`）、`DD-E11-METH-P1M04`（`P1-M04`）、`DD-E11-METH-P1M05`（`P1-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.3. `FciDiscoveryAdapter`
+
+#### 1.3.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.discovery.FciDiscoveryAdapter`。**状態：PROPOSED（Source未実装）。** Graph DiscoveryのMethod実行Adapter。担当Method：`P1-M06`。**再利用:** 既存DiscoveryAdapterのGraph意味Validatorとnode/edge変換を共有。PCをFCIとみなさない。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.3.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.3.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.3.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+| `preflight(self, request: ValidatedDiscoveryRequest)` | `CapabilityOrEligibilityResult` | P1-M06固有CI/Data/BK/Backend適格性 |
+| `execute(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSink)` | `DiscoveryGraphOutcome` | PAG endpoint/lag/latentをlossless保持 |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.3.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M06` | PAG | circle/bidirected/latent・oracle、point estimation不可 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.3.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.3.7. 検証
+
+`DD-E11-METH-P1M06`（`P1-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.4. `FrontdoorLinearAdapter`
+
+#### 1.4.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.frontdoor.FrontdoorLinearAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M07`。**再利用:** 既存CausalDesign・回帰推定器を再利用。数値FD-A固有契約を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.4.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.4.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.4.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.4.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M07` | restricted FD-A ATE | 線形Mediator/Outcomeモデルとno direct path仮定、別Reference・CI |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.4.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.4.7. 検証
+
+`DD-E11-METH-P1M07`（`P1-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.5. `NativeEffectAdapter`
+
+#### 1.5.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.estimation.NativeEffectAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M08, P1-M09`。**再利用:** 既存EstimationAdapterとcausal.inference.estimators.treatment_effectの計算。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.5.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.5.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.5.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.5.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M08` | randomized diff-in-means ATE | randomization、variance、seedとpopulation |
+| `P1-M09` | OLS adopted ATE/ATT | linear model/contrast、robust varianceの採否 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.5.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.5.7. 検証
+
+`DD-E11-METH-P1M08`（`P1-M08`）、`DD-E11-METH-P1M09`（`P1-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.6. `WeightingEffectAdapter`
+
+#### 1.6.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.estimation.WeightingEffectAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P1-M10, P1-M11`。**再利用:** 既存IPW/AIPWとpropensity・balance診断。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.6.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.6.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.6.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.6.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M10` | IPW ATE/ATT | propensity/overlap/balance/ESS/weights/CI |
+| `P1-M11` | AIPW ATE/ATT | nuisance/DR claimの条件、crossfit/variance |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.6.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.6.7. 検証
+
+`DD-E11-METH-P1M10`（`P1-M10`）、`DD-E11-METH-P1M11`（`P1-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.7. `RefutationAdapter`
+
+#### 1.7.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.refutation.adapter.RefutationAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M12, P1-M13, P1-M14, P1-M15`。**再利用:** 既存RefutationAdapter.runはそのまま維持。必要ならMethod用typed façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.7.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.7.3. Constructor / Factory
+
+既存`ariadne.scientific.refutation.adapter.RefutationAdapter`を直接改造して別Domainの状態を持たせない。v2 callerが使用する`run(input_,output_dir)`を変えず、型付きMethod Portからの変換は独立façade／Bridgeで行う。
+
+#### 1.7.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `run(self, input_: RefutationInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **EXISTING v2 API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.7.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M12` | placebo treatment | 事前指定置換ルール、null診断、再現seed |
+| `P1-M13` | data subset | Subset規則、sample/support、差分の解釈 |
+| `P1-M14` | random common cause | 摂動DGP/seed、条件付き安定性 |
+| `P1-M15` | bootstrap refutation | resampling unit/CI可用性、同一DGP |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.7.6. I/O・連携・失敗処理
+
+既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は互換Bridgeから共通計算を再利用し、`StagingArtifactSink`以外への直接File書込・旧DTOからの無検証CASTを禁止。Scientific Negativeとtechnical errorを分離。
+
+#### 1.7.7. 検証
+
+`DD-E11-METH-P1M12`（`P1-M12`）、`DD-E11-METH-P1M13`（`P1-M13`）、`DD-E11-METH-P1M14`（`P1-M14`）、`DD-E11-METH-P1M15`（`P1-M15`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.8. `SensitivityAdapter`
+
+#### 1.8.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.sensitivity.adapter.SensitivityAdapter`。**状態：EXISTING（既存Sourceのrun署名を維持）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M16, P1-M17`。**再利用:** 既存SensitivityAdapter.runを維持。必要ならtyped façadeから共有処理を呼ぶ。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.8.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.8.3. Constructor / Factory
+
+既存`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`を直接改造して別Domainの状態を持たせない。v2 callerが使用する`run(input_,output_dir)`を変えず、型付きMethod Portからの変換は独立façade／Bridgeで行う。
+
+#### 1.8.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `run(self, input_: SensitivityInput, output_dir: Path)` | `list[ScientificResultDescriptor]` | **EXISTING v2 API**。互換維持。typed façadeは既存runを無検証castせず検証済み中間表現へ変換する |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.8.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M16` | adjustment set | Graph/Design/追加変数・post treatment適格性 |
+| `P1-M17` | propensity clipping | trim threshold、estimand変化、ESS/sample loss |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.8.6. I/O・連携・失敗処理
+
+既存`run(input_,output_dir)`のPath I/O/DTOはv2専用。Local型付き実行は互換Bridgeから共通計算を再利用し、`StagingArtifactSink`以外への直接File書込・旧DTOからの無検証CASTを禁止。Scientific Negativeとtechnical errorを分離。
+
+#### 1.8.7. 検証
+
+`DD-E11-METH-P1M16`（`P1-M16`）、`DD-E11-METH-P1M17`（`P1-M17`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.9. `ObservedNceAdapter`
+
+#### 1.9.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNceAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M18`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCEを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.9.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.9.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.9.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.9.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M18` | negative control exposure | 実在Z・事前帰無・opt-in、条件付き関連/負結果 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.9.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.9.7. 検証
+
+`DD-E11-METH-P1M18`（`P1-M18`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.10. `ObservedNcoAdapter`
+
+#### 1.10.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.negative_controls.ObservedNcoAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M19`。**再利用:** 既存Design/Outcome/Inference検証を共通化してNCOを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.10.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.10.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.10.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.10.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M19` | negative control outcome | 実在W・事前帰無・opt-in、条件付き関連/負結果 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.10.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.10.7. 検証
+
+`DD-E11-METH-P1M19`（`P1-M19`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.11. `OlsRvAdapter`
+
+#### 1.11.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.sensitivity.OlsRvAdapter`。**状態：PROPOSED（Source未実装）。** DiagnosticのMethod実行Adapter。担当Method：`P1-M20`。**再利用:** 既存OLS推定の係数・SE・dfを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.11.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.11.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.11.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.11.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P1-M20` | OLS partial R²、point RV(q=1) | 古典OLS係数/SE/df、非OLS拒否 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.11.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.11.7. 検証
+
+`DD-E11-METH-P1M20`（`P1-M20`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.12. `EconmlCateAdapter`
+
+#### 1.12.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlCateAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M01, P2-M02, P2-M03, P2-M04`。**再利用:** 既存CausalDesign・propensity/overlap検証を再利用しEconML固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.12.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.12.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.12.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.12.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P2-M01` | LinearDML CATE | X/W/treatment/outcome、inference registry、fold |
+| `P2-M02` | CausalForestDML CATE | leaf/support/nuisance/CI API、row privacy |
+| `P2-M03` | DRLearner CATE | binary treatment/propensity、inference method |
+| `P2-M04` | ForestDRLearner CATE | propensity+forest inference/support |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.12.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.12.7. 検証
+
+`DD-E11-METH-P2M01`（`P2-M01`）、`DD-E11-METH-P2M02`（`P2-M02`）、`DD-E11-METH-P2M03`（`P2-M03`）、`DD-E11-METH-P2M04`（`P2-M04`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.13. `MetaLearnerAdapter`
+
+#### 1.13.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.MetaLearnerAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M05, P2-M06, P2-M07`。**再利用:** 既存CausalDesignとOutcome modelを再利用しS/T/X適格性を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.13.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.13.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.13.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.13.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P2-M05` | S-Learner CATE | counterfactual prediction、point/CI制限 |
+| `P2-M06` | T-Learner CATE | treated/control support、point/CI制限 |
+| `P2-M07` | X-Learner CATE | cross-model weights、point/CI制限 |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.13.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.13.7. 検証
+
+`DD-E11-METH-P2M05`（`P2-M05`）、`DD-E11-METH-P2M06`（`P2-M06`）、`DD-E11-METH-P2M07`（`P2-M07`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.14. `EconmlDrivAdapter`
+
+#### 1.14.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.heterogeneity.EconmlDrivAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P2-M08`。**再利用:** 共通IV/Estimandの識別検証を再利用しDRIV固有APIを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.14.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.14.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.14.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.14.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P2-M08` | IV heterogeneous structural slope | Z/A/X/W、IV relevance/exclusion、inference |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.14.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.14.7. 検証
+
+`DD-E11-METH-P2M08`（`P2-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.15. `TigramiteTemporalAdapter`
+
+#### 1.15.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.temporal.TigramiteTemporalAdapter`。**状態：PROPOSED（Source未実装）。** Graph DiscoveryのMethod実行Adapter。担当Method：`P3-M01, P3-M02, P3-M03`。**再利用:** 既存Graph endpoint意味とlag規約の共通Validatorを再利用。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.15.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.15.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.15.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.15.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M01` | PCMCI | CI test/lag window、time-series order、graph |
+| `P3-M02` | PCMCI+ | contemporaneous endpoint、CPDAG-like oracle |
+| `P3-M03` | LPCMCI | PAG/latent/endpoint fidelity、lag |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.15.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.15.7. 検証
+
+`DD-E11-METH-P3M01`（`P3-M01`）、`DD-E11-METH-P3M02`（`P3-M02`）、`DD-E11-METH-P3M03`（`P3-M03`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.16. `PanelQuasiAdapter`
+
+#### 1.16.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.PanelQuasiAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M04, P3-M05`。**再利用:** 共通Estimand/Design/Time validationを再利用しDiD/Event Study推定を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.16.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.16.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.16.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.16.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M04` | DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| `P3-M05` | Event Study | cohort/event time、pretrend、reference periods |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.16.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.16.7. 検証
+
+`DD-E11-METH-P3M04`（`P3-M04`）、`DD-E11-METH-P3M05`（`P3-M05`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.17. `InterruptedTsAdapter`
+
+#### 1.17.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.InterruptedTsAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M06`。**再利用:** 共通Time/Design検証を再利用しITS HAC推論を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.17.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.17.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.17.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.17.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M06` | level/slope change | intervention date、seasonality/autocorrelation/HAC |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.17.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.17.7. 検証
+
+`DD-E11-METH-P3M06`（`P3-M06`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.18. `RddAdapter`
+
+#### 1.18.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.RddAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M07, P3-M08`。**再利用:** 共通IV/EstimandとScientific CIを再利用しSharp/Fuzzyを明示区別。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.18.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.18.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.18.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.18.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M07` | Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI |
+| `P3-M08` | Fuzzy RD local complier effect | First stage、discontinuity ratio、local IV inference |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.18.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.18.7. 検証
+
+`DD-E11-METH-P3M07`（`P3-M07`）、`DD-E11-METH-P3M08`（`P3-M08`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.19. `WaldRatioAdapter`
+
+#### 1.19.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.iv.WaldRatioAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M09`。**再利用:** 共通IV適格性を再利用、Waldとweak-IV negativeを追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.19.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.19.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.19.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.19.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M09` | B0 complier LATE reference | binary Z/A、IV assumptions、first stage |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.19.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.19.7. 検証
+
+`DD-E11-METH-P3M09`（`P3-M09`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.20. `TwoSlsAdapter`
+
+#### 1.20.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.iv.TwoSlsAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M10, P3-M11`。**再利用:** 共通IV適格性を再利用、B0/B1識別対象・AR反転を追加。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.20.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.20.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.20.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.20.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M10` | B0 just-identified LATE | zero controls、single Z/A、robust covariance、AR |
+| `P3-M11` | B1 additive linear IV slope | single binary Z/A、predeclared C、robust AR |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.20.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.20.7. 検証
+
+`DD-E11-METH-P3M10`（`P3-M10`）、`DD-E11-METH-P3M11`（`P3-M11`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.21. `SyntheticControlAdapter`
+
+#### 1.21.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticControlAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M12`。**再利用:** 共通Panel/Time/Donor適格性とpoint-only inferenceを利用。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.21.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.21.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.21.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.21.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M12` | treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.21.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.21.7. 検証
+
+`DD-E11-METH-P3M12`（`P3-M12`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
+### 1.22. `SyntheticDidAdapter`
+
+#### 1.22.1. 識別情報・責務
+
+**Class/Module:** `ariadne.scientific.causal_methods.quasi.SyntheticDidAdapter`。**状態：PROPOSED（Source未実装）。** EstimationのMethod実行Adapter。担当Method：`P3-M13`。**再利用:** 共通Panel/Time/Donor適格性とunit/time weightsを利用。入口がCLIであることを科学的な別実装の根拠にしない。
+
+#### 1.22.2. フィールド
+
+| Field / dependency | Type | 制約 |
+|---|---|---|
+| `method_descriptor` | `MethodDescriptor` | 実行Method IDとEstimand/Operation/Inferenceを固定。Backendのデフォルトに任せない |
+| `backend_factory` | `Callable[..., BackendAdapter]`（必要なMethodだけ） | optional dependencyは遅延導入。外部Estimator Objectを永続化しない |
+| `scientific_context` | `ValidatedScientificContext` | Data eligibility、Randomness、上流lineageを検証したper-run Context。共有mutable stateは禁止 |
+
+#### 1.22.3. Constructor / Factory
+
+`__init__(self, *, descriptor: MethodDescriptor, backend_factory: BackendFactory, policy: ScientificEligibilityPolicy)`。Constructorは外部ライブラリのimport/数値計算/Artifact書込を行わない。DescriptorのMethod/Operation/Estimand適合を検証し、不一致はtyped error。
+
+#### 1.22.4. メソッド
+
+| Signature | Return | Contract |
+|---|---|---|
+| `preflight(self, request: ValidatedMethodRequest)` | `EligibilityOutcome` | Method/Estimand/Design/Backend Profileの静的適格性を型付きで返す。推定処理・File公開なし |
+| `execute(self, request: ValidatedMethodRequest, *, sink: StagingArtifactSink)` | `TypedScientificOutcome` | 適格なMethodだけ実行し、ArtifactはStagingへ。外部Backend Objectを返さない |
+
+公開Portの`identify/estimate/run`とAdapter Methodは混同しない。FactoryとFacadeは検証済みRequestを渡し、数理・Backend結果を直接Domainへcastしない。
+
+#### 1.22.5. 処理仕様
+
+| Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
+|---|---|---|
+| `P3-M13` | panel average effect | donor and time weights、preperiod/variance method |
+
+Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+#### 1.22.6. I/O・連携・失敗処理
+
+Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyped evidenceとして返し、File書込みは`StagingArtifactSink`へ限定。旧`ScientificCoreAdapter`経路との共通計算、Model Object不露出、version/API/seed/fold provenanceを検証する。
+
+#### 1.22.7. 検証
+
+`DD-E11-METH-P3M13`（`P3-M13`） に対応するpositive DGP、invalid config/Method、Method固有negative、独立Scientific Reference、Regression/Codec testを要求する。IDの正式照合には§2の41 Method tableと§4〜§8を優先し、この7区分の記載だけで科学的PASSとはしない。
+
 
 ## 2. 全41件のAdapter allocation
 
@@ -99,7 +1061,7 @@ Method Descriptorは `method_id, operation, estimand_family, design_kind, backen
 
 [FCI Method config schema](../23_api_interface_design/schema_drafts/e11_p1_m06_fci_method_config_v1.schema.json)に従い`fisherz/chisq/gsq`、明示alpha/depth/max_path_length、null/required/forbidden directed BackgroundKnowledgeを検証する。DatasetとDesignの列名・順序、finite complete observations、CI別measurement scale、categorical support、観測独立性・標本規模、BK矛盾を確認し、未承認の欠損補完・離散化・CI代替をしない。特定の`causal-learn`版を科学的Method定義に固定せず、effective distribution/API/signature/endpoint accessorとlockをRuntimeで照合し、不一致は`BACKEND_API_MISMATCH`。
 
-Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpoint markの順序を保持する。PAG circle/bidirectedをDAGへ確定せず、重複・不正node/markを拒否し、GraphVersion/dual hashをDomainへ渡す。BKがPAGの不確定endpointを過剰確定する場合は独立motif検証なしに成功としない。2観測変数の潜在交絡を一意識別したとは報告しない。
+Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpoint markの順序を保持する。PAG circle/bidirectedをDAGへ確定せず、重複・不正node/markを拒否し、GraphEvidenceとdual hashを共通科学契約へ渡す（Product GraphVersion IDは自動発行しない）。BKがPAGの不確定endpointを過剰確定する場合は独立motif検証なしに成功としない。2観測変数の潜在交絡を一意識別したとは報告しない。
 
 `DD-E11-METH-P106`は実効API/eligibility、独立MAG/PAG同値類Oracle、BK/latent negativeの検証契約。Backendの出力を自らの正解Oracleにしない。
 
@@ -177,3 +1139,11 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 ## 9. 科学計算の共通実装とVersion付き互換Bridge
 
 Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.causal.discovery`・`ariadne.causal.inference`内の既存計算を意味互換で再利用する。新しいFCI/IV/CATE等はMethod固有の新実装が必要な場合のみ追加する。Typed Port=`ariadne.scientific.ports.causal`、Capability Port=`ariadne.scientific.ports.capability`、BackendEvidence=`ariadne.scientific.capabilities`。旧Product `ScientificCorePort.run_*`は公開v2 DTO/Pathの署名を維持し、実装移行時は明示Bridgeから同一科学Kernelを呼ぶ。旧v2の型へAR/PAG/識別状態を損失変換してはいけない。
+
+## 10. Class配置・既存Scientific Coreとの互換契約
+
+22 Adapter Class中、`ariadne.scientific.refutation.adapter.RefutationAdapter`と`ariadne.scientific.sensitivity.adapter.SensitivityAdapter`は既存実装であり、旧`run(input_,output_dir)`署名を変更しない。その他20 ClassはPROPOSED。いずれも入口専用の独立数値実装を持つことは認めず、既存`causal.discovery`/`causal.inference`と`scientific.*`の関数・validationを再利用する。
+
+`MethodDescriptor`の唯一のOwnerは`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。`StageRunnerRegistry`のStageType registryと同一視しない。旧Product `ScientificCorePort`の5 Operation署名を維持し、Method別typed Portが同じ科学的Kernelを利用する明示Bridgeを介する。新しいFCI、LATE/AR、CATE、Temporal、Quasiは既存の科学実装で不足する部分だけを別Method Adapterとして追加する。
+
+22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
