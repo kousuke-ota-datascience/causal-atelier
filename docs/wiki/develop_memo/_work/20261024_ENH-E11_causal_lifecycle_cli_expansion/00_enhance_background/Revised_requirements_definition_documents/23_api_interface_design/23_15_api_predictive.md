@@ -1,11 +1,1136 @@
-# 23_15_api_predictive
+# 23_15_api_predictive — Predictive Web API仕様
+
+## 1. API概要
+
+- 対象: Predictive のHTTP契約。
+- Base path: `/api/v1`。
+- 本改訂はOwner採用の**Operation単位Request/Response/Errors定義**を対象とする。実行時PASSや要件変更を含まない。
+- Source snapshot: `2068b3b2f8c096d581a0f2d56047c4185c5ac7cc`。CURRENTと未検証事項を分離する。
+
+## 2. エンドポイント一覧
+
+| No. | HTTP | Path | Handler | HTTP Success |
+|---:|---|---|---|---|
+| 1 | `GET` | `/api/v1/projects/{project_id}/predictive/capabilities` | `predictive_capabilities` | `200` |
+| 2 | `POST` | `/api/v1/projects/{project_id}/predictive/split-validations` | `validate_predictive_split` | `201` |
+| 3 | `GET` | `/api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}` | `get_partition_artifact` | `200` |
+| 4 | `POST` | `/api/v1/projects/{project_id}/execution-plans` | `create_execution_plan` | `201` |
+| 5 | `GET` | `/api/v1/projects/{project_id}/execution-plans/{plan_id}` | `get_execution_plan` | `200` |
+| 6 | `POST` | `/api/v1/projects/{project_id}/execution-plans/{plan_id}/validate` | `validate_execution_plan` | `200` |
+| 7 | `POST` | `/api/v1/projects/{project_id}/executions` | `submit_predictive_execution` | `202` |
+| 8 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}` | `get_predictive_execution` | `200` |
+| 9 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}/stages` | `get_predictive_stages` | `200` |
+| 10 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}/results` | `get_predictive_results` | `200` |
+| 11 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}/artifacts` | `get_predictive_artifacts` | `200` |
+| 12 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}/lineage` | `get_predictive_lineage` | `200` |
+| 13 | `POST` | `/api/v1/projects/{project_id}/executions/{execution_id}/cancel` | `cancel_predictive_execution` | `200` |
+| 14 | `POST` | `/api/v1/projects/{project_id}/executions/{execution_id}/retry` | `retry_predictive_execution` | `200` |
+| 15 | `POST` | `/api/v1/projects/{project_id}/executions/{execution_id}/rerun` | `rerun_predictive_execution` | `202` |
+| 16 | `POST` | `/api/v1/projects/{project_id}/executions/{execution_id}/revise` | `revise_predictive_execution` | `202` |
+| 17 | `GET` | `/api/v1/projects/{project_id}/executions/{execution_id}/prefill` | `get_predictive_prefill` | `200` |
+
+## 3. 共通Error Response形式
+
+CURRENTのDomainError/RequestValidationError Handlerは`application/problem+json`ではなく、以下のJSON envelope。
+
+```json
+{"error":{"code":"INVALID_REQUEST","message":"Request validation failed.","details":{},"request_id":"{request_id}"}}
+```
+
+共通Handlerに定義されたErrorがすべてのOperationから発生するとは限らない。下表の条件付きErrorはテストPASS済みという意味ではない。
+
+## 4. エンドポイント詳細
+
+### 4.1 `GET /api/v1/projects/{project_id}/predictive/capabilities`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-01` |
+| Method / Path | `GET /api/v1/projects/{project_id}/predictive/capabilities` |
+| Handler | `predictive.py::predictive_capabilities` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
 
 
----
+#### Errors
 
-## 5. Web API Interface
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
 
-### 5.6 Predictive Interface
+#### 根拠・未検証事項
+
+- Router Source: `predictive.py`（blob `ca9f6e37796c38b6b0de22d78b08e5ed20042198`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.2 `POST /api/v1/projects/{project_id}/predictive/split-validations`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-02` |
+| Method / Path | `POST /api/v1/projects/{project_id}/predictive/split-validations` |
+| Handler | `predictive.py::validate_predictive_split` |
+| Success Status | HTTP 201 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `PredictiveSplitRequest`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `dataset_version_id` | `str` | 必須 | 不可 | — |
+| `analysis_view_id` | `str \| None` | 任意 | 許可 | None |
+| `family_spec` | `dict[str, Any]` | 必須 | 不可 | — |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "dataset_version_id": "{dataset_version_id}",
+  "family_spec": {}
+}
+```
+
+#### Response
+
+- HTTP **201**。Body schema: `PredictiveSplitResponse`。
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `schema_version` | `Literal["predictive-split-validation/1"]` | 必須 | 不可 | — |
+| `status` | `Literal["VALID"]` | 必須 | 不可 | — |
+| `execution_id` | `str` | 必須 | 不可 | — |
+| `task_type` | `str` | 必須 | 不可 | — |
+| `strategy` | `str` | 必須 | 不可 | — |
+| `partition_counts` | `dict[str, int]` | 必須 | 不可 | — |
+| `partition_artifact` | `PartitionArtifactResponse` | 必須 | 不可 | — |
+| `source_snapshot` | `dict[str, Any]` | 必須 | 不可 | — |
+| `project_id` | `str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `body` | `PredictiveSplitRequest,` | 必須 | 不可 | — |
+| `svc` | `PredictiveSplitServiceDep,` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `artifact_id` | `str,` | 必須 | 不可 | — |
+| `svc` | `PredictiveSplitServiceDep,` | 必須 | 不可 | — |
+
+**Response JSON構造例（説明用）**
+
+```json
+{
+  "schema_version": "predictive-split-validation/1",
+  "status": "VALID",
+  "execution_id": "{execution_id}",
+  "task_type": "string",
+  "strategy": "string",
+  "partition_counts": {},
+  "partition_artifact": "string",
+  "source_snapshot": {},
+  "project_id": "{project_id}",
+  "body": "string",
+  "svc": "string",
+  "artifact_id": "{artifact_id}"
+}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive.py`（blob `ca9f6e37796c38b6b0de22d78b08e5ed20042198`）。Request DTO: `PredictiveSplitRequest`、Response Model: `PredictiveSplitResponse`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.3 `GET /api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-03` |
+| Method / Path | `GET /api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}` |
+| Handler | `predictive.py::get_partition_artifact` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `artifact_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object（Router/Serviceのdict）。
+
+| 項目 | 意味・型 |
+|---|---|
+| `artifact_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `execution_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `artifact_type` | Source返却キー（値の詳細型はService/Schema依存） |
+| `schema_version` | Source返却キー（値の詳細型はService/Schema依存） |
+| `content_hash` | Source返却キー（値の詳細型はService/Schema依存） |
+| `size_bytes` | Source返却キー（値の詳細型はService/Schema依存） |
+| `metadata` | Source返却キー（値の詳細型はService/Schema依存） |
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive.py`（blob `ca9f6e37796c38b6b0de22d78b08e5ed20042198`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.4 `POST /api/v1/projects/{project_id}/execution-plans`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-04` |
+| Method / Path | `POST /api/v1/projects/{project_id}/execution-plans` |
+| Handler | `predictive_workflow.py::create_execution_plan` |
+| Success Status | HTTP 201 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `ExecutionPlanCreate`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `analysis_specification_id` | `str` | 必須 | 不可 | — |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "analysis_specification_id": "{analysis_specification_id}"
+}
+```
+
+#### Response
+
+- HTTP **201**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `ExecutionPlanCreate`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.5 `GET /api/v1/projects/{project_id}/execution-plans/{plan_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-05` |
+| Method / Path | `GET /api/v1/projects/{project_id}/execution-plans/{plan_id}` |
+| Handler | `predictive_workflow.py::get_execution_plan` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `plan_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.6 `POST /api/v1/projects/{project_id}/execution-plans/{plan_id}/validate`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-06` |
+| Method / Path | `POST /api/v1/projects/{project_id}/execution-plans/{plan_id}/validate` |
+| Handler | `predictive_workflow.py::validate_execution_plan` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `plan_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object（Router/Serviceのdict）。
+
+| 項目 | 意味・型 |
+|---|---|
+| `execution_plan_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `valid` | Source返却キー（値の詳細型はService/Schema依存） |
+| `plan_hash` | Source返却キー（値の詳細型はService/Schema依存） |
+| `execution_order` | Source返却キー（値の詳細型はService/Schema依存） |
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.7 `POST /api/v1/projects/{project_id}/executions`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-07` |
+| Method / Path | `POST /api/v1/projects/{project_id}/executions` |
+| Handler | `predictive_workflow.py::submit_predictive_execution` |
+| Success Status | HTTP 202 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `Idempotency-Key` | IdempotencyService適用Commandなら非空必須 |
+| `X-User-Id` | Sourceで参照。認証確立の証拠ではない |
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `PredictiveExecutionSubmit`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `analysis_specification_id` | `str` | 必須 | 不可 | — |
+| `execution_plan_id` | `str` | 必須 | 不可 | — |
+| `seed` | `int` | 必須 | 不可 | — |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "analysis_specification_id": "{analysis_specification_id}",
+  "execution_plan_id": "{execution_plan_id}",
+  "seed": 0
+}
+```
+
+#### Response
+
+- HTTP **202**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 400/409 | IDEMPOTENCY_KEY_REQUIRED / IDEMPOTENCY_CONFLICT | Key欠落・異なる内容の同一Key再利用 | IdempotencyService |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `PredictiveExecutionSubmit`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.8 `GET /api/v1/projects/{project_id}/executions/{execution_id}`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-08` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}` |
+| Handler | `predictive_workflow.py::get_predictive_execution` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.9 `GET /api/v1/projects/{project_id}/executions/{execution_id}/stages`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-09` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}/stages` |
+| Handler | `predictive_workflow.py::get_predictive_stages` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object。
+
+| 項目 | 型 |
+|---|---|
+| `items` | array[Service resource] |
+
+Service返却要素のField型は追加照合対象。
+
+**Response JSON構造例（説明用）**
+
+```json
+{"items":[]}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.10 `GET /api/v1/projects/{project_id}/executions/{execution_id}/results`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-10` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}/results` |
+| Handler | `predictive_workflow.py::get_predictive_results` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object。
+
+| 項目 | 型 |
+|---|---|
+| `items` | array[Service resource] |
+
+Service返却要素のField型は追加照合対象。
+
+**Response JSON構造例（説明用）**
+
+```json
+{"items":[]}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.11 `GET /api/v1/projects/{project_id}/executions/{execution_id}/artifacts`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-11` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}/artifacts` |
+| Handler | `predictive_workflow.py::get_predictive_artifacts` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object。
+
+| 項目 | 型 |
+|---|---|
+| `items` | array[Service resource] |
+
+Service返却要素のField型は追加照合対象。
+
+**Response JSON構造例（説明用）**
+
+```json
+{"items":[]}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.12 `GET /api/v1/projects/{project_id}/executions/{execution_id}/lineage`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-12` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}/lineage` |
+| Handler | `predictive_workflow.py::get_predictive_lineage` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object。
+
+| 項目 | 型 |
+|---|---|
+| `items` | array[Service resource] |
+
+Service返却要素のField型は追加照合対象。
+
+**Response JSON構造例（説明用）**
+
+```json
+{"items":[]}
+```
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.13 `POST /api/v1/projects/{project_id}/executions/{execution_id}/cancel`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-13` |
+| Method / Path | `POST /api/v1/projects/{project_id}/executions/{execution_id}/cancel` |
+| Handler | `predictive_workflow.py::cancel_predictive_execution` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.14 `POST /api/v1/projects/{project_id}/executions/{execution_id}/retry`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-14` |
+| Method / Path | `POST /api/v1/projects/{project_id}/executions/{execution_id}/retry` |
+| Handler | `predictive_workflow.py::retry_predictive_execution` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.15 `POST /api/v1/projects/{project_id}/executions/{execution_id}/rerun`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-15` |
+| Method / Path | `POST /api/v1/projects/{project_id}/executions/{execution_id}/rerun` |
+| Handler | `predictive_workflow.py::rerun_predictive_execution` |
+| Success Status | HTTP 202 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `X-User-Id` | Sourceで参照。認証確立の証拠ではない |
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **202**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.16 `POST /api/v1/projects/{project_id}/executions/{execution_id}/revise`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-16` |
+| Method / Path | `POST /api/v1/projects/{project_id}/executions/{execution_id}/revise` |
+| Handler | `predictive_workflow.py::revise_predictive_execution` |
+| Success Status | HTTP 202 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+| Header | 仕様 |
+|---|---|
+| `X-User-Id` | Sourceで参照。認証確立の証拠ではない |
+
+**Request Body / Field定義**
+
+Content-Type: `application/json`、型 `PredictiveExecutionRevise`
+
+| 項目 | 型 | 必須 | null | 制約・既定値 |
+|---|---|---|---|---|
+| `analysis_specification_id` | `str` | 必須 | 不可 | — |
+| `seed` | `int` | 必須 | 不可 | — |
+| `change_reason` | `str` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `body` | `ExecutionPlanCreate,` | 必須 | 不可 | — |
+| `svc` | `PredictiveWorkflowServiceDep,` | 必須 | 不可 | — |
+| `project_id` | `str, plan_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, plan_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `body` | `PredictiveExecutionSubmit,` | 必須 | 不可 | — |
+| `request` | `Request,` | 必須 | 不可 | — |
+| `svc` | `PredictiveWorkflowServiceDep,` | 必須 | 不可 | — |
+| `idempotency` | `IdempotencyServiceDep,` | 必須 | 不可 | — |
+| `idempotency_key` | `str \| None` | 任意 | 許可 | lt=None |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `execution_id` | `str,` | 必須 | 不可 | — |
+| `request` | `Request,` | 必須 | 不可 | — |
+| `svc` | `PredictiveWorkflowServiceDep,` | 必須 | 不可 | — |
+| `project_id` | `str,` | 必須 | 不可 | — |
+| `execution_id` | `str,` | 必須 | 不可 | — |
+| `body` | `PredictiveExecutionRevise,` | 必須 | 不可 | — |
+| `request` | `Request,` | 必須 | 不可 | — |
+| `svc` | `PredictiveWorkflowServiceDep,` | 必須 | 不可 | — |
+| `project_id` | `str, execution_id: str, svc: PredictiveWorkflowServiceDep` | 必須 | 不可 | — |
+
+**Request JSON例（説明用）**
+
+```json
+{
+  "analysis_specification_id": "{analysis_specification_id}",
+  "seed": 0,
+  "change_reason": "string",
+  "project_id": "{project_id}",
+  "body": "string",
+  "svc": "string",
+  "request": "string",
+  "idempotency": "string",
+  "execution_id": "{execution_id}"
+}
+```
+
+#### Response
+
+- HTTP **202**。Body schema: Service output（response_model未宣言）。
+
+Routerは`dict`を返すがPydantic response_model未宣言。Response Fieldの完全な型/キーは**未確定**。Service return値の追加照合が必要。
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 409 | PROJECT_ARCHIVED / RESOURCE_IMMUTABLE / EXECUTION_STATE_CONFLICT | 対象がARCHIVED/FIXEDまたは遷移不適格で該当DomainErrorを送出する場合 | 適用可能なOperationのみ、到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `PredictiveExecutionRevise`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+### 4.17 `GET /api/v1/projects/{project_id}/executions/{execution_id}/prefill`
+
+#### 基本情報
+
+| 項目 | 内容 |
+|---|---|
+| ID | `API-15-17` |
+| Method / Path | `GET /api/v1/projects/{project_id}/executions/{execution_id}/prefill` |
+| Handler | `predictive_workflow.py::get_predictive_prefill` |
+| Success Status | HTTP 200 |
+
+#### Request
+
+**Path parameters**
+
+| 項目 | 型 | 必須 |
+|---|---|---|
+| `project_id` | string | 必須 |
+| `execution_id` | string | 必須 |
+
+**Query parameters**
+
+なし
+
+**Headers**
+
+Router固有の必須Header宣言なし
+
+**Request Body / Field定義**
+
+Request JSON Bodyなし（Router未定義）。
+
+#### Response
+
+- HTTP **200**。Body schema: JSON object（Router/Serviceのdict）。
+
+| 項目 | 意味・型 |
+|---|---|
+| `base_execution_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `analysis_specification_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `execution_plan_id` | Source返却キー（値の詳細型はService/Schema依存） |
+| `seed` | Source返却キー（値の詳細型はService/Schema依存） |
+| `revision_context` | Source返却キー（値の詳細型はService/Schema依存） |
+
+
+#### Errors
+
+| HTTP | Error Code | 発生条件 | 根拠・状態 |
+|---|---|---|---|
+| 400 | INVALID_REQUEST | 型・必須Field等のRequest検証に失敗 | 共通Handler |
+| 404 | ENTITY_NOT_FOUND | 対象がなく、ServiceがEntityNotFoundを送出する場合 | 共通Handler。Operationごとの到達は要確認 |
+| 422 | PredictiveValidationError.code / INVALID_SCHEMA | Predictive inputや実行契約不適合でDomainErrorを送出する場合 | Error codeはService/Backendの分岐による |
+
+#### 根拠・未検証事項
+
+- Router Source: `predictive_workflow.py`（blob `f6a2b04456d23f37baa4f17331241b2427ea5028`）。Request DTO: `none`、Response Model: `未宣言`。
+- 未実行: HTTP Contract Test、Serviceの全Error分岐、認可の実効証明。Source宣言を実行済みと扱わない。
+
+## 5. 検証状況
+
+- Route/Method/Path: 17 件 Source確認。
+- Request: Router/Pydanticモデルの静的制約を反映。Response: 型付きモデルは全Fieldを表記。Service無型応答は一部未確定。
+- HTTP Contract Test: NOT_RUN。Endpoint詳細の完全性・認可・実行時エラー網羅は未検証。
+- 元の`docs/wiki/requirement_definition/`への昇格: NOT_DONE。
+
+## 6. 既存Domain・設計制約（旧仕様本文から保持）
+
+以下は既存のDomain規範・補足情報を保持したもの。重複する旧Route一覧より§2（Source基準）を優先する。改訂前の原本文はGit Blob `9dc7ef62e0f1ec7d0c769556f98cfa3d593c8226`で追跡可能。
+
+### Predictive Interface
 
 Predictive analysisは`predictive-analysis-spec/1`を入力契約とする。現行実装のfull runtime planは`split -> prepare -> train -> evaluate -> optional explain`である。
 
@@ -33,7 +1158,7 @@ Split validation requestは`dataset_version_id / analysis_view_id? / family_spec
 `Metrics`は保存済み`EVALUATION_RESULT`をreadして成立し得る。`Model Management`は`TRAINING_RESULT`、`MODEL_CARD_RESULT`、`FITTED_MODEL`、`MODEL_CARD`等のResult / Artifactをreadするsurfaceとして成立し得る。Navigation再配置を理由にPredictive spec/validation/defaultを変更しない。
 
 
-#### 5.6.1 Predictive subgroup evaluation response contract
+#### Predictive subgroup evaluation response contract
 
 Predictive evaluation outputは指定subgroupごとにrecord listを返す。group valueをJSON object keyへ埋め込まない。
 
@@ -69,7 +1194,7 @@ Predictive evaluation outputは指定subgroupごとにrecord listを返す。gro
 - `n < 2`またはvalid resamples < 200では`uncertainty=null` + warning。
 - metric計算不能は`value=null`、`uncertainty=null`、status/warningを返す。値を捏造しない。
 
-#### 5.6.2 Predictive advanced capabilities contract
+#### Predictive advanced capabilities contract
 
 `GET /projects/{project_id}/predictive/capabilities` remains the canonical Predictive capability metadata endpoint.
 
@@ -161,28 +1286,6 @@ Model artifacts continue to use existing Artifact resources. New model writes ca
 - **`FR-183`**：explanation Result/Artifactはmethod/model/provider、feature/sample identity、model/prediction output scale、background/reference、effective seed/parameters、library version等のprovenanceを保持する
 - **`FR-184`**：Train / Explainability / Model Managementはbackend capability metadataからcompatible option、availability/reason、parameter definition、provenanceを表示し、Frontendを独立したmodel-method compatibility authorityにしない
 
-## PREP-01: Router operation source inventory
+## 7. 改訂記録
 
-Evidence: predictive.py@ca9f6e37796c38b6b0de22d78b08e5ed20042198, predictive_workflow.py@f6a2b04456d23f37baa4f17331241b2427ea5028. Source-declared routes only; the app.py API prefix is /api/v1. 200* is default decorator success, not a runtime validation.
-
-| HTTP | Route | Handler | Declared status | Response model | Router |
-| --- | --- | --- | --- | --- | --- |
-| GET | `/api/v1/projects/{project_id}/predictive/capabilities` | `predictive_capabilities` | 200* | untyped | predictive |
-| POST | `/api/v1/projects/{project_id}/predictive/split-validations` | `validate_predictive_split` | 201 | PredictiveSplitResponse | predictive |
-| GET | `/api/v1/projects/{project_id}/predictive/partition-artifacts/{artifact_id}` | `get_partition_artifact` | 200* | untyped | predictive |
-| POST | `/api/v1/projects/{project_id}/execution-plans` | `create_execution_plan` | 201 | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/execution-plans/{plan_id}` | `get_execution_plan` | 200* | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/execution-plans/{plan_id}/validate` | `validate_execution_plan` | 200* | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/executions` | `submit_predictive_execution` | 202 | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}` | `get_predictive_execution` | 200* | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/stages` | `get_predictive_stages` | 200* | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/results` | `get_predictive_results` | 200* | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/artifacts` | `get_predictive_artifacts` | 200* | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/lineage` | `get_predictive_lineage` | 200* | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/cancel` | `cancel_predictive_execution` | 200* | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/retry` | `retry_predictive_execution` | 200* | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/rerun` | `rerun_predictive_execution` | 202 | untyped | predictive_workflow |
-| POST | `/api/v1/projects/{project_id}/executions/{execution_id}/revise` | `revise_predictive_execution` | 202 | untyped | predictive_workflow |
-| GET | `/api/v1/projects/{project_id}/executions/{execution_id}/prefill` | `get_predictive_prefill` | 200* | untyped | predictive_workflow |
-
-Observed route count: 17. Identity/path = DEFINED by Router Source. Request DTO / constraints, authorization, lifecycle effects, error semantics, idempotency, version compatibility, FR/Negative Test trace are NOT_SPECIFIED pending DTO/Service/OpenAPI verification. Duplicate or shadowed route behavior, if any, is not established from this inventory. This annex is not Contract/Architecture PASS.
+- 2026-11-17: 全23_10〜23_19共通フォーマットへ再構成。Request/Response/ErrorsをOperation別に記載し、Source確認と未検証を分離。
