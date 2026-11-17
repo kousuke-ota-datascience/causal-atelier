@@ -39,7 +39,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 - dotdot、absolute、drive letter、NUL、backslash区切りの混合、不正Unicode正規化、symlink targetの危険な参照を拒否。
 - pathの安全性検証は**静的文法のみ**であり、その後の実file openを代替しない。
 
-`ContentReferencePort.verify(ref: ContentRef, trusted_root: Path) -> VerifiedContent`：
+`ContentReferencePort.verify(ref: ContentRef, trusted_root: TrustedLocalRoot) -> VerifiedContent`：
 - I/O adapterによりroot閉じ込めOpen、同一file descriptorからhashを計算し実際の内容を返す。
 - hash mismatch、path race、size policy、read failureをTyped exception。
 - 参照解決に基づく科学内容検証は別Domain validatorへ渡す。
@@ -231,3 +231,9 @@ class DiagnosticPort(Protocol):
 `InferenceEvidence.availability=AVAILABLE`では、承認された推論型と一致する`FiniteInterval`または`ARConfidenceSet`ちょうど1つを持つ。他のAvailabilityでは両方nullかつreason必須。点推定とScienceAcceptanceは独立。CONFIRMATORY結果にはMethod別に受入済み推論証拠を要求し、`NOT_EVALUATED`を`PASS`として表示しない。
 
 Wire shape candidateと証明範囲は[F07 review input](../combined_review/99_20261117_prep02_f07_ar_inference_schema_candidate.md)及び[JSON Schema draft](../23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json)。JSON Schemaだけでは成分順序/結合、統計的Coverage、Methodの適格性は証明されない。`F07_DESIGN_REFINED / SCHEMA_NOT_FROZEN / SCIENCE_NOT_RUN`。
+
+
+## 13. F04/F07レビュー是正による型・Science境界
+
+- F04 `TrustedLocalRoot`はraw `Path`ではなく、OS/ACL/mount/dirfdが検証されたCapability。`Validated*Request`はType Hintのみで科学的適格性を証明できないため、生成時とAdapter直前の不変条件を検証する。Product Portへの無検証cast禁止。[レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md) §1、[F05](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)。
+- F07の`EMPTY`は汎用AR数学集合として有効な可能性があり、特定B0/B1 just-identified Methodの不変条件とは区別する。従前の非空仕様は**初期ドラフト方針であり科学的に一般化された確定事実ではない**。汎用Schemaで`EMPTY`を採用するかはOwner/Science決定後に`AR02`とJSON Schemaを同時更新する。数値計算失敗は別に`FAILED + reason`。

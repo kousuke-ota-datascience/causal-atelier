@@ -57,3 +57,10 @@
 現行Product `ScientificCorePort` / `ScientificResultDescriptor` / `ArtifactStorePort`とE11 Local Port/DTOを同一interfaceへ合流させない。E11は独立したTyped Identification、Effect、Inference、AR Confidence Set、Technical/Scientific statesと、staging→atomic no-replace publicationを要求する。旧Product v2の実効挙動を変更せず、必要な純計算だけを互換性と科学的意味が証明されたexplicit Adapterで再利用する。
 
 F07の区間表現はextended-real tagged endpoints・nonempty canonical component union・lossless topology、CI不在のtyped reason、ScienceAcceptanceの独立を守る。詳細は`30_61` `11/12、`23_41` `9、`23_42` `12。Draft Schema/ABIは独立Architecture Reviewまで未Freeze。F03/F05/F06/環境/Method Scienceの未証明も残る。
+
+
+### 18.4. F03/F05/F06とF04/F07レビューのFreeze準備（2026-11-17）
+
+承認済みA/A/Aの選択を実装拘束として反映：F03はLinux同mount/FS `RENAME_NOREPLACE`（ロックのみの代替を禁止）、F05はOwner EUID/private TrustedLocalRoot/事前Policy＋CLI flagを独立検証、F06は`e11-local-*/1`の5識別子を正確なdiscriminatorでdispatchし旧v2を改変しない。F04は既存Product Port/Statusの無検証cast禁止、F07は有界/無界/非連結集合とInference/Scienceの独立を保持。
+
+レビューにより、汎用ARの`EMPTY`、Legacy Study YAML例の`path`と`ContentRef.relative_key`差、Publisherの`Path`引数とTrusted Rootの不一致、Process lock fallback矛盾を発見。修復した設計と未決定事項は[レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md)、[F03](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)、[F05](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)、[F06](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)を参照。実効FS・Privacy・Science試験は未実施。F04/F07レビューは**Author Self Review**であり、F12独立Architecture Reviewを満たさない。

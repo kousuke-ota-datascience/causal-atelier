@@ -58,21 +58,72 @@ ROOT/
   "schema_version": "e11-local-effect-result/1",
   "result_id": "example-effect",
   "run_id": "example-run",
-  "estimand": {"family": "LATE_COMPLIER", "population": "compliers", "contrast": "A1-A0"},
-  "design_ref": {"id": "design-1", "sha256": "example-not-a-real-hash"},
-  "question_ref": {"id": "question-1", "sha256": "example-not-a-real-hash"},
+  "estimand": {
+    "family": "LATE_COMPLIER",
+    "population": "compliers",
+    "contrast": "A1-A0"
+  },
+  "design_ref": {
+    "identity": "design-1",
+    "relative_key": "inputs/design.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "media_type": "application/json",
+    "schema_version": null
+  },
+  "question_ref": {
+    "identity": "question-1",
+    "relative_key": "inputs/question.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "media_type": "application/json",
+    "schema_version": null
+  },
   "graph_ref": null,
-  "identification": {"status": "IDENTIFIED", "proof_ref": "proof-1", "reasons": []},
-  "point": {"availability": "AVAILABLE", "value": 0.5, "unit": "outcome", "reason": null},
-  "uncertainty": {"availability": "NOT_REQUESTED", "kind": null, "confidence_level": null, "confidence_set": null, "reason": "not_requested"},
-  "science_acceptance": {"state": "NOT_EVALUATED", "evidence_ref": null},
+  "identification": {
+    "status": "IDENTIFIED",
+    "proof_ref": {
+      "identity": "proof-1",
+      "relative_key": "upstream/identification.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "media_type": "application/json",
+      "schema_version": null
+    },
+    "reasons": []
+  },
+  "point": {
+    "availability": "AVAILABLE",
+    "value": 0.5,
+    "unit": "outcome",
+    "reason": null
+  },
+  "uncertainty": {
+    "availability": "NOT_REQUESTED",
+    "kind": null,
+    "interval": null,
+    "confidence_set": null,
+    "reason": {
+      "code": "NOT_REQUESTED_BY_USER"
+    }
+  },
+  "science_acceptance": {
+    "state": "NOT_EVALUATED",
+    "evidence_ref": null
+  },
   "diagnostics": [],
-  "method": {"id": "P3-M09", "backend": "native", "inference_method": null},
-  "privacy": {"classification": "AGGREGATE", "row_level_export": false}
+  "method": {
+    "id": "P3-M09",
+    "backend": "native",
+    "config": {},
+    "inference_method": null,
+    "backend_version": null
+  },
+  "privacy": {
+    "classification": "AGGREGATE",
+    "row_level_export": false
+  }
 }
 ~~~
 
-上記のexample hashは意図的に無効であり、実行入力としては受け付けない。examplesはSchema Testでsynthetic valid hashへ差し替える。
+上記の`sha256`は64桁0で**Schema上は形式妥当だが、実bytes由来の検証済みdigestではない**。実行入力として受け付けない。例は説明用であり、MethodとEstimand/識別の科学的適格性を証明しない。Schemaと実効Hash/Methodの受入条件は別に検証する。
 
 ## 4. AR Confidence Setの損失ない表現
 
@@ -198,3 +249,14 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 `e11-local-effect-result/1`の`uncertainty`内で`availability`・`kind`・`interval/confidence_set`・`reason`を独立に表す。Confidence Setの成分は`lower/upper`に`{"kind":"FINITE","value":...}` / `{"kind":"NEG_INFINITY"}` / `{"kind":"POS_INFINITY"}`を使用し、無限区間の端点の開閉を真偽値で表す。`ALL_REAL`、`DISCONNECTED`、`UNBOUNDED`、`BOUNDED`を`topology`で明示し、成分の完全な配列を保存する。`JSON Infinity/NaN`は禁止。`AR_CONFIDENCE_SET`には`inversion_evidence`のContentRefとconfidence levelが必要。正常な`AVAILABLE`と、`UNSUPPORTED/UNAVAILABLE/FAILED/NOT_REQUESTED`による推論不在は相互排他的であり、後者には理由コードを残す。`EffectOutcome.point`、`science_acceptance`、`technical_status`は推論可用性から独立。
 
 機械可読な**内部$defsドラフト**：[e11_ar_inference_defs.schema.json](schema_drafts/e11_ar_inference_defs.schema.json)。[F07 review input](../combined_review/99_20261117_prep02_f07_ar_inference_schema_candidate.md)`2〜4をsemantic validation・positive/negative test条件として併用する。これは正式なE11 Result JSON Schema全体のFreezeではない。Interval unionの正規化や科学的CoverageはJSON Schema検証だけで確定できない。Method別推論とIndependent Reviewが残る。
+
+
+## 13. F03/F05/F06出版・Privacy・Version整合（Freeze準備）
+
+F03：`ValidatedStagedBundle`だけをLocal Publisherへ渡し、`renameat2(...RENAME_NOREPLACE)`で既存runを不変のまま保護する。発行後のfsync/readback失敗は、削除や再上書きをせず`PUBLICATION_INDETERMINATE`として扱う。詳細：[F03契約](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)。
+
+F05：default row-level Parquetなし。明示Study request ∧ CLI flag ∧ 別に証拠を持つ事前Study Policy ∧ private TrustedLocalRoot ∧ column/row制限が一致した場合のみ行出力。Unknown ACL/mount/namespaceは拒否。[F05契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)。
+
+F06：5種類の採用済みVersion文字列と独立`e11-commit/1` markerを厳格dispatch。[F06契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)、[機械可読Schemaドラフト](schema_drafts/)参照。例の`ContentRef`は5キー形式。旧`id/sha256`例・`path/sha256`例を新v1正規値として暗黙解釈しない。
+
+F07：汎用ARの`EMPTY`表現は[設計レビュー](../combined_review/103_20261117_prep02_f04_f07_design_review_findings.md)の`REV-F07-01`として**未決定**。既存`arConfidenceSet.components.minItems=1`ドラフトのまま統計的に空集合が不可能と一般化しない。最終Schema Freeze前にOwner/Science判断が必要。

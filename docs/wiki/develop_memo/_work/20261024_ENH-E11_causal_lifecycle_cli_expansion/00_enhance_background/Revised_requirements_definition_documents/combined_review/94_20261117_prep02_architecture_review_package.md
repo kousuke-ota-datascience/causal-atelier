@@ -87,3 +87,12 @@ This package is a review input, **not** an independent review artifact or Owner 
 - F07: [AR/Inference serialization + scientific-state ADR candidate](99_20261117_prep02_f07_ar_inference_schema_candidate.md) と [machine-readable internal JSON Schema $defs draft](../23_api_interface_design/schema_drafts/e11_ar_inference_defs.schema.json)。Extended-real tagged endpoint、interval normalization、ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED topology、typed non-availability reason、Science Acceptance独立を具体化。
 - Reconciled Stock: `30_61` `11/12、`23_41` `9、`23_42` `12、`22_15` `18.3。Reviewer must validate identical meaning and still audit exact Protocol method/error signatures, schema composition into Result/Manifest, F03/F05/F06 runtime proof, Product v2 regression and Science Oracle.
 - **Disposition:** DESIGN_SPEC_DRAFTED / SCHEMA_PORT_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN / CODING_NOT_AUTHORIZED. This is a reviewer *input*, not self-approval.
+
+
+## 8. 2026-11-17 F04/F07 Review / F03/F05/F06 Freeze-prep Update
+
+- [F04/F07 **self-review findings**](103_20261117_prep02_f04_f07_design_review_findings.md)：重要な`REV-F07-01`(AR EMPTYの汎用数学的妥当性)、`REV-F07-02`(Result/Study例とDTOの不一致)、`REV-F04-01`(TrustedLocalRoot vs Path)、`REV-F04-02`(lock fallback vs Owner no-replace)等を発見。**Independent Reviewは未実施**。
+- [F03 mechanical contract](104_20261117_prep02_f03_atomic_publish_contract.md)：`RENAME_NOREPLACE`・file/dir fsync・readback・collisionとindeterminate復旧。
+- [F05 privacy contract](105_20261117_prep02_f05_trusted_root_privacy_contract.md)：EUID、ACL/mount、Policy authority、allowlist/row limitとFail closed。
+- [F06 version+codec+errors](106_20261117_prep02_f06_dispatch_codec_error_contract.md)：厳格なStudy/Graph/Result/Manifest/Status discriminatorとCommit Marker。6 machine-readable draft schemasが`23_api_interface_design/schema_drafts/`に存在し、Canonical JSON Bytes/Privacy Error exit/F07 EMPTY等は未Freeze。
+- **Reviewer request:** F03/F04/F05/F06/F07の上記指摘をResolution別に承認/差戻しし、独立のSource SHA署名付き判定を残す。OS/profiles/scientific proof無しでF03/F05/F07 Runtime PASSを宣言しない。

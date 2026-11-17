@@ -29,35 +29,24 @@ CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [
 
 ## 3. Config request（Schema contract）
 
-次は登録するconfigキーと意味を表す例。 `sha256` の値は説明用であり実在入力のhashではない。
+次はF06のstrict v1 wire（審査用JSON Schemaドラフト）と整合する説明用YAML例。`ContentRef`は`identity/relative_key/sha256/media_type/schema_version`の5項目を持ち、旧例の`path`省略形をE11 v1で暗黙受理しない。ゼロ埋め`sha256`は**未実測のダミー**であり、実際の入力bytes検証には通らない。
 
 ~~~yaml
 schema_version: e11-local-study/1
 operation: ESTIMATE
-run_id: "user-provided-unique-run-id"
+run_id: example-run
 analysis_mode: EXPLORATORY
 inputs:
-  question: {path: "inputs/question.json", sha256: "<sha256-hex>"}
-  design: {path: "inputs/design.json", sha256: "<sha256-hex>"}
-  graph: {path: "inputs/graph.json", sha256: "<sha256-hex>"}
-  dataset: {path: "inputs/dataset.parquet", sha256: "<sha256-hex>"}
-  identification: {path: "upstream/identification.json", sha256: "<sha256-hex>"}
-estimand:
-  family: ATE
-  population: "specified-target-population"
-  contrast: "treatment-versus-control"
-method:
-  id: P1-M08
-  backend: native
-  config: {}
-inference:
-  requested: false
-  confidence_level: null
-randomness:
-  seed: 1234
-privacy:
-  classification: AGGREGATE
-  row_export_requested: false
+  question: {identity: question-1, relative_key: inputs/question.json, sha256: "0000000000000000000000000000000000000000000000000000000000000000", media_type: application/json, schema_version: null}
+  design: {identity: design-1, relative_key: inputs/design.json, sha256: "0000000000000000000000000000000000000000000000000000000000000000", media_type: application/json, schema_version: null}
+  graph: {identity: graph-1, relative_key: inputs/graph.json, sha256: "0000000000000000000000000000000000000000000000000000000000000000", media_type: application/json, schema_version: null}
+  dataset: {identity: dataset-1, relative_key: inputs/dataset.parquet, sha256: "0000000000000000000000000000000000000000000000000000000000000000", media_type: application/vnd.apache.parquet, schema_version: null}
+  identification: {identity: identification-1, relative_key: upstream/identification.json, sha256: "0000000000000000000000000000000000000000000000000000000000000000", media_type: application/json, schema_version: null}
+estimand: {family: ATE, population: specified-target-population, contrast: treatment-versus-control}
+method: {id: P1-M08, backend: native, config: {}}
+inference: {requested: false, confidence_level: null}
+randomness: {seed: 1234}
+privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: null}
 ~~~
 
 - `operation` は`DISCOVER / IDENTIFY / ESTIMATE / REFUTE / SENSITIVITY / DIAGNOSE`の**操作型**でありMethod IDの別名ではない。41 Methodは認可済みMethod registryにおける固定IDにより選択し、対応するOperation／Estimand／Backendを別途検証する。
@@ -166,3 +155,11 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 `E11LocalApplication`から見た`ContentReferencePort/MethodCapabilityPort/IdentificationPort/EstimatorPort/DiagnosticPort`はProduct `ScientificCorePort`の子型ではない。新E11のDTOはScientific status・Estimand・Proof・Inferenceの意味を独立に持ち、既存`ResultType`や`ScientificStatus`へ無断で射影しない。Backendに任意最終Pathの書込みを許すことなく`StagingArtifactSink`へ出力する。Local `Publisher/Reader`は既存Product `ArtifactStorePort`の`store/exists/retrieve/delete`では実現できない同一FS immutable multi-file publicationを提供する。E11版と旧`CliManifest(2.0)`は別Readerでstrict dispatchする。
 
 Portの候補署名/Negative case/Regression obligationsは[F04 ADR候補](../combined_review/98_20261117_prep02_f04_port_boundary_adr_candidate.md)、値型とAdapter境界は[30_61](../30_detailed_design/30_61_e11_local_domain_ports.md)`11。**候補Port署名はFreeze未了であり、現行実装のAPIではない。**
+
+
+## 10. F03/F05/F06共通Port・Version・Error契約（Freeze準備）
+
+- [F03 Atomic no-replace出版契約](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)：Linux `renameat2(RENAME_NOREPLACE)`を必須とし、ロックや普通のrenameで代替しない。Producerは`ValidatedStagedBundle`、Readerは`VerifiedLocalRun`を返す。未検証・競合・crash時に成功を主張しない。
+- [F05 Trusted Root/Privacy契約](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Local Principal、ACL/mount、Owner一致と事前承認済みPolicyの証跡を検証。Study自己申告boolのみで個票を許可しない。
+- [F06 Dispatch/Codec/Error契約](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：採用済み5種のversionと`e11-commit/1` markerを厳格dispatch。Unknown/legacyはfail-closed。構造は[Schema draft一覧](schema_drafts/)に対応。
+- **状態:** `CANDIDATE / OWNER_AAA_ADOPTED / SCHEMAS_NOT_FROZEN / INDEPENDENT_REVIEW_NOT_RUN`。`23_41`内の旧候補表現はA/A/A採用済みversion値を撤回するものではない。

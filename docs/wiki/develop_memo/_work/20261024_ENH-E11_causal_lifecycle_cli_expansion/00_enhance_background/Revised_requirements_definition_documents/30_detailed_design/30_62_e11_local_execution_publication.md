@@ -167,7 +167,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 | Field | Type（Proposed） | 生成元 | 可変性・制約 |
 | --- | --- | --- | --- |
-| `root` | `Path` | 呼出し元からTrusted Root注入 | Immutable root reference。実FSの所有者・権限／同一devをpreflight |
+| `root` | `TrustedLocalRoot` | OS検証済みdirfd Capability | Immutable root handle。所有者・ACL・mount/同一FSを検証し、commit時にも整合を確認 |
 | `run_id` | `str` | 正規化済LocalStudySpec | Immutable。23_42のsafe grammar |
 | `request_hash` | `str` | canonical LocalStudySpec bytes | Immutable。小文字SHA256 hex64 |
 | `state` | `PublishState` | FactoryでPREPARING | PREPARING→STAGING→VALIDATING→COMMITTED/ABORTED |
@@ -177,7 +177,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.3. Constructor / Factory
 
-- **Proposed** `__init__(self, root: Path, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。注入されたrootは存在するTrusted directoryのみ、random staging tokenは`begin`時に生成する。
+- **Proposed** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS/ACL/mount/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
 - **前提:** `run_id`にseparator/「.」「..」を含まない、request hashはcanonical versionと一致。Trusted Root所有者／同一FS／OS principalの確認に失敗したらstaging生成しない。
 - **Failure:** `CONFIG_INVALID`/ `INPUT_PATH_INVALID`/ `PERMISSION_DENIED`などのtyped error。実際のException class名・Constructor実装はADR/06 Freeze時に確定。
 
@@ -197,7 +197,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 2. `begin`で`root/.staging/{random-token}`を0700作成。Path文字列チェックだけでなく、全componentをtrusted dirfd下に開くか同等のanti-symlink手法を適用。
 3. `STAGING`でArtifactを0600でcreate。全bytesのhash/size/schema/Parquet列/Privacyを検証し、同じkeyの二重書込を拒否。
 4. `VALIDATING`でManifestを作り、Artifactリストを走査。Manifest自体のhashを外側の`_COMMITTED.json`へ格納し、Readerと同一アルゴリズムでstagingをreadbackする。File・Directoryをfsync。
-5. `commit`は`runs/{run_id}`未存在を**非原子的exists判定に依存せず**保証するno-replace primitiveまたは実証済みのprocess-wide/exclusive FS lockを要求。単純`Path.rename()`をno-clobber保証としない。
+5. `commit`は`runs/{run_id}`未存在を**非原子的exists判定に依存せず**保証するLinux `renameat2(RENAME_NOREPLACE)`（同mount/FSの実効対応を確認）を要求。Process lock、排他FS lockのみ、check-then-rename、通常の`Path.rename()`は代替として**禁止**。未対応FSはfail-closed。
 6. 同一FSで一括公開後、親directory fsyncと公開版の完全readbackが成功して初めて`COMMITTED`。再試行は既存runのrequest hash一致かつ全readback PASSのときのみ同じrefを返す。
 7. Rename後の異常は`COMMITTED`と断定せず、Readerの現在値とRecovery規則で解決。異なるrequest hashは`RUN_ID_CONFLICT`。科学計算のexactly-onceは保証しない。
 
@@ -342,14 +342,14 @@ This table is a logical field grouping; exact nested JSON Schema property names,
 | `principal_uid, root_owner_uid` | `int` | OS effective actor + trusted root | mismatch reject unless explicit delegated policy |
 | `classification` | `PrivacyClass` | Study Spec | default non-row / explicit restricted |
 | `row_export_requested` | `bool` | Study spec | flagだけで認可しない |
-| `row_export_authorized` | `bool` | scope-specific policy | separate positive authorization |
+| `authorization_evidence` | `VerifiedStudyPolicyEvidence|None` | Study要求と別の事前Policy権威に照合 | self-asserted Study boolは認可証跡にしない |
 | `allowed_columns` | `tuple[str,...]` | policy | whitelisted minimal fields |
 | `max_rows` | `int` | policy | bounded; enforce before output |
 | `audit_context` | `Mapping[str,JsonValue]` | local provenance | secrets/raw rows forbidden |
 
 ### 6.3. Constructor / Factory
 
-- **Proposed:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, row_export_authorized, allowed_columns, max_rows, audit_context)`。
+- **Proposed:** `__init__(self, *, principal_uid, root_owner_uid, classification, row_export_requested, authorization_evidence, allowed_columns, max_rows, audit_context)`。
 - **Preconditions:** OS effective identity＋permission sourceはruntime evidenceから採取。HeaderやCLI flagを信頼済principalの証拠に昇格しない。
 - **Postconditions:** policy object immutable。構築時に実outputを生成しない。Delegated/CI/container UID規則はADR＋negative testで最終確定。
 
@@ -398,3 +398,11 @@ Scientific bias/coverage/FWER/MCS/resource・Licenseは該当Gateの07独立科�
 ## 9. DEC-PREP02 approved physical-design guardrails (2026-11-17)
 
 [Owner record](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md) adopts **A/A/A**, with no implementation claims. `LocalPrivacyPolicy`: reject UID-root-owner mismatch, delegated/shared/CI/container-root-accessible paths and unverifiable ACL/mount exposure; require Study policy AND CLI flag AND private OS root for row output; default aggregate-only. `LocalArtifactPublisher`: enforce effective atomic **no-clobber** Linux same-FS directory publication; no `exists()+rename` fallback; fail closed on unsupported filesystem; staged full-bundle verification, readback and fsync boundaries remain required. `LocalRunManifest` and `LocalManifestReader`: strict explicit version discriminators for study/graph/effect-result/manifest/status `e11-local-*/1`, legacy Product v2 isolated. Require negative tests: concurrent run_id, unsupported FS, crash at each write/publish/fsync boundary, shared mount, UID mismatch, unknown version, legacy v2. Exact syscall ABI/DTO signatures/JSON Schema and independent Architecture review remain **not frozen/not run**.
+
+
+## 10. F03/F05/F06 機械契約の具体化・残る検証
+
+- [F03 syscall/fsync/Reader ADR](../combined_review/104_20261117_prep02_f03_atomic_publish_contract.md)：staging全bytesとmarker・Manifestのvalidation → 各File/Dir fsync → `renameat2(...RENAME_NOREPLACE)` → `.staging`/`runs` Parent dirfsync → Reader検証。`EEXIST`は既存bundleの完全照合後に限り再利用。post-rename障害は不確定状態であり削除禁止。
+- [F05 security threat model](../combined_review/105_20261117_prep02_f05_trusted_root_privacy_contract.md)：Trusted RootはUID一致＋private ACL/mount/namespaceを検証。自分でYAMLに書いた`row_export_authorized: true`を事前承認扱いしない。
+- [F06 dispatch/codec/error](../combined_review/106_20261117_prep02_f06_dispatch_codec_error_contract.md)：5採用済みDiscriminator＋Commit Marker、strict JSON Schema v1草案、typed Error→CLI exit候補、unknown/old versionsの拒否。
+- **Open:** Stable trusted Policy authority、Canonical JSON bytes/hash specification、OS/FS ABI and ACL probe, independent reviewer and runtime tests。候補Class仕様であって実装・Freeze・受入PASSではない。
