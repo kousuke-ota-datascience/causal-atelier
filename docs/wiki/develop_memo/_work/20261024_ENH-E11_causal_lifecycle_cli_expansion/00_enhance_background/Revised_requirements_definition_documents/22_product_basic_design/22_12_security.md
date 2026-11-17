@@ -93,3 +93,8 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 **REQUIRED:** FR-121の全Project-scoped操作のdeny-by-defaultは引き続きNormative。単にServiceにRole関数が存在することと、全Endpointが同じ検査を通過することは異なる。外部認証Gatewayの有無は未検証であり、デプロイ環境全体における認可不備の最終判定ではない。
 
 **Disposition:** `23_10`§5.1.2で操作ごとの差分・Source blob・負例を追跡。Product Web/APIのGapはDEC09に従いE11 Local CLIへ転嫁せず、別Product修正のOwner・Issue・Test Evidenceを設定する。E11側でこのGapを解消済みと主張しない。安全な受入以前の状態は`SOURCE_GAP_IDENTIFIED / INTEGRATION_TEST_NOT_RUN`。
+
+
+### 15.7 PREP-02 Local security authority decision (2026-11-17)
+
+[DEC-PREP02-A Owner record](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): **Option A ADOPTED**. ENH-E11 initial Local CLI export authority is restricted to same effective UID as owner of a private trusted local root, with no delegation. Shared/CI/container-root-accessible mount or unverified ACL/permission case is fail-closed. Row-level output is default disabled and requires Study policy authorization **and** explicit CLI flag, root/actor checks, column/row minimization, and absence of row/secret leakage in logs/Manifest. This does not assert a complete runtime proof or replace Product RBAC; §15.5's previously pending Owner choice is superseded **only** as to choice of policy. OS/filesystem verification, exact error contract and independent security review remain open.
