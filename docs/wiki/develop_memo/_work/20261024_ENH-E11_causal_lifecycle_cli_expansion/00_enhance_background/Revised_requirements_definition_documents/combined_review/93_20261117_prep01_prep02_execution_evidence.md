@@ -194,3 +194,8 @@ Changes in work revision only: F07 common and embedded Effect Result draft schem
 ## 18. PREP-02 independent review submission approval (2026-11-17)
 
 Owner accepted next **process step**: submit F03–F07 to independent Architecture/Security/Science review. Authority: [DEC-PREP02-E](decisions/96_20261117_dec_prep02_independent_review_submission_authorization.md). [Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) opened with pinned reviewer source SHA `6dd45982e389ea57deabd4eef7871af3fe111aab`. No reviewer assigned or independent F12 review produced. **Review submission approved**, not Port/Schema Freeze, PREP PASS, Coding Authorization or canonical-original promotion.
+
+
+## 19. Owner's independent-review completion assertion vs verification（2026-11-17）
+
+[DEC-PREP02-F](decisions/97_20261117_dec_prep02_owner_independent_review_completion_attestation.md) captures Owner's 「独立レビュー完了。承認する」 and acceptance of reported outcome. GitHub [Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) had no reviewer-specific F03–F07 written verdict, artifact or source SHA to independently confirm completion. **Do not claim the review never happened**: it may have been conducted outside GitHub; evidence reconciliation is pending. Owner approval = recorded; F12 independent review PASS = **NOT_EVIDENCED**; Port/Schema Freeze = **NO**; Coding Authorization = **NO**. The original canonical requirement_definition stays untouched.

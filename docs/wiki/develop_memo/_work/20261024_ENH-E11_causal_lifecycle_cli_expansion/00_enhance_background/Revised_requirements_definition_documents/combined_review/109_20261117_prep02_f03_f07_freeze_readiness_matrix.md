@@ -71,3 +71,8 @@ Owner 2026-11-17 accepted all four A choices. See [Owner Decision record](decisi
 ## 9. Independent review handoff — Owner authorized (2026-11-17)
 
 [DEC-PREP02-E](decisions/96_20261117_dec_prep02_independent_review_submission_authorization.md) records Owner approval **to submit**, not approval of F03–F07 technical correctness or Freeze. [GitHub Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) is **OPEN / REVIEWER_UNASSIGNED / INDEPENDENT_VERDICT_NOT_RUN**. Reviewer baseline: `6dd45982e389ea57deabd4eef7871af3fe111aab`. Each F03–F07 and F12 must receive separately evidenced independent disposition. `PREP02_IN_PROGRESS / PORT_SCHEMA_NOT_FROZEN / CODING_NOT_AUTHORIZED`.
+
+
+## 10. Owner attestation of independent review completion (2026-11-17)
+
+User states independent review has finished and approves it. [DEC-PREP02-F](decisions/97_20261117_dec_prep02_owner_independent_review_completion_attestation.md) records that **Owner approval is acknowledged**. However [Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) had no reviewer findings, per-F03–F07 verdict, or assignment when checked; completion remains **independently unverified**, including possible off-platform work. Reviewer evidence/source SHA and dispositions must be reconciled prior to any Freeze. `OWNER_ATTESTED / REVIEW_EVIDENCE_PENDING / F12_UNVERIFIED / NO_FREEZE / NO_CODING_AUTHORIZATION`.

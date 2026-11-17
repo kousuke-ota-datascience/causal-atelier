@@ -56,3 +56,8 @@ Required review oracles:
 ## 5. Owner authorization to submit this checkpoint (2026-11-17)
 
 [DEC-PREP02-E process approval](decisions/96_20261117_dec_prep02_independent_review_submission_authorization.md) authorizes independent review of this exact snapshot. [GitHub Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) captures review scope, per-F03–F07 oracles, independent findings format, and test-evidence gaps. **Reviewer is not assigned and no independent verdict exists**. The original reviewer baseline remains `6dd45982e389ea57deabd4eef7871af3fe111aab`; this administration commit only records authorization and does not revise that frozen review snapshot.
+
+
+## 6. Independent-review completion declaration from Owner（2026-11-17）
+
+Owner reported completion and approval of independent review. [DEC-PREP02-F](decisions/97_20261117_dec_prep02_owner_independent_review_completion_attestation.md) records this statement, but the independent report, reviewer identity, F03–F07 finding dispositions and reviewed SHA were **not present on Issue #25 or the reviewed branch** at verification. The [Issue #25](https://github.com/kousuke-ota-datascience/causal-atelier/issues/25) now includes the Owner attestation and evidence requirements. This checkpoint remains a **review input**, not verified independent review PASS. Freeze/Coding Authorization not declared.
