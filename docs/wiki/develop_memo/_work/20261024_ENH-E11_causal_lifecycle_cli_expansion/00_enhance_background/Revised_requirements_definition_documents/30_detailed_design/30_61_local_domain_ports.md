@@ -1,4 +1,4 @@
-# 30_61_e11_local_domain_ports — E11 Local Domain / Scientific Port 物理詳細設計
+# 30_61_local_domain_ports — Local Domain / Scientific Port 物理詳細設計
 
 ## 1. モジュール構成・依存方向
 
@@ -6,7 +6,7 @@ Local causal laneのDomain/Port配置と依存関係を定義する。既存Prod
 
 ~~~text
 src/ariadne/
-  causal/local_contract/                  # E11 Domain value / validation (外部科学library不要)
+  causal/local_contract/                  # Local Domain value / validation (外部科学library不要)
     references.py                         # ContentRef / CanonicalRef
     study.py                              # LocalStudySpec / EstimandRef
     graph.py                              # GraphEvidence / EndpointEdge
@@ -63,7 +63,7 @@ Portに外部libraryのModel/Estimator Objectを渡さず、Typed DTO／bytes/co
 
 `LocalConfigDecoder.decode_yaml(raw: bytes) -> LocalStudySpec`：
 - `LocalConfigDecoder.decode(raw: bytes, *, declared_format: Literal["yaml", "json"]) -> ValidatedStudy`が共通Portとの接点。`decode_yaml`は内部helperであり別公開契約を作らない。YAML/JSON重複key・alias/excessive nesting・Python Tag等を拒否し、strict Schema/Method Profile検証後だけValidatedStudy factoryを呼ぶ。
-- `schema_version`を先に判定。unknown/legacyはE11 parserに流さない。
+- `schema_version`を先に判定。unknown/legacyはLocal v1 parserに流さない。
 - `LocalStudySpec.validate_local_invariants() -> tuple[Reason,...]`：required refs by Operation、Method/Estimand target、analysis_mode/inference、row export request、Run IDなどの純粋不変条件を収集。
 - Result/Manifest bytesを生成せず、副作用は無し。config hashはcanonical encoding後のbytesのdigestから求め、canonicalization versionを記録する。
 
@@ -112,7 +112,7 @@ PAGのTAIL/ARROW/CIRCLE、双方向矢印、Node identity、lagとTemporalConven
 
 - `IdentificationOutcome.from_adapter(raw: AdapterIdentification) -> IdentificationOutcome`：Backend独自StatusをDomainの証拠・Reasonに正規化し、method／assumptions／GraphVersion／対象Estimandの裏付けを要求。DoWhyの内部ATE labelからLATE等を推測しない。
 - `EstimatorRequest.assert_eligible(identification: IdentificationOutcome, design: CausalDesignEvidence, capability: BackendCapability) -> ValidatedEstimatorRequest`：上流hash全一致、対象Estimand、Method専用assumptions、必要Instrument/Mediator/support、Data Eligibility、confidence policyを検査。
-- `NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED` は新E11の点推定に自動通過させない。緩和可能な列挙WARNのみoverride理由を受理。B0/B1/DRIVを別Estimand familyとしてvalidateする。
+- `NOT_IDENTIFIED / REQUIRES_REVIEW / PARTIALLY_IDENTIFIED` はLocal実行系の点推定に自動通過させない。緩和可能な列挙WARNのみoverride理由を受理。B0/B1/DRIVを別Estimand familyとしてvalidateする。
 - 不適格なら `ScientificNegativeOutcome` の型付き結果を返し、外部Backendを呼ばない。Schema/path mismatchはtechnical validation failureへ分離する。
 
 ### 5.3. 検証
