@@ -89,3 +89,24 @@ This Final Audit is complete as a **static documentary audit with corrections**.
 **Resulting control-plane state:** `PREP-03_FINAL_STATIC_AUDIT_OWNER_APPROVED`; `OD-04_CLOSED_APPROVED`; `DESIGN_CONTRACT_GAPS_OPEN`; `G01..G10_NOT_FROZEN`; `CODING_NOT_AUTHORIZED`; `TESTS_NOT_RUN`; `NO_999_VERDICT`. G02〜G10 remain **review-accepted DRAFT**, not Frozen contracts. Any freeze must be independently evaluated for each Gate and only after its missing normative data is resolved or its scope is explicitly amended and approved. The accepted Package DAG does not override the latest canonical upstream 999 rules.
 
 **Next authorized preparation:** resolve OD-01–03 and the true open portions of OD-05, propagate Owner decisions to affected Revised design and 06/07/Pxx as standalone contracts, then re-audit before separately requesting Contract Freeze. Do not edit production Source/tests/`uv.lock`, invoke Coding Agent/Independent Test Agent or assert Gate/Science PASS based on this approval.
+
+## 7. OD-01–03/05 continuation — design candidate submission (2026-11-18 JST)
+
+**Operation:** Post-Owner-consolidated-review analysis and drafting of remaining actual contracts; Owner consolidated approval does not apply to new options. **Result:** `CANDIDATES_WRITTEN / OD_01_02_03_OPEN / OD05_AUTHORING_OPEN / NOT_FROZEN`.
+
+| Item | Research and resulting artifact | State |
+|---|---|---|
+| OD-01 | [118 DoWhy IV target options](../00_enhance_background/Revised_requirements_definition_documents/combined_review/118_20261118_prep03_od01_iv_target_decision_candidate.md): recommended B0 conditional `LATE_COMPLIER` identification only; alternatives B0+B1 and review-only. DoWhy label is not sufficient proof | Owner choice pending; `P1-M05` stays blocked |
+| OD-02 | [119 independent approval authority](../00_enhance_background/Revised_requirements_definition_documents/combined_review/119_20261118_prep03_od02_od03_row_export_design_candidate.md): Ed25519/admin trust-store preferred candidate, signer/issuer role, domain-separated JCS policy, hash/expiry/revocation/run binding/anti-replay, fail-closed | Owner operational/security decision pending; no actual approval key/signer created |
+| OD-03 | [119 bounded Row Writer](../00_enhance_background/Revised_requirements_definition_documents/combined_review/119_20261118_prep03_od02_od03_row_export_design_candidate.md): precise proposed `RowEffectsParquetWriter`/Factory/Serializer signatures, authorization-before-row-read, separate G01 Publisher | Owner Class/Factory contract decision pending; no row export enabled |
+| OD-05 | [120 41-Method profile inventory](../00_enhance_background/Revised_requirements_definition_documents/combined_review/120_20261118_prep03_od05_method_profile_gap_register.md): scanned scoped schema_drafts; P1-M06 has 3 method-specific schema drafts, remaining 40 none located there; Gateway work allocation without redefining adopted mathematical targets | Profile authoring and effective backend validation pending |
+| Submission | [121 Owner decision sheet](../00_enhance_background/Revised_requirements_definition_documents/combined_review/121_20261118_prep03_owner_decision_submission.md) distinguishes precise A/B/C recommendations, required actions and amendment/Freeze boundary | Submitted for Owner selection, NOT accepted |
+
+**Additional static defect cleanup (not Owner design choice):**
+- G05/P02 included G01 FCI `LocalCausalUseCase→DiscoveryPort→FciDiscoveryAdapter.execute` dispatch/Registry paragraphs under privacy approval semantics. Removed irrelevant text; the separate approved Privacy Port contract remains intact.
+- G05/P03's operation-bundle Validator reference now points to its self-contained §2B, not an external DD normative clause.
+- G05/G10 Gate06 `LocalArtifactPublisher` method matrix now contains the same concrete five signatures already present in the embedded Class contract, no “need full DD verification” placeholder.
+
+**Authority caution:** PREP02/111 describes the exact HC1 AR realization as a proposed numeric reference, while DD30_63 describes it as the targeted implementation. This difference must be explicitly reconciled for G08 Method profile/Science Freeze, not mistaken for a reason to undo accepted B0/B1/AR full-real semantic bounds.
+
+**No implicit Owner approval:** New candidate values are not silently propagated to 10_32/30_62/30_63/23_41/23_42 or frozen G02/G05/G10 06/07/Pxx. The accepted 36-Pxx package structure/OD-04 closure remains unchanged. No Source, tests, lock, executable system, independent Science PASS or Gate999 work was performed.

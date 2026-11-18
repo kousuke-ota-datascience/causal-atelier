@@ -320,3 +320,14 @@ Final Audit record: [PREP03_final_audit.md](PREP03_final_audit.md) (review only,
 **Owner directive:** `Owner一括レビュー：承認する`（2026-11-18 07:57:48 JST）。[PREP-03 Final Audit §6](PREP03_final_audit.md)に承認範囲・非承認範囲・Control Plane判定を記録。**承認対象はFinal Static Audit、G02〜G10の依存DAG、WORK_PACKAGE実行方式、全36 Pxx構成、既決意味論の継承である。** OD-04=OWNER_APPROVED/CLOSED。G02〜G10 06/P00/07にはOwner Reviewを反映し、`DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZED`を保持。
 
 **Open Decisions remain:** OD-01（P1-M05 IV Target）、OD-02（G05 independent Row Approval Authority/Verifier）、OD-03（G05 Row Writer Class/Factory/Method）、OD-05の真のMethod Config/Inference Profile gaps。独立Science/Backend/License evidence（OD-06/07）は実行／Legal段階で取得する。**レビュー承認は未決の値を補完せず、Freeze、Coding Authorization、Source/Test変更、999 PASSを許可しない。** 正本への昇格も未実施。
+
+### 12.7. OD-01〜03/05 design candidate preparation（2026-11-18 JST）
+
+Owner一括レビューで**承認されていない**具体設計の採用候補を、Final Audit [§7](PREP03_final_audit.md)および以下のFLOW判断候補に分離して記録。
+
+- [OD-01: IV Target選択候補](../00_enhance_background/Revised_requirements_definition_documents/combined_review/118_20261118_prep03_od01_iv_target_decision_candidate.md) — B0-only LATE条件付き識別を推奨。Owner選択待ち。
+- [OD-02/03: Row trust and writer](../00_enhance_background/Revised_requirements_definition_documents/combined_review/119_20261118_prep03_od02_od03_row_export_design_candidate.md) — Ed25519独立署名とRow Writer Concrete Class/Method。独立承認主体・鍵運用・Class最終選択はOwner待ち。
+- [OD-05: Method Profile41件棚卸](../00_enhance_background/Revised_requirements_definition_documents/combined_review/120_20261118_prep03_od05_method_profile_gap_register.md) — 既決数理と未作成Config/Schema/Science Evidenceを区分。
+- [Owner decision submission](../00_enhance_background/Revised_requirements_definition_documents/combined_review/121_20261118_prep03_owner_decision_submission.md) — 申請用比較表。未承認候補は正式Pxxに採用しない。
+
+**文書欠陥是正:** G05/P02の混入G01 FCI dispatch説明を除去、G05/P03外部DDへのOperation規範委譲を§2Bへ、G05/G10 Gate06 Publisher概要署名を既存詳細設計に一致させた。引き続き `PREP03_OWNER_REVIEW_APPROVED / OD04_CLOSED / OD01_OD02_OD03_OPEN / OD05_PROFILE_OPEN / GATES_NOT_FROZEN / CODING_NOT_AUTHORIZED`。

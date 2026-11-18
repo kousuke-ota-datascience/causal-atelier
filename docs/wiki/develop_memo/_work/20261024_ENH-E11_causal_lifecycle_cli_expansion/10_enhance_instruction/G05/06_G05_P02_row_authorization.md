@@ -202,10 +202,6 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 `LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
 
-公開`MethodCapabilityPort.resolve(request:ValidatedCapabilityRequest)`はOperation/Estimand/Inference/Designを含む要求を厳格検証し、整合が確認できたMethod/Backend/ProfileだけをConcrete `MethodCapabilityRegistry.resolve(method_id,backend_id,profile)`へ委譲するFacadeである。Method ID/Backend/Profileの3値だけから要求全体の適格性を推測してはならない。`describe`はpure、`resolve`は実効Distribution/APIを検査、`load_adapter`だけがoptional importを行う。互換検証とfallback禁止の規則を2系統に複製しない。
-
-**Adapter dispatch：** `MethodCapabilityPort.resolve`はConcrete `MethodCapabilityRegistry`の単一metadata/Runtime probeを使い、`BackendCapabilityRecord`をValidated Requestに付与する。各Scientific Port Concreteは同じRegistryの`load_adapter(capability)`を利用する。UseCaseが任意のBackend objectを受け取らず、`LocalCausalUseCase.run → MethodCapabilityPort.resolve → DiscoveryPort.discover → FciDiscoveryAdapter.execute`を唯一のG01実行経路にする。
-
 **PrivacyのAuthority署名方式・鍵配布/失効・Writer Class等の具体未決は上記方針とは別の真のDesign Gapであり、未決ScopeをBLOCKEDにする。**
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
