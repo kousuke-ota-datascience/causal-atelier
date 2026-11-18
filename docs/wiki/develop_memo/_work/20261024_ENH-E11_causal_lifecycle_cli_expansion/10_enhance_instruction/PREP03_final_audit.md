@@ -53,11 +53,11 @@
 
 | Decision | Category | Affected Gate / Pxx | Required action | Freeze effect |
 |---|---|---|---|---|
-| OD-01 | **True semantic open** | G02/P02 P1-M05 | Decide the actual DoWhy IV identification target, admissible assumptions and typed result. Do not silently use B0 LATE or DRIV slope | Blocks P1-M05; G02 full-scope PASS requires resolution |
-| OD-02 | **True security design open** | G05/P02/P04 | Define independent Approval Authority, signature/key custody, scope/audience/expiry/revocation/anti-replay and Policy Verifier Class/Method. Self-authored policy ref, bool or CLI flag never constitute authorization | Blocks row export |
-| OD-03 | **True API/ownership open** | G05/P03 | Define row-level Parquet Writer Class/module, public Factory/Method signatures, call order *after* verified authorization, columns and row bound/readback | Blocks row export; zero unauthorized row bytes |
+| OD-01 | **OWNER_ADOPTED / DESIGN_CLOSED** | G02/P02 P1-M05 | Owner採用A：DoWhy IV IDENTIFYはB0_BINARY_IV / binary Z/A unadjusted conditional `LATE_COMPLIER`のみ。表示ラベルの自動cast禁止。数値推定はG08 | 対象選択はCLOSED。Method Profile/DoWhy実API/独立Science未実証がFreeze blocker |
+| OD-02 | **OWNER_ADOPTED / DESIGN_CLOSED** | G05/P02/P04 | Owner採用A：Ed25519 detached signed JCS policy／admin-owned issuer/key/revocation Trust Anchor／既存PolicyVerifierPortのConcrete実装 | 実際の独立Approver・admin管理者／鍵配備/clock/revocation/OS証明が無いRow ReleaseはBLOCKED_DEPLOYMENT_AUTHORITY |
+| OD-03 | **OWNER_ADOPTED / DESIGN_CLOSED** | G05/P03 | Owner採用A：RowEffectsParquetWriter/Factory・Deferred Source・Validated Serializerを分離し、認可後にのみG01 Sinkへbounded private bytesを渡す | 実効Parquet ABI/row schema/Approval deployment/Reader実測は未了 |
 | OD-04 | **APPROVED — Owner decision on plan** | Gate06/P00 all G02–G10 | 2026-11-18 JST Owner approved the displayed Gate DAG, WORK_PACKAGE mode, required 36 Pxx and G03/G04/G06/G07/G08/G09/G10 package decompositions | No longer an unresolved planning decision; actual Gate06/07/Pxx Freeze and upstream 999 evidence are separate |
-| OD-05 | **Method contract completion, not blanket semantic redesign** | G02–G09 Method-owning Pxx | Supply strict registered Method Config/Question/Design/Output profiles and concrete inference configurations where not already fixed by DD. Use adopted Target/Algorithm; escalate to Owner only genuine conflicts/absent choices | Block only affected Method/Pxx from Freeze/authorization |
+| OD-05 | **OWNER_ADOPTED_AUTHORING_POLICY / IMPLEMENTATION_OPEN** | G02–G09 Method-owning Pxx | 40 Method strict Config/Question/Design/Output/Inference Profileは各Owner Gateで作成・登録する方針に決定、既決Targetを再審議しない | 各schema/negative/Backend/Scienceは未生成。実装可能性を宣言しない |
 | OD-06 | **Independent evidence / verification** | All Gates, especially G10/P04 and G10/07 | Generate source-controlled positive/negative fixtures, independent reference, effective backend/API/lock/SBOM, T2/T3 preregistration, K/R/MC-SE/coverage FWER=.05. Do not label ungenerated proof PASS | Does not invalidate adopted semantics, but blocks Science PASS |
 | OD-07 | **Delivery legal judgment** | G10/P01/P05 | Record actual license/SBOM and customer-distribution approval independently from scientific PASS | Blocks non-approved customer delivery, not internal scientific method definition |
 
@@ -96,10 +96,10 @@ This Final Audit is complete as a **static documentary audit with corrections**.
 
 | Item | Research and resulting artifact | State |
 |---|---|---|
-| OD-01 | [118 DoWhy IV target options](../00_enhance_background/Revised_requirements_definition_documents/combined_review/118_20261118_prep03_od01_iv_target_decision_candidate.md): recommended B0 conditional `LATE_COMPLIER` identification only; alternatives B0+B1 and review-only. DoWhy label is not sufficient proof | Owner choice pending; `P1-M05` stays blocked |
-| OD-02 | [119 independent approval authority](../00_enhance_background/Revised_requirements_definition_documents/combined_review/119_20261118_prep03_od02_od03_row_export_design_candidate.md): Ed25519/admin trust-store preferred candidate, signer/issuer role, domain-separated JCS policy, hash/expiry/revocation/run binding/anti-replay, fail-closed | Owner operational/security decision pending; no actual approval key/signer created |
-| OD-03 | [119 bounded Row Writer](../00_enhance_background/Revised_requirements_definition_documents/combined_review/119_20261118_prep03_od02_od03_row_export_design_candidate.md): precise proposed `RowEffectsParquetWriter`/Factory/Serializer signatures, authorization-before-row-read, separate G01 Publisher | Owner Class/Factory contract decision pending; no row export enabled |
-| OD-05 | [120 41-Method profile inventory](../00_enhance_background/Revised_requirements_definition_documents/combined_review/120_20261118_prep03_od05_method_profile_gap_register.md): scanned scoped schema_drafts; P1-M06 has 3 method-specific schema drafts, remaining 40 none located there; Gateway work allocation without redefining adopted mathematical targets | Profile authoring and effective backend validation pending |
+| OD-01 | **OWNER_ADOPTED / DESIGN_CLOSED** | G02/P02 P1-M05 | Owner採用A：DoWhy IV IDENTIFYはB0_BINARY_IV / binary Z/A unadjusted conditional `LATE_COMPLIER`のみ。表示ラベルの自動cast禁止。数値推定はG08 | 対象選択はCLOSED。Method Profile/DoWhy実API/独立Science未実証がFreeze blocker |
+| OD-02 | **OWNER_ADOPTED / DESIGN_CLOSED** | G05/P02/P04 | Owner採用A：Ed25519 detached signed JCS policy／admin-owned issuer/key/revocation Trust Anchor／既存PolicyVerifierPortのConcrete実装 | 実際の独立Approver・admin管理者／鍵配備/clock/revocation/OS証明が無いRow ReleaseはBLOCKED_DEPLOYMENT_AUTHORITY |
+| OD-03 | **OWNER_ADOPTED / DESIGN_CLOSED** | G05/P03 | Owner採用A：RowEffectsParquetWriter/Factory・Deferred Source・Validated Serializerを分離し、認可後にのみG01 Sinkへbounded private bytesを渡す | 実効Parquet ABI/row schema/Approval deployment/Reader実測は未了 |
+| OD-05 | **OWNER_ADOPTED_AUTHORING_POLICY / IMPLEMENTATION_OPEN** | G02–G09 Method-owning Pxx | 40 Method strict Config/Question/Design/Output/Inference Profileは各Owner Gateで作成・登録する方針に決定、既決Targetを再審議しない | 各schema/negative/Backend/Scienceは未生成。実装可能性を宣言しない |
 | Submission | [121 Owner decision sheet](../00_enhance_background/Revised_requirements_definition_documents/combined_review/121_20261118_prep03_owner_decision_submission.md) distinguishes precise A/B/C recommendations, required actions and amendment/Freeze boundary | Submitted for Owner selection, NOT accepted |
 
 **Additional static defect cleanup (not Owner design choice):**
@@ -110,3 +110,22 @@ This Final Audit is complete as a **static documentary audit with corrections**.
 **Authority caution:** PREP02/111 describes the exact HC1 AR realization as a proposed numeric reference, while DD30_63 describes it as the targeted implementation. This difference must be explicitly reconciled for G08 Method profile/Science Freeze, not mistaken for a reason to undo accepted B0/B1/AR full-real semantic bounds.
 
 **No implicit Owner approval:** New candidate values are not silently propagated to 10_32/30_62/30_63/23_41/23_42 or frozen G02/G05/G10 06/07/Pxx. The accepted 36-Pxx package structure/OD-04 closure remains unchanged. No Source, tests, lock, executable system, independent Science PASS or Gate999 work was performed.
+
+## 8. Owner決定の採用確定と設計反映（2026-11-19 JST）
+
+**Trigger:** Owner明示回答「採用する」（2026-11-18T22:10:50Z = 2026-11-19 07:10:50 JST）。[DEC-PREP03-OD01–05](../00_enhance_background/Revised_requirements_definition_documents/combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md)が今回のOwner採用の最新判断記録。過去§4/§6/§7のOPEN/提案記載は、当時の経過記録であり、現在の判断を上書きしない。
+
+**採用範囲（設計Decision CLOSED）：** OD-01=A（P1-M05 B0条件付きcomplier LATE識別のみ）、OD-02=A（独立Ed25519/admin-owned trust anchor）、OD-03=A（別責務RowEffectsParquetWriter/Factory）、OD-05=40 MethodのGate別strict Profile作成方針。OD-04のGate DAG/36 Package構成承認は維持。未採用Option B/Cを勝手に代替実装しない。
+
+**Revised design propagation:** `10_32_scientific_method_scope` P1-M05対象、`30_63_causal_method_adapters` DoWhy識別条件・40 Method Registry、`30_62_local_execution_publication` §9 新Verifier/Trust/Writerの7区分相当Class/Protocol/科学・公開責務、`23_41_cli_scientific_ports` §4.5と`23_42_local_result_manifest_artifact` §10。Policy Envelopeのstrict JSON Schema Draft `e11_local_row_export_policy_v1.schema.json`を追加し、common Public v1 payload数は変えない。
+
+**Gate contract propagation:** G02 06/P00/P01–04/07、G05 06/P00/P01–04/07、G10 06/P00/P01–05/07に採用仕様を本文規範として転記。G03/G04/G06/G07/G08/G09の各06/P00/07/全23 PxxにOD-05受け持ち・`METHOD_PROFILE_UNAVAILABLE`を明示。各PxxのMethod/数学的TargetやPackage依存を広げない。
+
+**残るBlockerの再分類（設計Decision未決と同一視しない）：**
+1. **G02/Science/Profile:** P1-M05を含む6 Methodの具体Config/Question/Design/Output Profile、DoWhy effective API/positive+negative/independent Referenceが未実装・未検証。Target自体は決定済み。
+2. **G05/Deployment:** Independent approver実在・admin trust-store ownerの指定、署名鍵配備/rotation、失効freshness/Clock、OS/ACL/mount証拠がないとRow Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。テスト鍵とself-signed policyを本番承認にしない。
+3. **G05/Artifact:** Method別ApprovedRowSchema/実効Parquet API、G01 StagingSink/Publisher/Readerとの実FS/Crash/Leak/Revocation-TOCTOUはテスト前。
+4. **OD-05/41 Science:** P1-M06 draft以外の40 Method profile具体ファイルは未作成。41 Method DGP/NEG/REF/T2/T3は未生成/未実施。Method別必要条件をfreeze前に具体化。G08 ARのHC1数値公式採用履歴の齟齬は別監査。
+5. **Controls:** Freeze/Coding Authorization、独立Test/999、受領者別Customer Legal・正本昇格は未実施。
+
+**Review disposition:** `PREP03_OWNER_CHOICES_ADOPTED / DESIGN_PROPAGATED_DRAFT / RUNTIME_SECURITY_PROFILE_SCIENCE_PENDING / G01–G10_NOT_FROZEN / CODING_NOT_AUTHORIZED`。文書上の署名・Class設計が決まったことは、実在鍵・Source/Class・実装・Science PASSが存在することではない。

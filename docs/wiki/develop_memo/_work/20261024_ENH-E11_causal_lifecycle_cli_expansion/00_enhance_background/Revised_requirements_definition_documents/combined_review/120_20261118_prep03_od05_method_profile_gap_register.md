@@ -1,5 +1,7 @@
 # PREP-03 / OD-05 — Method profile completion inventory and Gate authoring contract
 
+**Owner決定（2026-11-19）:** OD-05のGate別Profile作成・配置方式をOwner採用済み。この表は41 Methodの範囲確認と40 Methodのプロフィール実装残務を示すが、個々のJSON Schema/independent Scienceは未作成。正式決定は[DEC-PREP03-OD01–05](122_20261119_dec_prep03_od01_od05_owner_adoption.md) §1/5。
+
 **Class:** FLOW / evidence-backed readiness register and design gap routing. NOT 41 approved Method Configs or backend test evidence.  
 **Inventory baseline:** 68fb0b64021cc9ff372a0a7e3f13a406638da08f, `10_32_scientific_method_scope.md`, `23_api_interface_design/schema_drafts/` filenames.  
 **Status:** `OD-05_PARTIALLY_OPEN / MATH_ALREADY_ADOPTED / PROFILE_CONSTRUCTION_PENDING`.

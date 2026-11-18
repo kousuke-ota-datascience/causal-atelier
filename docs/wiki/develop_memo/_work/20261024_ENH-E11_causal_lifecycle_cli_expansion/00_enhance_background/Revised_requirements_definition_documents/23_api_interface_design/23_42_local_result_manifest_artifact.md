@@ -259,3 +259,36 @@ AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5分類。`EMPTY`�
 `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`はManifest ValueのSchemaとstrict bytes射影を所有し、`ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader`が発行済みBundleの独立readbackを担当する。`LocalArtifactPublisher`は同一FS run単位のatomic publicationを担い、既存`product.ports.artifact_store.ArtifactStorePort`の単一File/Object storeを置換しない。`GraphEvidence`と`EffectOutcome`の科学的意味はCausal Domain側のValue/Validatorで検証する。
 
 Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wire識別子であり、文書名に含まれるEnhancement番号とは別の**Version互換契約**として維持する。将来改訂する際は明示的Version dispatch／migrationと旧Readerの回帰検証を必要とし、表示上のファイル改名だけで変更しない。
+
+## 10. G05 Signed Row Policy／Parquet Artifact interface（Owner OD-02=A, OD-03=A）
+
+### 10.1. Policy ArtifactのWireとHash領域
+
+`e11-local-row-export-policy/1`はStudy/Graph/Effect/Status/Manifestとは**別の独立承認Artifact Version**である。Schema Draftは[policy envelope](schema_drafts/e11_local_row_export_policy_v1.schema.json)。必須Envelopeはstrict `payload`、`signature_ed25519`（64bytesをstrict unpadded base64urlで符号化、署名対象には含めない）。signed bytes = ASCII `ARIADNE-E11-ROW-POLICY-v1` + `0x00` + `RFC8785-JCS(payload)`。Reader/Verifierは署名に使ったexact bytesと`ContentRef.sha256`の**raw envelope bytes**を別々に検証する。
+
+| Payload Key | Type / 必須意味 |
+|---|---|
+| `policy_version` | `e11-local-row-export-policy/1` |
+| `policy_id/issuer_id/key_id` | unique opaque id。外部admin Registryでissuer/key/grantを検証し、payloadからverification public keyを信頼しない |
+| `subject_study_approval_digest` | `SHA256(JCS(ValidatedStudy where privacy.policy_ref=null))`、自己循環除外 |
+| `run_id` | immutable exact run identity、他run/replayへ転用不可 |
+| `approved_scope` | `[ROW_EFFECT_PARQUET]`のみ |
+| `classification` | `RESTRICTED_ROW_LEVEL`のみ |
+| `allowed_columns` | nonempty unique ordered column allowlist、実DataFrame schemaと一致 |
+| `max_rows / max_output_bytes` | positive integer bound、Method別Writerは両方確認 |
+| `issued_at / expires_at / revocation_epoch` | UTC/未失効・承認Roleのfresh revocation snapshotが必須 |
+
+`request_hash=SHA256(JCS(Study including privacy.policy_ref))`と上記Approval-subject digestは**異なる**。PolicyそのものをStudyの承認subjectへ含める循環署名を禁止する。Study/Method/DataRefが変化すれば再承認。署名検証結果は`VerifiedStudyPolicyEvidence`の非秘密情報と検証済みrun/policy/Study bindingとしてManifestのrestricted Artifact metadataへ載せ、署名Private Keyやrow valuesを載せない。Policy sourceはTrustedRootのsecure-open ContentRef、鍵・grant・revocationはEUIDが編集できないadmin Registry。
+
+### 10.2. Row Parquet/Publication contract
+
+1. 行出力の前提はStudy request∧CLI flag∧署名検証済みPreapproval∧`TrustedPolicyAnchor`∧OS EUID=root owner / trusted private mount/ACL∧allowed columns/row/byte limits。欠ければ`ROW_EXPORT_NOT_AUTHORIZED`/exit3、RowSourceの反復・row bytesの作成も禁止。署名検証済みPolicy Evidenceは別の信頼されたComposition Rootから取得。
+2. `LocalPrivacyPolicy.authorize`→`filter_export_columns`によって出力許可と列順・行上限を固定。`RowEffectsParquetWriter.write`は同一run/Study/Policy hashのTrusted UseCase/Sinkと照合。Policy Decision単独を承認根拠にしない。
+3. 遅延`DeferredRowEffectsSource.read_rows()`から`max_rows+1`を上限として実行時に境界チェック、許可列のみ順序固定でParquetへ符号化。実効型/行ID/NaN/重複/サイズ等の`ApprovedRowSchema`はMethod別にstrict登録、Backend任せにしない。
+4. File keyは`row_effects.parquet`、media type `application/vnd.apache.parquet`、classification `RESTRICTED_ROW_LEVEL`。G01 `StagingArtifactSink.stage_bytes`でPrivate Stagingへ渡す。Signer/RowWriterはfinal`runs/`へ書かない。G01 Publisherのseal/atomic no-clobber/Reader readbackが唯一の成功判定。
+5. TTL、Revocation/TrustStore/OS root/ACL/mountはRow materialization前・Stage前・Seal/Publish前に再確認。途中失効なら**以降公開禁止・staging隔離**であり、「過去に生成済みのprivate row bytesが0」と誤報しない。正常な本番例には独立承認主体・admin運用/鍵が実在していることを要求。
+6. `manifest.json`、`status.json`、`result.json`、stdout/stderr/logに個票/secretを入れない。Readerはprivate class、policy digest、rows/columns/byte count、Manifest sha/Marker/ACLを再検証。不明環境/不正署名/自己承認は成功へ昇格しない。
+
+### 10.3. Independent Interface Test obligations
+
+`IO-E11-06`に追加し、署名正例（独立admin trust）、self-signed/changed policy、run_id/Study hash drift、issuer role不足、期限切れ・失効・stale revocation、root/mount/UID race、rowlimit+1、byte-cap超過、dtype/duplicate/nonfinite、serialize後失効、partial Stage/Commit、旧v2 readbackを検証。MockでVerifierの振る舞いを確認しても、実キー運用/本番Release Authorizationの証拠にならない。Owner採用はContract設計であり、現実のApprover/Key Store配備、Method Profile/Parquet ABI、独立Test、Freeze/Coding Authorizationは未完了。

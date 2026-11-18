@@ -49,3 +49,11 @@ Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci
 ## Graph identity and parent linkage
 
 `e11-local-graph/1`では両Versionキーは存在必須・nullableとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、Product由来のGraphだけ実在するProduct GraphVersion識別子を設定する。parentが非nullならversionも非nullであることはJSON Schemaの条件式で拒否可能。**ID実在性、親子の対応、graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
+
+## PREP-03 OD-02/03 Owner採用（2026-11-19）
+
+- [e11_local_row_export_policy_v1.schema.json](e11_local_row_export_policy_v1.schema.json) — Ed25519署名Envelope/strict signed payloadの**構造Draft**。Version `e11-local-row-export-policy/1`は独立承認Policy artifactのVersionであり、Study/Graph/Effect/Manifest/Statusの既存5 Public payload Versionを増やさない。
+- 実署名検証はdomain-separated RFC8785 JCS payload + admin-only trust-storeのissuer/key/role、署名鍵の実際の独立所持、revocation/UTC/Study digest/run_id/ACL/mountの意味Validatorが必須。JSON Schemaだけで独立承認や本番鍵が存在したと判断しない。
+- G05 Row WriterのParquet columns/dtypesとMethod固有`ApprovedRowSchema`は別に確定が必要。G02〜G09の40件Method Config/Question/Design/Output/Inference Schemaを本Owner採用で一括生成済みと扱わない。
+
+Decision: [DEC-PREP03-OD01–05](../../combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md)。Runtime/Security review, Gate Freeze and Coding Authorization remain pending.

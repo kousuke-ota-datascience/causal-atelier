@@ -437,7 +437,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 8.4. Privacy Policyの独立Authority
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
+`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。OD-02=Aにより、本EnhancementのRow Exportの署名方式はEd25519／domain-separated RFC8785-JCS、EUIDが改竄不能なadmin-owned Trust Storeと失効検証を用いるとOwner採用済み。ただし現実の独立承認者・鍵Store管理者／実配備・失効freshness/clock/OSが未確認ならrow releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。
 
 ### 8.5. CLI entrypoint／error envelope
 
@@ -446,3 +446,43 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 Error envelopeはreason `code`と発生`phase`を区別する。入力Schema=exit2、入力path/hash/認可=exit3、Backend/Capability=exit4、出版/readback=exit5。科学的negativeは完全に検証されたBundleのときのみexit0となり得る。
 
 CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design/23_41_cli_scientific_ports.md)が所有し、数理的なestimand/identificationをCLI固有のDomainに移さない。
+
+## 9. 個票の独立承認と限定Parquet Writer（OD-02=A / OD-03=A、Owner採用）
+
+本節は`LocalPrivacyPolicy` (§6) と`LocalArtifactPublisher` (§3) の既決Public ABIを維持したうえで、実行UIDの自己承認とrow-serialization権限を分離するClass仕様である。**科学Kernel側は行データを作成してよいという一般権限を本節から得ない。** Row releaseはG05のみに限定し、G01〜G04では集計専用。実際の独立承認主体・鍵配備/運用・失効情報が信頼可能に用意できない環境ではrow exportをdeny、既存aggregate-only runは適格であれば維持。
+
+### 9.1. `TrustedPolicyAnchor` — admin-only trust anchor value
+
+- **Class/Module:** `ariadne.interfaces.cli.local_causal.policy_trust.TrustedPolicyAnchor`。実行者と別のadmin権限が管理する検証鍵/issuer grants/`ROW_EFFECT_PARQUET_APPROVER`役割/失効snapshotに対するimmutable OS-backed capability。StudyやCLI入力Pathから生成しない。
+- **Fields:** trusted registry/root dirfd、管理者owner/ACL/mount証拠、issuer/key role bindings、revoked key IDs/policy IDs、`revocation_epoch`、snapshot取得時刻/freshness根拠。秘密署名鍵を含まない。
+- **Factory:** CLI composition rootのOS-aware loaderのみが構築する。EUIDが編集可能なregistry、unknown/symlink/root変更・失効snapshot期限切れ・未確認時計ではValueを返さない。名前は`TrustedPolicyAnchor`に統一（旧候補`PolicyTrustAnchor`）。
+- **Failure:** `PRIVACY_POLICY_UNVERIFIED` / `ROW_EXPORT_NOT_AUTHORIZED`、exit3。現実のapprover/管理者担当者、鍵rotation/revocation freshness SLA、信頼可能clock・対象OS supportはdeploymentで実証するまでrelease不可。
+
+### 9.2. `Ed25519LocalPolicyVerifier` — concrete verified prior approval
+
+- **Class/Module:** `ariadne.interfaces.cli.local_causal.policy_verifier.Ed25519LocalPolicyVerifier`。`LocalPolicyVerifierPort`の既存`verify`を実装する。Signing/承認発行は**責務外**。
+- **Fields:** `codec: StrictJcsCodec`、`clock: TrustedUtcClock`。署名鍵、任意のStudy入力値・run-specific authorizationをInstance Fieldに持たない。
+- **Constructor:** `__init__(self, *, codec: StrictJcsCodec, clock: TrustedUtcClock)`。Optional Crypto Libraryの実効version/APIが一致しない場合はunavailableを返し、署名を省略しない。
+- **Public method:** `verify(self, *, policy_ref: ContentRef, study: ValidatedStudy, root: TrustedLocalRoot, anchor: TrustedPolicyAnchor) -> VerifiedStudyPolicyEvidence`。引数/戻り値は既存Application Portと同じ。
+- **Policy wire:** `e11-local-row-export-policy/1`のstrict JSON Envelope `{payload, signature_ed25519}`。署名対象bytesはASCII `ARIADNE-E11-ROW-POLICY-v1` + 一個の`0x00` + RFC8785-JCS(`payload`)。Detached署名はその外側であり、Envelope全体のraw bytesは`ContentRef.sha256`で独立照合。`signature_ed25519`はstrict unpadded base64urlでdecode後ちょうど64bytes。payload内の`issuer_id`/`key_id`はlookup用でありtrusted public keyの出所にならない。
+- **Payload mandatory:** version、policy_id、issuer_id、key_id、subject_study_approval_digest、run_id、approved_scope（`ROW_EFFECT_PARQUET`限定）、classification（`RESTRICTED_ROW_LEVEL`）、allowed_columns、max_rows、max_output_bytes、issued_at、expires_at、revocation_epoch。未知必須Field/format/payloadの重複keyは拒否。`subject_study_approval_digest=SHA256(JCS(ValidatedStudy with privacy.policy_ref=null))`、完全`request_hash=SHA256(JCS(ValidatedStudy including policy_ref))`のHash領域を分け、同一run_idでStudy/Contentが変われば承認を拒否。
+- **Process:** (1) trusted dirfd下でPolicy Fileをsecure-open・raw bytes hash検査、(2) strict Envelope/Version/UTF8/JCS/schema、(3) admin-only Anchorのissuer/role/keyとroot/UID/ACL/mount、(4) domain-separated signature verify、(5) Study+run+estimand+dataset identity/scope/row flags/columns/limits、(6) issued/expiry UTC+revocation key/policy+freshness、(7) immutable nonsecret `VerifiedStudyPolicyEvidence`を返す。`LocalPrivacyPolicy.authorize`がStudy request∧CLI flag∧このEvidence∧private root/Principal∧行列上限を評価する。row source.materializeより前に全検証、seal/publish前にも失効/期限/root変化を再照合。
+- **Replay:** policyは特定のrun_idとStudy digestへ結合し、他runへ使えない。同一run再試行は完全一致Hash/Reader readback時のみ。外部one-time-spend ledgerを実装したと主張しない。
+- **Failure:** 署名不正/自己生成鍵/role不足/期限切れ/失効/古い失効snapshot/Hash mismatch/unsafe mount/Principal driftはexit3、初期deny時row bytes一切生成なし。認可後stagingしてから失効した場合は**公開禁止・staging隔離**（過去に作成済みのprivate bytesはゼロと偽らない）。ログ/JSONに鍵やRow valuesを記録しない。
+- **Tests (G05 independent):** signed legitimate preapproval、unsigned/self-signed、issuer/key substitution、wrong target/run/content、expired/revoked/stale epoch、privilege/mount race、fail-closed and no row creation、旧Product v2回帰。Test keyによる成功は本番承認の代理ではない。
+
+### 9.3. `RowEffectsParquetWriter` — authorized bounded serialization
+
+- **Class/Module:** `ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsParquetWriter`。Row-level serialization専用でありPublish/readback/Signer/Study approvalのOwnerではない。`LocalArtifactPublisher`と`LocalManifestReader`の既存契約を再利用。
+- **Fields:** `serializer: ValidatedParquetSerializer`、`max_memory_bytes: int`（正の環境上限）。runtime/run/ApprovalはInstance Fieldに保持しない。
+- **Constructor:** `__init__(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int)`。Backend effective version/ABIと入力上限を事前検証。`RowEffectsWriterFactory.create(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int) -> RowEffectsParquetWriter`（同Module、Factoryに承認権限なし）。
+- **Method:** `write(self, *, source: DeferredRowEffectsSource, study: ValidatedStudy, decision: PrivacyDecision, selection: ColumnSelection, sink: StagingArtifactSink) -> ArtifactDescriptor`。`DeferredRowEffectsSource.schema()->ColumnSchema`、`read_rows()->Iterable[Mapping[str,JsonValue]]`（Scientific result access Protocol）。`ValidatedParquetSerializer.encode(self, *, rows: BoundedRowBatch, schema: ApprovedRowSchema)->bytes`（CLI adapter側Serializer Protocol）。
+- **Precondition:** Trusted UseCaseで新鮮な署名付きPolicy Evidenceを独立Verifierが確認→`LocalPrivacyPolicy.authorize`→`filter_export_columns`→同一Study/Run/Request/Policy digest・sink capabilityを結合済み。`PrivacyDecision`というPython DTO単独では認可証明にならない。Source iteratorは前段の全許可条件が揃うまで一度も呼ばない。
+- **Process:** (1) schemaだけを取得してallowlist/ordered column/schema-variantを検証、(2) 認可後に最大`max_rows+1`行まで遅延取得し上限超過を検知、(3) mandatory row id/effect値、duplicate IDs、invalid dtype、nonfinite、unknown columns・zero-row（Method別で禁止なら）拒否、(4) bounded private memoryでapproved schemaのParquet bytesを生成、`max_output_bytes`と`max_memory_bytes`を検査、(5) trust/expiry/revocation/root再照合、(6) `sink.stage_bytes(key=row_effects.parquet,data=bytes,media_type=application/vnd.apache.parquet,classification=RESTRICTED_ROW_LEVEL)`、(7) G01 Publisherがartifact SHA/size/schema/row count/Policy/Manifestをvalidate/seal/publishし、独立Readerで完全readback。
+- **Postcondition:** 0行許可と空Artifact生成は同義ではない。許可されたRow Schemaを持つPrivate Artifactのみ生成し、成功時に`ArtifactDescriptor`を返す。stdout/summary JSON/logsへRow valuesや個人情報を転記しない。Row Dataの型/列はMethod別の`ApprovedRowSchema` Profileで確定し、Backend defaultから推測しない。
+- **Failure:** Denied、source identity drift、row/byte overrun、unsafe schema、expired/revoked、Parquet encode/Publisher失敗はpartial completedにしない。Unauthorizedは出口3で初期Row bytesなし。後段失効では公開禁止・private staging隔離。final runsへ直接Path書込は禁止。
+- **Tests:** signed authorized restricted Parquet＋列順/型/件数、wrong Policy/target/run、unauthorized flagなしのsource iteration 0回、max_rows+1、超byte、NaN/dup IDs、revocation between serialize/stage/commit、private 0600/0700、Manifest/Reader hash/privacy、旧v2 ABI。
+
+### 9.4. Release plan and status
+
+OD-02/03の**方式・Class契約はOwner採用済み**。しかし現実の独立Approver・trusted store admin・鍵配備／失効freshness値・trusted clock・実効OS/mountの認可事実は未確認。行配布は`BLOCKED_DEPLOYMENT_AUTHORITY`、Method-specific `ApprovedRowSchema`/Parquet実効API/Independent TestもGate05のFreeze前に確認する。文書採用だけでG05/07 PASSや個票リリースが成立しない。

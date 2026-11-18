@@ -18,7 +18,7 @@
 | P1-M02 | Native Backdoor identification／ATE | SCOPE:P1-06, SCOPE:P1-07 | FR-187 | AR-029 | ENV-BASE | DGP-002, DGP-021; NEG-002, NEG-003 | REF-G01, REF-I01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M03 | DoWhy Backdoor identification／ATE候 | SCOPE:P1-08 | FR-187 | AR-029 | ENV-DOWHY | DGP-002, DGP-021; NEG-002, NEG-027 | REF-G01, REF-I01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P1-M04 | DoWhy Frontdoor identification／ATE | SCOPE:P1-08 | FR-187 | AR-029 | ENV-DOWHY | DGP-005; NEG-004 | REF-G01, REF-I02 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| P1-M05 | DoWhy IV identification／方法固有の対象は未確 | SCOPE:P1-08 | FR-187 | AR-029 | ENV-DOWHY | DGP-006; NEG-006, NEG-007 | REF-I03, REF-G01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / BLOCKED / NOT_GENERATED |
+| P1-M05 | DoWhy IV identification／B0二値Z/A・無調整complier LATE（条件付き識別のみ） | SCOPE:P1-08 | FR-187 | AR-029 | ENV-DOWHY | DGP-006; NEG-006, NEG-007 | REF-I03, REF-G01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / OWNER_TARGET_ADOPTED_PROFILE_BACKEND_SCIENCE_PENDING / NOT_GENERATED |
 | P1-M06 | FCI／PAGと等価類 | SCOPE:P1-09 | FR-186 | AR-028 | ENV-BASE | DGP-011, DGP-021; NEG-003, NEG-021, NEG-028 | REF-G02 | AC-D02, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | PLAN:G01 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
 | P1-M07 | Frontdoor two-stage regression／ATE | SCOPE:P1-08 | FR-188 | AR-030 | ENV-DOWHY | DGP-005; NEG-004, NEG-005 | REF-I02, REF-E04 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02 | PLAN:G02 / OWNER_METHOD_ACCEPTED_TECH_AND_SCIENCE_BLOCKED / NOT_GENERATED |
 | P1-M08 | Native diff-in-means／ATE | SCOPE:P1-11 | FR-192 | AR-033 | ENV-BASE | DGP-001, DGP-022; NEG-001, NEG-010 | REF-E01 | AC-D03, AC-P01, AC-P03, AC-P05, AC-I01, AC-I02 | PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
@@ -73,3 +73,11 @@
 - **`FR-048`**：estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない
 - **`AR-016`**：subgroup metricは`sample_count`を必須とし、0.95 percentile bootstrap（1000 resamples、deterministic seed）で計算可能な場合にuncertaintyを併記し、計算不能値を捏造しない
 - **`AR-027`**：coefficient contribution / SHAP / LIMEはmodel behavior explanationであり、feature causal importance、treatment effect、causal mechanismを意味しない
+
+## 4. PREP-03 OD Owner採用（2026-11-19）とMethod提供境界
+
+- **P1-M05（OD-01=A）**：IDENTIFYのみ。明示的な`B0_BINARY_IV`・単一二値Z/A・無調整・IV独立性/排除制約/単調性・relevance/consistencyを伴うcomplier `LATE_COMPLIER`の**条件付き識別証拠**を返す。GraphやDoWhyの`nonparametric-ate`等のdisplay labelだけからLATEを宣言しない。B1構造IV係数・DRIV・ATE/ATTへ転換禁止。IDENTIFYで`result.json`を生成しない。数値LATE/ARはG08。前提の真偽や実効Backend APIの検証は別。
+- **OD-05（Owner採用）**：`P1-M06`以外の40 Methodについて担当Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）がstrict Method Config、Question/Design、Output、Inference Profileを定義し、登録済みprofile無しで`config={}`を受け入れない。必要fixtureと実効backend科学検証は未生成のまま記録し、科学Targetの既決定義を再議論しない。
+- **OD-02/03（Owner採用）**：G05の個票はEd25519署名による独立事前承認と、認可後にだけRowEffectsParquetWriterへ書込む契約を採用する。ただし現実の独立承認者・admin trust-store管理者／鍵／失効/時計の実効配備が未指定なら個票公開はBLOCKED。既存G01 Publisherを再実装しない。
+
+この採用は設計契約であり、Schema完成、Backend/独立Science PASS、実際の個票リリース権限、Gate Freeze、Coding Authorizationを示さない。承認記録：combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md。

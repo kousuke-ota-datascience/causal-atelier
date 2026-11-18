@@ -1,5 +1,7 @@
 # PREP-03 / OD-02 + OD-03 — Independent row approval and Parquet Writer design candidates
 
+**Owner決定（2026-11-19）:** OD-02=A（Ed25519/admin-owned trust store）とOD-03=A（RowEffectsParquetWriter/Factory）をOwner採用済み。本文の「proposal/Owner decisions still required」は作成時点の履歴。実際の独立Approver・Key Admin/Provisioning/Revocation/Clock/OS/Parquet実証は引き続きrelease blocker。正式契約は[DEC-PREP03-OD01–05](122_20261119_dec_prep03_od01_od05_owner_adoption.md) §1/3/4。
+
 **Document class:** FLOW / Security + Architecture design candidate. NOT adopted by Owner, not normative executable Pxx.  
 **State:** `OD-02_OPEN / OD-03_OPEN / G05_ROW_EXPORT_BLOCKED / NOT_FROZEN`  
 **Invariants already adopted:** PREP-02 F05 independent prior approval; Study request AND CLI row flag AND independently verified approval AND same-UID private TrustedRoot AND allowed columns/rows. Deny = CLI exit 3 and zero row artifact bytes before initial authorization. G01 atomic Publisher/Reader is the only publication authority; no independent row publisher.

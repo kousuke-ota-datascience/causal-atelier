@@ -24,6 +24,9 @@ DiD/Event/ITSをtiming・pretrend・cluster・serial correlation条件付きで�
 | P02 | interrupted_ts | NONE | P3-M06 | Intervention level/slope、seasonality、serial covariance/HACのmethod-specific evidence。 |
 | P03 | quasi_integration | P01,P02 | — | Panel/time index/Design不適格のtyped negative、Local Effect/Manifestと旧v2を統合。 |
 
+
+**Owner採用 OD-05（2026-11-19）：** G07の3 Methodについて、既決Target/数理は変更せず、担当Pxxでそれぞれstrict versioned `Method Config / Question / Design / Output / Inference Profile`を独立に定義・登録する。Method固有の確認項目は「DiD 2x2 vs staggered ATT、event-time reference cohort/period、cluster covariance、ITS介入時点のlevel/slope/HAC/serial dependence」。条件付き必須Field、Backend effective API/version/optional extras、positive/invalid-config/wrong-target/unsupported-CI/negative-science fixtureとtyped reasonを固定する。未登録/未検証は`METHOD_PROFILE_UNAVAILABLE`等でfail-closed。単なる`config={}`、Backend default、未生成DGP/REF、K/R/MC-SE未実測をPASSとしない。これはProfile作成の**担当配分採用**であり、個々のSchema/Inference/科学Referenceの完成・Freeze・Coding Authorizationを意味しない。
+
 ## 3. Execution DAG and handoff
 
 - `P01` <- NONE

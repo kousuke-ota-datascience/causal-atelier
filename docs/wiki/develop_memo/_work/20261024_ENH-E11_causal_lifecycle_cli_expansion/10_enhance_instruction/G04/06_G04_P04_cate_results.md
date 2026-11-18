@@ -319,3 +319,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Freeze-critical independent contract audit
 
 Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は§4、DGP/NEG/REF/Focused acceptanceは§5〜6に含み、外部Gate06/07/DDに実装指示を委譲しない。残未決: CATE aggregate contract/row policy、G05と共有するresult shape/ColumnSelection、per method inference policyをFreeze前決定。 Backend実効API/Science Pilot/Reference/Method Config未確定のまま実装しない。Ownerの一括レビューで調停する。
+
+## 9. OD-05 Owner-adopted Method Profile construction obligation
+
+**Accepted authoring allocation (2026-11-19 JST):** G04/P04 is responsible for cross-cutting validation of the existing Method registry; it must not implement additional Method schemas or numerical adapters. Scientific constraints: DML/DR/MetaLearner X/W roles/seed/folds/CI eligibility、DRIV theta_IV(x). Retain the existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. A profile must declare mandatory and conditional fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit Backend defaults.
+
+**Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
+
+**Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.

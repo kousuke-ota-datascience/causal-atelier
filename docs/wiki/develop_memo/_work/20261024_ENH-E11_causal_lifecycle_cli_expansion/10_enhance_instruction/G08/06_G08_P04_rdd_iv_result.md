@@ -328,3 +328,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Freeze-critical standalone gaps
 
 本PackageはClass Field/Constructor/Methodを§3、数理処理順序/分岐を§4、科学的DGP/NEG/REFとAcceptanceを§5〜6で内部定義する。**残課題:** RD/IV/ARのEstimand区別およびAR ConfidenceSetのlossless表現は設計済み。未完了なのは対応するstrict Method Profile、Schema/Manifestの負例Fixtureおよび実効readback/独立Reference検証。 P3-M10/M11で有限gridだけのAR反転を実装することは禁止。OwnerがFreeze時に独立数理/Backend/ConfigとScience受入条件を明示的に判定する。
+
+## 9. OD-05 Owner-adopted Method Profile construction obligation
+
+**Accepted authoring allocation (2026-11-19 JST):** G08/P04 is responsible for cross-cutting validation of the existing Method registry; it must not implement additional Method schemas or numerical adapters. Scientific constraints: sharp/fuzzy RD bandwidth/kernel, B0/B1 binary Z/A/C and HC1 χ²(1) AR full-real confidence set/inference. Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
+
+**Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
+
+**Readiness:** Owner accepted work allocation only; this does not assert that individual schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, Freeze or Coding Authorization are complete. For G08, exact HC1 AR numeric reference adoption history in PREP02-111 vs DD30_63 must be reconciled before Freeze without changing already adopted B0/B1/AR science bounds.

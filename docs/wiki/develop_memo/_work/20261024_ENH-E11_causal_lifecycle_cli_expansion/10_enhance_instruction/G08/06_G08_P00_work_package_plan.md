@@ -25,6 +25,9 @@ Sharp/Fuzzy RDDとB0/B1 IV/2SLSを局所Estimand・弱IV AR集合付きで提供
 | P03 | two_sls_ar | P02 | P3-M10,P3-M11 | B0 Q=[1], B1 Q=[1,C]。Y−βA~Q+ZのHC1 χ²(1)全実数AR反転、EMPTY数学集合とFAILEDは別。 |
 | P04 | rdd_iv_result | P01,P02,P03 | — | RDD/IV別Result、bounded/unbounded/disconnected AR、独立Reference/Coverage/weak IV検証とReader。 |
 
+
+**Owner採用 OD-05（2026-11-19）：** G08の5 Methodについて、既決Target/数理は変更せず、担当Pxxでそれぞれstrict versioned `Method Config / Question / Design / Output / Inference Profile`を独立に定義・登録する。Method固有の確認項目は「Sharp/Fuzzy RD cutoff/bandwidth/kernel/order、B0/B1二値Z/A/C設計、HC1 AR χ²(1)全実数反転、weak IV/inference/退化条件」。条件付き必須Field、Backend effective API/version/optional extras、positive/invalid-config/wrong-target/unsupported-CI/negative-science fixtureとtyped reasonを固定する。未登録/未検証は`METHOD_PROFILE_UNAVAILABLE`等でfail-closed。単なる`config={}`、Backend default、未生成DGP/REF、K/R/MC-SE未実測をPASSとしない。これはProfile作成の**担当配分採用**であり、個々のSchema/Inference/科学Referenceの完成・Freeze・Coding Authorizationを意味しない。
+
 ## 3. Execution DAG and handoff
 
 - `P01` <- NONE

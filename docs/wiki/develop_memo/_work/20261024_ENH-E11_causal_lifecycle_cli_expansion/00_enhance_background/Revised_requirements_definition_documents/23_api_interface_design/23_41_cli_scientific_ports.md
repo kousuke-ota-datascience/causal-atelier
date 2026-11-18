@@ -100,6 +100,19 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 - `LocalPolicyVerifierPort.verify(*,policy_ref,study,root,anchor)`のanchorはCLI composition rootがStudy外のsecure runtime trust configurationから取得した`context.policy_anchor`である。行出力には検証済みanchorが必須で、null/自己申告はfail-closedとする。G01の集計専用動作ではnullを許す。`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,policy,output_shape)`は実効主体・許可範囲も照合する。G01では行出力要求またはFlag単独でも拒否。
 - `LocalPublicationPort`と`LocalManifestReaderPort`はApplication Portであり、Concrete CLI Publisher/Readerへ委譲する。独立Readerが`VerifiedLocalRun`を返す前にCOMPLETEDへ昇格しない。
 
+
+### 4.5. OD-01 / OD-02 / OD-03 / OD-05 Owner採用によるInterface追加（2026-11-19）
+
+**P1-M05:** strict Method Requestは`operation=IDENTIFY, estimand.family=LATE_COMPLIER, design_profile=B0_BINARY_IV`を必須とし、二値Z/A単一IV・追加C無し・宣言済みrelevance/independence/exclusion/monotonicity/consistencyのconditional Proofと上流Hashを検査。DoWhy backendの出力labelからTargetを推定せず、有効なIV式とAPIの対応がないときtyped failureとする。IDENTIFYにEffect Result禁止、G08数値推定へ暗黙接続しない。
+
+**Privacy trusted port（OD-02=A）:** 既存`LocalPolicyVerifierPort.verify(*,policy_ref:ContentRef,study:ValidatedStudy,root:TrustedLocalRoot,anchor:TrustedPolicyAnchor)->VerifiedStudyPolicyEvidence`のPort署名は保持。Concrete `Ed25519LocalPolicyVerifier`（`ariadne.interfaces.cli.local_causal.policy_verifier`）は独立admin rootから`TrustedPolicyAnchor`を受け、`e11-local-row-export-policy/1` strict payloadへのdomain-separated RFC8785-JCS Ed25519署名、issuer/key role、policy_id/run_id/study approval digest、scope、columns、row/byte caps、有効期限・revocation epoch/最新情報を検証する。署名用private keyやユーザー提供public keyを信頼しない。Studyのpolicy_refをnullにした`subject_study_approval_digest`とpolicy_ref込み`request_hash`を分離。評価`LocalPrivacyPolicyPort.authorize`の前、および行ステージseal/publication前に再検証し、未認可はexit3でno row bytes before authorization。
+
+**Row writer（OD-03=A）:** 新`RowEffectsParquetWriter.write(*, source:DeferredRowEffectsSource, study:ValidatedStudy, decision:PrivacyDecision, selection:ColumnSelection, sink:StagingArtifactSink)->ArtifactDescriptor`と`RowEffectsWriterFactory.create(*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)->RowEffectsParquetWriter`をCLI adapterに配置。認可済みrun/Study/Evidenceの照合後だけsourceを遅延反復し、列allowlist・行数・byte上限を検査してrestricted`row_effects.parquet`のbytesをG01 Sinkへstage。Writerの`PrivacyDecision`引数単独は署名検証の代替にならず、既存Publisher/Reader/UseCaseの公開authorityを重複させない。行級Outputを使う場合、対象OSの独立approver/admin key store/失効feedが実配備されるまではfail-closed。
+
+**Method Profiles（OD-05）:** 40 Methodの専用Config/Question/Design/Output/Inferenceを各Owner Gateで厳格Schemaとして登録する。P1-M06既存schema draftsは実行PASSではない。Method未登録、Backend mismatch、未承認CIは別理由で拒否する。採用済みMethod意味論をBackend defaultsで上書きしない。
+
+**状態:** Design choice adopted; runtime security provisioning、individual Method Schemas、independent Science Reference、Gate Freeze/Coding Authorizationは未了。
+
 ## 5. Status／error／exit envelope
 
 制御応答：

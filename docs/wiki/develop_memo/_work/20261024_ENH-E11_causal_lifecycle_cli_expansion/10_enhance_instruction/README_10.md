@@ -331,3 +331,11 @@ Owner一括レビューで**承認されていない**具体設計の採用候�
 - [Owner decision submission](../00_enhance_background/Revised_requirements_definition_documents/combined_review/121_20261118_prep03_owner_decision_submission.md) — 申請用比較表。未承認候補は正式Pxxに採用しない。
 
 **文書欠陥是正:** G05/P02の混入G01 FCI dispatch説明を除去、G05/P03外部DDへのOperation規範委譲を§2Bへ、G05/G10 Gate06 Publisher概要署名を既存詳細設計に一致させた。引き続き `PREP03_OWNER_REVIEW_APPROVED / OD04_CLOSED / OD01_OD02_OD03_OPEN / OD05_PROFILE_OPEN / GATES_NOT_FROZEN / CODING_NOT_AUTHORIZED`。
+
+### 12.8. OD-01/02/03/05 Owner採用とRevised設計への展開（2026-11-19 JST）
+
+**Owner明示採用:** OD-01=A（B0 conditional `LATE_COMPLIER` / P1-M05 IDENTIFYのみ）、OD-02=A（Ed25519独立署名／admin-only trust-store）、OD-03=A（`RowEffectsParquetWriter`・Factory/Serializerの分離）、OD-05（40 Method別strict ProfileのGate担当実装方針）。正規判断記録：[DEC-PREP03 122](../00_enhance_background/Revised_requirements_definition_documents/combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md)。既決Method/科学意味論を再議決しない。
+
+**文書反映:** Revised RD10_32、IF23_41/23_42、DD30_62/30_63と、G02/G05/G10全関連06/07/Pxx、G03/G04/G06/G07/G08/G09のOD-05受持ちに展開。[監査§8](PREP03_final_audit.md)に対象と不確実性を記録。Schema Draft `e11_local_row_export_policy_v1.schema.json`は**機械的形状**であり、Ed25519の実署名検証/本番承認の代替ではない。
+
+**Latest operational state:** `OD01_OD02_OD03_DESIGN_CLOSED / OD05_AUTHORING_POLICY_APPROVED / ROW_DEPLOYMENT_AUTHORITY_UNPROVISIONED / 40_METHOD_PROFILES_UNBUILT / SCIENCE_NOT_RUN / NOT_FROZEN / CODING_NOT_AUTHORIZED`。現実の独立Approver・KeyStore Admin/鍵配備/失効/OS、Backend/JSON/Parquet実効、Independent Referenceは未確認のため個票配布とGate実行は認可しない。旧正本移行無し。

@@ -24,8 +24,8 @@
 | ID | Primary purpose | Primary verification layer | Required observable evidence |
 |---|---|---|---|
 | `G05-07-01` | HTE support/calibration/uncertainty（cross-cutting） | unit/contract + required integration | CATE/DRIV別support/uncertainty/diagnostics；適格positive/negative・typed Reason |
-| `G05-07-02` | 個票出力Policy認可とTrust Anchor（cross-cutting） | unit/contract + required integration | row flag/principal/verified policy/column allowlist；適格positive/negative・typed Reason |
-| `G05-07-03` | 個票ParquetとAtomic Publisher連携（cross-cutting） | unit/contract + required integration | staging、schema/column control、readback；適格positive/negative・typed Reason |
+| `G05-07-02` | 個票出力Policy認可とTrust Anchor（cross-cutting） | unit/contract + Linux/crypto integration | Ed25519実署名/issuer role/admin store/Study digest/run binding、invalid/expired/revoked、exit3、Source iteration 0、no row bytes |
+| `G05-07-03` | 個票ParquetとAtomic Publisher連携（cross-cutting） | unit/contract + real Parquet/FS integration | RowEffectsParquetWriter Class/Factory/allowlist/row+byte caps、G01 StagingSink・Publisher/Reader readback・revocation TOCTOU |
 | `G05-07-04` | HTE/Row Export統合と回帰（cross-cutting） | unit/contract + required integration | 不許可出力0、Aggregate互換/Manifest；適格positive/negative・typed Reason |
 | `G05-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
 | `G05-07-06` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Upstream 999 invariants, no old v2 CLI/Result change |
@@ -40,6 +40,22 @@
 本Gateに新規Method IDはない。上流各Methodの科学的受入証拠を破棄・偽装せず、当該Gateの横断Contract/Privacy/Manifest/再現性に専用の独立Reference/negativeを要求する。
 
 **Independent oracle and numerical rule:** DGP truthとEstimator/Backend outputは別Authority。Fixed generator/Reference SHA、既知EstimandとAssumptions、negative/statusを先に登録。Deterministic schema/JCS/roundtripは100%一致。Stochastic ScienceはT2 PilotとT3正式事前登録を分離し、多重性K/FWER=0.05、K/R/seed/threshold/computeは科学決定に基づきFreeze。未確定を推測で補完せず該当Test Item BLOCKED。
+
+
+## 3.1. OD-02/03 adopted independent Security/Artifact matrix（全件blocking）
+
+| Test | Setup | 必須観測／FAIL条件 |
+|---|---|---|
+| G05-07-POL01 | Study bool/CLI flagのみ・self-signed・ユーザー入力公開鍵・誤issuer/key role | exit3、`DeferredRowEffectsSource.read_rows`未呼出、row bytes/staging無し |
+| G05-07-POL02 | 正式署名Ed25519＋admin-owned trust store、run/Study digest一致、許可scope/列/行上限 | `VerifiedStudyPolicyEvidence`と`PrivacyDecision`／署名原本raw hash一致、独立Context経路 |
+| G05-07-POL03 | 別run/変更Question/Design/Dataset/estimand、期限・Policy/key失効、stale revocation、clock異常 | typed exit3、未認可RowSourceの反復0回、silent aggregate fallbackなし |
+| G05-07-POL04 | unsafe root/UID/ACL/mount、TOCTOU、issuer/admin registryをEUIDが置換 | Fail closed、書込前/Stage前/Publish前再検証、stdout/stderr/secret漏洩無し |
+| G05-07-WR01 | legit signed roleと実配備trust root、bounded 1..max_rows + allowlist | ordered column schema/bytes/dtype、G01 Sink/Publisher/Manifest/Marker/Reader完全一致、private 0600/0700 |
+| G05-07-WR02 | max_rows+1、max_output_bytes超過、NaN/dup IDs/unknown column、empty invalid | no completed row publication、typed rejection/部分成功無し |
+| G05-07-WR03 | private staging後のRevocation/expiry、rename race/disk fault | 既stage bytesがあっても公開無し・commit marker無し・隔離、二重Publish禁止 |
+| G05-07-WR04 | 旧Product v2、Output JSON/console/log/Error中の行値 | 旧ABI維持、無認可行/secretは一切流出しない |
+
+**Authority:** OD-02/03のClass/署名方式はOwner採用済み。現実のApprover/KeyStore/Clock/Revocationと実Parquet Backendのdeploy evidenceがない場合はpositive G05-07-POL02/WR01を`BLOCKED_DEPLOYMENT_AUTHORITY`とする。スキーマ検証やtest key成功を本番許可としてPASSしない。個票未承認のケースで適格な集計runを妨げない。
 
 ## 4. Verification operation, evidence and decision
 

@@ -13,7 +13,7 @@
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** Native/DoWhy識別、推定適格性、FD-A限定線形効果を安全に区別する。
 
-**科学/Designの必須制約:** P1-M05のIV識別対象は未確定。FD-A識別成立と数値推定成立は別。
+**科学/Designの必須制約:** P1-M05はOwner採用の`B0_BINARY_IV`・二値Z/A無調整complier `LATE_COMPLIER`の**条件付き識別のみ**。実効DoWhy IV式・Graph/Design仮定・Hashを明示的に検証し、display labelからLATEへcastしない。Method Profile/Backend/独立Scienceは未実証。 FD-A識別成立と数値推定成立は別。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -301,6 +301,8 @@ P1-M06は`e11_p1_m06_fci_method_config_v1.schema.json`、専用Question/Design i
 - Confirmatory ResultはMethod別の妥当な推論がなければScience PASSとしない。
 
 **未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
+**OD-01 dispatch norm:** `P1-M05`の`IDENTIFY`は条件付きcomplier `LATE_COMPLIER` Proofを`identification.json`へ保持。Effect/point/CI file禁止、B1/DRIV/ATE requestや無効Hash/InstrumentはEstimator呼出前にtyped拒否。G08数値推定をこのPackageで実装しない。P1-M05を含む各Method固有strict Profileが未登録の場合、全Gateを成功にしない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 

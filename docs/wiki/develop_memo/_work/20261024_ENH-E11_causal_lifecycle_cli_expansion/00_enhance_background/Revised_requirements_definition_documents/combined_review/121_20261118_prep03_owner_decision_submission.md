@@ -1,5 +1,7 @@
 # PREP-03 / OD-01–05 — Owner decision submission and implementation boundary
 
+**Owner採用の結果（2026-11-19）:** 推奨OD-01=A/OD-02=A/OD-03=A/OD-05=Gate別Profile作成を採用。本文の選択肢表と「未採用」は提出時の履歴。別途残るDeployment Authority・Method Config/Runtime/Scienceの実証とFreezeは禁止事項を[122](122_20261119_dec_prep03_od01_od05_owner_adoption.md)に確定。
+
 **Classification:** FLOW / Owner decision pack; candidate, not stock design / not Contract Freeze.  
 **As-of baseline:** `68fb0b64021cc9ff372a0a7e3f13a406638da08f` (`prototype/ariadne_mvp`)  
 **Existing accepted facts:** PREP03 Final Audit Owner-approved; Gate DAG, WORK_PACKAGE and 36 Pxx approved; PREP02 common design baseline F03–F07 frozen; scientific targets adopted wherever 10_32 and 30_63 already specify them.

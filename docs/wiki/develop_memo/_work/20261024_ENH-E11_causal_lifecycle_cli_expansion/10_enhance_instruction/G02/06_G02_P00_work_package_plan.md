@@ -8,20 +8,22 @@
 **Owner-approved execution mode:** WORK_PACKAGE / P01,P02,P03,P04  
 **Owner-approved upstream dependency:** G01 PASS。2026-11-18 JST Owner一括レビューで承認。各上流canonical 999 PASSは未成立、Runtimeで別途検証する。
 
-**Owner review:** PREP-03 Final AuditのOD-04（G02 Gate Dependency / Required Packages / Package DAG）を承認。Planの承認はGate06/07 Freeze、Owner Coding Authorization、Agent実行を許可しない。科学Method・Privacy Authority・Row Writer等のOpen Decisionを維持する。参照：[`PREP03_final_audit.md`](../PREP03_final_audit.md) §6。
+**Owner review:** PREP-03 Final AuditのOD-04（G02 Gate Dependency / Required Packages / Package DAG）を承認。Planの承認はGate06/07 Freeze、Owner Coding Authorization、Agent実行を許可しない。科学Method Profile/Backend・Privacy deployment等の未実装を維持する。参照：[`PREP03_final_audit.md`](../PREP03_final_audit.md) §6。
 
 ## 1. Gate semantic acceptance
 
 Native/DoWhy識別、推定適格性、FD-A限定線形効果を安全に区別する。
 
-**主要不確実性:** P1-M05のIV識別対象は未確定。FD-A識別成立と数値推定成立は別。
+**OD-05採用:** G02のP1-M01〜05・P1-M07（計6 Method）はそれぞれstrict Method Config/Question/Design/Output/Inference Profileを定義・登録し、invalid config/Estimand/Backendとunsupported CIをtyped negativeにする。専用Schema/Backend実測/独立Oracleが未実装なら当該Methodは`METHOD_PROFILE_UNAVAILABLE`等でBLOCKED。採用済Targetの再決定を求めない。
+
+**主要不確実性:** P1-M05はOwner採用の`B0_BINARY_IV`・二値Z/A無調整complier `LATE_COMPLIER`の**条件付き識別のみ**。実効DoWhy IV式・Graph/Design仮定・Hashを明示的に検証し、display labelからLATEへcastしない。Method Profile/Backend/独立Scienceは未実証。 FD-A識別成立と数値推定成立は別。
 
 ## 2. Package ownership map
 
 | Package | Scope | Required Pxx deps | Method | Package obligations |
 |---|---|---|---|---|
 | P01 | native_identification | NONE | P1-M01,P1-M02 | 既存randomized/backdoor識別・adjustment/Graph Validatorを再利用。非識別とProof/Upstream整合を厳格化。 |
-| P02 | dowhy_identification | P01 | P1-M03,P1-M04,P1-M05 | DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05 target未確定ならBLOCKED。 |
+| P02 | dowhy_identification | P01 | P1-M03,P1-M04,P1-M05 | DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05は明示的B0 conditional LATEのみ対象とし、専用Profile/API未検証はtyped BLOCKED。 |
 | P03 | frontdoor_fd_a | P01,P02 | P1-M07 | 単一Mediator FD-Aの識別仮定と限定二段階線形数値を別契約で実装。一般Frontdoor Formulaへの拡張禁止。 |
 | P04 | identification_dispatch | P01,P02,P03 | — | IDENTIFY/ESTIMATEのOperation別必須Bundleと未識別時Estimator未呼出、旧v2互換を実証。 |
 

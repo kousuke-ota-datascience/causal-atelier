@@ -27,6 +27,9 @@ Native推定と4 Refutation・2 Sensitivity・NCE/NCO/RVをEffect lineage付き�
 | P05 | negative_controls_ols_rv | P01 | P1-M18,P1-M19,P1-M20 | 観測Z/W、事前帰無・opt-in・条件付き関連。OLS RV(q=1)は古典OLS coef/SE/df限定。 |
 | P06 | diagnostics_pipeline | P03,P04,P05 | — | 13 MethodのREFUTE/SENSITIVITY/DIAGNOSE Bundleと旧Product v2回帰・Privacyを統合。 |
 
+
+**Owner採用 OD-05（2026-11-19）：** G03の13 Methodについて、既決Target/数理は変更せず、担当Pxxでそれぞれstrict versioned `Method Config / Question / Design / Output / Inference Profile`を独立に定義・登録する。Method固有の確認項目は「OLS contrast/variance、IPW propensity/normalization/positivity、AIPW nuisance/crossfit/ATE-ATT score、Refutation resampling、NCE/NCO observed null、OLS RV q=1」。条件付き必須Field、Backend effective API/version/optional extras、positive/invalid-config/wrong-target/unsupported-CI/negative-science fixtureとtyped reasonを固定する。未登録/未検証は`METHOD_PROFILE_UNAVAILABLE`等でfail-closed。単なる`config={}`、Backend default、未生成DGP/REF、K/R/MC-SE未実測をPASSとしない。これはProfile作成の**担当配分採用**であり、個々のSchema/Inference/科学Referenceの完成・Freeze・Coding Authorizationを意味しない。
+
 ## 3. Execution DAG and handoff
 
 - `P01` <- NONE

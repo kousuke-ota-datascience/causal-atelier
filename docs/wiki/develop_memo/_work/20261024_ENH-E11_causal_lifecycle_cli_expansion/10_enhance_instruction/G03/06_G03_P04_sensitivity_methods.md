@@ -193,3 +193,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - 本文§3で必要なClassのConstructor・Field・公開Method・処理責務、§4で実装順序/分岐、§5〜6でMethod別のScience/Testを保持する。外部DDやGate06を読ませて不足仕様を推測させない。
 - **未確定事項:** 既存SensitivityAdapter Bridgeと各感度分析のestimand保存。 未解決のBackend API、Method Config、DGP/NEG/Reference/quantitative Science、Owner Decisionは該当MethodをBLOCKEDとし、Freeze前に閉じる。
+
+## 9. OD-05 Owner-adopted Method Profile construction obligation
+
+**Accepted authoring allocation (2026-11-19 JST):** G03/P04 is responsible for strict versioned Config/Question/Design/Output/Inference Profile authoring/registration for P1-M16,M17. Scientific constraints: OLS/IPW/AIPW contrast/variance/overlap/cross-fitting、Refutation・NCE/NCO・RV q=1. Retain the existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. A profile must declare mandatory and conditional fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit Backend defaults.
+
+**Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
+
+**Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.

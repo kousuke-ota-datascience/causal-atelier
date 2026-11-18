@@ -9,11 +9,11 @@
 
 ## 1. Assigned Purpose / Authority
 
-**目的:** 個票Parquet WriterのClass責務・正確署名未確定はDESIGN_GAPとして明記。Writer/Reader両側でcolumn/row bound検査。
+**目的:** RowEffectsParquetWriter/FactoryのClass責務・公開MethodはOwner採用済み。未配備Backend/ApprovedRowSchema/OSをFreeze前検証。Writer/Reader両側でcolumn/row bound検査。
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** CATE support/calibration/uncertaintyと独立事前承認に基づく個票成果物発行を検証する。
 
-**科学/Designの必須制約:** 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。
+**科学/Designの必須制約:** Ed25519独立署名AuthorityとRowEffectsParquetWriter/FactoryのClass契約はOwner採用済み。現実の独立承認者・鍵Store管理者／配備・失効/時計・実OS/Parquet実証は未完了。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -24,12 +24,12 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 - Scientific `Identification/Point/Inference/ScienceAcceptance`とTechnical outcomeは別軸。不適格なMethod、無識別、Unsupported CI、missing optional Backendは型付き負結果またはTechnical error。未実行をPASS、point-onlyをCI有り、Backend自身の出力を独立Oracleにしない。
 - `LocalCausalUseCase`はstrict ValidatedStudyから各Portへ委譲し、Fileはstaging→atomic Publisher→independent readback。G05のPolicy認可前は個票禁止。
 
-**This package rules:** 個票Parquet WriterのClass責務・正確署名未確定はDESIGN_GAPとして明記。Writer/Reader両側でcolumn/row bound検査。
+**This package rules:** RowEffectsParquetWriter/FactoryのClass責務・公開MethodはOwner採用済み。未配備Backend/ApprovedRowSchema/OSをFreeze前検証。Writer/Reader両側でcolumn/row bound検査。
 
 ### 2A. 既存SourceとRow Release authorityの境界（`2cf28f59a324`）
 - **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。
 - **Design-only:** `LocalPrivacyPolicy`の純粋`authorize/filter_export_columns`と、独立承認機関が発行する証拠を検証するVerifier、認可後に初めてrow bytesを生成するParquet Writerは別責務。現在の§3契約のうちAuthorityの署名・Key Owner・Scope・期限・失効・Anti-replay、Row Writer Class/Factory/Methodが**未決**であり、Agentが作成したPolicyRef/bool/CLI flagは認可として無効。承認前のrow materialize/serialize/publishは禁止。`LocalCausalUseCase`・G01 Publisher/Reader/RegistryをG05で複製しない。
-- **Freeze blocker:** Row許可のOwner決定後、本Pxxの設計中Class/API・G05 Gate06/07の同一Authorityを改訂/Freezeするまでは、個票処理パスは`BLOCKED_PRIVACY_AUTHORITY_UNRESOLVED`。mockは実認可証拠を代替せず、無断でパスを実装しない。
+- **Freeze blocker:** Row方式/ClassはOwner採用済み。現実の独立Authority/鍵/Trust StoreとG05 06/07/Pxxの再監査・Freeze前に個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。mockは実認可証拠を代替せず、無断でパスを実装しない。
 
 ### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
 | Operation | 必須Artifact | 禁止・negative条件 |
@@ -46,10 +46,12 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
 |---|---|---|---|
 | `LocalArtifactPublisher` | `ariadne.interfaces.cli.local_causal.publication.LocalArtifactPublisher` | Port/Value/Facade integration (no duplicate implementation) | begin(self)->StagingArtifactSink; stage_bytes(self,key:RelativeArtifactKey,data:bytes,media_type:str,classification:PrivacyClass)->ArtifactDescriptor; validate(self,manifest:LocalRunManifest)->ValidatedBundle; commit(self,validated:ValidatedBundle)->CommittedRunRef; abort(self,reason:str)->None |
+| `RowEffectsParquetWriter` | `ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsParquetWriter` | P03 primary new Class | `__init__(self,*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)` / `write(self,*,source:DeferredRowEffectsSource,study:ValidatedStudy,decision:PrivacyDecision,selection:ColumnSelection,sink:StagingArtifactSink)->ArtifactDescriptor` |
+| `RowEffectsWriterFactory` | `ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsWriterFactory` | P03 factory | `create(self,*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)->RowEffectsParquetWriter` |
 | `LocalRunManifest` | `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest` | Port/Value/Facade integration (no duplicate implementation) | to_canonical_bytes() |
 | `LocalManifestReader` | `ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader` | Port/Value/Facade integration (no duplicate implementation) | read_run(trusted_root:TrustedLocalRoot,run_id:RunId) |
 
-**Class/Method authority:** 本Pxx §3.1以降に埋め込んだField/Constructor/Public Methodが一次規範。本Gateの主責務はHTE診断/Policy/認可付きWriter/Readerであり、新Scientific Adapterを追加しない。Approval AuthorityやRow WriterのClass/Methodは未決ならBLOCKEDとしてOwner決定を求め、Agentが独自署名・鍵・出力方式を創作してはならない。
+**Class/Method authority:** 本Pxx §3.1以降に埋め込んだField/Constructor/Public Methodが一次規範。本Gateの主責務はHTE診断/Policy/認可付きWriter/Readerであり、新Scientific Adapterを追加しない。Ed25519独立Verifier／RowEffectsParquetWriter/FactoryはOwner採用済みClassとして責務を守り、実deployment未成立をBLOCKEDとして、Agentが独自署名・鍵・出力方式を創作してはならない。
 
 **Responsibility:** 本PackageはScientific Adapter数値本体を新規所有しない。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -225,11 +227,38 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 `DD-E11-READ01` valid; `READ02` marker missing; `READ03` corrupted bytes/size; `READ04` wrong version; `READ05` individual export suppression; `READ06` old v2 not E11; `READ07` symlink/path race。関連要件：IF IO-E11-01〜09、FR-201〜203、NFR-031/032、BD01-F03/F05/F06/F12。
 
+
+### 3.4. `RowEffectsParquetWriter` — G05/P03 primary Class contract
+
+#### 3.4.1. 識別情報・責務
+`ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsParquetWriter`。認可後のbounded RowEffect projectionとParquet bytesの生成、および既存G01 StagingSinkへのstageのみを所有。認可/署名・別FS Publisher・Result Data Scientist Algorithm・Reader・`_COMMITTED.json`の発行を**責務外**とする。
+
+#### 3.4.2. Field / Constructor
+`serializer: ValidatedParquetSerializer`（eff runtime/Version/APIを確認）、`max_memory_bytes: int`（正の上限）のimmutable依存だけ。`__init__(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int)`。run、Secret、Policy/Sourceはper-callで扱いClass内に永続保持しない。
+
+#### 3.4.3. Method / exact types
+`write(self, *, source: DeferredRowEffectsSource, study: ValidatedStudy, decision: PrivacyDecision, selection: ColumnSelection, sink: StagingArtifactSink) -> ArtifactDescriptor`。関連Protocolは`DeferredRowEffectsSource.schema()->ColumnSchema`、`read_rows()->Iterable[Mapping[str,JsonValue]]`、`ValidatedParquetSerializer.encode(self, *, rows: BoundedRowBatch, schema: ApprovedRowSchema)->bytes`。
+
+#### 3.4.4. Preconditions / Steps
+1. G05/P02による`Ed25519LocalPolicyVerifier.verify`のfresh signed evidence、Study row requestとCLI flag、private TrustedRoot/principal、`LocalPrivacyPolicy.authorize`と`filter_export_columns`で認可済みの`PrivacyDecision`/ordered ColumnSelectionを、Trusted UseCase内でrun_id/Study approval digest/Policy/request_hash/Sinkに束縛する。`PrivacyDecision`のDTO単独では署名の代替ではない。
+2. 認可前に`source.read_rows`を**一度も呼ばず**個票bytesを生成しない。`source.schema()`とApprovedRowSchemaを検証後、`max_rows+1` sentinelまで遅延取得し上限超過はfail closed。No automatic sampling/lineage change。row ID・Effect dtype・unique identity、unknown column、NaN/Inf、不正zero rowを拒否。
+3. 限定メモリ内で許可された列順のみParquetへencodeし`max_output_bytes`、`max_memory_bytes`、Privacy classification、bytes/media_type/schema/hashを検証。期限/失効/TrustedRoot/OS Principal変化を再確認。
+4. `sink.stage_bytes(key=RelativeArtifactKey("row_effects.parquet"), data=parquet_bytes, media_type="application/vnd.apache.parquet", classification=PrivacyClass.RESTRICTED_ROW_LEVEL)`して`ArtifactDescriptor`を返す。Publisherは唯一G01 `LocalArtifactPublisher`：seal/atomic no-clobber/fsync/Independent Reader readbackでCOMMITTEDを判定する。Writerは`runs/`や別commit markerを作らない。
+
+#### 3.4.5. Failure / acceptance
+Initial invalid approvalならRow Sourceをiterateせず0 bytes、exit3。`max_rows+1`、unknown column/dtype、duplicated IDs、nonfinite、output bytes cap、Parquet failure、Policy expiry/revocation、file raceでpartial completedは禁止。Private staging後の失効は公開禁止/隔離、過去に作られたbytesを0と虚偽表示しない。Result/Manifest/CLI stdout/stderr/logにはrow値・secretを出さない。`G05-07-WR01〜04`、IO-E11-06、旧Product v2回帰を必須とする。Method別`ApprovedRowSchema`と実効Parquet API/lock、実deploymentはFreeze前検証。
+
+### 3.5. `RowEffectsWriterFactory` and Serializer contracts
+
+- **Factory:** `ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsWriterFactory.create(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int) -> RowEffectsParquetWriter`。Factoryは承認Authorityではない。
+- **`DeferredRowEffectsSource`:** scientific result reader Protocol。schema-only検証可、`read_rows`は認可後にのみ実行。科学KernelにCLI署名コードをimportしない。
+- **`ValidatedParquetSerializer`:** CLI-adapter Protocol `encode(self, *, rows: BoundedRowBatch, schema: ApprovedRowSchema) -> bytes`。Backend effective version/API/valid dtype/ordered columns/row maxを確認、値/個人情報をログ出力しない。
+
 ## 4. Required implementation — G05/P03 dedicated processing
 
 1. **Entry:** G04 canonical 999 PASS、G05 Frozen06/07/Pxx、Owner Coding Authorization、Source/lock、依存Pxxを確認。G04のEffect/CATE/Graph/Studyが同一Hash/Version/Estimand対象であることを検証。
 2. Typed CATE/Diagnosticから認可されたColumnSelection・RowLimit・verified Approval Evidenceを検証し、実データ行は許可前にmaterialize/serializeしない。
-3. **Row WriterのConcrete Class・Factory・Signatureは現設計で未確定**。`LocalArtifactPublisher`の`StagingArtifactSink`/atomic no-clobber責務と、Parquet row serialization責務を混同しない。Parser/Writer/Publisherの所有権はFreeze前Owner設計決定が必要。
+3. **RowEffectsParquetWriter/FactoryのClass/Method契約はOD-03=AでOwner採用済み**。`LocalArtifactPublisher`の`StagingArtifactSink`/atomic no-clobber責務と、Parquet row serialization責務を混同しない。WriterはG05/P03、Signer検証はG05/P02、Publisher/ReaderはG01がOwner採用済み。実Deployment/Schema/Backend TestはFreeze前に必要。
 4. 承認済み場合に限りParquet schema/column order/dtype/row count/privacy class、artifact SHA/size、manifest lineage、readback consistencyを実測。明示的な非列集合/有効行数/零行を検証。
 5. commit marker/fsync/no-clobber/torn-writeはG01と同一Publisherに委譲し、並行実行と失効/期限切れでのzero-row/no publishを負例検証。
 6. **Privacy boundary:** 未承認・技術的失敗・Authority未定はzero-rowでstopし、許可ErrorをError suppressionやdummy Policyで回避しない。G01 Publisher/Readerは再実装しない。Optional Backend/Science Availabilityも分離する。
@@ -247,9 +276,11 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunId)`は公開`LocalManifestReaderPort.verify(*,root:TrustedLocalRoot,run_id:RunId)`から委譲される。Marker→Manifest→Artifact bytes/type/hash/size→cross-refsとPrivacyを検証する。入力Schema不正はexit2、公開済みbundle readback破損はphase=PUBLICATIONのexit5。修復・自動削除は行わない。
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
+`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。OD-02=Aにより、本EnhancementのRow Exportの署名方式はEd25519／domain-separated RFC8785-JCS、EUIDが改竄不能なadmin-owned Trust Storeと失効検証を用いるとOwner採用済み。ただし現実の独立承認者・鍵Store管理者／実配備・失効freshness/clock/OSが未確認ならrow releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。
 
-**PrivacyのAuthority署名方式・鍵配布/失効・Writer Class等の具体未決は上記方針とは別の真のDesign Gapであり、未決ScopeをBLOCKEDにする。**
+**OD-02/03のEd25519+admin trust-store/RowEffectsParquetWriter方式・署名/ClassはOwner採用済み。実際の独立approver・admin鍵配備/失効freshness/clock/OS・Method別row schema/実Backend/Independent Testが未完なら当該個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。**
+
+**OD-02/03已採用の必要条件：** G05/P02の`Ed25519LocalPolicyVerifier.verify`でadmin-only authority（not user-owned）によるrun/Study/Method/Policy scopeに束縛された署名を検証し、`LocalPrivacyPolicy.authorize`の前にtrusted Proofを確定。G05/P03`RowEffectsParquetWriter.write`だけが認可後row bytesを作りG01 sinkへ渡す。未配備ならrelease deny、他PackageのHTE集計診断を無根拠に止めない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -271,7 +302,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. G05 privacy and evidence test contract
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
-- Typed CATE/Diagnosticから認可されたColumnSelection・RowLimit・verified Approval Evidenceを検証し、実データ行は許可前にmaterialize/serializeしない。 **Row WriterのConcrete Class・Factory・Signatureは現設計で未確定**。`LocalArtifactPublisher`の`StagingArtifactSink`/atomic no-clobber責務と、Parquet row serialization責務を混同しない。Parser/Writer/Publisherの所有権はFreeze前Owner設計決定が必要。 承認済み場合に限りParquet schema/column order/dtype/row count/privacy class、artifact SHA/size、manifest lineage、readback consistencyを実測。明示的な非列集合/有効行数/零行を検証。 commit marker/fsync/no-clobber/torn-writeはG01と同一Publisherに委譲し、並行実行と失効/期限切れでのzero-row/no publishを負例検証。
+- Typed CATE/Diagnosticから認可されたColumnSelection・RowLimit・verified Approval Evidenceを検証し、実データ行は許可前にmaterialize/serializeしない。 **RowEffectsParquetWriter/FactoryのClass/Method契約はOD-03=AでOwner採用済み**。`LocalArtifactPublisher`の`StagingArtifactSink`/atomic no-clobber責務と、Parquet row serialization責務を混同しない。WriterはG05/P03、Signer検証はG05/P02、Publisher/ReaderはG01がOwner採用済み。実Deployment/Schema/Backend TestはFreeze前に必要。 承認済み場合に限りParquet schema/column order/dtype/row count/privacy class、artifact SHA/size、manifest lineage、readback consistencyを実測。明示的な非列集合/有効行数/零行を検証。 commit marker/fsync/no-clobber/torn-writeはG01と同一Publisherに委譲し、並行実行と失効/期限切れでのzero-row/no publishを負例検証。
 - Evidenceはpositive/negative、Approval Signature/Expiry/Scope、Effective UID/ACL/mount、row bytes createdか、Parquet/Manifest/Marker/Readback、source/fixture SHAとactual commandを含める。秘密鍵そのものや個票のログ出力は禁止。
 - Test側のCollection/Runner実Pathは40の発見規則に従う。未実装Approval Authority/Writerをmockして正規Privacy PASSとしない。
 
@@ -288,4 +319,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Document independence:** Class Fields/Constructor/Methodは§3、専用処理は§4、検証/負例は§6で完結。Owner決定が無い要件は仮構実装で埋めない。
 
-**BLOCKED before Freeze:** Parquet Row WriterのClass/Method/Factory/API、認可されたbytes作成前の安全な連携。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。
+**BLOCKED before Freeze:** Row Writer Class/Factory/MethodはOwner採用済み。実効Parquet serializer/API・Method別ApprovedRowSchema・OS配備／署名付きPolicy・認可前RowSource非反復の独立検証は未完了。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。

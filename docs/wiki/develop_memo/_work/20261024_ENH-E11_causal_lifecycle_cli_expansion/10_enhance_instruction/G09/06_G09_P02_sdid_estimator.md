@@ -233,3 +233,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Self-contained Freeze stop
 
 §3でField/Constructor/Public Method/I-Oを、§4で独自Algorithmと失敗時分岐を、§5〜6でDGP/NEG/REF/DDと証拠を本書内に規定する。**Open scientific/design item:** SDID weight/Variance estimator/effective API and independent REF-Q05. Method-specific API/quantitative science thresholdsが未決ならNo Coding Authorization。外部文書をNormative補完として要求しない。
+
+## 9. OD-05 Owner-adopted Method Profile construction obligation
+
+**Accepted authoring allocation (2026-11-19 JST):** G09/P02 is responsible for strict versioned Config/Question/Design/Output/Inference Profile authoring/registration for P3-M13. Scientific constraints: SCM donor selection/preperiod fit/point-only, SDID unit/time weights/panel inference. Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
+
+**Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
+
+**Readiness:** Owner accepted work allocation only; this does not assert that individual schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, Freeze or Coding Authorization are complete. For G08, exact HC1 AR numeric reference adoption history in PREP02-111 vs DD30_63 must be reconciled before Freeze without changing already adopted B0/B1/AR science bounds.

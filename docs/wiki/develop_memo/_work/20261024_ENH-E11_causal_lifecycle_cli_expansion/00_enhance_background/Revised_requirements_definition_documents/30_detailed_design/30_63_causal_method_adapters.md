@@ -81,9 +81,12 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 |---|---|---|
 | `P1-M03` | backdoor ATE | effective API、method-specific proof、Graph対応 |
 | `P1-M04` | frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
-| `P1-M05` | IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+| `P1-M05` | IDENTIFY B0_BINARY_IV / conditional `LATE_COMPLIER` | 単一二値Z/A・無調整、relevance/independence/exclusion/monotonicity方向/consistencyの宣言と検査、DoWhy実効IV式をtyped Proofへ。display labelからLATE cast禁止、推定禁止 |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
+
+
+**P1-M05（OD-01=A Owner採用）の不変実装契約：** `IDENTIFY`のみ。`estimand.family=LATE_COMPLIER`、population=compliers、contrast=A1−A0、`design_profile=B0_BINARY_IV`。単一binary instrument Z・binary endogenous treatment A・outcome Y・無調整C無しを要求し、instrument relevance/nonzero first-stage、independence、exclusion、monotonicity方向、consistency/SUTVAを宣言済み・ref付きDesign仮定として検証する。これら未検証な因果仮定をGraphだけから実証したと扱わない。選択済DoWhy effective library/APIのIV expression/identifierを確認して初めてconditional `IdentificationOutcome`を返し、DoWhy内部の`nonparametric-ate`等の表示から自動LATE castしない。検証済みProof、Estimand/Graph/Question/Design/Dataset hashes、条件付きAssumption refsを保持。B1/DRIV/ATE target・非二値Z/A・欠落IV仮定・API非互換・wrong hashをtyped `IDENTIFICATION_TARGET_UNRESOLVED`/`METHOD_INCOMPATIBLE`/`REQUIRES_REVIEW`/`CAPABILITY_UNAVAILABLE`等でfail closed。弱IVの統計的兆候を「Graph条件と同じ意味の非識別」と混同せず、推定可能な点値/CIを作らない。`IDENTIFY`は`identification.json`を出版し、`result.json`やNumerical Effectを出さない。DGP-006、NEG-006/007、REF-I03/REF-G01にinvalid Target/Graph/monotonicity/weak IV/APIの負例を追加。G08 B0 Wald/2SLS/ARは本Adapterの責務外。Method Config/独立Reference/実効DoWhy APIは実行検証前に明示的に固定する（未作成なら`METHOD_PROFILE_UNAVAILABLE`）。
 
 #### 1.2.6. I/O・連携・失敗処理
 
@@ -968,7 +971,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | P1-M02 | `NativeIdentificationAdapter` / backdoor ATE | adjustment/backdoor、Graph・Design適格性 |
 | P1-M03 | `DoWhyIdentificationAdapter` / backdoor ATE | effective API、method-specific proof、Graph対応 |
 | P1-M04 | `DoWhyIdentificationAdapter` / frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
-| P1-M05 | `DoWhyIdentificationAdapter` / IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+| P1-M05 | `DoWhyIdentificationAdapter` / B0 conditional `LATE_COMPLIER` identification | IDENTIFY専用、二値Z/A・追加C無し、明示Design仮定とIV proof、DoWhy labelだけのLATE変換禁止 |
 | P1-M06 | `FciDiscoveryAdapter` / PAG | circle/bidirected/latent・oracle、point estimation不可 |
 | P1-M07 | `FrontdoorLinearAdapter` / restricted FD-A ATE | 線形Mediator/Outcomeモデルとno direct path仮定、別Reference・CI |
 | P1-M08 | `NativeEffectAdapter` / randomized diff-in-means ATE | randomization、variance、seedとpopulation |
@@ -1006,13 +1009,16 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | P3-M12 | `SyntheticControlAdapter` / treated-unit counterfactual gap | donor pretreatment fit/contamination、point-only |
 | P3-M13 | `SyntheticDidAdapter` / panel average effect | donor and time weights、preperiod/variance method |
 
-**41 Method：** P1=20、P2=8、P3=13。ここでの`P1/P2/P3`はMethod catalogのPhase接頭辞であり、Enhance Workflowの`P01〜Pxx` Work Package IDとは異なる。P1-M05の対象EstimandをMethod labelからLATEと推定せず、識別対象未確定は型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
+**41 Method：** P1=20、P2=8、P3=13。ここでの`P1/P2/P3`はMethod catalogのPhase接頭辞であり、Enhance Workflowの`P01〜Pxx` Work Package IDとは異なる。P1-M05はOwner採用の明示的B0 `LATE_COMPLIER` conditional identificationを対象とする。Method label/DoWhy backendの表示からEstimandを推測せず、要求・前提・Proof未検証なら型付きBLOCKとする。MethodConfig・BackendVersion・Inference可用性・科学ReferenceをMethodに結び付ける。
 
 ### 2.1. Method Schemaと受理範囲
 
 41 Method IDは固定Catalog識別子であり、各IDにOperation、Estimand、Backend/Profile、Method Config Schema、Question/Design Evidence Profile、Inference Policy、Output Artifact Profileを登録する。Class割当があることだけでは実行可能性を意味しない。`ValidatedMethodRequest`は登録済みstrict Method Schemaとcross-asset semantic Validatorの双方に成功した場合のみFactoryから生成する。
 
 P1-M06は`e11_p1_m06_fci_method_config_v1.schema.json`、専用Question/Design internal profilesを使用する。他のMethodについてconfig/profile未定義のまま`config={}`やBackend defaultで通すことを禁止し、`METHOD_PROFILE_UNAVAILABLE`等のtyped reasonでfail-closedにする。各Method提供前に対応Gateで正規Schema、条件付き必須項目、negative fixturesを確定し登録する。Gate IDはSchema dispatchのキーにしない。
+
+
+**OD-05 Gate別Method Profile採用：** P1-M06を除く40 Methodは各Owner Gateでstrict Method Config/Question/Design/Output/Inference Profileを作成してMethodRegistryに登録する（G02=6/G03=13/G04=8/G06=3/G07=3/G08=5/G09=2）。登録の有無と科学的真理・数値的Referenceは区別し、未登録は`METHOD_PROFILE_UNAVAILABLE`。このProfile作成方式のOwner採用は、個々のMethod Schema JSONやCI/Backend/科学Oracleの完成を意味しない。統合G10は41 Methodを再検証し、新規Method IDを追加しない。
 
 ## 3. 共通Adapter Contract
 

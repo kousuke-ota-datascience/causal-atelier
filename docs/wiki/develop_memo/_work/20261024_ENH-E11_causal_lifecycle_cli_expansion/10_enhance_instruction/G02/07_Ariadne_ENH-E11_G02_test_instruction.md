@@ -24,7 +24,7 @@
 | ID | Primary purpose | Primary verification layer | Required observable evidence |
 |---|---|---|---|
 | `G02-07-01` | Native randomized/backdoor識別（P1-M01, P1-M02） | contract + real backend integration + independent reference | Design/GraphVersion/Proof・IdentificationOutcome；適格positive/negative・typed Reason |
-| `G02-07-02` | DoWhy optional backdoor/frontdoor/IV識別（P1-M03, P1-M04, P1-M05） | contract + real backend integration + independent reference | Effective API/Backend・IV target未確定BLOCK；適格positive/negative・typed Reason |
+| `G02-07-02` | DoWhy optional backdoor/frontdoor/IV識別（P1-M03, P1-M04, P1-M05） | contract + real backend integration + independent reference | Effective API/Backend・Owner採用B0 conditional LATEと実効DoWhy IV証明、missing profileはtyped BLOCK；適格positive/negative・typed Reason |
 | `G02-07-03` | FD-A限定線形two-stage推定（P1-M07） | contract + real backend integration + independent reference | single mediator・no direct path・独立数値Reference；適格positive/negative・typed Reason |
 | `G02-07-04` | Identification→Estimator eligibility・Local CLI（cross-cutting） | unit/contract + required integration | Hash/Estimand/Proof/Reason・旧v2回帰；適格positive/negative・typed Reason |
 | `G02-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
@@ -43,10 +43,14 @@
 | `P1-M02` / `DD-E11-METH-P102` | backdoor ATE | DGP-002, DGP-021; NEG-002, NEG-003 / REF-G01, REF-I01 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED / AC-D01, AC-D02, AC-D07；Method-specific science/CI未確定ならBLOCKED |
 | `P1-M03` / `DD-E11-METH-P103` | backdoor ATE | DGP-002, DGP-021; NEG-002, NEG-027 / REF-G01, REF-I01 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED / AC-D01, AC-D02, AC-D07；Method-specific science/CI未確定ならBLOCKED |
 | `P1-M04` / `DD-E11-METH-P104` | frontdoor ATE | DGP-005; NEG-004 / REF-G01, REF-I02 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED / AC-D01, AC-D02, AC-D07；Method-specific science/CI未確定ならBLOCKED |
-| `P1-M05` / `DD-E11-METH-P105` | IV identifying target | DGP-006; NEG-006, NEG-007 / REF-I03, REF-G01 | PLAN:G02 / BLOCKED / NOT_GENERATED / AC-D01, AC-D02, AC-D07；Method-specific science/CI未確定ならBLOCKED |
+| `P1-M05` / `DD-E11-METH-P105` | B0 conditional `LATE_COMPLIER` identification | DGP-006; NEG-006, NEG-007 / REF-I03, REF-G01 | PLAN:G02 / OWNER_TARGET_ADOPTED_PROFILE_BACKEND_SCIENCE_PENDING / NOT_GENERATED / AC-D01, AC-D02, AC-D07；Method-specific science/CI未確定ならBLOCKED |
 | `P1-M07` / `DD-E11-METH-P107` | restricted FD-A ATE | DGP-005; NEG-004, NEG-005 / REF-I02, REF-E04 | PLAN:G02 / OWNER_METHOD_ACCEPTED_TECH_AND_SCIENCE_BLOCKED / NOT_GENERATED / AC-D03, AC-P01, AC-P03, AC-I01, AC-I02；Method-specific science/CI未確定ならBLOCKED |
 
 **Independent oracle and numerical rule:** DGP truthとEstimator/Backend outputは別Authority。Fixed generator/Reference SHA、既知EstimandとAssumptions、negative/statusを先に登録。Deterministic schema/JCS/roundtripは100%一致。Stochastic ScienceはT2 PilotとT3正式事前登録を分離し、多重性K/FWER=0.05、K/R/seed/threshold/computeは科学決定に基づきFreeze。未確定を推測で補完せず該当Test Item BLOCKED。
+
+**G02-07-02 P1-M05 independent tests:** DoWhyのeffective runtime/APIとIV expression、正例DGP-006におけるB0二値Z/A/無調整＋宣言済みinstrument assumptionsとconditional `IdentificationOutcome`、NEG-006のfirst stage不十分、NEG-007のexclusion違反、B1/DRIV/ATE混同、missing monotonicity、wrong graph/hash、nonbinary instrument、missing Profile、unsupported backendのtyped negativeを独立に照合。IDENTIFYでは`identification.json`があること、Effect `result.json`・Estimator callがないことをreadback検証。Backend自身のIV labelは独立oracleではない。
+
+**G02 Method Profile gate:** **OD-05採用:** G02のP1-M01〜05・P1-M07（計6 Method）はそれぞれstrict Method Config/Question/Design/Output/Inference Profileを定義・登録し、invalid config/Estimand/Backendとunsupported CIをtyped negativeにする。専用Schema/Backend実測/独立Oracleが未実装なら当該Methodは`METHOD_PROFILE_UNAVAILABLE`等でBLOCKED。採用済Targetの再決定を求めない。 テスト実行までは`TESTS_NOT_RUN`であり、07の記述だけをScience PASSとしない。
 
 ## 4. Verification operation, evidence and decision
 
@@ -58,6 +62,6 @@
 
 ## 5. Freeze前のOwner/Science review
 
-P1-M05 IV識別の対象EstimandをLATEと推測しない。
+P1-M05 Owner採用のB0条件付き`LATE_COMPLIER`をMethod Profile/Designで明示指定する。DoWhy内部IVラベルだけから推測せず、実効IV expression/Assumptions/Graph provenanceを照合する。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。

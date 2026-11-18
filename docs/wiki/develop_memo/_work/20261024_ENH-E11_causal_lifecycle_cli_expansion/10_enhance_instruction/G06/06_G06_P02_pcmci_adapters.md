@@ -199,3 +199,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Freeze-only review: unresolved decisions
 
 **Self-contained:** §3は全ClassのField/Constructor/Public Method/I-Oを、§4は実装分岐を、§5〜6は必要なMethod/DGP/NEG/REFと検証を本文で保持する。**BLOCKED before Freeze:** Tigramite実効API・independent Temporal Oracle・Method別CI/lag boundariesの確定。 他文書の参照をCoding Agentに必須とせず、設計空白はOwner決定まで止める。
+
+## 9. OD-05 Owner-adopted Method Profile construction obligation
+
+**Accepted authoring allocation (2026-11-19 JST):** G06/P02 is responsible for strict versioned Config/Question/Design/Output/Inference Profile authoring/registration for P3-M01–M03. Scientific constraints: CI-test/temporal lag/zero-lag/PCMCI+/LPCMCI endpoint, latent uncertainty. Retain the existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. A profile must declare mandatory and conditional fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit Backend defaults.
+
+**Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
+
+**Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.

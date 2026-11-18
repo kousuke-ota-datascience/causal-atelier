@@ -13,7 +13,7 @@
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** CATE support/calibration/uncertaintyと独立事前承認に基づく個票成果物発行を検証する。
 
-**科学/Designの必須制約:** 独立承認Authority、鍵・失効、Row WriterのClass/Method所有権に設計未確定がある。
+**科学/Designの必須制約:** Ed25519独立署名AuthorityとRowEffectsParquetWriter/FactoryのClass契約はOwner採用済み。現実の独立承認者・鍵Store管理者／配備・失効/時計・実OS/Parquet実証は未完了。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -29,7 +29,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 ### 2A. 既存SourceとRow Release authorityの境界（`2cf28f59a324`）
 - **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。
 - **Design-only:** `LocalPrivacyPolicy`の純粋`authorize/filter_export_columns`と、独立承認機関が発行する証拠を検証するVerifier、認可後に初めてrow bytesを生成するParquet Writerは別責務。現在の§3契約のうちAuthorityの署名・Key Owner・Scope・期限・失効・Anti-replay、Row Writer Class/Factory/Methodが**未決**であり、Agentが作成したPolicyRef/bool/CLI flagは認可として無効。承認前のrow materialize/serialize/publishは禁止。`LocalCausalUseCase`・G01 Publisher/Reader/RegistryをG05で複製しない。
-- **Freeze blocker:** Row許可のOwner決定後、本Pxxの設計中Class/API・G05 Gate06/07の同一Authorityを改訂/Freezeするまでは、個票処理パスは`BLOCKED_PRIVACY_AUTHORITY_UNRESOLVED`。mockは実認可証拠を代替せず、無断でパスを実装しない。
+- **Freeze blocker:** Row方式/ClassはOwner採用済み。現実の独立Authority/鍵/Trust StoreとG05 06/07/Pxxの再監査・Freeze前に個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。mockは実認可証拠を代替せず、無断でパスを実装しない。
 
 ### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
 | Operation | 必須Artifact | 禁止・negative条件 |
@@ -49,7 +49,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, policy:VerifiedStudyPolicyEvidence|None, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |
 | `LocalManifestReader` | `ariadne.interfaces.cli.local_causal.manifest_reader.LocalManifestReader` | Port/Value/Facade integration (no duplicate implementation) | read_run(trusted_root:TrustedLocalRoot,run_id:RunId) |
 
-**Class/Method authority:** 本Pxx §3.1以降に埋め込んだField/Constructor/Public Methodが一次規範。本Gateの主責務はHTE診断/Policy/認可付きWriter/Readerであり、新Scientific Adapterを追加しない。Approval AuthorityやRow WriterのClass/Methodは未決ならBLOCKEDとしてOwner決定を求め、Agentが独自署名・鍵・出力方式を創作してはならない。
+**Class/Method authority:** 本Pxx §3.1以降に埋め込んだField/Constructor/Public Methodが一次規範。本Gateの主責務はHTE診断/Policy/認可付きWriter/Readerであり、新Scientific Adapterを追加しない。Ed25519独立Verifier／RowEffectsParquetWriter/FactoryはOwner採用済みClassとして責務を守り、実deployment未成立をBLOCKEDとして、Agentが独自署名・鍵・出力方式を創作してはならない。
 
 **Responsibility:** 本PackageはScientific Adapter数値本体を新規所有しない。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -239,7 +239,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 2. 無認可、偽署名、失効・期限切れ、Scope変更、UID/ACL/mount不適格、RowLimit超過、stdout/stderr/Log漏えいの負例を実環境で検証。
 3. 独立署名検証を`LocalPrivacyPolicy`自身の自己承認ではなくG05/P02のTrust Authorityに依拠させ、CLI flagだけではRow writerを呼べないことを確認。
 4. Authorized caseはG05/P03のParquet読戻し、列/行/Schema、manifest SHA、commit marker/row privacy metadataの一致を検証し、旧v2の非認可挙動を変更しない。
-5. Browser/Web/APIは追加せず、CLI aggregate-only existing behaviorを維持。実Policy Authority/Writer未承認ではpositive caseを勝手にPASSとしない。
+5. Browser/Web/APIは追加せず、CLI aggregate-only existing behaviorを維持。Owner採用済みのVerifier/Writer Classでも、実署名権限/鍵Store/Parquet backend/独立E2E未検証ならpositive caseを勝手にPASSとしない。
 6. **Privacy boundary:** 未承認・技術的失敗・Authority未定はzero-rowでstopし、許可ErrorをError suppressionやdummy Policyで回避しない。G01 Publisher/Readerは再実装しない。Optional Backend/Science Availabilityも分離する。
 7. **Output:** Typed Decision/Evidence/Aggregate/Policy-bound Artifactを必要な場合のみStaging→Atomic Publisherへ渡す。既存Product ABIとException/Exit policyを保護する。
 
@@ -247,7 +247,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 以下は既存30_62/30_63の設計規則のうち本Packageへ適用する本文内契約である。外部DDを読ませて仕様を補完することは禁止する。自Packageが所有しないClassは再実装しない。
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
+`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。OD-02=Aにより、本EnhancementのRow Exportの署名方式はEd25519／domain-separated RFC8785-JCS、EUIDが改竄不能なadmin-owned Trust Storeと失効検証を用いるとOwner採用済み。ただし現実の独立承認者・鍵Store管理者／実配備・失効freshness/clock/OSが未確認ならrow releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。
 
 Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`を用いるFacade。二重の公開アルゴリズムにしない。staging全File/Directory fsync→同一FSの`renameat2(RENAME_NOREPLACE)`→親dir fsync→独立Reader readbackまで成功して初めてCOMMITTED。EEXIST時の同request hash再利用は全bytes/Manifest/Privacy検証済みに限る。rename後の失敗は`PUBLICATION_INDETERMINATE`、削除・上書き禁止。
 
@@ -257,7 +257,16 @@ Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtif
 
 Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunId)`は公開`LocalManifestReaderPort.verify(*,root:TrustedLocalRoot,run_id:RunId)`から委譲される。Marker→Manifest→Artifact bytes/type/hash/size→cross-refsとPrivacyを検証する。入力Schema不正はexit2、公開済みbundle readback破損はphase=PUBLICATIONのexit5。修復・自動削除は行わない。
 
-**PrivacyのAuthority署名方式・鍵配布/失効・Writer Class等の具体未決は上記方針とは別の真のDesign Gapであり、未決ScopeをBLOCKEDにする。**
+**OD-02/03のEd25519+admin trust-store/RowEffectsParquetWriter方式・署名/ClassはOwner採用済み。実際の独立approver・admin鍵配備/失効freshness/clock/OS・Method別row schema/実Backend/Independent Testが未完なら当該個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。**
+
+
+**G05/P04 OD-02/03採用済みE2E契約（本Package規範）**
+
+- **Verified signature:** Policy Envelopeのpayloadは`e11-local-row-export-policy/1`、署名はEd25519(`ASCII("ARIADNE-E11-ROW-POLICY-v1")+0x00+JCS(payload)`)。TrustedPolicyAnchorはStudy外のadmin-owned non-EUID-writable issuer/key role registryとfresh revocation snapshotから生成。Study policy_refをnullにした承認対象digest、run_id、scope、columns/row/byte cap、expiration、Principal/ACL/mountを全件検証。署名鍵・Public Key self-declarationやCLI flagは承認証拠としない。
+- **Runtime call chain:** `Ed25519LocalPolicyVerifier.verify(*,policy_ref,study,root,anchor)`→`LocalPrivacyPolicy.authorize(...)`→`filter_export_columns`→`RowEffectsParquetWriter.write(*,source,study,decision,selection,sink)`→G01 `LocalArtifactPublisher.validate/commit`→独立`LocalManifestReader.read_run`。Writerの具体Moduleは`ariadne.interfaces.cli.local_causal.row_effects_parquet`、`write`はAuthorized Row sourceとStagingSinkのみを受けてPublisherの権限を持たない。
+- **Positive:** 実際に別Principalにより発行済みの署名＋admin provisioned store/適合OS環境・Method別ApprovedRowSchema・Parquet APIで、restricted`row_effects.parquet`の列順/型/件数/byte count、Manifest/Marker/readback/0600/0700を検証する。
+- **Negative:** missing flag、self-signed、issuer role無し、別Study/run、偽hash、expire/revoke/stale feed、UID/ACL/mount unsafe、row cap+1/byte cap/NaN/duplicate IDs、seal前/後失効・torn publication、stdout/stderr/log leak。初期DENYならsource iterator 0回・row bytes作成0・exit3。認可後staging失効は未公開隔離（過去bytesは0とは限らない）。
+- **No false PASS:** test signer/test keyとmock Authorityは本番独立承認の実在証拠ではない。実際のApprover・KeyStore Admin/Revocation Clock・OS/FSとSerializerが未確認なら`BLOCKED_DEPLOYMENT_AUTHORITY`、Gate999 PASS禁止。既存Product v2/旧科学ABIとG01 Publisherは不変。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -279,7 +288,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. G05 privacy and evidence test contract
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
-- 無認可、偽署名、失効・期限切れ、Scope変更、UID/ACL/mount不適格、RowLimit超過、stdout/stderr/Log漏えいの負例を実環境で検証。 独立署名検証を`LocalPrivacyPolicy`自身の自己承認ではなくG05/P02のTrust Authorityに依拠させ、CLI flagだけではRow writerを呼べないことを確認。 Authorized caseはG05/P03のParquet読戻し、列/行/Schema、manifest SHA、commit marker/row privacy metadataの一致を検証し、旧v2の非認可挙動を変更しない。 Browser/Web/APIは追加せず、CLI aggregate-only existing behaviorを維持。実Policy Authority/Writer未承認ではpositive caseを勝手にPASSとしない。
+- 無認可、偽署名、失効・期限切れ、Scope変更、UID/ACL/mount不適格、RowLimit超過、stdout/stderr/Log漏えいの負例を実環境で検証。 独立署名検証を`LocalPrivacyPolicy`自身の自己承認ではなくG05/P02のTrust Authorityに依拠させ、CLI flagだけではRow writerを呼べないことを確認。 Authorized caseはG05/P03のParquet読戻し、列/行/Schema、manifest SHA、commit marker/row privacy metadataの一致を検証し、旧v2の非認可挙動を変更しない。 Browser/Web/APIは追加せず、CLI aggregate-only existing behaviorを維持。Owner採用済みのVerifier/Writer Classでも、実署名権限/鍵Store/Parquet backend/独立E2E未検証ならpositive caseを勝手にPASSとしない。
 - Evidenceはpositive/negative、Approval Signature/Expiry/Scope、Effective UID/ACL/mount、row bytes createdか、Parquet/Manifest/Marker/Readback、source/fixture SHAとactual commandを含める。秘密鍵そのものや個票のログ出力は禁止。
 - Test側のCollection/Runner実Pathは40の発見規則に従う。未実装Approval Authority/Writerをmockして正規Privacy PASSとしない。
 
@@ -296,4 +305,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Document independence:** Class Fields/Constructor/Methodは§3、専用処理は§4、検証/負例は§6で完結。Owner決定が無い要件は仮構実装で埋めない。
 
-**BLOCKED before Freeze:** Approval Authority実体、実OS環境・Row Writer、negative fixturesと実測証跡。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。
+**BLOCKED before Freeze:** Verifier/Writer設計採用済みだが、実際の独立Approver/TrustStore管理者・鍵/失効/OS・Parquet backend、negative fixtures/実測証跡は未完了。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。

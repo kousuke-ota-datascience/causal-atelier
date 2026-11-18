@@ -255,9 +255,17 @@ Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.ca
 
 22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。署名アルゴリズムや鍵配布・失効方式は別の具体Policyとして設定可能であり、Ed25519等を無条件の仕様に固定しない。
+`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。Owner採用OD-02=Aにより、G05の署名アルゴリズムはEd25519／domain-separated RFC8785-JCS、admin-only Trust Anchor方式を採る。現実の独立承認者・鍵配備・失効/Clock/OS検証がない場合はRow Releaseを`BLOCKED_DEPLOYMENT_AUTHORITY`とする。
 
 **実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
+
+
+**OD-01/02/03/05（2026-11-19 Owner採用）との横断一致規範：**
+
+- `P1-M05`はG02で`IDENTIFY`専用、明示的`B0_BINARY_IV` binary Z/A unadjusted `LATE_COMPLIER`条件付き識別。DoWhy IV internal label/`nonparametric-ate`だけでLATE証明とせず、宣言済みrelevance/exclusion/independence/monotonicity/consistency、Graph/Question/Design/Content hashとeffective APIを検証。`IDENTIFY`のEffect `result.json`は禁止。G08のB0数値推定/B1 slope/DRIVと混同しない。DGP-006、NEG-006/007、REF-I03/REF-G01は別科学Evidence。
+- G05 restricted Row Parquetには独立admin-owned KeyStoreとEd25519 Policy Envelope、domain-separated JCS signature/run_id/Study approval digest/issuer role/expiry/revocation/column/row/byte limitsを全て検証した`VerifiedStudyPolicyEvidence`が必要。`RowEffectsParquetWriter`は`LocalPrivacyPolicy.authorize`の後でのみbounded row bytesをG01 StagingSinkへ作成し、G01 Publisher/Readerが唯一のpublication/readback Authority。実際の独立Approver／admin鍵Store管理者／失効・OS/Parquet検証が未配備ならRow ReleaseをBLOCKED、mock署名を本番許可としない。
+- OD-05の40 Method専用Config/Question/Design/Output/Inference Profileは各Owner Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）で完成・登録されるまでは`METHOD_PROFILE_UNAVAILABLE`で該当Methodをfail-closed。P1-M06のG01 Draftを除く40件を`config={}`で一括許可しない。G10は全41 Methodの実Backend/Lock/独立DGP/NEG/REF/CI/Regressionを検証するのみ。
+- 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer LegalのPASSを意味しない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 

@@ -1,5 +1,7 @@
 # PREP-03 / OD-01 — DoWhy IV target decision candidate
 
+**Owner決定（2026-11-19）:** Option AはOwner採用済み。本文の「OPEN / proposed」は採用前に記載した候補の履歴であり、現在のTarget未決を意味しない。正式契約は[DEC-PREP03-OD01–05](122_20261119_dec_prep03_od01_od05_owner_adoption.md) §1–2。Method Profile・DoWhy API/Scienceは未実証。
+
 **Document class:** FLOW / Owner decision proposal; NOT normative stock design, NOT authorization.  
 **Baseline:** 68fb0b64021cc9ff372a0a7e3f13a406638da08f / `prototype/ariadne_mvp`  
 **State:** `OD-01_OPEN / TARGET_UNRESOLVED / G02_P02_NOT_FROZEN`

@@ -9,11 +9,11 @@
 
 ## 1. Assigned Purpose / Authority
 
-**目的:** DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05 target未確定ならBLOCKED。
+**目的:** DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05は明示的B0 conditional LATEのみ対象とし、専用Profile/API未検証はtyped BLOCKED。
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** Native/DoWhy識別、推定適格性、FD-A限定線形効果を安全に区別する。
 
-**科学/Designの必須制約:** P1-M05のIV識別対象は未確定。FD-A識別成立と数値推定成立は別。
+**科学/Designの必須制約:** P1-M05はOwner採用の`B0_BINARY_IV`・二値Z/A無調整complier `LATE_COMPLIER`の**条件付き識別のみ**。実効DoWhy IV式・Graph/Design仮定・Hashを明示的に検証し、display labelからLATEへcastしない。Method Profile/Backend/独立Scienceは未実証。 FD-A識別成立と数値推定成立は別。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -24,7 +24,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 - Scientific `Identification/Point/Inference/ScienceAcceptance`とTechnical outcomeは別軸。不適格なMethod、無識別、Unsupported CI、missing optional Backendは型付き負結果またはTechnical error。未実行をPASS、point-onlyをCI有り、Backend自身の出力を独立Oracleにしない。
 - `LocalCausalUseCase`はstrict ValidatedStudyから各Portへ委譲し、Fileはstaging→atomic Publisher→independent readback。G05のPolicy認可前は個票禁止。
 
-**This package rules:** DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05 target未確定ならBLOCKED。
+**This package rules:** DoWhy optional実効API/BackendとGraph/estimandを検証。IV内部labelをLATEへcastせず、P1-M05は明示的B0 conditional LATEのみ対象とし、専用Profile/API未検証はtyped BLOCKED。
 
 ### 2A. 既存SourceとのABI境界（HEAD `2cf28f59a324`で実体を確認）
 - **実在する公開API:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_identification(self, input_: IdentificationInput, output_dir: Path) -> list[ScientificResultDescriptor]`は`src/ariadne/scientific/identification/adapter.py`の`IdentificationAdapter.run(self, input_: IdentificationInput, output_dir: Path) -> list[ScientificResultDescriptor]`へ委譲する。後者の既存Randomized/Backdoor処理を再利用する。DoWhy IV/Frontdoor数値推定/MethodCapabilityRegistryの存在は、このABIだけからは導けない。
@@ -91,7 +91,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 |---|---|---|
 | `P1-M03` | backdoor ATE | effective API、method-specific proof、Graph対応 |
 | `P1-M04` | frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
-| `P1-M05` | IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+| `P1-M05` | B0 conditional `LATE_COMPLIER` identification | Owner採用B0条件付きcomplier LATEを明示的Designでだけ認める。DoWhy内部labelからLATE cast禁止、未検証ProfileはBLOCK |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本PackageのMethod固有実装・検証節に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
@@ -171,11 +171,11 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 1. **Entry:** G02 06/07・本PxxがFrozen、Owner Coding Authorization発行、G01 latest canonical 999 PASS、依存Pxx checkpoint SHAと実際のbranch source/lock一致を確認。不一致は開始禁止。
 2. Backend選択はMethod RegistryのDoWhy capabilityを通し、未導入/Version/API mismatchはそのMethodだけのtyped unavailable。別Methodへsilent fallbackしない。
 3. `P1-M03`はBackdoor、`P1-M04`はFrontdoor（前提Graph、媒介構造と交絡条件を分離）をtyped IdentificationOutcomeへ変換。DoWhyが返すラベルとAriadneのEstimand/Proofを同一視しない。
-4. `P1-M05`はIV対象Estimandが未承認であり、LATEを仮定して処理を確定しない。仕様決定までは`IDENTIFICATION_TARGET_UNRESOLVED`のtyped blocking outcomeとして扱い、Method IDを削除しない。
+4. Owner採用の`P1-M05` IVのB0条件付きLATEは識別仮定への依存をProofに明示し、推定値やCIを生成しない。B1/DRIV/ATEへの暗黙fallbackは禁止。 Missing B0 Design/Assumption/Backend APIは`IDENTIFICATION_TARGET_UNRESOLVED`/`METHOD_INCOMPATIBLE`/`CAPABILITY_UNAVAILABLE`を理由付きで返し、Method IDは残す。
 5. **Common postcondition:** preflight→typed eligibility→selected backend/科学Kernel→validated typed outcome→G01正規StagingSink。Staging外のfinal run path、Resultと未承認の個票出力へ直接書かない。Technical exit0はScience PASSを意味しない。
 6. **Prohibited:** 類似名称によるMethod置換、旧v2のSignature/Graph/Codec改変、mock-onlyによるScience PASS、unsupported CIの捏造。Backend failureと正当な科学的負結果を識別する。
 
-**Science-specific method constraints incorporated here:** DoWhy Methodに応じた識別対象を明示しIV target未解決をBLOCK。
+**Science-specific method constraints incorporated here:** DoWhy Methodに応じた識別対象を明示しB0 conditional LATE以外をBLOCKし実際のDoWhy IV proofとprofileを要件化。
 
 ### 設計書で定義済みの科学・型契約（このPxxに展開済みの規範）
 
@@ -185,7 +185,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 |---|---|---|
 | `P1-M03` | backdoor ATE | effective API、method-specific proof、Graph対応 |
 | `P1-M04` | frontdoor ATE | 単一Mediator／識別仮定、数値FD-Aとは別 |
-| `P1-M05` | IV identifying target | DoWhy内部ラベルをLATEと同一視せず対象未確定をBLOCK |
+| `P1-M05` | B0 conditional `LATE_COMPLIER` identification | Owner採用B0条件付きcomplier LATEを明示的Designでだけ認める。DoWhy内部labelからLATE cast禁止、未検証ProfileはBLOCK |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
 
@@ -194,7 +194,19 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 - Backendの数値例外、収束エラー、非有限推定を成功へ書き換えない。
 - Confirmatory ResultはMethod別の妥当な推論がなければScience PASSとしない。
 
+**OD-05採用:** G02のP1-M01〜05・P1-M07（計6 Method）はそれぞれstrict Method Config/Question/Design/Output/Inference Profileを定義・登録し、invalid config/Estimand/Backendとunsupported CIをtyped negativeにする。専用Schema/Backend実測/独立Oracleが未実装なら当該Methodは`METHOD_PROFILE_UNAVAILABLE`等でBLOCKED。採用済Targetの再決定を求めない。
+
 **未実測のBackend/Independent Reference/Method固有Schema/定量閾値は上記契約が未定義であることとは異なる。** 採用済みTarget/数理規則をAgent裁量で変更せず、未実測はScience/Freezeの該当判定でBLOCKEDとする。
+
+
+#### P1-M05 Owner採用済みのMethod固有契約（G02/P02本文規範）
+
+- **Operation/Target:** `IDENTIFY`のみ、`family=LATE_COMPLIER`、`population=compliers`、`contrast=A1-A0`、`design_profile=B0_BINARY_IV`。B1 IV structural slope、DRIV theta_IV(x)、一般ATE/ATTの自動サポート禁止。
+- **Inputs:** `ValidatedMethodRequest`にQuestion/Design/Graph/Dataset ContentRef/hash、単一binary Zとbinary A、outcome Y、C無し、relevance/nonzero first-stage、独立性/排除制約/単調性方向/consistency-SUTVAの**宣言済みかつ由来のある仮定**を保持。Graph検証は観測不能な仮定の真偽を証明しない。
+- **Preflight/Backend:** `DoWhyIdentificationAdapter.preflight`はstrict Method Profile/Estimand/Graph適合を確認。Backend Factoryの選択した実効DoWhy distribution/APIからIV expression/role mappingを確認。DoWhyが`nonparametric-ate`等と表示してもB0 LATEへ直接castしない。実効APIが条件付きProofを表現できなければ`METHOD_INCOMPATIBLE`/`CAPABILITY_UNAVAILABLE`。
+- **Execute/Result:** `execute(...,sink)`は条件付き`IdentificationOutcome`、Proof ref、Assumption refs、upstream identity/hashと科学的限界をtypedに返す。`IDENTIFY`は`study.json`,`status.json`,`identification.json`,`manifest.json`,`_COMMITTED.json`だけ（技術的成功時）。`result.json`と数値point/CI/Estimator callは禁止。G08 B0 Wald/2SLS/ARへ非自動委譲。
+- **Negative:** wrong/missing Target、B1/DRIV/ATE、nonbinary Z/A、無効Graph/Hash、欠落IV仮定、weak/zero first stage、DoWhy API不一致、Method Profile未登録は`IDENTIFICATION_TARGET_UNRESOLVED`/`METHOD_INCOMPATIBLE`/`REQUIRES_REVIEW`/`CAPABILITY_UNAVAILABLE`/`METHOD_PROFILE_UNAVAILABLE`の適合Reasonで止める。weak-IV統計兆候と論理的非識別を混同しない。
+- **Science obligation:** DGP-006、NEG-006/007、REF-I03/REF-G01、DD-E11-METH-P105、AC-D01/D02/D07。独立Referenceとeffective backendは未実証。`P1-M03`/`P1-M04`は従来のBackdoor/Frontdoor ATE定義を変えない。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
@@ -202,7 +214,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 |---|---|---|---|---|---|
 | `P1-M03` DoWhy Backdoor identification／ATE候 | `DD-E11-METH-P103` | DGP-002, DGP-021; NEG-002, NEG-027 | REF-G01, REF-I01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | `P1-M04` DoWhy Frontdoor identification／ATE | `DD-E11-METH-P104` | DGP-005; NEG-004 | REF-G01, REF-I02 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
-| `P1-M05` DoWhy IV identification／方法固有の対象は未確 | `DD-E11-METH-P105` | DGP-006; NEG-006, NEG-007 | REF-I03, REF-G01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / BLOCKED / NOT_GENERATED |
+| `P1-M05` DoWhy IV identification／B0二値Z/A・無調整complier LATE（条件付き識別） | `DD-E11-METH-P105` | DGP-006; NEG-006, NEG-007 | REF-I03, REF-G01 | AC-D01, AC-D02, AC-D07 | PLAN:G02 / OWNER_TARGET_ADOPTED_PROFILE_BACKEND_SCIENCE_PENDING / NOT_GENERATED |
 
 **Proof boundary:** 本Pxx§5のDGP/NEG/REF/ACは全件独立科学検証義務である。IDの列挙は実Fixture/独立Reference生成済みやPASSを意味しない。Backend自己出力を真値としない。FWER=.05・K/R/Compute/MC-SE/CI coverageと閾値はFreeze前に決定し、未確定はBLOCKED。別文書を読んで値を推測・補完しない。
 
@@ -220,7 +232,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. Package-specific executable evidence
 
 - 対象MethodとDD IDは§5の各行を一つも省略しない。DGP/NEG/REFの名前は検証対象IDであり、**実測/fixtureが作成済みという主張ではない**。
-- **必須Focused Contract:** Backend選択はMethod RegistryのDoWhy capabilityを通し、未導入/Version/API mismatchはそのMethodだけのtyped unavailable。別Methodへsilent fallbackしない。 `P1-M03`はBackdoor、`P1-M04`はFrontdoor（前提Graph、媒介構造と交絡条件を分離）をtyped IdentificationOutcomeへ変換。DoWhyが返すラベルとAriadneのEstimand/Proofを同一視しない。 `P1-M05`はIV対象Estimandが未承認であり、LATEを仮定して処理を確定しない。仕様決定までは`IDENTIFICATION_TARGET_UNRESOLVED`のtyped blocking outcomeとして扱い、Method IDを削除しない。
+- **必須Focused Contract:** Backend選択はMethod RegistryのDoWhy capabilityを通し、未導入/Version/API mismatchはそのMethodだけのtyped unavailable。別Methodへsilent fallbackしない。 `P1-M03`はBackdoor、`P1-M04`はFrontdoor（前提Graph、媒介構造と交絡条件を分離）をtyped IdentificationOutcomeへ変換。DoWhyが返すラベルとAriadneのEstimand/Proofを同一視しない。 Owner採用の`P1-M05` IVのB0条件付きLATEは識別仮定への依存をProofに明示し、推定値やCIを生成しない。B1/DRIV/ATEへの暗黙fallbackは禁止。 Missing B0 Design/Assumption/Backend APIは`IDENTIFICATION_TARGET_UNRESOLVED`/`METHOD_INCOMPATIBLE`/`CAPABILITY_UNAVAILABLE`を理由付きで返し、Method IDは残す。
 - Test discovery/pathは40に委譲するが、何を検証するか（出力Status、Method target、reason、既存ABI不変、科学Oracleと適格Backend）は本文と§5に保持する。Unit/Contract/実Backend integrationを役割ごとに実施し、適用不能なものはReasonを明示する。
 - EvidenceにClass.Module/Method/入力形、正例・負例のexpected vs actual、使用Backend version/API/seed、source+fixture SHA、effective Method/Estimand/Inference、pytest collect/command、PASS/FAIL/BLOCKEDを記録する。
 
@@ -236,4 +248,4 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Freeze-critical independence audit (review DRAFT)
 
 - **Self-containment:** Class Fields/Constructor/public Method/処理は§3.1以降、Package固有順序は§4、Methodと独立検証IDは§5〜6で与える。他の06/P00/07やDDをNormative手順の補完材料にしない。
-- **Remaining review:** `P1-M05`のIV識別対象/typed result決定。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
+- **Remaining review:** `P1-M05`の対象はB0 conditional `LATE_COMPLIER`にOwner確定済み。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
