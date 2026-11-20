@@ -4,7 +4,7 @@
 
 **Class:** FLOW / evidence-backed readiness register and design gap routing. NOT 41 approved Method Configs or backend test evidence.  
 **Inventory baseline:** 68fb0b64021cc9ff372a0a7e3f13a406638da08f, `10_32_scientific_method_scope.md`, `23_api_interface_design/schema_drafts/` filenames.  
-**Status:** `OD-05_PARTIALLY_OPEN / MATH_ALREADY_ADOPTED / PROFILE_CONSTRUCTION_PENDING`.
+**Status:** `OD-05_PARTIALLY_OPEN / MATH_ALREADY_ADOPTED / 40_DRAFTS_AUTHORED_SCIENCE_PENDING`.
 
 ## 1. Verifiable discovery boundary
 
@@ -35,7 +35,7 @@ Catalog: G01=1, G02=6, G03=13, G04=8, G06=3, G07=3, G08=5, G09=2. `G05` is cross
 | `P1-M02` | G02 | IDENTIFY | Native Backdoor identification／ATE | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-002, DGP-021; NEG-002, NEG-003; REF-G01, REF-I01 |
 | `P1-M03` | G02 | IDENTIFY | DoWhy Backdoor identification／ATE候 | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-002, DGP-021; NEG-002, NEG-027; REF-G01, REF-I01 |
 | `P1-M04` | G02 | IDENTIFY | DoWhy Frontdoor identification／ATE | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-005; NEG-004; REF-G01, REF-I02 |
-| `P1-M05` | G02 | IDENTIFY | DoWhy IV identification／方法固有の対象は未確 | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-006; NEG-006, NEG-007; REF-I03, REF-G01 |
+| `P1-M05` | G02 | IDENTIFY | DoWhy IV identification／B0条件付きcomplier LATE（OD-01採用済み） | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-006; NEG-006, NEG-007; REF-I03, REF-G01 |
 | `P1-M06` | G01 | DISCOVER | FCI／PAGと等価類 | DRAFTS PRESENT (3 specific schema files; not runtime-verified) | DGP-011, DGP-021; NEG-003, NEG-021, NEG-028; REF-G02 |
 | `P1-M07` | G02 | ESTIMATE | Frontdoor two-stage regression／ATE | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-005; NEG-004, NEG-005; REF-I02, REF-E04 |
 | `P1-M08` | G03 | ESTIMATE | Native diff-in-means／ATE | NO METHOD-SPECIFIC DRAFT FILE IN REVIEWED schema_drafts (not proof of absence elsewhere) | DGP-001, DGP-022; NEG-001, NEG-010; REF-E01 |
@@ -78,7 +78,7 @@ Catalog: G01=1, G02=6, G03=13, G04=8, G06=3, G07=3, G08=5, G09=2. `G05` is cross
 | Gate | Mandatory scope-specific profile clauses | Actual decision boundary |
 |---|---|---|
 | G01 | FCI CI test API, conditional independence tests, PAG endpoints, alpha/lag and Graph proof; existing 3 draft files | Verify draft schema vs adopted G01 06/07 and effective backend; do not infer PASS |
-| G02 | Randomized/Backdoor graph proof, DoWhy effective IV/frontdoor graph and target, explicit FD-A single-mediator linear equations/assumptions, no unidentifiable effect | OD-01 P1-M05 target truly undecided; everything else starts with adopted identification semantics |
+| G02 | Randomized/Backdoor graph proof, DoWhy effective IV/frontdoor graph and target, explicit FD-A single-mediator linear equations/assumptions, no unidentifiable effect | P1-M05 B0 conditional LATE target already Owner adopted; everything else starts with adopted identification semantics |
 | G03 | OLS target/contrast/variance, IPW normalized weights and positivity, AIPW nuisance/cross-fitting/finite-sample inference, refutation/resampling method, NCE/NCO conditional null, RV q=1 | Method-specific nuisance/CI and statistic distribution choices vs required independent evidence |
 | G04 | DML/DR/forest learner X/W roles, treatment encoding, nuisance/folds/seed, inference eligibility, individual CATE privacy; DRIV `CONDITIONAL_IV_STRUCTURAL_SLOPE` | Do not equate default EconML CI with approved inference; collect versioned API evidence |
 | G05 | No new Method; HTE row release depends on scientific Effect/Inference evidence plus signed policy and writer profiles | OD-02/03 separate actual security architecture gaps |
@@ -97,3 +97,7 @@ Catalog: G01=1, G02=6, G03=13, G04=8, G06=3, G07=3, G08=5, G09=2. `G05` is cross
 5. **Important authority reconciliation:** the PREP02 F07 analysis `111_...` describes the HC1 quadratic realization as an engineering proposal, whereas 30_63 describes HC1/χ²(1) as intended implementation. Before G08 Freeze, explicitly reconcile whether Owner-adopted design includes that exact reference formula, without undoing the already adopted AR full-real confidence-set semantics. An independent numerical oracle is still necessary.
 
 **Disposition:** `COVERAGE_REGISTER_COMPLETE / 40_METHOD_SPECIFIC_DRAFTS_NOT_LOCATED_IN_INSPECTED_FOLDER / RUNTIME_AND_SCIENCE_NOT_VERIFIED / OD-05_CONTRACT_FILL_PENDING`. The per-method work must be closed in self-contained 06/07/Pxx before any affected Gate Freeze; this document is not an execution instruction.
+
+## PREP-04.1 2026-11-21 amendment
+
+40 Method×5 strict internal JSON Schema Drafts authored; owner 06/Pxx/07 instructions across G02–G09 updated. Old P1-M05 target-unknown wording corrected to the Owner-adopted B0 conditional LATE. NOT_FROZEN: versioned backend API, science DGP/REF, numerical/CI AC, status alignment and independent validation not complete. This is authoring coverage, not independent scientific PASS.

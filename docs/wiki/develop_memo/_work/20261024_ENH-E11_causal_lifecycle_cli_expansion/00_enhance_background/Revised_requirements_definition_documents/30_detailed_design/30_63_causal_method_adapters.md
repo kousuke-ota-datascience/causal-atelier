@@ -1149,3 +1149,10 @@ Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.ca
 `MethodDescriptor`の唯一のOwnerは`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`。`StageRunnerRegistry`のStageType registryと同一視しない。旧Product `ScientificCorePort`の5 Operation署名を維持し、Method別typed Portが同じ科学的Kernelを利用する明示Bridgeを介する。新しいFCI、LATE/AR、CATE、Temporal、Quasiは既存の科学実装で不足する部分だけを別Method Adapterとして追加する。
 
 22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
+
+
+## 11. Method-specific strict Profile dispatch and ownership
+
+Every catalog Method is accepted only after MethodRegistry dispatch and validation of strict Method Config, Question, Design, Output and Inference profiles. The 40 non-FCI draft profile suites reside in Revised IF23 schema_drafts/method_profiles; P1-M06 FCI already has dedicated Config/Question/Design drafts. Draft presence alone is not registry registration, effective backend availability or independent Science evidence.
+
+Sequence: strict Study decoding → Method/Operation/Estimand/backend resolution → required Method Config/no unknown fields/no defaults → Question/Design/Dataset/Graph/Upstream semantic validation and actual hash → backend/version/API/inference preflight → typed computation → G01 staging/publication/Reader verification. No config={} success or method fallback. Public e11-local-*/1 wires and existing Product v2 ABI are invariant. Assumption declarations are conditional evidence, not proof of causal truth; confirmatory CI requires approved method-specific independent scientific coverage. G05 independently authorizes row export.

@@ -38,3 +38,7 @@ Each Pxx→focused verification→20 Package Report→Checkpoint SHA。全requir
 ## 4. Governance / Coding Authorization
 
 P00は独立受入条件でも実装許可でもない。06/07 Freeze、Owner採用のPackage list/dependency、上流Gate canonical 999、実基準SHAとenvironment preflightが揃うまでPxxは実行禁止。Issue、Package結果、P00の状態を999代用にしない。
+
+## PREP-04.1 integration checks
+- P3-M12 strict owner profile and DGP-017; NEG-024; REF-Q04 required; no runtime availability inference.
+- P3-M13 strict owner profile and DGP-018; NEG-024; REF-Q05 required; no runtime availability inference.

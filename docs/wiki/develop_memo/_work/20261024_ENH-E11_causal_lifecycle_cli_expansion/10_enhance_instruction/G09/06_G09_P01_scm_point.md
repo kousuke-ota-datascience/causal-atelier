@@ -248,3 +248,15 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** Owner accepted work allocation only; this does not assert that individual schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, Freeze or Coding Authorization are complete. For G08, exact HC1 AR numeric reference adoption history in PREP02-111 vs DD30_63 must be reconciled before Freeze without changing already adopted B0/B1/AR science bounds.
+
+
+## PREP-04.1 embedded Method contract (NOT_FROZEN)
+
+### P3-M12 (PREP-04.1 STRICT DRAFT / NOT_FROZEN)
+- ESTIMATE target: 10_32 semantic target (not assigned canonical enum); Pxx owner=P01; SCM treated-unit gap and SDID panel-average effect are not interchangeable.
+- Config required fields: weight_objective_spec_ref, preperiod_fit_spec_ref, donor_eligibility_spec_ref; types/const/ranges in method_config JSON Schema, no unknown keys/defaults; config={} fails.
+- Question required: question_id/research_question/population/analysis_goal/estimand_family/contrast, matched against Study.
+- Design required: design_id/question_id/design_kind; treated_unit, donor_units, time_index, preperiod_end, intervention_time, no_donor_contamination_ref; validate donor/treatment contamination, pre-period support, time ordering, upstream content hashes and panel eligibility.
+- Positive output result.json/e11-local-effect-result/1; G01 hash/marker/manifest/Reader; privacy row output requires G05 approval. Negative case returns typed reason, not fake effect.
+- Inference: SCM point-only; requested=false, confidence_level=null; no placebo interval.
+- Independent DGP/NEG/REF DGP-017; NEG-024; REF-Q04 plus empty/unknown Config, wrong target/Time/Donor, pre-period leakage, missing upstream hash, backend unavailable, unsupported CI. Backend/License/independent oracle/K/R/FWER=.05/MC-SE/coverage not verified.

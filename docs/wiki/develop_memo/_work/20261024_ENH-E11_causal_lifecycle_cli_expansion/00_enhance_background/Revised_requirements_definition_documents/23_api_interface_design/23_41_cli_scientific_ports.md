@@ -189,3 +189,8 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 ### Publication・Privacy・Errorの恒久契約
 
 PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、CLI flag、独立事前Policy、same-UID private TrustedRoot、column/row制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。
+
+
+## 5. Internal strict Method Profile overlays
+
+The public e11-local-study/1 Study.method.id dispatches to a registered strict Config/Question/Design/Output/Inference validator. Per-Method validators apply to existing unversioned Question/Design ContentRef bytes with independent hash check and cross-asset semantic equality; they do not introduce a new public wire version. Method-positive Output is still normalized to canonical Effect/Graph/diagnostic Artifact and G01 Publisher/Reader. Syntactic Study.inference.requested=true does not authorize unavailable finite or AR intervals or confirmatory PASS. Unknown, mismatched, unsupported or unavailable Method/Backend/CI reject with canonical typed reasons; no fallback.

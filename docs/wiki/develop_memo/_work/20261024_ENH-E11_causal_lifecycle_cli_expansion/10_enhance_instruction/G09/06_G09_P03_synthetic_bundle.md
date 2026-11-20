@@ -355,3 +355,8 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** Owner accepted work allocation only; this does not assert that individual schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, Freeze or Coding Authorization are complete. For G08, exact HC1 AR numeric reference adoption history in PREP02-111 vs DD30_63 must be reconciled before Freeze without changing already adopted B0/B1/AR science bounds.
+
+
+## PREP-04.1 integration checks
+- P3-M12 strict owner profile and DGP-017; NEG-024; REF-Q04 required; no runtime availability inference.
+- P3-M13 strict owner profile and DGP-018; NEG-024; REF-Q05 required; no runtime availability inference.

@@ -93,3 +93,8 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.1 Method inventory
+- P3-M12 owner=P01 Config=weight_objective_spec_ref, preperiod_fit_spec_ref, donor_eligibility_spec_ref; Design=treated_unit, donor_units, time_index, preperiod_end, intervention_time, no_donor_contamination_ref; DGP-017; NEG-024; REF-Q04; Backend/Science NOT_VERIFIED.
+- P3-M13 owner=P02 Config=unit_weights_spec_ref, time_weights_spec_ref, variance_spec_ref, donor_eligibility_spec_ref; Design=treated_units, donor_units, time_index, preperiod_end, intervention_time, panel_support_ref; DGP-018; NEG-024; REF-Q05; Backend/Science NOT_VERIFIED.

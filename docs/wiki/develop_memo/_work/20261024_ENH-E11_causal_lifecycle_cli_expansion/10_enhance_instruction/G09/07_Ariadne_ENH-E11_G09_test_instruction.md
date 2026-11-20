@@ -62,3 +62,25 @@
 SCM point-onlyにCIを捏造、donor contamination、事後選択の無言許可を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+
+## PREP-04.1 independent Method acceptance (NOT_FROZEN)
+
+### P3-M12 (PREP-04.1 STRICT DRAFT / NOT_FROZEN)
+- ESTIMATE target: 10_32 semantic target (not assigned canonical enum); Pxx owner=P01; SCM treated-unit gap and SDID panel-average effect are not interchangeable.
+- Config required fields: weight_objective_spec_ref, preperiod_fit_spec_ref, donor_eligibility_spec_ref; types/const/ranges in method_config JSON Schema, no unknown keys/defaults; config={} fails.
+- Question required: question_id/research_question/population/analysis_goal/estimand_family/contrast, matched against Study.
+- Design required: design_id/question_id/design_kind; treated_unit, donor_units, time_index, preperiod_end, intervention_time, no_donor_contamination_ref; validate donor/treatment contamination, pre-period support, time ordering, upstream content hashes and panel eligibility.
+- Positive output result.json/e11-local-effect-result/1; G01 hash/marker/manifest/Reader; privacy row output requires G05 approval. Negative case returns typed reason, not fake effect.
+- Inference: SCM point-only; requested=false, confidence_level=null; no placebo interval.
+- Independent DGP/NEG/REF DGP-017; NEG-024; REF-Q04 plus empty/unknown Config, wrong target/Time/Donor, pre-period leakage, missing upstream hash, backend unavailable, unsupported CI. Backend/License/independent oracle/K/R/FWER=.05/MC-SE/coverage not verified.
+
+
+### P3-M13 (PREP-04.1 STRICT DRAFT / NOT_FROZEN)
+- ESTIMATE target: 10_32 semantic target (not assigned canonical enum); Pxx owner=P02; SCM treated-unit gap and SDID panel-average effect are not interchangeable.
+- Config required fields: unit_weights_spec_ref, time_weights_spec_ref, variance_spec_ref, donor_eligibility_spec_ref; types/const/ranges in method_config JSON Schema, no unknown keys/defaults; config={} fails.
+- Question required: question_id/research_question/population/analysis_goal/estimand_family/contrast, matched against Study.
+- Design required: design_id/question_id/design_kind; treated_units, donor_units, time_index, preperiod_end, intervention_time, panel_support_ref; validate donor/treatment contamination, pre-period support, time ordering, upstream content hashes and panel eligibility.
+- Positive output result.json/e11-local-effect-result/1; G01 hash/marker/manifest/Reader; privacy row output requires G05 approval. Negative case returns typed reason, not fake effect.
+- Inference: Requested confidence_level (0,1) is syntax only; SDID CI requires separately approved variance and independent coverage.
+- Independent DGP/NEG/REF DGP-018; NEG-024; REF-Q05 plus empty/unknown Config, wrong target/Time/Donor, pre-period leakage, missing upstream hash, backend unavailable, unsupported CI. Backend/License/independent oracle/K/R/FWER=.05/MC-SE/coverage not verified.
