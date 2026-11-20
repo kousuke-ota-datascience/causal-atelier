@@ -262,3 +262,9 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.
+
+
+## PREP-04.1 integration preflight (DRAFT)
+- P3-M01 owner P02: all five strict profiles and DGP-009; NEG-021; REF-G03; no SCIENCE PASS from schema presence.
+- P3-M02 owner P02: all five strict profiles and DGP-009, DGP-010; NEG-021, NEG-028; REF-G03, REF-G02; no SCIENCE PASS from schema presence.
+- P3-M03 owner P02: all five strict profiles and DGP-011; NEG-021, NEG-028; REF-G03, REF-G02; no SCIENCE PASS from schema presence.

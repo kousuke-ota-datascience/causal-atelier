@@ -63,3 +63,35 @@
 lag0/lag>0混同、PAG/CPDAGのDAG化、時系列順序改変を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+
+## PREP-04.1 independent strict Method verification (DRAFT)
+
+### P3-M01 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: DISCOVER / 10_32 semantic target (not assigned canonical enum); Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: ci_test_spec_ref, tau_min, tau_max, alpha; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: graph.json/e11-local-graph/1, no result.json; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false, confidence_level=null. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-009; NEG-021; REF-G03. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P3-M02 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: DISCOVER / 10_32 semantic target (not assigned canonical enum); Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: ci_test_spec_ref, tau_min, tau_max, alpha, contemporaneous_rules_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref, endpoint_convention_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: graph.json/e11-local-graph/1, no result.json; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false, confidence_level=null. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-009, DGP-010; NEG-021, NEG-028; REF-G03, REF-G02. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P3-M03 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: DISCOVER / 10_32 semantic target (not assigned canonical enum); Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: ci_test_spec_ref, tau_min, tau_max, alpha, latent_assumptions_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref, endpoint_convention_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: graph.json/e11-local-graph/1, no result.json; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false, confidence_level=null. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-011; NEG-021, NEG-028; REF-G03, REF-G02. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.

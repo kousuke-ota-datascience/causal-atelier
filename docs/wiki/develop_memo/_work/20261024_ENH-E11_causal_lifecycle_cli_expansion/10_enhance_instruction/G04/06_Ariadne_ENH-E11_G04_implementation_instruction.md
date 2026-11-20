@@ -101,3 +101,14 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.1 Method ownership matrix (DRAFT)
+- P2-M01 Pxx P01 ESTIMATE/CATE Config(model_y_ref, model_t_ref, cv_folds, final_model_ref), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-003; NEG-011, NEG-012, NEG-013; REF-E05; Backend/Science BLOCKED.
+- P2-M02 Pxx P01 ESTIMATE/CATE Config(model_y_ref, model_t_ref, cv_folds, n_estimators, min_leaf_size), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-004; NEG-010, NEG-012, NEG-013; REF-E05; Backend/Science BLOCKED.
+- P2-M03 Pxx P01 ESTIMATE/CATE Config(outcome_model_ref, propensity_model_ref, cv_folds), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05, REF-E03; Backend/Science BLOCKED.
+- P2-M04 Pxx P01 ESTIMATE/CATE Config(outcome_model_ref, propensity_model_ref, cv_folds, n_estimators, min_leaf_size), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-004; NEG-010, NEG-011, NEG-013; REF-E05, REF-E03; Backend/Science BLOCKED.
+- P2-M05 Pxx P02 ESTIMATE/CATE Config(outcome_model_ref, counterfactual_prediction_rule_ref), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-002, DGP-003; NEG-010, NEG-012, NEG-013; REF-E05; Backend/Science BLOCKED.
+- P2-M06 Pxx P02 ESTIMATE/CATE Config(treated_model_ref, control_model_ref), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-003, DGP-004; NEG-010, NEG-013; REF-E05; Backend/Science BLOCKED.
+- P2-M07 Pxx P02 ESTIMATE/CATE Config(treated_model_ref, control_model_ref, cross_arm_weight_model_ref), Design(treatment, outcome, effect_modifiers, controls, unconfoundedness_ref), DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05; Backend/Science BLOCKED.
+- P2-M08 Pxx P03 ESTIMATE/CONDITIONAL_IV_STRUCTURAL_SLOPE Config(outcome_model_ref, treatment_model_ref, instrument_model_ref, cv_folds), Design(treatment, outcome, instrument, effect_modifiers, controls, iv_assumptions_ref), DGP-008; NEG-009, NEG-012, NEG-013; REF-E06; Backend/Science BLOCKED.

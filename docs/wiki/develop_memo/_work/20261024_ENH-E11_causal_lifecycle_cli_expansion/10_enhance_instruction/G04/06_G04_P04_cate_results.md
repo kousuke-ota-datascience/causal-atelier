@@ -327,3 +327,14 @@ Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.
+
+
+## PREP-04.1 integration preflight (DRAFT)
+- P2-M01 owner P01: all five strict profiles and DGP-003; NEG-011, NEG-012, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
+- P2-M02 owner P01: all five strict profiles and DGP-004; NEG-010, NEG-012, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
+- P2-M03 owner P01: all five strict profiles and DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05, REF-E03; no SCIENCE PASS from schema presence.
+- P2-M04 owner P01: all five strict profiles and DGP-004; NEG-010, NEG-011, NEG-013; REF-E05, REF-E03; no SCIENCE PASS from schema presence.
+- P2-M05 owner P02: all five strict profiles and DGP-002, DGP-003; NEG-010, NEG-012, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
+- P2-M06 owner P02: all five strict profiles and DGP-003, DGP-004; NEG-010, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
+- P2-M07 owner P02: all five strict profiles and DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
+- P2-M08 owner P03: all five strict profiles and DGP-008; NEG-009, NEG-012, NEG-013; REF-E06; no SCIENCE PASS from schema presence.

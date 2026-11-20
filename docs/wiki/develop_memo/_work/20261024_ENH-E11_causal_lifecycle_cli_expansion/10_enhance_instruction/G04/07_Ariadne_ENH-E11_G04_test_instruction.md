@@ -69,3 +69,85 @@
 DRIV=通常CATEの同一Target化、pointwise CI=simultaneous band扱い、unsupported CIの捏造を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+
+## PREP-04.1 independent strict Method verification (DRAFT)
+
+### P2-M01 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P01; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: model_y_ref, model_t_ref, cv_folds, final_model_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-003; NEG-011, NEG-012, NEG-013; REF-E05. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M02 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P01; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: model_y_ref, model_t_ref, cv_folds, n_estimators, min_leaf_size; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-004; NEG-010, NEG-012, NEG-013; REF-E05. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M03 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P01; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: outcome_model_ref, propensity_model_ref, cv_folds; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05, REF-E03. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M04 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P01; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: outcome_model_ref, propensity_model_ref, cv_folds, n_estimators, min_leaf_size; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-004; NEG-010, NEG-011, NEG-013; REF-E05, REF-E03. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M05 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: outcome_model_ref, counterfactual_prediction_rule_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-002, DGP-003; NEG-010, NEG-012, NEG-013; REF-E05. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M06 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: treated_model_ref, control_model_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-003, DGP-004; NEG-010, NEG-013; REF-E05. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M07 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CATE; Pxx=P02; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: treated_model_ref, control_model_ref, cross_arm_weight_model_ref; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, effect_modifiers, controls, unconfoundedness_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+### P2-M08 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Method scope: ESTIMATE / CONDITIONAL_IV_STRUCTURAL_SLOPE; Pxx=P03; preserve 10_32 scientific target, do not cast alternative estimands.
+- Config mandatory fields: outcome_model_ref, treatment_model_ref, instrument_model_ref, cv_folds; versioned method_config Schema restricts type/const/range and extra keys, config={} is rejected, no backend defaults.
+- Question mandatory: question_id/research_question/population/analysis_goal/estimand_family/contrast; Study target and references cross-validated.
+- Design mandatory: design_id/question_id/design_kind plus treatment, outcome, instrument, effect_modifiers, controls, iv_assumptions_ref; validated data columns, roles, dataset support and assumption/Graph/temporal provenance. Declarations are not proof of causal truth. Exact types enforced by dedicated design_profile Schema.
+- Positive output: result.json/e11-local-effect-result/1, point may be unavailable; individual row outputs only by G05 authority; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
+- Inference: requested=false/null or true/numeric (0,1); real CI needs compatible versioned backend and independent coverage; unsupported→INFERENCE_UNAVAILABLE. CONFIRMATORY is not granted by schema syntax.
+- Independent AC: DGP-008; NEG-009, NEG-012, NEG-013; REF-E06. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.

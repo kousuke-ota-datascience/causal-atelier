@@ -92,3 +92,9 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.1 Method ownership matrix (DRAFT)
+- P3-M01 Pxx P02 DISCOVER/10_32 semantic target (not assigned canonical enum) Config(ci_test_spec_ref, tau_min, tau_max, alpha), Design(time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref), DGP-009; NEG-021; REF-G03; Backend/Science BLOCKED.
+- P3-M02 Pxx P02 DISCOVER/10_32 semantic target (not assigned canonical enum) Config(ci_test_spec_ref, tau_min, tau_max, alpha, contemporaneous_rules_ref), Design(time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref, endpoint_convention_ref), DGP-009, DGP-010; NEG-021, NEG-028; REF-G03, REF-G02; Backend/Science BLOCKED.
+- P3-M03 Pxx P02 DISCOVER/10_32 semantic target (not assigned canonical enum) Config(ci_test_spec_ref, tau_min, tau_max, alpha, latent_assumptions_ref), Design(time_index, sampling_unit, observed_variables, temporal_ordering_ref, lag_convention_ref, endpoint_convention_ref), DGP-011; NEG-021, NEG-028; REF-G03, REF-G02; Backend/Science BLOCKED.
