@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m08:design_profile:draft1",
+  "title": "P1-M08 design_profile strict Method profile — DRAFT",
+  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_id",
+    "question_id",
+    "design_kind",
+    "treatment",
+    "outcome",
+    "randomization_evidence_ref",
+    "allocation_unit"
+  ],
+  "properties": {
+    "design_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "design_kind": {
+      "const": "RANDOMIZED_EFFECT"
+    },
+    "treatment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "randomization_evidence_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "allocation_unit": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

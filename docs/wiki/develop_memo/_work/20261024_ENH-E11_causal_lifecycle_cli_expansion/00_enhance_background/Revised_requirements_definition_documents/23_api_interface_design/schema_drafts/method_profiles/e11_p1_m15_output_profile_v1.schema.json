@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m15:output_profile:draft1",
+  "title": "P1-M15 output_profile strict Method profile — DRAFT",
+  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "method_id",
+    "operation",
+    "positive_artifacts",
+    "forbidden_artifacts",
+    "portable_result_schema",
+    "upstream_hashes_verified"
+  ],
+  "properties": {
+    "method_id": {
+      "const": "P1-M15"
+    },
+    "operation": {
+      "const": "REFUTE"
+    },
+    "positive_artifacts": {
+      "const": [
+        "diagnostics.json"
+      ]
+    },
+    "forbidden_artifacts": {
+      "const": [
+        "result.json"
+      ]
+    },
+    "portable_result_schema": {
+      "const": "DIAGNOSTIC_EVIDENCE"
+    },
+    "upstream_hashes_verified": {
+      "const": true
+    }
+  }
+}

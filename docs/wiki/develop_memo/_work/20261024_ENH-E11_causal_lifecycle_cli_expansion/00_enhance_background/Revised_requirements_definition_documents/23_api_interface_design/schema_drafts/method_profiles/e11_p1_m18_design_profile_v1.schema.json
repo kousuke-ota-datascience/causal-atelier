@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m18:design_profile:draft1",
+  "title": "P1-M18 design_profile strict Method profile — DRAFT",
+  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_id",
+    "question_id",
+    "design_kind",
+    "outcome",
+    "treatment",
+    "negative_control_exposure",
+    "null_assumption_ref",
+    "adjustment_columns"
+  ],
+  "properties": {
+    "design_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "design_kind": {
+      "const": "OBSERVED_NCE"
+    },
+    "outcome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "treatment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "negative_control_exposure": {
+      "type": "string",
+      "minLength": 1
+    },
+    "null_assumption_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "adjustment_columns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  }
+}

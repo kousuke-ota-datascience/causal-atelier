@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p2-m01:method_config:draft1",
+  "title": "P2-M01 method_config strict Method profile — DRAFT",
+  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_y_ref",
+    "model_t_ref",
+    "cv_folds",
+    "final_model_ref"
+  ],
+  "properties": {
+    "model_y_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model_t_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cv_folds": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "final_model_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

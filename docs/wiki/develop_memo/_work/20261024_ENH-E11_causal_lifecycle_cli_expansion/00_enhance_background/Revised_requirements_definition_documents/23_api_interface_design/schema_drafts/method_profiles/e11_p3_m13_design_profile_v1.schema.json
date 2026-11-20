@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p3-m13:design_profile:draft1",
+  "title": "P3-M13 design_profile strict Method profile — DRAFT",
+  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_id",
+    "question_id",
+    "design_kind",
+    "treated_units",
+    "donor_units",
+    "time_index",
+    "preperiod_end",
+    "intervention_time",
+    "panel_support_ref"
+  ],
+  "properties": {
+    "design_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "design_kind": {
+      "const": "SYNTHETIC_DID"
+    },
+    "treated_units": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "donor_units": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "time_index": {
+      "type": "string",
+      "minLength": 1
+    },
+    "preperiod_end": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intervention_time": {
+      "type": "string",
+      "minLength": 1
+    },
+    "panel_support_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
