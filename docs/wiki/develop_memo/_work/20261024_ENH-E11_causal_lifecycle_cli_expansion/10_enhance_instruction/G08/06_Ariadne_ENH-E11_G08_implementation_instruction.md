@@ -99,3 +99,11 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.1 Method ownership matrix (DRAFT)
+- P3-M07 Pxx P01 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(bandwidth, polynomial_order, kernel_spec_ref, cutoff), Design(running_variable, outcome, treatment, cutoff, continuity_assumption_ref, density_check_ref), DGP-015; NEG-023; REF-Q03; backend/Science not verified.
+- P3-M08 Pxx P01 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(bandwidth, polynomial_order, kernel_spec_ref, cutoff, first_stage_diagnostic_ref), Design(running_variable, outcome, treatment, cutoff, local_iv_assumptions_ref, first_stage_evidence_ref), DGP-016; NEG-006, NEG-023; REF-Q03, REF-I03; backend/Science not verified.
+- P3-M09 Pxx P02 ESTIMATE/LATE_COMPLIER Config(design_profile, first_stage_diagnostic_ref, variance_spec_ref), Design(instrument, treatment, outcome, instrument_binary, treatment_binary, adjustment_columns, iv_assumptions_ref), DGP-006; NEG-006, NEG-007; REF-I03, REF-E07; backend/Science not verified.
+- P3-M10 Pxx P03 ESTIMATE/LATE_COMPLIER Config(design_profile, first_stage_diagnostic_ref, ar_statistic_spec_ref, covariance_spec_ref), Design(instrument, treatment, outcome, instrument_binary, treatment_binary, adjustment_columns, iv_assumptions_ref), DGP-006, DGP-024; NEG-006, NEG-025; REF-E07, REF-U01; backend/Science not verified.
+- P3-M11 Pxx P03 ESTIMATE/LINEAR_IV_STRUCTURAL_COEFFICIENT Config(design_profile, first_stage_diagnostic_ref, ar_statistic_spec_ref, covariance_spec_ref), Design(instrument, treatment, outcome, instrument_binary, treatment_binary, controls, iv_assumptions_ref), DGP-007, DGP-024; NEG-008, NEG-025; REF-E08, REF-U01; backend/Science not verified.

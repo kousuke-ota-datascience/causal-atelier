@@ -93,3 +93,9 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.1 Method ownership matrix (DRAFT)
+- P3-M04 Pxx P01 ESTIMATE/ATT Config(design_variant, estimator_spec_ref, cluster_covariance_spec_ref), Design(unit_id, time_id, treatment, outcome, parallel_trends_assumption_ref), DGP-012, DGP-013; NEG-022; REF-Q01; backend/Science not verified.
+- P3-M05 Pxx P01 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(event_window_start, event_window_end, reference_event_time, cohort_estimator_spec_ref, cluster_covariance_spec_ref), Design(unit_id, time_id, treatment, outcome, cohort_id, pretrend_assumption_ref), DGP-013; NEG-022; REF-Q01; backend/Science not verified.
+- P3-M06 Pxx P02 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(effect_components, trend_spec_ref, serial_covariance_spec_ref), Design(time_index, outcome, intervention_time, seasonality_spec_ref, autocorrelation_evidence_ref), DGP-014; NEG-023; REF-Q02; backend/Science not verified.

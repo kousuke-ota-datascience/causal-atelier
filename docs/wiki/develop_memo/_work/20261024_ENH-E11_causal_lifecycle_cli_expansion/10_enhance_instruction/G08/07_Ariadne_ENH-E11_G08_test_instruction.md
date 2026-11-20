@@ -66,3 +66,60 @@
 B0 LATEとB1 slopeの混同、weak IVで有限CI捏造、AR setの単一区間化を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+
+## PREP-04.1 independent strict Method verification (DRAFT)
+
+### P3-M07 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Scientific operation ESTIMATE, target=10_32 semantic target (not assigned canonical enum), owner P01. Preserve DiD2x2/staggered/event-time/ITS/RD/B0/B1 distinct targets and Estimands; B0 LATE is not B1 structural IV coefficient.
+- Config mandatory fields: bandwidth, polynomial_order, kernel_spec_ref, cutoff. Strict type/const/domain as versioned method_config Schema, no unknown keys/defaults, reject config={}.
+- Question mandatory: question_id, research_question, population, analysis_goal, estimand_family, contrast. Compare with Study/Design and upstream identification/graph hashes.
+- Design mandatory: design_id, question_id, design_kind and running_variable, outcome, treatment, cutoff, continuity_assumption_ref, density_check_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
+- Output: positive result.json/e11-local-effect-result/1, numerical point null with typed reason if unavailable; G01 Reader/Marker/Manifest/Hash; AR topology ALL_REAL/UNBOUNDED/DISCONNECTED/BOUNDED and mathematically possible EMPTY distinguished from numerical FAILED. No invented finite-grid full-real guarantee.
+- Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
+- Independent tests DGP-015; NEG-023; REF-Q03. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
+
+
+### P3-M08 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Scientific operation ESTIMATE, target=10_32 semantic target (not assigned canonical enum), owner P01. Preserve DiD2x2/staggered/event-time/ITS/RD/B0/B1 distinct targets and Estimands; B0 LATE is not B1 structural IV coefficient.
+- Config mandatory fields: bandwidth, polynomial_order, kernel_spec_ref, cutoff, first_stage_diagnostic_ref. Strict type/const/domain as versioned method_config Schema, no unknown keys/defaults, reject config={}.
+- Question mandatory: question_id, research_question, population, analysis_goal, estimand_family, contrast. Compare with Study/Design and upstream identification/graph hashes.
+- Design mandatory: design_id, question_id, design_kind and running_variable, outcome, treatment, cutoff, local_iv_assumptions_ref, first_stage_evidence_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
+- Output: positive result.json/e11-local-effect-result/1, numerical point null with typed reason if unavailable; G01 Reader/Marker/Manifest/Hash; AR topology ALL_REAL/UNBOUNDED/DISCONNECTED/BOUNDED and mathematically possible EMPTY distinguished from numerical FAILED. No invented finite-grid full-real guarantee.
+- Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
+- Independent tests DGP-016; NEG-006, NEG-023; REF-Q03, REF-I03. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
+
+
+### P3-M09 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Scientific operation ESTIMATE, target=LATE_COMPLIER, owner P02. Preserve DiD2x2/staggered/event-time/ITS/RD/B0/B1 distinct targets and Estimands; B0 LATE is not B1 structural IV coefficient.
+- Config mandatory fields: design_profile, first_stage_diagnostic_ref, variance_spec_ref. Strict type/const/domain as versioned method_config Schema, no unknown keys/defaults, reject config={}.
+- Question mandatory: question_id, research_question, population, analysis_goal, estimand_family, contrast. Compare with Study/Design and upstream identification/graph hashes.
+- Design mandatory: design_id, question_id, design_kind and instrument, treatment, outcome, instrument_binary, treatment_binary, adjustment_columns, iv_assumptions_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
+- Output: positive result.json/e11-local-effect-result/1, numerical point null with typed reason if unavailable; G01 Reader/Marker/Manifest/Hash; AR topology ALL_REAL/UNBOUNDED/DISCONNECTED/BOUNDED and mathematically possible EMPTY distinguished from numerical FAILED. No invented finite-grid full-real guarantee.
+- Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
+- Independent tests DGP-006; NEG-006, NEG-007; REF-I03, REF-E07. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
+
+
+### P3-M10 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Scientific operation ESTIMATE, target=LATE_COMPLIER, owner P03. Preserve DiD2x2/staggered/event-time/ITS/RD/B0/B1 distinct targets and Estimands; B0 LATE is not B1 structural IV coefficient.
+- Config mandatory fields: design_profile, first_stage_diagnostic_ref, ar_statistic_spec_ref, covariance_spec_ref. Strict type/const/domain as versioned method_config Schema, no unknown keys/defaults, reject config={}.
+- Question mandatory: question_id, research_question, population, analysis_goal, estimand_family, contrast. Compare with Study/Design and upstream identification/graph hashes.
+- Design mandatory: design_id, question_id, design_kind and instrument, treatment, outcome, instrument_binary, treatment_binary, adjustment_columns, iv_assumptions_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
+- Output: positive result.json/e11-local-effect-result/1, numerical point null with typed reason if unavailable; G01 Reader/Marker/Manifest/Hash; AR topology ALL_REAL/UNBOUNDED/DISCONNECTED/BOUNDED and mathematically possible EMPTY distinguished from numerical FAILED. No invented finite-grid full-real guarantee.
+- Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
+- Independent tests DGP-006, DGP-024; NEG-006, NEG-025; REF-E07, REF-U01. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
+
+
+### P3-M11 — strict Method contract (PREP-04.1 DRAFT / NOT_FROZEN)
+- Scientific operation ESTIMATE, target=LINEAR_IV_STRUCTURAL_COEFFICIENT, owner P03. Preserve DiD2x2/staggered/event-time/ITS/RD/B0/B1 distinct targets and Estimands; B0 LATE is not B1 structural IV coefficient.
+- Config mandatory fields: design_profile, first_stage_diagnostic_ref, ar_statistic_spec_ref, covariance_spec_ref. Strict type/const/domain as versioned method_config Schema, no unknown keys/defaults, reject config={}.
+- Question mandatory: question_id, research_question, population, analysis_goal, estimand_family, contrast. Compare with Study/Design and upstream identification/graph hashes.
+- Design mandatory: design_id, question_id, design_kind and instrument, treatment, outcome, instrument_binary, treatment_binary, controls, iv_assumptions_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
+- Output: positive result.json/e11-local-effect-result/1, numerical point null with typed reason if unavailable; G01 Reader/Marker/Manifest/Hash; AR topology ALL_REAL/UNBOUNDED/DISCONNECTED/BOUNDED and mathematically possible EMPTY distinguished from numerical FAILED. No invented finite-grid full-real guarantee.
+- Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
+- Independent tests DGP-007, DGP-024; NEG-008, NEG-025; REF-E08, REF-U01. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.

@@ -40,3 +40,10 @@ Each Pxx→focused verification→20 Package Report→Checkpoint SHA。全requir
 ## 4. Governance / Coding Authorization
 
 P00は独立受入条件でも実装許可でもない。06/07 Freeze、Owner採用のPackage list/dependency、上流Gate canonical 999、実基準SHAとenvironment preflightが揃うまでPxxは実行禁止。Issue、Package結果、P00の状態を999代用にしない。
+
+## PREP-04.1 integration preflight (DRAFT)
+- P3-M07 owner P01: five strict profiles and DGP-015; NEG-023; REF-Q03; science/backend BLOCKED.
+- P3-M08 owner P01: five strict profiles and DGP-016; NEG-006, NEG-023; REF-Q03, REF-I03; science/backend BLOCKED.
+- P3-M09 owner P02: five strict profiles and DGP-006; NEG-006, NEG-007; REF-I03, REF-E07; science/backend BLOCKED.
+- P3-M10 owner P03: five strict profiles and DGP-006, DGP-024; NEG-006, NEG-025; REF-E07, REF-U01; science/backend BLOCKED.
+- P3-M11 owner P03: five strict profiles and DGP-007, DGP-024; NEG-008, NEG-025; REF-E08, REF-U01; science/backend BLOCKED.
