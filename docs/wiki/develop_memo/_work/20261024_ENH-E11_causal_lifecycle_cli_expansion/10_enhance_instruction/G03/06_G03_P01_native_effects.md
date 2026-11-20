@@ -248,3 +248,27 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.
+
+
+## PREP-04.1 owner Method contracts (DRAFT / NOT_FROZEN)
+
+### P1-M08 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: ATE; owner: P01. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED variance_spec_ref, treatment_coding_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, randomization_evidence_ref, allocation_unit plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-001, DGP-022; NEG-001, NEG-010; REF-E01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M09 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: 10_32 semantic target (not assigned canonical enum); owner: P01. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED linear_model_spec_ref, contrast_spec_ref, covariance_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, adjustment_columns, identification_evidence_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002, DGP-003; NEG-002, NEG-008, NEG-020; REF-E01, REF-I01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.

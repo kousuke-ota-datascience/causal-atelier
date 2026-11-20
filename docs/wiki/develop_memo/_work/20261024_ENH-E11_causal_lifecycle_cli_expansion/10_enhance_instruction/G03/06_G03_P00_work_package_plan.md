@@ -44,3 +44,18 @@ Each Pxx→focused verification→20 Package Report→Checkpoint SHA。全requir
 ## 4. Governance / Coding Authorization
 
 P00は独立受入条件でも実装許可でもない。06/07 Freeze、Owner採用のPackage list/dependency、上流Gate canonical 999、実基準SHAとenvironment preflightが揃うまでPxxは実行禁止。Issue、Package結果、P00の状態を999代用にしない。
+
+## PREP-04.1 integration guards (DRAFT)
+- P1-M08 owner P01 strict five-profile validation, negative Science DGP-001, DGP-022; NEG-001, NEG-010; REF-E01.
+- P1-M09 owner P01 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-002, NEG-008, NEG-020; REF-E01, REF-I01.
+- P1-M10 owner P02 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-010, NEG-018; REF-E02.
+- P1-M11 owner P02 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-010, NEG-011, NEG-012; REF-E03.
+- P1-M12 owner P03 strict five-profile validation, negative Science DGP-022; NEG-014; REF-R01.
+- P1-M13 owner P03 strict five-profile validation, negative Science DGP-001, DGP-002; NEG-015; REF-R01.
+- P1-M14 owner P03 strict five-profile validation, negative Science DGP-002; NEG-017; REF-R01.
+- P1-M15 owner P03 strict five-profile validation, negative Science DGP-001, DGP-002; NEG-016; REF-R01.
+- P1-M16 owner P04 strict five-profile validation, negative Science DGP-021, DGP-002; NEG-002; REF-G01, REF-R01.
+- P1-M17 owner P04 strict five-profile validation, negative Science DGP-002, DGP-023; NEG-010, NEG-018; REF-E02, REF-R01.
+- P1-M18 owner P05 strict five-profile validation, negative Science DGP-019; NEG-019, NEG-026; REF-R02.
+- P1-M19 owner P05 strict five-profile validation, negative Science DGP-019; NEG-019, NEG-026; REF-R02.
+- P1-M20 owner P05 strict five-profile validation, negative Science DGP-020; NEG-020; REF-R03.

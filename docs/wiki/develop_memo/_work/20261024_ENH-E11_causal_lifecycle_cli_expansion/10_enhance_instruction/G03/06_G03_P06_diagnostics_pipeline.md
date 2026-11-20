@@ -364,3 +364,19 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing specific profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
 **Readiness:** This Owner decision allocates work; it does not assert that schemas, independent DGP/REF, Backend execution, K/R/MC-SE/coverage, Gate07/999, contract Freeze or Coding Authorization are complete. No new mathematical Target is adopted here.
+
+
+## PREP-04.1 integration guards (DRAFT)
+- P1-M08 owner P01 strict five-profile validation, negative Science DGP-001, DGP-022; NEG-001, NEG-010; REF-E01.
+- P1-M09 owner P01 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-002, NEG-008, NEG-020; REF-E01, REF-I01.
+- P1-M10 owner P02 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-010, NEG-018; REF-E02.
+- P1-M11 owner P02 strict five-profile validation, negative Science DGP-002, DGP-003; NEG-010, NEG-011, NEG-012; REF-E03.
+- P1-M12 owner P03 strict five-profile validation, negative Science DGP-022; NEG-014; REF-R01.
+- P1-M13 owner P03 strict five-profile validation, negative Science DGP-001, DGP-002; NEG-015; REF-R01.
+- P1-M14 owner P03 strict five-profile validation, negative Science DGP-002; NEG-017; REF-R01.
+- P1-M15 owner P03 strict five-profile validation, negative Science DGP-001, DGP-002; NEG-016; REF-R01.
+- P1-M16 owner P04 strict five-profile validation, negative Science DGP-021, DGP-002; NEG-002; REF-G01, REF-R01.
+- P1-M17 owner P04 strict five-profile validation, negative Science DGP-002, DGP-023; NEG-010, NEG-018; REF-E02, REF-R01.
+- P1-M18 owner P05 strict five-profile validation, negative Science DGP-019; NEG-019, NEG-026; REF-R02.
+- P1-M19 owner P05 strict five-profile validation, negative Science DGP-019; NEG-019, NEG-026; REF-R02.
+- P1-M20 owner P05 strict five-profile validation, negative Science DGP-020; NEG-020; REF-R03.

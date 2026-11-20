@@ -74,3 +74,150 @@
 ATE/ATT重み混同、NCE/NCO帰無非棄却からの無交絡証明、OLS以外へのRV流用を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+
+## PREP-04.1 independent acceptance per Method (DRAFT)
+
+### P1-M08 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: ATE; owner: P01. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED variance_spec_ref, treatment_coding_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, randomization_evidence_ref, allocation_unit plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-001, DGP-022; NEG-001, NEG-010; REF-E01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M09 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: 10_32 semantic target (not assigned canonical enum); owner: P01. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED linear_model_spec_ref, contrast_spec_ref, covariance_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, adjustment_columns, identification_evidence_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002, DGP-003; NEG-002, NEG-008, NEG-020; REF-E01, REF-I01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M10 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: 10_32 semantic target (not assigned canonical enum); owner: P02. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED propensity_model_ref, weight_normalization_spec_ref, positivity_diagnostic_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, confounders, overlap_assumption_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002, DGP-003; NEG-010, NEG-018; REF-E02; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M11 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: ESTIMATE; target: 10_32 semantic target (not assigned canonical enum); owner: P02. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED propensity_model_ref, outcome_model_ref, crossfit_folds, variance_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED treatment, outcome, confounders, overlap_assumption_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: result.json/e11-local-effect-result/1; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: true request syntax requires confidence_level (0,1), not scientific CI availability; false => null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002, DGP-003; NEG-010, NEG-011, NEG-012; REF-E03; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M12 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: REFUTE; target: 10_32 semantic target (not assigned canonical enum); owner: P03. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED placebo_rule_ref, repetitions; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, design_evidence_ref, resampling_unit plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-022; NEG-014; REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M13 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: REFUTE; target: 10_32 semantic target (not assigned canonical enum); owner: P03. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED subset_selection_ref, subset_fraction; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, design_evidence_ref, sampling_unit plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-001, DGP-002; NEG-015; REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M14 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: REFUTE; target: 10_32 semantic target (not assigned canonical enum); owner: P03. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED perturbation_generator_ref, repetitions; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, design_evidence_ref, perturbation_scope_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002; NEG-017; REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M15 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: REFUTE; target: 10_32 semantic target (not assigned canonical enum); owner: P03. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED resampling_unit, resamples; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, design_evidence_ref, resampling_unit plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-001, DGP-002; NEG-016; REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M16 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: SENSITIVITY; target: 10_32 semantic target (not assigned canonical enum); owner: P04. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED candidate_adjustment_sets, design_check_rule_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, graph_evidence_ref, candidate_adjustment_sets plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-021, DGP-002; NEG-002; REF-G01, REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M17 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: SENSITIVITY; target: 10_32 semantic target (not assigned canonical enum); owner: P04. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED clip_lower, clip_upper, diagnostic_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED base_effect_hash, propensity_evidence_ref, overlap_assumption_ref plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-002, DGP-023; NEG-010, NEG-018; REF-E02, REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M18 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: DIAGNOSE; target: 10_32 semantic target (not assigned canonical enum); owner: P05. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED negative_control_exposure, explicit_opt_in, null_diagnostic_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED outcome, treatment, negative_control_exposure, null_assumption_ref, adjustment_columns plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-019; NEG-019, NEG-026; REF-R02; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M19 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: DIAGNOSE; target: 10_32 semantic target (not assigned canonical enum); owner: P05. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED negative_control_outcome, explicit_opt_in, null_diagnostic_spec_ref; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED outcome, treatment, negative_control_outcome, null_assumption_ref, adjustment_columns plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-019; NEG-019, NEG-026; REF-R02; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+### P1-M20 — strict Method contract (PREP-04.1 DRAFT)
+- Operation: DIAGNOSE; target: 10_32 semantic target (not assigned canonical enum); owner: P05. Study/Question/Design/Estimand/Graph and content hashes must match.
+- Config: REQUIRED q, ols_model_spec_ref, target_coefficient_ref, variance_kind; strict no unknown keys, no implicit defaults, config={} rejected. Exact type/const/domain constraints in its versioned method_config Schema.
+- Question: question_id/research_question/population/analysis_goal/estimand_family/contrast all mandatory, typed, Study-consistent.
+- Design: REQUIRED outcome, treatment, ols_fit_evidence_ref, degrees_of_freedom plus design_id/question_id/design_kind; explicit roles, assumptions and support validated semantically, never inferred from label. Exact field types in its versioned design_profile Schema.
+- Output positive: diagnostics.json; no numeric effect result.json; G01 Publisher/Reader/Manifest/Hash and privacy required. Typed scientific negative can omit positive artifact.
+- Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
+- Independent positive/negative obligations: DGP-020; NEG-020; REF-R03; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
+- BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+Independent backend and science PASS not yet evidenced.
