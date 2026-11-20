@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m07:method_config:draft1",
+  "title": "P1-M07 — restricted single-mediator FD-A linear two-stage ATE / method_config",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "estimation_rule",
+    "mediator_column",
+    "mediator_model_spec_ref",
+    "outcome_model_spec_ref"
+  ],
+  "properties": {
+    "estimation_rule": {
+      "const": "FD_A_LINEAR_COEFFICIENT_PRODUCT"
+    },
+    "mediator_column": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mediator_model_spec_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outcome_model_spec_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

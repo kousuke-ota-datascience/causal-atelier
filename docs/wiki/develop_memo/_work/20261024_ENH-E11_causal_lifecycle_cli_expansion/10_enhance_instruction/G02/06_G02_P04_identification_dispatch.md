@@ -341,3 +341,12 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - **Self-containment:** Class Fields/Constructor/public Method/処理は§3.1以降、Package固有順序は§4、Methodと独立検証IDは§5〜6で与える。他の06/P00/07やDDをNormative手順の補完材料にしない。
 - **Remaining review:** upstream Proof→Estimator eligibility/Manifestのcross-operation schema具体性。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
+
+
+## PREP-04.1 Dispatch-specific Negative Matrix (DRAFT / NOT_FROZEN)
+- P1-M01: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-001, NEG-027. No profile fallback.
+- P1-M02: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-002, NEG-003. No profile fallback.
+- P1-M03: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-002, NEG-027. No profile fallback.
+- P1-M04: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-004. No profile fallback.
+- P1-M05: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-006, NEG-007. No profile fallback.
+- P1-M07: Require registered five strict internal profiles for ESTIMATE; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-004, NEG-005. No profile fallback.

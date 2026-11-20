@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m05:method_config:draft1",
+  "title": "P1-M05 — DoWhy IV conditional complier LATE identification (B0) / method_config",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_profile",
+    "monotonicity_direction"
+  ],
+  "properties": {
+    "design_profile": {
+      "const": "B0_BINARY_IV"
+    },
+    "monotonicity_direction": {
+      "enum": [
+        "NONDECREASING",
+        "NONINCREASING"
+      ]
+    }
+  }
+}

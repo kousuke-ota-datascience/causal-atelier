@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m02:method_config:draft1",
+  "title": "P1-M02 — Native backdoor ATE identification / method_config",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identification_rule",
+    "adjustment_columns"
+  ],
+  "properties": {
+    "identification_rule": {
+      "const": "GRAPH_BACKDOOR"
+    },
+    "adjustment_columns": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  }
+}

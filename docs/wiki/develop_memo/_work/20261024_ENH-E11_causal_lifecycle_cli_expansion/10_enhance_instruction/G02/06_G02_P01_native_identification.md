@@ -244,3 +244,30 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - **Self-containment:** Class Fields/Constructor/public Method/処理は§3.1以降、Package固有順序は§4、Methodと独立検証IDは§5〜6で与える。他の06/P00/07やDDをNormative手順の補完材料にしない。
 - **Remaining review:** 既存Scientific Kernelで利用可能なGraph/Adjustment APIとNativeAdapterへのBridgeの現物照合。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
+
+
+### P1-M01: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `IDENTIFY` / existing randomized identification target; resolve exact family from legacy source evidence; Backend evidence `ENV-BASE` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** identification_rule:const(RANDOMIZED_ASSIGNMENT); `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=IDENTIFICATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, allocation_unit, randomization_evidence_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** identification.json proof; result.json and numeric Effect forbidden; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false and confidence_level=null, no estimator/CI. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-001; negatives NEG-001, NEG-027 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-G01, REF-I01; AC-D01, AC-D02, AC-D07. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Treatment contrast and target-family equivalence must be checked against existing v2 randomized behavior
+  - No empirical proof of randomized assignment is implied by declaration
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).
+
+
+### P1-M02: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `IDENTIFY` / `ATE`; Backend evidence `ENV-BASE` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** identification_rule:const(GRAPH_BACKDOOR), adjustment_columns:array; `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=IDENTIFICATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, adjustment_columns, graph_evidence_ref, backdoor_proof_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** identification.json proof; result.json and numeric Effect forbidden; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false and confidence_level=null, no estimator/CI. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-002,DGP-021; negatives NEG-002, NEG-003 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-G01, REF-I01; AC-D01, AC-D02, AC-D07. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Graph semantic validator must reject colliders and post-treatment adjustment; empty adjustment set is allowed only if graph-valid
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).

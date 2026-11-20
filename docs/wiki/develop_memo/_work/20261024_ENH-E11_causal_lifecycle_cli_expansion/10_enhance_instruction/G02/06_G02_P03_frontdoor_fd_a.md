@@ -279,3 +279,17 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - **Self-containment:** Class Fields/Constructor/public Method/処理は§3.1以降、Package固有順序は§4、Methodと独立検証IDは§5〜6で与える。他の06/P00/07やDDをNormative手順の補完材料にしない。
 - **Remaining review:** FD-A数値推定の条件付き共変量構造、Variance/CI、Backend版/Reference妥当性。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
+
+
+### P1-M07: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `ESTIMATE` / `ATE`; Backend evidence `ENV-DOWHY` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** estimation_rule:const(FD_A_LINEAR_COEFFICIENT_PRODUCT), mediator_column:string, mediator_model_spec_ref:string, outcome_model_spec_ref:string; `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=EFFECT_ESTIMATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, mediator, frontdoor_proof_ref, no_direct_path_assumption_ref, linear_mediator_model_ref, linear_outcome_model_ref, graph_evidence_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** result.json with e11-local-effect-result/1; do not produce unsupported CI; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false → confidence_level=null; requested=true → confidence_level∈(0,1), execution requires an independently approved effective Method-specific CI otherwise INFERENCE_UNAVAILABLE; never promote to CONFIRMATORY. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-005; negatives NEG-004, NEG-005 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-I02, REF-E04; AC-D03, AC-P01, AC-P03, AC-I01, AC-I02. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Fix and independently verify precise mediator/outcome regressions including covariates and interaction exclusions
+  - Finite-sample variance, interval method, bootstrap validity and selected backend signature require independent science/runtime evidence
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).

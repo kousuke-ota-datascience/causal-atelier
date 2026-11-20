@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m05:output_profile:draft1",
+  "title": "P1-M05 — DoWhy IV conditional complier LATE identification (B0) / output_profile",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "method_id",
+    "operation",
+    "positive_artifacts",
+    "forbidden_artifacts",
+    "portable_result_schema",
+    "upstream_hashes_verified"
+  ],
+  "properties": {
+    "method_id": {
+      "const": "P1-M05"
+    },
+    "operation": {
+      "const": "IDENTIFY"
+    },
+    "positive_artifacts": {
+      "const": [
+        "identification.json"
+      ]
+    },
+    "forbidden_artifacts": {
+      "const": [
+        "result.json"
+      ]
+    },
+    "portable_result_schema": {
+      "const": "IDENTIFICATION_PROOF"
+    },
+    "upstream_hashes_verified": {
+      "const": true
+    }
+  }
+}

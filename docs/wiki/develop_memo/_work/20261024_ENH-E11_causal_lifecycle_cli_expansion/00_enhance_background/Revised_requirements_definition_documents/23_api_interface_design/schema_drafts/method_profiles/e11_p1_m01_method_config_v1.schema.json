@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m01:method_config:draft1",
+  "title": "P1-M01 — Native randomized identification / method_config",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identification_rule"
+  ],
+  "properties": {
+    "identification_rule": {
+      "const": "RANDOMIZED_ASSIGNMENT"
+    }
+  }
+}

@@ -249,3 +249,44 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - **Self-containment:** Class Fields/Constructor/public Method/処理は§3.1以降、Package固有順序は§4、Methodと独立検証IDは§5〜6で与える。他の06/P00/07やDDをNormative手順の補完材料にしない。
 - **Remaining review:** `P1-M05`の対象はB0 conditional `LATE_COMPLIER`にOwner確定済み。 Method-specific Schema/Backend/独立Fixture/Science quantitative thresholdを実際に固定する。未確定部分を実装推測で埋めず、対象MethodをBLOCKEDとして扱う。
+
+
+### P1-M03: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `IDENTIFY` / `ATE`; Backend evidence `ENV-DOWHY` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** identification_rule:const(DOWHY_BACKDOOR), adjustment_columns:array; `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=IDENTIFICATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, adjustment_columns, graph_evidence_ref, backdoor_proof_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** identification.json proof; result.json and numeric Effect forbidden; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false and confidence_level=null, no estimator/CI. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-002,DGP-021; negatives NEG-002, NEG-027 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-G01, REF-I01; AC-D01, AC-D02, AC-D07. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Pin effective DoWhy identify_effect signature, returned estimand proof and version; DoWhy display string is not proof
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).
+
+
+### P1-M04: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `IDENTIFY` / `ATE`; Backend evidence `ENV-DOWHY` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** identification_rule:const(DOWHY_FRONTDOOR), mediator_column:string; `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=IDENTIFICATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, mediator, graph_evidence_ref, frontdoor_proof_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** identification.json proof; result.json and numeric Effect forbidden; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false and confidence_level=null, no estimator/CI. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-005; negatives NEG-004 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-G01, REF-I02; AC-D01, AC-D02, AC-D07. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Frontdoor identification does not authorize linear two-stage effect calculation; test effective DoWhy API and conditions independently
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).
+
+
+### P1-M05: strict Profile authoring draft (PREP-04.1; NOT_FROZEN)
+- **Operation / accepted Estimand:** `IDENTIFY` / `LATE_COMPLIER`; Backend evidence `ENV-DOWHY` is an environment obligation, **not** an approved runtime backend selection.
+- **Strict Method Config required fields (no defaults):** design_profile:const(B0_BINARY_IV), monotonicity_direction:enum(NONDECREASING/NONINCREASING); `additionalProperties=false`; empty config invalid. Config↔Design↔Study must be compared semantically.
+- **Question required:** question_id, research_question, population, analysis_goal=IDENTIFICATION, estimand_family, contrast. Study estimand and question estimand must match exactly; M05 population=compliers, contrast=A1−A0.
+- **Design required:** design_id, question_id, design_kind, treatment, outcome, instrument, treatment_binary, instrument_binary, adjustment_columns, monotonicity_direction, relevance_assumption_ref, independence_assumption_ref, exclusion_assumption_ref, monotonicity_assumption_ref, consistency_assumption_ref, graph_evidence_ref. Assumption *references* are declarations, not empirical confirmation; validate identities, column roles, dataset support, graph/identification lineage.
+- **Output (positive only):** identification.json proof; result.json and numeric Effect forbidden; manifest/status/commit/readback follow G01. Scientific negative may have no positive artifact and must carry typed reason.
+- **Inference (Study.inference):** requested=false and confidence_level=null, no estimator/CI. Strict unknown-key rejection.
+- **Evidence obligation:** positive DGP-006; negatives NEG-006, NEG-007 plus config={} / unknown-key / wrong-method / wrong-estimand / wrong-backend / missing-ref / unsupported-CI; independent REF-I03, REF-G01; AC-D01, AC-D02, AC-D07. All fixtures/Backend/threshold/Science are NOT_GENERATED/NOT_EVALUATED.
+- **Unresolved (BLOCKED before Freeze):**
+  - Observe first-stage nonzero: cannot be proved by declaration; distinguish weak-IV evidence from identification logic
+  - DoWhy effective API and IV expression must be independently checked; no effect result.json
+  - Study contrast A1-A0, population=compliers and cross-field direction consistency are semantic validation, not implied by this JSON
+- **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).

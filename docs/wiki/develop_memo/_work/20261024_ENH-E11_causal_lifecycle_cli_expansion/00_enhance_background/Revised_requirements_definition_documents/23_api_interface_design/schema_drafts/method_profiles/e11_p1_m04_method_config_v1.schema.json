@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:prep04-1:p1-m04:method_config:draft1",
+  "title": "P1-M04 — DoWhy frontdoor ATE identification / method_config",
+  "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identification_rule",
+    "mediator_column"
+  ],
+  "properties": {
+    "identification_rule": {
+      "const": "DOWHY_FRONTDOOR"
+    },
+    "mediator_column": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

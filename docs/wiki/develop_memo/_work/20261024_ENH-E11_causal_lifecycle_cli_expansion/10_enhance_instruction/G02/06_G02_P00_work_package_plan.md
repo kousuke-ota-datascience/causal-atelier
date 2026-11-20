@@ -39,3 +39,12 @@ Each Pxx→focused verification→20 Package Report→Checkpoint SHA。全requir
 ## 4. Governance / Coding Authorization
 
 P00は独立受入条件でも実装許可でもない。06/07 Freeze、Owner採用のPackage list/dependency、上流Gate canonical 999、実基準SHAとenvironment preflightが揃うまでPxxは実行禁止。Issue、Package結果、P00の状態を999代用にしない。
+
+## PREP-04.1 strict Method contract status (DRAFT / NOT_FROZEN)
+- **P1-M01 / P01**: IDENTIFY; strict config required identification_rule; Design required treatment, outcome, allocation_unit, randomization_evidence_ref; DGP DGP-001, NEG-001/NEG-027, REF-G01/REF-I01; API/Science NOT_VERIFIED.
+- **P1-M02 / P01**: IDENTIFY; strict config required identification_rule, adjustment_columns; Design required treatment, outcome, adjustment_columns, graph_evidence_ref, backdoor_proof_ref; DGP DGP-002,DGP-021, NEG-002/NEG-003, REF-G01/REF-I01; API/Science NOT_VERIFIED.
+- **P1-M03 / P02**: IDENTIFY; strict config required identification_rule, adjustment_columns; Design required treatment, outcome, adjustment_columns, graph_evidence_ref, backdoor_proof_ref; DGP DGP-002,DGP-021, NEG-002/NEG-027, REF-G01/REF-I01; API/Science NOT_VERIFIED.
+- **P1-M04 / P02**: IDENTIFY; strict config required identification_rule, mediator_column; Design required treatment, outcome, mediator, graph_evidence_ref, frontdoor_proof_ref; DGP DGP-005, NEG-004, REF-G01/REF-I02; API/Science NOT_VERIFIED.
+- **P1-M05 / P02**: IDENTIFY; strict config required design_profile, monotonicity_direction; Design required treatment, outcome, instrument, treatment_binary, instrument_binary, adjustment_columns, monotonicity_direction, relevance_assumption_ref, independence_assumption_ref, exclusion_assumption_ref, monotonicity_assumption_ref, consistency_assumption_ref, graph_evidence_ref; DGP DGP-006, NEG-006/NEG-007, REF-I03/REF-G01; API/Science NOT_VERIFIED.
+- **P1-M07 / P03**: ESTIMATE; strict config required estimation_rule, mediator_column, mediator_model_spec_ref, outcome_model_spec_ref; Design required treatment, outcome, mediator, frontdoor_proof_ref, no_direct_path_assumption_ref, linear_mediator_model_ref, linear_outcome_model_ref, graph_evidence_ref; DGP DGP-005, NEG-004/NEG-005, REF-I02/REF-E04; API/Science NOT_VERIFIED.
+Schema files are under Revised IF23 schema_drafts/method_profiles. They are not yet runtime-registered; no invented backend signatures/CI. Actual independent 07 remains blocking.
