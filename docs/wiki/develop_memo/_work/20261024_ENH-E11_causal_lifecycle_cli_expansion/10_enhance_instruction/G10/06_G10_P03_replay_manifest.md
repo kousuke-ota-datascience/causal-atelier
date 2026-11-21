@@ -126,7 +126,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 | Field | Type | 生成元 | 可変性・制約 |
 | --- | --- | --- | --- |
-| `root` | `TrustedLocalRoot` | OS検証済みdirfd Capability | Immutable root handle。所有者・ACL・mount/同一FSを検証し、commit時にも整合を確認 |
+| `root` | `TrustedLocalRoot` | OS検証済みdirfd Capability | Immutable root handle。所有者・owner-only mode・local ext4/XFS/同一FSを検証し、commit時にもFD/owner/modeを確認 |
 | `run_id` | `str` | 正規化済LocalStudySpec | Immutable。23_42のsafe grammar |
 | `request_hash` | `str` | canonical LocalStudySpec bytes | Immutable。小文字SHA256 hex64 |
 | `state` | `PublishState` | FactoryでPREPARING | PREPARING→STAGING→VALIDATING→PUBLISHING→COMMITTED/INDETERMINATE、公開前のみABORTED |
