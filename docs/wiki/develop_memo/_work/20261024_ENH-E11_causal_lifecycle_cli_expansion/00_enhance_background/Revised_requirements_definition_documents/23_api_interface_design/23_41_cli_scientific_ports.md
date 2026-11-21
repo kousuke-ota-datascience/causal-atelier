@@ -74,7 +74,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ### 4.1. Port間の正規署名と相互整合
 
-上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はnonroot EUID/owner/mode・local ext4/XFS・same-FS/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
@@ -163,10 +163,10 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | ENV-DOWHY | `e11-dowhy` | Method別実効DoWhy API／版本照合 |
 | ENV-ECONML | `e11-econml` | method-specific CATE/DRIV、CI availability |
 | ENV-TIGRAMITE | `e11-temporal` | PCMCI系、端点/lag、顧客配布Legalは別判定 |
-| ENV-COMBINED | 上記3 extras | universal lock、共存、旧CLI回帰 |
+| ENV-COMBINED | 上記3 extras | optional 後続相互運用試験。初期必須の実行Profileではなく未検証combinedをsupported扱いしない |
 | ENV-RD | `e11-rdd`（法務・配布条件付き） | RD Backend・GPLの配布可否を受領者単位で判定 |
 
-`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版、SBOMは成果物集合、Legal Reviewは受領者別の配布可否。全Profileはfresh isolated venvで `uv lock --check / uv sync --locked / uv pip check` とMethod API smokeを実施する。未実測版を実効値として出力しない。GPLに係る特定顧客へのDeliveryは法務承認前 `CUSTOMER_DELIVERY_BLOCKED` とする。
+`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版を記録する。初期必須はENV-BASE/DOWHY/ECONML/TIGRAMITEの各isolated venvと `uv lock --check / uv sync --locked / uv pip check`＋Method API smoke。ENV-COMBINEDは追加optional QAであり、初期に同時共存を保証しない。SBOMや受領者別法務状態は内部CLIのRuntime/Manifestに含めず、実際の顧客納入の直前に別途手動審査し、未承認納入を禁止する。未実測版を実効値として出力しない。
 
 ## 8. 恒久Interface Contract Test
 

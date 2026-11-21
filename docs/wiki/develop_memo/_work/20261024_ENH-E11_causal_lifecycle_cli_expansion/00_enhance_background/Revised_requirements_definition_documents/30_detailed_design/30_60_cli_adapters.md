@@ -100,7 +100,7 @@ Protocol自身にmutable fieldなし（N/A）。引数`ref: ContentRef`、`root:
 
 #### 10.1.3. Constructor / Factory
 
-Protocolに具体constructorはない（N/A）。`TrustedLocalRoot`と`LocalPrincipal`の型Authorityは`ariadne.shared.local_fs`。TrustedRoot Factory／CLI composition rootはOS subject・dirfd・owner・ACL/mountを検証し、CLI Concreteに引き渡す。
+Protocolに具体constructorはない（N/A）。`TrustedLocalRoot`と`LocalPrincipal`の型Authorityは`ariadne.shared.local_fs`。TrustedRoot Factory／CLI composition rootは実際の非root OS EUID、owner・owner-only mode、safe dirfd、local ext4/XFS・same FSを検証し、CLI Concreteに引き渡す。別のACL/xattr・namespace/mount-IDの証明は初期local scopeの必須条件でない。
 
 #### 10.1.4. メソッド
 
