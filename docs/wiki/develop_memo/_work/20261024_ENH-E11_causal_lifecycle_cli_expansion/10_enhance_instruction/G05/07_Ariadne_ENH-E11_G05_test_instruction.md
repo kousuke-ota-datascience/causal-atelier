@@ -1,14 +1,13 @@
 # Ariadne ENH-E11 G05 — 07 独立テスト指示書：HTE診断・個票Privacy・Artifact
 
-### 現行G05個票出力契約 — Owner 2026-11-21
+### G05現行個票出力契約 — Owner 2026-11-21改訂
 
-- **要件:** FR-195／NFR-031／P2-15。一般ユーザーによるローカル分析中間Artifact。第三者Approver、署名、鍵、失効、issuer registryの承認プロセスを要求しない。「独立承認」ではなく「実行者の明示的opt-in」と定義する。
-- **対象環境:** Linux非root実効UID・ext4/XFS local filesystem。UID=root owner、root/staging 0700・Parquet 0600、ACL/mount/namespace/symlink/dirfd・same-FSを検証。管理者・同一UID processは本Threat Modelで隔離できない。
-- **許可AND:** `Study.privacy.row_export_requested=true` ∧ CLI `--allow-row-level-export` ∧ `RESTRICTED_ROW_LEVEL` ∧ 対象Methodの`ApprovedRowSchema`/ordered allowlist/row ID・row/byte/memory上限 ∧ private EUID-owned TrustedRoot ∧ same-run G01 StagingSink。未認可ならexit3、RowSource反復0・row bytes0、暗黙aggregate fallback無し。
-- **既決APIの限定変更:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase.__init__`から署名Verifier依存を除く。`e11-local-study/1`は維持し任意`privacy.policy_ref`は現行unsigned modeではnullのみ。
-- **維持するClass:** `RowEffectsParquetWriter.__init__(*,serializer,max_memory_bytes)`、`write(*,source,study,decision,selection,sink)->ArtifactDescriptor`、`RowEffectsWriterFactory.create(*,serializer,max_memory_bytes)`、`DeferredRowEffectsSource.schema/read_rows`、`ValidatedParquetSerializer.encode(*,rows,schema)->bytes`。Sourceは全許可成立後だけ反復。WriterはG01公開責務を複製しない。
-- **出力:** `row_effects.parquet`／`application/vnd.apache.parquet`／`RESTRICTED_ROW_LEVEL`。G01のみstaging/atomic no-clobber/Manifest/Marker/Reader。Stage/Seal/Publish前にroot/UID/ACL/mount/runを再検査。後段異常でprivate stagingの過去bytes0を主張せず、公開成功にもしない。Result/Manifest/stdout/stderr/logに行値なし。
-- **未完了:** Method別RowSchema/制約数値、実ext4/XFS/ACL/mount、Parquet ABI、科学Reference、独立07実測。Freeze・Coding Authorization・999は未実施。変更のAuthorityは`combined_review/129_20261121_dec_g05_local_row_export_simplification.md`、過去PREP-02/03/04.2は履歴として保持。
+- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。
+- **Privacy/OS:** EUIDが所有するprivate TrustedRoot、root/staging 0700、row file 0600、ACL/mount/namespace/symlink/dirfdとsame-FSを検査。rootと同一UIDのプロセスは隔離できない。個票は`RESTRICTED_ROW_LEVEL`に分類。
+- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。
+- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。
+- **Writer:** 既決`RowEffectsParquetWriter.__init__(*,serializer,max_memory_bytes)`、`write(*,source,study,decision,selection,sink)->ArtifactDescriptor`、`RowEffectsWriterFactory.create(*,serializer,max_memory_bytes)`、`DeferredRowEffectsSource.schema/read_rows`、`ValidatedParquetSerializer.encode(*,rows,schema)->bytes`を維持。実行条件成立後だけread_rows、G01 Sink以外へ書かない。
+- **Publication/test:** `row_effects.parquet`／`application/vnd.apache.parquet`のみG01 Publisher/Readerが原子的にpublish・readback。Stage/Seal/Publish前にroot/UID/mount/runを再検査、障害後にCOMMITTEDを偽装しない。個票値はaggregate Result/Manifest/CLI/logsへ出さない。未検証事項：Method RowSchema、実FS/Parquet、07独立Science/Privacy Test、Freeze、Coding Authorization。
 
 
 **Verification contract status: DRAFT / NOT_FROZEN / TESTS_NOT_RUN**
@@ -32,17 +31,17 @@
 
 ## 2. Required Test Items (file locations are NOT normative)
 
-| ID | Primary purpose | Primary verification layer | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-|---|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `G05-07-01` | HTE support/calibration/uncertainty（cross-cutting） | unit/contract + required integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `G05-07-02` | 実行者double opt-in・private root適格性 | contract＋real Linux ext4/XFS test | UID/owner/ACL/mount、Method出力制限、初期deny/row反復0 |
-| `G05-07-03` | 個票ParquetとAtomic Publisher連携 | contract＋real Parquet/FS test | RowWriter/Factory/allowlist/row+byte caps、G01 Sink/Reader/FS race |
-| `G05-07-04` | HTE/Row Export統合と回帰（cross-cutting） | unit/contract + required integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `G05-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `G05-07-06` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `G05-07-07` | Independent Science/T2/T3 | independently verified reference + real backend integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `001` | Candidate identity | repository provenance audit | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| `999` | Formal Gate decision | independent 30 reports | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| ID | Primary purpose | Primary verification layer | Required observable evidence |
+|---|---|---|---|
+| `G05-07-01` | HTE support/calibration/uncertainty（cross-cutting） | unit/contract + required integration | CATE/DRIV別support/uncertainty/diagnostics；適格positive/negative・typed Reason |
+| `G05-07-02` | Local user double opt-in + private FS | contract + Linux ext4/XFS integration | UID/owner/ACL/mount、Method Schema・deny時Source反復0 |
+| `G05-07-03` | bounded Parquet + atomic Publisher | contract + real FS/Parquet integration | Writer/Factory/schema/row byte limit、G01 Publisher/Reader/TOCTOU |
+| `G05-07-04` | HTE/Row Export統合と回帰（cross-cutting） | unit/contract + required integration | 不許可出力0、Aggregate互換/Manifest；適格positive/negative・typed Reason |
+| `G05-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
+| `G05-07-06` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Upstream 999 invariants, no old v2 CLI/Result change |
+| `G05-07-07` | Independent Science/T2/T3 | independently verified reference + real backend integration | Method-specific DGP/NEG/REF, prereg K/R/seed/compute, predeclared quantitative decision |
+| `001` | Candidate identity | repository provenance audit | Candidate full SHA, actual checkout, test-only diff classification |
+| `999` | Formal Gate decision | independent 30 reports | All blocking items PASS, verified FAIL or BLOCKED and owner action |
 
 **Browser E2E:** 本E11 ScopeはCLI-firstで新規Web UIを実装しないため、当該Gateの新規Browser E2E blocking journeyは**N/A**。既存Productのaffected Browser journeyはRegression対象となり得る。将来UIを本GateScopeへ変更する場合は07の正式Amendment・再Freezeとcritical journey・command・environment・synchronization記述を先行させる。
 
@@ -55,18 +54,18 @@
 
 ## 3.1. OD-02/03 adopted independent Security/Artifact matrix（全件blocking）
 
-| Test | Setup | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| G05-07-POL01 | Studyのみ／CLIのみ／両方false | exit3、RowSource反復0、個票bytes0、silent fallback無し |
-| G05-07-POL02 | Study・CLI両true＋非root EUID/private ext4/XFS | Method別RowSchema/列行byte上限を検証し許可。正例は実FS/ParquetとReaderまで確認 |
-| G05-07-POL03 | 別run/変更Study/Method/Data、UID/owner/ACL/mount不適格 | typed exit3、RowSource反復0、row bytes0 |
-| G05-07-POL04 | symlink/TOCTOU/shared root/namespace/cross-FS/mount権限変化 | fail closed、Stage/Seal/Publish前再検証、個票/秘密漏洩無し |
-| G05-07-WR01 | 適格なStudy＋CLI、1..max_rows、Method列allowlist | private0600/0700、ordered schema/bytes/dtype、G01 Publisher/Manifest/Marker/Reader一致 |
-| G05-07-WR02 | max_rows+1、max_output_bytes超過、NaN/dup IDs/unknown column、empty invalid | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
-| G05-07-WR03 | private staging後のACL/mount/owner変化、rename race/disk failure | 公開無し・commit marker無し・隔離、二重Publish無し |
-| G05-07-WR04 | 旧Product v2、Output JSON/console/log/Error中の行値 | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| Test | Setup | 必須観測／FAIL条件 |
+|---|---|---|
+| G05-07-POL01 | Studyのみ・CLIのみ・両方false | exit3・row Source反復0・row bytes0・fallback無し |
+| G05-07-POL02 | Study/CLI両true・nonroot EUID/private ext4/XFS・Method schema | PrivacyDecision許可・実FS/Parquetの正例・Writer/readback |
+| G05-07-POL03 | 異run/変更Method/Study/Data・wrong EUID/owner/ACL | typed exit3・RowSource反復0・bytes0 |
+| G05-07-POL04 | unsafe ACL/mount/namespace/symlink/root変更・cross-FS | Fail closed、stage/publish再検証、row値漏洩無し |
+| G05-07-WR01 | 両opt-in＋実private FS・Method approved 1..max_rows | ordered column/type/row/byteとG01 Sink/Reader/Marker/hash、0700/0600 |
+| G05-07-WR02 | max_rows+1、max_output_bytes超過、NaN/dup IDs/unknown column、empty invalid | no completed row publication、typed rejection/部分成功無し |
+| G05-07-WR03 | stage後のroot/ACL/mount不正・rename race/disk failure | 未公開、marker無し、private stage隔離、二重Publish無し |
+| G05-07-WR04 | 旧Product v2、Output JSON/console/log/Error中の行値 | 旧ABI維持、無認可行/secretは一切流出しない |
 
-**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
+**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 ## 4. Verification operation, evidence and decision
 
