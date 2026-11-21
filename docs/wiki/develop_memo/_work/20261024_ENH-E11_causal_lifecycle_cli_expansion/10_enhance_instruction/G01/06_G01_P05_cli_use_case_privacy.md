@@ -34,7 +34,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 P05 depends on P02, P03 and P04. P01 has already provided strict parser, Codec and Manifest DTO. Complete all actual cross-asset joins here; do not mistake the P01 pure decoder for a filesystem verifier.
 
 ## 4. Explicitly out of scope
-他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
+他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、不適格なUID/owner/mode/local FS、既存run上書き、Package外の便乗変更。
 
 ## 5. Entry criteria / required evidence
 Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends on P02,P03,P04の実装checkpoint full SHAとfocused検証を確認。矛盾/依存未成立はBLOCKED。
@@ -49,7 +49,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 | Field | Type | Construction/Trust |
 | --- | --- | --- |
-| `root` | `TrustedLocalRoot` | P02 verified root dirfd, owner/ACL/mount |
+| `root` | `TrustedLocalRoot` | P02 verified root dirfd, owner/mode/local FS |
 | `principal` | `LocalPrincipal` | actual effective OS actor, not Study claim |
 | `cli_row_flag` | `bool` | explicit CLI intent, never merged into Study YAML |
 
@@ -124,7 +124,7 @@ def filter_export_columns(self, frame_schema: ColumnSchema, *,
                           decision: PrivacyDecision) -> ColumnSelection: ...
 ~~~
 
-**G01 requirements:** `privacy.row_export_requested=false` AND `--allow-row-level-export=false`, trusted same-UID private root with valid ACL/mount and aggregate-only verified output shape. **Either** individual-row input flag is invalid in G01, exit3 before any row bytes or Stage; no silent fallback. G01 never executes `filter_export_columns` for individual rows or creates `row_effects.parquet`.
+**G01 requirements:** `privacy.row_export_requested=false` AND `--allow-row-level-export=false`, trusted same-UID private root with valid owner/mode/local FS and aggregate-only verified output shape. **Either** individual-row input flag is invalid in G01, exit3 before any row bytes or Stage; no silent fallback. G01 never executes `filter_export_columns` for individual rows or creates `row_effects.parquet`.
 
 G05 alone supports optional individual-row intermediate output by the executor's Study+CLI **double opt-in**, safe non-root Linux ext4/XFS private root and Method-specific approved row/column/byte bounds. This is not an independent human approval. The G05 decision cannot expand the G01 scientific or operation scope.
 
@@ -184,9 +184,9 @@ Package completion時:
 
 ## 10. Package completion criteria — Definition of Done
 
-- [ ] `LocalRunContext` trusted root/principal/row flag/independent optional Policy Anchor created by CLI composition, not Study YAML; `LocalCausalUseCase` 12 Port fields and exact `preflight/run` signatures implemented.
+- [ ] `LocalRunContext` trusted root/principal/row flag created by CLI composition, not Study YAML; `LocalCausalUseCase` 11 injected Port fields (no policy_verifier) and exact `preflight/run` signatures implemented.
 - [ ] Preflight verifies actual Question/Design/Dataset bytes and Method/CI eligibility with zero fit/staging/publish; Run uses exact `CapabilityPort -> DiscoveryPort -> FCI -> LocalPublicationPort -> Reader` flow, no uncontrolled final Path write.
-- [ ] `LocalPrivacyPolicyPort.authorize` and stateless CLI Concrete deny either row request or CLI row flag, unsafe owner/mount/ACL/Principal, with no aggregate fallback and zero row/secret leak; null Policy Anchor permitted for aggregate-only.
+- [ ] `LocalPrivacyPolicyPort.authorize` and stateless CLI Concrete deny either row request or CLI row flag, unsafe owner/mode/local FS/Principal, with no aggregate fallback and zero row/secret leak; no Policy Anchor or signature verifier is created.
 - [ ] Graph-positive vs valid science-negative Operation Bundle rules, Status axis separation, JCS/lineage/dual hash, no dummy Effect and no false COMMITTED implemented.
 - [ ] New `ariadne-causal-local` command maps exits 0/2/3/4/5 by phase and emits sanitized single JSON response; old Product v2 CLI/contracts unchanged.
 - [ ] P01–P04 dependency checkpoints confirmed; focused CLI integration and existing Product v2 contract/regression cases and full SHA/fixture/env/DD-ID evidence recorded. P05 PACKAGE_COMPLETE alone is not G01_999 PASS.

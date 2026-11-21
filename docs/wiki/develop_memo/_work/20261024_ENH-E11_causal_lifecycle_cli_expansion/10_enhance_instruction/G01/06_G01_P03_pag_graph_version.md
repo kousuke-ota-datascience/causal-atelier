@@ -32,7 +32,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 G01 `DISCOVER` creates a new immutable Graph value, not a Product GraphVersion. Version issuance is the existing `product.application.graph_version_service.GraphVersionService` sole authority.
 
 ## 4. Explicitly out of scope
-他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
+他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、不適格なUID/owner/mode/local FS、既存run上書き、Package外の便乗変更。
 
 ## 5. Entry criteria / required evidence
 Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends on P01の実装checkpoint full SHAとfocused検証を確認。矛盾/依存未成立はBLOCKED。

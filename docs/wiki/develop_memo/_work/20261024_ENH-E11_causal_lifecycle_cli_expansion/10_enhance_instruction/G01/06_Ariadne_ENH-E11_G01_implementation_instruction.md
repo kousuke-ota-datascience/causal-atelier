@@ -154,7 +154,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 - GRAPH-A: 生成DAGを唯一のPAG oracleとして用いない。潜在変数を含む小Graphから観測MAG・同値類の制約を**独立に**導出し、強制されない方向は未確定のまま評価する。PAGのどの円端点も「潜在交絡が証明された」という意味ではない。
 - BackgroundKnowledge: `required_edges`／`forbidden_edges`は変数の存在、矛盾、自己辺、cycle/precedenceの妥当性を検査。Backend内部のBK適用には**禁止方向から不要なTAILを確定させる可能性**が報告されている（[上流#266](https://github.com/py-why/causal-learn/issues/266)）。G01ではBK指定時に独立Graph motifのendpoint非過剰確定RegressionがGreenとなるまで`BACKEND_SEMANTICS_UNVERIFIED`で拒否し、結果をPAGとしてPublishしない。修正が必要ならG01内のversioned adapterに限定し、外部ライブラリの無断Patch/依存更新はしない。
 
-**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flag・Study外から取得したoptional Policy Anchorを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
+**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flagを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
 
 ## 5. G01 Operation別Bundle・状態・Publication
 
@@ -172,7 +172,7 @@ ROOT/runs/{run_id}/
 - `status.json`は`technical_status=COMPLETED`でも`identification_status=NOT_APPLICABLE`,`point_availability=NOT_REQUESTED`,`inference_availability=NOT_REQUESTED`、`science_acceptance=NOT_EVALUATED`を基本とする。G01テストで独立Science判定するまでは`PASS`不可。科学的に負の有効結果（例: CI不適格でMethodが構造判定を保留）を技術完了とする場合は明示reasons／graph=nullを許す。ただし実行例外やBackend unavailableは成功Bundleへ偽装しない。
 - Manifest/Markerは固定のHash連鎖：`request_hash=SHA256(JCS(typed Study))`、`manifest_sha256=SHA256(actual manifest.json bytes)`、Graph semantic digestと全File実bytes digestは区別し、cross-file run_id/method/estimand/lineageを突合する。
 - 未公開と公開済みの唯一の可視性境界は`renameat2(RENAME_NOREPLACE)`による**同一FSディレクトリのno-clobber rename**。staging files+dirs fsync、rename、両parent dir fsync、独立Reader readbackが成功して初めて`COMPLETED`を返す。結果不定時に既存runを消したり再renameしてsuccessにしない。Readerはmarker→Manifest→inventory file実bytes→schema/相互参照の順で検証する。
-- 初期出力Rootの保護は非委譲・同一effective UIDのprivate local FS。shared/CI/container mount・unsafe ACL/owner/symlinkは拒否。`--allow-row-level-export`やStudyの個票要求はG01では**exit3**、row bytesをstagingにも書かない。
+- 初期出力Rootの保護は非委譲・同一effective UIDのprivate local FS。wrong UID/owner/mode、非local ext4/XFS、symlink/path逸脱は拒否。`--allow-row-level-export`やStudyの個票要求はG01では**exit3**、row bytesをstagingにも書かない。
 
 ## 6. Error・CLI最小動作
 
