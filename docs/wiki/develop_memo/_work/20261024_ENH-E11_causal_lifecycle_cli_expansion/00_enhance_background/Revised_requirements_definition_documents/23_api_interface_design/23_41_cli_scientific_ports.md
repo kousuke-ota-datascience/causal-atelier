@@ -24,7 +24,7 @@ CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [
 - `--output-root`：必須。成功時のimmutabilityと公開境界。作業ディレクトリの暗黙採用は禁止。
 - `--check-only`：実行・出力publish無しでconfig／path／hash／静的capability／eligibilityを検査。外部Backendが必要な深い科学実行のPASSを主張しない。
 - `--json`：stdoutへ機械可読の制御Envelopeのみ。個票・秘匿データをstdoutへ流さない。
-- `--allow-row-level-export`：個票CATEの生成を**明示的に要求する一条件**。入力privacy policy、OS主体・出力ディレクトリと別の承認条件を満たさなければ拒否。
+- `--allow-row-level-export`：実行者の明示的opt-in。Studyの`privacy.row_export_requested=true`、実効UID所有のprivate TrustedRoot、Method別の行・列・byte上限とAND判定。独立承認者や署名鍵は不要。
 - 5つの`e11-local-*/1`識別子は固定。Marker`e11-commit/1`は別の内部versionである。無版入力を既定Versionとして推測しない。
 
 ## 3. Config request（Schema contract）
@@ -66,8 +66,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `IdentificationPort.identify(request)` | `IdentificationOutcome` | validated proof・Graph/upstream hash |
 | `EstimatorPort.estimate(request, *, sink)` | `EffectOutcome` | validated eligibility、stagingだけに出力 |
 | `DiagnosticPort.run(request, *, sink)` | `DiagnosticOutcome` | Validated upstream/Method |
-| `LocalPolicyVerifierPort.verify(*, policy_ref, study, root, anchor)` | `VerifiedStudyPolicyEvidence` | Studyから独立した事前承認Authority |
-| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, principal, policy, output_shape)` | `PrivacyDecision` | 独立承認・private Root・column/row上限 |
+| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, principal, output_shape)` | `PrivacyDecision` | Study＋CLIの明示要求・実行UID所有のprivate Root・Method別column/row/byte上限 |
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
@@ -75,7 +74,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ### 4.1. Port間の正規署名と相互整合
 
-上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool, policy_anchor:TrustedPolicyAnchor|None)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はowner/ACL/mount/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
@@ -97,21 +96,21 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 
 - `LocalCausalUseCase.run(spec,context)`は`MethodCapabilityPort.resolve(ValidatedCapabilityRequest)`でOperation/Estimand/Backend/Inference/Method configを確認し、選択済`BackendCapabilityRecord`を`ValidatedDiscoveryRequest`等に結合する。具体Scientific Portは同一Method Registryの`load_adapter(capability)`を利用し、別Methodへのfallbackを禁止する。
 - `DISCOVER`は`DiscoveryPort.discover(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink)->DiscoveryGraphOutcome`へdispatchする。IDENTIFYはIdentificationPort、ESTIMATEはEstimatorPort、REFUTE/SENSITIVITY/DIAGNOSEはDiagnosticPortへdispatchする。Resultの型とOperation別Publication義務は23_42 §2.1に従う。
-- `LocalPolicyVerifierPort.verify(*,policy_ref,study,root,anchor)`のanchorはCLI composition rootがStudy外のsecure runtime trust configurationから取得した`context.policy_anchor`である。行出力には検証済みanchorが必須で、null/自己申告はfail-closedとする。G01の集計専用動作ではnullを許す。`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,policy,output_shape)`は実効主体・許可範囲も照合する。G01では行出力要求またはFlag単独でも拒否。
+- G05ではStudyの個票出力要求とCLI flag、実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別出力制限を`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)`で確認する。第三者承認や鍵管理は必要としない。G01では個票出力を拒否する。
 - `LocalPublicationPort`と`LocalManifestReaderPort`はApplication Portであり、Concrete CLI Publisher/Readerへ委譲する。独立Readerが`VerifiedLocalRun`を返す前にCOMPLETEDへ昇格しない。
 
 
-### 4.5. OD-01 / OD-02 / OD-03 / OD-05 Owner採用によるInterface追加（2026-11-19）
+### 4.5. Owner決定の現行適用 — OD-01/03/05は維持、G05署名方式のみ限定改訂（2026-11-21）
 
 **P1-M05:** strict Method Requestは`operation=IDENTIFY, estimand.family=LATE_COMPLIER, design_profile=B0_BINARY_IV`を必須とし、二値Z/A単一IV・追加C無し・宣言済みrelevance/independence/exclusion/monotonicity/consistencyのconditional Proofと上流Hashを検査。DoWhy backendの出力labelからTargetを推定せず、有効なIV式とAPIの対応がないときtyped failureとする。IDENTIFYにEffect Result禁止、G08数値推定へ暗黙接続しない。
 
-**Privacy trusted port（OD-02=A）:** 既存`LocalPolicyVerifierPort.verify(*,policy_ref:ContentRef,study:ValidatedStudy,root:TrustedLocalRoot,anchor:TrustedPolicyAnchor)->VerifiedStudyPolicyEvidence`のPort署名は保持。Concrete `Ed25519LocalPolicyVerifier`（`ariadne.interfaces.cli.local_causal.policy_verifier`）は独立admin rootから`TrustedPolicyAnchor`を受け、`e11-local-row-export-policy/1` strict payloadへのdomain-separated RFC8785-JCS Ed25519署名、issuer/key role、policy_id/run_id/study approval digest、scope、columns、row/byte caps、有効期限・revocation epoch/最新情報を検証する。署名用private keyやユーザー提供public keyを信頼しない。Studyのpolicy_refをnullにした`subject_study_approval_digest`とpolicy_ref込み`request_hash`を分離。評価`LocalPrivacyPolicyPort.authorize`の前、および行ステージseal/publication前に再検証し、未認可はexit3でno row bytes before authorization。
+**G05 local row eligibility（Owner改訂）:** `LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)` がStudy request∧CLI flag∧非root実行UID所有のprivate ext4/XFS TrustedRoot∧Method別ApprovedRowSchema/行列/byte制限を判断。`LocalPolicyVerifierPort`、`TrustedPolicyAnchor`、Ed25519/署名Key/失効は本local intermediate row exportのactive実装対象外。既存`e11-local-study/1`の任意`privacy.policy_ref`は現行modeではnullのみ。初期拒否はexit3でrow iterator呼出0回、row bytes0。
 
-**Row writer（OD-03=A）:** 新`RowEffectsParquetWriter.write(*, source:DeferredRowEffectsSource, study:ValidatedStudy, decision:PrivacyDecision, selection:ColumnSelection, sink:StagingArtifactSink)->ArtifactDescriptor`と`RowEffectsWriterFactory.create(*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)->RowEffectsParquetWriter`をCLI adapterに配置。認可済みrun/Study/Evidenceの照合後だけsourceを遅延反復し、列allowlist・行数・byte上限を検査してrestricted`row_effects.parquet`のbytesをG01 Sinkへstage。Writerの`PrivacyDecision`引数単独は署名検証の代替にならず、既存Publisher/Reader/UseCaseの公開authorityを重複させない。行級Outputを使う場合、対象OSの独立approver/admin key store/失効feedが実配備されるまではfail-closed。
+**Row writer（OD-03署名保持）:** `RowEffectsParquetWriter.write(*,source:DeferredRowEffectsSource,study:ValidatedStudy,decision:PrivacyDecision,selection:ColumnSelection,sink:StagingArtifactSink)->ArtifactDescriptor`と`RowEffectsWriterFactory.create(*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)->RowEffectsParquetWriter`を維持。G05でlocal eligibilityの成立後のみ行を遅延反復し、strict row schema/allowlist/limitsを検査してG01 sinkへstage。Writerは独立Publisher・Signer・Readerを持たず、同一run/Study/Source/RootとDecisionを検証。
 
 **Method Profiles（OD-05）:** 40 Methodの専用Config/Question/Design/Output/Inferenceを各Owner Gateで厳格Schemaとして登録する。P1-M06既存schema draftsは実行PASSではない。Method未登録、Backend mismatch、未承認CIは別理由で拒否する。採用済みMethod意味論をBackend defaultsで上書きしない。
 
-**状態:** Design choice adopted; runtime security provisioning、individual Method Schemas、independent Science Reference、Gate Freeze/Coding Authorizationは未了。
+**状態:** 独立署名はOwner限定改訂で撤回済み。Method別RowSchema、実ext4/XFS/Parquet、独立Science、Gate FreezeとCoding Authorizationは未了。
 
 ## 5. Status／error／exit envelope
 
@@ -188,7 +187,7 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 
 ### Publication・Privacy・Errorの恒久契約
 
-PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、CLI flag、独立事前Policy、same-UID private TrustedRoot、column/row制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。
+PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、CLI flag、same-UID private TrustedRoot、Method別column/row/byte制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。
 
 
 ## 5. Internal strict Method Profile overlays

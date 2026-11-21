@@ -228,7 +228,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 
 ## 8. Local privacy／distribution
 
-- 個票を含む `row_effects.parquet` は `RESTRICTED_ROW_LEVEL`。通常出力では作らない。明示Study request、CLI flag、独立Authorityの事前承認`VerifiedStudyPolicyEvidence`、same-UID private TrustedRoot、許可column/max_rowsを全件検証する。
+- 個票を含む `row_effects.parquet` は `RESTRICTED_ROW_LEVEL`。通常出力では作らない。明示Study requestとCLI flagのdouble opt-in、非root実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別の列/行/byte/memory上限を全件検証する。独立承認や署名鍵を要求しない。
 - Local OS PrincipalはProduct ProjectMembershipを代替する認証ではない。共有端末/CI/container-root-accessible mountと不明ACL/namespaceは別の信頼可能な契約がない限り拒否する。stdout/stderr/log/exception traceに個票やsecretを出さない。
 - Customer delivery可否は科学的結果・内部実行の状態とは別。GPL系Backendを含む受領者別Bundleの法務レビュー未完は `CUSTOMER_DELIVERY_BLOCKED` として扱う。
 
@@ -252,7 +252,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 
 AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5分類。`EMPTY`は数学的に正常に反転した0成分で`AVAILABLE + inversion_evidence`と共存しうる一方、計算失敗は`FAILED + reason`。端点で双方openの接触区間はgapを保存する。非退化なB0/B1 HC1 ARの非空条件はMethod固有Validatorで判定し、CodecやSchemaの検証を統計的Coverageの証明としない。
 
-行出力に対する独立Policy trust anchorはStudy YAMLの自己宣言と区別し、権限不足なら個票を生成せずexit3。出版前の検証だけでなく、ReaderもMarker/Manifest/Filesの実bytes・size/type、private Artifactの権限とLineageを再検証する。
+行出力はStudyとCLI両方の明示opt-inを実行UIDのprivate root・Method別schemaとAND検証し、不成立なら個票を生成せずexit3。出版前の検証だけでなく、ReaderもMarker/Manifest/Filesの実bytes・size/type、private Artifactの権限とLineageを再検証する。
 
 ### 9.1. Class・Portとの単一Authority／互換性
 
@@ -260,35 +260,23 @@ AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5分類。`EMPTY`�
 
 Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wire識別子であり、文書名に含まれるEnhancement番号とは別の**Version互換契約**として維持する。将来改訂する際は明示的Version dispatch／migrationと旧Readerの回帰検証を必要とし、表示上のファイル改名だけで変更しない。
 
-## 10. G05 Signed Row Policy／Parquet Artifact interface（Owner OD-02=A, OD-03=A）
+## 10. G05 Local row intermediate Artifact contract
 
-### 10.1. Policy ArtifactのWireとHash領域
+### 10.1. Opt-in and compatibility
 
-`e11-local-row-export-policy/1`はStudy/Graph/Effect/Status/Manifestとは**別の独立承認Artifact Version**である。Schema Draftは[policy envelope](schema_drafts/e11_local_row_export_policy_v1.schema.json)。必須Envelopeはstrict `payload`、`signature_ed25519`（64bytesをstrict unpadded base64urlで符号化、署名対象には含めない）。signed bytes = ASCII `ARIADNE-E11-ROW-POLICY-v1` + `0x00` + `RFC8785-JCS(payload)`。Reader/Verifierは署名に使ったexact bytesと`ContentRef.sha256`の**raw envelope bytes**を別々に検証する。
+- 対象は一般権限Linuxユーザーがlocal ext4/XFS上で生成する個票中間成果物。実行者自身による明示的な出力指示であり、独立Approver・Ed25519署名・署名鍵Store・失効を求めない。従前の独立承認方式はOwnerの2026-11-21限定改訂により撤回。
+- Studyは既存`e11-local-study/1`を保持。`privacy.row_export_requested=true`かつCLI `--allow-row-level-export`を必須とし、任意の`privacy.policy_ref`は現行unsigned modeではnullのみ受理（non-nullを承認として認めない）。
+- `RESTRICTED_ROW_LEVEL`、対象Methodの`ApprovedRowSchema`、許可列順・row ID・dtype・max_rows・max_output_bytes・max_memory_bytesを照合。Method固有数値や列名を推測しない。
+- 実行EUIDが所有するprivate TrustedRoot・同一local filesystem、root/staging 0700、row artifact 0600、ACL/mount/namespace/symlink/dirfd安全性を実行時に確認。rootまたは同一UID processからの分離は保証しない。
+- 初期拒否はexit3、Source iteration0、row bytes0、aggregateへ暗黙fallbackしない。認可後のprivate staging失敗は公開せず、過去の生成bytesが0だったと偽らない。
 
-| Payload Key | Type / 必須意味 |
-|---|---|
-| `policy_version` | `e11-local-row-export-policy/1` |
-| `policy_id/issuer_id/key_id` | unique opaque id。外部admin Registryでissuer/key/grantを検証し、payloadからverification public keyを信頼しない |
-| `subject_study_approval_digest` | `SHA256(JCS(ValidatedStudy where privacy.policy_ref=null))`、自己循環除外 |
-| `run_id` | immutable exact run identity、他run/replayへ転用不可 |
-| `approved_scope` | `[ROW_EFFECT_PARQUET]`のみ |
-| `classification` | `RESTRICTED_ROW_LEVEL`のみ |
-| `allowed_columns` | nonempty unique ordered column allowlist、実DataFrame schemaと一致 |
-| `max_rows / max_output_bytes` | positive integer bound、Method別Writerは両方確認 |
-| `issued_at / expires_at / revocation_epoch` | UTC/未失効・承認Roleのfresh revocation snapshotが必須 |
+### 10.2. Authorized bounded Parquet and G01 publication
 
-`request_hash=SHA256(JCS(Study including privacy.policy_ref))`と上記Approval-subject digestは**異なる**。PolicyそのものをStudyの承認subjectへ含める循環署名を禁止する。Study/Method/DataRefが変化すれば再承認。署名検証結果は`VerifiedStudyPolicyEvidence`の非秘密情報と検証済みrun/policy/Study bindingとしてManifestのrestricted Artifact metadataへ載せ、署名Private Keyやrow valuesを載せない。Policy sourceはTrustedRootのsecure-open ContentRef、鍵・grant・revocationはEUIDが編集できないadmin Registry。
+1. `LocalPrivacyPolicy.authorize(*,study,cli_row_flag,root,principal,output_shape)`でStudy、CLI、UID/root、Method出力適格性をAND検証し、`filter_export_columns`で列順を確定する。
+2. Owner採用済み`RowEffectsParquetWriter.write(*,source,study,decision,selection,sink)`とFactory/Serializer/Deferred Source署名は維持。Source.schema()とMethod別RowSchemaを検査した後、両opt-inかつOS適格性を確認した時のみ`read_rows()`を反復し`max_rows+1`で超過を拒否。重複行ID/unknown columns/不正dtype/NaN/Inf/上限超過はfail closed。
+3. `row_effects.parquet`、media type `application/vnd.apache.parquet`、classification `RESTRICTED_ROW_LEVEL`を既存G01 `StagingArtifactSink.stage_bytes`へ渡す。Writerが直接final runs/、Manifest、markerを発行することは禁止。G01 Publisherが唯一のatomic no-clobber authority、Readerが独立readbackを行う。
+4. Stage/Seal/Publish前にroot/UID/mount/ACL/同一Sinkとinput hashを再検証。異常時にcommit markerなし。行値をResult/Manifest/status/CLI stdout・stderr・logに転記しない。
 
-### 10.2. Row Parquet/Publication contract
+### 10.3. Independent acceptance
 
-1. 行出力の前提はStudy request∧CLI flag∧署名検証済みPreapproval∧`TrustedPolicyAnchor`∧OS EUID=root owner / trusted private mount/ACL∧allowed columns/row/byte limits。欠ければ`ROW_EXPORT_NOT_AUTHORIZED`/exit3、RowSourceの反復・row bytesの作成も禁止。署名検証済みPolicy Evidenceは別の信頼されたComposition Rootから取得。
-2. `LocalPrivacyPolicy.authorize`→`filter_export_columns`によって出力許可と列順・行上限を固定。`RowEffectsParquetWriter.write`は同一run/Study/Policy hashのTrusted UseCase/Sinkと照合。Policy Decision単独を承認根拠にしない。
-3. 遅延`DeferredRowEffectsSource.read_rows()`から`max_rows+1`を上限として実行時に境界チェック、許可列のみ順序固定でParquetへ符号化。実効型/行ID/NaN/重複/サイズ等の`ApprovedRowSchema`はMethod別にstrict登録、Backend任せにしない。
-4. File keyは`row_effects.parquet`、media type `application/vnd.apache.parquet`、classification `RESTRICTED_ROW_LEVEL`。G01 `StagingArtifactSink.stage_bytes`でPrivate Stagingへ渡す。Signer/RowWriterはfinal`runs/`へ書かない。G01 Publisherのseal/atomic no-clobber/Reader readbackが唯一の成功判定。
-5. TTL、Revocation/TrustStore/OS root/ACL/mountはRow materialization前・Stage前・Seal/Publish前に再確認。途中失効なら**以降公開禁止・staging隔離**であり、「過去に生成済みのprivate row bytesが0」と誤報しない。正常な本番例には独立承認主体・admin運用/鍵が実在していることを要求。
-6. `manifest.json`、`status.json`、`result.json`、stdout/stderr/logに個票/secretを入れない。Readerはprivate class、policy digest、rows/columns/byte count、Manifest sha/Marker/ACLを再検証。不明環境/不正署名/自己承認は成功へ昇格しない。
-
-### 10.3. Independent Interface Test obligations
-
-`IO-E11-06`に追加し、署名正例（独立admin trust）、self-signed/changed policy、run_id/Study hash drift、issuer role不足、期限切れ・失効・stale revocation、root/mount/UID race、rowlimit+1、byte-cap超過、dtype/duplicate/nonfinite、serialize後失効、partial Stage/Commit、旧v2 readbackを検証。MockでVerifierの振る舞いを確認しても、実キー運用/本番Release Authorizationの証拠にならない。Owner採用はContract設計であり、現実のApprover/Key Store配備、Method Profile/Parquet ABI、独立Test、Freeze/Coding Authorizationは未完了。
+`IO-E11-06`：double opt-in正例とflag単独/Study単独/両false負例、wrong UID/root、ACL/mount/symlink/namespace/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:local-row-export-policy:1",
-  "title": "ENH-E11 independently signed row export policy envelope — OD-02 Owner-adopted schema DRAFT",
-  "description": "Shape only: semantic validator MUST independently verify ContentRef raw hash, domain-separated Ed25519 over JCS(payload), issuer role/admin-owned key trust, policy revocation freshness, trusted root/principal, Study digest/run, authorizations and timing; this draft is NOT an actual authorization or runtime security approval.",
+  "title": "WITHDRAWN HISTORICAL DRAFT — signed G05 policy not used",
+  "description": "Withdrawn as active G05 contract by explicit Owner local intermediate output change dated 2026-11-21. Historical schema only; DO NOT register, require, sign, revoke or deploy. Current G05 uses double opt-in and OS private root, without a signed policy. See combined_review/129_20261121_dec_g05_local_row_export_simplification.md.",
   "type": "object",
   "additionalProperties": false,
   "required": [

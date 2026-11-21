@@ -78,6 +78,6 @@
 
 - **P1-M05（OD-01=A）**：IDENTIFYのみ。明示的な`B0_BINARY_IV`・単一二値Z/A・無調整・IV独立性/排除制約/単調性・relevance/consistencyを伴うcomplier `LATE_COMPLIER`の**条件付き識別証拠**を返す。GraphやDoWhyの`nonparametric-ate`等のdisplay labelだけからLATEを宣言しない。B1構造IV係数・DRIV・ATE/ATTへ転換禁止。IDENTIFYで`result.json`を生成しない。数値LATE/ARはG08。前提の真偽や実効Backend APIの検証は別。
 - **OD-05（Owner採用）**：`P1-M06`以外の40 Methodについて担当Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）がstrict Method Config、Question/Design、Output、Inference Profileを定義し、登録済みprofile無しで`config={}`を受け入れない。必要fixtureと実効backend科学検証は未生成のまま記録し、科学Targetの既決定義を再議論しない。
-- **OD-02/03（Owner採用）**：G05の個票はEd25519署名による独立事前承認と、認可後にだけRowEffectsParquetWriterへ書込む契約を採用する。ただし現実の独立承認者・admin trust-store管理者／鍵／失効/時計の実効配備が未指定なら個票公開はBLOCKED。既存G01 Publisherを再実装しない。
+- **G05 Row Export（2026-11-21 Owner限定改訂）**：非root Linux実行者がStudy requestとCLI flagでdouble opt-inし、same-UID private ext4/XFS TrustedRoot、Method別`ApprovedRowSchema`/列行byte上限を検証した場合のみG05 RowEffectsParquetWriterが個票中間データを出力する。独立Approver、Ed25519/鍵/失効は不要。OD-03 WriterとG01 Publisherを維持。決定記録：combined_review/129_20261121_dec_g05_local_row_export_simplification.md。
 
 この採用は設計契約であり、Schema完成、Backend/独立Science PASS、実際の個票リリース権限、Gate Freeze、Coding Authorizationを示さない。承認記録：combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md。

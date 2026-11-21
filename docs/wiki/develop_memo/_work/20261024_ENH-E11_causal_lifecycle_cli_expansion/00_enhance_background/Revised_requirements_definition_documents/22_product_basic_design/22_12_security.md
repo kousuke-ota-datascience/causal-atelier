@@ -69,7 +69,7 @@ Artifact materializationはlogical Execution/Stage/output slot/typeからdetermi
 | Input Path | Root/path allowlist、traversal・symlink escapeを拒否 | canonical root/reparse/TOCTOU strategy |
 | Config / Serialization | Versioned typed inputのみ受入。未信頼のpickleなど任意code実行を既定経路で許さない | exact parser/allowlist |
 | Output directory | private artifact root、権限・umask等を設計し、失敗時も保護 | filesystem support, ACL/permissions |
-| Row-level CATE and individual explanations | 明示的opt-inと機微Artifact扱い、許可されたexportに限定 | 実行者・承認者の関係、Policy authority / evidence |
+| Row-level CATE and individual explanations | Study＋CLI double opt-inと機微Artifact扱い、private local FSでの限定export | 一般Linux実行者自身のopt-in、private root/ACL/Method別列行制限。外部Approver/署名鍵不要 |
 | Manifest/Logs | Credential・機微列・個票値を原則含めず、hashや統計量を記録 | deidentification/log retention |
 | Backend | optional codeを実効版・license・安全性基準で選別 | package audit and runtime isolation |
 
@@ -98,3 +98,7 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 ### 15.7 PREP-02 Local security authority decision (2026-11-17)
 
 [DEC-PREP02-A Owner record](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): **Option A ADOPTED**. ENH-E11 initial Local CLI export authority is restricted to same effective UID as owner of a private trusted local root, with no delegation. Shared/CI/container-root-accessible mount or unverified ACL/permission case is fail-closed. Row-level output is default disabled and requires Study policy authorization **and** explicit CLI flag, root/actor checks, column/row minimization, and absence of row/secret leakage in logs/Manifest. This does not assert a complete runtime proof or replace Product RBAC; §15.5's previously pending Owner choice is superseded **only** as to choice of policy. OS/filesystem verification, exact error contract and independent security review remain open.
+
+## Local scientific individual-row output
+
+初期E11 G05の個票中間成果物は、2026-11-21 Owner限定改訂により、第三者の独立署名承認ではなくStudy＋CLI二重opt-inと実行EUID所有のprivate ext4/XFS TrustedRootに基づいて出力する。Directory0700・File0600、列/行/byte最小化とG01のatomic Publisher／Readerを維持し、FR-195/NFR-031の保護要件とProduct RBACは変更しない。過去のF05/OD02署名判断は歴史的記録として保存し、現行例外は`combined_review/129_20261121_dec_g05_local_row_export_simplification.md`で追跡する。
