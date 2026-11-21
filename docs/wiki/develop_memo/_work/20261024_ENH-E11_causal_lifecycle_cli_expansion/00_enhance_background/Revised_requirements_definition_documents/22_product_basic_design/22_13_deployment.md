@@ -56,4 +56,4 @@
 | rdrobust package | direct無し、Lock package entry無し | ENV-RDは科学Backendの実効適格性を個別検証。外販条件は初期Scope外 |
 | Existing ML | Lockにcausal-learn、lightgbm、shap、lime package entriesは存在 | E11全Backendを満たす証拠にならない |
 
-**Disposition (Owner SIM-03/04, 2026-11-21):** DEC08 ENV-BASE/DOWHY/ECONML/TIGRAMITEとMethod別API/科学的検証は維持し、ENV-COMBINED全extras CIは初期必須から削除（未検証の同時導入はsupported扱いしない）。Coding Authorization後、`pyproject.toml`/`uv.lock`を同じChangeで更新し、4必須Profileごとにlock check→sync→API smoke→関連旧v2回帰。SBOM/受領者別法務サービスを内部CLIの必須機能にしない。NFR-034のE11 MUST受入はOwnerのinternal-only再評価によりRETIRED。社内ソフトウェア利用の適法性は既存組織規程に従う。Source/Tests/Lock未変更、実効試験NOT_RUN。
+**Disposition (Owner SIM-03/04, 2026-11-21):** DEC08 ENV-BASE/DOWHY/ECONML/TIGRAMITEとMethod別API/科学的検証は維持し、ENV-COMBINED全extras CIは初期必須から削除（未検証の同時導入はsupported扱いしない）。Coding Authorization後、`pyproject.toml`/`uv.lock`を同じChangeで更新し、4必須Profileごとにlock check→sync→API smoke→関連旧v2回帰。SBOM/受領者別法務サービスを内部CLIの必須機能にしない。NFR-034は外販未確定のため現行E11の必須受入から除外し、DEFERRED/FUTUREに保持する（134のStatus訂正）。社内ソフトウェア利用の適法性は既存組織規程に従う。Source/Tests/Lock未変更、実効試験NOT_RUN。

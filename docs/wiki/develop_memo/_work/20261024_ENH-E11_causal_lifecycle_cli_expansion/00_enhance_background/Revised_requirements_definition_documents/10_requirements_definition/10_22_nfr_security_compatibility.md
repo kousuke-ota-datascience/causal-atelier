@@ -20,8 +20,8 @@
 | NFR-028 | Dependency isolation | 任意の分析エンジンが利用不能でも基本機能を継続でき、利用不能理由を識別できる | — | ACTIVE | IMPLEMENTED | ENH-E10 |
 | NFR-031 | Security and Privacy | ローカル分析で不正なPath／Symlink／任意実行Objectを拒否し、個票出力を権限・最小化条件に従い管理する | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | NFR-032 | Dependency Isolation | 任意導入の科学Backendの不在・不適合が既存Coreや別Methodの稼働を妨げず、当該能力のUnavailable状態と理由を明示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| NFR-034 | License Compliance — historical, non-current | 配布先ごとのライセンス審査が完了しない限り、審査対象の外部ライブラリを含む顧客納入を許可しない【旧条文・現行E11では非適用。顧客納入は未確定】 | MUST | RETIRED | UNVERIFIED | ENH-E11 |
+| NFR-034 | License Compliance — future customer delivery | 顧客向け納入が正式に決定された場合、審査対象の外部ライブラリを含む顧客納入について、適用ライセンスと配布条件を審査する。提供形態・対象Package・審査手順はその時点で別途確定する | MUST | DEFERRED | UNVERIFIED | FUTURE |
 
 ### External customer delivery (non-current requirement)
 
-`NFR-034`は現在の正式な受入条件から除外する。配布形態・受領者・外販方針が未確定であり、このE11でCustomer Deliveryの規範的要件・実装機能・Release Gateを作らない。元のID／旧MUST条文は歴史的追跡のため残し、`RETIRED`は現在の義務がないことを表す。外販決定時にはその時点の実配布形態・依存Library・適用OSS Licenseと組織ポリシーを元に別途正式要件を起案する。**これはOSSライセンスの遵守不要を意味しない。** 社内でのソフトウェア利用・複製・配布にも適用条件があり、既存組織の承認・コンプライアンス制度はE11の機能要件として新規実装せずに従う。
+`NFR-034`は外販・顧客納入の実施自体が未確定であるため、現行ENH-E11の必須実装・受入から除外し、`DEFERRED / FUTURE`として将来検討対象に保持する。`DEFERRED`は外販を約束するものではない。将来顧客納入が正式にスコープ採用された場合、その時点の提供形態・配布Library・適用OSS License・組織ポリシーに基づき具体的な手順と受入条件を再審議する。**社内利用に適用されるOSSライセンス義務は免除されない。** 既存の社内コンプライアンス制度は遵守するが、その管理機能を今回のAriadneへ追加しない。今回のStatus訂正根拠は`combined_review/134_20261122_dec_nfr034_deferred_correction.md`。
