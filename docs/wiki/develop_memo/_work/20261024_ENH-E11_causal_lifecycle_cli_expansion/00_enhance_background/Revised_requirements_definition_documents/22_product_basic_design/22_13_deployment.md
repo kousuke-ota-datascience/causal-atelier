@@ -21,18 +21,18 @@
 | ENV-DOWHY | E11 DoWhy | Identification/FD-A実効APIと旧CLI回帰 | Adopted plan; not tested with new lock |
 | ENV-ECONML | E11 EconML | CATE/DRIV、nuisance、CI availability | Adopted plan; not tested with new lock |
 | ENV-TIGRAMITE | E11 temporal | PCMCI family、CI test、Graph endpoints | Adopted plan; not tested with new lock |
-| ENV-COMBINED | DoWhy + EconML + Tigramite | Combined conflict・legacy・Science | Adopted plan; not tested with new lock |
+| ENV-COMBINED | DoWhy + EconML + Tigramite | 任意の後続相互運用検証。初期Gate必須ではない | DEFERRED / NOT_VERIFIED / combined利用保証なし |
 | ENV-RD | RD追加候補（初期5件外） | Sharp/Fuzzy RD実効API、推論、GPL顧客配布 | Conditional / not automatically approved for delivery |
 
-- 各Profileはfresh isolated venvで`uv lock --check`、`uv sync --locked`、`uv pip check`等の適合検証を行い、`--frozen`をlock stale検証と取り違えない。Runtimeでは`--no-dev`等の環境要件を明記する。
+- 初期必須のENV-BASE／ENV-DOWHY／ENV-ECONML／ENV-TIGRAMITEは個別fresh isolated venvで`uv lock --check`、`uv sync --locked`、`uv pip check`を実施する。全extrasを同時導入するENV-COMBINEDはmandatory Gateではなく、未検証の組合せを利用可能と保証しない。Runtime profileは実測して固定する。
 - 41 MethodごとにBackend/Version/APIを照合し、選択Methodのincompatible/missing状態は**typed unavailable**として結果・Manifestへ反映する。予期せぬfallbackは認めない。
-- Effective environment provenanceとSBOM/LicenseはRelease候補のSource SHA/Lock SHAおよび実効wheel/sourceをTraceする。実測なしにbitwise reproducibleを保証しない。
+- Effective environment provenanceはSource/Lock SHA、実効installed distribution/version/APIを追跡する。内部CLI分析にSBOMの自動生成・受領者別License承認機能を必要としない。顧客配布時は別途手動審査する。実測なしにbitwise reproducibleを保証しない。
 
 ### 16.2. 配布・OSSライセンスの設計境界
 
-- Internal Science使用、顧客へのwheel/container/sourceのSI納入、クラウドサービス提供で法的評価の対象は異なる。License種別・実配布Artifact・受領者・結合・通知・ソース提供・契約条件を法務とOwnerが審査する。
+- 内部Science実行と顧客への配布を区別する。外部顧客へwheel/container/source等を納入する場合は、対象ライブラリと実配布方式をOwner/法務が手動審査し、未承認の納入を禁止する。CLI runtimeへ顧客別認可管理・SBOM生成機能は追加しない。
 - DEC08の記録ではTigramiteのGPLv3-or-later、およびrdrobust PythonのGPL-3.0-onlyが審査対象候補として挙げられている。**本書は個別法務判断をしない**。
-- Mandatory Science PASS／Environment PASS／Legal Delivery APPROVALは独立状態。GPLをoptional extrasにすることだけでは顧客配布の許可条件を満たさない。
+- Science PASSと選択MethodのEnvironment PASSは独立。Legal Delivery APPROVALは実際の外部顧客納入前の手動判断であり、内部CLIの科学計算Gateには混在させない。GPLをoptional extrasにするだけで顧客配布を許可しない。
 
 環境適合・科学的妥当性・顧客配布の許可は独立判定とし、いずれかのPASSから別のPASSを推定しない。
 
@@ -56,4 +56,4 @@
 | rdrobust package | direct無し、Lock package entry無し | ENV-RD候補かつ顧客配布法務別 |
 | Existing ML | Lockにcausal-learn、lightgbm、shap、lime package entriesは存在 | E11全Backendを満たす証拠にならない |
 
-**Disposition:** DEC08の5 Profile（BASE/DOWHY/ECONML/TIGRAMITE/COMBINED）と条件付きENV-RDの採用**方針**は保持する。依存導入は明示Coding Contractにより`pyproject.toml`と`uv.lock`を同一Changeで更新し、fresh isolated Profileで`uv lock --check`→`uv sync --locked`→Package/API smoke→旧v2/E9/E10 regression→SBOM/License/Legal separated checksを実行する。**このPREP工程では本体依存ファイルは未変更、実際のinstallation/Science PASSはNOT_RUN。**
+**Disposition (Owner SIM-03/04, 2026-11-21):** DEC08 ENV-BASE/DOWHY/ECONML/TIGRAMITEとMethod別API/科学的検証は維持し、ENV-COMBINED全extras CIは初期必須から削除（未検証の同時導入はsupported扱いしない）。Coding Authorization後、`pyproject.toml`/`uv.lock`を同じChangeで更新し、4必須Profileごとにlock check→sync→API smoke→関連旧v2回帰。SBOM/受領者別法務サービスを内部CLIの必須機能にしない。顧客納入前のNFR-034手動審査は維持。Source/Tests/Lock未変更、実効試験NOT_RUN。

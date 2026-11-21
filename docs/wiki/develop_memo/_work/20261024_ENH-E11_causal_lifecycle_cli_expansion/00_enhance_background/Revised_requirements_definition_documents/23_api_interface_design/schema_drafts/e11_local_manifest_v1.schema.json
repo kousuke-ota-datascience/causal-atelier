@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:manifest:1",
   "title": "E11 manifest v1 schema — PREP-02 review draft only",
-  "description": "Manifest is a separate canonical object with no self hash; marker externally references its exact bytes. Artifact uniqueness, cross-ref and privacy checks require semantic validation. The Result discriminator can be null for non-Effect operations; an operation-specific bundle validator must enforce expected outputs rather than fabricate Effect files.",
+  "description": "Manifest is a separate canonical object with no self hash; marker externally references its exact bytes. Artifact uniqueness, cross-ref and privacy checks require semantic validation. The Result discriminator can be null for non-Effect operations; an operation-specific bundle validator must enforce expected outputs rather than fabricate Effect files. Local internal scientific output does not include customer-license approval or SBOM fields under Owner 2026-11-21 SIM-04; external delivery remains subject to separate manual review.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -194,16 +194,6 @@
         },
         "api_probes": {
           "type": "object"
-        },
-        "sbom_ref": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/contentRef"
-            },
-            {
-              "type": "null"
-            }
-          ]
         }
       }
     },
@@ -220,8 +210,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "science_evidence_ref",
-        "legal_delivery_status"
+        "science_evidence_ref"
       ],
       "properties": {
         "science_evidence_ref": {
@@ -233,10 +222,6 @@
               "type": "null"
             }
           ]
-        },
-        "legal_delivery_status": {
-          "type": "string",
-          "minLength": 1
         }
       }
     },

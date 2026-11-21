@@ -68,14 +68,14 @@ Artifact materializationはlogical Execution/Stage/output slot/typeからdetermi
 | CLI runner identity | 実行主体はlocal OS実行者。Product `X-User-Id`/Project Roleを強制前提としない | OS user/privilege model and delegation |
 | Input Path | Root/path allowlist、traversal・symlink escapeを拒否 | canonical root/reparse/TOCTOU strategy |
 | Config / Serialization | Versioned typed inputのみ受入。未信頼のpickleなど任意code実行を既定経路で許さない | exact parser/allowlist |
-| Output directory | private artifact root、権限・umask等を設計し、失敗時も保護 | filesystem support, ACL/permissions |
-| Row-level CATE and individual explanations | Study＋CLI double opt-inと機微Artifact扱い、private local FSでの限定export | 一般Linux実行者自身のopt-in、private root/ACL/Method別列行制限。外部Approver/署名鍵不要 |
+| Output directory | private artifact root、owner UIDと0700/0600を検証し、失敗時も保護 | local ext4/XFS、dirfd/path・mode |
+| Row-level CATE and individual explanations | Study＋CLI double opt-inと機微Artifact扱い、private local FSでの限定export | 一般Linux実行者自身のopt-in、owner-only mode・Method別列/行/byte制限。外部Approver/署名鍵・独立ACL/namespace証明不要 |
 | Manifest/Logs | Credential・機微列・個票値を原則含めず、hashや統計量を記録 | deidentification/log retention |
 | Backend | optional codeを実効版・license・安全性基準で選別 | package audit and runtime isolation |
 
 Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**Local CLIの個票出力の認可をProduct membershipなしで説明できる設計**が必要。これは未解決のBD-01 blocking itemである。明示opt-inだけであらゆる漏洩対策が完成したと解釈しない。
 
-既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportにはOSの実行主体・出力権限・明示opt-inを組み合わせるが、最終的な認可規則・証跡・ACLは未確定の設計事項として扱う。
+既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportには一般Linux EUID/private ext4-XFS所有root、0700/0600、安全なdirfdとStudy＋CLIのdouble opt-inを適用する。独立ACL/xattr証明・mount namespace追跡・CI/container環境種別検出は要求しない。同一UID/rootに対する隔離は保証しない。
 
 **当該機能に適用する設計制約（関連Requirement）**
 
@@ -97,7 +97,7 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 
 ### 15.7 PREP-02 Local security authority decision (2026-11-17)
 
-[DEC-PREP02-A Owner record](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): **Option A ADOPTED**. ENH-E11 initial Local CLI export authority is restricted to same effective UID as owner of a private trusted local root, with no delegation. Shared/CI/container-root-accessible mount or unverified ACL/permission case is fail-closed. Row-level output is default disabled and requires Study policy authorization **and** explicit CLI flag, root/actor checks, column/row minimization, and absence of row/secret leakage in logs/Manifest. This does not assert a complete runtime proof or replace Product RBAC; §15.5's previously pending Owner choice is superseded **only** as to choice of policy. OS/filesystem verification, exact error contract and independent security review remain open.
+[DEC-PREP02-A historical](../combined_review/decisions/94_20261117_dec_prep02_owner_architecture_choices.md): Original ACL/mount/namespace proof requirement was superseded ONLY for owner-only local ext4/XFS under 2026-11-21 SIM-01 (combined_review/131). Current same-UID/mode/secure-path and G01 atomic publisher remain; no external threat isolation is claimed.
 
 ## Local scientific individual-row output
 

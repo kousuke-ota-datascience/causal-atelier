@@ -199,14 +199,14 @@ Graph JSONは `e11-local-graph/1`。`version_id`／`parent_version_id`は実在�
 | identity | `manifest_version=e11-local-manifest/1`、run_id、operation、request_hash、schema dispatch |
 | lineage | question/design/graph/dataset/upstream Identification refs＋hash、effective Estimand |
 | execution | technical/result science axis、actual backend and method、inference config、analysis mode |
-| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、SBOM ref、**canonical_codec_version** |
+| runtime | repo commit/dirty、Python/platform/CPU/BLAS threads、uv.lock hash、installed distribution/version、extras、actual API probes、**canonical_codec_version** |
 | stochastic | effective seed、stream derivation、split/partition hash、fold、Bootstrap config、retries |
 | artifacts | canonical relative key、type、size bytes、sha256、privacy classification、visibility |
-| review | method Reference／Science evidence refs（未実行ならnull）、legal delivery status別記 |
+| review | method Reference／Science evidence refs（未実行ならnull）。顧客配布の法務判断はManifest外で管理 |
 
 `_COMMITTED.json` は `{"marker_version":"e11-commit/1","run_id":"...","manifest_sha256":"...","request_hash":"..."}`。Manifestは自身のhashを含めず、markerがManifestのbytes hashを指す。Markerはartifact一覧の外側にあり循環hash参照を作らない。Readerは marker→Manifest→各Artifact hash/size/MediaType→Operation別必須/禁止Artifact、schema_dispatch、Status、Method、upstream lineage cross-refを検証する。外部からの上流参照もtrusted root＋hashの範囲で再照合する。
 
-Manifestに全source pathを生の絶対パスで記録せず、再現に必要な参照とdigest、非機微な環境要約を格納する。SBOMへの内部referenceは秘密やライセンス未承認状態を解除しない。個票Parquetをdefault summary／console／JSONに含めない。
+Manifestに全source pathを生の絶対パスで記録せず、再現に必要な参照とdigest、非機微な環境要約を格納する。内部CLIのManifestにはSBOM referenceや顧客配布承認状態を要求しない。個票Parquetをdefault summary／console／JSONに含めない。
 
 ### 6.1. Operation dispatch・Hashの非循環性
 
@@ -229,7 +229,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 ## 8. Local privacy／distribution
 
 - 個票を含む `row_effects.parquet` は `RESTRICTED_ROW_LEVEL`。通常出力では作らない。明示Study requestとCLI flagのdouble opt-in、非root実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別の列/行/byte/memory上限を全件検証する。独立承認や署名鍵を要求しない。
-- Local OS PrincipalはProduct ProjectMembershipを代替する認証ではない。共有端末/CI/container-root-accessible mountと不明ACL/namespaceは別の信頼可能な契約がない限り拒否する。stdout/stderr/log/exception traceに個票やsecretを出さない。
+- Local OS PrincipalはProduct ProjectMembershipを代替する認証ではない。初期対象は非root EUID所有のprivate local ext4/XFS root/0700、row file/0600で、safe dirfd・Path・same-FSを検証する。独立ACL/xattr/namespace/mount visibility証明やCI/container環境種別判定を要件化しない。同一UIDとOS管理者からの隔離は保証しない。stdout/stderr/log/exception traceに個票やsecretを出さない。
 - Customer delivery可否は科学的結果・内部実行の状態とは別。GPL系Backendを含む受領者別Bundleの法務レビュー未完は `CUSTOMER_DELIVERY_BLOCKED` として扱う。
 
 ## 9. 恒久Interface Contract Test
@@ -242,7 +242,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 | IO-E11-04 | JSON AR topology round-trip | DISCONNECTED/ALL_REAL/無界endpoint喪失 |
 | IO-E11-05 | Graph endpoint/lag/GraphVersion round-trip | circle消失、parent欠落 |
 | IO-E11-06 | Restricted CATE Parquet/summary/CLI leakage | opt-in無しの個票公開 |
-| IO-E11-07 | Backend/env/lock/SBOM readback | 適用不能Versionや不明依存の成功扱い |
+| IO-E11-07 | Backend/env/lock metadata readback | 適用不能Versionや不明依存の成功扱い（内部CLIでSBOM非必須） |
 | IO-E11-08 | immutable run／partial Manifest rejection | stale hashes、non-atomic backend |
 | IO-E11-09 | Product v2 reader regression | legacy Manifestを新Bundle Schemaとして誤解釈 |
 
@@ -267,7 +267,7 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 - 対象は一般権限Linuxユーザーがlocal ext4/XFS上で生成する個票中間成果物。実行者自身による明示的な出力指示であり、独立Approver・Ed25519署名・署名鍵Store・失効を求めない。従前の独立承認方式はOwnerの2026-11-21限定改訂により撤回。
 - Studyは既存`e11-local-study/1`を保持。`privacy.row_export_requested=true`かつCLI `--allow-row-level-export`を必須とし、任意の`privacy.policy_ref`は現行unsigned modeではnullのみ受理（non-nullを承認として認めない）。
 - `RESTRICTED_ROW_LEVEL`、対象Methodの`ApprovedRowSchema`、許可列順・row ID・dtype・max_rows・max_output_bytes・max_memory_bytesを照合。Method固有数値や列名を推測しない。
-- 実行EUIDが所有するprivate TrustedRoot・同一local filesystem、root/staging 0700、row artifact 0600、ACL/mount/namespace/symlink/dirfd安全性を実行時に確認。rootまたは同一UID processからの分離は保証しない。
+- 実行EUIDが所有するprivate TrustedRoot・同一local filesystem、root/staging 0700、row artifact 0600、実行UID/owner/mode/FS/symlink/dirfd安全性を実行時に確認。rootまたは同一UID processからの分離は保証しない。
 - 初期拒否はexit3、Source iteration0、row bytes0、aggregateへ暗黙fallbackしない。認可後のprivate staging失敗は公開せず、過去の生成bytesが0だったと偽らない。
 
 ### 10.2. Authorized bounded Parquet and G01 publication
@@ -275,7 +275,7 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 1. `LocalPrivacyPolicy.authorize(*,study,cli_row_flag,root,principal,output_shape)`でStudy、CLI、UID/root、Method出力適格性をAND検証し、`filter_export_columns`で列順を確定する。
 2. Owner採用済み`RowEffectsParquetWriter.write(*,source,study,decision,selection,sink)`とFactory/Serializer/Deferred Source署名は維持。Source.schema()とMethod別RowSchemaを検査した後、両opt-inかつOS適格性を確認した時のみ`read_rows()`を反復し`max_rows+1`で超過を拒否。重複行ID/unknown columns/不正dtype/NaN/Inf/上限超過はfail closed。
 3. `row_effects.parquet`、media type `application/vnd.apache.parquet`、classification `RESTRICTED_ROW_LEVEL`を既存G01 `StagingArtifactSink.stage_bytes`へ渡す。Writerが直接final runs/、Manifest、markerを発行することは禁止。G01 Publisherが唯一のatomic no-clobber authority、Readerが独立readbackを行う。
-4. Stage/Seal/Publish前にroot/UID/mount/ACL/同一Sinkとinput hashを再検証。異常時にcommit markerなし。行値をResult/Manifest/status/CLI stdout・stderr・logに転記しない。
+4. Stage/Seal/Publish前にroot/UID/FS identity/同一Sinkとinput hashを再検証。異常時にcommit markerなし。行値をResult/Manifest/status/CLI stdout・stderr・logに転記しない。
 
 ### 10.3. Independent acceptance
 
