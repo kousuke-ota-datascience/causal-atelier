@@ -29,9 +29,8 @@ Current design concernを次のtest layerへtraceする。
 | Static architecture | Local CLI→Web/API/DB/Worker逆依存禁止、Domain→optional backend逆依存禁止、old v2 schema reader保護 |
 | Unit/contract | Graph endpoint fidelity、Estimand差、nonidentification fail closed、backend unavailable、Result state axes、confidence set topology |
 | Local artifact integration | traversal/symlink、publish partial failure、readback/checksum、crash-recovery、row-level privacy、old Run compatibility |
-| Environment | 5 isolated profiles＋conditional RD、lock/extra/API/version、core startup、old E9/v2 regression |
+| Environment | 4必須isolated profiles（BASE/DOWHY/ECONML/TIGRAMITE）＋Method別conditional RD、lock/extra/API/version、core startup、関連E9/v2 regression |
 | Independent science | 41 Method/68 Scope/10 UC、DGP/NEG/REF/AC/ENV-AC、FWER=.05、K/R/MC／Coverage／Monte Carlo error |
-| Delivery / legal | 実際の顧客配布前に対象Dependency/配布方式をOwner・法務が手動審査。内部科学CLIのGate実行にはSBOM生成／受領者別認可管理を追加しない |
 
 `PLAN:G01〜G10`は暫定的な計画Workstream名であり、そのままではEnhancement Workflowの正式受入Gateではない。正式Gateはsemantic Acceptance Contractとして境界を確定し、各Gateの`06` Coding Contract・`07` Verification Contract・`999` Decisionで管理する。**本BDの文書監査PASSが実行テストPASSを意味しない**。[Review](../bd01_review/90_architecture_consistency_review.md)。
 

@@ -27,7 +27,7 @@
 - 初期E11に含めないのは、ATC、汎用Mediation、Matching／汎用g-computation、Policy Value、Monitoring/drift、汎用Graph consensus、一般化された部分識別効果集合の自動数値推定。
 - 初期E11に含めないのは、Simulated Confounder／Graph Perturbation、古典OLS以外の未観測交絡Sensitivity全面化、RPCMCI／J-PCMCI+、別審査の条件付きIV推定器C、SCM未承認CI。
 - 新E11 MethodのProduct API/UI/Worker/DB/migration統合、既存Product GAP-C01〜04の暗黙の閉鎖は含めない。
-- 対象Methodが承認Scopeに含まれていても、必要な法務審査を通過しない顧客向けGPL系Backend配布は許可しない。
+- 外販、顧客向けBackend配布、受領者別法務審査、SBOM／Legal Release Workflowは初期E11の機能・必須Gateから除外する。社内利用に適用されるOSSライセンスおよび組織規程の遵守は、この除外により免除されない。
 - 付録Aの**D-only Scope**はE11初期の必須提供対象ではない。**混合Disposition**ではR/Q/Nの承認部分のみ実装義務とし、D部分は追跡を維持する。
 
 **Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)。対象Scopeと正式要件の対応は [RD-03 Trace](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)。

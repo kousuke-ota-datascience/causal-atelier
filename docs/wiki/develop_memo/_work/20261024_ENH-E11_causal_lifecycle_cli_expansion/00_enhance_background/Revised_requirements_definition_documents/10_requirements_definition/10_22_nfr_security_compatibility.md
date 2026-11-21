@@ -20,4 +20,8 @@
 | NFR-028 | Dependency isolation | 任意の分析エンジンが利用不能でも基本機能を継続でき、利用不能理由を識別できる | — | ACTIVE | IMPLEMENTED | ENH-E10 |
 | NFR-031 | Security and Privacy | ローカル分析で不正なPath／Symlink／任意実行Objectを拒否し、個票出力を権限・最小化条件に従い管理する | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | NFR-032 | Dependency Isolation | 任意導入の科学Backendの不在・不適合が既存Coreや別Methodの稼働を妨げず、当該能力のUnavailable状態と理由を明示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| NFR-034 | License Compliance | 配布先ごとのライセンス審査が完了しない限り、審査対象の外部ライブラリを含む顧客納入を許可しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| NFR-034 | License Compliance — historical, non-current | 配布先ごとのライセンス審査が完了しない限り、審査対象の外部ライブラリを含む顧客納入を許可しない【旧条文・現行E11では非適用。顧客納入は未確定】 | MUST | RETIRED | UNVERIFIED | ENH-E11 |
+
+### ENH-E11 internal scientific CLI scope correction (Owner, 2026-11-22)
+
+`NFR-034`は初期E11の正式なcurrent acceptanceから除外する。配布形態・受領者・外販方針が未確定であり、このE11でCustomer Deliveryの規範的要件・実装機能・Release Gateを作らない。元のID／旧MUST条文は歴史的追跡のため残し、`RETIRED`は現在の義務がないことを表す。外販決定時にはその時点の実配布形態・依存Library・適用OSS Licenseと組織ポリシーを元に別途正式要件を起案する。**これはOSSライセンスの遵守不要を意味しない。** 社内でのソフトウェア利用・複製・配布にも適用条件があり、既存組織の承認・コンプライアンス制度はE11の機能要件として新規実装せずに従う。

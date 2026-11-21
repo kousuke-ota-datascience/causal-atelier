@@ -155,18 +155,18 @@ CLI exit code：`0`＝制御上正常終了（科学的負結果を含む）、`
 
 Method-specific confidence intervalの欠落は `null + reason`。推論Registryが未承認の方式や外部Backend defaultを採用済みCIとして報告しない。
 
-## 7. Environment capabilityとLicense
+## 7. Internal scientific runtime capability
 
 | Profile | Eligible extras | Interface上の扱い |
 |---|---|---|
 | ENV-BASE | coreのみ | optional MethodはUNAVAILABLE。旧v2は動作継続 |
 | ENV-DOWHY | `e11-dowhy` | Method別実効DoWhy API／版本照合 |
 | ENV-ECONML | `e11-econml` | method-specific CATE/DRIV、CI availability |
-| ENV-TIGRAMITE | `e11-temporal` | PCMCI系、端点/lag、顧客配布Legalは別判定 |
+| ENV-TIGRAMITE | `e11-temporal` | PCMCI系、端点/lag、科学Backend実効適格性 |
 | ENV-COMBINED | 上記3 extras | optional 後続相互運用試験。初期必須の実行Profileではなく未検証combinedをsupported扱いしない |
-| ENV-RD | `e11-rdd`（法務・配布条件付き） | RD Backend・GPLの配布可否を受領者単位で判定 |
+| ENV-RD | `e11-rdd`（Method別条件付き） | RD Backend/Inference の実効適格性を検証。顧客配布の受領者別判定は行わない |
 
-`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版を記録する。初期必須はENV-BASE/DOWHY/ECONML/TIGRAMITEの各isolated venvと `uv lock --check / uv sync --locked / uv pip check`＋Method API smoke。ENV-COMBINEDは追加optional QAであり、初期に同時共存を保証しない。SBOMや受領者別法務状態は内部CLIのRuntime/Manifestに含めず、実際の顧客納入の直前に別途手動審査し、未承認納入を禁止する。未実測版を実効値として出力しない。
+`pyproject.toml`は宣言、`uv.lock`は解決集合、Runtime Manifestは実効版を記録する。初期必須はENV-BASE/DOWHY/ECONML/TIGRAMITEの各isolated venvと `uv lock --check / uv sync --locked / uv pip check`＋Method API smoke。ENV-COMBINEDは追加optional QAであり、初期に同時共存を保証しない。SBOMや受領者別顧客法務状態は内部CLIのRuntime/Manifest/Gateに含めない。外販は未確定でありE11新規要件を作らず、社内でのOSS利用について既存組織の遵守手順を適用する。未実測版を実効値として出力しない。
 
 ## 8. 恒久Interface Contract Test
 
@@ -178,7 +178,7 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | IF-E11-04 | 未確定Graph endpoint/lag/parent GraphVersionのround-trip | PAG→DAG、circle消失を拒否 |
 | IF-E11-05 | typed Effect/uncertainty/ScienceとAR集合のround-trip | infiniteをnull/finite CIへ丸めない |
 | IF-E11-06 | NCE/NCO/RV opt-in、individual exportの拒否／許可境界 | CLI flag単独での行レベル情報流出禁止 |
-| IF-E11-07 | 全Profile、lock/capability、no optional import at core startup | unavailable隔離、Combined経路と旧v2 |
+| IF-E11-07 | 4必須Profile、lock/capability、no optional import at core startup | unavailable隔離、選択Backend/Methodと旧v2。ENV-COMBINEDは必須でない |
 | IF-E11-08 | technical exitとscientific negative、stderr/stdout非漏洩 | Science FAILをCLI error扱い・Science PASS偽装禁止 |
 | IF-E11-09 | manifest/version/effective API/hash/readback | corrupted artifactやpartial publishを成功扱いしない |
 | IF-E11-10 | method-specific DGP/NEG/REF/ACの網羅 | 同名別Estimandや未検証CIの自動代替禁止 |

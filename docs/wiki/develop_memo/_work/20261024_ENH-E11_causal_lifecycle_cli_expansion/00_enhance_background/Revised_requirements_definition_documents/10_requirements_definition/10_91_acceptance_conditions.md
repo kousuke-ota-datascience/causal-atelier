@@ -31,7 +31,7 @@
 3. 10 UCから正式FR/NFR/科学的ARとMethod契約・受入Evidenceを追跡可能にする。
 4. 科学的受入はfamilywise error rate `FWER=0.05`の承認方針と、Method別の事前指定K/R/MC・計算資源上限・coverage・Monte Carlo誤差を満たす必要がある。計画のみをPASSとして扱わない。
 5. 旧`causal-analysis-spec/2`、既存Product Web/API/Worker/DB、CLI、既存FR/NFR/ARへの互換性を保護する。
-6. 個票CATEやLocal Artifactのプライバシー、部分保存の正常公開防止、Optional Backend不在の隔離、配布前ライセンス審査を受入条件とする。
+6. 個票CATEやLocal Artifactのプライバシー、部分保存の正常公開防止、Optional Backend不在の隔離を受入条件とする。顧客納入／受領者別License承認・SBOM/Legal Release WorkflowはENH-E11初期受入対象外。
 
 ## 12.2. 既存の定量的受入条件
 

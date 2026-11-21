@@ -1,6 +1,6 @@
 # 10_32_scientific_method_scope — Method提供義務とScience制限
 
-承認されたMethodの対象・適格性・Estimandを利用者向けFRの抽象化で縮小しない。Science/Legal/Gateは未受入。
+承認されたMethodの対象・適格性・Estimandを利用者向けFRの抽象化で縮小しない。Science/Gateは未受入。社内利用を対象とし、顧客納入・外販・Legal Deliveryは初期Scope外。
 
 ## 1. Scopeと制約
 
@@ -8,7 +8,7 @@
 - B0二値Z/A complier LATE、B1指定Cの加法線形IV構造係数、DRIV条件付きIV構造係数、非IV CATE、Sharp/Fuzzy RDの局所効果は異なる。
 - FD-Aは限定線形・単一Mediator、NCE/NCOは明示opt-in、OLS Sensitivityは古典OLS partial R²／point RV(q=1)、初期SCMはpoint-only。
 - 当該Backendが無い場合はMethod `UNAVAILABLE`を返し、他の方法へ無言でfallbackしない。
-- ATC／汎用Mediation／Matching・汎用g-computation／Policy／Monitoring／未承認CI／Product統合／法務審査前GPL配布は初期提供に含めない。
+- ATC／汎用Mediation／Matching・汎用g-computation／Policy／Monitoring／未承認CI／Product統合／顧客向け配布・外販関連の運用機能は初期提供に含めない。
 
 ## 2. 全41 Methodの正式Requirement Trace
 
