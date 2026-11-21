@@ -3,11 +3,11 @@
 ### G05現行個票出力契約 — Owner 2026-11-21改訂
 
 - **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。
-- **Privacy/OS:** EUIDが所有するprivate TrustedRoot、root/staging 0700、row file 0600、ACL/mount/namespace/symlink/dirfdとsame-FSを検査。rootと同一UIDのプロセスは隔離できない。個票は`RESTRICTED_ROW_LEVEL`に分類。
+- **Privacy/OS:** EUIDが所有するprivate TrustedRoot、root/staging 0700、row file 0600、owner/mode/local ext4-XFS/symlink/dirfdとsame-FSを検査。rootと同一UIDのプロセスは隔離できない。個票は`RESTRICTED_ROW_LEVEL`に分類。
 - **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。
 - **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。
 - **Writer:** 既決`RowEffectsParquetWriter.__init__(*,serializer,max_memory_bytes)`、`write(*,source,study,decision,selection,sink)->ArtifactDescriptor`、`RowEffectsWriterFactory.create(*,serializer,max_memory_bytes)`、`DeferredRowEffectsSource.schema/read_rows`、`ValidatedParquetSerializer.encode(*,rows,schema)->bytes`を維持。実行条件成立後だけread_rows、G01 Sink以外へ書かない。
-- **Publication/test:** `row_effects.parquet`／`application/vnd.apache.parquet`のみG01 Publisher/Readerが原子的にpublish・readback。Stage/Seal/Publish前にroot/UID/mount/runを再検査、障害後にCOMMITTEDを偽装しない。個票値はaggregate Result/Manifest/CLI/logsへ出さない。未検証事項：Method RowSchema、実FS/Parquet、07独立Science/Privacy Test、Freeze、Coding Authorization。
+- **Publication/test:** `row_effects.parquet`／`application/vnd.apache.parquet`のみG01 Publisher/Readerが原子的にpublish・readback。Stage/Seal/Publish前にroot/UID/mode/FS/runを再検査、障害後にCOMMITTEDを偽装しない。個票値はaggregate Result/Manifest/CLI/logsへ出さない。未検証事項：Method RowSchema、実FS/Parquet、07独立Science/Privacy Test、Freeze、Coding Authorization。
 
 
 **Document class:** Primary Execution Contract (self-contained Review DRAFT)  
@@ -219,7 +219,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
 - CATE supportはTreatment×X/Wのデータ範囲と推定対象のSupportに基づき、Overlap/Effective Sample/CalibrationとUncertaintyを混同せず別Metric/Statusとして計算。 Calibration/Coverage評価は事前指定Holdoutまたは独立SimulationとEstimator/Backendのvalid inferenceに限定。適格な標本数、group size、CI availabilityを記録。 G04のCATE Resultを入力として検証し、Method固有nuisanceや数値Estimatorを再実装しない。aggregateだけ返し、G05/P02の独立認可なしに個票値を作らない。
-**Independent test:** 両opt-inと片側だけの拒否、wrong UID/ACL/mount/symlink、許可Method RowSchema、Source iteration count、row/byte cap、atomic commit/Readerと旧v2回帰を独立実測。
+**Independent test:** 両opt-inと片側だけの拒否、wrong UID/owner/mode/FS/symlink、許可Method RowSchema、Source iteration count、row/byte cap、atomic commit/Readerと旧v2回帰を独立実測。
 
 ## 7. Checkpoint / Handoff / Stop
 
@@ -236,3 +236,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **BLOCKED before Freeze:** HTE calibration metricとholdout policy/必要Science Oracle、G04推論契約。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。
 
+
+### SIM-01 — local FS evidence requirements trimmed by Owner (2026-11-21)
+
+This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/digest, statx mount-ID/namespace visibility attestation, CI/container heuristic/environment classification. This is not a guarantee against another process running with the same UID or a privileged OS administrator. Real ownership/modes/FS/path failures are still negative tests; no row source iteration before eligibility. G01 no-clobber Publisher/Reader and G05 independent science tests remain unchanged. Do not implement a key/Trust Store or signed prior approval. Reconciliation authority: combined_review/129 + /131. Independent Test NOT_RUN; Gate NOT_FROZEN.

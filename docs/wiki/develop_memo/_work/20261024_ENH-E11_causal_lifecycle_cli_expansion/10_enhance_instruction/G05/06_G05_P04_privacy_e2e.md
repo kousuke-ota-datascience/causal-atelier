@@ -3,11 +3,11 @@
 ### G05現行個票出力契約 — Owner 2026-11-21改訂
 
 - **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。
-- **Privacy/OS:** EUIDが所有するprivate TrustedRoot、root/staging 0700、row file 0600、ACL/mount/namespace/symlink/dirfdとsame-FSを検査。rootと同一UIDのプロセスは隔離できない。個票は`RESTRICTED_ROW_LEVEL`に分類。
+- **Privacy/OS:** EUIDが所有するprivate TrustedRoot、root/staging 0700、row file 0600、owner/mode/local ext4-XFS/symlink/dirfdとsame-FSを検査。rootと同一UIDのプロセスは隔離できない。個票は`RESTRICTED_ROW_LEVEL`に分類。
 - **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。
 - **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。
 - **Writer:** 既決`RowEffectsParquetWriter.__init__(*,serializer,max_memory_bytes)`、`write(*,source,study,decision,selection,sink)->ArtifactDescriptor`、`RowEffectsWriterFactory.create(*,serializer,max_memory_bytes)`、`DeferredRowEffectsSource.schema/read_rows`、`ValidatedParquetSerializer.encode(*,rows,schema)->bytes`を維持。実行条件成立後だけread_rows、G01 Sink以外へ書かない。
-- **Publication/test:** `row_effects.parquet`／`application/vnd.apache.parquet`のみG01 Publisher/Readerが原子的にpublish・readback。Stage/Seal/Publish前にroot/UID/mount/runを再検査、障害後にCOMMITTEDを偽装しない。個票値はaggregate Result/Manifest/CLI/logsへ出さない。未検証事項：Method RowSchema、実FS/Parquet、07独立Science/Privacy Test、Freeze、Coding Authorization。
+- **Publication/test:** `row_effects.parquet`／`application/vnd.apache.parquet`のみG01 Publisher/Readerが原子的にpublish・readback。Stage/Seal/Publish前にroot/UID/mode/FS/runを再検査、障害後にCOMMITTEDを偽装しない。個票値はaggregate Result/Manifest/CLI/logsへ出さない。未検証事項：Method RowSchema、実FS/Parquet、07独立Science/Privacy Test、Freeze、Coding Authorization。
 
 
 **Document class:** Primary Execution Contract (self-contained Review DRAFT)  
@@ -93,7 +93,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/ACL/mountをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。
+**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/owner/mode/FSをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。
 
 **Application Port配置:** `ContentReferencePort`、`LocalPublicationPort`/`LocalManifestReaderPort`、`LocalPrivacyPolicyPort`。Applicationが具体adapterを直接参照しない。
 
@@ -163,7 +163,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 #### フィールド
 
-**Instance Field：なし。** `LocalPrivacyPolicy`は単一の純粋なPolicy Evaluatorであり、runごとの`principal_uid`、`root_owner_uid`、`classification`、`row_export_requested`、`authorization_evidence`、`allowed_columns`、`max_rows`、`audit_context`を状態として保持しない。各値は信頼された`study`、`root`、`principal`、`policy`、`output_shape`からcall単位で得る。これによりApplicationの再利用可能なstateless UseCaseと両立する。
+**Instance Field：なし。** `LocalPrivacyPolicy`は単一の純粋なPolicy Evaluatorであり、runごとの`principal_uid`、`root_owner_uid`、`classification`、`row_export_requested`、`allowed_columns`、`max_rows`、`audit_context`を状態として保持しない。各値は信頼された`study`、`root`、`principal`、`policy`、`output_shape`からcall単位で得る。これによりApplicationの再利用可能なstateless UseCaseと両立する。
 
 #### Constructor / Factory
 
@@ -184,14 +184,14 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 #### I/O・連携・失敗処理
 
-- **Input:** `ValidatedStudy`（元CLI `LocalStudySpec`）, CLI intent, runtime principal/effective UID, trusted root/owner/ACL/mount証拠, independently verified policy, output shape/column Schema。
+- **Input:** `ValidatedStudy`（元CLI `LocalStudySpec`）, CLI intent, runtime principal/effective UID, trusted root/owner/owner/mode/FS証拠, independently verified policy, output shape/column Schema。
 - **Output:** allow/reject（含むReason）と許可されたColumnSelection。Raw rows不要。
 - **Side effect:** N/A（純粋Policy）。File create/0600・dir0700とaudit event emissionはPublisher/CLI adapterの責務。
-- **Failure:** missing flag、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
+- **Failure:** missing flag、UID mismatch、nonlocal FS or nonprivate root、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
 
 #### 検証
 
-`DD-E11-PRIV01` default no rows、`PRIV02` flag alone deny、`PRIV03` UID mismatch、`PRIV04` 0600/0700、`PRIV05` stdout/log leakage、`PRIV06` shared mount deny、`PRIV07` allowed-columns minimization。関連要件：FR-194/195/203、NFR-031/032、AR-034/035、BD01-F05/F12。
+`DD-E11-PRIV01` default no rows、`PRIV02` flag alone deny、`PRIV03` UID mismatch、`PRIV04` 0600/0700、`PRIV05` stdout/log leakage、`PRIV06` unsupported nonlocal FS / nonowner mode deny、`PRIV07` allowed-columns minimization。関連要件：FR-194/195/203、NFR-031/032、AR-034/035、BD01-F05/F12。
 
 ### 3.3. `LocalManifestReader` — normative implementation contract
 
@@ -287,7 +287,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. G05 privacy and evidence test contract
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
-**Independent test:** 両opt-inと片側だけの拒否、wrong UID/ACL/mount/symlink、許可Method RowSchema、Source iteration count、row/byte cap、atomic commit/Readerと旧v2回帰を独立実測。
+**Independent test:** 両opt-inと片側だけの拒否、wrong UID/owner/mode/FS/symlink、許可Method RowSchema、Source iteration count、row/byte cap、atomic commit/Readerと旧v2回帰を独立実測。
 
 ## 7. Checkpoint / Handoff / Stop
 
@@ -302,5 +302,9 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **Document independence:** Class Fields/Constructor/Methodは§3、専用処理は§4、検証/負例は§6で完結。Owner決定が無い要件は仮構実装で埋めない。
 
-**Remaining design gap:** Method別ApprovedRowSchemaの有効列・型・row identity・科学Target・limit値、実Linux ext4/XFS/ACL/mountおよびParquet effective APIと独立Privacy/Science testsは未実証。
+**Remaining design gap:** Method別ApprovedRowSchemaの有効列・型・row identity・科学Target・limit値、実Linux ext4/XFS/owner/mode/FSおよびParquet effective APIと独立Privacy/Science testsは未実証。
 
+
+### SIM-01 — local FS evidence requirements trimmed by Owner (2026-11-21)
+
+This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/digest, statx mount-ID/namespace visibility attestation, CI/container heuristic/environment classification. This is not a guarantee against another process running with the same UID or a privileged OS administrator. Real ownership/modes/FS/path failures are still negative tests; no row source iteration before eligibility. G01 no-clobber Publisher/Reader and G05 independent science tests remain unchanged. Do not implement a key/Trust Store or signed prior approval. Reconciliation authority: combined_review/129 + /131. Independent Test NOT_RUN; Gate NOT_FROZEN.
