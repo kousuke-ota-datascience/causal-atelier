@@ -34,7 +34,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 The Package produces typed values, verified **schema** and canonical bytes; it does not claim verified physical input, Product GraphVersion ownership or independent Graph science.
 
 ## 4. Explicitly out of scope
-他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
+他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、不適格なowner/mode/local FS、既存run上書き、Package外の便乗変更。
 
 ## 5. Entry criteria / required evidence
 Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。P01に先行する実装Packageは存在しないので依存Checkpointは不要。矛盾/依存未成立はBLOCKED。
@@ -99,7 +99,7 @@ Implement versioned deterministic `e11-json-jcs-rfc8785/1` canonicalization. Inp
 | `ContentRef.sha256` | Exact completed artifact file bytes (P02) |
 | `marker.manifest_sha256` | Exact completed `manifest.json` bytes (P02) |
 
-Run the repository's `e11_jcs_golden_vectors.json` (7 positive/7 negative) against independent ECMAScript bytes; Python-only roundtripping does not establish cross-language conformance. No UTF normalization that changes the supplied code points.
+Run the repository's `e11_jcs_golden_vectors.json` (7 positive/7 negative) against independently sourced, pre-registered RFC8785 expected byte vectors. No external ECMAScript runtime or cross-language parity execution is required. Self-generated expected fixtures are NOT independent references. No UTF normalization that changes the supplied code points.
 
 ### 6.5. `LocalRunManifest` — 30_62 §4 / MAN01–06
 
@@ -167,3 +167,7 @@ source / previous checkpoint / test output / provenanceは外部参照してよ�
 - continuation不能 -> `PACKAGE_BLOCKED`
 - Gate PASS / FAILは判定しない。
 - next packageへ勝手に先行しない。
+
+### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
+
+G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.

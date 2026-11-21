@@ -34,7 +34,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 P02 receives P01's strict Codec and Manifest DTO. P03/P04 are not prerequisites: exercise publication with valid *synthetic* typed Graph/Status bytes, never label synthetic bytes a scientific PAG PASS.
 
 ## 4. Explicitly out of scope
-他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、未承認ACL/mount、既存run上書き、Package外の便乗変更。
+他GateのMethod実装、旧Product v2変更、根拠なしのScience PASS、行出力自己許可、不適格なowner/mode/local FS、既存run上書き、Package外の便乗変更。
 
 ## 5. Entry criteria / required evidence
 Gate 06/07のFreeze・Coding Authorization・固定branch HEAD確認。Depends on P01の実装checkpoint full SHAとfocused検証を確認。矛盾/依存未成立はBLOCKED。
@@ -45,11 +45,11 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 ### 6.1. Trusted local OS capability (30_60 §10 / 23_41 §4 / REF02–04, PRIV03/04/06)
 
-**Types:** `ariadne.shared.local_fs.TrustedLocalRoot` and `LocalPrincipal` must represent the effective OS subject and verified root-dirfd/owner/ACL/mount information, not an arbitrary Path or caller self-assertion. CLI composition root owns factory and OS verification; `LocalRunContext` later consumes these verified capabilities.
+**Types:** `ariadne.shared.local_fs.TrustedLocalRoot` and `LocalPrincipal` must represent the effective OS subject and verified root-dirfd/owner/mode/local ext4-XFS information, not an arbitrary Path or caller self-assertion. CLI composition root owns factory and OS verification; `LocalRunContext` later consumes these verified capabilities.
 
-**Factory preconditions:** local Linux target only; reject root outside explicitly authorized base, symlink in any component, unsafe owner/effective UID, unexpected delegation, ACL exposure, shared/CI/container-root visibility or unknown mount property. A mode `0700` alone is not proof of private mount. Keep dirfd for subsequent open/rename, recheck safe identity at publication boundary; no Product ProjectMembership emulation.
+**Factory preconditions:** local Linux target only; reject root outside the allowed local directory, symlink components, owner/effective UID mismatch, nonprivate 0700/0600 modes, unsupported nonlocal or cross-filesystem outputs. Maintain verified dirfds and recheck owner/mode/root identity at publication. Separate ACL xattr, mount namespace, CI/container environment classification and mount-ID provenance proof are NOT mandatory; same-UID/root isolation is not promised. No Product ProjectMembership emulation.
 
-**Secure operations:** Open each relative path under verified dirfd with `openat2` (restricted resolution) or correct component-by-component `openat/O_NOFOLLOW` equivalent. Validate regular-file type, mount/owner and opened-FD identity. Reject traversal, symlink changes, hardlink-based unexpected exposure and path replacement. A lexical check is insufficient. Never materialize an absolute untrusted path and reopen by name.
+**Secure operations:** Open each relative path under verified dirfd with `openat2` (restricted resolution) or correct component-by-component `openat/O_NOFOLLOW` equivalent. Validate regular-file type, owner/mode/local-FS type and opened-FD identity. Reject traversal, symlink changes, hardlink-based unexpected exposure and path replacement. A lexical check is insufficient. Never materialize an absolute untrusted path and reopen by name.
 
 ### 6.2. `ContentReferencePort.verify` and `LocalContentReferenceAdapter` (30_60 §10 / REF01–04)
 
@@ -61,7 +61,7 @@ def verify(self, ref: ContentRef, *, root: TrustedLocalRoot) -> VerifiedContent:
 
 No Port mutable Instance Fields. Concrete receives verified root on each call; no raw path passed from Application to CLI. Open the referenced regular file safely, read/hash the **same FD** and compare exact bytes, size, content digest and safe metadata with declared `ContentRef`. A same-identity but modified blob fails; a cached validated result cannot bypass per-open consistency. Close FD on all paths. Verify MIME/schema meaning separately in P01/P05.
 
-**Failure:** invalid root/owner/ACL/mount, symlink/hardlink/race, non-regular file, changed inode or actual bytes/hash/size mismatch, missing file, unreadable data -> typed INPUT/SECURITY (CLI exit3), never SCI negative. No I/O writes. Stale verification is not authorization to write outputs.
+**Failure:** invalid root/owner/mode/nonlocal FS, symlink/hardlink/race, non-regular file, changed inode or actual bytes/hash/size mismatch, missing file, unreadable data -> typed INPUT/SECURITY (CLI exit3), never SCI negative. No I/O writes. Stale verification is not authorization to write outputs.
 
 ### 6.3. Application Port facade (30_62 §8.2 / PUB01–10, READ01–07)
 
@@ -122,7 +122,7 @@ def verify(self, *, root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun: 
 
 **Readback sequence:** (1) secure run directory open under verified Root and effective principal; (2) require `_COMMITTED.json` and validate `e11-commit/1`, run ID and request hash; (3) open exact `manifest.json` safely, compare SHA256 of same FD bytes to marker; (4) strict `LocalRunManifest.from_payload` and Codec/version checks; (5) unique safe Inventory keys, real size/SHA/MIME/classification/visibility, upstream lineage, Method, Study/Status/Graph cross-schema agreement and Privacy; (6) only then return immutable `VerifiedLocalRun`. No inference of committed state from marker existence alone.
 
-Never return private row bytes without independent authorization; default G01 is aggregate-only. Corrupt, partial, legacy, versionless or unsafe ACL/symlink/mount runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader cannot mutate, repair or delete a run.
+Never return private row bytes in G01: G01 is strictly aggregate-only, and G05 alone owns double-opt-in local row output. Corrupt, partial, legacy, versionless or unsafe owner/mode/symlink/nonlocal-FS runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader cannot mutate, repair or delete a run.
 
 ### 6.6. Error and ownership matrix
 
@@ -132,7 +132,7 @@ Never return private row bytes without independent authorization; default G01 is
 | Staging before rename | permission, ENOSPC, schema, fsync -> PUBLICATION, exit5 | no final marker; safe pre-rename abort |
 | No-clobber conflict | `RUN_ID_CONFLICT` or same-hash verified reuse, exit5 unless reuse | overwritten final run count = 0 |
 | After possible rename | `PUBLICATION_INDETERMINATE` / exit5 | false COMMITTED count = 0; no deletion |
-| Published Reader | hash/marker/version/ACL bad -> PUBLICATION, exit5 | no VerifiedLocalRun, no auto-repair |
+| Published Reader | hash/marker/version/owner-mode bad -> PUBLICATION, exit5 | no VerifiedLocalRun, no auto-repair |
 
 P02 never claims scientific accuracy from a well-formed Graph file. P01 owns canonical bytes/DTO; P03 owns Graph semantics; P04 scientific Oracle; P05 integrates UseCase and actual Privacy eligibility. Preserve Product `ArtifactStorePort` and legacy `CliManifest(2.0)` contracts.
 
@@ -140,7 +140,7 @@ P02 never claims scientific accuracy from a well-formed Graph file. P01 owns can
 
 | DD / Gate item | Primary layer | Observable positive and negative evidence |
 | --- | --- | --- |
-| REF01–04, PRIV03/04/06; 07-02 | contract + real Linux integration | same-FD actual bytes, directory symlink/hardlink/race, owner/ACL/mount negatives, zero root escape |
+| REF01–04, PRIV03/04/06; 07-02 | contract + real Linux integration | same-FD actual bytes, directory symlink/hardlink/race, owner/mode/nonlocal-FS negatives, zero root escape |
 | PUB01–04; 07-05 | real Linux integration | ENOSPC, marker-before/after, SIGKILL around rename/fsync; false COMMITTED count 0 |
 | PUB05–09; 07-05 | real Linux integration | competing writers, same/different request hash, unsupported syscall and actual no-clobber + durable directory fsync |
 | READ01–07, MAN03–06; 07-06 | contract + real Linux integration | Marker→Manifest→Artifact hash/size/lineage/privacy/version; only valid complete bundle yields VerifiedLocalRun |
@@ -179,3 +179,7 @@ source / previous checkpoint / test output / provenanceは外部参照してよ�
 - continuation不能 -> `PACKAGE_BLOCKED`
 - Gate PASS / FAILは判定しない。
 - next packageへ勝手に先行しない。
+
+### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
+
+G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.

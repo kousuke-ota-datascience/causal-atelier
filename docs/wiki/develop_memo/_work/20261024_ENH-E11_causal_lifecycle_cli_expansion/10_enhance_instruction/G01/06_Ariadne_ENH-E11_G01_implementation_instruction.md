@@ -83,7 +83,7 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_62 `3 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
 | 30_62 `4/8.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
 | 30_62 `5/8.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
-| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/ACL/mountとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と個票のdouble opt-in／Method別最小化はG05 | 02/11 |
+| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/owner/mode/FSとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と個票のdouble opt-in／Method別最小化はG05 | 02/11 |
 | 30_62 `8.5 `interfaces.cli.local_causal.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
 **G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07のlocal EUID所有private rootとdouble opt-in/列最小化→G05。未実装対象をG01でPASS扱いしない。
@@ -193,3 +193,7 @@ ROOT/runs/{run_id}/
 G01 06は**詳細設計Class.Method・不変条件・DD検証IDに対応付け済みの実装契約**。必要なRuntime適合性・API probes/Graph oracle・JCS実装・FS crash試験は07の責務であり、この文書を増殖させる必要はない。Coding AgentはG01のWPに着手する前に、環境がPython3.12/Linux、既存`uv.lock`の`causal-learn 0.1.4.8`であること、Source/Contractに破壊的差異がないことを確認する。真に未対応ならsilent fallbackではなくTyped Blockerを出す。
 
 **最終判定:** `G01_06_IMPLEMENTATION_CONTRACT_READY / G01_07_VERIFICATION_CONTRACT_READY / TESTS_NOT_RUN / CODING_NOT_AUTHORIZED`。
+
+### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
+
+G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.
