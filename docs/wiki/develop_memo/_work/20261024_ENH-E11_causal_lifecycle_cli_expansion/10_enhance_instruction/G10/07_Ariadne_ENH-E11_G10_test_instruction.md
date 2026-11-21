@@ -93,11 +93,11 @@
 **OD-01/02/03/05（2026-11-19 Owner採用）との横断一致規範：**
 
 - `P1-M05`はG02で`IDENTIFY`専用、明示的`B0_BINARY_IV` binary Z/A unadjusted `LATE_COMPLIER`条件付き識別。DoWhy IV internal label/`nonparametric-ate`だけでLATE証明とせず、宣言済みrelevance/exclusion/independence/monotonicity/consistency、Graph/Question/Design/Content hashとeffective APIを検証。`IDENTIFY`のEffect `result.json`は禁止。G08のB0数値推定/B1 slope/DRIVと混同しない。DGP-006、NEG-006/007、REF-I03/REF-G01は別科学Evidence。
-- G05 restricted Row Parquetには独立admin-owned KeyStoreとEd25519 Policy Envelope、domain-separated JCS signature/run_id/Study approval digest/issuer role/expiry/revocation/column/row/byte limitsを全て検証した`VerifiedStudyPolicyEvidence`が必要。`RowEffectsParquetWriter`は`LocalPrivacyPolicy.authorize`の後でのみbounded row bytesをG01 StagingSinkへ作成し、G01 Publisher/Readerが唯一のpublication/readback Authority。実際の独立Approver／admin鍵Store管理者／失効・OS/Parquet検証が未配備ならRow ReleaseをBLOCKED、mock署名を本番許可としない。
+- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、ACL/mount/namespace/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
 - OD-05の40 Method専用Config/Question/Design/Output/Inference Profileは各Owner Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）で完成・登録されるまでは`METHOD_PROFILE_UNAVAILABLE`で該当Methodをfail-closed。P1-M06のG01 Draftを除く40件を`config={}`で一括許可しない。G10は全41 Methodの実Backend/Lock/独立DGP/NEG/REF/CI/Regressionを検証するのみ。
 - 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer LegalのPASSを意味しない。
 
-**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05偽Ed25519 signature/untrusted admin store、RowSource事前反復、revocation midrun/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
+**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05 Studyのみ／CLIのみopt-in、wrong UID/root/ACL/mount、RowSource事前反復、Stage後FS drift/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
 
 ## 4. Verification operation, evidence and decision
 
