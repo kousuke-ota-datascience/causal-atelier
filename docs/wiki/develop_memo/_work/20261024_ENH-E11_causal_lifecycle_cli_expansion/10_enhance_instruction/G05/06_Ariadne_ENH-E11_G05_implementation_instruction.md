@@ -103,3 +103,16 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
 
 **本Commitには実装変更・試験実行・Owner Freeze・Coding Authorization・Gate 999判定を含めない。**
+
+
+## PREP-04.2 / G05 operational closure checkpoint (DRAFT / NOT_FROZEN)
+
+**Already Owner-adopted — no redesign:** OD-02 Ed25519 detached domain-separated RFC8785-JCS + admin-owned non-EUID-writable Trust Anchor; OD-03 exact `Ed25519LocalPolicyVerifier`, `RowEffectsParquetWriter`/`Factory` and `DeferredRowEffectsSource`/`ValidatedParquetSerializer` signatures; G01 alone owns staging/publication/readback. P02 is independent verification (not signing), P03 serializes only after independent authorization; P04 independently verifies the full release boundary. No new G05 Method ID or Product API/DB.
+
+**BLOCKED deployment inputs:** real independent Approver and Trust Store admin principal unassigned; key custody/provisioning/rotation and authentic policy/key revocation source not deployed; approved revocation-snapshot freshness and trusted UTC clock operating bounds unspecified; actual EUID/ACL/mount/FS not verified; Method-specific `ApprovedRowSchema` exact ordered column/dtype/row identity not finalized; effective Parquet and Ed25519 versions/APIs not probed. Freeze can't be declared by a test key or these documentation drafts. See independent operational mapping `combined_review/128_20261121_prep04_2_g05_operational_authority_contract.md`.
+
+**Acceptance invariant:** initial missing/invalid approval ⇒ exit3, zero `DeferredRowEffectsSource.read_rows` and zero new row bytes. Valid approval⇒ bounded ordered allowed rows only→G01 staging; recheck revocation/clock/root pre-stage/seal/publish. After authorized private staging revocation ⇒ no publish, but do not assert historical staged bytes were zero. `row_effects.parquet` restricted, no values in Result/Manifest/stdout/stderr/log; own G01 Reader required. 
+
+**Work boundary:** no numerical timeouts/thresholds, guessed Method columns/dtypes, substituted backend libraries, new signer/Publisher or new scientific target; unresolved values remain explicit Owner/operations blockers. G05 999, Freeze and Coding Authorization NOT_PERFORMED.
+
+**Package-specific PREP-04.2 note:** Gate06: OD-02/03 are CLOSED. The real-world independent approver, Trust Store admin, key and revocation/clock/OS environment remain external deployment prerequisites; exact RowSchema/Parquet ABI unresolved. No claim of positive release PASS.
