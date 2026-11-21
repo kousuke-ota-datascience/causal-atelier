@@ -31,7 +31,7 @@
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`、`cli_row_flag:bool`をimmutableに保持。実行EUIDとprivate root ownerの一致、ext4/XFS local FSとACL/mountをTrustedRoot Factoryが検証。G05個票はStudy requestとCLI Flagのdouble opt-inであり署名Policy Anchorは持たない。
+**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`、`cli_row_flag:bool`をimmutableに保持。実行EUIDとprivate root ownerの一致、ext4/XFS local FSの種別と所有UID/owner-only mode/same-FS/dirfdをTrustedRoot Factoryが検証。G05個票はStudy requestとCLI Flagのdouble opt-inであり署名Policy Anchorは持たない。
 
 **Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。ApplicationはPortのみに依存する。独立署名Policy Verifierは初期G05の責務外。
 
@@ -125,7 +125,7 @@ def resolve(self, method_id: str, backend_id: str, profile: str) -> BackendCapab
 def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter: ...
 ~~~
 
-`describe`はpure metadata。`resolve`でDistribution metadata、実効API signature/Version、指定Methodの利用可能性・Inference availabilityを検査。`load_adapter`だけがoptional importを実行する。Unavailable時は当該Methodのtyped reasonとし、core起動や旧v2を破壊しない。`pyproject.toml`・universal `uv.lock`・実効runtime・SBOM・Legalは別軸で記録。
+`describe`はpure metadata。`resolve`でDistribution metadata、実効API signature/Version、指定Methodの利用可能性・Inference availabilityを検査。`load_adapter`だけがoptional importを実行する。Unavailable時は当該Methodのtyped reasonとし、core起動や旧v2を破壊しない。`pyproject.toml`・universal `uv.lock`・実効runtime（installed distribution/version/API）を記録する。顧客配布用SBOM/法務承認は内部CLIの必須Artifact/Runtime機能でなく、実配布前に外部で審査。
 
 | Method | Observable contract | Side effects / exceptions |
 | --- | --- | --- |
@@ -167,7 +167,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 | Field | Type | 生成元 | 可変性・制約 |
 | --- | --- | --- | --- |
-| `root` | `TrustedLocalRoot` | OS検証済みdirfd Capability | Immutable root handle。所有者・ACL・mount/同一FSを検証し、commit時にも整合を確認 |
+| `root` | `TrustedLocalRoot` | OS検証済みdirfd Capability | Immutable root handle。所有UID・owner-only mode・local ext4/XFS・同一FSを検証し、commit時もFD/owner/modeを再検証 |
 | `run_id` | `str` | 正規化済LocalStudySpec | Immutable。23_42のsafe grammar |
 | `request_hash` | `str` | canonical LocalStudySpec bytes | Immutable。小文字SHA256 hex64 |
 | `state` | `PublishState` | FactoryでPREPARING | PREPARING→STAGING→VALIDATING→PUBLISHING→COMMITTED/INDETERMINATE、公開前のみABORTED |
@@ -177,7 +177,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 3.3. Constructor / Factory
 
-- **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS/ACL/mount/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
+- **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS EUID/owner/owner-only mode/同一local ext4-XFS/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
 - **前提:** `run_id`にseparator/「.」「..」を含まない、request hashはcanonical versionと一致。Trusted Root所有者／同一FS／OS principalの確認に失敗したらstaging生成しない。
 
 ### 3.4. メソッド
@@ -349,11 +349,11 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.5. 処理仕様
 
-`authorize`は集計結果に個票を含まないことを確認し、G05個票ではStudy明示request ∧ CLI Flag ∧ 実行EUID=root owner ∧ private 0700/0600/ext4/XFS/ACL/mount/namespace適格 ∧ `RESTRICTED_ROW_LEVEL` ∧ Method別`ApprovedRowSchema`/許可列・row/byte/memory上限をAND評価する。Unknown/unsafeはfail-closedでrow bytesを生成しない。aggregate Result/Manifest/stdout/logにrow valuesを含めない。
+`authorize`は集計結果に個票を含まないことを確認し、G05個票ではStudy明示request ∧ CLI Flag ∧ 実行EUID=root owner ∧ private 0700/0600/local ext4/XFS/owner/dirfd適格 ∧ `RESTRICTED_ROW_LEVEL` ∧ Method別`ApprovedRowSchema`/許可列・row/byte/memory上限をAND評価する。Unknown/unsafeはfail-closedでrow bytesを生成しない。aggregate Result/Manifest/stdout/logにrow valuesを含めない。
 
 ### 6.6. I/O・連携・失敗処理
 
-- **Input:** `ValidatedStudy`、CLI intent、runtime EUID、verified private root/owner/ACL/mount、OutputShape、Method別`ApprovedRowSchema`。外部署名Policyなし。
+- **Input:** `ValidatedStudy`、CLI intent、runtime EUID、verified private root/owner/mode/local FS、OutputShape、Method別`ApprovedRowSchema`。外部署名Policyなし。
 - **Output:** allow/reject（含むReason）と許可されたColumnSelection。Raw rows不要。
 - **Side effect:** N/A（純粋Policy）。File create/0600・dir0700とaudit event emissionはPublisher/CLI adapterの責務。
 - **Failure:** missing flag、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
@@ -413,7 +413,7 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 | `LocalArtifactPublisher` / `ariadne.interfaces.cli.local_causal.publication` | `product.ports.artifact_store.ArtifactStorePort`、`adapters.local_artifact_store.LocalArtifactStore`のhash/path処理 | 複数Artifact・Manifest・Markerをrun単位でimmutable/atomic no-clobber公開。単一Object storeの`store`とは異なる；既存Product Storeを無条件に置換しない |
 | `LocalRunManifest` / `ariadne.interfaces.cli.local_causal.manifest` | `interfaces.cli.manifest.CliManifest`（既存v2のReader/Writerは変更しない） | `e11-local-manifest/1` wireは既存のversioned識別子として保持。typed status/lineage/codecを検証し旧v2への暗黙castを禁止 |
 | `LocalManifestReader` / `ariadne.interfaces.cli.local_causal.manifest_reader` | Product ArtifactStoreのbyte fetch自体は共通化可能 | Marker→Manifest→Artifact→Privacyのbundle全体を検証する独立Readerで、File存在だけで成功にしない |
-| `LocalPrivacyPolicy` / `ariadne.interfaces.cli.local_causal.privacy` | ProductのMembership/RBACはProduct DB資源だけに適用 | 実行者のStudy＋CLI double opt-in、OS owner/ACL/mount、Method別列・行・byte上限を評価。署名鍵や第三者承認は不要 |
+| `LocalPrivacyPolicy` / `ariadne.interfaces.cli.local_causal.privacy` | ProductのMembership/RBACはProduct DB資源だけに適用 | 実行者のStudy＋CLI double opt-in、OS owner/mode/local FS、Method別列・行・byte上限を評価。署名鍵や第三者承認は不要 |
 | `BackendCapabilityRecord` / `ariadne.scientific.capabilities` | 既存Method compatibility checksとscientific runtime probe | 実効distribution/API signatureとMethod supportを証拠化するimmutable value。Backend importやRegistry mutationは持たない |
 
 ### 8.1. Port FacadeとMethod Registry
@@ -454,7 +454,7 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 
 - 実行主体はLinux非root effective UID。所属部署・外部Reviewer・Product Membershipを確認しない。
 - Study.privacy.row_export_requested=true、CLI --allow-row-level-export、privacy.classification=RESTRICTED_ROW_LEVEL、実行EUID=TrustedRoot owner、同一local ext4/XFS、private owner-only root/staging0700・row file0600をAND評価する。
-- ACL/mount/namespace/symlink・path traversal/UID/root identityを実効OSで検証する。共有・不明・異FS・non-owner・容認不能なアクセス権はfail-closed。rootや同じUID processを攻撃者として隔離したという主張はしない。
+- owner/mode/local FS/symlink・path traversal/UID/root identityを実効OSで検証する。共有・不明・異FS・non-owner・容認不能なアクセス権はfail-closed。rootや同じUID processを攻撃者として隔離したという主張はしない。
 - `e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。旧署名Policy Schemaは歴史的Draftとしてのみ保持。新たな署名Policy Envelopeの生成や鍵配備を要求しない。
 - `LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`。個票失敗はexit3、`read_rows`呼出0・個票bytes0、silent aggregate fallbackなし。Method別`ApprovedRowSchema`・Capsの欠落は個票をdenyし、科学計算結果を偽のFAILに変換しない。
 
@@ -466,10 +466,14 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 - **Factory:** `create(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int) -> RowEffectsParquetWriter`。
 - **Protocols:** `DeferredRowEffectsSource.schema()->ColumnSchema`、`read_rows()->Iterable[Mapping[str,JsonValue]]`；`ValidatedParquetSerializer.encode(*,rows:BoundedRowBatch,schema:ApprovedRowSchema)->bytes`。
 - **Precondition:** trusted LocalCausalUseCase has validated same-run Study/Method/Data/OutputShape, effective UID/root, explicit double opt-in and a Method-approved ordered ColumnSelection. The typed `PrivacyDecision` cannot be accepted as an unverified user-originated object or used to escape the UseCase/Sink boundary.
-- **Algorithm:** schema-only inspection→approved ordered allowlist/row ID/dtype/units→after eligibility, lazily read a maximum of max_rows+1 rows→reject duplicate IDs, nonfinite values, unknown columns, wrong types, row/byte/memory limit→encode bounded Parquet→recheck root/UID/mount/ACL/source identity→stage `row_effects.parquet` / `application/vnd.apache.parquet` / `RESTRICTED_ROW_LEVEL` to existing G01 Sink only.
+- **Algorithm:** schema-only inspection→approved ordered allowlist/row ID/dtype/units→after eligibility, lazily read a maximum of max_rows+1 rows→reject duplicate IDs, nonfinite values, unknown columns, wrong types, row/byte/memory limit→encode bounded Parquet→recheck root/UID/FS/owner/mode/source identity→stage `row_effects.parquet` / `application/vnd.apache.parquet` / `RESTRICTED_ROW_LEVEL` to existing G01 Sink only.
 - **Publication:** G01 Publisher alone validates/schema/hash/Manifest/Marker and performs same-FS atomic no-clobber rename and independent Reader readback. Row Writer never writes to final runs/, produces a new Manifest or signs an export.
 - **Failure:** initially unapproved ⇒ row iterator zero and row bytes zero. Post-stage FS problem ⇒ no success/marker, private staging quarantined; do not claim old staging bytes vanished. JSON/Manifest/CLI/log contains no row values or secrets.
 
 ### 9.3. Independent verification / remaining blockers
 
 G05/P02: both opt-in flags separately/AND, actual nonroot UID/private ext4/XFS/root/ACL/mount/symlink/namespace tests; G05/P03: Method `ApprovedRowSchema`, ordered columns, row/byte/memory caps, real Parquet API and readback; G05/P04/07: row source pre-auth calls zero, stage/commit races, G01 marker/hash/fault/no-clobber, no row leak, legacy Product v2 regression. Key/signature/revocation tests are excluded. ApprovedRowSchema/Parquet effective ABI/Linux filesystem tests still missing. No G05 Freeze, Coding Authorization or Gate999 pass.
+
+### 9.4. SIM-01 current local-FS proof boundary（Owner 2026-11-21）
+
+初期G05のローカルFS保護は非root EUIDの所有・root/staging 0700・row file 0600・real ext4/XFS・same filesystem・dirfd/O_NOFOLLOW・Symlink/Path拒否で成立する。旧PREP02のACL xattr digest、statx mount-ID追跡、mount namespace可視性の独立証明、CI/container環境検知は必須でない。同じUIDおよびroot管理者からの隔離を保証しない。実行時のOwner/ModeとFS identity・Pathを適切な公開境界で再確認する。NFR-030/031とG01原子的Publisher・独立Readerは継続。内部CLIのSBOM/顧客配布License stateは要求しない。元のFreeze履歴はcombined_review/131により限定的にsupersedeされ、実Linux/FSテストはNOT_RUN。
