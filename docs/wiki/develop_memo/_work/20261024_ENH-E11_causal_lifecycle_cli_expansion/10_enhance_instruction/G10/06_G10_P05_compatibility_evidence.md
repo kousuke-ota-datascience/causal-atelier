@@ -219,7 +219,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 #### 処理仕様
 
-`authorize`は集計結果には個票を含まないこと、root/actorが適格であることを確認する。個票出力を許可する場合はStudyからの明示request ∧ CLI flag ∧ Studyから独立した事前承認済み`VerifiedStudyPolicyEvidence`（scope/columns/row bound一致） ∧ OS Principal/owner/delegation適格 ∧ root permissions ∧ classification/column/minimum-row policy の全条件をrequire。Fail-closedで個票Parquetを生成しない。通常のResult/Manifest/stdout/logにrow valuesを含めない。Shared mount、root container、CI volumeにおける可視性はOS File Modeだけで推測しない。
+`authorize`は集計結果へ個票を含めず、G05個票出力時にはStudyの明示要求 ∧ CLI flag ∧ 実行者EUIDが所有するprivate TrustedRoot（Linux local ext4/XFS、適切な0700/0600・ACL/mount/namespace） ∧ Method別ApprovedRowSchema・列/行/byte/memory上限をAND評価する。条件不成立ならfail-closedでRowSourceを反復せず個票bytesを生成しない。Result/Manifest/stdout/logへ行値を含めない。共有mount、root権限実行、未知ACLやnamespaceは拒否する。
 
 #### I/O・連携・失敗処理
 
@@ -254,7 +254,7 @@ Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.ca
 
 22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。Owner採用OD-02=Aにより、G05の署名アルゴリズムはEd25519／domain-separated RFC8785-JCS、admin-only Trust Anchor方式を採る。現実の独立承認者・鍵配備・失効/Clock/OS検証がない場合はRow Releaseを`BLOCKED_DEPLOYMENT_AUTHORITY`とする。
+`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)`が実行者のdouble opt-inとOS TrustedRoot/Method別出力適格性を判定する。独立Approver/Ed25519/鍵/失効/TrustedPolicyAnchorは初期G05 local個票中間成果物には適用しない。事前の行生成禁止、同一run/Study/Source/Sinkの結合、staging前・seal/publish前のroot/UID/ACL/mount再照合を維持し、不適格ならexit3で初期row bytes0。既存G01 Publisher/ReaderとOD-03 WriterのClass/Method署名は不変。
 
 **実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
 
