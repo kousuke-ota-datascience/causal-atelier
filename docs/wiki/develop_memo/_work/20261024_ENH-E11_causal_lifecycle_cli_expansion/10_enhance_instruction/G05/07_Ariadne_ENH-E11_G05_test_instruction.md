@@ -52,7 +52,7 @@
 **Independent oracle and numerical rule:** DGP truthとEstimator/Backend outputは別Authority。Fixed generator/Reference SHA、既知EstimandとAssumptions、negative/statusを先に登録。Deterministic schema/JCS/roundtripは100%一致。Stochastic ScienceはT2 PilotとT3正式事前登録を分離し、多重性K/FWER=0.05、K/R/seed/threshold/computeは科学決定に基づきFreeze。未確定を推測で補完せず該当Test Item BLOCKED。
 
 
-## 3.1. OD-02/03 adopted independent Security/Artifact matrix（全件blocking）
+## 3.1. Local executor double opt-in／OS・Parquet privacy matrix（全件blocking）
 
 | Test | Setup | 必須観測／FAIL条件 |
 |---|---|---|
@@ -65,7 +65,7 @@
 | G05-07-WR03 | stage後のroot/ACL/mount不正・rename race/disk failure | 未公開、marker無し、private stage隔離、二重Publish無し |
 | G05-07-WR04 | 旧Product v2、Output JSON/console/log/Error中の行値 | 旧ABI維持、無認可行/secretは一切流出しない |
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。
 
 ## 4. Verification operation, evidence and decision
 

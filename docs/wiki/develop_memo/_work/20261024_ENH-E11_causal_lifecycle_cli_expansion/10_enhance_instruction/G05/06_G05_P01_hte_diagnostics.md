@@ -21,9 +21,8 @@
 
 **目的:** G04推定器を再実装せずMethod別support/calibration/uncertaintyを型付き診断。算法/Result owner不足ならDESIGN_GAP。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -38,7 +37,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 2A. 既存SourceとRow Release authorityの境界（`2cf28f59a324`）
 - **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。
-- **G05 Local output:** Study/CLI double opt-in＋nonroot Linux EUID/private root/ACL/mount＋Method別approved row schema/capsが必要。個票値はJSON/logへ出さない。
+**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。
 
 ### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
 | Operation | 必須Artifact | 禁止・negative条件 |
@@ -48,7 +47,6 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | ESTIMATE | `study.json`, `status.json`, `result.json` | `schema_dispatch.result=e11-local-effect-result/1`。point欠落はnull＋理由で表し、非識別への推定値偽装禁止 |
 | REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Effect再発行禁止。上流Effect/Graph/Design hash、seed・適用条件の検証が必須 |
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
@@ -58,7 +56,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `InferenceEvidence` | `ariadne.causal.inference.contracts.InferenceEvidence` | Port/Value/Facade integration (no duplicate implementation) | validate_for(mode,method) |
 | `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | Port/Value/Facade integration (no duplicate implementation) | run(self, request:ValidatedDiagnosticRequest, *, sink:StagingArtifactSink) -> DiagnosticOutcome |
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。
 
 **Responsibility:** 本PackageはScientific Adapter数値本体を新規所有しない。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -196,17 +194,15 @@ LinearDML/CausalForestDML/DRLearner/ForestDRLearner/S/T/X-Learnerを単にCATE�
 - Inference RegistryはMethod/Backend/version/final estimator config別に `POINT_ONLY / SUPPORTED_CI / UNSUPPORTED / UNAVAILABLE / FAILED` を判定。Native bootstrapを統計的妥当性確認なしに汎用適用しない。
 - Exploratory point-onlyは許すが、Confirmatoryは事前に宣言したtargetに適合するCIと独立Science Evidenceが必要。Pointwise CIとsimultaneous bandを区別する。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Method steps:** P02は拒否時Source反復0を保証。P03は許可されたRowSchema/column orderでmax_rows+1とbyte capを検査し、G01 sinkへstage。P04はOS/FS正常・異常双方をE2E。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Scientific boundary:** G04のCATE(x)／DRIV heterogeneous IV coefficientは異なるEstimand。HTE support/uncertainty、Method別oracleと推論の可用性を混同せず、個票Releaseの可否を科学Statusへ偽装しない。
 
 ## 6. Focused Verification Contract — WHAT, not physical filename
 
@@ -223,7 +219,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
 - CATE supportはTreatment×X/Wのデータ範囲と推定対象のSupportに基づき、Overlap/Effective Sample/CalibrationとUncertaintyを混同せず別Metric/Statusとして計算。 Calibration/Coverage評価は事前指定Holdoutまたは独立SimulationとEstimator/Backendのvalid inferenceに限定。適格な標本数、group size、CI availabilityを記録。 G04のCATE Resultを入力として検証し、Method固有nuisanceや数値Estimatorを再実装しない。aggregateだけ返し、G05/P02の独立認可なしに個票値を作らない。
-- **G05 Local output:** Study/CLI double opt-in＋nonroot Linux EUID/private root/ACL/mount＋Method別approved row schema/capsが必要。個票値はJSON/logへ出さない。
+**Independent test:** 両opt-inと片側だけの拒否、wrong UID/ACL/mount/symlink、許可Method RowSchema、Source iteration count、row/byte cap、atomic commit/Readerと旧v2回帰を独立実測。
 
 ## 7. Checkpoint / Handoff / Stop
 

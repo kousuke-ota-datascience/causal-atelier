@@ -31,11 +31,10 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 
 ## 1. Gate Acceptance Claim and Scope
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。
 
 **候補依存:** `G04`のlatest canonical 999 PASS。この依存DAGはOwner一括レビューで承認済み。各上流Gateのlatest canonical 999 PASSは実行時に別途検証する。Issue追跡は999の代替でない。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 **対象外:** 既存Product科学ABIの変更、Web/API/DB/Worker新規統合、G01のPublisherやGraphVersionを別実装すること、他Gate MethodをScopeなしに追加すること、顧客配布許可、現時点での正本文書昇格。
 
@@ -92,7 +91,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 - Scientific `Identification/Point/Inference/ScienceAcceptance`とTechnical outcomeは別軸。不適格なMethod、無識別、Unsupported CI、missing optional Backendは型付き負結果またはTechnical error。未実行をPASS、point-onlyをCI有り、Backend自身の出力を独立Oracleにしない。
 - `LocalCausalUseCase`はstrict ValidatedStudyから各Portへ委譲し、Fileはstaging→atomic Publisher→independent readback。G05のPolicy認可前は個票禁止。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Scientific boundary:** G04のCATE(x)／DRIV heterogeneous IV coefficientは異なるEstimand。HTE support/uncertainty、Method別oracleと推論の可用性を混同せず、個票Releaseの可否を科学Statusへ偽装しない。
 
 ## 6. Gate Coding-side Verification and Candidate Assembly
 

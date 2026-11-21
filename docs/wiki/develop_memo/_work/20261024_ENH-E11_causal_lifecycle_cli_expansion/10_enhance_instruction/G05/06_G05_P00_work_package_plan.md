@@ -18,13 +18,12 @@
 **Owner-approved execution mode:** WORK_PACKAGE / P01,P02,P03,P04  
 **Owner-approved upstream dependency:** G04 PASS。2026-11-18 JST Owner一括レビューで承認。各上流canonical 999 PASSは未成立、Runtimeで別途検証する。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Boundary:** Gate06とGate07はimplementation claimと独立test claimを分離し、P02はlocal permission evaluator、P03はbounded row Serializer、P04はreal OS/FS E2Eを担当する。P00/Package CompleteはGate999を代替しない。
 
 ## 1. Gate semantic acceptance
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
+**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。
 
-**G05 local eligibility:** Study＋CLI double opt-in・nonroot EUID/private ext4/XFS・Method row schema/row+byte boundをAND評価し、初期deny時RowSource反復0/bytes0、後段異常時public commit無し。G01 Publisher/Readerだけを使用する。
 
 ## 2. Package ownership map
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:study:1",
   "title": "E11 study v1 schema — PREP-02 review draft only",
-  "description": "Study YAML must first be parsed safely and duplicate keys rejected. Semantic operation-required refs, policy authority and confidence-level interval require separate validation.",
+  "description": "Strict local Study wire shape (e11-local-study/1). G05 row export in current unsigned local mode requires double Study/CLI opt-in and safe private ext4/XFS root; any supplied optional privacy.policy_ref must be null under the current semantic validator. Scientific Method-specific and output/privacy eligibility require separate validation. No signing key or independent approver.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -213,7 +213,8 @@
             {
               "type": "null"
             }
-          ]
+          ],
+          "description": "Optional historical/reserved reference. In the current G05 unsigned local intermediate row-output mode, this field is null when present; a nonnull value is not a valid row authorization. Public schema_version and field shape unchanged."
         }
       }
     }
