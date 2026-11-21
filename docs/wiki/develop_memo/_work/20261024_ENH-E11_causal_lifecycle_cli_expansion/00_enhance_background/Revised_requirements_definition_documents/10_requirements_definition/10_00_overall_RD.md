@@ -120,6 +120,6 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 - 対象Method／Estimandや科学的な禁止事項は[Method Scope](10_32_scientific_method_scope.md)を、総合受入条件は[Acceptance](10_91_acceptance_conditions.md)を参照する。
 - REST/CLIのwire形式、Pythonクラスのprivate API、詳細算法・物理配置は21／22／23／30系設計で規定する。
 
-### ENH-E11 actor and release boundary — Owner internal-use assumption (2026-11-22)
+### Local Scientific CLIの対象利用者と提供境界
 
-E11の科学Method追加を利用するprimary actorは**社内データサイエンティスト**で、初期使用経路はLinux一般ユーザーのLocal Scientific CLI。外販、Customer-specific release、multi-tenant authorization、署名配布/License Governance service、Product API/UI/DBへの新規統合はE11の実装Scopeではない。既存ProductのProject RBAC・Analyzer／Reviewerおよび既存Result APIは従来どおり維持し、Local CLIに移植しない。現時点で顧客納入形態を仮定して新しい役割・必須Stage・配布用Artifactを追加しない。Scientific MethodのEstimand/Eligibility/Reference/NFR-035は、このActor限定により緩和されない。
+Local Scientific CLIの科学Methodを利用するprimary actorは**社内データサイエンティスト**で、初期使用経路はLinux一般ユーザーのLocal Scientific CLI。外販、Customer-specific release、multi-tenant authorization、署名配布/License Governance service、Product API/UI/DBへの新規統合はLocal Scientific CLIの現行提供範囲ではない。既存ProductのProject RBAC・Analyzer／Reviewerおよび既存Result APIは従来どおり維持し、Local CLIに移植しない。現時点で顧客納入形態を仮定して新しい役割・必須Stage・配布用Artifactを追加しない。Scientific MethodのEstimand/Eligibility/Referenceと科学的受入は、このActor限定により緩和されない。
