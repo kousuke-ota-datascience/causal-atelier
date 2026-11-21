@@ -26,7 +26,7 @@
 | `G10-07-01` | 41 Method/strict Profile/Registry統合（cross-cutting） | unit/contract + required integration | P1=20,P2=8,P3=13の配置・availability；適格positive/negative・typed Reason |
 | `G10-07-02` | 全Operation Manifest/Hash/Readback（cross-cutting） | unit/contract + required integration | source/fixture/environment/schema JCS/Checksum；適格positive/negative・typed Reason |
 | `G10-07-03` | 全Gateと旧Product v2互換回帰（cross-cutting） | unit/contract + required integration | local CLI/Result/graph/Privacyの保護；適格positive/negative・typed Reason |
-| `G10-07-04` | 独立科学Benchmark・Backend/License検証（cross-cutting） | unit/contract + required integration | Method-specific DGP/NEG/REF, T2/T3, delivery gate；適格positive/negative・typed Reason |
+| `G10-07-04` | 独立科学Benchmark・Backend/License検証（cross-cutting） | unit/contract + required integration | Method-specific DGP/NEG/REF, T2/T3; actual customer delivery license approval remains outside CLI Gate；適格positive/negative・typed Reason |
 | `G10-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
 | `G10-07-06` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Upstream 999 invariants, no old v2 CLI/Result change |
 | `G10-07-07` | Independent Science/T2/T3 | independently verified reference + real backend integration | Method-specific DGP/NEG/REF, prereg K/R/seed/compute, predeclared quantitative decision |
@@ -87,17 +87,17 @@
 
 **Numerical decision:** T1 deterministic schema/hash/roundtrip and T2 Pilot and T3 confirmatory simulation are independent layers. Method-specific K (multiple comparisons), R (replications), MC-SE, confidence coverage, acceptance boundaries and compute budget must be preregistered before T3; adopted familywise error control is FWER=0.05. Do not infer K/R from this document, do not convert pilot tuning into confirmatory PASS, and do not use output from the backend under test as ground truth. Entire Test Item/Gate PASS requires all blocking proofs for the same Fixed Trial Candidate.
 
-**Compatibility/Legal:** 上流G01〜G09のscience decisionをG10で上書きしない。G10は全41を横断再現し、Source/lock/Backend、SBOM/License、Legacy CLI Product v2のcurrent invariantを別々に検証。顧客別GPL等のLicense/Delivery判断を自動PASSしない。
+**Compatibility/Legal:** 上流G01〜G09のscience decisionをG10で上書きしない。G10は全41を横断再現し、Source/lock/Backend、effective installed package/version、Legacy CLI Product v2のcurrent invariantを別々に検証。顧客別GPL等のLicense/Delivery判断を自動PASSしない。
 
 
 **OD-01/02/03/05（2026-11-19 Owner採用）との横断一致規範：**
 
 - `P1-M05`はG02で`IDENTIFY`専用、明示的`B0_BINARY_IV` binary Z/A unadjusted `LATE_COMPLIER`条件付き識別。DoWhy IV internal label/`nonparametric-ate`だけでLATE証明とせず、宣言済みrelevance/exclusion/independence/monotonicity/consistency、Graph/Question/Design/Content hashとeffective APIを検証。`IDENTIFY`のEffect `result.json`は禁止。G08のB0数値推定/B1 slope/DRIVと混同しない。DGP-006、NEG-006/007、REF-I03/REF-G01は別科学Evidence。
-- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、ACL/mount/namespace/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
+- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
 - OD-05の40 Method専用Config/Question/Design/Output/Inference Profileは各Owner Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）で完成・登録されるまでは`METHOD_PROFILE_UNAVAILABLE`で該当Methodをfail-closed。P1-M06のG01 Draftを除く40件を`config={}`で一括許可しない。G10は全41 Methodの実Backend/Lock/独立DGP/NEG/REF/CI/Regressionを検証するのみ。
-- 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer LegalのPASSを意味しない。
+- 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer delivery legal acceptance（配布時のみ）を意味しない。
 
-**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05 Studyのみ／CLIのみopt-in、wrong UID/root/ACL/mount、RowSource事前反復、Stage後FS drift/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
+**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05 Studyのみ／CLIのみopt-in、wrong UID/root/owner/mode/FS、RowSource事前反復、Stage後FS drift/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
 
 ## 4. Verification operation, evidence and decision
 
@@ -112,3 +112,7 @@
 未PASS GateをG10単独でPASS扱いすること、統計Method一律閾値、法務未審査の配布許可を禁止。
 
 Method-specific strict Schema・positive/negative・独立Reference/推論Method/CI・threshold・Backend/License・Gate境界/depends/quant computeをレビューし、07をFreezeして初めて実行可能。現時点ではTest NOT_RUN、999 NOT_EXECUTED。
+
+### Owner SIM-01/03/04 initial-Gate simplification (2026-11-21)
+
+Mandatory integration profiles are ENV-BASE, ENV-DOWHY, ENV-ECONML and ENV-TIGRAMITE, each with actual lock/distribution/API smoke and Method-specific science/reproducibility checks. ENV-COMBINED all-extras runtime/CI is an optional later interop check, **not** G10 initial PASS dependency; do NOT claim simultaneous all-extras environment is verified. Local scientific Manifest has NO required `runtime.sbom_ref` or `review.legal_delivery_status` (the active Draft 2020-12 Schema removed them); installed distribution/version/lock source provenance and independent science review evidence remain required. SBOM generation, per-customer authorization state and legal evidence are NOT G10 CLI runtime functionality. Prior to any actual customer external delivery, the Owner/legal reviewer must manually review actual shipped dependencies and block unapproved distribution. FS privacy boundary is ordinary nonroot Linux EUID/private owner-only ext4/XFS root with 0700/0600 and FD-safe paths/same FS; no separate ACL/xattr digest, mount namespace/ID proof or CI/container classification. Preserve G01 Publisher/Reader, NFR-030/031/032/033/034/035/036, all science, all Method ID targets, upstream Gate999 independence and Product v2. Historical DEC08/PREP02 remains historical, specifically superseded by combined_review/131. No runtime evidence / Gate999 PASS / Coding Authorization.

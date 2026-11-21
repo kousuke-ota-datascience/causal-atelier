@@ -13,7 +13,7 @@
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。
 
-**科学/Designの必須制約:** 各GateのScience999を省略しない。GPLの顧客個別License判断は別。
+**科学/Designの必須制約:** 各GateのScience999を省略しない。GPLの顧客配布時の手動License審査は内部分析Gate外。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -28,8 +28,8 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 2A. 41 Method横断Reuseと既存ABIの実在確認（`2cf28f59a324`）
 - **実在:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter`は`run_discovery(DiscoveryInput, Path)`、`run_identification(IdentificationInput, Path)`、`run_estimation(EstimationInput, Path)`、`run_refutation(RefutationInput, Path)`、`run_sensitivity(SensitivityInput, Path)`の公開ABI（返値はいずれも`list[ScientificResultDescriptor]`）。対応実体は`scientific/discovery|identification|inference|refutation|sensitivity/adapter.py`の各`run(input_, output_dir)`。これらは旧Product Path APIであり、E11の`Discovery/Identification/Estimator/DiagnosticPort`のtyped Request/Outcomeとは互換性を自動仮定しない。
-- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifest/Licenseの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05独立Privacy Authorityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。
-- **科学的Boundary:** G10の横断テストには全41 MethodのDGP/NEG/独立REF、実効Backend/lock/fixture/SBOM SHA、Source/Environment/seed、preregistered K/R/MC-SE/coverage/threshold、FWER=.05とMethod別Inference profileが必要。未決は該当MethodのBLOCKED、G10全体のGate PASS禁止。
+- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。
+- **科学的Boundary:** G10の横断テストには全41 MethodのDGP/NEG/独立REF、実効Backend/lock/fixture SHA、Source/Environment/seed、preregistered K/R/MC-SE/coverage/threshold、FWER=.05とMethod別Inference profileが必要。未決は該当MethodのBLOCKED、G10全体のGate PASS禁止。
 
 ### 2B. Standalone Operation/Result/Manifest契約
 | Operation | 必須Artifact | 禁止・Negative |
@@ -92,7 +92,7 @@ def resolve(self, method_id: str, backend_id: str, profile: str) -> BackendCapab
 def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter: ...
 ~~~
 
-`describe`はpure metadata。`resolve`でDistribution metadata、実効API signature/Version、指定Methodの利用可能性・Inference availabilityを検査。`load_adapter`だけがoptional importを実行する。Unavailable時は当該Methodのtyped reasonとし、core起動や旧v2を破壊しない。`pyproject.toml`・universal `uv.lock`・実効runtime・SBOM・Legalは別軸で記録。
+`describe`はpure metadata。`resolve`でDistribution metadata、実効API signature/Version、指定Methodの利用可能性・Inference availabilityを検査。`load_adapter`だけがoptional importを実行する。Unavailable時は当該Methodのtyped reasonとし、core起動や旧v2を破壊しない。`pyproject.toml`・universal `uv.lock`・実効runtime/Library versionを記録。SBOMと顧客別Legalは内部Scienceの必須runtime contractでない。
 
 | Method | Observable contract | Side effects / exceptions |
 | --- | --- | --- |
@@ -117,7 +117,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 #### 検証
 
-`DD-E11-CAP01`ENV-BASE隔離、`CAP02`単独3Profile、`CAP03`Combined API parity、`CAP04`Versionとunsupported mode、`CAP05`transitive package有無とMethod選択区別、`CAP06`Customer Delivery legal blocked。
+`DD-E11-CAP01` ENV-BASE隔離、`CAP02`単独3Backend Profile、`CAP04`Version/unsupported、`CAP05`transitive package有無とMethod選択区別を初期Gate必須とする。`CAP03` Combined API parityは初期Gate対象外（未検証の同時導入をsupportedと呼ばない）。`CAP06` Customer Delivery legal blockedは実際の顧客納入時の手動法務Checkであって内部Science Gateには含めない。
 
 **関連ID:** DD-E11-CAP01〜CAP06、FR-185/194/195/196/197/202、NFR-028〜030/032、AR-034/040、BD01-F08/F09/F12。
 
@@ -257,7 +257,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 - `DD-E11-METH-P101〜P120 / P201〜P208 / P301〜P313`は41 Methodに対応する恒久的な受入義務ID。各Methodについてpositive DGP/独立Reference、negative Scenario、Method×Estimand/Backend/CI、canonical Result/Manifest readback、Product regression影響を検証する。
 - 独立検証ではDGP version・seed・Method-specific推論・Monte Carlo SE/Coverage/多重性と適格Run分母を定義する。型・Schema一致は科学的Coverageや識別の証明ではない。
-- 顧客Deliveryは実際のBundleのSBOM/Licenseと受領者別法務判定を別途必要とする。
+- 顧客に実際に配布する場合は対象PackageのLicenseと配布方式をOwner/法務が手動確認し、未承認の納入を禁止する。内部CLI実行にSBOM生成や受領者別承認管理を要求しない。
 
 参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
 
@@ -317,9 +317,9 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 **OD-01/02/03/05（2026-11-19 Owner採用）との横断一致規範：**
 
 - `P1-M05`はG02で`IDENTIFY`専用、明示的`B0_BINARY_IV` binary Z/A unadjusted `LATE_COMPLIER`条件付き識別。DoWhy IV internal label/`nonparametric-ate`だけでLATE証明とせず、宣言済みrelevance/exclusion/independence/monotonicity/consistency、Graph/Question/Design/Content hashとeffective APIを検証。`IDENTIFY`のEffect `result.json`は禁止。G08のB0数値推定/B1 slope/DRIVと混同しない。DGP-006、NEG-006/007、REF-I03/REF-G01は別科学Evidence。
-- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、ACL/mount/namespace/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
+- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
 - OD-05の40 Method専用Config/Question/Design/Output/Inference Profileは各Owner Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）で完成・登録されるまでは`METHOD_PROFILE_UNAVAILABLE`で該当Methodをfail-closed。P1-M06のG01 Draftを除く40件を`config={}`で一括許可しない。G10は全41 Methodの実Backend/Lock/独立DGP/NEG/REF/CI/Regressionを検証するのみ。
-- 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer LegalのPASSを意味しない。
+- 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer delivery legal acceptance（配布時のみ）を意味しない。
 
 ## 6. Focused Verification Contract — WHAT, not physical filename
 
@@ -337,7 +337,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - §4の各段階をunit/contract/実Backend・FS integrationで測定し、実在するlegacy product testsをcurrent checkoutからdiscoverして実行。Completion Reportのpath/commandを物理Authorityにしない。
 - **Target-specific mandatory cases:** 全41 MethodのDGP/NEG/REF/DD/ACをMethod別に追跡する。§5表の記載は計画であり、全Methodの独立oracleが存在/実行されている証拠ではない。 T1 deterministic Contract と T2 Pilot、T3 confirmatory Monte Carloを分離。Pilotで効果量/Variance/条件付き排除Ruleを探索してよいがT3のThreshold/seed/Method/Family/K/R/computeを事後調整しない。 多重性は承認済みFWER=0.05を適用し、Method×Outcome familyごとのKと試験棄却率/CI coverage/MC-SEを事前登録。Rが足りない、generator/verifier未固定、compute上限不足ならBLOCKEDでありPASSとしない。 DGP true estimand/Graph/Referenceは生成式・独立実装/レビューされた値を真値にし、Backend自己出力や他Agentの同一誤りをOracleにしない。IV/AR・Temporal/PAG・Negative Control・CATE/HTE/Quasi・Privacyは固有の仮定/負例を実測。 Gate G01〜G09のcanonical 999を科学証拠の代わりにしない。上流999とFull CandidateのSource/Fixture/Backend/Policy SHA、ScienceStatus/TechnicalStatusを照合し、実施していないMethodを全41 PASSへカウントしない。
 - P04は§5の全41 MethodについてDGP/NEG/REF/DDと独立数値/構造Oracleを判定する。P01〜P03/P05はScopeに関係するMethod/Result保護義務を保持し、科学Kernelを再実装しない。
-- Actual fixture/Source/lock/Backend/API/SBOM SHA、Test layer/lifecycle、collected command、Observed/Expected、Quantitative Science K/R/MC-SE、PASS/FAIL/BLOCKED Reasonを記録。未実施をPASSとすることは禁止。
+- Actual fixture/Source/lock/Backend/API SHA、Test layer/lifecycle、collected command、Observed/Expected、Quantitative Science K/R/MC-SE、PASS/FAIL/BLOCKED Reasonを記録。未実施をPASSとすることは禁止。
 
 ## 7. Checkpoint / Handoff / Stop
 
@@ -351,3 +351,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## 8. Explicit design/Science/Legal Freeze conditions
 
 Class Fields/Constructors/Public Methodの実行意味は§3、Method固有処理は§4、Method/DD/Science義務は§5〜6に収める。外部DDから不足仕様の推論をCoding Agentに強制しない。**Freeze blockers:** 41 Methodの独立DGP/NEG/REF、FWER family K/R、coverage/MC-SE/Compute、数理退化・point-onlyの定量判定。 OwnerまとめReviewがこれらを判定するまでNo Coding Authorization/No Science PASS/No canonical promotion。
+
+### Owner SIM-01/03/04 initial-Gate simplification (2026-11-21)
+
+Mandatory integration profiles are ENV-BASE, ENV-DOWHY, ENV-ECONML and ENV-TIGRAMITE, each with actual lock/distribution/API smoke and Method-specific science/reproducibility checks. ENV-COMBINED all-extras runtime/CI is an optional later interop check, **not** G10 initial PASS dependency; do NOT claim simultaneous all-extras environment is verified. Local scientific Manifest has NO required `runtime.sbom_ref` or `review.legal_delivery_status` (the active Draft 2020-12 Schema removed them); installed distribution/version/lock source provenance and independent science review evidence remain required. SBOM generation, per-customer authorization state and legal evidence are NOT G10 CLI runtime functionality. Prior to any actual customer external delivery, the Owner/legal reviewer must manually review actual shipped dependencies and block unapproved distribution. FS privacy boundary is ordinary nonroot Linux EUID/private owner-only ext4/XFS root with 0700/0600 and FD-safe paths/same FS; no separate ACL/xattr digest, mount namespace/ID proof or CI/container classification. Preserve G01 Publisher/Reader, NFR-030/031/032/033/034/035/036, all science, all Method ID targets, upstream Gate999 independence and Product v2. Historical DEC08/PREP02 remains historical, specifically superseded by combined_review/131. No runtime evidence / Gate999 PASS / Coding Authorization.
