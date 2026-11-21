@@ -1,5 +1,16 @@
 # ENH-E11 G05 P01 — hte_diagnostics
 
+### 現行G05個票出力契約 — Owner 2026-11-21
+
+- **要件:** FR-195／NFR-031／P2-15。一般ユーザーによるローカル分析中間Artifact。第三者Approver、署名、鍵、失効、issuer registryの承認プロセスを要求しない。「独立承認」ではなく「実行者の明示的opt-in」と定義する。
+- **対象環境:** Linux非root実効UID・ext4/XFS local filesystem。UID=root owner、root/staging 0700・Parquet 0600、ACL/mount/namespace/symlink/dirfd・same-FSを検証。管理者・同一UID processは本Threat Modelで隔離できない。
+- **許可AND:** `Study.privacy.row_export_requested=true` ∧ CLI `--allow-row-level-export` ∧ `RESTRICTED_ROW_LEVEL` ∧ 対象Methodの`ApprovedRowSchema`/ordered allowlist/row ID・row/byte/memory上限 ∧ private EUID-owned TrustedRoot ∧ same-run G01 StagingSink。未認可ならexit3、RowSource反復0・row bytes0、暗黙aggregate fallback無し。
+- **既決APIの限定変更:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase.__init__`から署名Verifier依存を除く。`e11-local-study/1`は維持し任意`privacy.policy_ref`は現行unsigned modeではnullのみ。
+- **維持するClass:** `RowEffectsParquetWriter.__init__(*,serializer,max_memory_bytes)`、`write(*,source,study,decision,selection,sink)->ArtifactDescriptor`、`RowEffectsWriterFactory.create(*,serializer,max_memory_bytes)`、`DeferredRowEffectsSource.schema/read_rows`、`ValidatedParquetSerializer.encode(*,rows,schema)->bytes`。Sourceは全許可成立後だけ反復。WriterはG01公開責務を複製しない。
+- **出力:** `row_effects.parquet`／`application/vnd.apache.parquet`／`RESTRICTED_ROW_LEVEL`。G01のみstaging/atomic no-clobber/Manifest/Marker/Reader。Stage/Seal/Publish前にroot/UID/ACL/mount/runを再検査。後段異常でprivate stagingの過去bytes0を主張せず、公開成功にもしない。Result/Manifest/stdout/stderr/logに行値なし。
+- **未完了:** Method別RowSchema/制約数値、実ext4/XFS/ACL/mount、Parquet ABI、科学Reference、独立07実測。Freeze・Coding Authorization・999は未実施。変更のAuthorityは`combined_review/129_20261121_dec_g05_local_row_export_simplification.md`、過去PREP-02/03/04.2は履歴として保持。
+
+
 **Document class:** Primary Execution Contract (self-contained Review DRAFT)  
 **Gate:** G05 / **Package:** P01 / **Trial:** NOT_STARTED  
 **Depends on Pxx:** NONE  
@@ -11,9 +22,9 @@
 
 **目的:** G04推定器を再実装せずMethod別support/calibration/uncertaintyを型付き診断。算法/Result owner不足ならDESIGN_GAP。
 
-**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** CATE support/calibration/uncertaintyと独立事前承認に基づく個票成果物発行を検証する。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
-**科学/Designの必須制約:** Ed25519独立署名AuthorityとRowEffectsParquetWriter/FactoryのClass契約はOwner採用済み。現実の独立承認者・鍵Store管理者／配備・失効/時計・実OS/Parquet実証は未完了。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -28,28 +39,27 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 2A. 既存SourceとRow Release authorityの境界（`2cf28f59a324`）
 - **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。
-- **Design-only:** `LocalPrivacyPolicy`の純粋`authorize/filter_export_columns`と、独立承認機関が発行する証拠を検証するVerifier、認可後に初めてrow bytesを生成するParquet Writerは別責務。現在の§3契約のうちAuthorityの署名・Key Owner・Scope・期限・失効・Anti-replay、Row Writer Class/Factory/Methodが**未決**であり、Agentが作成したPolicyRef/bool/CLI flagは認可として無効。承認前のrow materialize/serialize/publishは禁止。`LocalCausalUseCase`・G01 Publisher/Reader/RegistryをG05で複製しない。
-- **Freeze blocker:** Row方式/ClassはOwner採用済み。現実の独立Authority/鍵/Trust StoreとG05 06/07/Pxxの再監査・Freeze前に個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。mockは実認可証拠を代替せず、無断でパスを実装しない。
+- **現行G05実装条件:** Study＋CLI両方の明示opt-in、実効EUID/private root、Method別RowSchema/上限。初期denyは行生成0、stage後異常はCOMMITTED無し。
 
 ### 2B. Operation別Artifact/Schema契約（このPackage本文が実装規範）
-| Operation | 必須Artifact | 禁止・negative条件 |
-|---|---|---|
-| DISCOVER | `study.json`, `status.json`, Graph成功時`graph.json` | `result.json`禁止。科学的Graph無しは`diagnostics.json`＋nonempty reason、`schema_dispatch.graph=null`。Backend失敗との混同は禁止 |
-| IDENTIFY | `study.json`, `status.json`, `identification.json` | Effect `result.json`禁止。識別negativeもtyped、Graph/Design/Estimand/Proof hashを照合 |
-| ESTIMATE | `study.json`, `status.json`, `result.json` | `schema_dispatch.result=e11-local-effect-result/1`。point欠落はnull＋理由で表し、非識別への推定値偽装禁止 |
-| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Effect再発行禁止。上流Effect/Graph/Design hash、seed・適用条件の検証が必須 |
+| Operation | 必須Artifact | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| DISCOVER | `study.json`, `status.json`, Graph成功時`graph.json` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| IDENTIFY | `study.json`, `status.json`, `identification.json` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| ESTIMATE | `study.json`, `status.json`, `result.json` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| REFUTE/SENSITIVITY/DIAGNOSE | `study.json`, `status.json`, `diagnostics.json` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
-全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）を置くが、両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key・size bytes・SHA256・MediaType・Privacyを列挙。`request_hash=SHA256(JCS(validated typed Study JSON))`、Manifestに自己hashを入れずMarkerがManifestの実bytes SHA256を保持。Readerはmarker→manifest→artifact→Operation Profile→upstream hashをTrustedRoot内で検証。staging→atomic no-clobber publishを既存G01 Publisherで行い、Row Parquetは独立承認証拠の検証前にbytes生成すら禁止。Publication不正・欠損をScience negativeに変換しない。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
 ## 3. Class Placement, Signature, Reuse, Dependency Direction
 
-| Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Exact approved/design signature |
-|---|---|---|---|
-| `EffectOutcome` | `ariadne.causal.inference.contracts.EffectOutcome` | Port/Value/Facade integration (no duplicate implementation) | validate_consistency() / to_result_payload() |
-| `InferenceEvidence` | `ariadne.causal.inference.contracts.InferenceEvidence` | Port/Value/Facade integration (no duplicate implementation) | validate_for(mode,method) |
-| `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | Port/Value/Facade integration (no duplicate implementation) | run(self, request:ValidatedDiagnosticRequest, *, sink:StagingArtifactSink) -> DiagnosticOutcome |
+| Class/Port | Designed module (DD30_61〜63) | Ownership boundary | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `EffectOutcome` | `ariadne.causal.inference.contracts.EffectOutcome` | Port/Value/Facade integration (no duplicate implementation) | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `InferenceEvidence` | `ariadne.causal.inference.contracts.InferenceEvidence` | Port/Value/Facade integration (no duplicate implementation) | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `DiagnosticPort` | `ariadne.scientific.ports.causal.DiagnosticPort` | Port/Value/Facade integration (no duplicate implementation) | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
-**Class/Method authority:** 本Pxx §3.1以降に埋め込んだField/Constructor/Public Methodが一次規範。本Gateの主責務はHTE診断/Policy/認可付きWriter/Readerであり、新Scientific Adapterを追加しない。Ed25519独立Verifier／RowEffectsParquetWriter/FactoryはOwner採用済みClassとして責務を守り、実deployment未成立をBLOCKEDとして、Agentが独自署名・鍵・出力方式を創作してはならない。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
 **Responsibility:** 本PackageはScientific Adapter数値本体を新規所有しない。 Values/Portsの使い回しとNew Methodの科学Algorithm実装の区別を守る。他Package担当Classに対する変更が必要なら契約修正を申請する。
 
@@ -65,14 +75,14 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 #### フィールド
 
-| Field | Type・制約 |
-|---|---|
-| `result_id, estimand` | immutable result/target |
-| `point_availability, point_value` | finite value または null + reason |
-| `inference` | `InferenceEvidence` |
-| `science_acceptance` | 推論可用性とは独立した審査状態 |
-| `diagnostics` | `tuple[DiagnosticRef,...]`。Method別typed診断参照 |
-| `method_evidence, upstream_hashes` | typed Backend evidenceとlineage |
+| Field | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `result_id, estimand` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `point_availability, point_value` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `inference` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `science_acceptance` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `diagnostics` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `method_evidence, upstream_hashes` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
 #### Constructor / Factory
 
@@ -80,10 +90,10 @@ Constructor/Factoryはtyped statusと上流lineageを持つEvidenceから生成�
 
 #### メソッド
 
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `validate_consistency()` | typed validation result | pure point/CI/science consistency | nonfinite point、null reason欠落 |
-| `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | incompatible schema/estimand |
+| Signature | Return | 処理と副作用 | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `validate_consistency()` | typed validation result | pure point/CI/science consistency | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `to_result_payload()` | typed Result payload | pure typed result projection。JCS byte encodingは共通Codec | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
 #### 処理仕様
 
@@ -105,13 +115,13 @@ ValueのI/Oなし。request hashは`SHA256(JCS(validated typed Study JSON))`、G
 
 #### フィールド
 
-| Field | Type | 制約 |
-|---|---|---|
-| `availability` | `InferenceAvailability` | AVAILABLE/UNAVAILABLE/FAILED/NOT_REQUESTED等 |
-| `kind` | Method-specific enum | 実効推論方式 |
-| `interval, confidence_set` | `FiniteInterval|None, ARConfidenceSet|None` | AVAILABLEなら正当な片方ちょうど1つ |
-| `reason` | `ScientificReason|None` | nonAVAILABLEでは必須 |
-| `method_config` | typed config | Backend/Method/Estimandに適合 |
+| Field | Type | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `availability` | `InferenceAvailability` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `kind` | Method-specific enum | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `interval, confidence_set` | `FiniteInterval|None, ARConfidenceSet|None` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `reason` | `ScientificReason|None` | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `method_config` | typed config | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
 #### Constructor / Factory
 
@@ -119,9 +129,9 @@ Constructor/Factoryはavailabilityとevidenceの排他性、およびreason整�
 
 #### メソッド
 
-| Signature | Return | 処理と副作用 | 例外 |
-|---|---|---|---|
-| `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | unsupported confirmatory inference |
+| Signature | Return | 処理と副作用 | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---|---|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| `validate_for(mode,method)` | Validated inference / typed reason | pure Method/analysis-mode適格性検査 | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
 #### 処理仕様
 
@@ -187,26 +197,26 @@ LinearDML/CausalForestDML/DRLearner/ForestDRLearner/S/T/X-Learnerを単にCATE�
 - Inference RegistryはMethod/Backend/version/final estimator config別に `POINT_ONLY / SUPPORTED_CI / UNSUPPORTED / UNAVAILABLE / FAILED` を判定。Native bootstrapを統計的妥当性確認なしに汎用適用しない。
 - Exploratory point-onlyは許すが、Confirmatoryは事前に宣言したtargetに適合するCIと独立Science Evidenceが必要。Pointwise CIとsimultaneous bandを区別する。
 
-`LocalPolicyVerifierPort.verify`は`context.policy_anchor`（Study/CLI入力とは独立のsecure runtime configuration由来）によりStudy・scope・columns・row boundを事前承認した`VerifiedStudyPolicyEvidence`を生成する。Study自身のbool/policy_refは認可証拠ではない。`LocalPrivacyPolicyPort.authorize`の`PrivacyDecision`前に個票bytesをstagingに出力しない。same-UID/private owner-controlled TrustedRootが基準で、shared/CI/container-root可視mountや不明ACL/namespaceはfail-closed。OD-02=Aにより、本EnhancementのRow Exportの署名方式はEd25519／domain-separated RFC8785-JCS、EUIDが改竄不能なadmin-owned Trust Storeと失効検証を用いるとOwner採用済み。ただし現実の独立承認者・鍵Store管理者／実配備・失効freshness/clock/OSが未確認ならrow releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
-**OD-02/03のEd25519+admin trust-store/RowEffectsParquetWriter方式・署名/ClassはOwner採用済み。実際の独立approver・admin鍵配備/失効freshness/clock/OS・Method別row schema/実Backend/Independent Testが未完なら当該個票Releaseは`BLOCKED_DEPLOYMENT_AUTHORITY`。**
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
-**OD-02/03已採用の必要条件：** G05/P02の`Ed25519LocalPolicyVerifier.verify`でadmin-only authority（not user-owned）によるrun/Study/Method/Policy scopeに束縛された署名を検証し、`LocalPrivacyPolicy.authorize`の前にtrusted Proofを確定。G05/P03`RowEffectsParquetWriter.write`だけが認可後row bytesを作りG01 sinkへ渡す。未配備ならrelease deny、他PackageのHTE集計診断を無根拠に止めない。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
 ## 5. Method-by-Method DGP/Negative/Reference Obligations
 
 このPackageは新Method IDの科学Kernelを追加しない。既存のG01〜G09 Method/ResultとTyped Portを再利用する。
 
-**Proof boundary:** §5のMethod参照は科学Kernelの再実装指示ではない。G05の主受入は§4と§6のPolicy/Privacy/HTE診断のpositive/negative。必要な科学真値は独立Referenceを使用し、未生成FixtureやFWER=.05/K/R/Coverage未決をPASSとしない。Trust AnchorとRow Writerの設計空白はBLOCKEDであり外部文書から推測しない。
+**現行G05個票出力条件:** StudyとCLIの二重opt-in、実効一般Linux UID所有のprivate ext4/XFS rootとMethod別承認済みRowSchema/列・行・byte上限のAND。初期deny時にsource反復せずexit3。既存WriterとG01 Publisher/Readerのみを使用。
 
 ## 6. Focused Verification Contract — WHAT, not physical filename
 
-| Layer | Required behavior |
-|---|---|
-| unit | Value/Estimand/Method schema、negative、Hash/Status/No-False-PASS、pure Algorithm。 |
-| contract | `Class.Method`入出力、Port/Backend Registry選択、typed evidence/Lineage、Version+Codec。 |
-| integration | 必要な実Backend/CLI/FS/Atomic readback、optional Profile、既存Product v2回帰。 |
-| scientific evidence | Method別DGP/NEG/independent reference、定量Simulation/coverage/MC-SE。 |
+| Layer | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+|---| Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| unit | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| contract | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| integration | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
+| scientific evidence | Study＋CLI double opt-in、一般Linux EUID/private ext4/XFS、Method別RowSchemaと列行byte cap、初期deny時source反復0・row bytes0、G01 readback正負例 |
 
 TestはLifecycle（enhancement/regression/characterization/benchmark/support/legacy）とLayer（unit/contract/integration/frontend/browser_e2e）を独立分類。新規は`tests/enhancement/enh_e11/g05/<layer>/`に原則配置、実Path/command/pytest collectionは40 Operatorがcurrent checkoutからdiscover。受入07をpathの文字列で置き換えない。Mock-onlyでreal Backend/FS/ScienceをPASSにしない。
 
@@ -214,8 +224,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - 必須の受入条件は§4の各分岐、§5のScience/Method依存、§6のunit/contract/実filesystem integrationで個別に判定する。
 - CATE supportはTreatment×X/Wのデータ範囲と推定対象のSupportに基づき、Overlap/Effective Sample/CalibrationとUncertaintyを混同せず別Metric/Statusとして計算。 Calibration/Coverage評価は事前指定Holdoutまたは独立SimulationとEstimator/Backendのvalid inferenceに限定。適格な標本数、group size、CI availabilityを記録。 G04のCATE Resultを入力として検証し、Method固有nuisanceや数値Estimatorを再実装しない。aggregateだけ返し、G05/P02の独立認可なしに個票値を作らない。
-- Evidenceはpositive/negative、Approval Signature/Expiry/Scope、Effective UID/ACL/mount、row bytes createdか、Parquet/Manifest/Marker/Readback、source/fixture SHAとactual commandを含める。秘密鍵そのものや個票のログ出力は禁止。
-- Test側のCollection/Runner実Pathは40の発見規則に従う。未実装Approval Authority/Writerをmockして正規Privacy PASSとしない。
+- **現行G05実装条件:** Study＋CLI両方の明示opt-in、実効EUID/private root、Method別RowSchema/上限。初期denyは行生成0、stage後異常はCOMMITTED無し。
 
 ## 7. Checkpoint / Handoff / Stop
 
@@ -232,15 +241,3 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 **BLOCKED before Freeze:** HTE calibration metricとholdout policy/必要Science Oracle、G04推論契約。 これらは本Pxxに係る未確定決定であり、他Pxx/07/設計書を読んで推定してはならない。G05のRow出力をG01〜G04に遡及して許可しない。
 
-
-## PREP-04.2 / G05 operational closure checkpoint (DRAFT / NOT_FROZEN)
-
-**Already Owner-adopted — no redesign:** OD-02 Ed25519 detached domain-separated RFC8785-JCS + admin-owned non-EUID-writable Trust Anchor; OD-03 exact `Ed25519LocalPolicyVerifier`, `RowEffectsParquetWriter`/`Factory` and `DeferredRowEffectsSource`/`ValidatedParquetSerializer` signatures; G01 alone owns staging/publication/readback. P02 is independent verification (not signing), P03 serializes only after independent authorization; P04 independently verifies the full release boundary. No new G05 Method ID or Product API/DB.
-
-**BLOCKED deployment inputs:** real independent Approver and Trust Store admin principal unassigned; key custody/provisioning/rotation and authentic policy/key revocation source not deployed; approved revocation-snapshot freshness and trusted UTC clock operating bounds unspecified; actual EUID/ACL/mount/FS not verified; Method-specific `ApprovedRowSchema` exact ordered column/dtype/row identity not finalized; effective Parquet and Ed25519 versions/APIs not probed. Freeze can't be declared by a test key or these documentation drafts. See independent operational mapping `combined_review/128_20261121_prep04_2_g05_operational_authority_contract.md`.
-
-**Acceptance invariant:** initial missing/invalid approval ⇒ exit3, zero `DeferredRowEffectsSource.read_rows` and zero new row bytes. Valid approval⇒ bounded ordered allowed rows only→G01 staging; recheck revocation/clock/root pre-stage/seal/publish. After authorized private staging revocation ⇒ no publish, but do not assert historical staged bytes were zero. `row_effects.parquet` restricted, no values in Result/Manifest/stdout/stderr/log; own G01 Reader required. 
-
-**Work boundary:** no numerical timeouts/thresholds, guessed Method columns/dtypes, substituted backend libraries, new signer/Publisher or new scientific target; unresolved values remain explicit Owner/operations blockers. G05 999, Freeze and Coding Authorization NOT_PERFORMED.
-
-**Package-specific PREP-04.2 note:** P01: HTE diagnostic support/calibration/uncertainty is separate from authorized row release. Do not generate RowSource values in diagnostics or grant private row policy. G04 CATE/DRIV Method scientific target/uncertainty must remain authoritative.
