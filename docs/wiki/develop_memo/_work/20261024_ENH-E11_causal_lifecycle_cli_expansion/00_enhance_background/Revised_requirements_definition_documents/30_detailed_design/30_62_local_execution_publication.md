@@ -436,7 +436,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 8.4. ローカル実行者の個票出力適格性
 
-一般ユーザーのStudy requestとCLI Flagのdouble opt-in、実行EUID/private TrustedRoot owner一致、local ext4/XFS・0700/0600・ACL/mount、Method別`ApprovedRowSchema`と出力上限を`LocalPrivacyPolicyPort.authorize`で検証する。署名鍵、第三者Approver、Trust Anchor、失効は要求しない。RowSource反復前・Stage/Seal/Publish前にOS/root/lineageを再検証し、未知状態はFail Closedとする。Aggregate-onlyを不必要に阻害しない。
+一般ユーザーのStudy requestとCLI Flagのdouble opt-in、実行EUID/private TrustedRoot owner一致、local ext4/XFS・0700/0600・owner/mode/dirfd、Method別`ApprovedRowSchema`と出力上限を`LocalPrivacyPolicyPort.authorize`で検証する。署名鍵、第三者Approver、Trust Anchor、失効は要求しない。RowSource反復前・Stage/Seal/Publish前にOS/root/lineageを再検証し、未知状態はFail Closedとする。Aggregate-onlyを不必要に阻害しない。
 
 ### 8.5. CLI entrypoint／error envelope
 
@@ -472,7 +472,7 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 
 ### 9.3. Independent verification / remaining blockers
 
-G05/P02: both opt-in flags separately/AND, actual nonroot UID/private ext4/XFS/root/ACL/mount/symlink/namespace tests; G05/P03: Method `ApprovedRowSchema`, ordered columns, row/byte/memory caps, real Parquet API and readback; G05/P04/07: row source pre-auth calls zero, stage/commit races, G01 marker/hash/fault/no-clobber, no row leak, legacy Product v2 regression. Key/signature/revocation tests are excluded. ApprovedRowSchema/Parquet effective ABI/Linux filesystem tests still missing. No G05 Freeze, Coding Authorization or Gate999 pass.
+G05/P02: both opt-in flags separately/AND, actual nonroot UID/private ext4/XFS/root/owner-mode/symlink/dirfd/same-FS tests; G05/P03: Method `ApprovedRowSchema`, ordered columns, row/byte/memory caps, real Parquet API and readback; G05/P04/07: row source pre-auth calls zero, stage/commit races, G01 marker/hash/fault/no-clobber, no row leak, legacy Product v2 regression. Key/signature/revocation tests are excluded. ApprovedRowSchema/Parquet effective ABI/Linux filesystem tests still missing. No G05 Freeze, Coding Authorization or Gate999 pass.
 
 ### 9.4. SIM-01 current local-FS proof boundary（Owner 2026-11-21）
 
