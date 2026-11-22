@@ -61,3 +61,7 @@ Decision: [DEC-PREP03-OD01–05](../../combined_review/122_20261119_dec_prep03_o
 ## Current strict draft boundaries
 
 Studyには個票出力の単一明示booleanだけを持ち、撤回済み署名Policy参照を含めない。現行Local GraphのProduct Version IDはnull固定であり、将来のProduct連携には新たな明示契約が必要。40 MethodのOutput共通Schema候補は、各Methodの固定Operation/Artifact/Result制約と同等な場合のみ登録できる。Schemaの構造検証だけでは実効Backend、Path安全性、統計的妥当性は証明できない。
+
+## Factored Method Profile (40×5)
+
+The prospective strict **structural** authority for all 200 internal Method Profile drafts is now `method_profiles/factored/e11_{method_config,question_profile,design_profile,output_profile,inference_profile}_factored_v1.json`. Each bundle reconstructs its Method ID's exact original single-object JSON Schema using a common core plus a per-Method overlay. Do **not** validate common and overlay separately with `allOf` and `additionalProperties:false`; that changes acceptance semantics. The former 200 individual files are kept as immutable hash-pinned baselines until the independent Draft202012 parity runner succeeds in a pinned checkout. This internal draft registry is not a new public payload version and does not grant Method/Backend/Scientific availability. Cross-artifact B03 semantics, Source/Method Profile integration and Final Coding Authorization remain separate.
