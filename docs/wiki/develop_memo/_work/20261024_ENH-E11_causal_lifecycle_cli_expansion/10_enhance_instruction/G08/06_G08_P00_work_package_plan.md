@@ -22,7 +22,7 @@ Sharp/Fuzzy RDDとB0/B1 IV/2SLSを局所Estimand・弱IV AR集合付きで提供
 |---|---|---|---|---|
 | P01 | rdd_sharp_fuzzy | NONE | P3-M07,P3-M08 | cutoff/bandwidth/densityとFuzzy first stage、RBC CI API availabilityを検証。 |
 | P02 | wald_late | NONE | P3-M09 | 二値Z/A・B0無調整LATE、first-stage weak/zero、IV independence/exclusion/monotonicityは証明済みとしない。 |
-| P03 | two_sls_ar | P02 | P3-M10,P3-M11 | B0 Q=[1], B1 Q=[1,C]。Y−βA~Q+ZのHC1 χ²(1)全実数AR反転、EMPTY数学集合とFAILEDは別。 |
+| P03 | two_sls_ar | P02 | P3-M10,P3-M11 | B0 Q=[1], B1 Q=[1,C]。Y−βA~Q+ZのHC1 χ²(1)全実数AR反転は独立数学・統計Reviewer承認前の候補（未Freeze）。全実数領域AR信頼集合、数学的EMPTYと数値FAILEDの区別は承認済み要求。 |
 | P04 | rdd_iv_result | P01,P02,P03 | — | RDD/IV別Result、bounded/unbounded/disconnected AR、独立Reference/Coverage/weak IV検証とReader。 |
 
 
