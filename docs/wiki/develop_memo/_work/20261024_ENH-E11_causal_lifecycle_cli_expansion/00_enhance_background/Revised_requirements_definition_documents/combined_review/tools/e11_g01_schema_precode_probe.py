@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 from copy import deepcopy
 import importlib.metadata
+from hashlib import sha256
+import re
 import json
 from pathlib import Path
 import subprocess
@@ -34,7 +36,16 @@ def git(root: Path, *args: str) -> str:
     return p.stdout.strip()
 
 def load_schema(path: Path) -> dict:
-    data = json.loads(path.read_text(encoding="utf-8"))
+    # JSON Schema is source-of-truth; reject duplicate keys instead of last-wins.
+    def reject_duplicate_keys(pairs):
+        obj = {}
+        for key, value in pairs:
+            if key in obj:
+                raise ValueError(f"Duplicate JSON Schema key {key!r} in {path}")
+            obj[key] = value
+        return obj
+    data = json.loads(path.read_text(encoding="utf-8"),
+                      object_pairs_hook=reject_duplicate_keys)
     if not isinstance(data, dict):
         raise ValueError(f"Not a JSON Schema object: {path}")
     Draft202012Validator.check_schema(data)
@@ -170,8 +181,16 @@ def main() -> int:
         repo = repo.parent
     if not (repo / ".git").exists():
         raise RuntimeError("Not a real Git checkout")
+    if not re.fullmatch(r"[0-9a-f]{40}", args.expected_head):
+        raise ValueError("--expected-head must be the independently pinned 40-hex SHA")
     head = git(repo, "rev-parse", "HEAD")
     dirty = bool(git(repo, "status", "--porcelain=v1"))
+    lock_path = repo / "uv.lock"
+    if not lock_path.is_file():
+        raise RuntimeError("Target uv.lock missing at pinned checkout")
+    lock_sha256 = sha256(lock_path.read_bytes()).hexdigest()
+    lock_blob_sha = git(repo, "hash-object", str(lock_path))
+    script_blob_sha = git(repo, "hash-object", str(Path(__file__).resolve()))
     target_python = sys.version_info[:2] == (3, 12)
     schemas = {name: load_schema(SCHEMAS / name) for name in PUBLIC + FCI}
     blobs = {name: git(repo, "hash-object", str(SCHEMAS / name))
@@ -200,6 +219,9 @@ def main() -> int:
         "git_head": head, "expected_head": args.expected_head,
         "git_head_matches": head == args.expected_head,
         "git_worktree_dirty": dirty,
+        "uv_lock_sha256": lock_sha256,
+        "uv_lock_git_blob_sha": lock_blob_sha,
+        "probe_source_blob_sha": script_blob_sha,
         "source_blob_sha": blobs,
         "metaschema_valid_count": len(schemas),
         "fci_fixture_count": len(fixtures),
