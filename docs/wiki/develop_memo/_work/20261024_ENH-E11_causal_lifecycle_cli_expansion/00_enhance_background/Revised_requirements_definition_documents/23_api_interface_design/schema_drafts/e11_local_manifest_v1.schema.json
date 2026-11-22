@@ -135,8 +135,14 @@
       ],
       "properties": {
         "technical_status": {
-          "type": "string",
-          "minLength": 1
+          "enum": [
+            "COMPLETED",
+            "VALIDATION_FAILED",
+            "CAPABILITY_UNAVAILABLE",
+            "EXECUTION_FAILED",
+            "PUBLICATION_FAILED"
+          ],
+          "description": "Same status enum as e11-local-status/1. Manifest/Status exact value equality, publication phase and readback are enforced by a separate cross-artifact semantic validator."
         },
         "analysis_mode": {
           "enum": [
