@@ -231,7 +231,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 #### 識別情報・責務
 
-**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
+**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。現行`e11-local-graph/1` Wireでは`version_id`と`parent_version_id`を両方`null`に固定する（Schema const-null）。Product実在IDをE11 Local Wireへ写像・importしない。既存Product GraphVersionの実在IDと親整合は旧Product互換Bridgeで別に扱い、Graph科学的親はprovenance/ContentRef/hashで検証する。
 
 #### フィールド
 
@@ -241,8 +241,8 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `nodes` | `tuple[Node,...]` | unique identity |
 | `edges` | `tuple[EndpointEdge,...]` | endpoint/lag/identityをlossless |
 | `temporal` | `TemporalConvention|None` | lagの符号・基準時刻 |
-| `source_graph_version_id` | `str|None` | 実在するProduct GraphVersionを参照。自身はVersionを発行しない |
-| `source_graph_parent_version_id` | `str|None` | 実在する親GraphVersion ID。source_graph_version_idがnullなら必ずnull |
+| `source_graph_version_id` | `str|None` | E11 Localでは常にNone。実在するProduct IDは旧Product互換Bridgeの別契約でのみ検査 |
+| `source_graph_parent_version_id` | `str|None` | E11 Localでは常にNone。科学的親provenanceは別のContentRef/hashで保持 |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
 #### Constructor / Factory
@@ -266,7 +266,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Local内容hash・科学的親provenance・non-null Product import拒否と旧Product別Bridgeでの互換保護。FR-186/196、AR-028/036/043。
 
 ### 3.5. `EffectOutcome` — complete Class method protocol
 
