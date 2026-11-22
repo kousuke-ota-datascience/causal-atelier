@@ -52,7 +52,7 @@ Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci
 
 ## PREP-03 OD-02/03 Owner採用（2026-11-19）
 
-- [e11_local_row_export_policy_v1.schema.json](e11_local_row_export_policy_v1.schema.json) — **WITHDRAWN HISTORICAL DRAFT / NOT REGISTERED / NOT DISPATCHED**。Current v1では署名Policyと`policy_ref`を使用しない。
+- Signed G05 row-policy Schemaは現行Schema Draft treeから削除済み。過去の採用・撤回判断は`combined_review/128/129/131/137`とGit Historyに保持し、現行`e11-local-study/1`では`policy_ref`を登録・解釈しない。
 - Historical signed-policy authority is not an initial E11 functionality; no keys, Trust Store, independent reviewer or revocation contract are required.
 - G05 Row WriterのParquet columns/dtypesとMethod固有`ApprovedRowSchema`は別に確定が必要。G02〜G09の40件Method Config/Question/Design/Output/Inference Schemaを本Owner採用で一括生成済みと扱わない。
 
