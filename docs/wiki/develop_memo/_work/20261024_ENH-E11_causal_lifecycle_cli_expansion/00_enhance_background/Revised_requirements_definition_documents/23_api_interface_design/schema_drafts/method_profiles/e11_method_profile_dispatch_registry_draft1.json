@@ -1,0 +1,1215 @@
+{
+  "catalog_version": "e11-method-profile-dispatch/draft1",
+  "status": "200_SOURCE_DRAFTS_REFERENCED; AUTOMATED_COMPILATION_AND_PARITY_NOT_RUN",
+  "method_count": 40,
+  "profile_count": 200,
+  "kinds": [
+    "method_config",
+    "question_profile",
+    "design_profile",
+    "output_profile",
+    "inference_profile"
+  ],
+  "profiles": [
+    {
+      "method_id": "P1-M01",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m01_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M01",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m01_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M01",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m01_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M01",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m01_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M01",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m01_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M02",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m02_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M02",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m02_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M02",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m02_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M02",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m02_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M02",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m02_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M03",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m03_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M03",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m03_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M03",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m03_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M03",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m03_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M03",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m03_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M04",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m04_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M04",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m04_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M04",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m04_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M04",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m04_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M04",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m04_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M05",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m05_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M05",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m05_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M05",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m05_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M05",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m05_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M05",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m05_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M07",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m07_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M07",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m07_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M07",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m07_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M07",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m07_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M07",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m07_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M08",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m08_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M08",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m08_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M08",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m08_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M08",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m08_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M08",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m08_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M09",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m09_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M09",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m09_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M09",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m09_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M09",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m09_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M09",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m09_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M10",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m10_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M10",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m10_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M10",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m10_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M10",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m10_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M10",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m10_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M11",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m11_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M11",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m11_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M11",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m11_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M11",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m11_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M11",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m11_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M12",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m12_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M12",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m12_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M12",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m12_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M12",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m12_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M12",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m12_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M13",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m13_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M13",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m13_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M13",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m13_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M13",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m13_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M13",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m13_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M14",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m14_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M14",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m14_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M14",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m14_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M14",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m14_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M14",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m14_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M15",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m15_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M15",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m15_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M15",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m15_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M15",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m15_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M15",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m15_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M16",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m16_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M16",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m16_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M16",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m16_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M16",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m16_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M16",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m16_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M17",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m17_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M17",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m17_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M17",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m17_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M17",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m17_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M17",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m17_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M18",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m18_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M18",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m18_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M18",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m18_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M18",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m18_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M18",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m18_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M19",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m19_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M19",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m19_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M19",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m19_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M19",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m19_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M19",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m19_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M20",
+      "kind": "method_config",
+      "source_schema": "e11_p1_m20_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M20",
+      "kind": "question_profile",
+      "source_schema": "e11_p1_m20_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M20",
+      "kind": "design_profile",
+      "source_schema": "e11_p1_m20_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M20",
+      "kind": "output_profile",
+      "source_schema": "e11_p1_m20_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P1-M20",
+      "kind": "inference_profile",
+      "source_schema": "e11_p1_m20_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M01",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m01_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M01",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m01_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M01",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m01_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M01",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m01_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M01",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m01_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M02",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m02_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M02",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m02_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M02",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m02_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M02",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m02_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M02",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m02_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M03",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m03_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M03",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m03_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M03",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m03_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M03",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m03_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M03",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m03_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M04",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m04_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M04",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m04_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M04",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m04_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M04",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m04_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M04",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m04_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M05",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m05_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M05",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m05_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M05",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m05_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M05",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m05_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M05",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m05_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M06",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m06_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M06",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m06_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M06",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m06_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M06",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m06_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M06",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m06_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M07",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m07_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M07",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m07_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M07",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m07_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M07",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m07_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M07",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m07_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M08",
+      "kind": "method_config",
+      "source_schema": "e11_p2_m08_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M08",
+      "kind": "question_profile",
+      "source_schema": "e11_p2_m08_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M08",
+      "kind": "design_profile",
+      "source_schema": "e11_p2_m08_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M08",
+      "kind": "output_profile",
+      "source_schema": "e11_p2_m08_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P2-M08",
+      "kind": "inference_profile",
+      "source_schema": "e11_p2_m08_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M01",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m01_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M01",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m01_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M01",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m01_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M01",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m01_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M01",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m01_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M02",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m02_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M02",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m02_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M02",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m02_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M02",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m02_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M02",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m02_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M03",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m03_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M03",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m03_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M03",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m03_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M03",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m03_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M03",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m03_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M04",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m04_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M04",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m04_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M04",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m04_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M04",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m04_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M04",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m04_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M05",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m05_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M05",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m05_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M05",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m05_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M05",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m05_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M05",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m05_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M06",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m06_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M06",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m06_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M06",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m06_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M06",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m06_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M06",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m06_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M07",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m07_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M07",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m07_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M07",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m07_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M07",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m07_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M07",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m07_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M08",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m08_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M08",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m08_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M08",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m08_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M08",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m08_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M08",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m08_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M09",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m09_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M09",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m09_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M09",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m09_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M09",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m09_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M09",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m09_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M10",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m10_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M10",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m10_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M10",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m10_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M10",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m10_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M10",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m10_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M11",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m11_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M11",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m11_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M11",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m11_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M11",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m11_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M11",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m11_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M12",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m12_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M12",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m12_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M12",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m12_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M12",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m12_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M12",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m12_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M13",
+      "kind": "method_config",
+      "source_schema": "e11_p3_m13_method_config_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M13",
+      "kind": "question_profile",
+      "source_schema": "e11_p3_m13_question_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M13",
+      "kind": "design_profile",
+      "source_schema": "e11_p3_m13_design_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M13",
+      "kind": "output_profile",
+      "source_schema": "e11_p3_m13_output_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    },
+    {
+      "method_id": "P3-M13",
+      "kind": "inference_profile",
+      "source_schema": "e11_p3_m13_inference_profile_v1.schema.json",
+      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED"
+    }
+  ]
+}
