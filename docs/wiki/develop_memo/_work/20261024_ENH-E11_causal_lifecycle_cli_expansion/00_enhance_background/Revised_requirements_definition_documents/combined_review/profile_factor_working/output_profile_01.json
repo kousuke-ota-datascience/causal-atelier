@@ -1,0 +1,372 @@
+{
+  "kind": "output_profile",
+  "batch": 1,
+  "methods": [
+    "P1-M10",
+    "P1-M11",
+    "P1-M12",
+    "P1-M13",
+    "P1-M14",
+    "P1-M15",
+    "P1-M16",
+    "P1-M17"
+  ],
+  "entries": [
+    {
+      "id": "P1-M10",
+      "file": "e11_p1_m10_output_profile_v1.schema.json",
+      "blob_sha": "79257270fa547853ba0a39f5b77e37673d5ad79b",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m10:output_profile:draft1",
+        "title": "P1-M10 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M10"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M11",
+      "file": "e11_p1_m11_output_profile_v1.schema.json",
+      "blob_sha": "3054ae57c9f68a16c5f00ff934a6a1a26a2f6aa7",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m11:output_profile:draft1",
+        "title": "P1-M11 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M11"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M12",
+      "file": "e11_p1_m12_output_profile_v1.schema.json",
+      "blob_sha": "dfdcac9314f5175bf144152cd99680eb6d4c7756",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m12:output_profile:draft1",
+        "title": "P1-M12 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M12"
+          },
+          "operation": {
+            "const": "REFUTE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M13",
+      "file": "e11_p1_m13_output_profile_v1.schema.json",
+      "blob_sha": "3a9a3db1f2ae62f746298225eb73e5c84c45d44a",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m13:output_profile:draft1",
+        "title": "P1-M13 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M13"
+          },
+          "operation": {
+            "const": "REFUTE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M14",
+      "file": "e11_p1_m14_output_profile_v1.schema.json",
+      "blob_sha": "81ba31f76e77dc5528f3ea5043d44e62abeb198a",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m14:output_profile:draft1",
+        "title": "P1-M14 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M14"
+          },
+          "operation": {
+            "const": "REFUTE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M15",
+      "file": "e11_p1_m15_output_profile_v1.schema.json",
+      "blob_sha": "ba3481827b05a52fd79acba3843a6751a47cd337",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m15:output_profile:draft1",
+        "title": "P1-M15 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M15"
+          },
+          "operation": {
+            "const": "REFUTE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M16",
+      "file": "e11_p1_m16_output_profile_v1.schema.json",
+      "blob_sha": "b198151aaad43f4c8eba9b5540683a86f66eb3c4",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m16:output_profile:draft1",
+        "title": "P1-M16 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M16"
+          },
+          "operation": {
+            "const": "SENSITIVITY"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M17",
+      "file": "e11_p1_m17_output_profile_v1.schema.json",
+      "blob_sha": "c2d3fb21da59dc6066401dec4f39e8d63f1151bd",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m17:output_profile:draft1",
+        "title": "P1-M17 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P1-M17"
+          },
+          "operation": {
+            "const": "SENSITIVITY"
+          },
+          "positive_artifacts": {
+            "const": [
+              "diagnostics.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "DIAGNOSTIC_EVIDENCE"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    }
+  ]
+}
