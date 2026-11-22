@@ -187,6 +187,36 @@ def main() -> int:
     lock_blob_sha = git(repo, "hash-object", str(lock_path))
     script_blob_sha = git(repo, "hash-object", str(Path(__file__).resolve()))
     target_python = sys.version_info[:2] == (3, 12)
+    out = args.report.resolve()
+    if out == repo.resolve() or repo.resolve() in out.parents:
+        raise ValueError("Review report path must be outside the repository")
+
+    # Provenance conditions are gates, not merely inputs to a final PASS
+    # expression. Reject before loading or validating any Schema.
+    if not (target_python and head == args.expected_head and not dirty):
+        report = {
+            "verdict": "BLOCKED_PRECONDITION_NO_SCHEMA_VALIDATION",
+            "blocked_reasons": [
+                name for name, failed in (
+                    ("PYTHON_NOT_3_12", not target_python),
+                    ("HEAD_MISMATCH", head != args.expected_head),
+                    ("DIRTY_WORKTREE", dirty),
+                ) if failed
+            ],
+            "schema_validation_invoked": False,
+            "git_head": head,
+            "expected_head": args.expected_head,
+            "python": sys.version.split()[0],
+            "uv_lock_git_blob_sha": lock_blob_sha,
+            "uv_lock_sha256": lock_sha256,
+            "probe_source_blob_sha": script_blob_sha,
+            "warning": "Author-only precode evidence; no independent S09, science, Reader, S10 or S11.",
+        }
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        print(json.dumps({"verdict": report["verdict"], "report": str(out)}))
+        return 2
+
     # Exactly 6 public + 3 active P1-M06 schemas are normative for G01.
     schemas = {name: load_schema(SCHEMAS / name) for name in PUBLIC + FCI_ACTIVE}
     blobs = {name: git(repo, "hash-object", str(SCHEMAS / name))
@@ -256,9 +286,6 @@ def main() -> int:
             "Full positive/negative public E11 Study/Graph/Status/Manifest/Marker instances",
         ],
     }
-    out = args.report.resolve()
-    if out == repo.resolve() or repo.resolve() in out.parents:
-        raise ValueError("Review report path must be outside the repository")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"verdict": report["verdict"], "report": str(out),
