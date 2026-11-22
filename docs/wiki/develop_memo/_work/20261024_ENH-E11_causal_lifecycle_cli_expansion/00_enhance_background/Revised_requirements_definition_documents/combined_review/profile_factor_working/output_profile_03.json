@@ -1,0 +1,370 @@
+{
+  "kind": "output_profile",
+  "batch": 3,
+  "methods": [
+    "P2-M06",
+    "P2-M07",
+    "P2-M08",
+    "P3-M01",
+    "P3-M02",
+    "P3-M03",
+    "P3-M04",
+    "P3-M05"
+  ],
+  "entries": [
+    {
+      "id": "P2-M06",
+      "file": "e11_p2_m06_output_profile_v1.schema.json",
+      "blob_sha": "7cf4e400af6061fd3d79fded5701d910b31cf236",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m06:output_profile:draft1",
+        "title": "P2-M06 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults. B03 internal non-scalar typed artifact required (cate_surface.json); schema is only a descriptor, actual payload/lineage/inference and privacy require independent semantic validation.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P2-M06"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json",
+              "cate_surface.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M07",
+      "file": "e11_p2_m07_output_profile_v1.schema.json",
+      "blob_sha": "e226a4a6503a333651b203805a4ea1a0fe894736",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m07:output_profile:draft1",
+        "title": "P2-M07 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults. B03 internal non-scalar typed artifact required (cate_surface.json); schema is only a descriptor, actual payload/lineage/inference and privacy require independent semantic validation.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P2-M07"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json",
+              "cate_surface.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M08",
+      "file": "e11_p2_m08_output_profile_v1.schema.json",
+      "blob_sha": "2918a4b44ee4ee94177351ace15d21e2d9e2dedc",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m08:output_profile:draft1",
+        "title": "P2-M08 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults. B03 internal non-scalar typed artifact required (cate_surface.json); schema is only a descriptor, actual payload/lineage/inference and privacy require independent semantic validation.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P2-M08"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json",
+              "cate_surface.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M01",
+      "file": "e11_p3_m01_output_profile_v1.schema.json",
+      "blob_sha": "7fdd72dad286d95f38c8ba35cb75627e5cf6b82d",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m01:output_profile:draft1",
+        "title": "P3-M01 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P3-M01"
+          },
+          "operation": {
+            "const": "DISCOVER"
+          },
+          "positive_artifacts": {
+            "const": [
+              "graph.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "e11-local-graph/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M02",
+      "file": "e11_p3_m02_output_profile_v1.schema.json",
+      "blob_sha": "bd8378222c29d4a839d84b2287959b215675bd4b",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m02:output_profile:draft1",
+        "title": "P3-M02 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P3-M02"
+          },
+          "operation": {
+            "const": "DISCOVER"
+          },
+          "positive_artifacts": {
+            "const": [
+              "graph.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "e11-local-graph/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M03",
+      "file": "e11_p3_m03_output_profile_v1.schema.json",
+      "blob_sha": "fafffc5b06846475d7e326f13a2d2fdc08a120a3",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m03:output_profile:draft1",
+        "title": "P3-M03 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P3-M03"
+          },
+          "operation": {
+            "const": "DISCOVER"
+          },
+          "positive_artifacts": {
+            "const": [
+              "graph.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "portable_result_schema": {
+            "const": "e11-local-graph/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M04",
+      "file": "e11_p3_m04_output_profile_v1.schema.json",
+      "blob_sha": "5d6baf8181b8476742bdcfb0c02544cfc37e7d2e",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m04:output_profile:draft1",
+        "title": "P3-M04 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P3-M04"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M05",
+      "file": "e11_p3_m05_output_profile_v1.schema.json",
+      "blob_sha": "da14c27309dd89ed7f6c6f02aaea020819301308",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m05:output_profile:draft1",
+        "title": "P3-M05 output_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults. B03 internal non-scalar typed artifact required (event_time_effects.json); schema is only a descriptor, actual payload/lineage/inference and privacy require independent semantic validation.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "method_id",
+          "operation",
+          "positive_artifacts",
+          "forbidden_artifacts",
+          "portable_result_schema",
+          "upstream_hashes_verified"
+        ],
+        "properties": {
+          "method_id": {
+            "const": "P3-M05"
+          },
+          "operation": {
+            "const": "ESTIMATE"
+          },
+          "positive_artifacts": {
+            "const": [
+              "result.json",
+              "event_time_effects.json"
+            ]
+          },
+          "forbidden_artifacts": {
+            "const": []
+          },
+          "portable_result_schema": {
+            "const": "e11-local-effect-result/1"
+          },
+          "upstream_hashes_verified": {
+            "const": true
+          }
+        }
+      }
+    }
+  ]
+}
