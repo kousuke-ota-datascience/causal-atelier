@@ -1,0 +1,380 @@
+{
+  "kind": "question_profile",
+  "batch": 3,
+  "methods": [
+    "P2-M06",
+    "P2-M07",
+    "P2-M08",
+    "P3-M01",
+    "P3-M02",
+    "P3-M03",
+    "P3-M04",
+    "P3-M05"
+  ],
+  "entries": [
+    {
+      "id": "P2-M06",
+      "file": "e11_p2_m06_question_profile_v1.schema.json",
+      "blob_sha": "feb0693b0617bcf8881053bc1f0d7b80c1574b77",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m06:question_profile:draft1",
+        "title": "P2-M06 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "CATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M07",
+      "file": "e11_p2_m07_question_profile_v1.schema.json",
+      "blob_sha": "78841439c140d72f224ac278b236dfbec1a1a03f",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m07:question_profile:draft1",
+        "title": "P2-M07 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "CATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M08",
+      "file": "e11_p2_m08_question_profile_v1.schema.json",
+      "blob_sha": "2e2178d911529f42c0501c36dfcb0935391708d7",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m08:question_profile:draft1",
+        "title": "P2-M08 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "CONDITIONAL_IV_STRUCTURAL_SLOPE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M01",
+      "file": "e11_p3_m01_question_profile_v1.schema.json",
+      "blob_sha": "959eba1a798ca21f7c18cfbcc051f11e45a8310c",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m01:question_profile:draft1",
+        "title": "P3-M01 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "GRAPH_STRUCTURE"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M02",
+      "file": "e11_p3_m02_question_profile_v1.schema.json",
+      "blob_sha": "ddaeaaa5621373eae700faec62f769c566c7a195",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m02:question_profile:draft1",
+        "title": "P3-M02 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "GRAPH_STRUCTURE"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M03",
+      "file": "e11_p3_m03_question_profile_v1.schema.json",
+      "blob_sha": "68d53741da186501fb2c6bf5d7f2e02fa5d33190",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m03:question_profile:draft1",
+        "title": "P3-M03 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "GRAPH_STRUCTURE"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M04",
+      "file": "e11_p3_m04_question_profile_v1.schema.json",
+      "blob_sha": "8c9f2f4a77e26b2a6275f215734ddd8792e1678d",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m04:question_profile:draft1",
+        "title": "P3-M04 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "ATT"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M05",
+      "file": "e11_p3_m05_question_profile_v1.schema.json",
+      "blob_sha": "d4307f61c7d8a09a2b7b2fea5ac8dfbffad4a71d",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m05:question_profile:draft1",
+        "title": "P3-M05 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}
