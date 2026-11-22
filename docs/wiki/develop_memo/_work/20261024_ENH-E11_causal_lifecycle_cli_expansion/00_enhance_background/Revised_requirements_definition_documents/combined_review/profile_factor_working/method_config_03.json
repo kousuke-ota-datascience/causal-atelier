@@ -1,0 +1,309 @@
+{
+  "kind": "method_config",
+  "batch": 3,
+  "methods": [
+    "P2-M06",
+    "P2-M07",
+    "P2-M08",
+    "P3-M01",
+    "P3-M02",
+    "P3-M03",
+    "P3-M04",
+    "P3-M05"
+  ],
+  "entries": [
+    {
+      "id": "P2-M06",
+      "file": "e11_p2_m06_method_config_v1.schema.json",
+      "blob_sha": "4dfd6ef5ed39f18879009ba2db8bcefff2575906",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m06:method_config:draft1",
+        "title": "P2-M06 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "treated_model_ref",
+          "control_model_ref"
+        ],
+        "properties": {
+          "treated_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "control_model_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M07",
+      "file": "e11_p2_m07_method_config_v1.schema.json",
+      "blob_sha": "4875450b1ba91d5cf7046c7ff94ddeeef433d283",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m07:method_config:draft1",
+        "title": "P2-M07 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "treated_model_ref",
+          "control_model_ref",
+          "cross_arm_weight_model_ref"
+        ],
+        "properties": {
+          "treated_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "control_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cross_arm_weight_model_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P2-M08",
+      "file": "e11_p2_m08_method_config_v1.schema.json",
+      "blob_sha": "a1bc50048260efb097d495b4a761c61a80a468b2",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p2-m08:method_config:draft1",
+        "title": "P2-M08 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "outcome_model_ref",
+          "treatment_model_ref",
+          "instrument_model_ref",
+          "cv_folds"
+        ],
+        "properties": {
+          "outcome_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "treatment_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "instrument_model_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cv_folds": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M01",
+      "file": "e11_p3_m01_method_config_v1.schema.json",
+      "blob_sha": "ec96bcbe4917cf0aadcc319d6638fba66b57d434",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m01:method_config:draft1",
+        "title": "P3-M01 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ci_test_spec_ref",
+          "tau_min",
+          "tau_max",
+          "alpha"
+        ],
+        "properties": {
+          "ci_test_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tau_min": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tau_max": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "alpha": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M02",
+      "file": "e11_p3_m02_method_config_v1.schema.json",
+      "blob_sha": "47dd01dff9a2c1ec4bed85bd35bcb7fbce04f9b3",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m02:method_config:draft1",
+        "title": "P3-M02 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ci_test_spec_ref",
+          "tau_min",
+          "tau_max",
+          "alpha",
+          "contemporaneous_rules_ref"
+        ],
+        "properties": {
+          "ci_test_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tau_min": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tau_max": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "alpha": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "contemporaneous_rules_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M03",
+      "file": "e11_p3_m03_method_config_v1.schema.json",
+      "blob_sha": "267928269de913f14400026387f577114ee8db49",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m03:method_config:draft1",
+        "title": "P3-M03 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ci_test_spec_ref",
+          "tau_min",
+          "tau_max",
+          "alpha",
+          "latent_assumptions_ref"
+        ],
+        "properties": {
+          "ci_test_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tau_min": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tau_max": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "alpha": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "latent_assumptions_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M04",
+      "file": "e11_p3_m04_method_config_v1.schema.json",
+      "blob_sha": "2e7c66fb4a92f7f138df6b420795df05d2f547a1",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m04:method_config:draft1",
+        "title": "P3-M04 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "design_variant",
+          "estimator_spec_ref",
+          "cluster_covariance_spec_ref"
+        ],
+        "properties": {
+          "design_variant": {
+            "enum": [
+              "DID_2X2",
+              "STAGGERED"
+            ]
+          },
+          "estimator_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cluster_covariance_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P3-M05",
+      "file": "e11_p3_m05_method_config_v1.schema.json",
+      "blob_sha": "6dabe810bf93995ef9034840aa791f14819ff276",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p3-m05:method_config:draft1",
+        "title": "P3-M05 method_config strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_window_start",
+          "event_window_end",
+          "reference_event_time",
+          "cohort_estimator_spec_ref",
+          "cluster_covariance_spec_ref"
+        ],
+        "properties": {
+          "event_window_start": {
+            "type": "integer"
+          },
+          "event_window_end": {
+            "type": "integer"
+          },
+          "reference_event_time": {
+            "type": "integer"
+          },
+          "cohort_estimator_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cluster_covariance_spec_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}
