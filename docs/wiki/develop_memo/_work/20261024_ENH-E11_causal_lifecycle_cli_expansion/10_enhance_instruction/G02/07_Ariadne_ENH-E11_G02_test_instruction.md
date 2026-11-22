@@ -1,5 +1,7 @@
 # Ariadne ENH-E11 G02 — 07 独立テスト指示書：Identification・Eligibility・optional DoWhy
 
+**DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G02の独立S09監査は、先行Gate（G01）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG02自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG02のCoding前無条件停止条件にしない。**G01_999の実PASS→独立G02 S09 verdict→Owner G02-S10 Freeze→Owner G02-S11 Coding Authorization**を各々確認するまでG02のCoding禁止。実Adapter/FS/数値T2/T3/RegressionはG02の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
+
 **Verification contract status: DRAFT / NOT_FROZEN / TESTS_NOT_RUN**
 **Owner review: 2026-11-18 JST — PREP-03 audit and G02 Gate-level verification plan reviewed/accepted, with open Method/Profile/Evidence decisions preserved. This is NOT Contract Freeze, Independent Test execution, Gate999 PASS, or Coding Authorization.**
 **Gate: G02 / Independent Test Agent / Trial01 NOT_STARTED**
