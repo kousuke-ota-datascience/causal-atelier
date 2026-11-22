@@ -42,7 +42,7 @@
 
 `AR-016`のbootstrap条件をE11全ての因果Estimatorへの普遍的な推論要件へ一般化してはならない。
 
-## 12.3. S02採用後のLocal CLI受入契約
+## 12.3. Local Scientific CLIの受入契約
 
 1. 既存Product全体の§12は保持するが、新E11の実装対象は§12.1に列挙されたLocal Scientific CLIに限定する。変更影響が及ぶProductの回帰、および最終候補での旧v2互換性検証を実施する。
 2. `FR-195/NFR-031`：Study単一明示opt-in、default拒否、実効UID/private ext4/XFS Root、Method別Schema/caps、個票生成前のdeny、aggregate/manifest/logへの値漏洩禁止、再利用Study時の毎回の適格性再検証をPositive/Negativeで確認する。
