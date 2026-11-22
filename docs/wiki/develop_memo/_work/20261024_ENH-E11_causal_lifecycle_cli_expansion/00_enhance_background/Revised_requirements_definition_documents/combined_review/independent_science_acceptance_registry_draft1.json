@@ -1,0 +1,2196 @@
+{
+  "catalog_version": "e11-independent-science-acceptance/draft1",
+  "source": "10_32_scientific_method_scope.md",
+  "source_blob_sha": "a401d42adfd4e45149fac8503a1e49291af9930f",
+  "record_count": 41,
+  "status": "REFERENCE_IDS_AND_ACCEPTANCE_IDS_TRACED; INDEPENDENT_REFERENCE_AND_QUANTITATIVE_AC_NOT_FINALIZED; NO_TEST_RUN",
+  "method_records": [
+    {
+      "method_id": "P1-M01",
+      "method_and_estimand": "Native Randomized identification／A",
+      "operation": "IDENTIFY",
+      "scope_refs": [
+        "SCOPE:P1-06"
+      ],
+      "formal_fr": [
+        "FR-187"
+      ],
+      "scientific_ar": [
+        "AR-029"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-001"
+      ],
+      "negative": [
+        "NEG-001",
+        "NEG-027"
+      ],
+      "reference": [
+        "REF-G01",
+        "REF-I01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-D07"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known identified/negative causal graph and explicitly declared assumption refs; no numerical Effect result",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M02",
+      "method_and_estimand": "Native Backdoor identification／ATE",
+      "operation": "IDENTIFY",
+      "scope_refs": [
+        "SCOPE:P1-06",
+        "SCOPE:P1-07"
+      ],
+      "formal_fr": [
+        "FR-187"
+      ],
+      "scientific_ar": [
+        "AR-029"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002",
+        "DGP-021"
+      ],
+      "negative": [
+        "NEG-002",
+        "NEG-003"
+      ],
+      "reference": [
+        "REF-G01",
+        "REF-I01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-D07"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known identified/negative causal graph and explicitly declared assumption refs; no numerical Effect result",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M03",
+      "method_and_estimand": "DoWhy Backdoor identification／ATE候",
+      "operation": "IDENTIFY",
+      "scope_refs": [
+        "SCOPE:P1-08"
+      ],
+      "formal_fr": [
+        "FR-187"
+      ],
+      "scientific_ar": [
+        "AR-029"
+      ],
+      "environment": "ENV-DOWHY",
+      "dgp": [
+        "DGP-002",
+        "DGP-021"
+      ],
+      "negative": [
+        "NEG-002",
+        "NEG-027"
+      ],
+      "reference": [
+        "REF-G01",
+        "REF-I01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-D07"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known identified/negative causal graph and explicitly declared assumption refs; no numerical Effect result",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M04",
+      "method_and_estimand": "DoWhy Frontdoor identification／ATE",
+      "operation": "IDENTIFY",
+      "scope_refs": [
+        "SCOPE:P1-08"
+      ],
+      "formal_fr": [
+        "FR-187"
+      ],
+      "scientific_ar": [
+        "AR-029"
+      ],
+      "environment": "ENV-DOWHY",
+      "dgp": [
+        "DGP-005"
+      ],
+      "negative": [
+        "NEG-004"
+      ],
+      "reference": [
+        "REF-G01",
+        "REF-I02"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-D07"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known identified/negative causal graph and explicitly declared assumption refs; no numerical Effect result",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M05",
+      "method_and_estimand": "DoWhy IV identification／B0二値Z/A・無調整complier LATE（条件付き識別のみ）",
+      "operation": "IDENTIFY",
+      "scope_refs": [
+        "SCOPE:P1-08"
+      ],
+      "formal_fr": [
+        "FR-187"
+      ],
+      "scientific_ar": [
+        "AR-029"
+      ],
+      "environment": "ENV-DOWHY",
+      "dgp": [
+        "DGP-006"
+      ],
+      "negative": [
+        "NEG-006",
+        "NEG-007"
+      ],
+      "reference": [
+        "REF-I03",
+        "REF-G01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-D07"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / OWNER_TARGET_ADOPTED_PROFILE_BACKEND_SCIENCE_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known identified/negative causal graph and explicitly declared assumption refs; no numerical Effect result",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M06",
+      "method_and_estimand": "FCI／PAGと等価類",
+      "operation": "DISCOVER",
+      "scope_refs": [
+        "SCOPE:P1-09"
+      ],
+      "formal_fr": [
+        "FR-186"
+      ],
+      "scientific_ar": [
+        "AR-028"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-011",
+        "DGP-021"
+      ],
+      "negative": [
+        "NEG-003",
+        "NEG-021",
+        "NEG-028"
+      ],
+      "reference": [
+        "REF-G02"
+      ],
+      "acceptance_ids": [
+        "AC-D02",
+        "AC-G01",
+        "AC-G02",
+        "AC-G03",
+        "AC-G04",
+        "AC-G06"
+      ],
+      "owner_gate": "G01",
+      "original_status": "PLAN:G01 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known reference graph equivalence class and invariant arrow/circle endpoints/lag; reject orientation not identified from data",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M07",
+      "method_and_estimand": "Frontdoor two-stage regression／ATE",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P1-08"
+      ],
+      "formal_fr": [
+        "FR-188"
+      ],
+      "scientific_ar": [
+        "AR-030"
+      ],
+      "environment": "ENV-DOWHY",
+      "dgp": [
+        "DGP-005"
+      ],
+      "negative": [
+        "NEG-004",
+        "NEG-005"
+      ],
+      "reference": [
+        "REF-I02",
+        "REF-E04"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G02",
+      "original_status": "PLAN:G02 / OWNER_METHOD_ACCEPTED_TECH_AND_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M08",
+      "method_and_estimand": "Native diff-in-means／ATE",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P1-11"
+      ],
+      "formal_fr": [
+        "FR-192"
+      ],
+      "scientific_ar": [
+        "AR-033"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-001",
+        "DGP-022"
+      ],
+      "negative": [
+        "NEG-001",
+        "NEG-010"
+      ],
+      "reference": [
+        "REF-E01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M09",
+      "method_and_estimand": "Native OLS／採用済み契約範囲のATE/ATT表現",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P1-11",
+        "SCOPE:P1-17"
+      ],
+      "formal_fr": [
+        "FR-192"
+      ],
+      "scientific_ar": [
+        "AR-033"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002",
+        "DGP-003"
+      ],
+      "negative": [
+        "NEG-002",
+        "NEG-008",
+        "NEG-020"
+      ],
+      "reference": [
+        "REF-E01",
+        "REF-I01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M10",
+      "method_and_estimand": "Native IPW／ATE・ATT（別fixture）",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P1-11",
+        "SCOPE:P1-12"
+      ],
+      "formal_fr": [
+        "FR-192"
+      ],
+      "scientific_ar": [
+        "AR-033"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002",
+        "DGP-003"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-018"
+      ],
+      "reference": [
+        "REF-E02"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-R05"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M11",
+      "method_and_estimand": "Native AIPW／ATE・ATT（別fixture）",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P1-11",
+        "SCOPE:P1-12"
+      ],
+      "formal_fr": [
+        "FR-192"
+      ],
+      "scientific_ar": [
+        "AR-033"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002",
+        "DGP-003"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-011",
+        "NEG-012"
+      ],
+      "reference": [
+        "REF-E03"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M12",
+      "method_and_estimand": "Placebo Treatment refutation／null診",
+      "operation": "REFUTE",
+      "scope_refs": [
+        "SCOPE:P1-13"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-022"
+      ],
+      "negative": [
+        "NEG-014"
+      ],
+      "reference": [
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-R01",
+        "AC-T01"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null and positive perturbation diagnostic; correct statistic and expected rejection/stability pattern",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M13",
+      "method_and_estimand": "Data Subset refutation／安定性",
+      "operation": "REFUTE",
+      "scope_refs": [
+        "SCOPE:P1-13"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-001",
+        "DGP-002"
+      ],
+      "negative": [
+        "NEG-015"
+      ],
+      "reference": [
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D03",
+        "AC-R02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null and positive perturbation diagnostic; correct statistic and expected rejection/stability pattern",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M14",
+      "method_and_estimand": "Random Common Cause refutation／摂動安",
+      "operation": "REFUTE",
+      "scope_refs": [
+        "SCOPE:P1-14"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002"
+      ],
+      "negative": [
+        "NEG-017"
+      ],
+      "reference": [
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D03",
+        "AC-R02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null and positive perturbation diagnostic; correct statistic and expected rejection/stability pattern",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M15",
+      "method_and_estimand": "Bootstrap refutation／再標本化安定性",
+      "operation": "REFUTE",
+      "scope_refs": [
+        "SCOPE:P1-14"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-001",
+        "DGP-002"
+      ],
+      "negative": [
+        "NEG-016"
+      ],
+      "reference": [
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D03",
+        "AC-R02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null and positive perturbation diagnostic; correct statistic and expected rejection/stability pattern",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M16",
+      "method_and_estimand": "Adjustment Set Sensitivity／設計変更",
+      "operation": "SENSITIVITY",
+      "scope_refs": [
+        "SCOPE:P1-16"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-021",
+        "DGP-002"
+      ],
+      "negative": [
+        "NEG-002"
+      ],
+      "reference": [
+        "REF-G01",
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D02",
+        "AC-R02"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Independent perturbation/sensitivity analytic construction with nuisance/estimand eligibility",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M17",
+      "method_and_estimand": "Propensity Clipping Sensitivity／tr",
+      "operation": "SENSITIVITY",
+      "scope_refs": [
+        "SCOPE:P1-16"
+      ],
+      "formal_fr": [
+        "FR-189"
+      ],
+      "scientific_ar": [
+        "AR-044"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-002",
+        "DGP-023"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-018"
+      ],
+      "reference": [
+        "REF-E02",
+        "REF-R01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-R05"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Independent perturbation/sensitivity analytic construction with nuisance/estimand eligibility",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M18",
+      "method_and_estimand": "Observed NCE null diagnostic／条件付き関",
+      "operation": "DIAGNOSE",
+      "scope_refs": [
+        "SCOPE:P1-15",
+        "SCOPE:X-04"
+      ],
+      "formal_fr": [
+        "FR-190"
+      ],
+      "scientific_ar": [
+        "AR-031"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-019"
+      ],
+      "negative": [
+        "NEG-019",
+        "NEG-026"
+      ],
+      "reference": [
+        "REF-R02"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-T01",
+        "AC-T02",
+        "AC-T03",
+        "AC-R03"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null/alternative diagnostic and calibrated p-values; never interpret failure to reject as proof of no confounding",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M19",
+      "method_and_estimand": "Observed NCO null diagnostic／条件付き関",
+      "operation": "DIAGNOSE",
+      "scope_refs": [
+        "SCOPE:P1-15",
+        "SCOPE:X-04"
+      ],
+      "formal_fr": [
+        "FR-190"
+      ],
+      "scientific_ar": [
+        "AR-031"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-019"
+      ],
+      "negative": [
+        "NEG-019",
+        "NEG-026"
+      ],
+      "reference": [
+        "REF-R02"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-T01",
+        "AC-T02",
+        "AC-T03",
+        "AC-R03"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null/alternative diagnostic and calibrated p-values; never interpret failure to reject as proof of no confounding",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P1-M20",
+      "method_and_estimand": "OLS partial R² / RV sensitivity／指定",
+      "operation": "DIAGNOSE",
+      "scope_refs": [
+        "SCOPE:P1-17",
+        "SCOPE:X-05"
+      ],
+      "formal_fr": [
+        "FR-191"
+      ],
+      "scientific_ar": [
+        "AR-032"
+      ],
+      "environment": "ENV-BASE",
+      "dgp": [
+        "DGP-020"
+      ],
+      "negative": [
+        "NEG-020"
+      ],
+      "reference": [
+        "REF-R03"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-D03",
+        "AC-R04"
+      ],
+      "owner_gate": "G03",
+      "original_status": "PLAN:G03 / OWNER_METHOD_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known null/alternative diagnostic and calibrated p-values; never interpret failure to reject as proof of no confounding",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M01",
+      "method_and_estimand": "LinearDML／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-02"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-003"
+      ],
+      "negative": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M02",
+      "method_and_estimand": "CausalForestDML／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-03"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-004"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M03",
+      "method_and_estimand": "DRLearner／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-04"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-003",
+        "DGP-004"
+      ],
+      "negative": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05",
+        "REF-E03"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M04",
+      "method_and_estimand": "ForestDRLearner／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-05"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-004"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-011",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05",
+        "REF-E03"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M05",
+      "method_and_estimand": "S-Learner／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-06"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-002",
+        "DGP-003"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M06",
+      "method_and_estimand": "T-Learner／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-07"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-003",
+        "DGP-004"
+      ],
+      "negative": [
+        "NEG-010",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M07",
+      "method_and_estimand": "X-Learner／CATE(x)",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-08"
+      ],
+      "formal_fr": [
+        "FR-193"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-003",
+        "DGP-004"
+      ],
+      "negative": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E05"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P2-M08",
+      "method_and_estimand": "DRIV-A／CONDITIONAL_IV_STRUCTURAL_SLOPE",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P2-09"
+      ],
+      "formal_fr": [
+        "FR-194"
+      ],
+      "scientific_ar": [
+        "AR-034"
+      ],
+      "environment": "ENV-ECONML",
+      "dgp": [
+        "DGP-008"
+      ],
+      "negative": [
+        "NEG-009",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "reference": [
+        "REF-E06"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-I01",
+        "AC-I02",
+        "AC-I03"
+      ],
+      "owner_gate": "G04",
+      "original_status": "PLAN:G04 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M01",
+      "method_and_estimand": "PCMCI／time-lagged graph",
+      "operation": "DISCOVER",
+      "scope_refs": [
+        "SCOPE:P3-02"
+      ],
+      "formal_fr": [
+        "FR-196"
+      ],
+      "scientific_ar": [
+        "AR-036"
+      ],
+      "environment": "ENV-TIGRAMITE",
+      "dgp": [
+        "DGP-009"
+      ],
+      "negative": [
+        "NEG-021"
+      ],
+      "reference": [
+        "REF-G03"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-G01",
+        "AC-G02",
+        "AC-G03",
+        "AC-G05"
+      ],
+      "owner_gate": "G06",
+      "original_status": "PLAN:G06 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Known reference graph equivalence class and invariant arrow/circle endpoints/lag; reject orientation not identified from data",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M02",
+      "method_and_estimand": "PCMCI+／time-series CPDAG",
+      "operation": "DISCOVER",
+      "scope_refs": [
+        "SCOPE:P3-03"
+      ],
+      "formal_fr": [
+        "FR-196"
+      ],
+      "scientific_ar": [
+        "AR-036"
+      ],
+      "environment": "ENV-TIGRAMITE",
+      "dgp": [
+        "DGP-009",
+        "DGP-010"
+      ],
+      "negative": [
+        "NEG-021",
+        "NEG-028"
+      ],
+      "reference": [
+        "REF-G03",
+        "REF-G02"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-G01",
+        "AC-G02",
+        "AC-G03",
+        "AC-G04",
+        "AC-G06"
+      ],
+      "owner_gate": "G06",
+      "original_status": "PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known reference graph equivalence class and invariant arrow/circle endpoints/lag; reject orientation not identified from data",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M03",
+      "method_and_estimand": "LPCMCI／time-series PAG",
+      "operation": "DISCOVER",
+      "scope_refs": [
+        "SCOPE:P3-04"
+      ],
+      "formal_fr": [
+        "FR-196"
+      ],
+      "scientific_ar": [
+        "AR-036"
+      ],
+      "environment": "ENV-TIGRAMITE",
+      "dgp": [
+        "DGP-011"
+      ],
+      "negative": [
+        "NEG-021",
+        "NEG-028"
+      ],
+      "reference": [
+        "REF-G03",
+        "REF-G02"
+      ],
+      "acceptance_ids": [
+        "AC-D01",
+        "AC-G01",
+        "AC-G02",
+        "AC-G03",
+        "AC-G04",
+        "AC-G06"
+      ],
+      "owner_gate": "G06",
+      "original_status": "PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Known reference graph equivalence class and invariant arrow/circle endpoints/lag; reject orientation not identified from data",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M04",
+      "method_and_estimand": "DiD／ATT（2×2とstaggeredは別契約）",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-07"
+      ],
+      "formal_fr": [
+        "FR-197"
+      ],
+      "scientific_ar": [
+        "AR-037"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-012",
+        "DGP-013"
+      ],
+      "negative": [
+        "NEG-022"
+      ],
+      "reference": [
+        "REF-Q01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q01"
+      ],
+      "owner_gate": "G07",
+      "original_status": "PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M05",
+      "method_and_estimand": "Event Study／event-time効果",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-08"
+      ],
+      "formal_fr": [
+        "FR-197"
+      ],
+      "scientific_ar": [
+        "AR-037"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-013"
+      ],
+      "negative": [
+        "NEG-022"
+      ],
+      "reference": [
+        "REF-Q01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q01"
+      ],
+      "owner_gate": "G07",
+      "original_status": "PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M06",
+      "method_and_estimand": "Interrupted Time Series／介入時点のlevel",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-09"
+      ],
+      "formal_fr": [
+        "FR-197"
+      ],
+      "scientific_ar": [
+        "AR-037"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-014"
+      ],
+      "negative": [
+        "NEG-023"
+      ],
+      "reference": [
+        "REF-Q02"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q02"
+      ],
+      "owner_gate": "G07",
+      "original_status": "PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M07",
+      "method_and_estimand": "Sharp RDD／cutoff局所効果",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-10"
+      ],
+      "formal_fr": [
+        "FR-198"
+      ],
+      "scientific_ar": [
+        "AR-038"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-015"
+      ],
+      "negative": [
+        "NEG-023"
+      ],
+      "reference": [
+        "REF-Q03"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q03"
+      ],
+      "owner_gate": "G08",
+      "original_status": "PLAN:G08 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M08",
+      "method_and_estimand": "Fuzzy RDD／cutoff局所complier効果",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-11"
+      ],
+      "formal_fr": [
+        "FR-198"
+      ],
+      "scientific_ar": [
+        "AR-038"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-016"
+      ],
+      "negative": [
+        "NEG-006",
+        "NEG-023"
+      ],
+      "reference": [
+        "REF-Q03",
+        "REF-I03"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q03"
+      ],
+      "owner_gate": "G08",
+      "original_status": "PLAN:G08 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M09",
+      "method_and_estimand": "Wald ratio／binary Z/A complier LAT",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-12"
+      ],
+      "formal_fr": [
+        "FR-199"
+      ],
+      "scientific_ar": [
+        "AR-039"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-006"
+      ],
+      "negative": [
+        "NEG-006",
+        "NEG-007"
+      ],
+      "reference": [
+        "REF-I03",
+        "REF-E07"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-D07"
+      ],
+      "owner_gate": "G08",
+      "original_status": "PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M10",
+      "method_and_estimand": "B0 just-identified 2SLS／binary Z/A",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-12"
+      ],
+      "formal_fr": [
+        "FR-199"
+      ],
+      "scientific_ar": [
+        "AR-039"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-006",
+        "DGP-024"
+      ],
+      "negative": [
+        "NEG-006",
+        "NEG-025"
+      ],
+      "reference": [
+        "REF-E07",
+        "REF-U01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-A01",
+        "AC-A02",
+        "AC-A03",
+        "AC-A04",
+        "AC-A05",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G08",
+      "original_status": "PLAN:G08 / CONFIG_AND_AC_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M11",
+      "method_and_estimand": "B1-A／LINEAR_IV_STRUCTURAL_COEFFICIENT",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-12"
+      ],
+      "formal_fr": [
+        "FR-199"
+      ],
+      "scientific_ar": [
+        "AR-039"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-007",
+        "DGP-024"
+      ],
+      "negative": [
+        "NEG-008",
+        "NEG-025"
+      ],
+      "reference": [
+        "REF-E08",
+        "REF-U01"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-P05",
+        "AC-A01",
+        "AC-A02",
+        "AC-A03",
+        "AC-A04",
+        "AC-A05",
+        "AC-I01",
+        "AC-I02"
+      ],
+      "owner_gate": "G08",
+      "original_status": "PLAN:G08 / OWNER_TARGET_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M12",
+      "method_and_estimand": "Synthetic Control／処置単位の時点別反実仮想ギャップ",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-13"
+      ],
+      "formal_fr": [
+        "FR-200"
+      ],
+      "scientific_ar": [
+        "AR-041"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-017"
+      ],
+      "negative": [
+        "NEG-024"
+      ],
+      "reference": [
+        "REF-Q04"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-Q04"
+      ],
+      "owner_gate": "G09",
+      "original_status": "PLAN:G09 / OWNER_BASELINE_ACCEPTED_POINT_ONLY_SCIENCE_PENDING / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    },
+    {
+      "method_id": "P3-M13",
+      "method_and_estimand": "Synthetic DiD／panel平均介入効果",
+      "operation": "ESTIMATE",
+      "scope_refs": [
+        "SCOPE:P3-14"
+      ],
+      "formal_fr": [
+        "FR-200"
+      ],
+      "scientific_ar": [
+        "AR-041"
+      ],
+      "environment": "ENV-BASE / backend pending",
+      "dgp": [
+        "DGP-018"
+      ],
+      "negative": [
+        "NEG-024"
+      ],
+      "reference": [
+        "REF-Q05"
+      ],
+      "acceptance_ids": [
+        "AC-D03",
+        "AC-P01",
+        "AC-P03",
+        "AC-I01",
+        "AC-I02",
+        "AC-Q05"
+      ],
+      "owner_gate": "G09",
+      "original_status": "PLAN:G09 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED",
+      "oracle_rule_candidate": "Analytic or independent software known-truth estimand, bias/coverage/interval topology only for supported inference",
+      "independent_reference_path": null,
+      "reference_sha256": null,
+      "fixture_sha256": null,
+      "scientific_truth_expression": null,
+      "quantitative_thresholds": {
+        "family_id": null,
+        "comparison_count_K": null,
+        "replications_R": null,
+        "alpha_fwer": 0.05,
+        "mc_precision_target": null,
+        "bias_tolerance": null,
+        "coverage_tolerance": null,
+        "seed_schedule": null
+      },
+      "inference_mechanism_verified": false,
+      "prereg_status": "PENDING",
+      "test_observation": "NOT_RUN"
+    }
+  ]
+}
