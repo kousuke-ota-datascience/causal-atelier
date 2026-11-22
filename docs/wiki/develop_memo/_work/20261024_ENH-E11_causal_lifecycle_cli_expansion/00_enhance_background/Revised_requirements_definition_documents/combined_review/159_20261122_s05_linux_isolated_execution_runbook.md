@@ -63,6 +63,10 @@ sha256sum "$OUT/g01_b02_schema_author_diagnostic.json" > "$OUT/g01_b02_schema_au
 ```
 
 A `PASS_AUTHOR_STRUCTURAL_PRECODE_DIAGNOSTIC` result is evidence only for the **tested structural cases**. It does **not** validate all six public wire Schemas with complete positive/negative instances or independently prove cross-file same-run identities, FCI eligibility, BK contradiction handling, effective Backend, independent MAG/PAG truth, JCS goldens, or actual Reader/FS. Those remain explicitly required and require separate independent review/evidence. `--expected-head` is the actual newly pinned checkout SHA, not the old manifest source snapshot commit.
+### B.2 Schema validator provenance guard (2026-11-22)
+
+The review-only `e11_g01_schema_precode_probe.py` now checks Python **exactly** 3.12, the externally specified full HEAD SHA and clean checkout **before invoking any Draft202012 schema validation**. A failed prerequisite yields `BLOCKED_PRECONDITION_NO_SCHEMA_VALIDATION` with an out-of-repository JSON report and nonzero exit, rather than running Schema fixtures on unapproved source. See supplemental blob `564a3dcbb9a20cdbcce1bdf95760a4f80336bd2a` in G01 scoped `draft7`. Actual B02 schema validation and independent fixtures are still `NOT_RUN`; the script is not an independent Reviewer.
+
 
 ## C. B04 — **G01 ENV-BASE only**, additional Backend profiles deferred to their owning Gates
 
@@ -131,7 +135,3 @@ No Contract Freeze/S11 Coding Authorization may be inferred from the Owner's A/A
 At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft7.json` (historical draft3 remains immutable).
 
 **Preflight failure behavior:** Before any FCI import or fit, the review-only script checks Python exactly 3.12, full `--expected-head` equality and clean Git worktree. On mismatch it writes `BLOCKED_PRECONDITION_NO_BACKEND_EXECUTION` to the report and exits nonzero without invoking FCI. If the prerequisites pass but one CI fit raises, the failure is retained under that method, while the remaining `fisherz/chisq/gsq` diagnostics and invalid-CI negative may still be collected. The report still cannot certify cross-process stdout isolation, the application adapter, or independent MAG/PAG/BK scientific acceptance. An exception, nonzero exit or missing report must be treated as BLOCKED, never erased by successful modes.
-
-### B.2 Schema validator provenance guard (2026-11-22)
-
-The review-only `e11_g01_schema_precode_probe.py` now checks Python **exactly** 3.12, the externally specified full HEAD SHA and clean checkout **before invoking any Draft202012 schema validation**. A failed prerequisite yields `BLOCKED_PRECONDITION_NO_SCHEMA_VALIDATION` with an out-of-repository JSON report and nonzero exit, rather than running Schema fixtures on unapproved source. See supplemental blob `564a3dcbb9a20cdbcce1bdf95760a4f80336bd2a` in G01 scoped `draft7`. Actual B02 schema validation and independent fixtures are still `NOT_RUN`; the script is not an independent Reviewer.
