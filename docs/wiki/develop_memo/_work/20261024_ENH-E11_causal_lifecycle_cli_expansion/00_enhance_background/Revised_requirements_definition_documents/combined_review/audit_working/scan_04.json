@@ -1,0 +1,231 @@
+{
+  "baseline_head": "0574c2196cfd2f3d9e95ac120e1e97703b1fff46",
+  "items": [
+    {
+      "file": "G09/06_G09_P03_synthetic_bundle.md",
+      "sha": "684d4edb3b33d65f7f727e6410bd75beb610fa9f",
+      "hits": [
+        {
+          "line": 91,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 93,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 97,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 120,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 126,
+          "content": "7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P00_work_package_plan.md",
+      "sha": "554b18ba63a18b5e39cbccf60a3adb9d2b72b9cb",
+      "hits": [
+        {
+          "line": 15,
+          "content": "41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 33,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P01_registry_lock.md",
+      "sha": "4f5f8ef6e9751eb5d6914e982cc3ebad530a3b0a",
+      "hits": [
+        {
+          "line": 14,
+          "content": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 31,
+          "content": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+        },
+        {
+          "line": 42,
+          "content": "全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS "
+        },
+        {
+          "line": 188,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "hits": [
+        {
+          "line": 14,
+          "content": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 31,
+          "content": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+        },
+        {
+          "line": 42,
+          "content": "全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS "
+        },
+        {
+          "line": 91,
+          "content": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。G10はStudy＋CLI double opt-inと実行UID/TrustedRoot、Method RowSchemaの適合を検証。署名用Policy Anchorはない。"
+        },
+        {
+          "line": 97,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 120,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 126,
+          "content": "7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。"
+        },
+        {
+          "line": 318,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        },
+        {
+          "line": 342,
+          "content": "- **Target-specific mandatory cases:** 全41 Method×Operation×Estimand×Inference×Backend/Profile×Question/Design/Graph/ArtifactのDispatch Matrixを生成し、適格組合せとtyped negative理由を機械照合。 DISCOVER/IDENTIFYはResult effect null、ESTIMATEは適格estimand/result、DIAGNOSEはBase Effect Proofと診断Evidenceを要求し、Operation別Manifest discriminatorを守る。 CLI UseCaseはCommon Scientific PortとG01のPublisher/Reader/Privacyへ委譲。Unknown ID、disabled Backend、unsuppo"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P03_replay_manifest.md",
+      "sha": "d3df1267adf226a693f94180a9e7339b22485a4a",
+      "hits": [
+        {
+          "line": 14,
+          "content": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 31,
+          "content": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+        },
+        {
+          "line": 42,
+          "content": "全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS "
+        },
+        {
+          "line": 234,
+          "content": "**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。"
+        },
+        {
+          "line": 339,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P04_science_benchmarks.md",
+      "sha": "d0659975a26436692b2678b2546532f601005798",
+      "hits": [
+        {
+          "line": 14,
+          "content": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 31,
+          "content": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+        },
+        {
+          "line": 42,
+          "content": "全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS "
+        },
+        {
+          "line": 206,
+          "content": "**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。"
+        },
+        {
+          "line": 250,
+          "content": "6. Gate G01〜G09のcanonical 999を科学証拠の代わりにしない。上流999とFull CandidateのSource/Fixture/Backend/Policy SHA、ScienceStatus/TechnicalStatusを照合し、実施していないMethodを全41 PASSへカウントしない。"
+        },
+        {
+          "line": 320,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        },
+        {
+          "line": 338,
+          "content": "- **Target-specific mandatory cases:** 全41 MethodのDGP/NEG/REF/DD/ACをMethod別に追跡する。§5表の記載は計画であり、全Methodの独立oracleが存在/実行されている証拠ではない。 T1 deterministic Contract と T2 Pilot、T3 confirmatory Monte Carloを分離。Pilotで効果量/Variance/条件付き排除Ruleを探索してよいがT3のThreshold/seed/Method/Family/K/R/computeを事後調整しない。 多重性は承認済みFWER=0.05を適用し、Method×Outcome familyごとのKと試験棄却率/CI coverage/MC-SEを事前登録。Rが足りない、generator/verifier未固定、compute上限不足ならBLOCKEDでありPASS"
+        }
+      ]
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "hits": [
+        {
+          "line": 14,
+          "content": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 31,
+          "content": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+        },
+        {
+          "line": 42,
+          "content": "全Operationに`manifest.json`（`e11-local-manifest/1`）と`_COMMITTED.json`（`e11-commit/1`）、ただし両者はArtifact Inventory外。Inventoryは実Fileの相対POSIX key、実bytes SHA256/size/MediaType/Privacyを網羅。 `request_hash=SHA256(JCS(validated typed Study JSON))`。Manifestに自己hashを格納せず、Markerの`manifest_sha256`にManifest実bytes hashを保存。ReaderはMarker→Manifest→実File→Operation/Profile→上流hashをTrustedRootで検証し、一致しない未コミット/破損データを拒否。Outputは既存G01のStaging→同一FS "
+        },
+        {
+          "line": 50,
+          "content": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+        },
+        {
+          "line": 89,
+          "content": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。G10はStudy＋CLI double opt-inと実行UID/TrustedRoot、Method RowSchemaの適合を検証。署名用Policy Anchorはない。"
+        },
+        {
+          "line": 95,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 118,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 124,
+          "content": "7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。"
+        },
+        {
+          "line": 209,
+          "content": "`__init__(self)->None`。Pure stateless LocalPrivacyPolicy。検証済みStudy/CLI flag・OS principal/root・Method出力Shapeに基づき行出力を評価し、独立署名ProofやKey Storeは不要。"
+        },
+        {
+          "line": 215,
+          "content": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | 23_41の公開Portと完全同一署名。純粋Policy、File公開副作用なし |"
+        },
+        {
+          "line": 222,
+          "content": "`authorize`は集計結果へ個票を含めず、G05個票出力時にはStudyの明示要求 ∧ CLI flag ∧ 実行者EUIDが所有するprivate TrustedRoot（Linux local ext4/XFS、適切な0700/0600・owner/mode/local ext4-XFS） ∧ Method別ApprovedRowSchema・列/行/byte/memory上限をAND評価する。条件不成立ならfail-closedでRowSourceを反復せず個票bytesを生成しない。Result/Manifest/stdout/logへ行値を含めない。非root EUID、private owner-only root、local ext4/XFS、same-FS、dirfd/path適格性の不成立は拒否する。独立ACL/namespace証明が不明という理由だけでは拒否しない。"
+        },
+        {
+          "line": 226,
+          "content": "- **Input:** `ValidatedStudy`（元CLI `LocalStudySpec`）, CLI intent, runtime principal/effective UID, trusted root/owner/owner/mode/FS証拠, independently verified policy, output shape/column Schema。"
+        },
+        {
+          "line": 257,
+          "content": "`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)`が実行者のdouble opt-inとOS TrustedRoot/Method別出力適格性を判定する。独立Approver/Ed25519/鍵/失効/TrustedPolicyAnchorは初期G05 local個票中間成果物には適用しない。事前の行生成禁止、同一run/Study/Source/Sinkの結合、staging前・seal/publish前のroot/UID/owner/mode/FS再照合を維持し、不適格ならexit3で初期row bytes0。既存G01 Publisher/ReaderとOD-03 WriterのClass/Method署名は不変。"
+        },
+        {
+          "line": 265,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+        }
+      ]
+    }
+  ]
+}
