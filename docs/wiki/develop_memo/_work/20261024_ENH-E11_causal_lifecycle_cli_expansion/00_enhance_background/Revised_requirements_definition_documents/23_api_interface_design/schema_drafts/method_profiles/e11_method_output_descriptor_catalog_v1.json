@@ -227,7 +227,8 @@
       "method_id": "P2-M01",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -237,7 +238,8 @@
       "method_id": "P2-M02",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -247,7 +249,8 @@
       "method_id": "P2-M03",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -257,7 +260,8 @@
       "method_id": "P2-M04",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -267,7 +271,8 @@
       "method_id": "P2-M05",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -277,7 +282,8 @@
       "method_id": "P2-M06",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -287,7 +293,8 @@
       "method_id": "P2-M07",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -297,7 +304,8 @@
       "method_id": "P2-M08",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "cate_surface.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -353,7 +361,8 @@
       "method_id": "P3-M05",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "event_time_effects.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
@@ -423,7 +432,8 @@
       "method_id": "P3-M12",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "scm_gaps.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",

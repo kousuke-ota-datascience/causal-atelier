@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:method-output-profile:factored-draft1",
   "title": "E11 Output Profile — strict factored draft for 40 non-FCI Methods",
-  "description": "S05 structural candidate only; per-Method schema positive/negative validator equivalence, actual output artifact/runtime/Backend and independent Science NOT yet accepted. Do not register as active until verified.",
+  "description": "S05 structural candidate only; per-Method schema positive/negative validator equivalence, actual output artifact/runtime/Backend and independent Science NOT yet accepted. Do not register as active until verified. The non-scalar P2 CATE, P3-M05 Event and P3-M12 SCM payloads require additional typed internal artifacts; actual payload semantic constraints validated independently.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -534,7 +534,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -558,7 +559,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -582,7 +584,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -606,7 +609,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -630,7 +634,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -654,7 +659,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -678,7 +684,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -702,7 +709,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "cate_surface.json"
           ]
         },
         "forbidden_artifacts": {
@@ -828,7 +836,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "event_time_effects.json"
           ]
         },
         "forbidden_artifacts": {
@@ -996,7 +1005,8 @@
         },
         "positive_artifacts": {
           "const": [
-            "result.json"
+            "result.json",
+            "scm_gaps.json"
           ]
         },
         "forbidden_artifacts": {
