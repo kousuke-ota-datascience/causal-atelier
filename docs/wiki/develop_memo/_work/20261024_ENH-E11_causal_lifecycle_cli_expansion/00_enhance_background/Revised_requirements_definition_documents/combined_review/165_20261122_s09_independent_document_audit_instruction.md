@@ -1,0 +1,90 @@
+# ENH-E11 S09 — Independent Document-Contract Audit Instruction (standalone / 2026-11-22)
+
+**Audience:** Independent scientific-document/architecture reviewer, **not** the original author, Coding Agent or Reference author.  
+**Execution authorization:** *Document review only.* Never execute Coding Agent, modify application source/tests/uv.lock/pyproject, declare Gate999 PASS, grant Owner Contract Freeze or Coding Authorization.  
+**Prior conclusions are not evidence:** The author-produced `164` report and older `148/149/163` records may identify candidate findings, but the reviewer must independently derive and adjudicate every contract claim from frozen target documents.  
+**State:** `REVIEW_INSTRUCTION_DRAFT / REVIEWER_NOT_LAUNCHED / INDEPENDENT_VERDICT_NOT_AVAILABLE`.
+
+## 0. Required invocation and immutable identity
+
+The operator must set:
+```text
+REPO=kousuke-ota-datascience/causal-atelier
+BRANCH=prototype/ariadne_mvp
+REVIEW_TARGET_FULL_SHA=<exact 40-character git commit pinned after all document changes>
+REVIEWER_ID=<actual independent reviewer identifier>
+REVIEW_RUN_ID=<unique review execution ID>
+OUTPUT_EVIDENCE_DIR=<review-only path outside protected app source/tests>
+```
+
+At start: resolve `git rev-parse HEAD` and verify equality with `REVIEW_TARGET_FULL_SHA`; fail closed on mismatch or dirty tree in authoritative input. Record exact Git blob SHA for every file read. The post-correction candidate file list `00_enhance_background/Revised_requirements_definition_documents/combined_review/s09_post_reconciliation_document_snapshot_draft1.json` is a **discovery index**, not proof of correctness; its `source_full_commit_sha` points to the immediately preceding content revision, not necessarily this prompt's eventual final SHA. Re-enumerate the checkout at the pinned Review target and verify that **all** 71 active 06/07/P00/Pxx and **seven** Operator prompts are covered. All factual claims must cite `path @ full SHA : line range` and observed bytes or cross-reference.
+
+## 1. Source-of-truth and authority hierarchy
+
+Use the Owner's explicit latest decisions as the scope authority:
+- DEC-S02-01..08 (combined_review/137): sole Study opt-in, removed unshipped signed policy and CLI flag, lossless factored Method profiles, all-41 valid science evidence with affected-only rerun, bounded Parquet, Local Graph content-hash lineage, bounded G01 OS/FS, impact-based protected regression.
+- DEC-S05-AR01 (150): **full-real** weak-IV robust AR confidence-set target frozen as a required scientific capability; **HC1/χ²(1) quadratic inversion is provisional** pending independent mathematical review, no final algorithm authority.
+- DEC-S05-02/03 (156): independent reviewer process and isolated Linux environments approved; no runtime/probe pass follows merely from approval.
+- Internal requirement stock: `Revised_requirements_definition_documents/10_requirements_definition/` including FR/AR/NFR/Method 10_31/10_32; `NFR-034=MUST/DEFERRED/UNVERIFIED/FUTURE` (potential future external delivery) and internal OSS obligations active.
+- Architecture/class/IF stock under `22_product_basic_design/`, `23_api_interface_design/`, `30_detailed_design/`, including 23_41/42, 30_61/62/63.
+- Current E11 public draft wire Schema and internal method/typed artifact Schema. A Schema draft is not adopted numerical Science, effective Backend or generated runtime code.
+- The actual **individual** `10_enhance_instruction/G01`... `G10` 06/P00/Pxx/07 documents are normative WHAT for their Gate and Work Package once frozen. They must be **self-contained** and may not require an Agent to infer missing Field/Constructor/Method/pre/post/negatives from a historical review log.
+- `40_operator_workflows/agent_entry_prompts/` owns entry/runner WHERE/HOW/test discovery and evidence, **not scientific semantics**. `999` is an independent Gate decision; no acceptance by Coding author alone.
+
+Historical decisions superseded narrowly by 137 remain historical facts, not current implementation requirements. Pre-S02 text copied into an active Pxx remains a contradiction even if a later append-only disclaimer tries to overrule it ambiguously.
+
+## 2. Mandatory exhaustive document inventory
+
+- All 20 current G01–G10 Gate `06_Ariadne_ENH-E11_G##_implementation_instruction.md` and `07_Ariadne_ENH-E11_G##_test_instruction.md`.
+- All 51 current G01–G10 `06_G##_P00_*.md` through `Pxx`; actually discover all matching files rather than assuming every Gate has identical Pxx.
+- Seven active `40_operator_workflows/agent_entry_prompts/` operational prompts: variable conventions, single Coding Agent, WP Coding Agent, Candidate Assembly, Independent Test, FAIL remediation, Gate Orchestrator; plus their README for discoverability (README does not count as one of seven).
+- 10/22/23/30 stock contracts, Schema Draft README, public Study/Graph/Effect/Manifest/Status/Commit Marker and five kinds of factored per-Method Profiles (40 Methods × five kinds = **200 strict target validations**), Method dispatch Registry, P1-M06 specialized FCI profile, `internal_scientific/` typed artifacts and exact output inventory, and current G10 41-Method/10-UC Method matrix. The reviewer shall enumerate the actual file paths and missing/mismatched files rather than guessing from this outline.
+- Real shared-Kernel Product v2 boundary source signatures may be inspected read-only if available to verify *declared design intent*; **do not claim execution/regression** from reading code.
+
+No source file can be silently excluded because its textual contract appears repetitive or a previous static scan counted fewer matches.
+
+## 3. Independent adversarial criteria (all required)
+
+### A. Owners and scope (S02-01/02, NFR-034)
+For G01, G05, G10 and cross-Gate Pxx, compare active CLI/Study `privacy.row_export_requested` single opt-in and exit/negative semantics. Verify **no active** `--allow-row-level-export`, `cli_row_flag`, `policy_ref`, `PolicyVerifier/Anchor`, signer, revoked policy, trust-store requirements. Quotations that explicitly prohibit removed fields are *not* contradictions. Verify row source iteration=0 on refusal, nonroot same EUID and private ext4/XFS, Method-specific column/row/byte/memory budgets, no aggregate downgrade/leak. Verify internal/local-only delivery scope and no unconditional external-customer GPL release approval; equally reject blanket OSS compliance deferral.
+
+### B. Method and Schema (S02-03/05)
+For all 40 non-FCI Methods, map Method ID → Operation/Estimand/Backend/Inference/Question/Design/Config/Output Profile/DD/Pxx/07. Ensure shared+per-ID descriptors build **one strict Method-specific Schema**, not unsound `allOf` with `additionalProperties:false`; unsupported/missing/unknown config and `config={}` blanket acceptance fail closed. Check P1-M05 B0 `IDENTIFY` LATE target is not an effect estimate; P2-M08 conditional IV structural slope ≠ non-IV CATE; G04 `cate_surface.json` design-grid only; G07 P3-M05 `event_time_effects.json` event-time/cohort; G09 P3-M12 `scm_gaps.json` PRE/POST point-only. Check `result.json point.NOT_AVAILABLE`, Method/Study/Estimand/lineage, privacy row separation, correct Operation-specific Manifest required/forbidden map. Structural Schema alone is insufficient; explicitly distinguish evidence missing from semantic contradiction.
+
+### C. Local Graph and publication (S02-06/07)
+Check all G01/G06 graph contracts against actual current `e11-local-graph/1` `version_id` and `parent_version_id` **const null**: no E11 wire exceptions allowing actual Product IDs. Validate content hash on semantic JCS Graph projection vs ContentRef full bytes, separate Product compatibility wrapper and existing GraphVersion writer, scientific parent provenance, PAG/CPDAG/lag/endpoint/fidelity. Verify bounded G01 atomic OS/Reader tests include owner EUID, private modes, dirfd/O_NOFOLLOW, same FS, race/no-clobber, post-rename `PUBLICATION_INDETERMINATE`, Marker/Reader tamper negatives. Reject unsupported power-loss durability guarantee inferred from SIGKILL or invented mandatory ACL/xattr/mount namespace attestation.
+
+### D. Science and AR (S02-04/DEC-S05-AR01)
+Check 41 Method registry covers P1=20, P2=8, P3=13, exactly one owner Gate each, DGP/NEG/independent REF, 07 AC, actual Backend/CI eligibility, S05 B02/B03/B04/B05 status accurately marked BLOCKED. In G08 P3-M10 B0 binary IV LATE and P3-M11 B1 structural slope, preserve full-real AR CI set bounded/unbounded/disconnected/ALL_REAL and admissible qualified EMPTY/undefined/degenerate reasoning; scalar point availability and AR availability independent. **Detect any active 'HC1/χ² algorithm adopted/frozen' language** despite DEC-S05-AR01, while preserving it as a reviewable candidate. No finite-grid shortcut, no unreviewed weak-IV confidence coverage.
+
+### E. G10 evidence/reuse and regression (S02-04/08)
+Test the words 'all 41 science evidence' and 'rerun' for semantic separation. All 41 need valid prior independent evidence, but rerun only changed/unknown transitive *behavior-affecting* dependencies. Closure must include code, shared kernel, schema/descriptors, policy, Python, lock, Backend, fixtures, reference, tests and AC. Unknown dependencies → rerun or BLOCK; no G10 waiver of upstream 999 or final cross-Gate integration. Product v2 protected ABI regression selection by evidence-based affected closure; unknown impact → test or BLOCK, not auto-PASS. Ensure no imposition of unconditional unrelated Product full-stack suite.
+
+### F. 06/Pxx/07/40 independence and signatures
+For each 06/Pxx enumerate owned Class/Module, Fields, Constructor, public signatures, pre/post, non-goals, Method-specific target and negative outcomes; cross-check 23/30 and adjacent Pxx without requiring the implementer to infer class behavior from a separate design memo. For each 07 verify independent WHAT/AC, oracle and failure semantics with no fixed historical physical test filename/command. Keep WHERE/HOW/current test discovery in 40; respect E9 enhancement-vs-regression lifecycle and unit/contract/integration layers. Detect duplicate implementation Kernel, Local ports, Product writers and unavailable optional dependencies advertised as installed.
+
+## 4. Proof requirements and method
+
+For each claimed PASS criterion provide:
+1. Requirement/Owner decision ID and a concrete observed line excerpt from each relevant normative document, with full Git blob SHA.
+2. Positive contract path and at least one counterexample/negative path, plus exact incompatible or missing clause when a finding exists.
+3. A determination of whether issue is **active normative contradiction**, unresolved design/science/blocking evidence, historical superseded text, or harmless quoted prohibition.
+4. Method/Package coverage count and a complete per-file audit inventory; no counting mere keywords as defects.
+5. A description of the minimum independent reproducible verification necessary before S10.
+
+Automated regex scans, JSON parse and AST schema inspection can help discovery but cannot replace separate semantic and scientific evaluation. The reviewer must run no newly authored science backend or protected source mutation. Use `NOT_VERIFIED` or `BLOCKED` rather than manufacturing PASS. No automatic approval of new inferential statistical method or scientific target.
+
+## 5. Output artifacts and verdict
+
+Produce three **read-only evidence artifacts** in the assigned review area (do not overwrite 06/07/Pxx):
+1. `s09_independent_file_inventory.json`: `review_target_full_sha`, all exact blob SHAs, 71/7 counts, per-file `READ/NOT_READ` and findings refs.
+2. `s09_independent_finding_ledger.md`: each finding ID/severity/owner requirement/actual source paths and quoted clause/positive/negative counterexample/required amendment/blocked state.
+3. `s09_independent_verdict.md`: Reviewer ID, date, executed environment, immutable target, checks performed, all unresolved blockers and explicit `PASS/FAIL/BLOCKED` **for documentation semantic consistency only**.
+
+`PASS` is permitted only when **all** required document scopes and independent criteria are examined, no active semantic contradiction remains, exact full SHA is fixed, and no structural authority gap remains. Missing target documents or inability to verify independent provenance = `BLOCKED`. Actual inconsistent instructions = `FAIL`. Runtime B02/B03/B04 and quantitative B05 Science/AR review blockers remain separately reported even after an S09 document-consistency PASS; **S10 Freeze remains BLOCKED until those independent obligations close**.
+
+Any correction is proposed in the findings only; the original author patches 06/Pxx/07 separately and obtains a **new target SHA plus a repeat audit**. Do not self-approve revisions. This report is not a human Owner's S10 Contract Freeze or S11 Coding Authorization.
+
+## 6. Required response to Owner
+
+Return an itemized summary of actual sources reviewed (71+7 and stock), active defects by severity, checks that could not be performed, science/environment blocker states, the exact `review_target_full_sha`, and separate statements of **S09 document verdict, S05 science/runtime status, S10 Freeze eligibility, and S11 permission**. If a material scientific change to the Owner-approved AR inferential target is proposed, present alternatives and counterevidence rather than silently substituting a weaker confidence interval.
