@@ -87,7 +87,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
-| `P3-M04` | DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| `P3-M04` | DiD ATT | DID_2X2 positive / STAGGERED DEFERRED preflight rejection、parallel trends、SE/cluster |
 | `P3-M05` | Event Study | cohort/event time、pretrend、reference periods |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本Pxx固有のMethod/Science contractに保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
@@ -173,7 +173,7 @@ Value自身はI/Oなし。ScientificValidationServiceの既存適格性規則を
 ## 4. Required implementation steps — G07/P01
 
 1. **Entry:** Current G07のFrozen06/07/Pxx、Owner Coding Authorization、Source/lock full SHA、当該06のupstream 999とPxx依存Checkpointを確認してから実装。Valid Study/Method/Design/Data/Estimand/Backendを境界で検証。
-2. `P3-M04` DiDは2x2 ATTとstaggered adoptionを別設計/Estimatorとして検証。Parallel trends/equilibrium、cohort/Time support、cluster covariance unitをPreflightし、TWFE係数を汎用staggered ATTへ転用しない。
+2. `P3-M04` DiDは初期DID_2X2 ATTのみを正例とし、STAGGEREDはDEFERREDの科学的拒否負例として検証。Parallel trends/equilibrium、cohort/Time support、cluster covariance unitをPreflightし、TWFE係数を汎用staggered ATTへ転用しない。
 3. `P3-M05` Event Studyはcohort/event-time window/reference period、lead/pretrend診断、post-treatment selection、unit/time indexを事前指定し、event-time vectorと基準期間をtyped schemaに残す。
 4. 適格性に違反するCohort、no pre/post、cluster不足、pretrend失敗と不確実診断を型付きで分け、ATTとevent-timeの異なる推論を単一数値として扱わない。
 5. **I/O/Failure:** Approved Method Adapter preflight→selected Backend（必要時lazy import）→typed Scientific Outcome→G01 Staging Publisher/Reader。Invalid config、合法的Scientific negative、不確定CI、Backend failureを分離し、Resultにeffective Method/Backend/Seed/Time/Design Evidenceを保存。
@@ -183,12 +183,12 @@ Value自身はI/Oなし。ScientificValidationServiceの既存適格性規則を
 
 以下は既存の詳細設計に記載された規則を本Packageへ直接展開したもの。Designの決定済み部分を不明事項としてAgentに再判断させない。実効Backend/API probe、独立Graph/Counterfactual Oracle、推論可用性の未実測は別にBLOCKEDとする。
 
-- DiD：2×2 ATTとstaggered adoptionを別Configuration/Estimandとし、staggeredに単純TWFE係数を普遍的ATTとして流用しない。parallel trendsとcohort support、cluster covarianceのunitを保存。
+- DiD：初期`DID_2X2` ATTのみを実行可能とし、staggeredは将来の別Configuration/EstimandとしてDEFERREDのまま保持し、staggeredに単純TWFE係数を普遍的ATTとして流用しない。parallel trendsとcohort support、cluster covarianceのunitを保存。
 - Event Study：事前指定reference periodとevent-time vector、cohort composition、lead/pretrend診断を保持。post-intervention windowによる選択が推論に与える影響を記録。
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
-| `P3-M04` | DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| `P3-M04` | DiD ATT | DID_2X2 positive / STAGGERED DEFERRED preflight rejection、parallel trends、SE/cluster |
 | `P3-M05` | Event Study | cohort/event time、pretrend、reference periods |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
@@ -197,7 +197,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |
 |---|---|---|---|---|---|
-| `P3-M04` DiD／ATT（2×2とstaggeredは別契約） | `DD-E11-METH-P304` | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| `P3-M04` DiD／ATT（初期DID_2X2のみ（STAGGERED=DEFERRED）） | `DD-E11-METH-P304` | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | `P3-M05` Event Study／event-time効果 | `DD-E11-METH-P305` | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 
 **Proof boundary:** §5のDGP/NEG/REF/ACは独立に実証すべき義務であり、Fixture/Oracleの実在やPASSを意味しない。Backend出力を自己正解にせず、時系列Graph/Quasi Methodごとの独立Referenceと実測で検証する。FWER=.05/K/R/CI coverage/MC-SE未確定はBLOCKED。外部資料から推測して決めない。
@@ -216,7 +216,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. Method-specific independent verification obligations
 
 - §5のDGP/NEG/REF/DD IDを、Science/Status/Method-config/Source-hashに対応させる。ID一覧はFixture実在や科学的PASSの証拠ではない。
-- **Positive and negative matrix:** `P3-M04` DiDは2x2 ATTとstaggered adoptionを別設計/Estimatorとして検証。Parallel trends/equilibrium、cohort/Time support、cluster covariance unitをPreflightし、TWFE係数を汎用staggered ATTへ転用しない。 `P3-M05` Event Studyはcohort/event-time window/reference period、lead/pretrend診断、post-treatment selection、unit/time indexを事前指定し、event-time vectorと基準期間をtyped schemaに残す。 適格性に違反するCohort、no pre/post、cluster不足、pretrend失敗と不確実診断を型付きで分け、ATTとevent-timeの異なる推論を単一数値として扱わない。
+- **Positive and negative matrix:** `P3-M04` DiDは初期DID_2X2 ATTのみを正例とし、STAGGEREDはDEFERREDの科学的拒否負例として検証。Parallel trends/equilibrium、cohort/Time support、cluster covariance unitをPreflightし、TWFE係数を汎用staggered ATTへ転用しない。 `P3-M05` Event Studyはcohort/event-time window/reference period、lead/pretrend診断、post-treatment selection、unit/time indexを事前指定し、event-time vectorと基準期間をtyped schemaに残す。 適格性に違反するCohort、no pre/post、cluster不足、pretrend失敗と不確実診断を型付きで分け、ATTとevent-timeの異なる推論を単一数値として扱わない。
 - Pure Value/Graph/Design→unit、Port/Codec/typed Reason→contract、実Backend/Tigramite/Quasi/CLI/Pub-Readback/legacy v2→integration。科学Graph/EffectのReferenceはBackend出力とは別に事前固定する。
 - Effective backend API/version, Test fixture/Source/lock SHA, seed, Data/Time ordering, CI/SE handling, observed outcome, actual test collection/command, FAIL/BLOCKED causeをEvidenceへ記録。必須RuntimeやOracleが未確定ならBLOCKED。
 
@@ -231,11 +231,11 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 ## 8. Freeze-only review: unresolved decisions
 
-**Self-contained:** §3は全ClassのField/Constructor/Public Method/I-Oを、§4は実装分岐を、§5〜6は必要なMethod/DGP/NEG/REFと検証を本文で保持する。**BLOCKED before Freeze:** 2x2 vs staggered DiDのEstimator/inference policyとcluster covariance、Event reference periodの承認。 他文書の参照をCoding Agentに必須とせず、設計空白はOwner決定まで止める。
+**Self-contained:** §3は全ClassのField/Constructor/Public Method/I-Oを、§4は実装分岐を、§5〜6は必要なMethod/DGP/NEG/REFと検証を本文で保持する。**BLOCKED before Freeze:** DID_2X2 positive / STAGGERED DEFERRED preflight rejection DiDのEstimator/inference policyとcluster covariance、Event reference periodの承認。 他文書の参照をCoding Agentに必須とせず、設計空白はOwner決定まで止める。
 
 ## 9. OD-05 Owner-adopted Method Profile construction obligation
 
-**Accepted authoring allocation (2026-11-19 JST):** G07/P01 is responsible for strict versioned Config/Question/Design/Output/Inference Profile authoring/registration for P3-M04,M05. Scientific constraints: DiD 2x2/staggered ATT/cluster, event-time reference cohort, ITS level/slope/HAC. Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
+**Accepted authoring allocation (2026-11-19 JST):** G07/P01 is responsible for strict versioned Config/Question/Design/Output/Inference Profile authoring/registration for P3-M04,M05. Scientific constraints: DiD 初期2x2 ATTのみ／STAGGERED DEFERRED/cluster, event-time reference cohort, ITS level/slope/HAC. Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
 
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
@@ -277,3 +277,9 @@ Contextは`LocalRunContext(root,principal)`、Privacy Portは`authorize(*,study,
 P3-M05 `ESTIMATE` has an **event-time/cohort effect vector**, not a scalar target. For an eligible Event Study run, `result.json` has nested `point.availability=NOT_AVAILABLE`, `point.value=null`, `point.reason.code=NON_SCALAR_TARGET`, while `status.json` has top-level `point_availability=NOT_AVAILABLE`; the Manifest must inventory `event_time_effects.json` conforming to `schema_drafts/internal_scientific/e11_event_time_effects_draft1.schema.json`. It binds `method_id=P3-M05`, `study_ref`, `reference_period`, `time_unit`, cohort/event-time keyed `effects`, inference availability/interval references and `pretrend_diagnostics_ref`. The designated reference period and cohort/time support must be predeclared; unique event-time/cohort keys, finite effects, no invalid pretrend concealment, and exact readback/hash/lineage are required. Do not synthesize a scalar ATT/ATE from the vector or substitute an AR confidence set. Other Methods (DiD/ITS) retain their distinct output/inference contracts.
 
 **P01:** Construct the typed event-time/cohort vector and reference/pretrend evidence without collapsing it into an ATT. Pass it to P03; do not create a parallel Bundle writer.
+
+## Owner A frozen scope decision — DEC-S09-P3M04-01 (2026-11-22, instruction DRAFT)
+
+**Owner DEC-S09-P3M04-01=A (2026-11-22):** P3-M04 initial science-executable variant is only `design_variant=DID_2X2` for two-group/two-period ATT; `STAGGERED` is a recognized future Config variant with capability `DEFERRED`, **not RETIRED** and not an eligible science target. Valid syntax does not imply execution. After strict validation, Method-level scientific preflight must reject `STAGGERED` with typed `SCIENCE_CONTRACT_NOT_AVAILABLE` / `CAPABILITY_UNAVAILABLE` (CLI exit4), before calling PanelQuasiAdapter/Estimator/Backend or any row-materializing scientific source; do not publish a successful `result.json`, `manifest.json` or committed success marker for that request. Unknown variant/invalid type/missing required Config are input-Schema failures (exit2). Do not fall back to DID_2X2, a TWFE coefficient, or P3-M05 Event Study. Valid DID_2X2 still needs Design, unit/time support, pre-declared parallel trends and cluster-covariance eligibility and independent DGP-012/NEG/REF-Q01 verification; no backend/science acceptance is yet established. DGP-013 remains relevant to P3-M05 and possible later STAGGERED research, but is not P3-M04 initial executable positive.
+
+**Gate/Package-specific instruction:** P01: implement DID_2X2 ATT/legitimate unit-cluster inference only. Test deferred-STAGGERED preflight *before* actual estimator/Backend calls. No separate staggered estimator or data-driven scalar aggregation in this coding scope.
