@@ -1,5 +1,7 @@
 # ENH-E11 G09 P00 — Work Package Plan (DRAFT)
 
+**DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G09の独立S09監査は、先行Gate（G01）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG09自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG09のCoding前無条件停止条件にしない。G09固有の独立S09 verdict→Owner G09-S10 Freeze→Owner G09-S11 Coding Authorizationを別々に取得する。**S11実行前にはG01_999の実PASSが必須**だが、S09文書監査の準備は先行Gateの実装中にも可能。実Adapter/FS/数値T2/T3/RegressionはG09の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
+
 **Gate:** G09 / Official Enhance Workflow Gate  
 **Class:** Planning/Operator Artifact, not Coding Agent's normative package  
 **Plan status:** OWNER_REVIEW_APPROVED / NOT_FROZEN / CODING_NOT_AUTHORIZED  
