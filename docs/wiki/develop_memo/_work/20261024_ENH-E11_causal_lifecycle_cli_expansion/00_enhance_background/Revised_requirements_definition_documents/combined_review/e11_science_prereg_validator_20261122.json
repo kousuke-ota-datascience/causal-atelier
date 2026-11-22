@@ -1,0 +1,31 @@
+{
+  "scope": "S05 B05 science preregistration JSON Schema shape only",
+  "source_blob_sha": "6dc5e9cd7df208ef226d0bb4dea86527a4bb1368",
+  "source_sha256": "8218c9aedf3b22774ace62b0ff26cb8d4e3c84c4f40bc1380b3a430475db3b71",
+  "runtime_python": "3.13.5",
+  "jsonschema_version": "4.26.0",
+  "metaschema_check": "PASS",
+  "synthetic_positive": 1,
+  "synthetic_negative": 15,
+  "negative_rejected": 15,
+  "negative_cases": [
+    "missing_independent_oracle",
+    "bad_fixture_sha256",
+    "pilot_incomplete",
+    "alpha_not_0_05",
+    "zero_replications",
+    "zero_hypotheses",
+    "post_hoc_registration",
+    "uncorrected_family_of_three",
+    "no_reviewer",
+    "missing_metrics",
+    "duplicate_metric",
+    "invalid_interval_metric",
+    "unknown_top_level_field",
+    "missing_vector_aggregation_rule",
+    "wrong_topology_metric_kind"
+  ],
+  "status": "PASS_DRAFT202012_STRUCTURAL_FIXTURE_TEST_ONLY",
+  "scientific_oracles_independent_reviews_T2_T3": "NOT_EXECUTED",
+  "illustrative_positive_is_not_real_evidence": true
+}
