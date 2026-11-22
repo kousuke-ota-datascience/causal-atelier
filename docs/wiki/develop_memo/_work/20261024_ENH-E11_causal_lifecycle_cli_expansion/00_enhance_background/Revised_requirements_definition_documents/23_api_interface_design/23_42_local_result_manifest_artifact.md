@@ -181,7 +181,7 @@ B0/B1でAR検定反転により得る信頼集合は、全ての実数を含む�
 
 ## 5. Graph／temporal evidenceの往復
 
-Graph JSONは `e11-local-graph/1`。`version_id`／`parent_version_id`は実在するProduct GraphVersionへの参照であり、CLI単独生成時は両方`null`とする。`parent_version_id`が非nullの場合、`version_id`も非nullで両者が実際に存在するProduct GraphVersion lineageに一致しなければならない。架空Product IDを発行しない。Graph自身のimmutable identityは`content_hash`と外部ContentRefで識別する。頂点ID、graph kind（DAG、CPDAG、PAG、必要なlatent/temporal variants）、edge endpoint pairs（tail/arrow/circle）、lag付き向き、time index policy、optional Product GraphVersion参照（存在時のparent/version provenanceを含む）、assumptionとsource reference/hashを保存する。`GraphEvidence`はimmutable科学Valueであり、CLIのGraph生成はProduct GraphVersion発行を必要としない。Graph編集/新Version作成/FIXはProduct連携時に既存`GraphVersionService`だけが実施する。
+Graph JSONは `e11-local-graph/1`。現行Local CLIで生成・消費するGraphは`version_id=null`かつ`parent_version_id=null`とし、いずれかがnon-nullなら未対応Product importとして拒否する。架空Product IDを発行せず、既存Product GraphVersionの所有者・既存契約を変更しない。Graph自身のimmutable identityは`content_hash`と外部ContentRefにより識別し、頂点ID、graph kind（DAG/CPDAG/PAG/temporal variants）、endpoint pairs（tail/arrow/circle）、lag・time index policy、assumptionとsource reference/hashを損失なく保持する。GraphEvidenceはimmutable科学Valueであり、方向改訂は元Graphを不変に保った別のLocal科学Versionと再識別を要する。将来Product importを追加する場合は明示別契約と検証済みProduct provenanceが必要である。
 
 禁止する可逆でない変換：
 - PAG circle-circle、circle-arrow、bidirected等をDAG単一向きへ丸める。
@@ -279,7 +279,7 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 
 ### 10.3. Independent acceptance
 
-`IO-E11-06`：single Study opt-in正例とflag単独/Study単独/両false負例、wrong UID/root、owner/mode/symlink/dirfd/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。
+`IO-E11-06`：Study単独opt-inのtrue/false/未指定正負例とUID/Root/Method不適格負例、wrong UID/root、owner/mode/symlink/dirfd/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。
 
 ## S02 Owner-adopted current Local CLI contract (2026-11-22)
 

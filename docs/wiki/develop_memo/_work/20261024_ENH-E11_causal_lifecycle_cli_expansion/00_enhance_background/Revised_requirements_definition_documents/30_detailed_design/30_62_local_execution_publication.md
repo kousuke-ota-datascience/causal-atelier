@@ -336,7 +336,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.3. Constructor / Factory
 
-`__init__(self) -> None`。外部I/O、run情報、Backendを保持しない。CLI composition rootからPortとして注入する。Study requestとStudy未許可時には権限を与えず、実行EUIDが所有するprivate TrustedRoot・Method別出力適格性とAND評価する。
+`__init__(self) -> None`。外部I/O、run情報、Backendを保持しない。CLI composition rootからPortとして注入する。Study単独の明示要求だけでは権限が成立せず、実行EUIDが所有するprivate TrustedRoot・Method別出力適格性とAND評価する。
 
 ### 6.4. メソッド
 
@@ -356,7 +356,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 - **Input:** `ValidatedStudy`、runtime EUID、verified private root/owner/mode/local FS、OutputShape、Method別`ApprovedRowSchema`。外部署名Policyなし。
 - **Output:** allow/reject（含むReason）と許可されたColumnSelection。Raw rows不要。
 - **Side effect:** N/A（純粋Policy）。File create/0600・dir0700とaudit event emissionはPublisher/CLI adapterの責務。
-- **Failure:** missing flag、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
+- **Failure:** Study row request false/unspecified、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
 
 ### 6.7. 検証
 

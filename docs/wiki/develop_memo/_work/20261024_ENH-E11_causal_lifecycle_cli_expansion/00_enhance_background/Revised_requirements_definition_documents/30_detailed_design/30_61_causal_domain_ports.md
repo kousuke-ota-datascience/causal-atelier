@@ -8,7 +8,7 @@
 
 #### 1.1.1. 識別情報・責務
 
-**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。現行Local Graph Wireの`version_id`/`parent_version_id`は常に`null`（Product GraphVersion import未対応）とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
+**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。現行Local Graph Wireの`version_id`/`parent_version_id`は常に`null`（Product GraphVersion import未対応）とする。未対応のProduct GraphVersion IDをGraph wireへ写像することは禁止し、現行Localでは両者nullを要求する。
 
 #### 1.1.2. フィールド
 

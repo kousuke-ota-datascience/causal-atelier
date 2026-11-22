@@ -48,7 +48,7 @@ Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci
 
 ## Graph identity and parent linkage
 
-`e11-local-graph/1`では両Versionキーは存在必須・nullableとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、現行Local GraphにはProduct由来の識別子を設定しない（両方null）。将来のProduct importは別契約・別Schemaで審議する。**ID実在性、親子の対応、graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
+`e11-local-graph/1`では両Versionキーは存在必須・現在のLocal専用Schemaでconst nullとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、現行Local GraphにはProduct由来の識別子を設定しない（両方null）。将来のProduct importは別契約・別Schemaで審議する。**graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
 
 ## PREP-03 OD-02/03 Owner採用（2026-11-19）
 
