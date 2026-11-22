@@ -95,7 +95,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Local内容hash・科学的親provenanceとProduct非連携の検証。FR-186/196、AR-028/036/043。
 
 ### 3.2. `DiscoveryPort` — inline Field/Constructor/Method contract
 
@@ -198,7 +198,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 1. **Entry:** Current G06のFrozen06/07/Pxx、Owner Coding Authorization、Source/lock full SHA、当該06のupstream 999とPxx依存Checkpointを確認してから実装。Valid Study/Method/Design/Data/Estimand/Backendを境界で検証。
 2. `TIME_SERIES_GRAPH`はG01の静的PAGと異なるTemporal Graph Value。Variable IDとlag、同時時刻Edge、Endpoint uncertainty、時刻方向を明示したVersion/Schemaに保持。
 3. 観測時刻の増加方向、lag符号（過去→現在の非負距離等）は**設計採用したConventionを明示するまで未固定**。timestamp/variable order/lag bounds/self edges/duplicate endpointsの検証を先行させ、silent sign swapを禁止。
-4. PAG circle/bidirected/LPCMCIのlatent uncertaintyをDAGへ潰さず、GraphEvidence共通Hash/Version contractを再利用する。G01 GraphVersion writerとは別Writerを作らない。
+4. PAG circle/bidirected/LPCMCIのlatent uncertaintyをDAGへ潰さず、GraphEvidence共通Hash/Version contractを再利用する。G01のLocal Graph writer/Publisherを再利用しProduct GraphVersion writerを新設しない。
 5. **I/O/Failure:** Approved Method Adapter preflight→selected Backend（必要時lazy import）→typed Scientific Outcome→G01 Staging Publisher/Reader。Invalid config、合法的Scientific negative、不確定CI、Backend failureを分離し、Resultにeffective Method/Backend/Seed/Time/Design Evidenceを保存。
 6. **Non-goals:** 旧v2 Public ABI、Web/API/DB/Worker、G01 GraphVersion/Publisherの再実装、未承認row export、Backend実測なしのScience PASSを禁止。
 
@@ -238,7 +238,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. Method-specific independent verification obligations
 
 - §5のDGP/NEG/REF/DD IDを、Science/Status/Method-config/Source-hashに対応させる。ID一覧はFixture実在や科学的PASSの証拠ではない。
-- **Positive and negative matrix:** `TIME_SERIES_GRAPH`はG01の静的PAGと異なるTemporal Graph Value。Variable IDとlag、同時時刻Edge、Endpoint uncertainty、時刻方向を明示したVersion/Schemaに保持。 観測時刻の増加方向、lag符号（過去→現在の非負距離等）は**設計採用したConventionを明示するまで未固定**。timestamp/variable order/lag bounds/self edges/duplicate endpointsの検証を先行させ、silent sign swapを禁止。 PAG circle/bidirected/LPCMCIのlatent uncertaintyをDAGへ潰さず、GraphEvidence共通Hash/Version contractを再利用する。G01 GraphVersion writerとは別Writerを作らない。
+- **Positive and negative matrix:** `TIME_SERIES_GRAPH`はG01の静的PAGと異なるTemporal Graph Value。Variable IDとlag、同時時刻Edge、Endpoint uncertainty、時刻方向を明示したVersion/Schemaに保持。 観測時刻の増加方向、lag符号（過去→現在の非負距離等）は**設計採用したConventionを明示するまで未固定**。timestamp/variable order/lag bounds/self edges/duplicate endpointsの検証を先行させ、silent sign swapを禁止。 PAG circle/bidirected/LPCMCIのlatent uncertaintyをDAGへ潰さず、GraphEvidence共通Hash/Version contractを再利用する。G01のLocal Graph writer/Publisherを再利用しProduct GraphVersion writerを新設しない。
 - Pure Value/Graph/Design→unit、Port/Codec/typed Reason→contract、実Backend/Tigramite/Quasi/CLI/Pub-Readback/legacy v2→integration。科学Graph/EffectのReferenceはBackend出力とは別に事前固定する。
 - Effective backend API/version, Test fixture/Source/lock SHA, seed, Data/Time ordering, CI/SE handling, observed outcome, actual test collection/command, FAIL/BLOCKED causeをEvidenceへ記録。必須RuntimeやOracleが未確定ならBLOCKED。
 
