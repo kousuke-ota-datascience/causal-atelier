@@ -135,7 +135,7 @@ Package completion時:
 
 - [ ] `GraphEvidence` field/constructor/Factory/`canonical_payload` matches 30_61 and strict E11 Schema with no Product Version Writer behavior.
 - [ ] All G01 PAG endpoint pair orientations round-trip losslessly, malformed/self-loop/duplicate/reverse/unknown/lag negatives rejected; shared Product Graph validator mapping uses `endpoint_source/target` vs E11 `source_mark/target_mark` correctly.
-- [ ] Standalone `version_id=null,parent_version_id=null` and optional real Product parent lineage retained; invented Version and parent-without-version are rejected.
+- [ ] Current **all E11 Local Graph** wire `version_id=null,parent_version_id=null` strictly; scientific parent/reference lineage is expressed through immutable provenance/ContentRef/hash, **not** Product GraphVersion IDs. Non-null Local wire IDs are rejected. Optional real Product parent/version lineage is preserved only in the **separate existing Product compatibility bridge** and cannot be silently injected into `e11-local-graph/1`.
 - [ ] Graph semantic JCS self-excluded digest and external exact-file-byte ContentRef digest distinguished; success vs scientific-negative Bundle has `result=null` and mandatory diagnostics on negative.
 - [ ] Focused unit/contract Graph DD-ID verification cases executed and checkpoint/fixture/source full SHA recorded. Graph serialization PASS is not independent MAG/PAG scientific accuracy PASS.
 
