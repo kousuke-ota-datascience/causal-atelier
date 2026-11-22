@@ -26,7 +26,7 @@
 | `G08-07-01` | RD/IV Design・Estimand適格性（cross-cutting） | unit/contract + required integration | cutoff/density/first-stage/B0/B1 target；適格positive/negative・typed Reason |
 | `G08-07-02` | Sharp/Fuzzy RD Adapter（P3-M07, P3-M08） | contract + real backend integration + independent reference | bandwidth/local target/discontinuity/CI；適格positive/negative・typed Reason |
 | `G08-07-03` | Wald・2SLS B0/B1（P3-M09, P3-M10, P3-M11） | contract + real backend integration + independent reference | binary Z/A、C、robust covariance/first stage；適格positive/negative・typed Reason |
-| `G08-07-04` | Weak-IV HC1・AR set推論（cross-cutting） | unit/contract + required integration | bounded/unbounded/disconnected/empty/all-real AR set；適格positive/negative・typed Reason |
+| `G08-07-04` | 弱IV頑健AR集合・算法独立審査（HC1は未Freeze候補） | unit/contract + required integration | bounded/unbounded/disconnected/empty/all-real AR set；適格positive/negative・typed Reason |
 | `G08-07-05` | RD/IV CLI・Typed Result・科学（cross-cutting） | unit/contract + required integration | REF-Q03/E07/E08/U01とv2回帰；適格positive/negative・typed Reason |
 | `G08-07-06` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
 | `G08-07-07` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Upstream 999 invariants, no old v2 CLI/Result change |
@@ -49,7 +49,7 @@
 **Independent oracle and numerical rule:** DGP truthとEstimator/Backend outputは別Authority。Fixed generator/Reference SHA、既知EstimandとAssumptions、negative/statusを先に登録。Deterministic schema/JCS/roundtripは100%一致。Stochastic ScienceはT2 PilotとT3正式事前登録を分離し、多重性K/FWER=0.05、K/R/seed/threshold/computeは科学決定に基づきFreeze。未確定を推測で補完せず該当Test Item BLOCKED。
 
 
-**Owner採用 OD-05（2026-11-19）：** G08の5 Methodについて、既決Target/数理は変更せず、担当Pxxでそれぞれstrict versioned `Method Config / Question / Design / Output / Inference Profile`を独立に定義・登録する。Method固有の確認項目は「Sharp/Fuzzy RD cutoff/bandwidth/kernel/order、B0/B1二値Z/A/C設計、HC1 AR χ²(1)全実数反転、weak IV/inference/退化条件」。条件付き必須Field、Backend effective API/version/optional extras、positive/invalid-config/wrong-target/unsupported-CI/negative-science fixtureとtyped reasonを固定する。未登録/未検証は`METHOD_PROFILE_UNAVAILABLE`等でfail-closed。単なる`config={}`、Backend default、未生成DGP/REF、K/R/MC-SE未実測をPASSとしない。これはProfile作成の**担当配分採用**であり、個々のSchema/Inference/科学Referenceの完成・Freeze・Coding Authorizationを意味しない。
+**Owner採用 OD-05（2026-11-19）：** G08の5 Methodについて、既決Target/数理は変更せず、担当Pxxでそれぞれstrict versioned `Method Config / Question / Design / Output / Inference Profile`を独立に定義・登録する。Method固有の確認項目は「Sharp/Fuzzy RD cutoff/bandwidth/kernel/order、B0/B1二値Z/A/C設計、全実数の弱IV頑健AR集合、独立科学審査待ちのHC1 χ²(1)反転候補（未Freeze）、推論/退化条件」。条件付き必須Field、Backend effective API/version/optional extras、positive/invalid-config/wrong-target/unsupported-CI/negative-science fixtureとtyped reasonを固定する。未登録/未検証は`METHOD_PROFILE_UNAVAILABLE`等でfail-closed。単なる`config={}`、Backend default、未生成DGP/REF、K/R/MC-SE未実測をPASSとしない。これはProfile作成の**担当配分採用**であり、個々のSchema/Inference/科学Referenceの完成・Freeze・Coding Authorizationを意味しない。
 
 **Independent acceptance for every G08 Method:** valid config/Question/Design/output/Inference positive, extra unknown-property/missing conditional field/wrong target/Graph or DataRef hash/backend mismatch/unsupported CI negatives, deployed real backend API and independent DGP/REF must be separately evidenced. G01/G10 Gateway PASS must not infer scientific proof from schema shape.
 
