@@ -93,3 +93,13 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - 既存の実行手順は`combined_review/159_20261122_s05_linux_isolated_execution_runbook.md`、Python標準Validator実行コードは`combined_review/tools/e11_profile_factor_compiler.py`。今後、承認済み隔離Python3.12と独立Reviewerで固定Source SHA+Lock+実Report/hashを収集する。新たなOwner科学選択はない。
 
 - B04追加観測（このチャットの非承認Python3.13.5 runtimeのみ）: `dowhy` / `econml` / `tigramite` / `causal-learn` distributions/modulesは未導入。`statsmodels 0.14.6`, `numpy 2.3.5`, `scipy 1.17.0`, `jsonschema 4.26.0`は導入済み。これをOwner承認済みPython3.12のENV-BASE/DOWHY/ECONML/TIGRAMITE fitted API検査に読み替えない。B04はBLOCKED。
+
+## K. S05-B03 Schema/Reader交差契約のAuthor修正（2026-11-22／最新継続）
+
+- **B03-R01:** `e11_local_manifest_v1.schema.json` の `execution.technical_status` が任意の非空stringだった不一致を修正、`status.json`と同一の5値Enumに制限。別File間の値一致は実Readerの義務であり、Schema修正だけで実COMPLETEDを証明しない。
+- **B03-R02:** 6個の内部科学Schema（CATE/Event/Identification/ITS/Diagnostics/SCM）に合計21ある`ContentRef.relative_key`へ公開Schemaと同一の相対path guardを追加。固定正例3、負例6の限定JS正規表現検査を実行。これだけで安全な実FD/permission/symlink/readbackを保証しない。
+- **B03-R03:** G01/P02 06、G01 07、G10/P03 06、G10 07の4指示書にSchema差異、実Bundle cross-wire一致、入力拒否負例・privacy/run hash/checksumを本文反映。
+- **B03-R04:** Stock正本候補`23_42_local_result_manifest_artifact.md`と`30_62_local_execution_publication.md`の規範設計にManifest/Status閉Enum一致・内部ContentRef safe lexical/実Reader FD/SHA権限検証を反映。エンハンス固有の事情を本文へ転記せず、永続設計として記載。
+- 現行Public Schema 6について、Operation/Mode/Status 7、run_id 4、Schema dispatch 3、Request Hash 1、ContentRef path 2、Local Graph null 2の合計**19/19 static pair一致**。13 public/internal Schema IDに重複なし。これは**Author source-level限定検査**であり、標準jsonschema/実Bundle reader/独立証拠ではない。
+- Case/evidence一覧: `combined_review/171_20261122_s05_b03_cross_schema_author_remediation_and_test_matrix.md`。S09監査索引: `combined_review/s09_post_reconciliation_document_snapshot_draft10.json`、normative Source=`a3268a1cf104e28e4508744b87db3c49237bda27`。402 unique blobsの索引でありS09独立PASSではない。165の独立監査指示はdraft10/R15-R16を参照する。
+- **Phaseの区別:** S10は実装前契約のReview/Freeze、完成したE11 Publisher/Readerの実FS readback受入はS11後G01/G10 07/999。まだ実装していないE11実行コードの成功結果をS10前提に置くと循環。S05-B03実readbackは現時点でNOT_RUNのまま。B02 Python3.12、B04 backend、B05独立科学、S09独立Reviewも未実施。S10 NOT_FROZEN、S11 NOT_AUTHORIZED、新規Owner科学判断なし。
