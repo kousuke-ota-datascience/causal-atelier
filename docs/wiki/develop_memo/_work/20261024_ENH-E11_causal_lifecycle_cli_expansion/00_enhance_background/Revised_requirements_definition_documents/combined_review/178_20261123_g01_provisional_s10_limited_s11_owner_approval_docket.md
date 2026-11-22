@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-23 JST
 **Controlling Owner policy:** `DEC-G01-EXEC-01=ADOPTED`, [177](177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md). `DEC-PREPCODE-01=B` remains applicable to other Gates.
-**Docket state (after separate Owner approval):** `PROVISIONAL_G01_S10_OWNER_APPROVED_IN_179 / LIMITED_G01_S11_OWNER_APPROVAL_NOT_GRANTED / ALL_EXTERNAL_EVIDENCE_PENDING`. See [179](179_20261123_g01_provisional_s10_owner_approved.md).
+**Docket current state (after both separate Owner approvals):** `PROVISIONAL_G01_S10_OWNER_APPROVED_IN_179 / LIMITED_G01_S11_OWNER_APPROVED_IN_180 / ALL_EXTERNAL_EVIDENCE_PENDING / CODING_NOT_OBSERVED`. See [179](179_20261123_g01_provisional_s10_owner_approved.md) and [180](180_20261123_g01_limited_s11_owner_coding_authorization.md).
 **Owner-approved provisional-S10 frozen source commit (per 179):** `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, branch `prototype/ariadne_mvp`. At actual S10 approval explicitly pin/verify one `G01_FROZEN_SOURCE_FULL_SHA` and `uv.lock` blob/SHA256 (not inferred from current branch HEAD); if other active contracts changed, recheck their exact content and impact before approval.
 **Candidate source lock provenance:** At immutable candidate commit `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, `uv.lock` Git blob SHA is `2b83110e86b26b7969fbddf8f98a727370ae19f7` (Git source-object identity; not SHA-256). At actual Owner S10 freeze, separately record/check actual `sha256sum uv.lock` on the identical checkout; no target Linux runtime is claimed.
 
@@ -29,7 +29,7 @@
 
 **S10 Owner result: `APPROVED_PROVISIONAL` on 2026-11-23 JST**, in independent decision record `179_20261123_g01_provisional_s10_owner_approved.md`. Frozen full source SHA `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`; `uv.lock` Git blob SHA `2b83110e86b26b7969fbddf8f98a727370ae19f7`. This is human approval in the conversation, **not** a fabricated separate digital signature or a Linux-run SHA256 audit. S11 is **not** granted.
 
-## B. Limited G01-S11 — Owner action 2 (NEXT OWNER DECISION; S10 ALREADY APPROVED)
+## B. Limited G01-S11 — Owner action 2 (OWNER APPROVED in 180; original proposed wording preserved)
 
 **Proposed Owner approval text:** “暫定S10で固定したG01のfull SHA・source/lock・06/P01〜P05/07を対象に、G01のCoding Agentによる実装・開発者テストを限定承認する。未取得の独立S09、実Python3.12 B02/B04、独立B05及び実FS/Reader/T2/T3/独立07は、G01_999合格の必須条件として保持する。科学的PASS、Gate999、他Gate実装、本番科学的提供は許可しない。”
 
@@ -37,10 +37,10 @@
 
 **Permitted after S11:** coding assigned E11 new local CLI and shared implementation, enhancement-local developer tests within established lifecycle policy, candidate assembly, independent 07/T2/T3 and actual runtime checks *when capable agents/environment exist*. P01 → (P02,P03) → P04 → P05; protect legacy Product v2. Evidence/CI failures stay `BLOCKED` or `FAIL`, not patched by unapproved algorithm changes. If independent S09 after coding detects frozen contract defect, follow formal 09, Owner change impact and re-freeze/re-authorization when substantive; do not override science targets.
 
-**S11 owner result field:** `NOT_DECIDED`; not implied by Owner adoption of `DEC-G01-EXEC-01` or actual S10 approval in `179`. No Coding Agent execution from this docket.
+**S11 owner result:** `OWNER_APPROVED_LIMITED`, by the new-thread Owner's separate explicit adoption of the recommended `G01-S11-LIMITED`, recorded in [180](180_20261123_g01_limited_s11_owner_coding_authorization.md). This was **not** implied by either policy adoption 177 or S10 approval 179. This docket does not itself show any Coding Agent execution.
 
 ## C. Practical next action — no impossible pre-code activity
 
 1. **Completed:** Owner explicitly approved provisional G01 S10 for frozen source `a05fd072...`; see `179`. No B02/B04 Linux or independent S09/B05 claims were manufactured.
-2. **After** Owner S10, issue separate **limited G01 S11** to permit coding; do not demand unavailable experimental evidence beforehand.
-3. In the actually authorized coding environment, implement 06/07 faithfully. Independently verify every X item before `G01_999 PASS`; otherwise `BLOCKED`. The present session has no Owner Linux VM or real independent reviewer; these are recorded as external pending, not executable next steps for this session.
+2. **Completed 2026-11-23 JST:** Separate Owner approval of **limited G01 S11** was issued in [180](180_20261123_g01_limited_s11_owner_coding_authorization.md); coding may be started in a compliant runtime after the 40 Operator preflight, without prior independent science PASS.
+3. Coding Agent operator handoff is [181](181_20261123_g01_coding_agent_entry_handoff.md). In the actually authorized coding environment, implement G01 P01–P05 faithfully. Independently verify every X item before `G01_999 PASS`; otherwise `BLOCKED`. No Owner Linux VM/Codex CLI execution or independent Reviewer PASS was observed in this conversation.
