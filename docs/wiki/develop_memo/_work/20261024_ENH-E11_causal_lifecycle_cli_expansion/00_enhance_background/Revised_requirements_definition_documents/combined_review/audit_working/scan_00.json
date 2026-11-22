@@ -1,0 +1,161 @@
+{
+  "baseline_head": "ad322e04c5f13125845654de0f039780f5b66ed6",
+  "items": [
+    {
+      "file": "G01/06_G01_P00_work_package_plan.md",
+      "sha": "c868894835a01b457c8f136f7e198bfa41eea2a3",
+      "hits": [
+        {
+          "line": 11,
+          "content": "**PREPARATION-03 技術評価：G01単一Gateを維持（Owner承認待ち）。** 対象はstrict Local Study/ContentRef、PAG/GraphEvidence、P1-M06 FCI、Linux Atomic Publication/Reader、non-effect DISCOVER CLIが一体となったrun-scoped垂直スライス。科学的Graphの正当性とFile Publicationの安全性は別個の必須受入軸として、それぞれP04/07-08〜10とP02/07-02/05/06の独立証跡を要求し、P05/07-07/11/12で共通Fixed Candidate SHAの統合動作を証明する。部分完成をGate PASSにしない。この構成で依存循環はなく、G01を分割する技術的必要性はない。Ownerの境界承認・06/07 Freeze・Coding Authorization"
+        }
+      ]
+    },
+    {
+      "file": "G01/06_G01_P01_local_contract_codec.md",
+      "sha": "028bd44671c1c6487645a3bb7d0858647f7a9e03",
+      "hits": [
+        {
+          "line": 28,
+          "content": "| `ariadne.interfaces.cli.local_causal.study.LocalStudySpec` | E11 transport DTO and invariant validation | No separate scientific Domain |"
+        },
+        {
+          "line": 64,
+          "content": "**Module/Class:** `ariadne.interfaces.cli.local_causal.study.LocalStudySpec`; immutable CLI envelope. Fields: `schema_version:Literal[\"e11-local-study/1\"]`, `run_id:str`, `operation:LocalOperation`, `analysis_mode:AnalysisMode`, `question/design/dataset:ContentRef`, `graph/identification:ContentRef|None`, `estimand:EstimandRef`, `method:MethodRequest`, `inference:InferenceRequest`, `randomness:RandomnessSpec`, `priva"
+        },
+        {
+          "line": 66,
+          "content": "**Constructor/Factory:** Immutable LocalStudySpec is constructed only after strict Study DTO decoding, with all declared fields set. **Method:** `validate_local_invariants(self) -> tuple[Reason,...]`, pure; check version, safe run_id, required/ref-null rules, Operation/Estimand and Privacy intent. DTO construction alone is not `ValidatedStudy` proof. Convert using common scientific validator; Application cannot impor"
+        },
+        {
+          "line": 68,
+          "content": "**G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false,policy_ref:null}`. Row request is a denial in P05 "
+        },
+        {
+          "line": 87,
+          "content": "**Cross-asset validation obligation (delegated to P02/P05 after actual bytes verification):** Apply P1-M06 Question and Design JSON profiles on verified reference bytes. Require `question.question_id=design.question_id=Study.inputs.question.identity`; `design.variables[].name` equals Dataset column names *and ordering*; `design.background_knowledge` JCS-equal `Study.method.config.background_knowledge`. Fisherz requir"
+        },
+        {
+          "line": 125,
+          "content": "P01 outputs `ContentRef`, `ValidatedStudy`, strict JCS/Manifest DTO and pure Profile validation; P02 verifies real File bytes and owns publication/readback, P03 owns `GraphEvidence`, P04 owns FCI runtime and P05 orchestrates. Do not make pure Decoder read files, do not let App import CLI concrete, do not modify Product v2 Reader/Writer or duplicate scientific eligibility logic."
+        }
+      ]
+    },
+    {
+      "file": "G01/06_G01_P02_atomic_publication_reader.md",
+      "sha": "9f98496ed2af933e5461678dc662b27a5b2f3bdc",
+      "hits": [
+        {
+          "line": 27,
+          "content": "| `ariadne.shared.local_fs.TrustedLocalRoot/LocalPrincipal` | verified OS capability and strict root factory at CLI composition | No trust delegated to Study/config string |"
+        },
+        {
+          "line": 125,
+          "content": "Never return private row bytes in G01: G01 is strictly aggregate-only, and G05 alone owns double-opt-in local row output. Corrupt, partial, legacy, versionless or unsafe owner/mode/symlink/nonlocal-FS runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader c"
+        }
+      ]
+    },
+    {
+      "file": "G01/06_G01_P03_pag_graph_version.md",
+      "sha": "53e26c6f435fa1f2764668f466860c91164a79ca",
+      "hits": []
+    },
+    {
+      "file": "G01/06_G01_P04_fci_backend_oracle.md",
+      "sha": "116b0549349cb7f1d53cb30673116d28eb873519",
+      "hits": []
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "hits": [
+        {
+          "line": 30,
+          "content": "| `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | stateless privacy decisions, G01 aggregate-only | G05 local double-opt-in/row minimization is outside G01 |"
+        },
+        {
+          "line": 54,
+          "content": "| `cli_row_flag` | `bool` | explicit CLI intent, never merged into Study YAML |"
+        },
+        {
+          "line": 96,
+          "content": "5. Enforce G01 aggregate-only: **either** Study row request **or** CLI row flag -> explicit PRIVACY_DENIED (exit3); no silent downgrade. For aggregate requests, verify effective Root/Principal; no independent approval authority is involved. `--check-only` never probes row release as if allowed."
+        },
+        {
+          "line": 117,
+          "content": "**Port module:** `ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`. Concrete `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` is stateless: `__init__(self)->None`; it accepts call-local validated Study, CLI flag, effective Principal, private TrustedRoot and Method output shape. There is **no active third-party signer, trust registry, signing verifier Port, key or revocation depe"
+        },
+        {
+          "line": 120,
+          "content": "def authorize(self, *, study: ValidatedStudy, cli_row_flag: bool,"
+        },
+        {
+          "line": 127,
+          "content": "**G01 requirements:** `privacy.row_export_requested=false` AND `--allow-row-level-export=false`, trusted same-UID private root with valid owner/mode/local FS and aggregate-only verified output shape. **Either** individual-row input flag is invalid in G01, exit3 before any row bytes or Stage; no silent fallback. G01 never executes `filter_export_columns` for individual rows or creates `row_effects.parquet`."
+        },
+        {
+          "line": 129,
+          "content": "G05 alone supports optional individual-row intermediate output by the executor's Study+CLI **double opt-in**, safe non-root Linux ext4/XFS private root and Method-specific approved row/column/byte bounds. This is not an independent human approval. The G05 decision cannot expand the G01 scientific or operation scope."
+        },
+        {
+          "line": 137,
+          "content": "**CLI syntax:** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`. File format must be explicitly determined and validated (not silently reinterpret Product v2). Construct Decoder, TrustedRoot Factory, Port adapters, selected FCI Method Registry and UseCase through **one** composition root; never import optional Method during ordinary CLI parsing."
+        },
+        {
+          "line": 143,
+          "content": "| 3 | invalid physical input/path/hash/root/owner/mount, Study row intent or CLI row flag in G01; invalid local privacy/UID | security/privacy reason, no rows or leak |"
+        },
+        {
+          "line": 187,
+          "content": "- [ ] `LocalRunContext` trusted root/principal/row flag created by CLI composition, not Study YAML; `LocalCausalUseCase` 11 injected Port fields (no policy_verifier) and exact `preflight/run` signatures implemented."
+        }
+      ]
+    },
+    {
+      "file": "G02/06_G02_P00_work_package_plan.md",
+      "sha": "33e3885780adcd4c63ff097207c3a5b02db0f90b",
+      "hits": []
+    },
+    {
+      "file": "G02/06_G02_P01_native_identification.md",
+      "sha": "14a3793bb75b72e045dd5f972de19f91f790fdf4",
+      "hits": []
+    },
+    {
+      "file": "G02/06_G02_P02_dowhy_identification.md",
+      "sha": "3086b99a661dd86d502e8664954baeb547ad4279",
+      "hits": []
+    },
+    {
+      "file": "G02/06_G02_P03_frontdoor_fd_a.md",
+      "sha": "802c6a65806ce5bb7141f8dd700fd90dd4a25aa0",
+      "hits": []
+    },
+    {
+      "file": "G02/06_G02_P04_identification_dispatch.md",
+      "sha": "c378ee387e49885ab4775c1fbeddf0c0ee72264c",
+      "hits": [
+        {
+          "line": 93,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 95,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 99,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 122,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 128,
+          "content": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        }
+      ]
+    }
+  ]
+}
