@@ -160,7 +160,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `edges` | `tuple[EndpointEdge,...]` | endpoint/lag/identityをlossless |
 | `temporal` | `TemporalConvention|None` | lagの符号・基準時刻 |
 | `source_graph_version_id` | `str|None` | 実在するProduct GraphVersionを参照。自身はVersionを発行しない |
-| `source_graph_parent_version_id` | `str|None` | 実在する親GraphVersion ID。source_graph_version_idがnullなら必ずnull |
+| `source_graph_parent_version_id` | `str|None` | 現行Localではnull固定。既存Product互換Bridgeのみ実在Product親を別検査し、Local wireには設定しない |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
 #### Constructor / Factory
@@ -184,7 +184,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Local内容hash・科学的親provenanceとProduct非連携の検証。FR-186/196、AR-028/036/043。
 
 ### 3.3. `LocalManifestReader` — inline Field/Constructor/Method contract
 
@@ -237,9 +237,9 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 1. **Entry:** Current G06のFrozen06/07/Pxx、Owner Coding Authorization、Source/lock full SHA、当該06のupstream 999とPxx依存Checkpointを確認してから実装。Valid Study/Method/Design/Data/Estimand/Backendを境界で検証。
 2. Temporal Design/GraphEvidence/lag/endpointはtyped ResultとVersioned `TIME_SERIES_GRAPH`で保存し、静的PAG/Effectを捏造しない。
 3. G01のStagingSink/Manifest/Publisher/ReaderにTemporal Graph profileを追加し、Method・effective CI・time index/lag convention・Backend/seedをArtifact metadataに保持。
-4. ReaderはContentRef full bytes、canonical Graph payload、Endpoint/lag/variable orderingとVersionを再検証し、不一致はGraph corruptionとしてfail-closed。
+4. ReaderはContentRef full bytes、canonical Graph payload、Endpoint/lag/variable ordering、Local両Product Version欄nullと科学的provenance/hashを再検証し、不一致はGraph corruptionとしてfail-closed。
 5. **I/O/Failure:** Approved Method Adapter preflight→selected Backend（必要時lazy import）→typed Scientific Outcome→G01 Staging Publisher/Reader。Invalid config、合法的Scientific negative、不確定CI、Backend failureを分離し、Resultにeffective Method/Backend/Seed/Time/Design Evidenceを保存。
-6. **Non-goals:** 旧v2 Public ABI、Web/API/DB/Worker、G01 GraphVersion/Publisherの再実装、未承認row export、Backend実測なしのScience PASSを禁止。
+6. **Non-goals:** 旧v2 Public ABI、Web/API/DB/Worker、G01 Local Graph/Publisherの再実装、未承認row export、Backend実測なしのScience PASSを禁止。
 
 ### 設計で定義済みのGraph／Quasi意味論（自己完結した実装規範）
 
@@ -273,7 +273,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ### 6.1. Method-specific independent verification obligations
 
 - §5のDGP/NEG/REF/DD IDを、Science/Status/Method-config/Source-hashに対応させる。ID一覧はFixture実在や科学的PASSの証拠ではない。
-- **Positive and negative matrix:** Temporal Design/GraphEvidence/lag/endpointはtyped ResultとVersioned `TIME_SERIES_GRAPH`で保存し、静的PAG/Effectを捏造しない。 G01のStagingSink/Manifest/Publisher/ReaderにTemporal Graph profileを追加し、Method・effective CI・time index/lag convention・Backend/seedをArtifact metadataに保持。 ReaderはContentRef full bytes、canonical Graph payload、Endpoint/lag/variable orderingとVersionを再検証し、不一致はGraph corruptionとしてfail-closed。
+- **Positive and negative matrix:** Temporal Design/GraphEvidence/lag/endpointはtyped ResultとVersioned `TIME_SERIES_GRAPH`で保存し、静的PAG/Effectを捏造しない。 G01のStagingSink/Manifest/Publisher/ReaderにTemporal Graph profileを追加し、Method・effective CI・time index/lag convention・Backend/seedをArtifact metadataに保持。 ReaderはContentRef full bytes、canonical Graph payload、Endpoint/lag/variable ordering、Local両Product Version欄nullと科学的provenance/hashを再検証し、不一致はGraph corruptionとしてfail-closed。
 - Pure Value/Graph/Design→unit、Port/Codec/typed Reason→contract、実Backend/Tigramite/Quasi/CLI/Pub-Readback/legacy v2→integration。科学Graph/EffectのReferenceはBackend出力とは別に事前固定する。
 - Effective backend API/version, Test fixture/Source/lock SHA, seed, Data/Time ordering, CI/SE handling, observed outcome, actual test collection/command, FAIL/BLOCKED causeをEvidenceへ記録。必須RuntimeやOracleが未確定ならBLOCKED。
 
