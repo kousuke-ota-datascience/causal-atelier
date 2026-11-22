@@ -82,7 +82,6 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 | `estimators` | `EstimatorPort` | composition root | immutable; typed scientific result to staging |
 | `diagnostics` | `DiagnosticPort` | composition root | immutable; method-specific typed diagnostics |
 | `reader` | `LocalManifestReaderPort` | composition root | immutable; independent committed run readback |
-| `policy_verifier` | `LocalPolicyVerifierPort` | composition root | immutable; preauthorization from independent authority |
 | `privacy` | `LocalPrivacyPolicyPort` | composition root | immutable; explicit row release decision |
 | `publisher` | `LocalPublicationPort` | composition root | immutable; all writes staged |
 | `runtime` | `RuntimeEnvironmentPort` | composition root | immutable; effective provenance not fabricated |
@@ -90,16 +89,16 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure runtime trust configurationから取得する。G01集計専用のとき`policy_anchor=null`を許容するが、行出力要求では欠落を拒否する。Study YAMLからContextの信頼属性を構築してはならない。
+**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`のみ保持。CLI composition rootが実EUID/Private Rootを検証し、行出力はG05以外拒否する。署名Policy Anchorや追加CLI Flagは不要。
 
-**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。Policy verifierはStudyと独立のTrust Anchorで事前承認証拠を検証する。
+**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。第三者署名VerifierはLocal CLIの現行契約に存在しない。
 
 #### Constructor / Factory
 
 配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
-注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`policy_verifier: LocalPolicyVerifierPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
+注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
-- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, policy_verifier: LocalPolicyVerifierPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort)`。公開ApplicationはPort抽象にのみ依存する。
+- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort)`。公開ApplicationはPort抽象にのみ依存する。
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
@@ -125,7 +124,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。
+7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。ValidatedStudy、context.root/principal、Method OutputShapeを`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`で照合し、staging seal→一括publish→独立Reader readbackを行う。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -350,3 +349,10 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - P1-M04: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-004. No profile fallback.
 - P1-M05: Require registered five strict internal profiles for IDENTIFY; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-006, NEG-007. No profile fallback.
 - P1-M07: Require registered five strict internal profiles for ESTIMATE; fail on empty/unknown config, mismatched Study/Question/Design target, backend/API incompatible, and inference unavailability; NEG-004, NEG-005. No profile fallback.
+
+
+## S02：担当Method Profile・共通署名の規範（G02 / Owner承認）
+
+担当Methodは`P1-M01, P1-M02, P1-M03, P1-M04, P1-M05, P1-M07`。共通5 Profile Kind（method_config/question_profile/design_profile/output_profile/inference_profile）を`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`から読み、exact Method IDのoverlayと共通Schemaを単一JSON Schemaに再構成する。Dispatch Registry `e11_method_profile_dispatch_registry_draft1.json`を照合し、Git Blob SHA・Draft202012 Schema・正例/負例が未確認なら`METHOD_PROFILE_UNAVAILABLE`でfail-closed。閉objectの別々の`allOf`合成で`additionalProperties:false`を破綻させない。Operation/Estimand/Backend/CI・DGP/NEG/REF/ACはMethodごとの科学契約に従い、共通化から科学Targetを推測しない。特にP1-M05はB0二値IV/無調整complier `LATE_COMPLIER`の条件付きIDENTIFY専用で数値Effectを生成しない。
+
+`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を共通署名とし、署名PolicyVerifier/Anchor・`cli_row_flag`・Study`privacy.policy_ref`は実装しない。G05以外では個票直接出力禁止、G05でもStudy `row_export_requested=true`と非root同一UID/private ext4/XFS・Method Schema/capsが全件必要。新Local GraphはProduct Version ID=null、content hashと科学由来を使い、Product DB GraphVersionをlookup/生成しない。既存Scientific Kernel・旧Product v2を保護し、回帰は影響閉包に基づいて選択、未知影響なら試験またはBLOCK。Method固有の実Backend/Inference・独立科学Referenceは未確認であり、Science PASSとはしない。

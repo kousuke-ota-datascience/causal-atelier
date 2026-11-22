@@ -290,3 +290,10 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
   - DoWhy effective API and IV expression must be independently checked; no effect result.json
   - Study contrast A1-A0, population=compliers and cross-field direction consistency are semantic validation, not implied by this JSON
 - **Backend / Science:** independently pin distribution/version/API/License and normative DGP/NEG/REF, quantitative K/R/MC-SE/coverage AC before this Method's acceptance. Backend failure=CAPABILITY_UNAVAILABLE, missing profile=METHOD_PROFILE_UNAVAILABLE, invalid config=CONFIG_INVALID, semantic mismatch=METHOD_INCOMPATIBLE, unsupported interval=INFERENCE_UNAVAILABLE (where mapped by canonical status authority).
+
+
+## S02：担当Method Profile・共通署名の規範（G02 / Owner承認）
+
+担当Methodは`P1-M01, P1-M02, P1-M03, P1-M04, P1-M05, P1-M07`。共通5 Profile Kind（method_config/question_profile/design_profile/output_profile/inference_profile）を`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`から読み、exact Method IDのoverlayと共通Schemaを単一JSON Schemaに再構成する。Dispatch Registry `e11_method_profile_dispatch_registry_draft1.json`を照合し、Git Blob SHA・Draft202012 Schema・正例/負例が未確認なら`METHOD_PROFILE_UNAVAILABLE`でfail-closed。閉objectの別々の`allOf`合成で`additionalProperties:false`を破綻させない。Operation/Estimand/Backend/CI・DGP/NEG/REF/ACはMethodごとの科学契約に従い、共通化から科学Targetを推測しない。特にP1-M05はB0二値IV/無調整complier `LATE_COMPLIER`の条件付きIDENTIFY専用で数値Effectを生成しない。
+
+`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を共通署名とし、署名PolicyVerifier/Anchor・`cli_row_flag`・Study`privacy.policy_ref`は実装しない。G05以外では個票直接出力禁止、G05でもStudy `row_export_requested=true`と非root同一UID/private ext4/XFS・Method Schema/capsが全件必要。新Local GraphはProduct Version ID=null、content hashと科学由来を使い、Product DB GraphVersionをlookup/生成しない。既存Scientific Kernel・旧Product v2を保護し、回帰は影響閉包に基づいて選択、未知影響なら試験またはBLOCK。Method固有の実Backend/Inference・独立科学Referenceは未確認であり、Science PASSとはしない。
