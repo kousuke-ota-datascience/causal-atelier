@@ -1,6 +1,6 @@
 {
   "catalog_version": "e11-method-output-descriptor-catalog/draft1",
-  "status": "DRAFT_METHOD_DESCRIPTOR_UPDATED_REVALIDATION_PENDING",
+  "status": "DRAFT_OWNER_A_CAPABILITY_BOUNDARY_REVALIDATION_PENDING",
   "authority": "DEC-S02 S02-03",
   "source": "40 method-specific e11_*_output_profile_v1.schema.json drafts",
   "method_count": 40,
@@ -355,7 +355,15 @@
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
-      "upstream_hashes_verified": true
+      "upstream_hashes_verified": true,
+      "positive_design_variant": "DID_2X2",
+      "deferred_design_variants": [
+        "STAGGERED"
+      ],
+      "deferred_reason_code": "SCIENCE_CONTRACT_NOT_AVAILABLE",
+      "deferred_technical_status": "CAPABILITY_UNAVAILABLE",
+      "deferred_cli_exit": 4,
+      "output_positive_requires_scientific_preflight": true
     },
     {
       "method_id": "P3-M05",
