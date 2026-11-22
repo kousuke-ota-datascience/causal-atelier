@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only G01 Draft202012 pre-code probe (author diagnostic, NOT independent S09)."""
+"""Read-only 6-public/3-active-FCI Draft202012 G01 diagnostic; historical profile is non-dispatch."""
 from __future__ import annotations
 import argparse
 from copy import deepcopy
@@ -23,12 +23,12 @@ PUBLIC = (
     "e11_local_manifest_v1.schema.json",
     "e11_local_commit_marker_v1.schema.json",
 )
-FCI = (
-    "e11_g01_fci_method_config_v1.schema.json",
+FCI_ACTIVE = (
     "e11_p1_m06_fci_method_config_v1.schema.json",
     "e11_p1_m06_fci_question_profile_v1.schema.json",
     "e11_p1_m06_fci_design_profile_v1.schema.json",
 )
+FCI_HISTORICAL_NONDISPATCH = "e11_g01_fci_method_config_v1.schema.json"
 
 def git(root: Path, *args: str) -> str:
     p = subprocess.run(["git", *args], cwd=root, text=True,
@@ -74,7 +74,7 @@ def design() -> dict:
             "background_knowledge": None}
 
 def cases(name: str) -> list[tuple[str, bool, dict]]:
-    if name in FCI[:2]:
+    if name == FCI_ACTIVE[0]:
         ok = config()
         bk = deepcopy(ok)
         bk["background_knowledge"] = {"required_edges": [["X", "Y"]],
@@ -102,7 +102,7 @@ def cases(name: str) -> list[tuple[str, bool, dict]]:
         bad["background_knowledge"]["required_edges"] = [["X", "Y"], ["X", "Y"]]
         r.append(("reject_duplicate_bk", False, bad))
         return r
-    if name == FCI[2]:
+    if name == FCI_ACTIVE[1]:
         ok = question()
         r = [("valid_question", True, ok)]
         for key, value in (("question_id", ""), ("analysis_goal", "ATE")):
@@ -116,7 +116,7 @@ def cases(name: str) -> list[tuple[str, bool, dict]]:
         del bad["population"]
         r.append(("reject_missing_population", False, bad))
         return r
-    if name == FCI[3]:
+    if name == FCI_ACTIVE[2]:
         ok = design()
         bk = deepcopy(ok)
         bk["background_knowledge"] = {"required_edges": [],
@@ -145,15 +145,10 @@ def cases(name: str) -> list[tuple[str, bool, dict]]:
     raise ValueError(f"No fixture set: {name}")
 
 def cross(schemas: dict[str, dict]) -> dict[str, bool]:
-    a, b = (deepcopy(schemas[x]) for x in FCI[:2])
-    for x in (a, b):
-        x.pop("$id", None)
-        x.pop("title", None)
     study, graph, status, manifest = (schemas[x] for x in
                                      (PUBLIC[0], PUBLIC[1], PUBLIC[2], PUBLIC[4]))
     privacy = study["properties"]["privacy"]
     return {
-        "duplicate_fci_config_equivalent_except_id_title": a == b,
         "discover_is_study_operation": (
             "DISCOVER" in study["properties"]["operation"]["enum"]),
         "method_config_is_required": (
@@ -192,11 +187,34 @@ def main() -> int:
     lock_blob_sha = git(repo, "hash-object", str(lock_path))
     script_blob_sha = git(repo, "hash-object", str(Path(__file__).resolve()))
     target_python = sys.version_info[:2] == (3, 12)
-    schemas = {name: load_schema(SCHEMAS / name) for name in PUBLIC + FCI}
+    # Exactly 6 public + 3 active P1-M06 schemas are normative for G01.
+    schemas = {name: load_schema(SCHEMAS / name) for name in PUBLIC + FCI_ACTIVE}
     blobs = {name: git(repo, "hash-object", str(SCHEMAS / name))
              for name in schemas}
+    # Legacy e11_g01_* is historical documentation, never a Method dispatch target.
+    # Validate it best-effort for drift visibility; do NOT gate active G01 readiness on it.
+    historic = {"path": FCI_HISTORICAL_NONDISPATCH,
+                "authority": "HISTORICAL_NONDISPATCH",
+                "diagnostic_only": True}
+    historic_path = SCHEMAS / FCI_HISTORICAL_NONDISPATCH
+    if historic_path.exists():
+        historic["git_blob_sha"] = git(repo, "hash-object", str(historic_path))
+        try:
+            old_schema = load_schema(historic_path)
+            active_schema = deepcopy(schemas[FCI_ACTIVE[0]])
+            for value in (old_schema, active_schema):
+                value.pop("$id", None)
+                value.pop("title", None)
+            historic["valid_metaschema"] = True
+            historic["same_constraints_as_active"] = old_schema == active_schema
+        except Exception as exc:
+            historic["valid_metaschema"] = False
+            historic["diagnostic_error"] = type(exc).__name__ + ": " + str(exc)
+    else:
+        historic["valid_metaschema"] = False
+        historic["diagnostic_error"] = "HISTORICAL_FILE_ABSENT"
     fixtures = []
-    for name in FCI:
+    for name in FCI_ACTIVE:
         v = Draft202012Validator(schemas[name])
         for label, expected, instance in cases(name):
             actual = v.is_valid(instance)
@@ -205,7 +223,7 @@ def main() -> int:
                              "matched": expected == actual})
     relations = cross(schemas)
     passed = (target_python and head == args.expected_head and not dirty
-              and len(schemas) == 10
+              and len(schemas) == 9
               and all(x["matched"] for x in fixtures)
               and all(relations.values()))
     report = {
@@ -223,6 +241,8 @@ def main() -> int:
         "uv_lock_git_blob_sha": lock_blob_sha,
         "probe_source_blob_sha": script_blob_sha,
         "source_blob_sha": blobs,
+        "active_fci_profile_count": len(FCI_ACTIVE),
+        "historic_g01_schema_diagnostic_nonblocking": historic,
         "metaschema_valid_count": len(schemas),
         "fci_fixture_count": len(fixtures),
         "fci_fixture_mismatches": [x for x in fixtures if not x["matched"]],
