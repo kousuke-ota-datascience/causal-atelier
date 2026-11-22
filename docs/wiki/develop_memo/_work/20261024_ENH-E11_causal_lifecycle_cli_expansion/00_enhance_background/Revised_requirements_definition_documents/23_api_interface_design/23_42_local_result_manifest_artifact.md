@@ -264,7 +264,7 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 
 ### 10.1. Opt-in and compatibility
 
-- 対象は一般権限Linuxユーザーがlocal ext4/XFS上で生成する個票中間成果物。実行者自身による明示的な出力指示であり、独立Approver・Ed25519署名・署名鍵Store・失効を求めない。従前の独立承認方式はOwnerの2026-11-21限定改訂により撤回。
+- 対象は一般権限Linuxユーザーがlocal ext4/XFS上で生成する個票中間成果物。実行者自身による明示的な出力指示であり、独立Approver・Ed25519署名・署名鍵Store・失効を求めない。現行Local CLIでは独立承認は非提供。
 - Studyは既存`e11-local-study/1`を保持。`privacy.row_export_requested=true`を唯一の明示出力選択とし、未公開`privacy.policy_ref`はStudy Schemaから削除、未知Fieldとして拒否する。
 - `RESTRICTED_ROW_LEVEL`、対象Methodの`ApprovedRowSchema`、許可列順・row ID・dtype・max_rows・max_output_bytes・max_memory_bytesを照合。Method固有数値や列名を推測しない。
 - 実行EUIDが所有するprivate TrustedRoot・同一local filesystem、root/staging 0700、row artifact 0600、実行UID/owner/mode/FS/symlink/dirfd安全性を実行時に確認。rootまたは同一UID processからの分離は保証しない。
@@ -281,6 +281,6 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 
 `IO-E11-06`：Study単独opt-inのtrue/false/未指定正負例とUID/Root/Method不適格負例、wrong UID/root、owner/mode/symlink/dirfd/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。
 
-## S02 Owner-adopted current Local CLI contract (2026-11-22)
+## Local bundle and evidence invariants
 
-The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.
+Local Graphは内容hash・入力由来を独立に持ち、Product GraphVersion IDを要求・発行しない。現行Local GraphのProduct ID欄はnullとし、未対応のnon-null importを拒否する。個票ParquetはStudyで明示要求された場合のみprivate TrustedRootとMethod固有OutputSchemaにより制限し、G01 staging/Publisher/Readerを通じて公開する。Manifest・commit marker・実ファイル検証・no-clobberは必須。科学証拠は全Methodについて必要であり、後続統合での再利用は実装・Backend・Fixture・Reference・判定条件の推移的依存が不変と検証できる場合に限る。

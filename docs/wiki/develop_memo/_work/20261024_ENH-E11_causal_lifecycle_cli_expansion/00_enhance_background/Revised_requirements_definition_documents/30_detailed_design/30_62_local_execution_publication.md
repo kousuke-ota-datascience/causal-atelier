@@ -448,7 +448,7 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 
 ## 9. ローカル個票中間成果物と限定Parquet Writer
 
-本節は一般権限Linuxユーザーがext4/XFSのprivate local filesystemへ個票中間成果物を作成する時だけの仕様である。実行者の自発的opt-inは第三者による独立承認ではない。署名鍵/Ed25519/失効と管理者Trust Registryは2026-11-21のOwner改訂により現在のG05対象外。G01 Publisher/Reader・全Methodの科学・公開E11 wire Version・旧Product v2は維持する。
+本節は一般権限Linuxユーザーがext4/XFSのprivate local filesystemへ個票中間成果物を作成する時だけの仕様である。実行者の自発的opt-inは第三者による独立承認ではない。署名鍵/Ed25519/失効と管理者Trust Registryは現在のLocal CLI対象外。G01 Publisher/Reader・全Methodの科学・公開E11 wire Version・旧Product v2は維持する。
 
 ### 9.1. Local executor / private root
 
@@ -478,6 +478,6 @@ G05/P02: Study-only explicit request true/false and root/Method eligibility, act
 
 初期G05のローカルFS保護は非root EUIDの所有・root/staging 0700・row file 0600・real ext4/XFS・same filesystem・dirfd/O_NOFOLLOW・Symlink/Path拒否で成立する。旧PREP02のACL xattr digest、statx mount-ID追跡、mount namespace可視性の独立証明、CI/container環境検知は必須でない。同じUIDおよびroot管理者からの隔離を保証しない。実行時のOwner/ModeとFS identity・Pathを適切な公開境界で再確認する。NFR-030/031とG01原子的Publisher・独立Readerは継続。内部CLIのSBOM/顧客配布License stateは要求しない。元のFreeze履歴はcombined_review/131により限定的にsupersedeされ、実Linux/FSテストはNOT_RUN。
 
-## S02 Owner-adopted current Local CLI contract (2026-11-22)
+## Local execution, privacy and publication invariants
 
-The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.
+`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を正規契約とする。Studyの明示`row_export_requested`はrequest identityに含め、private Root/同一UID/Method別allowlistとbounded outputを実行ごとに検証する。許可されるまで個票Sourceを反復せず、拒否はaggregateへのsilent fallbackとしない。Reader検証前にCOMMITTEDと報告せず、rename後の判定不能を`PUBLICATION_INDETERMINATE`とする。共通WriterはIV構造係数と非IV CATEの列意味を混同せずMethod固有制約を検証する。
