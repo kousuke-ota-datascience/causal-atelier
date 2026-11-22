@@ -82,3 +82,12 @@ No mismatch observed in these 19 static comparisons. This proves neither Schema 
 - **Formal B03 remains BLOCKED**, not a false PASS. Independent 07 after coding must reject deliberately corrupted fully-realized bundles. No protected Product code/tests/pyproject/uv.lock modified.
 - **S09 independent verdict NOT_RUN**; all seven edited draft Schema blob SHA plus four Gate docs must be included in a newly pinned index. Reviewer must inspect actual code-readback security semantics and determine if any pre-code contract gap remains.
 - **S05 B02/B04/B05 remain pending**; independent statistical AR method/coverage is separate from B03 codec representation. **S10 NOT_FROZEN / S11 NOT_AUTHORIZED**.
+
+## E. B03-R04 — durable stock 23_42/30_62 alignment after R01–R03
+
+Follow-up author consistency review found the new closed technical-status and internal-ContentRef contract had been propagated to four active G01/G10 06/07 Gate instructions, but the corresponding active stock design needed the same permanent explanatory contract. This is independent of the enhance-specific review chronology.
+
+- Revised `23_api_interface_design/23_42_local_result_manifest_artifact.md` to specify the five admissible technical states, exact Manifest-versus-Status value equality, genuine completed-state/readback boundary, internal lexical ContentRef protection and independent FS/FD/hashing authority.
+- Revised `30_detailed_design/30_62_local_execution_publication.md` in the Reader method section: verified run identity/operation/Method/schema-dispatch/Privacy, no acceptance of unknown/mismatched status, unsafe internal paths, duplicate keys, or unauthorized private artifact.
+- Captured two unique changed stock document blobs in `combined_review/s09_post_reconciliation_document_snapshot_draft10.json` with **source_full_commit_sha `a3268a1cf104e28e4508744b87db3c49237bda27`**. Earlier snapshot draft9 is historical.
+- These are normative design author edits only. Actual standard Schema validation and integration/independent Reader security evaluation remain unexecuted. No Owner decision or Pre-code Contract Freeze was implied.
