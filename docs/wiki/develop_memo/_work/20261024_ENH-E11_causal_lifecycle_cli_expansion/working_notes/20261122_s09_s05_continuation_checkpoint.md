@@ -59,3 +59,12 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 `DEC-S09-P3M04-01=A`はOwner明示採用済み。P3-M04初期対象は`DID_2X2`の2×2 ATTのみ。`STAGGERED`は`DEFERRED`（NOT RETIRED）であり、構文上認識できても科学的preflightで`SCIENCE_CONTRACT_NOT_AVAILABLE`/`CAPABILITY_UNAVAILABLE`（exit4）として拒否。Unknown Configは構造検証exit2と区別する。M04 STAGGEREDをDID_2X2/TWFE/P3-M05へ無言fallbackしない。元Method Config/Output 2 Schema＋factored 2 overlay、200-profile Dispatch、Output Catalog、G07 6文書、G10 8文書、Stock 10_32/23_42/30_63、独立監査165へ反映。詳細は`combined_review/167_20261122_dec_s09_p3m04_owner_a_propagation_audit.md`。
 
 静的再照合: 200元Schema blob SHA一致、40×5 ID/dispatch一意、両変更Schemaのoverlay AST一致、Output CatalogのDID_2X2 positive/STAGGERED deferred一致。実Python Draft202012 200 Validator・独立S09・Backend/Scienceは未実行。監査用新Source SHA index `combined_review/s09_post_reconciliation_document_snapshot_draft5.json` を使用し、以前のdraft1–4はhistoricalとして扱う。S10/S11は未承認。
+
+## G. S09 参照整合性・G08 AR予備検査の追加結果（2026-11-22）
+
+- S09相対リンク・権威参照のSource QA: 71 Gate 06/Pxx/07のinline相対Markdown link 198、Operator 7件（該当相対リンク0）、主要要件/設計33ファイルの50を検査。G10/P04に4件のリンク切れを検出して修正、同G10/P04を再走査して欠損0を確認。根拠・検査対象・未検査範囲は`combined_review/168_20261122_s09_reference_integrity_and_g08_ar_candidate_author_review.md`に記録。独立S09 PASSではない。
+- G08/P03の§4本文とMandatory Matrixに残った、未Freeze HC1/χ²(1) AR算法を「実装する」とする命令形を修正。他G08のOwner-OD05/Allocation/07行も候補の未承認状態を明示。全実数の弱IV頑健AR集合とB0/B1科学Targetは維持。独立Reviewer・Ownerの実装算法Freezeは依然BLOCKED。
+- Author側数学予備検査: `working_notes/20261122_s05_ar_hc1_candidate_author_mathematical_preflight.md`。B1相当の合成データでHC1/χ²逆転を二次不等式に変形し、BOUNDED/DISCONNECTED/ALL_REALの3種類を固定seedで再現。15点で別OLS+HC1実装と数値一致。Python3.13.5を使用、承認済みPython3.12と独立Oracle/弱IV coverageは未実施。
+- 現行監査索引: `combined_review/s09_post_reconciliation_document_snapshot_draft6.json`。Reviewer指示`165`も最新索引とAR方針に更新。
+
+**独立監査・200 Method Draft202012・Backend/数値Science・S10/S11の未実施は不変。新たなOwner判断事項なし。**
