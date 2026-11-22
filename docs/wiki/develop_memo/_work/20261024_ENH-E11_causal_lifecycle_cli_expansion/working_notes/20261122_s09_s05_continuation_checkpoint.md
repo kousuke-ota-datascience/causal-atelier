@@ -103,3 +103,12 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - 現行Public Schema 6について、Operation/Mode/Status 7、run_id 4、Schema dispatch 3、Request Hash 1、ContentRef path 2、Local Graph null 2の合計**19/19 static pair一致**。13 public/internal Schema IDに重複なし。これは**Author source-level限定検査**であり、標準jsonschema/実Bundle reader/独立証拠ではない。
 - Case/evidence一覧: `combined_review/171_20261122_s05_b03_cross_schema_author_remediation_and_test_matrix.md`。S09監査索引: `combined_review/s09_post_reconciliation_document_snapshot_draft10.json`、normative Source=`a3268a1cf104e28e4508744b87db3c49237bda27`。402 unique blobsの索引でありS09独立PASSではない。165の独立監査指示はdraft10/R15-R16を参照する。
 - **Phaseの区別:** S10は実装前契約のReview/Freeze、完成したE11 Publisher/Readerの実FS readback受入はS11後G01/G10 07/999。まだ実装していないE11実行コードの成功結果をS10前提に置くと循環。S05-B03実readbackは現時点でNOT_RUNのまま。B02 Python3.12、B04 backend、B05独立科学、S09独立Reviewも未実施。S10 NOT_FROZEN、S11 NOT_AUTHORIZED、新規Owner科学判断なし。
+
+## L. PREP-04→S10 / Coding Entryの実行証拠境界（2026-11-22）
+
+- 元のControl PlaneはPREP-01/02/03で要件・共通設計・06/07/DAGを作成/Owner静的承認し、PREP-04でMethod/Backend/Science/実装前契約を具体化、PREP-05独立監査、PREP-06 Contract Freeze、Owner Coding Authorization→Trial/Independent Test/Gate999の順。
+- 簡素化S01–S04およびS06–S08はAuthor改訂済みだが、S05の独立Science/実効Backend、S09独立監査、S10/11は未了。過去PREP-03採択の06/07は現行S02追加B×8改訂前の監査記録であり現行Freezeではない。
+- 41件の独立Science Registryを再読: G01=1/G02=6/G03=13/G04=8/G06=3/G07=3/G08=5/G09=2の41 unique。独立Reference実体/SHA、Fixture SHA、K/R/epsilon/許容差/seed/定量判定がすべてnullまたは未実行、`oracle_algorithm_status=DESIGN_PROPOSAL_NOT_IMPLEMENTED`が41/41。T3/Gate999の数値PASSはCoding前に要求できないが、Science Target/算法/独立Oracle/試験プロトコルの実装前承認は必要。
+- 本文書の核心成果: `combined_review/172_20261122_prep04_s10_precode_evidence_phase_assignment.md`にB02/B03/B04/B05のpre-code設計契約とpost-S11実候補の証拠を分離。既存`combined_review/159`実行RunbookのE節で`B03 real Reader PASS`をCoding前の無条件成功条件と誤読しないよう改訂。S09独立監査指示`combined_review/165`にR17追加。
+- **DEC-PREPCODE-01 未決:** 既存引継ぎは`S10全体統合Freeze→S11 Gate別Authorization`。G01 P00はcandidate T2/T3はCoding Entry前の必要条件ではない、他方147は41全MethodのOracle/数値受入パラメータをContract Freeze前の要件としている。A=元のGlobal S10 Freezeを維持（41 Method全件のPre-code契約を閉じてからG01着手）、B=共通Invariantを保持したGate-scoped S10 Freeze→S11（G01等そのGateとupstream依存の必要契約だけ完備すれば着手、各後続Gateは個別監査/Freeze/Authorization）。現時点は**Aが現行規則**、BはOwner明示承認が必要。実装前の未決を隠さず、Owner判断要求のために172へ比較記録した。
+- S05-B02 Python3.12実Validator、B03実Reader、B04本物のBackend、B05独立Science、S09独立監査は依然NOT_RUN/BLOCKED。S10 NOT_FROZEN、S11 CODING_NOT_AUTHORIZED。
