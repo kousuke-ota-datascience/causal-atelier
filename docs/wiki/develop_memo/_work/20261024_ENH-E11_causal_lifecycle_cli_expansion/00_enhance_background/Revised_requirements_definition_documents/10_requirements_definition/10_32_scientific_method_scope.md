@@ -78,6 +78,10 @@
 
 - **P1-M05（OD-01=A）**：IDENTIFYのみ。明示的な`B0_BINARY_IV`・単一二値Z/A・無調整・IV独立性/排除制約/単調性・relevance/consistencyを伴うcomplier `LATE_COMPLIER`の**条件付き識別証拠**を返す。GraphやDoWhyの`nonparametric-ate`等のdisplay labelだけからLATEを宣言しない。B1構造IV係数・DRIV・ATE/ATTへ転換禁止。IDENTIFYで`result.json`を生成しない。数値LATE/ARはG08。前提の真偽や実効Backend APIの検証は別。
 - **OD-05（Owner採用）**：`P1-M06`以外の40 Methodについて担当Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）がstrict Method Config、Question/Design、Output、Inference Profileを定義し、登録済みprofile無しで`config={}`を受け入れない。必要fixtureと実効backend科学検証は未生成のまま記録し、科学Targetの既決定義を再議論しない。
-- **G05 Row Export（2026-11-21 Owner限定改訂）**：非root Linux実行者がStudy requestとCLI flagでdouble opt-inし、same-UID private ext4/XFS TrustedRoot、Method別`ApprovedRowSchema`/列行byte上限を検証した場合のみG05 RowEffectsParquetWriterが個票中間データを出力する。独立Approver、Ed25519/鍵/失効は不要。OD-03 WriterとG01 Publisherを維持。決定記録：combined_review/129_20261121_dec_g05_local_row_export_simplification.md。
+- **G05 Row Export（2026-11-21 Owner限定改訂）**：非root Linux実行者がversioned Studyの`privacy.row_export_requested=true`で明示的に個票出力を選択し、same-UID private ext4/XFS TrustedRoot、Method別`ApprovedRowSchema`/列行byte上限を検証した場合のみG05 RowEffectsParquetWriterが個票中間データを出力する。独立Approver、Ed25519/鍵/失効は不要。OD-03 WriterとG01 Publisherを維持。決定記録：combined_review/129_20261121_dec_g05_local_row_export_simplification.md。
 
 この採用は設計契約であり、Schema完成、Backend/独立Science PASS、実際の個票リリース権限、Gate Freeze、Coding Authorizationを示さない。承認記録：combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md。
+
+## 5. Method Profile再利用と科学的受入
+
+全41 MethodのOperation、Estimand、Eligibility、実効Backend、Inference、Output、typed negativeおよび独立Reference/定量受入はMethod固有である。共通JSON構造は再利用できるが、40件の個別Profileが未検証なら`METHOD_PROFILE_UNAVAILABLE`としてfail-closedする。Method固有positive/negative parityとBackend/Scienceの実証が必要。G10では41件の有効独立科学証拠を確認する。証拠再利用は科学的結果に影響する推移的依存閉包が不変と証明された場合のみ可能であり、そうでなければ再実行またはBLOCKとする。

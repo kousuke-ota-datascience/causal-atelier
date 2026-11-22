@@ -47,3 +47,7 @@
 | FR-199 | Causal Instrumental Variables | 操作変数のcomplier LATEと線形IV構造係数を区別して推定し、弱操作変数の下で妥当な推論集合と診断を提示できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | FR-200 | Causal Synthetic Controls | 対照Donorを用いた準実験で介入前Fit・汚染・期間条件と手法別の推定／推論範囲を評価できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | FR-202 | Scientific Result | 効果点推定・不確実性の可用性・科学的受入状態を区別し、有界・非有界・非連結・全実数の推論集合を損失なく表現できる | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+
+### FR-195 local row-output interpretation
+
+Local個票出力は`Study.privacy.row_export_requested=true`の単一明示opt-inとし、別CLI確認、第三者署名承認を現行の条件としない。既定拒否、実行ごとのsource/Method/TrustedRoot/UID/列・容量適格性再検証、許可前の個票iterator非呼出、aggregate/logへの漏洩禁止、IV構造係数と非IV CATEの出力意味論の分離は必要。保存済みStudyは再実行にも同じ明示選択を適用する。

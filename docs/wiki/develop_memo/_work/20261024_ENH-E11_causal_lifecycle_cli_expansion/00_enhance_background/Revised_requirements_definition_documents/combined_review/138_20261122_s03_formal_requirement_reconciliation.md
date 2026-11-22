@@ -1,0 +1,5 @@
+# ENH-E11 S03 — Formal Requirement Reconciliation (2026-11-22)
+
+**Status:** S03_TEXT_RECONCILED / S04_DESIGN_NOT_YET_RECONCILED / INDEPENDENT_QA_NOT_RUN / CODING_NOT_AUTHORIZED. Owner authority: DEC-S02 record 137; baseline commit ece3b1b725e94a39d740826df4a79dff5b82e6c7.
+
+Revised **six** enhancement-local formal 10-series docs: `10_00` Delivery legend corrected, FR-195/NFR-031 local consent/privacy acceptance, `10_32` Method profile and G10 science evidence, `10_90` initial extra scope exclusions, `10_91` test acceptance layering. No FR/NFR/AR ID, level, existing Product status, 41 Method, 68 Scope or 10 UC deleted or added. NFR-034 remains MUST/DEFERRED/UNVERIFIED/FUTURE. S04 must reconcile current Study wire, IF/DD, 06/07; S05 method schema parity and real Backend remain OPEN. No Source/tests/lock/production canon altered.

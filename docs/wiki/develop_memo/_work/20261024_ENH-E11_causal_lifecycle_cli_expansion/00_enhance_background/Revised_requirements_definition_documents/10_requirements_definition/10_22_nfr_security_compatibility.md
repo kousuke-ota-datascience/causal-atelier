@@ -25,3 +25,7 @@
 ### External customer delivery (non-current requirement)
 
 `NFR-034`は外販・顧客納入の実施自体が未確定であるため、現行ENH-E11の必須実装・受入から除外し、`DEFERRED / FUTURE`として将来検討対象に保持する。`DEFERRED`は外販を約束するものではない。将来顧客納入が正式にスコープ採用された場合、その時点の提供形態・配布Library・適用OSS License・組織ポリシーに基づき具体的な手順と受入条件を再審議する。**社内利用に適用されるOSSライセンス義務は免除されない。** 既存の社内コンプライアンス制度は遵守するが、その管理機能を今回のAriadneへ追加しない。今回のStatus訂正根拠は`combined_review/134_20261122_dec_nfr034_deferred_correction.md`。
+
+### NFR-031 local output boundary
+
+非root EUID・所有者一致のprivate ext4/XFS TrustedRoot（owner-only mode、safe dirfd/path/symlink）、Method別列・row/byte/memory制限、Study上の明示単独opt-inをPositive/Negativeで検証する。不許可時は個票生成に先立ちfail-closedし、個票値をログ/集計/Manifestへ含めない。同一UID別processや特権管理者に対する隔離を保証しない。未実装の署名Policy／二重CLI flagは初期提供外。

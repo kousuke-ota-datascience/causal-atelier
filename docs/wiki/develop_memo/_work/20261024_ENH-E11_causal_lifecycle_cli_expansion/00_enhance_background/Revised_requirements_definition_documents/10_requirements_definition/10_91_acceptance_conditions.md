@@ -41,3 +41,11 @@
 - **`NFR-035`**：Method別の独立科学受入と多重性管理を求める。前項の条件を抽象的な能力表現によって弱めない。
 
 `AR-016`のbootstrap条件をE11全ての因果Estimatorへの普遍的な推論要件へ一般化してはならない。
+
+## 12.3. S02採用後のLocal CLI受入契約
+
+1. 既存Product全体の§12は保持するが、新E11の実装対象は§12.1に列挙されたLocal Scientific CLIに限定する。変更影響が及ぶProductの回帰、および最終候補での旧v2互換性検証を実施する。
+2. `FR-195/NFR-031`：Study単一明示opt-in、default拒否、実効UID/private ext4/XFS Root、Method別Schema/caps、個票生成前のdeny、aggregate/manifest/logへの値漏洩禁止、再利用Study時の毎回の適格性再検証をPositive/Negativeで確認する。
+3. `NFR-030`：G01実OS上でatomic no-clobber、stage/rename/marker/Reader、失敗時のfalse-success防止と不定状態を確認する。全故障組合せや未検証の電源断耐久性を主張しない。
+4. `NFR-035/AR-044`：独立DGP/NEG/REFと定量推論・FWERについて全41 Methodに有効証拠を必要とする。G10再利用にはMethod・共有Kernel・依存Lock・Fixture・Reference・Backend・評価契約を含む推移的影響閉包の不変性を検証し、変化/不明ならMethod再試験またはBLOCK。最終候補の横断統合/旧Product互換性は実測する。
+5. 共有Method Schema/RowSchema/Graph/Portsは各Methodの科学的区別、厳格Positive/Negative parityとPrivacyを保持して初めて利用可能とする。設計承認はMethod/Profile/Backend実測やGate PASSを意味しない。

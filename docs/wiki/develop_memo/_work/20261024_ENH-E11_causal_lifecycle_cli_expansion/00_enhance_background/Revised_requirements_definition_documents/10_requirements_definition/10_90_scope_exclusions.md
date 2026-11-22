@@ -31,3 +31,10 @@
 - 付録Aの**D-only Scope**はE11初期の必須提供対象ではない。**混合Disposition**ではR/Q/Nの承認部分のみ実装義務とし、D部分は追跡を維持する。
 
 **Authority:** [DEC-SR04-09](../../../working_notes/20261116_sr04_dec09_scope_requirements_architecture_gate_integrated_owner_approval.md)。対象Scopeと正式要件の対応は [RD-03 Trace](../doc01_review/rd03_review/96_rd03_formal_requirement_traceability.md)。
+
+### 11.2. Local CLI初期に要求しない付帯実装
+
+- Study単独の許可に追加する二重CLI確認、撤回済みSigned Policy Schema/`policy_ref`、新Product GraphVersion DB統合・顧客配布承認サービス。
+- Methodごとの重複共通Schema/Port/Factory、無条件の全41 Method G10再計算、全Pxxで変更に無関係なProduct全系E2E、重複する障害全順列。
+
+これらは科学的妥当性、個票安全性、No-false-success Publication、全Methodの独立科学的証拠、影響がある旧Product境界の回帰を減免しない。未検証・未知の影響は再試験またはBLOCK。

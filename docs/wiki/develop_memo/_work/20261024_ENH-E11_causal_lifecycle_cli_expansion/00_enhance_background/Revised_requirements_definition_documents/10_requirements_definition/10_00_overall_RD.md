@@ -84,6 +84,7 @@ Requirementの実装・主要改訂がどのdelivery scopeに属するかを表�
 | `ENH-E5` | ENH-E5で実装または不足部分の完成をdelivery対象としたRequirement。 |
 | `ENH-E7` | ENH-E7で追加、責務改訂、または実装充足したRequirement。 |
 | `ENH-E10` | ENH-E10 Predictive Advanced Modeling / XAIで追加または主要改訂したRequirement。 |
+| `ENH-E11` | ENH-E11 Local Scientific CLI／Causal Lifecycleで追加または主要改訂したRequirement。 |
 | `FUTURE` | current snapshot時点では実装完了対象外で、将来Enhancementで扱うRequirement。 |
 
 三つの属性は独立した軸として扱う。`Delivery`はRequirementの由来・主要delivery段階を示し、`Requirement Status`や`Implementation Status`の代替ではない。
@@ -123,3 +124,7 @@ Analysis WorkspaceではAnalysis Familyをanalytical context、Navigation Stage�
 ### Local Scientific CLIの対象利用者と提供境界
 
 Local Scientific CLIの科学Methodを利用するprimary actorは**社内データサイエンティスト**で、初期使用経路はLinux一般ユーザーのLocal Scientific CLI。外販、Customer-specific release、multi-tenant authorization、署名配布/License Governance service、Product API/UI/DBへの新規統合はLocal Scientific CLIの現行提供範囲ではない。既存ProductのProject RBAC・Analyzer／Reviewerおよび既存Result APIは従来どおり維持し、Local CLIに移植しない。現時点で顧客納入形態を仮定して新しい役割・必須Stage・配布用Artifactを追加しない。Scientific MethodのEstimand/Eligibility/Referenceと科学的受入は、このActor限定により緩和されない。
+
+### ENH-E11 Local CLI requirement boundary
+
+Local個票出力はversioned Studyの`privacy.row_export_requested=true`（未指定/falseは不許可）でのみ明示選択する。二つ目のCLI flagは不要。再利用Studyでも選択は持続するが、毎回source identity/hash、Method、実効UID、private Root、許可列・資源制約を再検証する。顧客向け配布は未決定で`NFR-034`は`MUST/DEFERRED/UNVERIFIED/FUTURE`、実配布Workflowは初期対象外。科学的受入と既存Product互換はこの簡素化によって緩和されない。
