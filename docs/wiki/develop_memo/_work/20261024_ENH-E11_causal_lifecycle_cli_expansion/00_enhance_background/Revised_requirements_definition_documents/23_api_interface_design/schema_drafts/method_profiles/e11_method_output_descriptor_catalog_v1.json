@@ -1,6 +1,6 @@
 {
   "catalog_version": "e11-method-output-descriptor-catalog/draft1",
-  "status": "S05 STRUCTURAL FACTORING CANDIDATE / NOT SCIENCE VALIDATED / NOT ACTIVE REGISTRY",
+  "status": "DRAFT_METHOD_DESCRIPTOR_UPDATED_REVALIDATION_PENDING",
   "authority": "DEC-S02 S02-03",
   "source": "40 method-specific e11_*_output_profile_v1.schema.json drafts",
   "method_count": 40,
@@ -372,7 +372,8 @@
       "method_id": "P3-M06",
       "operation": "ESTIMATE",
       "positive_artifacts": [
-        "result.json"
+        "result.json",
+        "its_components.json"
       ],
       "forbidden_artifacts": [],
       "portable_result_schema": "e11-local-effect-result/1",
