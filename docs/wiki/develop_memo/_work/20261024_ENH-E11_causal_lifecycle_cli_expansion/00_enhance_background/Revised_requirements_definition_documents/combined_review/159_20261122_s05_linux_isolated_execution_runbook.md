@@ -88,6 +88,9 @@ For the **first Gate G01**, `combined_review/tools/e11_g01_fci_backend_precode_p
 ```bash
 # Run after section C creates ENV-BASE; use a clean pinned review checkout.
 G01_REVIEW_SHA="$G01_REVIEW_TARGET_FULL_SHA"
+# Syntax check only: do not generate __pycache__ in the read-only checkout.
+"$OUT/env-BASE/bin/python" -B -c 'import ast, pathlib, sys; ast.parse(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))' \
+  "$E11_DIR/combined_review/tools/e11_g01_fci_backend_precode_probe.py"
 "$OUT/env-BASE/bin/python" \
   "$E11_DIR/combined_review/tools/e11_g01_fci_backend_precode_probe.py" \
   --expected-head "$G01_REVIEW_SHA" \
@@ -125,4 +128,4 @@ No Contract Freeze/S11 Coding Authorization may be inferred from the Owner's A/A
 
 ### C.2 Supplementary categorical coverage and SHA authority (2026-11-22)
 
-At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft4.json` (historical draft3 remains immutable).
+At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft5.json` (historical draft3 remains immutable).
