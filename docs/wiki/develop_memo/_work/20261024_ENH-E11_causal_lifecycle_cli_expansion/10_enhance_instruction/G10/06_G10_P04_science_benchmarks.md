@@ -259,7 +259,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 - 独立検証ではDGP version・seed・Method-specific推論・Monte Carlo SE/Coverage/多重性と適格Run分母を定義する。型・Schema一致は科学的Coverageや識別の証明ではない。
 - 顧客に実際に配布する場合は対象PackageのLicenseと配布方式をOwner/法務が手動確認し、未承認の納入を禁止する。内部CLI実行にSBOM生成や受領者別承認管理を要求しない。
 
-参照：[E11 Domain/Ports](30_61_causal_domain_ports.md)、[Execution/Publisher](30_62_local_execution_publication.md)、[CLI Port IF](../23_api_interface_design/23_41_cli_scientific_ports.md)、[Method Scope](../10_requirements_definition/10_32_scientific_method_scope.md)。
+参照：[E11 Domain/Ports](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)、[Execution/Publisher](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md)、[CLI Port IF](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md)、[Method Scope](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)。
 
 **実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
 
