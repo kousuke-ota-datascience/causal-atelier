@@ -291,7 +291,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 
 ## PREP-04.1 integration preflight (DRAFT)
-- P3-M04 owner P01: five strict profiles and DGP-012, DGP-013; NEG-022; REF-Q01; science/backend BLOCKED.
+- P3-M04 owner P01: five strict profiles and DGP-012（初期2×2正例）, DGP-013（P3-M04 STAGGEREDは将来・P3-M05は別）; NEG-022; REF-Q01; science/backend BLOCKED.
 - P3-M05 owner P01: five strict profiles and DGP-013; NEG-022; REF-Q01; science/backend BLOCKED.
 - P3-M06 owner P02: five strict profiles and DGP-014; NEG-023; REF-Q02; science/backend BLOCKED.
 
