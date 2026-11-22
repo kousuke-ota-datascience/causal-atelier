@@ -1,6 +1,6 @@
 {
   "catalog_version": "e11-method-profile-dispatch/draft1",
-  "status": "200_LOSSLESS_FACTORED_DRAFTS_VERIFIED_STRUCTURAL_IDENTITY; FORMAL_JSONSCHEMA_VALIDATOR_NOT_EXECUTED; ACTIVE_RUNTIME_REGISTRY_UNCHANGED",
+  "status": "40_METHOD_5_KIND_FACTORED_OWNER_A_P3M04_PATCH_AUTHOR_AST_CHECK_ONLY; FORMAL_DRAFT202012_VALIDATOR_NOT_EXECUTED; ACTIVE_RUNTIME_REGISTRY_UNCHANGED",
   "method_count": 40,
   "profile_count": 200,
   "kinds": [
@@ -1515,11 +1515,23 @@
       "method_id": "P3-M04",
       "kind": "method_config",
       "source_schema": "e11_p3_m04_method_config_v1.schema.json",
-      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED",
+      "status": "OWNER_A_SCOPE_ADOPTED_SCIENCE_NOT_VALIDATED",
       "source_baseline_schema": "e11_p3_m04_method_config_v1.schema.json",
       "factored_schema": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_method_config_factored_v1.json",
       "factored_overlay_method_id": "P3-M04",
-      "factorization_state": "AST_IDENTICAL_TO_BASELINE; STATIC_NEGATIVE_PARITY_CHECKED; FORMAL_VALIDATOR_PENDING"
+      "factorization_state": "AST_IDENTICAL_TO_CURRENT_SOURCE_AUTHOR_CHECK; FORMAL_DRAFT202012_VALIDATOR_PENDING",
+      "variant_capabilities": {
+        "DID_2X2": "INITIAL_ELIGIBLE_SUBJECT_TO_PREFLIGHT_AND_SCIENCE",
+        "STAGGERED": "DEFERRED_FAIL_CLOSED"
+      },
+      "deferred_negative": {
+        "reason_code": "SCIENCE_CONTRACT_NOT_AVAILABLE",
+        "technical_status": "CAPABILITY_UNAVAILABLE",
+        "cli_exit": 4,
+        "estimation_invocations": 0,
+        "successful_effect_result": false,
+        "aggregate_fallback": false
+      }
     },
     {
       "method_id": "P3-M04",
@@ -1545,11 +1557,23 @@
       "method_id": "P3-M04",
       "kind": "output_profile",
       "source_schema": "e11_p3_m04_output_profile_v1.schema.json",
-      "status": "ORIGINAL_DRAFT_NOT_SCIENTIFICALLY_VALIDATED",
+      "status": "OWNER_A_SCOPE_ADOPTED_SCIENCE_NOT_VALIDATED",
       "source_baseline_schema": "e11_p3_m04_output_profile_v1.schema.json",
       "factored_schema": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_output_profile_factored_v1.json",
       "factored_overlay_method_id": "P3-M04",
-      "factorization_state": "AST_IDENTICAL_TO_BASELINE; STATIC_NEGATIVE_PARITY_CHECKED; FORMAL_VALIDATOR_PENDING"
+      "factorization_state": "AST_IDENTICAL_TO_CURRENT_SOURCE_AUTHOR_CHECK; FORMAL_DRAFT202012_VALIDATOR_PENDING",
+      "variant_capabilities": {
+        "DID_2X2": "INITIAL_ELIGIBLE_SUBJECT_TO_PREFLIGHT_AND_SCIENCE",
+        "STAGGERED": "DEFERRED_FAIL_CLOSED"
+      },
+      "deferred_negative": {
+        "reason_code": "SCIENCE_CONTRACT_NOT_AVAILABLE",
+        "technical_status": "CAPABILITY_UNAVAILABLE",
+        "cli_exit": 4,
+        "estimation_invocations": 0,
+        "successful_effect_result": false,
+        "aggregate_fallback": false
+      }
     },
     {
       "method_id": "P3-M04",
@@ -2013,5 +2037,5 @@
     }
   ],
   "factoring_authority": "factored/*_factored_v1.json, reconstruct common shared_schema+per-Method overlay before Draft202012 strict validation",
-  "authoring": "Original individual 200 draft files remain immutable baselines; no source code/backend/active method registry changed."
+  "authoring": "Individual 200 source draft files are tracked by current source Git blob SHA; Owner-A scientific edits to P3-M04 method_config/output_profile change their SHA and require fresh parity evidence. No runtime MethodRegistry or Backend/Science code change authorized."
 }
