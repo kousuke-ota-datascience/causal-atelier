@@ -1,0 +1,294 @@
+{
+  "kind": "inference_profile",
+  "batch": 1,
+  "methods": [
+    "P1-M10",
+    "P1-M11",
+    "P1-M12",
+    "P1-M13",
+    "P1-M14",
+    "P1-M15",
+    "P1-M16",
+    "P1-M17"
+  ],
+  "entries": [
+    {
+      "id": "P1-M10",
+      "file": "e11_p1_m10_inference_profile_v1.schema.json",
+      "blob_sha": "3ae5558b7252d99910e6b19ccdcaa7565ccf2cde",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m10:inference_profile:draft1",
+        "title": "P1-M10 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "requested": {
+                  "const": false
+                }
+              },
+              "required": [
+                "requested"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_level": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_level": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "P1-M11",
+      "file": "e11_p1_m11_inference_profile_v1.schema.json",
+      "blob_sha": "83060fd5ce7f1e88633c442be6e8abf26bea093c",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m11:inference_profile:draft1",
+        "title": "P1-M11 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "requested": {
+                  "const": false
+                }
+              },
+              "required": [
+                "requested"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_level": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_level": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "P1-M12",
+      "file": "e11_p1_m12_inference_profile_v1.schema.json",
+      "blob_sha": "8b75fa82251b8e5f028b8207a0e664e0e37b30f4",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m12:inference_profile:draft1",
+        "title": "P1-M12 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M13",
+      "file": "e11_p1_m13_inference_profile_v1.schema.json",
+      "blob_sha": "b8c7b71324b1ede3d3acb5dc7d929673b136601b",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m13:inference_profile:draft1",
+        "title": "P1-M13 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M14",
+      "file": "e11_p1_m14_inference_profile_v1.schema.json",
+      "blob_sha": "6a7e8c1d92e2340cb29ce7a60833648df9e9ef6f",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m14:inference_profile:draft1",
+        "title": "P1-M14 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M15",
+      "file": "e11_p1_m15_inference_profile_v1.schema.json",
+      "blob_sha": "0956f34d1dc820df0cfdaa7a879da342a85858a7",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m15:inference_profile:draft1",
+        "title": "P1-M15 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M16",
+      "file": "e11_p1_m16_inference_profile_v1.schema.json",
+      "blob_sha": "022055a75b19161769452ccb7fa852ddb7f50b80",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m16:inference_profile:draft1",
+        "title": "P1-M16 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M17",
+      "file": "e11_p1_m17_inference_profile_v1.schema.json",
+      "blob_sha": "2915293d4a41c6f3f66dfd52853b37b8c90c63ba",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m17:inference_profile:draft1",
+        "title": "P1-M17 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}
