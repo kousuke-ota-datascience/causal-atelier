@@ -2,13 +2,13 @@
 
 **Date:** 2026-11-23 JST
 **Controlling Owner policy:** `DEC-G01-EXEC-01=ADOPTED`, [177](177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md). `DEC-PREPCODE-01=B` remains applicable to other Gates.
-**Docket state:** `S10_REVIEW_PACKET_READY / S10_OWNER_APPROVAL_NOT_GRANTED / S11_OWNER_APPROVAL_NOT_GRANTED / ALL_EXTERNAL_EVIDENCE_PENDING`.
-**Author candidate source commit (not an Owner Freeze):** `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, branch `prototype/ariadne_mvp`. At actual S10 approval explicitly pin/verify one `G01_FROZEN_SOURCE_FULL_SHA` and `uv.lock` blob/SHA256 (not inferred from current branch HEAD); if other active contracts changed, recheck their exact content and impact before approval.
+**Docket state (after separate Owner approval):** `PROVISIONAL_G01_S10_OWNER_APPROVED_IN_179 / LIMITED_G01_S11_OWNER_APPROVAL_NOT_GRANTED / ALL_EXTERNAL_EVIDENCE_PENDING`. See [179](179_20261123_g01_provisional_s10_owner_approved.md).
+**Owner-approved provisional-S10 frozen source commit (per 179):** `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, branch `prototype/ariadne_mvp`. At actual S10 approval explicitly pin/verify one `G01_FROZEN_SOURCE_FULL_SHA` and `uv.lock` blob/SHA256 (not inferred from current branch HEAD); if other active contracts changed, recheck their exact content and impact before approval.
 **Candidate source lock provenance:** At immutable candidate commit `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, `uv.lock` Git blob SHA is `2b83110e86b26b7969fbddf8f98a727370ae19f7` (Git source-object identity; not SHA-256). At actual Owner S10 freeze, separately record/check actual `sha256sum uv.lock` on the identical checkout; no target Linux runtime is claimed.
 
 **Author normative inventory:** `s09_post_reconciliation_document_snapshot_draft14.json` 402 paths; G01 source candidate `s09_g01_scoped_review_inventory_draft8.json` 11 OWN_GATE + 69 COMMON_SHARED + 5 IMPACT_SAMPLE = 85 initial semantic candidates, 317 future Gate NOT_REVIEWED. Source SHA inventory is not an independent audit.
 
-## A. Provisional G01-S10 — Owner action 1 (NOT YET ISSUED)
+## A. Provisional G01-S10 — Owner action 1 (APPROVED; original proposed wording preserved below)
 
 **Proposed Owner approval text:** “G01の共通・固有実装契約06/P00〜P05/07、対象E11 v1 Wire/Port/Privacy/Publisher/Reader、P1-M06 FCI、既存Product v2の保護条件と既定の独立07/999受入項目について、指定full SHAを暫定S10契約として固定する。独立S09/B02/B04/B05の未実行・未承認を明示的に留保し、G01_999までの必須判定として維持する。この承認単独ではCoding Agentを起動しない。”
 
@@ -27,9 +27,9 @@
 
 **Non-negotiable:** non-null BK (including empty BK) typed `BACKEND_SEMANTICS_UNVERIFIED` exit4 pre-FCI until independently accepted correct implementation. This preserves the BK-positive final acceptance, not a waiver. No synthetic or author-only evidence may substitute for independent PASS. Future Gate S09/S10/S11 and genuine upstream 999 remain as DEC-PREPCODE-01=B.
 
-**S10 owner result field:** `NOT_DECIDED`; once approved, record `APPROVED_PROVISIONAL` / `REJECTED`, actual full frozen SHA, source/lock digest, contract scope, exception ledger and date in a distinct Owner decision record. Do not mutate this preparatory text to imply silent approval.
+**S10 Owner result: `APPROVED_PROVISIONAL` on 2026-11-23 JST**, in independent decision record `179_20261123_g01_provisional_s10_owner_approved.md`. Frozen full source SHA `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`; `uv.lock` Git blob SHA `2b83110e86b26b7969fbddf8f98a727370ae19f7`. This is human approval in the conversation, **not** a fabricated separate digital signature or a Linux-run SHA256 audit. S11 is **not** granted.
 
-## B. Limited G01-S11 — Owner action 2 (SEPARATE, ONLY AFTER S10)
+## B. Limited G01-S11 — Owner action 2 (NEXT OWNER DECISION; S10 ALREADY APPROVED)
 
 **Proposed Owner approval text:** “暫定S10で固定したG01のfull SHA・source/lock・06/P01〜P05/07を対象に、G01のCoding Agentによる実装・開発者テストを限定承認する。未取得の独立S09、実Python3.12 B02/B04、独立B05及び実FS/Reader/T2/T3/独立07は、G01_999合格の必須条件として保持する。科学的PASS、Gate999、他Gate実装、本番科学的提供は許可しない。”
 
@@ -37,10 +37,10 @@
 
 **Permitted after S11:** coding assigned E11 new local CLI and shared implementation, enhancement-local developer tests within established lifecycle policy, candidate assembly, independent 07/T2/T3 and actual runtime checks *when capable agents/environment exist*. P01 → (P02,P03) → P04 → P05; protect legacy Product v2. Evidence/CI failures stay `BLOCKED` or `FAIL`, not patched by unapproved algorithm changes. If independent S09 after coding detects frozen contract defect, follow formal 09, Owner change impact and re-freeze/re-authorization when substantive; do not override science targets.
 
-**S11 owner result field:** `NOT_DECIDED`; not implied by Owner adoption of `DEC-G01-EXEC-01` or future S10 approval. No Coding Agent execution from this docket.
+**S11 owner result field:** `NOT_DECIDED`; not implied by Owner adoption of `DEC-G01-EXEC-01` or actual S10 approval in `179`. No Coding Agent execution from this docket.
 
 ## C. Practical next action — no impossible pre-code activity
 
-1. Owner decides **only provisional G01 S10** once this packet and exact source freeze SHA are presented; use `APPROVE / CHANGE / REJECT`. Do not request B02/B04 Linux or independent S09/B05 results to issue this provisional S10.
+1. **Completed:** Owner explicitly approved provisional G01 S10 for frozen source `a05fd072...`; see `179`. No B02/B04 Linux or independent S09/B05 claims were manufactured.
 2. **After** Owner S10, issue separate **limited G01 S11** to permit coding; do not demand unavailable experimental evidence beforehand.
 3. In the actually authorized coding environment, implement 06/07 faithfully. Independently verify every X item before `G01_999 PASS`; otherwise `BLOCKED`. The present session has no Owner Linux VM or real independent reviewer; these are recorded as external pending, not executable next steps for this session.
