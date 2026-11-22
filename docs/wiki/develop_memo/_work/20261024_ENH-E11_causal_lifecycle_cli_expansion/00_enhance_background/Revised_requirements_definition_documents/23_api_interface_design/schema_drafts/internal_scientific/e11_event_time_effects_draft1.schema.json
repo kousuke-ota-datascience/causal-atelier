@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:event_time_effects:draft1",
+  "title": "E11 internal event_time_effects typed scientific artifact — DRAFT",
+  "description": "Not a public wire version. JSON shape alone does not prove scientific validity, privacy, backend or source lineage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "source_ref",
+    "reference_period",
+    "time_unit",
+    "effects",
+    "pretrend_diagnostics_ref"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-internal-event-time/draft1"
+    },
+    "method_id": {
+      "const": "P3-M05"
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "reference_period": {
+      "type": "integer"
+    },
+    "time_unit": {
+      "enum": [
+        "DAY",
+        "WEEK",
+        "MONTH",
+        "PERIOD"
+      ]
+    },
+    "effects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_time",
+          "cohort_key",
+          "effect",
+          "inference_status",
+          "interval_ref"
+        ],
+        "properties": {
+          "event_time": {
+            "type": "integer"
+          },
+          "cohort_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effect": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "inference_status": {
+            "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE",
+              "UNSUPPORTED",
+              "FAILED",
+              "NOT_REQUESTED"
+            ]
+          },
+          "interval_ref": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "identity",
+                  "relative_key",
+                  "sha256",
+                  "media_type",
+                  "schema_version"
+                ],
+                "properties": {
+                  "identity": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "relative_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "media_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "schema_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "pretrend_diagnostics_ref": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "identity",
+            "relative_key",
+            "sha256",
+            "media_type",
+            "schema_version"
+          ],
+          "properties": {
+            "identity": {
+              "type": "string",
+              "minLength": 1
+            },
+            "relative_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "media_type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schema_version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:method_diagnostics:draft1",
+  "title": "E11 internal method_diagnostics typed scientific artifact — DRAFT",
+  "description": "Not a public wire version. JSON shape alone does not prove scientific validity, privacy, backend or source lineage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "source_ref",
+    "operation",
+    "diagnostic_status",
+    "design_ref",
+    "statistics",
+    "reason"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-internal-method-diagnostics/draft1"
+    },
+    "method_id": {
+      "enum": [
+        "P1-M12",
+        "P1-M13",
+        "P1-M14",
+        "P1-M15",
+        "P1-M16",
+        "P1-M17",
+        "P1-M18",
+        "P1-M19",
+        "P1-M20"
+      ]
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "operation": {
+      "enum": [
+        "REFUTE",
+        "SENSITIVITY",
+        "DIAGNOSE"
+      ]
+    },
+    "diagnostic_status": {
+      "enum": [
+        "COMPUTED",
+        "NOT_APPLICABLE",
+        "REQUIRES_REVIEW",
+        "UNAVAILABLE",
+        "FAILED"
+      ]
+    },
+    "design_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "statistics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "statistic_name",
+          "role",
+          "value",
+          "p_value",
+          "null_distribution_ref"
+        ],
+        "properties": {
+          "statistic_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "NULL_TEST",
+              "SENSITIVITY",
+              "STABILITY",
+              "BALANCE",
+              "OVERLAP",
+              "OTHER"
+            ]
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "p_value": {
+            "oneOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "null_distribution_ref": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "identity",
+                  "relative_key",
+                  "sha256",
+                  "media_type",
+                  "schema_version"
+                ],
+                "properties": {
+                  "identity": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "relative_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "media_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "schema_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

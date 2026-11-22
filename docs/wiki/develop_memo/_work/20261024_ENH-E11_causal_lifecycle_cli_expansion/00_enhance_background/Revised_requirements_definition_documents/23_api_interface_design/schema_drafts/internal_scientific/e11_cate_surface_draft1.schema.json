@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:cate_surface:draft1",
+  "title": "E11 internal cate_surface typed scientific artifact — DRAFT",
+  "description": "Not a public wire version. JSON shape alone does not prove scientific validity, privacy, backend or source lineage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "source_ref",
+    "estimand_family",
+    "predeclared_grid_ref",
+    "grid_origin",
+    "values",
+    "observed_rows_included"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-internal-cate-surface/draft1"
+    },
+    "method_id": {
+      "enum": [
+        "P2-M01",
+        "P2-M02",
+        "P2-M03",
+        "P2-M04",
+        "P2-M05",
+        "P2-M06",
+        "P2-M07",
+        "P2-M08"
+      ]
+    },
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "estimand_family": {
+      "enum": [
+        "NON_IV_CATE",
+        "CONDITIONAL_IV_STRUCTURAL_SLOPE"
+      ]
+    },
+    "predeclared_grid_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "grid_origin": {
+      "const": "PRECOMMITTED_NON_OBSERVED_DESIGN_GRID"
+    },
+    "values": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "grid_key",
+          "effect",
+          "inference_status",
+          "confidence_interval_ref"
+        ],
+        "properties": {
+          "grid_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effect": {
+            "type": "number"
+          },
+          "inference_status": {
+            "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE",
+              "UNSUPPORTED",
+              "FAILED",
+              "NOT_REQUESTED"
+            ]
+          },
+          "confidence_interval_ref": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "identity",
+                  "relative_key",
+                  "sha256",
+                  "media_type",
+                  "schema_version"
+                ],
+                "properties": {
+                  "identity": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "relative_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "media_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "schema_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "observed_rows_included": {
+      "const": false
+    }
+  }
+}
