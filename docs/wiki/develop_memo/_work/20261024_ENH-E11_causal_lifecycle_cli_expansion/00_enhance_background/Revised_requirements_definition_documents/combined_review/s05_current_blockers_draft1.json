@@ -1,16 +1,16 @@
 {
-  "schema_version": "e11-s05-readiness/20261122",
+  "schema_version": "e11-s05-readiness/20261122-rev2",
   "git_head_at_review": "91d7d9d4631d2248bcc012f9b48ae2f0e1ac5007",
-  "status": "S05_BLOCKED",
+  "status": "S05_IN_PROGRESS_BLOCKED",
   "coding_authorization": false,
   "contract_freeze": false,
   "owner_decision": "DEC-S05-AR01_A_ADOPTED",
   "s05": {
     "B01": "200_SCHEMA_LOSSLESS_AST_DONE",
     "B02": "STRUCTURAL_200_PASS_FORMAL_VALIDATOR_NOT_RUN",
-    "B03": "TYPED_ARTIFACT_DRAFT_SEMANTIC_NOT_RUN",
+    "B03": "5_INTERNAL_DRAFTS_9_CROSS_FIELD_RULES_ADDED; FULL_SEMANTIC_REVIEW_PENDING",
     "B04": "VERSIONS_PROPOSED_TARGET_PY312_NOT_RUN",
-    "B05": "41_ORACLE_RECIPES_8_METRIC_KINDS_PREREG_SCHEMA_VALIDATED_REFERENCE_T2_T3_NOT_RUN",
+    "B05": "41_PLAN_ORACLES_ONLY; PREREG_SCHEMA_STD_VALIDATOR_1_POS_15_NEG_PASS; INDEPENDENT_REFS_T2_T3_NOT_RUN",
     "B06": "STATIC_71_DOCUMENT_SCAN_FINISHED_FAIL"
   },
   "following_steps": {
@@ -67,5 +67,51 @@
       "unblock_action": "This is an S06–S09 work item, not a reason to falsify S05-B02–B05 completion; sequence remains unchanged",
       "decision_needed": "NO"
     }
-  ]
+  ],
+  "owner_decisions": [
+    {
+      "decision": "DEC-S05-AR01",
+      "choice": "A",
+      "status": "REVIEW_FIRST_ADOPTED"
+    },
+    {
+      "decision": "DEC-S05-02",
+      "choice": "A",
+      "status": "INDEPENDENT_REVIEW_AGENT_MODEL_ADOPTED_BUT_NO_AGENT_LAUNCHED"
+    },
+    {
+      "decision": "DEC-S05-03",
+      "choice": "A",
+      "status": "EXISTING_LINUX_ISOLATED_ENV_APPROVED_BUT_NO_VM_SESSION_ACCESS"
+    }
+  ],
+  "execution_evidence": [
+    {
+      "id": "B05_STANDARD_VALIDATOR_ONE_SCHEMA",
+      "source_blob_sha": "6dc5e9cd7df208ef226d0bb4dea86527a4bb1368",
+      "python": "3.13.5",
+      "jsonschema": "4.26.0",
+      "positive": 1,
+      "negative_rejected": 15,
+      "scope": "Only E11 prereg 1 schema; actual standard Draft202012, no science"
+    },
+    {
+      "id": "B03_DRAFT_REFINEMENT",
+      "constraints": 9,
+      "source": "157_20261122_b03_cross_field_constraints.md",
+      "scope": "Cross-field structural contract, not independent readback"
+    },
+    {
+      "id": "DEC_S05_02_03",
+      "source": "156_20261122_dec_s05_02_03_owner_review_and_environment.md"
+    }
+  ],
+  "unavailable_execution_paths": {
+    "owner_linux_shell": "NOT_CONNECTED",
+    "target_python312": "NOT_INSTALLED_IN_AVAILABLE_CONTAINER",
+    "github_clone_in_container": "FAILED_DNS_GITHUB_COM",
+    "notion_independent_agent": "ENTITLEMENT_REQUIRED_BUSINESS_NO_SESSION",
+    "alternate_independent_agent": "NOT_AVAILABLE_IN_THIS_TOOL_SESSION"
+  },
+  "last_review_note": "Owner A/A adopted, no actual remote VM or independent Reviewer execution; S05/S06/S09/S10/S11 no-go unchanged"
 }
