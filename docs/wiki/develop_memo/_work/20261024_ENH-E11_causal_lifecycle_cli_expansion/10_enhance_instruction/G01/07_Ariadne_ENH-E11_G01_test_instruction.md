@@ -78,7 +78,7 @@
 
 1. `DGP`: node集合（observed/latent分離）、SCM式・親構造・母集団CI制約・faithfulness、効果の強さ、sample size/n、CI familyと分布仮定、seed、Generator/source SHAを固定。
 2. `Reference`: 真のDAG → 観測変数へのlatent projection / MAG → Markov同値類のPAGのうち**強制される端点・不確定端点を独立理論で導出**。生成DAGの全部の方向を直接PAGの正解にしてはならない。
-3. `Serialization/typing`: PAG辺のendpoint・GraphVersion parent・JSON/Manifest全Hashの定義済みFixtureは**100%一致（false authorization 0）**。ここはstochastic測定と独立して合否確定。
+3. `Serialization/typing`: PAG辺のendpoint・Local科学的親provenance・Product version_id/parent_version_id=null・JSON/Manifest全Hashの定義済みFixtureは**100%一致（false authorization 0）**。ここはstochastic測定と独立して合否確定。
 4. `Stochastic performance`: 強信号で適格なGraph DGPについて、Owner DEC07の候補`adjacency Precision, Recall ≥0.80; FPR≤0.10`を**候補**として独立Pilotで妥当性を検討し、Hard/conditional/N/Aの分類を決める。強制Endpointは同値類Oracleに対してのみ測る。数値未確定の方向正答率を勝手に100%としない。
 5. `Multiplicity/K/R`: Gate全体のmandatory stochastic Hard cellを列挙した後、Bonferroni`α_j=.05/K`、replicate-level WilsonなどOwner DEC07の統計設計に従う。T2 PilotはGraphの場合まず約100 repsを**計算量見積り**の起点とし、T3正式R/K/seed/CPU capは本GateのScience実行前に確定。Pilot結果をT3の分母に混ぜない。
 6. 判定は`PASS/FAIL/INCONCLUSIVE/BLOCKED`。独立PAG Oracle未完成なら`G01-07-09=BLOCKED`、強信号Graphの数値Science PASSを捏造しない。ただし他の機械Contract テスト実装・実行を妨げない。
@@ -114,7 +114,7 @@ defect_or_reason | evidence_relative_key
 | AC | MUST acceptance claim | Primary test layer |
 | --- | --- | --- |
 | AC-01 | Study/ContentRef/Version/Method Config strict integrity | unit + contract; FD security in integration |
-| AC-02 | Lossless PAG/GraphVersion and strict JCS hashes | unit + contract |
+| AC-02 | Lossless PAG/Local graph identity and strict JCS hashes | unit + contract |
 | AC-03 | Linux same-FS no-replace atomic publish/readback/privacy | contract + real Linux integration |
 | AC-04 | Effective FCI/CI/BK validity and independent MAG/PAG oracle | contract + real backend integration + independent scientific evidence |
 | AC-05 | DISCOVER-only status/result semantics; v2 regression | contract + integration; protected legacy suite at current physical location |
