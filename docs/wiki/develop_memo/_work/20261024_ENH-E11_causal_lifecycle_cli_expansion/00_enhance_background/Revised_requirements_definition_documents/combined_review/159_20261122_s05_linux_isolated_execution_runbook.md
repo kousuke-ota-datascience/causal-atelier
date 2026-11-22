@@ -132,6 +132,10 @@ No Contract Freeze/S11 Coding Authorization may be inferred from the Owner's A/A
 
 ### C.2 Supplementary categorical coverage and SHA authority (2026-11-22)
 
-At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft7.json` (historical draft3 remains immutable).
+At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft8.json` (historical draft3 remains immutable).
 
 **Preflight failure behavior:** Before any FCI import or fit, the review-only script checks Python exactly 3.12, full `--expected-head` equality and clean Git worktree. On mismatch it writes `BLOCKED_PRECONDITION_NO_BACKEND_EXECUTION` to the report and exits nonzero without invoking FCI. If the prerequisites pass but one CI fit raises, the failure is retained under that method, while the remaining `fisherz/chisq/gsq` diagnostics and invalid-CI negative may still be collected. The report still cannot certify cross-process stdout isolation, the application adapter, or independent MAG/PAG/BK scientific acceptance. An exception, nonzero exit or missing report must be treated as BLOCKED, never erased by successful modes.
+
+## Owner DEC-G01-EXEC-01 rephased scheduling (2026-11-23)
+
+This Linux runbook is **not an actionable next step of the current ChatGPT session** (existing Owner VM unavailable). The B02/B04 target environment probes are mandatory **after separate Owner provisional G01-S10 and limited G01-S11, before G01_999 scientific/technical acceptance**, never requirements for issuing those two approvals. Do not claim runtime PASS or delay author contract/authorization preparation to iterate additional review-only probes. See combined_review/177 and 178.
