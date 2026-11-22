@@ -25,7 +25,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 
 **候補依存:** `G01`・`G02`のlatest canonical 999 PASS。この依存DAGはOwner一括レビューで承認済み。各上流Gateのlatest canonical 999 PASSは実行時に別途検証する。Issue追跡は999の代替でない。
 
-**科学的失敗モードと未決事項:** 2x2とstaggered DiDを同一TWFE ATTへ還元せず、ITSにiid SEを無検証適用しない。
+**科学的失敗モード（P3-M04の初期variant判断はOwner Aで解決済み）:** STAGGEREDをDID_2X2/TWFEへfallbackせず、ITSにiid SEを無検証適用しない。
 
 **対象外:** 既存Product科学ABIの変更、Web/API/DB/Worker新規統合、G01のPublisherやGraphVersionを別実装すること、他Gate MethodをScopeなしに追加すること、顧客配布許可、現時点での正本文書昇格。
 
@@ -59,7 +59,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 
 | Method / estimand | DD proof ID | Positive / Negative | Independent reference | AC | status from RD |
 |---|---|---|---|---|---|
-| `P3-M04` DiD／ATT（初期DID_2X2のみ（STAGGERED=DEFERRED）） | `DD-E11-METH-P304` | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| `P3-M04` DiD／初期DID_2X2 ATTのみ（STAGGERED=DEFERRED） | `DD-E11-METH-P304` | DGP-012（初期2×2正例）, DGP-013（P3-M04 STAGGEREDは将来・P3-M05は別）; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | `P3-M05` Event Study／event-time効果 | `DD-E11-METH-P305` | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | `P3-M06` Interrupted Time Series／介入時点のlevel | `DD-E11-METH-P306` | DGP-014; NEG-023 | REF-Q02 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q02 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 
@@ -75,7 +75,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 - Scientific `Identification/Point/Inference/ScienceAcceptance`とTechnical outcomeは別軸。不適格なMethod、無識別、Unsupported CI、missing optional Backendは型付き負結果またはTechnical error。未実行をPASS、point-onlyをCI有り、Backend自身の出力を独立Oracleにしない。
 - `LocalCausalUseCase`はstrict ValidatedStudyから各Portへ委譲し、Fileはstaging→atomic Publisher→independent readback。G05のPolicy認可前は個票禁止。
 
-**このGate固有の実装判断:** 2x2とstaggered DiDを同一TWFE ATTへ還元せず、ITSにiid SEを無検証適用しない。各PxxのPositive/NegativeとBackend/Inference/Estimand/Statusを実行前にSchema/Registryで照合する。
+**このGate固有の実装判断:** 初期2×2 ATTのみ実行適格、STAGGEREDはDEFERREDのtyped拒否。ITSにiid SEを無検証適用しない。各PxxのPositive/NegativeとBackend/Inference/Estimand/Statusを実行前にSchema/Registryで照合する。
 
 ## 6. Gate Coding-side Verification and Candidate Assembly
 
@@ -87,7 +87,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 ## 7. Freeze前のReview/Stop条件
 
 1. OwnerがGate依存・Acceptance Boundary・WORK_PACKAGE/Pxx順序を採否する。
-2. `10_32`のMethod config、Estimand、DGP、NEG、Reference、実効Backend/API/Inferenceの適格性を検証する。特に本Gateの未決事項 2x2とstaggered DiDを同一TWFE ATTへ還元せず、ITSにiid SEを無検証適用しない。
+2. `10_32`のMethod config、Estimand、DGP、NEG、Reference、実効Backend/API/Inferenceの適格性を検証する。特に初期2×2 ATTとSTAGGERED DEFERREDのcapability境界を守り、ITSにiid SEを無検証適用しない。
 3. 06/PxxのClass.Field/Constructor/Signature/Result authorityと既存Source、共有Port/Bridgeを整合させ、必要な設計欠落を閉じる。
 4. **既存Gate07 DRAFTを本06/Pxxと照合・修正し**、Method別AC/独立科学閾値・負例・固定Fixture/Runtime・No PASS条件を確定して06/07をともにFreezeする。
 5. Baseline full SHA、上流canonical 999、Runtime/Lock/License preflight、Ownerの明示Coding Authorizationが揃うまで`CODING_NOT_AUTHORIZED`。不足時は`BLOCKED_CONTRACT_AMBIGUITY`。
@@ -96,7 +96,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 
 
 ## PREP-04.1 Method ownership matrix (DRAFT)
-- P3-M04 Pxx P01 ESTIMATE/ATT Config(design_variant, estimator_spec_ref, cluster_covariance_spec_ref), Design(unit_id, time_id, treatment, outcome, parallel_trends_assumption_ref), DGP-012, DGP-013; NEG-022; REF-Q01; backend/Science not verified.
+- P3-M04 Pxx P01 ESTIMATE/ATT Config(design_variant, estimator_spec_ref, cluster_covariance_spec_ref), Design(unit_id, time_id, treatment, outcome, parallel_trends_assumption_ref), DGP-012（初期2×2正例）, DGP-013（P3-M04 STAGGEREDは将来・P3-M05は別）; NEG-022; REF-Q01; backend/Science not verified.
 - P3-M05 Pxx P01 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(event_window_start, event_window_end, reference_event_time, cohort_estimator_spec_ref, cluster_covariance_spec_ref), Design(unit_id, time_id, treatment, outcome, cohort_id, pretrend_assumption_ref), DGP-013; NEG-022; REF-Q01; backend/Science not verified.
 - P3-M06 Pxx P02 ESTIMATE/10_32 semantic target (not assigned canonical enum) Config(effect_components, trend_spec_ref, serial_covariance_spec_ref), Design(time_index, outcome, intervention_time, seasonality_spec_ref, autocorrelation_evidence_ref), DGP-014; NEG-023; REF-Q02; backend/Science not verified.
 
