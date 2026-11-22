@@ -13,7 +13,7 @@
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** Sharp/Fuzzy RDDとB0/B1 IV/2SLSを局所Estimand・弱IV AR集合付きで提供する。
 
-**科学/Designの必須制約:** B0 complier LATEとB1 structural slopeを区別。HC1 AR集合をfinite gridだけで判定しない。
+**科学/Designの必須制約:** B0 complier LATEとB1 structural slopeを区別。弱IV頑健AR信頼集合の全実数範囲をfinite gridだけで判定しない。HC1/χ²(1)反転は独立科学審査待ちの算法候補であり未Freeze。
 
 Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未FreezeのGate07で自分のScopeを拡張せず、当該Gateの06/P00/07は追跡・独立Acceptanceの役割と区別。Working SourceのClass存在とSignatureを確認し、設計上の存在を実装済みと誤認しない。
 
@@ -28,7 +28,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 ### 2A. Existing Source verified vs E11 RDD/IV API（`2cf28f59a324`）
 - **現行ABI:** `src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(self, input_: EstimationInput, output_dir: Path)->list[ScientificResultDescriptor]`は旧Product Path API。 `src/ariadne/causal/inference/estimators/treatment_effect.py`の`TreatmentEffectEstimator`は既存diff/OLS/IPW/AIPW数値Kernelだが、Sharp/Fuzzy RD、Wald、B0/B1 2SLS、Anderson–Rubinの実装済み証拠ではない。旧APIを変更・無検証castせず新Typed EstimatorPortへ共有純粋Kernelを接続する。
-- **新規科学境界:** `RddAdapter/WaldRatioAdapter/TwoSlsAdapter`は§3/§4の設計Class。P3-M09/M10のB0 binary Z/A complier LATE、P3-M11のB1 C調整付きstructural IV slopeを混同しない。HC1 Anderson–Rubinは各候補βの`Y-βA ~ [Q,Z]`でZ係数のzero testを反転し、全実数/非有界/非連結/退化を含む集合をlossless保存。有限gridは全実数tailの証明でない。Independent REF、分散/退化処理・推論受入の未決は`BLOCKED_SCIENCE_REFERENCE_UNRESOLVED`、Agent独断で閾値を選択しない。
+- **新規科学境界:** `RddAdapter/WaldRatioAdapter/TwoSlsAdapter`は§3/§4の設計Class。P3-M09/M10のB0 binary Z/A complier LATE、P3-M11のB1 C調整付きstructural IV slopeを混同しない。**未FreezeのHC1/χ²(1) Anderson–Rubin候補**は各候補βの`Y-βA ~ [Q,Z]`でZ係数のzero testを反転する案であり、独立数学・統計審査の対象であって、実装済み／採用済みのAlgorithmではない。**採用済み必須契約**は、選定後の弱IV頑健AR信頼集合について全実数/非有界/非連結/退化をlossless保存すること。有限gridは全実数tailの証明でない。算法確定前は`BLOCKED_SCIENCE_METHOD_NOT_FROZEN`としてfail closedし、候補を黙示採用しない。Independent REF、分散/退化処理・推論受入の未決は`BLOCKED_SCIENCE_REFERENCE_UNRESOLVED`、Agent独断で閾値を選択しない。
 - **Ownership:** G01 Registry/GraphVersion/Publisher/Reader、G03 Scientific Coreを二重実装しない。既存Method内の共通計算が新Estimandと一致しない場合は使い回さない。
 
 ### 2B. Standalone Operation/Result/Manifest契約
@@ -222,7 +222,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 - §5の各Method DGP/NEG/REF/DD/ACを保持。Positive DGPとindependent ReferenceをBackend予測から作らない。
 - **Mandatory focused cases:** `P3-M07` Sharp RDはrunning variable R、cutoff c、Bandwidth h、Kernel、Local polynomial order、covariates、Outcome discontinuityをMethod Configで固定し、cutoff近傍だけのTargetを推定。 `P3-M08` Fuzzy RDは同一cutoffにおけるOutcome jumpをTreatment first-stage jumpで割った局所IV/Complier effectとし、sharpの単なる別ラベルにしない。Zero/weak first-stageではfinite inferenceを捏造しない。 Assignment manipulation/density continuity、Covariate continuity、Bandwidth support、left/right sample countとRobust bias correction APIを検証する。`rdrobust`等の配布License適格性と数値推定Scienceは別判定。
-- Unit: domain/Estimand/AR set serialization/edge cases; Contract: Class.Method、typed outputs、result discriminator/lineage; Integration: 実Backend、IV instrument/data support、real Publisher/readback、旧Product v2回帰。Weak IV / negative assumptions/HC1 confidence inversionは独立算出Referenceと照合。
+- Unit: domain/Estimand/AR set serialization/edge cases; Contract: Class.Method、typed outputs、result discriminator/lineage; Integration: 実Backend、IV instrument/data support、real Publisher/readback、旧Product v2回帰。Weak IV / negative assumptions / **独立審査後にFreezeされた**AR inversionを独立算出Referenceと照合。HC1/χ²(1)は未承認候補であり、現時点でその実装／Reference受入を既定条件として強制しない。
 - Environment/Backend/API、Source+fixture+lock SHA、DGP/negative、実行Command/Collection、Expected/Observed、Scientific vs Technical outcomeをEvidence化。未確定Oracle/quant K/R/coverageならBLOCKED、Science PASSは出さない。
 
 ## 7. Checkpoint / Handoff / Stop
