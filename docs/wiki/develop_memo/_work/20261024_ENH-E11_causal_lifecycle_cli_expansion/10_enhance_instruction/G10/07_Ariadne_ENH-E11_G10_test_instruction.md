@@ -37,7 +37,7 @@
 
 ## 3. 41 Method independent scientific obligations — standalone G10 Verification contract
 
-**対象:** G10自体は新Method IDを定義しない。しかしG10-07-04/G10-07-07は、上流G01〜G09で承認された全41 Methodのscientific evidence、current effective Backend、positive/negative、independent referenceと実際の再実行を検証する。Test AgentがGate06/Pxxや外部RDを読まなくても対象Method ID/DD/REF/ACを列挙できるよう、以下に全件保持する。Status列は**作成時点のDRAFT planning state**であり、実行結果・Gate PASS・現在のSource capabilityを意味しない。
+**対象:** G10自体は新Method IDを定義しない。しかしG10-07-04/G10-07-07は、上流G01〜G09で承認された全41 Methodの有効なscientific evidence、current effective Backend、positive/negative、independent referenceを照合し、依存閉包が同一と証明できない影響分の再実行を検証する。Test AgentがGate06/Pxxや外部RDを読まなくても対象Method ID/DD/REF/ACを列挙できるよう、以下に全件保持する。Status列は**作成時点のDRAFT planning state**であり、実行結果・Gate PASS・現在のSource capabilityを意味しない。
 
 | Method | DD | DGP/NEG | Ref | AC | Status |
 |---|---|---|---|---|---|
@@ -87,17 +87,17 @@
 
 **Numerical decision:** T1 deterministic schema/hash/roundtrip and T2 Pilot and T3 confirmatory simulation are independent layers. Method-specific K (multiple comparisons), R (replications), MC-SE, confidence coverage, acceptance boundaries and compute budget must be preregistered before T3; adopted familywise error control is FWER=0.05. Do not infer K/R from this document, do not convert pilot tuning into confirmatory PASS, and do not use output from the backend under test as ground truth. Entire Test Item/Gate PASS requires all blocking proofs for the same Fixed Trial Candidate.
 
-**Compatibility/Legal:** 上流G01〜G09のscience decisionをG10で上書きしない。G10は全41を横断再現し、Source/lock/Backend、effective installed package/version、Legacy CLI Product v2のcurrent invariantを別々に検証。顧客別GPL等のLicense/Delivery判断を自動PASSしない。
+**Compatibility/Legal:** 上流G01〜G09のscience decisionをG10で上書きしない。G10は全41件の独立科学証拠を照合し、変更影響分を横断再実行し、Source/lock/Backend、effective installed package/version、Legacy CLI Product v2のcurrent invariantを別々に検証。顧客別GPL等のLicense/Delivery判断を自動PASSしない。
 
 
 **OD-01/02/03/05（2026-11-19 Owner採用）との横断一致規範：**
 
 - `P1-M05`はG02で`IDENTIFY`専用、明示的`B0_BINARY_IV` binary Z/A unadjusted `LATE_COMPLIER`条件付き識別。DoWhy IV internal label/`nonparametric-ate`だけでLATE証明とせず、宣言済みrelevance/exclusion/independence/monotonicity/consistency、Graph/Question/Design/Content hashとeffective APIを検証。`IDENTIFY`のEffect `result.json`は禁止。G08のB0数値推定/B1 slope/DRIVと混同しない。DGP-006、NEG-006/007、REF-I03/REF-G01は別科学Evidence。
-- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
+- G05 restricted Row ParquetはStudyの`privacy.row_export_requested=true`による単独opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完はBLOCKED。
 - OD-05の40 Method専用Config/Question/Design/Output/Inference Profileは各Owner Gate（G02=6、G03=13、G04=8、G06=3、G07=3、G08=5、G09=2）で完成・登録されるまでは`METHOD_PROFILE_UNAVAILABLE`で該当Methodをfail-closed。P1-M06のG01 Draftを除く40件を`config={}`で一括許可しない。G10は全41 Methodの実Backend/Lock/独立DGP/NEG/REF/CI/Regressionを検証するのみ。
 - 全決定は設計選択としてOwner採用済みであり、実Source/Test/uv.lock、実効Backend/独立Science、Contract Freeze、Coding Authorization、Customer delivery legal acceptance（配布時のみ）を意味しない。
 
-**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05 Studyのみ／CLIのみopt-in、wrong UID/root/owner/mode/FS、RowSource事前反復、Stage後FS drift/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
+**G10 independent negative obligations:** 41 Method Schema/Backend/Inferenceをsource+fixture SHAで照合し、P1-M05 B0/B1/DRIV誤分類、IDENTIFY result.json誤発行、G05 Study true/false/未指定と廃止CLI row flag拒否、wrong UID/root/owner/mode/FS、RowSource事前反復、Stage後FS drift/byte cap超過、missing Method Configをnegativeとする。実行とDeploy Authorityの独立Evidenceが未取得なら`BLOCKED`、Generator自身のResultはOracleではない。
 
 ## 4. Verification operation, evidence and decision
 
@@ -116,3 +116,10 @@ Method-specific strict Schema・positive/negative・独立Reference/推論Method
 ### Owner SIM-01/03/04 initial-Gate simplification (2026-11-21)
 
 Mandatory integration profiles are ENV-BASE, ENV-DOWHY, ENV-ECONML and ENV-TIGRAMITE, each with actual lock/distribution/API smoke and Method-specific science/reproducibility checks. ENV-COMBINED all-extras runtime/CI is an optional later interop check, **not** G10 initial PASS dependency; do NOT claim simultaneous all-extras environment is verified. Local scientific Manifest has NO required `runtime.sbom_ref` or `review.legal_delivery_status` (the active Draft 2020-12 Schema removed them); installed distribution/version/lock source provenance and independent science review evidence remain required. SBOM generation, per-customer authorization state and legal evidence are NOT G10 CLI runtime functionality. Prior to any actual customer external delivery, the Owner/legal reviewer must manually review actual shipped dependencies and block unapproved distribution. FS privacy boundary is ordinary nonroot Linux EUID/private owner-only ext4/XFS root with 0700/0600 and FD-safe paths/same FS; no separate ACL/xattr digest, mount namespace/ID proof or CI/container classification. Preserve G01 Publisher/Reader, NFR-030/031/032/033/035/036, all science, all Method ID targets, upstream Gate999 independence and Product v2. Historical DEC08/PREP02 remains historical, specifically superseded by combined_review/131. No runtime evidence / Gate999 PASS / Coding Authorization.
+
+
+## S02-01〜08：G10 全Method証拠・差分再実行の正規契約
+
+G10は41 Method全件（P1=20/P2=8/P3=13）の独立DGP/NEG/REF、Method別Schema/Estimand/Inference、Backendとsource+fixture SHA、T2/T3事前登録・FWER=.05、上流999を検証する。**全件を無条件に数値再実行する要求はない**。承認済み独立証拠について、Method code、shared scientific kernel、Method Registry/descriptor/schema、ports/validation、依存コード/ABI、Python/uv.lock/extra/Backend distribution+version、fixture/DGP、negative、Oracle/reference source、seed/quantitative AC/protocol、privacy・Result/Manifestが科学的結果に影響し得る**推移的依存閉包**を監査し、厳密に同一のものだけ再利用する。完全な閉包不変証明が欠損・不整合なら再実行し、再実行不能なら該当MethodをBLOCKしてG10_999 PASSを禁止する。新規/変更された評価指標を既存証拠から事後推測しない。最終Fixed Trial Candidate全体のOperation・Method/Estimand/Inference dispatch、JCS/ContentRef/Manifest/Marker/Reader、G05 Study単独opt-in/Privacy、Product v2互換と横断Negativeは毎回独立に実行する。Libraryのsymbol/API存在はScience PASSではない。
+
+G10-07の最小受入集合：同一full-SHA閉包→上流Science証拠再利用の正例、共有Kernel/Schema/lock/Backend/Fixture/REF/Policyの各1点変更→影響Methodの再実行またはBLOCK、依存グラフに未知辺→BLOCK、既存証拠に欠損/科学的FAIL→全41のPASS禁止、未変更41件のScience真値と後続横断統合別軸検証。旧Productの無関係なSuiteは全件無条件再試験せず、protected境界への影響閉包を証明して必要分を実行する。未知影響なら実行またはBLOCK。G05はStudy trueとnonroot same-UID private ext4/XFS/Method別allowlist・row/byte/memory capsのAND、false/省略は個票なし。署名Verifier・PolicyRef・追加CLI許可Flagは実装しない。現行Local Graphは内容hash/由来、Product Version IDはnull、非対応import拒否。40 Profileは共通Schema＋Method overlayを再構成して厳格検証し、未登録/未試験はfail-closed。外販向けLicense Governance NFR-034はDEFERREDだが社内OSS義務は継続。Coding Authorization未発行、B04/B05の実効証拠は未取得。
