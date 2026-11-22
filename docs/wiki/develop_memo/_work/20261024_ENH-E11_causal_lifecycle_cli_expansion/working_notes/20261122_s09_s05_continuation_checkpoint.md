@@ -91,3 +91,5 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - Evidence: `combined_review/170_20261122_s05_b02_factored_profiles_author_bounded_instance_smoke.md`。**使用したのは標準Draft202012Validatorではなく独自のsubschema evaluator**。完全なJSON Schema metaschema/parser/ref/実行等価性の検証、元Schema200件のPython実Validator正負例及びPython3.12実行は未実施。正式S05-B02は**BLOCKED**のまま。
 - 現コンテナはPython3.13.5、jsonschema4.26.0が使用可能だが、指定Python3.12はなく、GitHubへの直接git通信はDNS解決不能。Notion Custom Agentはentitlement_requiredで開始不可。承認済みLinux VM/Codex CLIへの接続手段が本チャットにない。これは実証実行のBlockerであり、独立S09・B03/04/05・S10/S11をPASSに変更しない。
 - 既存の実行手順は`combined_review/159_20261122_s05_linux_isolated_execution_runbook.md`、Python標準Validator実行コードは`combined_review/tools/e11_profile_factor_compiler.py`。今後、承認済み隔離Python3.12と独立Reviewerで固定Source SHA+Lock+実Report/hashを収集する。新たなOwner科学選択はない。
+
+- B04追加観測（このチャットの非承認Python3.13.5 runtimeのみ）: `dowhy` / `econml` / `tigramite` / `causal-learn` distributions/modulesは未導入。`statsmodels 0.14.6`, `numpy 2.3.5`, `scipy 1.17.0`, `jsonschema 4.26.0`は導入済み。これをOwner承認済みPython3.12のENV-BASE/DOWHY/ECONML/TIGRAMITE fitted API検査に読み替えない。B04はBLOCKED。
