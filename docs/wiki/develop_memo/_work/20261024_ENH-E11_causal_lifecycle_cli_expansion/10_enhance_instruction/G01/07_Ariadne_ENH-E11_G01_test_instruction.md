@@ -60,6 +60,8 @@
 | **G01-07-11 CLI error/privacy** | `--check-only`零書込、Study row request、bad hash、bad config、backend failure、corrupt readback | exit2/3/4/5をphaseごとに検証。実効principal/root/owner/modeの不一致でdenyし、個票・secretのlogs/stdout/staging漏洩0。非Effect科学的負結果と技術失敗を混同しない | 30_62 `1/6/8.5 `UseCase/LocalPrivacyPolicyPort.authorize/command.main`：RUN07、PUB07、PRIV01〜06、READ03 |
 | **G01-07-12 Product & scope regression** | 現存する旧Product v2 CLI/Scientific Coreテスト群（実効PathはOperatorが発見）、既存discovery/identify/estimate/refute/sensitivityとResult v2、G01外Method | legacy`manifest_version=2.0`・旧CLI output semantics不変、Product DB/Web/Worker Source不変、G01外Method変更0 | 30_62 `1/3/4/5/8.5 `command.main/Manifest/Reader`：RUN06、PUB10、MAN06、READ06；30_61 `4：EFF05（旧v2回帰のみ） |
 
+**B03 strict cross-wire negatives (G01-07-02/06):** Use an actual marked/manifested run after Coding Authorization and actual Linux FS. Positive marker→Manifest→Study/Status/optional Result/Graph/sidecar must be independently readable; negative variants are `manifest.execution.technical_status` mismatching `status.technical_status`, any unknown technical_status string (e.g. `SUCCESS`), stale Manifest/marker byte SHA, duplicate inventory key, internal scientific ContentRef.relative_key `../outside`, `/absolute`, `dir//file`, `dir\\file` or NUL, symlink swaps and unjustified private row bytes. Reject at appropriate schema/Reader boundary; absence of a source path leak is required. These are **post-authorization Gate test obligations**, not a claim of pre-code S05-B03 runtime PASS.
+
 **具体的な実効コマンドは上記Test Pathの作成後に実行する。** ABI不適合をmockだけで隠すことを禁止。Tests 05/06はReal Linux target filesystemの実際のsystem call pathを観測し、monkeypatchだけでPASSとしない。
 
 
