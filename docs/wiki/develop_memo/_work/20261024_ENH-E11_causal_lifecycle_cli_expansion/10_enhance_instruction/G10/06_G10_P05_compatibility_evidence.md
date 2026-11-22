@@ -121,7 +121,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。
+7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy単独opt-in（`row_export_requested=true`）/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -254,7 +254,7 @@ Adapterは`ariadne.scientific.causal_methods`に配置し、共通の`ariadne.ca
 
 22 Classの実装ModuleとMethodの対応は§1、41 Methodの対象と制約は§2〜§8がAuthorityである。Backend distribution/API availability・Optional Dependency・LicenseはMethodRegistryと独立Runtime probeで検証し、未取得EvidenceをAVAILABLEや科学的PASSにしない。
 
-`LocalPrivacyPolicyPort.authorize(*,study,Study.privacy.row_export_requested,root,principal,output_shape)`が実行者のdouble opt-inとOS TrustedRoot/Method別出力適格性を判定する。独立Approver/Ed25519/鍵/失効/TrustedPolicyAnchorは初期G05 local個票中間成果物には適用しない。事前の行生成禁止、同一run/Study/Source/Sinkの結合、staging前・seal/publish前のroot/UID/owner/mode/FS再照合を維持し、不適格ならexit3で初期row bytes0。既存G01 Publisher/ReaderとOD-03 WriterのClass/Method署名は不変。
+`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`がStudy単独opt-in＋OS/Method全件適格性とOS TrustedRoot/Method別出力適格性を判定する。独立Approver/Ed25519/鍵/失効/TrustedPolicyAnchorは初期G05 local個票中間成果物には適用しない。事前の行生成禁止、同一run/Study/Source/Sinkの結合、staging前・seal/publish前のroot/UID/owner/mode/FS再照合を維持し、不適格ならexit3で初期row bytes0。既存G01 Publisher/ReaderとOD-03 WriterのClass/Method署名は不変。
 
 **実際のBackend適格性・Config Schemaの未生成・独立OracleやCoverage証跡の不足は、上記Target/数理契約の未決とは区別する。** 実行後のScience判定を未検証のままPASSにしない。
 

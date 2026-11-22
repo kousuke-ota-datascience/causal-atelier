@@ -123,7 +123,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。
+7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy単独opt-in（`row_export_requested=true`）/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
