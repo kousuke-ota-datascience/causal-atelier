@@ -866,11 +866,11 @@
     },
     "P3-M04": {
       "source_file": "e11_p3_m04_method_config_v1.schema.json",
-      "source_blob_sha": "2e7c66fb4a92f7f138df6b420795df05d2f547a1",
+      "source_blob_sha": "fd8bc7120b586fe08c8708dab58ba457bf7a69a0",
       "overlay": {
         "$id": "urn:ariadne:e11:prep04-1:p3-m04:method_config:draft1",
         "title": "P3-M04 method_config strict Method profile — DRAFT",
-        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "description": "S09 Owner A adopted 2026-11-22: P3-M04 initially executes only DID_2X2 ATT. STAGGERED remains syntactically identifiable as a DEFERRED future capability and MUST fail scientific preflight with typed SCIENCE_CONTRACT_NOT_AVAILABLE / CAPABILITY_UNAVAILABLE (CLI exit4), no Estimator/Backend/row read, no successful Effect Result or fallback. Strict schema acceptance is not capability availability. Formal Draft202012/backend/science validation not run; not frozen.",
         "required": [
           "design_variant",
           "estimator_spec_ref",
@@ -881,7 +881,8 @@
             "enum": [
               "DID_2X2",
               "STAGGERED"
-            ]
+            ],
+            "description": "DID_2X2 is the only initial scientific executable variant if all other Method eligibility passes; STAGGERED is DEFERRED and must be denied in Method preflight (not converted to DID_2X2 or P3-M05)."
           },
           "estimator_spec_ref": {
             "type": "string",
@@ -1187,6 +1188,8 @@
     "distinct_method_ids": 40,
     "source_blob_hashes_checked": "recorded but not independently recounted",
     "positive_negative_validator_execution": "NOT_RUN",
-    "science_and_backend": "NOT_EVALUATED"
+    "science_and_backend": "NOT_EVALUATED",
+    "status": "OWNER_A_PATCH_REVALIDATION_REQUIRED",
+    "message": "Owner P3-M04 A adopted; factored AST equality locally checked for this method, independent Draft202012 200-profile parity not rerun."
   }
 }
