@@ -20,7 +20,7 @@
 | Owner Coding Authorization | S11 | none; Gate 01..10 06/07 remain unfrozen, no Coding Agent launch |
 | Trial / Independent Test / Gate999 | after S11 | real candidate E11 app FS/Method tests unavailable before implementation |
 
-Current active control index: `s09_post_reconciliation_document_snapshot_draft10.json`, 71 Gate + 7 Operator + 200 original Profile + 5 factored bundles + 13 schema + 98 stock + 8 supplemental source assets = 402 unique blobs. Selected 34 stock repeats the 98, not additive. Index SHA match is integrity **only**, not a semantic review.
+Current G01 scope source: `combined_review/s09_g01_scoped_review_inventory_draft1.json` (initial 85 candidate paths: G01 12 owned incl 4 FCI Schema, shared 69, impact sample 4; later Gate 317 NOT_REVIEWED). Actual independent Reviewer expands dependencies; no PASS.\n\nCurrent active control index: `s09_post_reconciliation_document_snapshot_draft11.json`, 71 Gate + 7 Operator + 200 original Profile + 5 factored bundles + 13 schema + 98 stock + 8 supplemental source assets = 402 unique blobs. Selected 34 stock repeats the 98, not additive. Index SHA match is integrity **only**, not a semantic review.
 
 ## 2. PREP-04 / S05 blockers — separate genuinely pre-code and post-code observations
 
