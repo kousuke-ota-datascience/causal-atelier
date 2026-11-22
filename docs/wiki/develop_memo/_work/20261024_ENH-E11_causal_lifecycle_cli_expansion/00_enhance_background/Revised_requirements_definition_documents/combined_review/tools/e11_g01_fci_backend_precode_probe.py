@@ -79,7 +79,7 @@ def main() -> int:
         ]
         report["backend_invoked"] = False
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+        out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps({"verdict": report["verdict"], "report": str(out)}))
         return 2
 
