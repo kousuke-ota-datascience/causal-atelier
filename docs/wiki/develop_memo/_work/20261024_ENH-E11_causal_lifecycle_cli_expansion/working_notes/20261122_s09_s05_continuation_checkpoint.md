@@ -83,3 +83,11 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - **S09-R14:** G01/P03 §10 DoDの`Standalone`限定と`optional real Product parent lineage retained`が、全E11 Local Graph `version_id=parent_version_id=null`契約を曖昧化。全Local wireはnull、科学的親はimmutable provenance/ContentRef/hash、実Product版親は別既存Bridgeだけと明記。
 - 修正根拠・未検証は`combined_review/169_20261122_s09_third_pass_author_contract_remediation.md`。旧draft7の5 blob SHA差分を新`combined_review/s09_post_reconciliation_document_snapshot_draft8.json`へ再固定。source snapshot=`2e529a38f1bc19afba9bec693a9a828bb7e1f9de`。71 Gate + 7 Operator + 200 original Method + 5 factored + 13 public/internal Schema + 98 active Stock Markdown + 8追加asset（402 uniqueのsource index、既選定34は98の内数）。`165`独立監査指示書をdraft8参照・R13/R14チェックへ更新。
 - **未達成:** 真の独立S09 verdict、Python3.12 B02、実Artifact/Reader B03、実Backend B04、独立41 Method/HC1数理審査/各scientific acceptance B05、S10 Freeze、S11 Authorization。**追加Owner判断なし。** S10はOwnerが別途統合審査・明示承認した場合のみ。
+
+## J. S05-B02 200 Profile限定実行（2026-11-22／最新継続）
+
+- 本チャットで実際にGitHub連携から5 factored Profile bundle（各40 Method）を取得し、JS/V8の**限定Schema構造評価器**により、正例200、必須Field欠落拒否200、未知Field拒否200、不正型/値拒否200、不正Method ID拒否40、Inference条件不整合拒否22、**合計862検証、期待値不一致0**。最初の6件の正例生成器の64桁hexフィクスチャ欠陥は修正し、全200件を再実行済み。
+- Dispatch Registry 200組の一意性、各factoredのsource_file/元Schema blob SHA 200/200、Output Catalogのconst項目40/40、P3-M04 STAGGERED DEFERRED及びP3-M06 ITS sidecar記述を検査し不一致なし。
+- Evidence: `combined_review/170_20261122_s05_b02_factored_profiles_author_bounded_instance_smoke.md`。**使用したのは標準Draft202012Validatorではなく独自のsubschema evaluator**。完全なJSON Schema metaschema/parser/ref/実行等価性の検証、元Schema200件のPython実Validator正負例及びPython3.12実行は未実施。正式S05-B02は**BLOCKED**のまま。
+- 現コンテナはPython3.13.5、jsonschema4.26.0が使用可能だが、指定Python3.12はなく、GitHubへの直接git通信はDNS解決不能。Notion Custom Agentはentitlement_requiredで開始不可。承認済みLinux VM/Codex CLIへの接続手段が本チャットにない。これは実証実行のBlockerであり、独立S09・B03/04/05・S10/S11をPASSに変更しない。
+- 既存の実行手順は`combined_review/159_20261122_s05_linux_isolated_execution_runbook.md`、Python標準Validator実行コードは`combined_review/tools/e11_profile_factor_compiler.py`。今後、承認済み隔離Python3.12と独立Reviewerで固定Source SHA+Lock+実Report/hashを収集する。新たなOwner科学選択はない。
