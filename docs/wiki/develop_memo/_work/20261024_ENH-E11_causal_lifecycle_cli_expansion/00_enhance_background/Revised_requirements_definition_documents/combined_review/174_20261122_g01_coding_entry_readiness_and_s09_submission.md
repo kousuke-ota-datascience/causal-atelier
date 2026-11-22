@@ -1,0 +1,54 @@
+# G01 — First Gate entry readiness and independent S09 submission package
+
+**As of:** 2026-11-22 JST  
+**Authority:** Owner `DEC-PREPCODE-01=B` recorded in `173`: scoped independent S09 → Owner G01-S10 → Owner G01-S11.  
+**Truthful state:** `AUTHOR_SUBMISSION_PREPARED / G01_S09_INDEPENDENT_NOT_RUN / G01_S10_NOT_FROZEN / G01_S11_NOT_AUTHORIZED`. No Agent coding, actual E11 Reader, Gate999, source/test/lock edit or scientific PASS.
+
+## 1. Pin and independent source discovery
+
+- Global 402-unique-file SHA locator: `combined_review/s09_post_reconciliation_document_snapshot_draft11.json`. It is an **impact inventory**, not 402 independently audited documents.
+- G01 candidate partition: `combined_review/s09_g01_scoped_review_inventory_draft1.json` with **402 exact original source paths + Git blob SHA** classified `OWN_GATE` (12 = 8 Gate G01 06/P00/P01–P05/07 plus four FCI schemas), `COMMON_SHARED` (69: seven Operator prompts, six public E11 payload schemas and selected active 10/22/23/30 source), `IMPACT_SAMPLE` (4 registry/descriptor/science-planning cross-gate summaries) and `DEFERRED_OTHER_GATE` (317). **Initial semantic read candidate = 85**, not a final independent closure count. Every entry currently `review_status=NOT_RUN`.
+- Re-enumerate all 402 and check real Git object hash vs current `git rev-parse HEAD`; dynamically extend the **85** when an actual import/Port/draft schema/Source signature/acceptance reference or protected v2 boundary traverses an unlisted path. A missing upstream normative dependency is not authorized to be skipped by this Author candidate classification.
+- The exact `REVIEW_TARGET_FULL_SHA` must be selected by the **independent S09 Reviewer at actual start**, not presumed to be the source snapshot's commit (evidence/decision commits may occur afterward). Require clean working tree or fail closed; identify every reviewed file by `path @ commit/blob SHA` and line range.
+- Read all G01 06/P00/P01–P05/07 as independent normative WHAT, seven 40 Operator prompts for runner entry correctness, chosen common 10/22/23/30 and E11 Schema; cross-check actual current `src/ariadne` signatures **read-only** and Product v2 contract; inspect `P1-M06` row of the 41-Method registry independently rather than accepting its design proposal as truth.
+- For G02–G10 nondependent science, record `DEFERRED_OTHER_GATE / NOT_REVIEWED`. G01 does not approve these files' content. G10 will ultimately require valid all-41 evidence.
+
+## 2. G01 pre-code evidence gates and owner of each
+
+| G01 entry item | Expected evidence **before** Owner G01-S10 | State / next action |
+| --- | --- | --- |
+| S09-G01-01 Common and owned contract | Independent reviewer trace 10/22/23/30 + G01 eight 06/Pxx/07 + 7 Operator, unique ownership/Port/constructor/FSM/status/Version/Privacy/V2 and current Source ABI; negative cases | **NOT_RUN**; independent reviewer separate from Author must execute `165` in G01 scope |
+| S09-G01-02 FCI strict schemas | Standard `Draft202012Validator.check_schema` of four real P1-M06/G01 FCI schemas and six E11 public Schema; independently authored success and unknown/malformed/target/backend/BK negative instances, G01 Question/Design/Study cross-ref | **NOT_RUN** on approved Python3.12 source; the two FCI Config Schema sources had equal constraints and differed only in `$id`/`title` in Author JSON comparison (this is not standard meta-validation) |
+| S09-G01-03 FCI Backend feasibility | `ENV-BASE` isolated Python3.12 real `causal-learn==0.1.4.8` + base statsmodels per actual effective lock, FCI `fisherz/chisq/gsq` valid typed inputs, fitted tiny graph and BK/latent negatives, import/version/API, positive and negative actual observed result | **NOT_RUN**; real Linux VM/Codex environment not accessible from this chat. Existing `159` probe checks API only; Method-specific fitted input/output verification still required |
+| S09-G01-04 Independent Graph scientific contract | Independent MAG/PAG truth derivation and known latent vs orientation-uncertain graph, `m`-separation equivalence, permissible PAG endpoints `o-o/o->/--o/->/<->`, BK constraints and invalid/underpowered two-variable latent scenario; method scientific negative expected output; independent oracle source+fixture+equations and immutable hashes | **NOT_RUN** as independent review; only recipes exist. T2/T3 **actual candidate** belongs after S11/07/999 and need preregistered K/R/seed/epsilon before T3 |
+| S09-G01-05 JCS, Graph, Status & Publisher/Reader **contracts** | Strict RFC8785 known golden bytes/hash domains, Local Graph Product IDs null, source lineage ContentRef, known negative run/Status/Method/hash/Marker/Manifest path, safe dirfd/no-follow same-FS/owner/private 0700/0600, no false COMMITTED; what is read/written and how Reader validates | **AUTHOR_RECONCILED / INDEPENDENT_NOT_RUN**; do not require not-yet-implemented local E11 Publisher/Reader real execution as a pre-code PASS |
+| S09-G01-06 G01 06/07/40 closure | Self-contained P01–P05 Class.Method signatures, Operation DISCOVER only/no fictitious Effect, P1-M06 graph result or typed negative, G01 12 independent Test Items, stop predicates and gated Operator process | **AUTHOR_RECONCILED / INDEPENDENT_NOT_RUN** |
+| S09-G01-07 Protected Product v2 baseline | Read-only actual ABI and scope-change proof; old `causal-analysis-spec/2`, existing discovery/test contracts, Product GraphVersion Writer not used by Local E11 | **DESIGN_ASSERTED / INDEPENDENT_NOT_VERIFIED**; real regression after Coding Authorization, final fixed SHA Gate07/999 |
+| S10-G01 | Complete independent G01 S09 verdict, resolve actual pre-code blockers, Owner review exact source/science/backend/Method/06/07/approval scope, issue explicit signed-off frozen full SHA and post-S11 evidence obligations | **NOT_FROZEN** |
+| S11-G01 | **Separate** explicit Owner permission after G01-S10; immutable frozen 06/07, target environment/Source, P01–P05 and independent Test Agent identified | **NOT_AUTHORIZED** |
+
+### Concrete missing evidence ≠ additional Owner decision
+
+The current blocking factors are **actual execution or independent-review evidence**, not a new Method-choice vote. The approved Linux Python3.12 environment and independent Reviewer approach are already chosen by Owner DEC-S05-02/03. Connection to that VM or actual independent execution is unavailable to this chat; do not substitute self-authored assurance. No automatic Notion upgrade, customer legal workflow, detached signing, G05 approval or ENV-COMBINED profile is required for G01.
+
+## 3. G01 operation and failure-type matrix for an independent S09 reviewer
+
+| Contract | Positive | Critical negative / fail closed |
+| --- | --- | --- |
+| P01 typed Study/dispatch/JCS | `DISCOVER`, `P1-M06`, exact Study/Question/Design/FCI configs, RFC8785 pinned bytes | unknown Method/config, `policy_ref`, retired CLI row flag, duplicate key/nonfinite/legacy v2 input |
+| P02 ContentRef Publisher/Reader | safe same-root regular file + declared digest; immutable atomic marker → independent readback | `../`, symlink, wrong FD/SHA, unsafe owner/FS, duplicate inventory, mismatch Status vs Manifest, post-rename indeterminate -> no false COMPLETED |
+| P03 GraphEvidence | lossless PAG endpoint marks and null Product IDs; Graph JCS self-hash vs actual ContentRef file digest | edge orientation swapped, `version_id` or `parent_version_id` non-null, Graph converted to DAG, fake Product Writer |
+| P04 FCI | source-matched `causal-learn` API/probe, compatible observed conditional independence, independent MAG/PAG oracle | invalid `fisherz/chisq/gsq`, BK contradiction, weak latent evidence, missing Backend, inferred but unsupported causal direction |
+| P05 Local UseCase & privacy | DISCOVER typed Graph/Status/Manifest, no `result.json`, `schema_dispatch.result=null` | row request true -> Privacy exit3 before Source access; missing row flag -> strict invalid Study exit2; unknown Method -> exit2/4 by cause; incorrect scientific-vs-technical state, Product v2 changes |
+
+**Note:** These are implementable acceptance contracts, not executed numerical tests.
+
+## 4. S09 review verdict and evidence contract
+
+The independent reviewer should run `combined_review/165_20261122_s09_independent_document_audit_instruction.md` with `REVIEW_GATE=G01`, `REVIEW_MODE=GATE_SCOPED_COMMON_PLUS_UPSTREAM`, final actual full SHA. Return (a) exact global inventory and in-scope semantic paths, (b) independent per-path findings and known source/line/contradiction, (c) G01 S09 document `PASS/FAIL/BLOCKED`, (d) **separate** B02/B03/B04/B05 pre-code science/Backend evidence verdicts, (e) S10 eligibility `ELIGIBLE/BLOCKED`. Reviewer cannot freeze or authorize code. If finding requires correction, Author edits and independent review on **new SHA**; do not use stale review acceptance.
+
+## 5. Next gate path
+
+Independent G01 S09 review + G01 pre-code evidence → Owner G01-S10 → Owner G01-S11 → G01 P01→P02+P03→P04→P05 → fixed Trial → independent 07/T2/T3/OS regression → **G01_999**. G02/G06/G09 may then seek S11 after their own S09/S10 and G01_999; G07/G08 also require G02_999; other DAG preserved. S09 preparation on later Gates can overlap upstream implementation, but no unfulfilled upstream 999 may be assumed PASS.
+
+**No freeze, no coding authority and no actual independent G01 review reported here.**
