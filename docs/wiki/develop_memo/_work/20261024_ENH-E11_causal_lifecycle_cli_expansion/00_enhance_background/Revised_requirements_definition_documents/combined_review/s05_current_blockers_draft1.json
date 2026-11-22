@@ -1,0 +1,71 @@
+{
+  "schema_version": "e11-s05-readiness/20261122",
+  "git_head_at_review": "91d7d9d4631d2248bcc012f9b48ae2f0e1ac5007",
+  "status": "S05_BLOCKED",
+  "coding_authorization": false,
+  "contract_freeze": false,
+  "owner_decision": "DEC-S05-AR01_A_ADOPTED",
+  "s05": {
+    "B01": "200_SCHEMA_LOSSLESS_AST_DONE",
+    "B02": "STRUCTURAL_200_PASS_FORMAL_VALIDATOR_NOT_RUN",
+    "B03": "TYPED_ARTIFACT_DRAFT_SEMANTIC_NOT_RUN",
+    "B04": "VERSIONS_PROPOSED_TARGET_PY312_NOT_RUN",
+    "B05": "41_ORACLE_RECIPES_8_METRIC_KINDS_PREREG_SCHEMA_VALIDATED_REFERENCE_T2_T3_NOT_RUN",
+    "B06": "STATIC_71_DOCUMENT_SCAN_FINISHED_FAIL"
+  },
+  "following_steps": {
+    "S06": "NOT_STARTED",
+    "S07": "NOT_STARTED",
+    "S08": "NOT_STARTED",
+    "S09": "NOT_STARTED",
+    "S10": "NOT_FROZEN",
+    "S11": "NOT_AUTHORIZED"
+  },
+  "blockers": [
+    {
+      "blocker_id": "S05-B02-VALIDATOR",
+      "owner_action_required": false,
+      "state": "BLOCKED_RUN_NOT_EXECUTED",
+      "what_is_done": "All 200 source Git blob SHAs equal, 200 exact JSON AST reassemblies, 772 custom JS shape positives/negatives",
+      "missing": "Independent standard Draft202012Validator.check_schema + positive/negative 200 source-versus-factored parity run in checked-out Git SHA",
+      "unblock_action": "In read-only checkout run combined_review/tools/e11_profile_factor_compiler.py --report /tmp/e11_b02_report.json using review-only jsonschema>=4",
+      "decision_needed": "NO"
+    },
+    {
+      "blocker_id": "S05-B03-SEMANTIC",
+      "owner_action_required": false,
+      "state": "BLOCKED_SEMANTIC_ORACLES",
+      "what_is_done": "Five draft typed scientific artifacts, 10 non-scalar Output profiles and descriptor catalog",
+      "missing": "Independently checked cross-file Method/Estimand/CI/ref/privacy/status validators and negative/round-trip fixtures",
+      "unblock_action": "Complete semantic validation contract in S05 and integrate later in S06/S07; don't assign scalar point to vector effects",
+      "decision_needed": "NO unless science target changes"
+    },
+    {
+      "blocker_id": "S05-B04-PY312",
+      "owner_action_required": false,
+      "state": "BLOCKED_RUNTIME_UNAVAILABLE",
+      "what_is_done": "Candidate DoWhy0.14, EconML0.17.1, Tigramite5.2.10.1, base lock known; exact method API symbols classified",
+      "missing": "Four isolated Python3.12 dependency resolutions, actual version/import/signature, fitted method, CI/graph output probes, known-good optional license/pin evidence",
+      "unblock_action": "Run separate, hash-pinned Python3.12 local probes; review-only venv; no pyproject/uv.lock production edit",
+      "decision_needed": "DEC-02 only if genuine incompatible versions/method API"
+    },
+    {
+      "blocker_id": "S05-B05-REFERENCE",
+      "owner_action_required": true,
+      "state": "BLOCKED_INDEPENDENT_SCIENCE",
+      "what_is_done": "41 oracle algorithm recipes, 41 metric-kind candidate maps, eight-kind prereg schema standard-validator passes, B0/B1 exploratory HC1 moments",
+      "missing": "Independent scientific reviewer authority and reviewed 41 analytic/data/graph references, T2 pilot, K/R/eps/seed/tolerances/family/compute prereg, separate T3; G08 AR candidate review",
+      "unblock_action": "Assign independent science reviewer(s), build independent hashed oracles, calibrate and preregister no post-hoc numbers; scientific A decision already adopted",
+      "decision_needed": "Only assignment and reviewer signoff now; DEC-03 if budget/accuracy conflict after pilot"
+    },
+    {
+      "blocker_id": "S05-B06-CONTRACT",
+      "owner_action_required": false,
+      "state": "AUDIT_FAIL_DEFER_FIX_S06_S07",
+      "what_is_done": "Static scans of 20 Gate 06/07 plus 51 Gate Pxx, 117 candidate outdated occurrences recorded with file SHA and line",
+      "missing": "Propagate Owner S02 simplifications and B03/05 into all affected instructions and independent 07, all 40 prompts; S09 independent semantic audit",
+      "unblock_action": "This is an S06–S09 work item, not a reason to falsify S05-B02–B05 completion; sequence remains unchanged",
+      "decision_needed": "NO"
+    }
+  ]
+}
