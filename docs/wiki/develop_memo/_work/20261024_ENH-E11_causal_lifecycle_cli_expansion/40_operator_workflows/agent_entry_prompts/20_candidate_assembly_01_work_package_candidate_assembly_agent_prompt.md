@@ -1,5 +1,7 @@
 # Work Package Candidate Assembly Agent Prompt
 
+**ENH-E11 Gate別Authorization Preflight（Owner DEC-PREPCODE-01=B、2026-11-22採用）:** 全Gate402 source inventoryのSHA一致は全Gate独立S09 PASSではない。対象`GATE_ID`に対する共通E11不変条件＋対象06/Pxx/07・Method/Profile・実際の上流依存閉包の**独立S09 verdict**、Owner**当該Gate S10 Contract Freeze（full reviewed SHA）**、Owner**当該Gate S11 Coding Authorization**を別々の証拠で確認する。G02以降は実際の依存Gate **999 PASS**と不変closureをS11起動条件に加える（S09文書レビュー準備自体は先行Gate999を待たなくてもよい）。証拠欠損・違うSHA・dirty/変化した共通契約・未Freezeなら`BLOCKED_CODING_AUTHORIZATION`、実装/テスト再実行/修復/Orchestrationを開始しない。G01は先行999なし、対象P1-M06 FCI/ENV-BASE/共通Wire+Publicationのみ。候補依存T2/T3・FS・実Backend統合はS11後のIndependent 07/999で必須。**現在、全Gate S10/S11は未承認。**
+
 この文書は、Work Package 方式で実装された Gate に対し、全 Package の完了状態を監査し、Gate 単位の **Fixed Trial Candidate** を確定して Implementation Completion Report を生成する Candidate Assembly Agent の entry prompt である。
 
 この Agent は実装 Agentでも Test Agentでもない。
