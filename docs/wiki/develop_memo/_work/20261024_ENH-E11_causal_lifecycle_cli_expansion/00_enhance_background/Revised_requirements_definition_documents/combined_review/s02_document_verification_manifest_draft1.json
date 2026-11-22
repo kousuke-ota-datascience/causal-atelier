@@ -1,0 +1,401 @@
+{
+  "schema_version": "e11-s02-document-crosswalk/1",
+  "baseline": "324412e3837d56d62a18b831c3c60010d6bec7c0",
+  "audit_source_head": "ceb3a45bc4982c03811b17111f7e043537da8142",
+  "status": "AUTHORING_COMPLETE_STATIC_REVIEW_CANDIDATE_NOT_INDEPENDENT_S09",
+  "owner_decision": "S02_8_B_OPTIONS_APPROVED; DEC-S05-AR01_A; DEC-S05-02_A; DEC-S05-03_A",
+  "gate_document_inventory": [
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "git_blob_sha": "60dcd04362f5b7aec7384016533af637104808d1"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P00_work_package_plan.md",
+      "git_blob_sha": "a1e40b600e4619b6380020fcdca628ab6aa47f22"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P01_local_contract_codec.md",
+      "git_blob_sha": "b500d06626b88e272fee12c7ddefab98c5f50b2e"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P02_atomic_publication_reader.md",
+      "git_blob_sha": "1eb2bdbe6bf4212cb4c362bb163f1027559e93ac"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P03_pag_graph_version.md",
+      "git_blob_sha": "0dff2af95f22dcb12efea868c1207d7e285a3ecd"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P04_fci_backend_oracle.md",
+      "git_blob_sha": "48c07abd5c6d8957af6547fdcc06ada7f6fac645"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/06_G01_P05_cli_use_case_privacy.md",
+      "git_blob_sha": "c2084b2ba4ecd93742486c603df0eb39f6e2281a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md",
+      "git_blob_sha": "9bd9ed9508e609d21603d9b7a5af0fe5f443b64d"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md",
+      "git_blob_sha": "36d62c8c218630a941055d4cc14095ca7740f443"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_G02_P00_work_package_plan.md",
+      "git_blob_sha": "facac52fc56ed09a52be4288e29d43f9f8a13386"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_G02_P01_native_identification.md",
+      "git_blob_sha": "54a115104d5522c6bcee619ba32385a3623684aa"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_G02_P02_dowhy_identification.md",
+      "git_blob_sha": "845927a56f3cfdb549f10742280d7bc8d2c605ac"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_G02_P03_frontdoor_fd_a.md",
+      "git_blob_sha": "18b93a5db51f2053aec9d48c3573a5d6552c0a2a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/06_G02_P04_identification_dispatch.md",
+      "git_blob_sha": "bcaa95741be12725ae7b4dc07caf87930ad30420"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G02/07_Ariadne_ENH-E11_G02_test_instruction.md",
+      "git_blob_sha": "351b72f5f7c1e95b697d8549d77cc218770b6b7a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md",
+      "git_blob_sha": "c1f53e00e71000e97c88dcc372aa82700a0b6614"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P00_work_package_plan.md",
+      "git_blob_sha": "4c2535119c64979901f6f600d2abf066f8aa3b3a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P01_native_effects.md",
+      "git_blob_sha": "f12f5eb90e2be82c6c838ba557cb210f352dc5a7"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P02_weighting_ipw_aipw.md",
+      "git_blob_sha": "5164a6448c164b13dece14c9896f5813f4bde816"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P03_refutation_methods.md",
+      "git_blob_sha": "5c1892d877d89f8856cf2625f83eeddb04a53f7e"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P04_sensitivity_methods.md",
+      "git_blob_sha": "e92dd870347311eb273b3f2500bba9b2d29b1131"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P05_negative_controls_ols_rv.md",
+      "git_blob_sha": "3cff6977e285ea8a1217b8abe43a6faffd05f206"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/06_G03_P06_diagnostics_pipeline.md",
+      "git_blob_sha": "8e1138a3424eb2c8f2647eca77c5e66854a99c6d"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G03/07_Ariadne_ENH-E11_G03_test_instruction.md",
+      "git_blob_sha": "3e6d52fdc3475457ee32e9bceba31ee8c55eebd8"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_Ariadne_ENH-E11_G04_implementation_instruction.md",
+      "git_blob_sha": "9666a194b3756c756dcdc63f95626551258d609a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_G04_P00_work_package_plan.md",
+      "git_blob_sha": "6d75abf71a9419fccd4330639474e9cbf8e3ad30"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_G04_P01_econml_dml_dr.md",
+      "git_blob_sha": "c6edfecfb266f19f4906a0722ebebf9269c01404"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_G04_P02_s_t_x_learners.md",
+      "git_blob_sha": "b5d4e25e44d5eec8e40c2a52d0ae591994cc7725"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_G04_P03_driv_iv_slope.md",
+      "git_blob_sha": "a74f8399acdd732e6da8e20a44b06c94bcb1f960"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/06_G04_P04_cate_results.md",
+      "git_blob_sha": "66da64ab240c17353353b49eace9ec500affce81"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G04/07_Ariadne_ENH-E11_G04_test_instruction.md",
+      "git_blob_sha": "7b943574c6c06198904e2780f47bf373a6d46289"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "git_blob_sha": "a1e346982045bd84bafe3fb49bae2d8b45e75fd0"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_G05_P00_work_package_plan.md",
+      "git_blob_sha": "685d37438bb9317c8c617f07a0a38b2aaba831ec"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_G05_P01_hte_diagnostics.md",
+      "git_blob_sha": "08241cd88e5f333182d9d2c0b2f27bea709725dd"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_G05_P02_row_authorization.md",
+      "git_blob_sha": "bc6db5c949dd51dda4a4a462b505366e2153b423"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_G05_P03_parquet_bundle.md",
+      "git_blob_sha": "e351b9646d6d97b358b9e1dfdf0ce8b7f61ecb90"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/06_G05_P04_privacy_e2e.md",
+      "git_blob_sha": "c146b14a665625da7e86c285881f446ebb2baefe"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "git_blob_sha": "f8bed0fb0507e6398700010710bbd4bb8115579a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md",
+      "git_blob_sha": "03e1f8da5375b9876869f3e8985d482afe656c9f"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/06_G06_P00_work_package_plan.md",
+      "git_blob_sha": "1db701bf061954c1c35d695a8c32f6766b497829"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/06_G06_P01_temporal_graph.md",
+      "git_blob_sha": "5e76f9ecddd954d232f5c379e96d2afb87a28f35"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/06_G06_P02_pcmci_adapters.md",
+      "git_blob_sha": "96a529a9b5d39ee6d72a48802f9958df64d5d4ec"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/06_G06_P03_temporal_bundle.md",
+      "git_blob_sha": "639c32ee9efb5b770b92e116f38b1a13451edfaf"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G06/07_Ariadne_ENH-E11_G06_test_instruction.md",
+      "git_blob_sha": "410cb4159f8702123240fec70aa5eda7db9f0e15"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md",
+      "git_blob_sha": "0fdfa7ce157ba03d318ec5e9218d3745b76f25fe"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/06_G07_P00_work_package_plan.md",
+      "git_blob_sha": "9a04824cde958cdad0738dc023194e994e8738ff"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/06_G07_P01_did_event.md",
+      "git_blob_sha": "cb6e48ea71a0d88a07b65cc7ef3f1459da859ed2"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/06_G07_P02_interrupted_ts.md",
+      "git_blob_sha": "0023750ee84fcd83027b7e11dee7053b42fb811d"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/06_G07_P03_quasi_integration.md",
+      "git_blob_sha": "3ec05a8431ee8c01f501603c761ed854afbec2d4"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G07/07_Ariadne_ENH-E11_G07_test_instruction.md",
+      "git_blob_sha": "f6a8ebea6d68daa5e57731f921dd8d0723f7be6f"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md",
+      "git_blob_sha": "14aa722a70c98d45372de26c22eae2524d1a3701"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_G08_P00_work_package_plan.md",
+      "git_blob_sha": "ff1c89b99549d151e7fa58e82ddcd41fe608b4b8"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_G08_P01_rdd_sharp_fuzzy.md",
+      "git_blob_sha": "c723b04929cd733928c4e6c0a7596649ce31a43c"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_G08_P02_wald_late.md",
+      "git_blob_sha": "a41967142a4dbccb1950820bf252e32033047b28"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_G08_P03_two_sls_ar.md",
+      "git_blob_sha": "9595c2341ed840b3ca312b99e96e56e2cef712bd"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/06_G08_P04_rdd_iv_result.md",
+      "git_blob_sha": "478b909e881b9cd9518a7377f5618215b53ccd33"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G08/07_Ariadne_ENH-E11_G08_test_instruction.md",
+      "git_blob_sha": "720f69a06721fc4489577e4fadc8589597c3da1a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md",
+      "git_blob_sha": "d71d19e580bee2e233401fbe3db59cb1a172a787"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/06_G09_P00_work_package_plan.md",
+      "git_blob_sha": "e4b2e7d9bdf39589be7031204d869b690e24c252"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/06_G09_P01_scm_point.md",
+      "git_blob_sha": "c59d13b6f6331972968d1f0a76659a4daffbde33"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/06_G09_P02_sdid_estimator.md",
+      "git_blob_sha": "650df767c8b6821544d312ef3333c9d0f3d0508f"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/06_G09_P03_synthetic_bundle.md",
+      "git_blob_sha": "4a85c5c097d7a9cca8befaa9d9b80e081e76cf22"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G09/07_Ariadne_ENH-E11_G09_test_instruction.md",
+      "git_blob_sha": "5898e1ef23585ce42df9e9d649b9373ab42b2c66"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "git_blob_sha": "7b906cb75388d815ca9332703b1adb00b8fd1a0d"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P00_work_package_plan.md",
+      "git_blob_sha": "fea48de4e4d4eab21ed05685e988f33205f7d7c9"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P01_registry_lock.md",
+      "git_blob_sha": "a74c48f2f76ef37a390871c1c2f8b89441002339"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P02_operation_matrix.md",
+      "git_blob_sha": "75de61e0535731f45cd2b9c5ae37290c6b4faf81"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P03_replay_manifest.md",
+      "git_blob_sha": "032ff408eafb29e6ecacadad82e8feea5e074229"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P04_science_benchmarks.md",
+      "git_blob_sha": "fd753dc70e07acd0831dacbe982ad9113542428e"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/06_G10_P05_compatibility_evidence.md",
+      "git_blob_sha": "4e7d1bb624e8f119e67ca0fa8d9ab88db15cfa7c"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "git_blob_sha": "c475967b58a39896132967f3fc16be8a026e20fe"
+    }
+  ],
+  "operator_prompt_inventory": [
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/00_variable_conventions.md",
+      "git_blob_sha": "f08d62ec5207265d41fcbd5e44b4a2561d9d83b2"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md",
+      "git_blob_sha": "0bcc63cede2673709c84834c4a4873e72c5fe388"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md",
+      "git_blob_sha": "0bf08ac267ff421b4e0cd8d5fdaecbe535f5c910"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md",
+      "git_blob_sha": "aec49b5ccdf4833cd10fbbec36984f3d4d3ebad8"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/30_independent_verification_01_test_agent_prompt.md",
+      "git_blob_sha": "bd301b63bce067dc15215fd99774198cedde1820"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/40_fail_remediation_01_fail_rework_coding_agent_prompt.md",
+      "git_blob_sha": "5a8ad31ba30d476d3b4a29c90e4c1c983a299901"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md",
+      "git_blob_sha": "dd29cf767fcf95945646023f6b53b9bfa7559d62"
+    }
+  ],
+  "design_requirement_trace": [
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_00_overall_RD.md",
+      "git_blob_sha": "3f0228fa78335fa049971a53fb3c840ade53157a"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_13_fr_causal.md",
+      "git_blob_sha": "4a8443e85639bcc2fe62ed0abbf1950c6c58350c"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_22_nfr_security_compatibility.md",
+      "git_blob_sha": "744e55f3054e0dd99ec96bfc5d62bed3f84cc0b8"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_31_ar_estimand_inference.md",
+      "git_blob_sha": "b0eec9c53bac7735034192d93aef3f178e0ca5b4"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md",
+      "git_blob_sha": "a401d42adfd4e45149fac8503a1e49291af9930f"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_90_scope_exclusions.md",
+      "git_blob_sha": "ebddd59ff3bbf00118a1d28f4bd51ce979067fea"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_91_acceptance_conditions.md",
+      "git_blob_sha": "49782237028fb7810602b3d0f105ce8bd07dec7d"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md",
+      "git_blob_sha": "4e08eb2b414c3048b010149791f795f210cc42a3"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md",
+      "git_blob_sha": "10d3b1bce6b76028afdc8087c6366918ce10d89c"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md",
+      "git_blob_sha": "d9915aa35e18d081dcb9e97e49e910d421ab1890"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md",
+      "git_blob_sha": "73c4ba8937ebff13cb104c49cb8b2a7ad5b657f5"
+    },
+    {
+      "path": "docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md",
+      "git_blob_sha": "e5b93da7e288aa049953712078dfa46d4289e94b"
+    }
+  ],
+  "gate_counts": {
+    "G01": 8,
+    "G02": 7,
+    "G03": 9,
+    "G04": 7,
+    "G05": 7,
+    "G06": 6,
+    "G07": 6,
+    "G08": 7,
+    "G09": 6,
+    "G10": 8
+  },
+  "asserted_authoring_coverage": {
+    "gate_06_07": 20,
+    "gate_p00_pxx": 51,
+    "gate_total": 71,
+    "operator_entry": 7,
+    "operator_readme": 2
+  },
+  "not_proven": [
+    "standard JSON Schema 200 validator in full checkout",
+    "Python3.12 optional Backend imports and actual fitted Inference",
+    "41 independent science Oracle + T2/T3",
+    "all real fs and actual row Parquet tests",
+    "S09 independent semantic audit",
+    "S10 Contract Freeze",
+    "S11 Coding Authorization"
+  ]
+}
