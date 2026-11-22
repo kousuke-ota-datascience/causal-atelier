@@ -8,13 +8,28 @@
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
-git status --porcelain=v1
+# A fresh independent operator must supply a previously pinned, immutable source SHA.
+# Never set this to "$(git rev-parse HEAD)" merely to make the check pass.
+: "${G01_REVIEW_TARGET_FULL_SHA:?Set the independently selected pinned 40-hex review SHA}"
+if [[ ! "$G01_REVIEW_TARGET_FULL_SHA" =~ ^[a-f0-9]{40}$ ]]; then
+  echo "BLOCKED: review target must be a 40-hex full SHA" >&2; exit 1
+fi
+ACTUAL_SHA="$(git rev-parse HEAD)"
+if [[ "$ACTUAL_SHA" != "$G01_REVIEW_TARGET_FULL_SHA" ]]; then
+  echo "BLOCKED: review target differs from checkout HEAD" >&2; exit 1
+fi
+if [[ -n "$(git status --porcelain=v1)" ]]; then
+  echo "BLOCKED: review checkout dirty" >&2; exit 1
+fi
 git rev-parse HEAD
+git hash-object uv.lock
+sha256sum uv.lock
 uv python list --only-installed
-# Must explicitly record and freeze the SHA being assessed; no moving branch during execution.
+# Save immutable commit, lock hash, installed Python and package index provenance
+# alongside each report outside the checkout; do not move the branch during execution.
 ```
 
-If the checkout is dirty or source SHA differs from frozen review candidate, record BLOCKED. Never silently run on another Git state. This step is not a Git repository clone instruction.
+If the checkout is dirty or source SHA differs from frozen review candidate, record BLOCKED. Never silently run on another Git state. The review target must be an **external independently selected full commit SHA** that existed before this checkout preflight; a clean checkout checked against itself is not an integrity check. Store its source provenance with `git hash-object uv.lock` and exact `sha256sum uv.lock`. This step is not a Git repository clone instruction.
 
 ## B. Schema B02 — **G01-only** Draft202012 validation entry
 
@@ -24,10 +39,8 @@ Owner `DEC-PREPCODE-01=B` sets **G01 common E11 wire + P1-M06** as the current S
 E11_DIR="$REPO_ROOT/docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents"
 OUT="$HOME/_work/e11_g01_review_$(git rev-parse --short=12 HEAD)"
 mkdir -p "$OUT"
-G01_REVIEW_SHA="$(git rev-parse HEAD)"
-if [[ -n "$(git status --porcelain=v1)" ]]; then
-  echo "BLOCKED: review checkout dirty" >&2; exit 1
-fi
+# Inherit the external immutable SHA verified in section A.
+G01_REVIEW_SHA="$G01_REVIEW_TARGET_FULL_SHA"
 ```
 
 **Only after a later owning Gate needs it:** `combined_review/tools/e11_profile_factor_compiler.py --report "$OUT/b02_200_schema_validator.json"` performs the **full 40×5=200** factorization check. It is **not invoked by the G01 commands below**, and its absence does **not** block G01 S10. The G01-specific validator is run in §B.1. A full source Profile SHA parity test does not replace G01-specific strict semantic joins, public Schema instances or independent MAG/PAG truth.
@@ -38,10 +51,8 @@ A review-only G01 executor exists at `combined_review/tools/e11_g01_schema_preco
 
 ```bash
 # Execute in the approved Python3.12 read-only checkout, not from this chat.
-G01_REVIEW_SHA="$(git rev-parse HEAD)"
-if [[ -n "$(git status --porcelain=v1)" ]]; then
-  echo "BLOCKED: review checkout dirty" >&2; exit 1
-fi
+# Inherit the external immutable SHA verified in section A.
+G01_REVIEW_SHA="$G01_REVIEW_TARGET_FULL_SHA"
 uv venv --python 3.12 "$OUT/env-g01-schema"
 uv pip install --python "$OUT/env-g01-schema/bin/python" 'jsonschema>=4,<5'
 "$OUT/env-g01-schema/bin/python" \
@@ -76,7 +87,7 @@ For the **first Gate G01**, `combined_review/tools/e11_g01_fci_backend_precode_p
 
 ```bash
 # Run after section C creates ENV-BASE; use a clean pinned review checkout.
-G01_REVIEW_SHA="$(git rev-parse HEAD)"
+G01_REVIEW_SHA="$G01_REVIEW_TARGET_FULL_SHA"
 "$OUT/env-BASE/bin/python" \
   "$E11_DIR/combined_review/tools/e11_g01_fci_backend_precode_probe.py" \
   --expected-head "$G01_REVIEW_SHA" \
