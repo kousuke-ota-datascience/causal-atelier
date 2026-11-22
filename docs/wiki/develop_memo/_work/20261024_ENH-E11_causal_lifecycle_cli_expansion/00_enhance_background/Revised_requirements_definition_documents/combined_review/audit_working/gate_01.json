@@ -1,0 +1,81 @@
+{
+  "baseline_head": "9014a84d421ace36958eaeac0cb72c27f2c5cdd8",
+  "items": [
+    {
+      "file": "G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md",
+      "sha": "2137f012614005d4c735e0179989b78a5e7080ec",
+      "hits": []
+    },
+    {
+      "file": "G06/07_Ariadne_ENH-E11_G06_test_instruction.md",
+      "sha": "6fed0a97d393378e3f95363691d918ad9e7e6b38",
+      "hits": []
+    },
+    {
+      "file": "G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md",
+      "sha": "107a07667b3392ffd5217073df24ed4151af9a9b",
+      "hits": []
+    },
+    {
+      "file": "G07/07_Ariadne_ENH-E11_G07_test_instruction.md",
+      "sha": "5c7e118bfe8507c986b6a55f76720776fd4d9a45",
+      "hits": []
+    },
+    {
+      "file": "G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md",
+      "sha": "1920ca25a00d3a48eda7e9af9401a4c3432c4e67",
+      "hits": []
+    },
+    {
+      "file": "G08/07_Ariadne_ENH-E11_G08_test_instruction.md",
+      "sha": "c9a445517a3c3886f6b2f2e6efdc9cc786bfdc35",
+      "hits": []
+    },
+    {
+      "file": "G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md",
+      "sha": "446482aceacb0da21b9a673f4783adc2420dae40",
+      "hits": []
+    },
+    {
+      "file": "G09/07_Ariadne_ENH-E11_G09_test_instruction.md",
+      "sha": "01003a22aba03c5ac399c335745da35e7a130fe3",
+      "hits": []
+    },
+    {
+      "file": "G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "sha": "ebe8da02420e21f94dc5aa7a5468dc45f8199407",
+      "hits": [
+        {
+          "line": 24,
+          "content": "**受入命題:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+        },
+        {
+          "line": 51,
+          "content": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection | 既存/新規の共通Value・Port・Facade参照。重複実装しない |"
+        },
+        {
+          "line": 121,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/M"
+        }
+      ]
+    },
+    {
+      "file": "G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "sha": "c60273ef6fbc4962a3ca0e020b780e29e8bb843a",
+      "hits": [
+        {
+          "line": 12,
+          "content": "このGateがPASSしたと主張するには「G01〜G09の41 MethodとOperation/Estimand/Schema/Backend/Artifactを一貫して再実行でき、厳密なManifest/Checksum/Readback・科学証拠・旧v2回帰を統合検証する。」をFull Fixed Candidate SHAで、後述の全受入軸と独立科学的Referenceに照らして証明する。Pxx COMPLETE、CLI exit0、Source上のMethod名、mock-onlyは独立Gate/Science PASSではない。"
+        },
+        {
+          "line": 40,
+          "content": "**対象:** G10自体は新Method IDを定義しない。しかしG10-07-04/G10-07-07は、上流G01〜G09で承認された全41 Methodのscientific evidence、current effective Backend、positive/negative、independent referenceと実際の再実行を検証する。Test AgentがGate06/Pxxや外部RDを読まなくても対象Method ID/DD/REF/ACを列挙できるよう、以下に全件保持する。Status列は**作成時点のDRAFT planning state**であり、実行結果・Gate PASS・現在のSource capabilityを意味しない。"
+        },
+        {
+          "line": 96,
+          "content": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/M"
+        }
+      ]
+    }
+  ]
+}
