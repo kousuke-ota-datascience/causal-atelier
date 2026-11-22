@@ -334,3 +334,8 @@ Template migration/apply tooling、instantiation tooling、validatorは同一規
 - **文書実在状況（2026-11-17）：G01〜G10に06/07が存在し、G02〜G10には各P00と計36件のPxxを作成済み。** いずれもPREP-03 Review DRAFTであり、承認・Freeze・Coding Authorization・Gate999 PASSを意味しない。存在と実行可能性を混同しない。
 - G01はWORK_PACKAGE方式の草案で、Coding Authorization未発行。Promptの存在はOwner承認・06/07 Freeze・readiness validator・実装着手権限を意味しない。
 
+
+
+## 2026-11-22 S02 Owner決定反映と40 Operatorの責務境界
+
+G01〜G10のGate-level 06/07 20件、P00/Pxx 51件が現存するが、現段階ではDraftであり、各GateのFreeze/Owner Coding Authorizationは別の明示承認事項。40 Operatorの実行Prompt 7文書は共通してS02 8項目の遵守、Method別Registry/strict overlay、Study単独row opt-inとOS/Method必須guard、G10の全41独立Science証拠の完全性と影響閉包に基づく選択再実行、旧Product ABIへの変更影響回帰、G01 FS有界試験、Local Graph content hash/非Product Version、NFR-034 DEFERREDと社内OSS遵守を実行前の検証条件とする。40はTest WHERE/HOWとAgent実行/候補SHA/独立性を所有するが、06/Pxx Coding WHATと07 Test WHAT、Owner判断や999 Gate Decisionを創作しない。S05 Backend/Scienceの実環境試験は未実施であり、指示書だけをもってScience PASS/Coding Authorizationとは扱わない。

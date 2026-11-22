@@ -156,7 +156,7 @@ filenameは手作業で決めず、`40_operator_workflows/tools/readme_naming.py
 ## ENH-E11 G01〜G10共通Prompt — Execution Preparation
 
 - **正式GateはG01〜G10の10件。** 本directoryの6実行Promptは全Gate共通で、`GATE_ID`から各GateのFreeze済み06/07/08/Pxxを解決する。未作成Gateの仕様をG01の資料から推測してはならない。
-- **現存するGate別06/07/PxxはG01だけ。** G01の06/07はDRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZEDであり、Promptの存在は実装実行を許可しない。G02〜G10も、各Gateの正式契約・実行mode・Owner Approval/Coding Authorizationを個別に成立させるまで起動禁止。
+- **現存するGate別06/07/P00/PxxはG01〜G10すべて（20 Gate 06/07＋51 P00/Pxx）。** ただし現在DRAFT / NOT_FROZEN / CODING_NOT_AUTHORIZEDであり、Prompt・指示書の存在は実装実行を許可しない。各GateのContract Freeze/Owner Coding Authorization/Full SHAと依存999を個別に確認する。S02 Owner承認の単一Study opt-in、factored Method Profile、G10全41件の有効科学証拠と差分再実行、影響回帰、NFR-034 DEFERREDを40 Promptで覆さない。
 - **G01正常時の想定経路:** Work Package Coding (P01–P05) → Candidate Assembly → Independent Test。`GATE_ID`がWORK_PACKAGEの別GateでもRequired Packagesは対象Gate06が所有し、P01〜P05と決め打ちしない。`SINGLE_EXECUTION`のGateでは専用Single Execution Promptを使い、Work Package Orchestratorを起動しない。
 - **ENH-E9 Test Architecture:** LifecycleとLayerは別軸。新規testは`tests/enhancement/enh_e11/<gate>/<layer>/`から開始、具体LayerとBrowser E2E要否はGate06/Pxx/07に従う。G01 CLI-onlyをG02〜G10へ一般化しない。既存Product testsは現配置に残し、`tests/regression/`の昇格は個別PROMOTE決定。
 - **E9 G02専用31修復Promptは非適用。** Test-side BLOCKEDは別のHuman-controlled repair scopeを定め、Independent Test Agentには修理権限を渡さない。
