@@ -75,3 +75,11 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - GitHub Treeのcurrent HEADで旧`draft6`の71+7+200+5+13+34各項目blob SHAが全件一致することを確認。`097f33f...`→`0d5b597...`の3 commitでは、独立レビュー指示書・証拠索引・本working noteのみ変更され、Normative契約・Profilesは不変。新規98+8のblob SHAは同じGit Tree由来。
 - `combined_review/165_20261122_s09_independent_document_audit_instruction.md`の主索引を`draft7`へ更新し、独立Reviewerに98 active Stockと8件の追加資料、歴史的draft除外、最終Review SHA再照合を明記。`draft1`〜`draft6`は履歴資料。
 - **検証限界:** 本作業はAuthorによるGit Tree/SHAとreviewer discoverabilityの静的整備であり、各98文書の意味論的整合性PASS、S09 independent verdict、S05 B02/B03/B04/B05、AR科学承認、S10/S11を意味しない。Ownerの新たな決定事項はない。次は実際の独立S09全件監査とS05の残証拠を閉じること。
+
+## I. S09第三巡Author修正（2026-11-22、次スレッド続行）
+
+- G01〜G10現行Gate指示書71件とOperator起動Prompt 7件を、主要Owner判断とAR、Graph、G05個票、CATE/ITS/SCM、G10証拠再利用の限定語句・重要本文について追加巡回。**Authorのtargeted semantic scan**であり、全行の独立意味論審査ではない。
+- **S09-R13:** G08/P01〜P04の主文にHC1/χ²(1)を採用済み算法と読める3箇所ずつ（合計12）の表現が残存。Owner DEC-S05-AR01=Aの科学Targetを保持し、HC1は未Freeze候補、実算法未承認なら`BLOCKED_SCIENCE_METHOD_NOT_FROZEN`、full-real robust AR必須と明記。後段の免責追記だけで主要命令を無効にする旧構造を是正。
+- **S09-R14:** G01/P03 §10 DoDの`Standalone`限定と`optional real Product parent lineage retained`が、全E11 Local Graph `version_id=parent_version_id=null`契約を曖昧化。全Local wireはnull、科学的親はimmutable provenance/ContentRef/hash、実Product版親は別既存Bridgeだけと明記。
+- 修正根拠・未検証は`combined_review/169_20261122_s09_third_pass_author_contract_remediation.md`。旧draft7の5 blob SHA差分を新`combined_review/s09_post_reconciliation_document_snapshot_draft8.json`へ再固定。source snapshot=`2e529a38f1bc19afba9bec693a9a828bb7e1f9de`。71 Gate + 7 Operator + 200 original Method + 5 factored + 13 public/internal Schema + 98 active Stock Markdown + 8追加asset（402 uniqueのsource index、既選定34は98の内数）。`165`独立監査指示書をdraft8参照・R13/R14チェックへ更新。
+- **未達成:** 真の独立S09 verdict、Python3.12 B02、実Artifact/Reader B03、実Backend B04、独立41 Method/HC1数理審査/各scientific acceptance B05、S10 Freeze、S11 Authorization。**追加Owner判断なし。** S10はOwnerが別途統合審査・明示承認した場合のみ。
