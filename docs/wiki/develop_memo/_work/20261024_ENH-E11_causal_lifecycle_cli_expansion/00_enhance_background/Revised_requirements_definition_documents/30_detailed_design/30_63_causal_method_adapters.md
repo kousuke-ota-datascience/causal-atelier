@@ -1121,7 +1121,7 @@ Instrument Z、Treatment A、Effect modifier X、Control W、識別仮定とhete
 
 **AR計算法の決定状態（DEC-S05-AR01 / 2026-11-22 Owner A案採用）：** 本節の「HC1・χ²(1)漸近検定＋二次式による全実数反転」は**独立科学レビュー前の実装候補**であり、現時点で凍結済みImplementation Authorityとみなさない。独立Reviewerが統計量の導出、強弱IV・分散退化・端点/非連結/ALL_REAL・漸近妥当性/coverageを監査し、受入結果・必要な変更を明示した後に確定する。Ownerは既承認の「全実数における弱IV頑健AR集合と、その非有界/非連結等を損失なく表現する科学的要件」を維持した。G08実装指示書の方式特定とS10 Freezeはこのレビュー結果なしに確定しない。個別数値試験がPASSしたと宣言しない。
 
-**AR具体化（共通Source設計拘束）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を対象実装方式とする。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは本節のAR定義に従い、Method固有の独立Referenceと照合する。これはB0/B1の科学的な統計量・推論前提を規定するものであり、独立ReferenceとCoverage実測とは別である。
+**AR具体化（独立数学・統計レビュー前の実装候補、未Freeze）：** `Q=[1]`（B0）または`Q=[1,C]`（B1）をFull Rankで保持し、各βについて`Y−βA ~ Q+Z`のZ係数=0を**HC1・χ²(1)漸近検定**する方式を検証対象の実装候補とする。独立Reviewerによる妥当性評価後まで現行の数理方式をCoding Contractとして固定しない。残差化・quadratic inversionは全実数で行い、有限gridから非有界・空集合を断定しない。公式の数値/科学受入では独立reference・有効な分散・条件付きIV仮定を評価する。統計量、二次式、退化条件、Negative Matrixは本節のAR定義に従い、Method固有の独立Referenceと照合する。これはB0/B1の科学的な統計量・推論前提を規定するものであり、独立ReferenceとCoverage実測とは別である。
 
 ### 7.4. SCM / SDID
 
