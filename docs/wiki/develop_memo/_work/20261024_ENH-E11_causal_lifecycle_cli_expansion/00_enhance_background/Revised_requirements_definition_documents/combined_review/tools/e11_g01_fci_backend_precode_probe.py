@@ -66,6 +66,7 @@ def main() -> int:
         "fit_science_accepted": False,
     }
     fit_ok = False
+    categorical_fit_ok = False
     neg_ok = False
     try:
         import numpy as np
@@ -133,6 +134,59 @@ def main() -> int:
                 "unexpected_stderr": stderr.getvalue()[:5000],
                 "fit_api_structural_ok": fit_ok,
             })
+            # The active P1-M06 config advertises three CI methods. Prove
+            # effective categorical API feasibility without claiming FCI
+            # graph truth or application-level categorical eligibility.
+            rng_cat = np.random.default_rng(271829)
+            n_cat = 2048
+            cat_x = rng_cat.binomial(1, 0.5, size=n_cat)
+            cat_y = np.bitwise_xor(cat_x, rng_cat.binomial(1, 0.20, size=n_cat))
+            cat_z = np.bitwise_xor(cat_y, rng_cat.binomial(1, 0.20, size=n_cat))
+            categorical_data = np.column_stack(
+                (cat_x, cat_y, cat_z)).astype(np.int64)
+            categorical_reports = []
+            for ci_method in ("chisq", "gsq"):
+                ci_stdout, ci_stderr = io.StringIO(), io.StringIO()
+                with redirect_stdout(ci_stdout), redirect_stderr(ci_stderr):
+                    ci_graph, ci_edges = fci(
+                        categorical_data, independence_test_method=ci_method,
+                        alpha=.05, depth=-1, max_path_length=-1,
+                        verbose=False, background_knowledge=None,
+                        show_progress=False, node_names=cols,
+                    )
+                ci_names = [node.get_name() for node in ci_graph.get_nodes()]
+                ci_edge_rows = [
+                    {"node1": edge.get_node1().get_name(),
+                     "endpoint1": str(edge.get_endpoint1()),
+                     "node2": edge.get_node2().get_name(),
+                     "endpoint2": str(edge.get_endpoint2())}
+                    for edge in ci_edges
+                ]
+                ci_valid = (
+                    len(ci_names) == len(cols)
+                    and len(set(ci_names)) == len(cols)
+                    and set(ci_names) == set(cols)
+                    and all(e["node1"] in cols and e["node2"] in cols
+                            and e["node1"] != e["node2"] for e in ci_edge_rows)
+                    and ci_stdout.getvalue() == ""
+                    and ci_stderr.getvalue() == ""
+                )
+                categorical_reports.append({
+                    "independence_test_method": ci_method,
+                    "data_sha256": sha256(categorical_data.tobytes()).hexdigest(),
+                    "n": n_cat, "n_variables": len(cols),
+                    "integer_coded_categories": True,
+                    "backend_node_names": ci_names,
+                    "backend_edges": ci_edge_rows,
+                    "unexpected_stdout": ci_stdout.getvalue()[:5000],
+                    "unexpected_stderr": ci_stderr.getvalue()[:5000],
+                    "fit_api_structural_ok": ci_valid,
+                })
+            report["categorical_ci_fits"] = categorical_reports
+            categorical_fit_ok = (
+                len(categorical_reports) == 2
+                and all(x["fit_api_structural_ok"] for x in categorical_reports)
+            )
             neg_out, neg_err = io.StringIO(), io.StringIO()
             neg_exc = None
             with redirect_stdout(neg_out), redirect_stderr(neg_err):
@@ -161,13 +215,14 @@ def main() -> int:
     passed = (py312 and head == args.expected_head and not dirty
               and report.get("distribution_version") == "0.1.4.8"
               and report.get("signature_required_names_available") is True
-              and fit_ok and neg_ok)
+              and fit_ok and categorical_fit_ok and neg_ok)
     report["verdict"] = (
         "PASS_AUTHOR_FCI_TINY_FIT_DIAGNOSTIC" if passed
         else "BLOCKED_OR_FAILED_AUTHOR_FCI_DIAGNOSTIC"
     )
     report["unverified"] = [
         "Actual Ariadne E11 Adapter integration and strict typed input preflight",
+        "Categorical CI scientific validity, support thresholds, and all typed data negatives",
         "Independently derived MAG/PAG graph truth/reference and forbidden BK motif",
         "Runtime scientific FCI soundness, stochastic T2/T3, error control and coverage",
         "Cross-process CLI stdout/log containment and atomic Publisher/Reader",
@@ -177,6 +232,7 @@ def main() -> int:
     out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"verdict": report["verdict"], "report": str(out),
                       "fit_api_structural_ok": fit_ok,
+                      "categorical_fit_api_structural_ok": categorical_fit_ok,
                       "invalid_ci_rejected": neg_ok}))
     return 0 if passed else 2
 
