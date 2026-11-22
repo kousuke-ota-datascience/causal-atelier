@@ -330,7 +330,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 
 ## 9. OD-05 Owner-adopted Method Profile construction obligation
 
-**Accepted authoring allocation (2026-11-19 JST):** G08/P04 is responsible for cross-cutting validation of the existing Method registry; it must not implement additional Method schemas or numerical adapters. Scientific constraints: sharp/fuzzy RD bandwidth/kernel, B0/B1 binary Z/A/C and HC1 χ²(1) AR full-real confidence set/inference. Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
+**Accepted authoring allocation (2026-11-19 JST):** G08/P04 is responsible for cross-cutting validation of the existing Method registry; it must not implement additional Method schemas or numerical adapters. Scientific constraints: sharp/fuzzy RD bandwidth/kernel, B0/B1 binary Z/A/C and full-real weak-IV-robust AR target (HC1 χ²(1) inversion is provisional and not yet accepted). Retain existing §§3–6 Class/Method/algorithm/DGP/NEG/REF/AC semantics. Profiles declare conditional/mandatory fields, type domains, effective Backend/API/Version, analysis_mode/inference eligibility, output status/artifact shape, and no implicit backend defaults.
 
 **Negative obligations:** unsupported method/profile/estimand, unknown fields, missing conditional fields, invalid Graph/Design/Question/DataRef identity, unavailable optional Backend, unsupported CI or invalid scientific assumptions are typed rejections; missing profile ⇒ `METHOD_PROFILE_UNAVAILABLE`. No silent fallback or `config={}` as a claim of support.
 
