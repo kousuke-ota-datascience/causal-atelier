@@ -198,6 +198,15 @@
               },
               {
                 "$ref": "#/$defs/diagnostic_metric"
+              },
+              {
+                "$ref": "#/$defs/identification_metric"
+              },
+              {
+                "$ref": "#/$defs/vector_metric"
+              },
+              {
+                "$ref": "#/$defs/stability_metric"
               }
             ]
           }
@@ -374,6 +383,93 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1
+        }
+      }
+    },
+    "identification_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "truth_consistency_rule_ref",
+        "max_false_identification_rate",
+        "positive_negative_matrix_ref"
+      ],
+      "properties": {
+        "kind": {
+          "const": "IDENTIFICATION"
+        },
+        "truth_consistency_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_false_identification_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "positive_negative_matrix_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "vector_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "coordinate_index_rule_ref",
+        "max_weighted_mae",
+        "max_rmse",
+        "aggregation_rule_ref"
+      ],
+      "properties": {
+        "kind": {
+          "const": "VECTOR"
+        },
+        "coordinate_index_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_weighted_mae": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_rmse": {
+          "type": "number",
+          "minimum": 0
+        },
+        "aggregation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "stability_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reference_perturbation_rule_ref",
+        "max_abs_deviation",
+        "sensitivity_curve_rule_ref"
+      ],
+      "properties": {
+        "kind": {
+          "const": "STABILITY"
+        },
+        "reference_perturbation_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_abs_deviation": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sensitivity_curve_rule_ref": {
+          "type": "string",
+          "minLength": 1
         }
       }
     }

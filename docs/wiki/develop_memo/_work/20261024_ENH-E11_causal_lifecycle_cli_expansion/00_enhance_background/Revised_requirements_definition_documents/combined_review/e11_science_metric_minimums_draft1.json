@@ -1,0 +1,588 @@
+{
+  "version": "e11-science-metric-minimums/draft1",
+  "status": "41_METHOD_METRIC_PLANS / INDEPENDENT_REVIEW_REQUIRED / ALL_NUMERIC_THRESHOLDS_MISSING",
+  "authority": "Approved 10_32 Method catalog is scientific target; candidate minimum metric types only",
+  "method_records": [
+    {
+      "method_id": "P1-M01",
+      "metric_family": "IDENTIFICATION_TRUTH",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-001",
+        "NEG-027"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M02",
+      "metric_family": "GRAPH_IDENTIFICATION",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION",
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-002",
+        "NEG-003"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M03",
+      "metric_family": "GRAPH_IDENTIFICATION",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION",
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-002",
+        "NEG-027"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M04",
+      "metric_family": "GRAPH_IDENTIFICATION",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION",
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-004"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M05",
+      "metric_family": "IV_CONDITIONAL_IDENTIFICATION",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-006",
+        "NEG-007"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M06",
+      "metric_family": "GRAPH_EQUIVALENCE",
+      "mandatory_metric_kinds": [
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-003",
+        "NEG-021",
+        "NEG-028"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M07",
+      "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-004",
+        "NEG-005"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M08",
+      "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-001",
+        "NEG-010"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M09",
+      "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-002",
+        "NEG-008",
+        "NEG-020"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M10",
+      "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-018"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M11",
+      "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-011",
+        "NEG-012"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M12",
+      "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+      "mandatory_metric_kinds": [
+        "DIAGNOSTIC"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-014"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M13",
+      "metric_family": "STABILITY_DEVIATION",
+      "mandatory_metric_kinds": [
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-015"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M14",
+      "metric_family": "STABILITY_DEVIATION",
+      "mandatory_metric_kinds": [
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-017"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M15",
+      "metric_family": "STABILITY_DEVIATION",
+      "mandatory_metric_kinds": [
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-016"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M16",
+      "metric_family": "GRAPH_IDENTIFICATION_AND_SENSITIVITY",
+      "mandatory_metric_kinds": [
+        "IDENTIFICATION",
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-002"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M17",
+      "metric_family": "SENSITIVITY_CURVE",
+      "mandatory_metric_kinds": [
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-018"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M18",
+      "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+      "mandatory_metric_kinds": [
+        "DIAGNOSTIC"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-019",
+        "NEG-026"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M19",
+      "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+      "mandatory_metric_kinds": [
+        "DIAGNOSTIC"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-019",
+        "NEG-026"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P1-M20",
+      "metric_family": "NUMERIC_FORMULA_AND_SENSITIVITY",
+      "mandatory_metric_kinds": [
+        "POINT",
+        "STABILITY"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-020"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M01",
+      "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M02",
+      "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M03",
+      "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M04",
+      "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-011",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M05",
+      "metric_family": "CATE_SURFACE_BIAS",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M06",
+      "metric_family": "CATE_SURFACE_BIAS",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-010",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M07",
+      "metric_family": "CATE_SURFACE_BIAS",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-011",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P2-M08",
+      "metric_family": "IV_CONDITIONAL_SLOPE_BIAS_AND_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-009",
+        "NEG-012",
+        "NEG-013"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M01",
+      "metric_family": "GRAPH_EQUIVALENCE",
+      "mandatory_metric_kinds": [
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-021"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M02",
+      "metric_family": "GRAPH_EQUIVALENCE",
+      "mandatory_metric_kinds": [
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-021",
+        "NEG-028"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M03",
+      "metric_family": "GRAPH_EQUIVALENCE",
+      "mandatory_metric_kinds": [
+        "GRAPH"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-021",
+        "NEG-028"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M04",
+      "metric_family": "PANEL_ATT_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-022"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M05",
+      "metric_family": "EVENT_TIME_VECTOR_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-022"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M06",
+      "metric_family": "ITS_LEVEL_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-023"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M07",
+      "metric_family": "LOCAL_RD_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-023"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M08",
+      "metric_family": "LOCAL_RD_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-006",
+        "NEG-023"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M09",
+      "metric_family": "IV_POINT_BIAS",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-006",
+        "NEG-007"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M10",
+      "metric_family": "IV_POINT_AND_AR_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "TOPOLOGY",
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-006",
+        "NEG-025"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M11",
+      "metric_family": "IV_STRUCTURAL_SLOPE_AND_AR_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "TOPOLOGY",
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-008",
+        "NEG-025"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M12",
+      "metric_family": "SCM_GAP_TIME_VECTOR",
+      "mandatory_metric_kinds": [
+        "VECTOR"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [],
+      "required_negative_matrix": [
+        "NEG-024"
+      ],
+      "blocked_until_independent_review": true
+    },
+    {
+      "method_id": "P3-M13",
+      "metric_family": "SDID_ATT_BIAS_COVERAGE",
+      "mandatory_metric_kinds": [
+        "POINT"
+      ],
+      "additional_kinds_if_inference_approved_and_requested": [
+        "INTERVAL"
+      ],
+      "required_negative_matrix": [
+        "NEG-024"
+      ],
+      "blocked_until_independent_review": true
+    }
+  ],
+  "conditional_rule": "INTERVAL requires approved estimand-specific CI availability and requested=true; P3-M10/M11 AR set additionally requires TOPOLOGY; point-only P3-M12 forbids INTERVAL; this list does not assert every Method supports inference",
+  "cross_asset_checks_not_in_jsonschema": [
+    "method_id to metric family and estimand match",
+    "seed set disjointness",
+    "real source hash dereference and independence",
+    "valid evidence age and reviewer",
+    "K includes all preregistered hypotheses",
+    "metric thresholds, T2 pilot and T3 completion"
+  ]
+}
