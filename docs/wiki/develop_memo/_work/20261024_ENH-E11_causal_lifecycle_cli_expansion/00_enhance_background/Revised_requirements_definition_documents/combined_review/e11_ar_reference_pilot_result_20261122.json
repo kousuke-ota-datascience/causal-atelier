@@ -1,0 +1,59 @@
+{
+  "status": "NONCONFIRMATORY_ALGEBRA_CHECK",
+  "candidate": "HC1_CHI2_QUADRATIC_AR",
+  "tests": [
+    {
+      "variant": "B0",
+      "n": 512,
+      "k": 2,
+      "seed": 20261122,
+      "true_structural_beta": 2,
+      "sample_wald_2sls_beta": 2.022897165247616,
+      "first_stage_gA": 47.50000000000014,
+      "t_ar_at_ratio": 0,
+      "q_coefficients": [
+        2152.700087965715,
+        -8599.099647701252,
+        8241.28391250556
+      ],
+      "num_evaluations": 8,
+      "max_absolute_algebra_error": 1.1641532182693481e-10
+    },
+    {
+      "variant": "B1",
+      "n": 512,
+      "k": 3,
+      "seed": 20261123,
+      "true_structural_beta": 1.4,
+      "sample_wald_2sls_beta": 1.901834455851734,
+      "first_stage_gA": 42.23891806241936,
+      "t_ar_at_ratio": 0,
+      "q_coefficients": [
+        1680.2958208487398,
+        -6375.468875275862,
+        5737.163090222021
+      ],
+      "num_evaluations": 8,
+      "max_absolute_algebra_error": 1.1641532182693481e-10
+    }
+  ],
+  "geometry_adversary": {
+    "case": "ZERO_FIRST_STAGE_TWO_RAYS",
+    "n": 128,
+    "first_stage_gA": 7.105427357601002e-15,
+    "point_ratio": "NOT_AVAILABLE",
+    "AR_topology": "TWO_UNBOUNDED_RAYS",
+    "roots": [
+      -17.183318882321387,
+      17.18223070783546
+    ],
+    "identification_validity": "FALSE; intentionally invalid exclusion; topology only"
+  },
+  "limitations": [
+    "Python 3.13 review-only, not Python 3.12 target",
+    "Neither a separate reviewer nor a frozen reference implementation",
+    "No calibrated coverage, weak-IV Monte Carlo, T2/T3 or exhaustive topology verification",
+    "Nominal 0.95 is illustrative; not preregistered T3 decision threshold"
+  ],
+  "python_script_sha256": "70e16fee0e58aed0560fd33623fe1630831dfea7314034629341e33848b10d70"
+}
