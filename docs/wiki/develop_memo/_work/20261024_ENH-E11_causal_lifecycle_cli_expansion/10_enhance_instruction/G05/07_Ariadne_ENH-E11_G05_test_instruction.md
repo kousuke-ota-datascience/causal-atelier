@@ -62,7 +62,7 @@
 | G05-07-POL04 | unsafe owner/mode/nonlocal FS/symlink/root変更・cross-FS | Fail closed、stage/publish再検証、row値漏洩無し |
 | G05-07-WR01 | Study `row_export_requested=true`＋実private FS・Method approved 1..max_rows | ordered column/type/row/byteとG01 Sink/Reader/Marker/hash、0700/0600 |
 | G05-07-WR02 | max_rows+1、max_output_bytes超過、NaN/dup IDs/unknown column、empty invalid | no completed row publication、typed rejection/部分成功無し |
-| G05-07-WR03 | stage後のroot/owner/mode/FS不正・rename race/disk failure | 未公開、marker無し、private stage隔離、二重Publish無し |
+| G05-07-WR03 | stage後のroot/owner/mode/FS不正、rename前のfailure、rename後fsync/readback不明、並行rename競合 | rename前の失敗は公開Run無し。rename後の不定状態では最終dir/markerが残存し得るため、`PUBLICATION_INDETERMINATE`・COMPLETED宣言禁止、既存Run削除/上書き禁止、独立Reader再照合必須。private stage隔離・二重Publish無し |
 | G05-07-WR04 | 旧Product v2、Output JSON/console/log/Error中の行値 | 旧ABI維持、無認可行/secretは一切流出しない |
 
 **Class boundary:** LocalPrivacyPolicyがStudy・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。
