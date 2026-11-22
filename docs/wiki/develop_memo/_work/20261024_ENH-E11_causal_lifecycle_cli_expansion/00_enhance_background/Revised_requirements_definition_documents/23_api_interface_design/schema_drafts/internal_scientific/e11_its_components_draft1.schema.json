@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:its-components:draft1",
+  "title": "E11 P3-M06 ITS scientific components (internal draft; non-row)",
+  "description": "ITS level/slope/horizon components. Structural schema only: covariance/assumptions, statistical validity, horizon predeclaration and hashes must be independently checked; not Contract Freeze.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "method_id",
+    "study_ref",
+    "design_ref",
+    "component_selection",
+    "intervention_time",
+    "level",
+    "slope",
+    "horizon_predeclaration_ref",
+    "post_horizon_effects",
+    "observed_rows_included"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "e11-internal-its-components/draft1"
+    },
+    "method_id": {
+      "const": "P3-M06"
+    },
+    "study_ref": {
+      "$ref": "#/$defs/contentRef"
+    },
+    "design_ref": {
+      "$ref": "#/$defs/contentRef"
+    },
+    "component_selection": {
+      "enum": [
+        "LEVEL",
+        "LEVEL_AND_SLOPE"
+      ]
+    },
+    "intervention_time": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "$ref": "#/$defs/effectComponent"
+    },
+    "slope": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/effectComponent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "horizon_predeclaration_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/contentRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "post_horizon_effects": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "h",
+          "estimate",
+          "inference_status",
+          "interval_ref"
+        ],
+        "properties": {
+          "h": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "estimate": {
+            "type": "number"
+          },
+          "inference_status": {
+            "enum": [
+              "AVAILABLE",
+              "UNAVAILABLE",
+              "UNSUPPORTED",
+              "FAILED",
+              "NOT_REQUESTED"
+            ]
+          },
+          "interval_ref": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/contentRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "inference_status": {
+                  "const": "AVAILABLE"
+                }
+              },
+              "required": [
+                "inference_status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "interval_ref": {
+                  "$ref": "#/$defs/contentRef"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "interval_ref": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "observed_rows_included": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "component_selection": {
+            "const": "LEVEL"
+          }
+        },
+        "required": [
+          "component_selection"
+        ]
+      },
+      "then": {
+        "properties": {
+          "slope": {
+            "type": "null"
+          },
+          "post_horizon_effects": {
+            "maxItems": 0
+          },
+          "horizon_predeclaration_ref": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "component_selection": {
+            "const": "LEVEL_AND_SLOPE"
+          }
+        },
+        "required": [
+          "component_selection"
+        ]
+      },
+      "then": {
+        "properties": {
+          "slope": {
+            "$ref": "#/$defs/effectComponent"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "post_horizon_effects": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "post_horizon_effects"
+        ]
+      },
+      "then": {
+        "properties": {
+          "horizon_predeclaration_ref": {
+            "$ref": "#/$defs/contentRef"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "effectComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimate",
+        "inference_status",
+        "interval_ref"
+      ],
+      "properties": {
+        "estimate": {
+          "type": "number"
+        },
+        "inference_status": {
+          "enum": [
+            "AVAILABLE",
+            "UNAVAILABLE",
+            "UNSUPPORTED",
+            "FAILED",
+            "NOT_REQUESTED"
+          ]
+        },
+        "interval_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "inference_status": {
+                "const": "AVAILABLE"
+              }
+            },
+            "required": [
+              "inference_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "interval_ref": {
+                "$ref": "#/$defs/contentRef"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "interval_ref": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
