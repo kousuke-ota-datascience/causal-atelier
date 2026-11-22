@@ -4,6 +4,8 @@
 **Controlling Owner policy:** `DEC-G01-EXEC-01=ADOPTED`, [177](177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md). `DEC-PREPCODE-01=B` remains applicable to other Gates.
 **Docket state:** `S10_REVIEW_PACKET_READY / S10_OWNER_APPROVAL_NOT_GRANTED / S11_OWNER_APPROVAL_NOT_GRANTED / ALL_EXTERNAL_EVIDENCE_PENDING`.
 **Author candidate source commit (not an Owner Freeze):** `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, branch `prototype/ariadne_mvp`. At actual S10 approval explicitly pin/verify one `G01_FROZEN_SOURCE_FULL_SHA` and `uv.lock` blob/SHA256 (not inferred from current branch HEAD); if other active contracts changed, recheck their exact content and impact before approval.
+**Candidate source lock provenance:** At immutable candidate commit `a05fd072cbb82a7c6e43f45e7208e078f0784a2b`, `uv.lock` Git blob SHA is `2b83110e86b26b7969fbddf8f98a727370ae19f7` (Git source-object identity; not SHA-256). At actual Owner S10 freeze, separately record/check actual `sha256sum uv.lock` on the identical checkout; no target Linux runtime is claimed.
+
 **Author normative inventory:** `s09_post_reconciliation_document_snapshot_draft14.json` 402 paths; G01 source candidate `s09_g01_scoped_review_inventory_draft8.json` 11 OWN_GATE + 69 COMMON_SHARED + 5 IMPACT_SAMPLE = 85 initial semantic candidates, 317 future Gate NOT_REVIEWED. Source SHA inventory is not an independent audit.
 
 ## A. Provisional G01-S10 — Owner action 1 (NOT YET ISSUED)
