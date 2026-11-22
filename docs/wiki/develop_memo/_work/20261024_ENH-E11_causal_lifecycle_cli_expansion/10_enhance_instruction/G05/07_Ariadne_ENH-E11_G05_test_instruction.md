@@ -56,7 +56,7 @@
 
 | Test | Setup | 必須観測／FAIL条件 |
 |---|---|---|
-| G05-07-POL01 | Studyのみ・CLIのみ・両方false | exit3・row Source反復0・row bytes0・fallback無し |
+| G05-07-POL01 | 有効Study `row_export_requested=false`／必須field省略／不正型／廃止CLI flag／両者同時指定 | valid false→Privacy exit3、missing/type/unknown CLI→config exit2。各分岐ともrow Source反復0・row bytes0・aggregateへの無言fallback無し |
 | G05-07-POL02 | Study `row_export_requested=true`（追加CLI flag不要）・nonroot EUID/private ext4/XFS・Method schema | PrivacyDecision許可・実FS/Parquetの正例・Writer/readback |
 | G05-07-POL03 | 異run/変更Method/Study/Data・wrong EUID/owner/mode | typed exit3・RowSource反復0・bytes0 |
 | G05-07-POL04 | unsafe owner/mode/nonlocal FS/symlink/root変更・cross-FS | Fail closed、stage/publish再検証、row値漏洩無し |
@@ -89,4 +89,4 @@ This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a lo
 
 ## S02-01/02/05 現行契約の確認（2026-11-22、Owner採用）
 
-本書が規範とする現行E11 Local個票出力の唯一の実行者opt-inは`ValidatedStudy.privacy.row_export_requested=true`である。CLI上の追加のrow-export許可flag、`LocalRunContext.cli_row_flag`、`privacy.policy_ref`、署名Verifier/鍵/独立Approverは実装しない。正規署名は`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)->PrivacyDecision`。Study trueのみで個票を無条件許可するわけではない。必ずnonroot実効UID同一所有者・private ext4/XFS TrustedRoot・owner-only mode・安全なdirfd/relative path・Method別ApprovedRowSchemaとallowed ordered columns、row/byte/memory制限、同一run G01 stagingをAND検証する。未適格・false/省略はexit3、個票Source反復0・row bytes0、aggregateへ自動格下げせず、log/Manifestに個票値を流出させない。検証後もSeal/Publish/readbackまでRoot/lineage driftを拒否し、既存Product v2は変更しない。独立試験ではtrue/false/省略、未知`policy_ref`、廃止CLI flag、Wrong UID/Root、unapproved column/row/byte、WriterとReaderの正負例を検証する。本契約はS02-01/02/05の**実装指示本文**であり、科学的Test PASSやCoding Authorizationではない。
+本書が規範とする現行E11 Local個票出力の唯一の実行者opt-inは`ValidatedStudy.privacy.row_export_requested=true`である。CLI上の追加のrow-export許可flag、`LocalRunContext.cli_row_flag`、`privacy.policy_ref`、署名Verifier/鍵/独立Approverは実装しない。正規署名は`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)->PrivacyDecision`。Study trueのみで個票を無条件許可するわけではない。必ずnonroot実効UID同一所有者・private ext4/XFS TrustedRoot・owner-only mode・安全なdirfd/relative path・Method別ApprovedRowSchemaとallowed ordered columns、row/byte/memory制限、同一run G01 stagingをAND検証する。有効Studyで`row_export_requested=false`またはroot/Method等のPrivacy不適格はexit3。必須`row_export_requested`の省略・型違反はStudy構造検証エラー(exit2)、廃止CLI row許可flagは未知Option(exit2)。いずれも個票Source反復0・row bytes0、aggregateへ自動格下げせず、log/Manifestに個票値を流出させない。検証後もSeal/Publish/readbackまでRoot/lineage driftを拒否し、既存Product v2は変更しない。独立試験ではtrue/false/省略、未知`policy_ref`、廃止CLI flag、Wrong UID/Root、unapproved column/row/byte、WriterとReaderの正負例を検証する。本契約はS02-01/02/05の**実装指示本文**であり、科学的Test PASSやCoding Authorizationではない。
