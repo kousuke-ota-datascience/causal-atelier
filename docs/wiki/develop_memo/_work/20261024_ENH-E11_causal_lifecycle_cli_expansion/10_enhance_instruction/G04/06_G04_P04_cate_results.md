@@ -87,7 +87,7 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。実行者のOS EUID/root/ACL/mountはCLI composition rootが検証。G04は個票出力禁止、G05だけがStudy+CLI double opt-inでlocal中間個票を許容する。
+**Application Context：** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`のみを保持。CLI composition rootが実EUID/private Rootを検証。G04が個票を直接公開する権限はない。G05のみStudy単独opt-inとMethod/OS全件適格性で行出力。
 
 **Application Port配置:** `ContentReferencePort`、`LocalPublicationPort`/`LocalManifestReaderPort`、`LocalPrivacyPolicyPort`。第三者Verifier/Trust Anchor/署名鍵はlocal CLIに要求しない。
 
@@ -122,7 +122,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 本書§2BのOperation別Graph/Identification/Effect/Diagnostics/Status・Lineageを検査する。G04では行出力を拒否し、G05のみStudy+CLI double opt-inとEUID/private local FS・Method別RowSchemaによる許可後にG01 Staging→Publisher→Readerを利用する。
+7. 本書§2BのOperation別Graph/Identification/Effect/Diagnostics/Status・Lineageを検査する。G04では行出力を拒否し、G05のみStudy単独opt-inとEUID/private local FS・Method別RowSchemaによる許可後にG01 Staging→Publisher→Readerを利用する。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -337,3 +337,9 @@ Constructor/Instance Fields/Public Methodの責務は§3、Method固有処理は
 - P2-M06 owner P02: all five strict profiles and DGP-003, DGP-004; NEG-010, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
 - P2-M07 owner P02: all five strict profiles and DGP-003, DGP-004; NEG-011, NEG-012, NEG-013; REF-E05; no SCIENCE PASS from schema presence.
 - P2-M08 owner P03: all five strict profiles and DGP-008; NEG-009, NEG-012, NEG-013; REF-E06; no SCIENCE PASS from schema presence.
+
+## S02 / G04のSelf-contained Method・非スカラー出力契約（Owner承認）
+
+対象`P2-M01〜P2-M08`の8件。5 Profile kindは`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`（kind=method_config/question_profile/design_profile/output_profile/inference_profile）＋Method ID別overlayを再構成し、`e11_method_profile_dispatch_registry_draft1.json`で厳密dispatch/Blob SHA/Method正負例/標準Draft202012 Parityを確認。closed schema断片を`allOf`結合しない。未検証/unknown Methodには`METHOD_PROFILE_UNAVAILABLE`を返す。全8 MethodがEffect scalar `result.json`の`point=NOT_AVAILABLE`（ターゲットが関数であるため）と独立typed `cate_surface.json`をManifestに記載し、observed rowではない事前指定Design grid上の評価値・SHA・Method/Estimandを保存する。P2-M01〜07はnon-IV `NON_IV_CATE`、P2-M08は条件付きIV `CONDITIONAL_IV_STRUCTURAL_SLOPE`。両者を同一CATEと混同しない。個人レベル`X_i`やCATE値は公開しない。個票のbounded ParquetはG05のみが明示Study `row_export_requested=true`＋nonroot private ext4/XFS/Method別列行byte/memory capsで審査してG01 Sinkへ。共通SchemaはEconMLのmethod-specific inferenceを保証しない。
+
+正規Context`LocalRunContext(root,principal)`とPrivacy Port`authorize(*,study,root,principal,output_shape)`。署名Verifier/Policy Anchor・Study`policy_ref`・追加CLI flagは撤廃。独立07は8 Methodの実Backend API、fitted inference、CI unsupportedをtyped、CATE grid mismatch/observed rows leak/IV target錯誤/Result scalar偽装/Manifest readback/hashの正負例を検査。既存KernelとProduct v2公開ABIを保護する。未実行をScience PASSにしない。
