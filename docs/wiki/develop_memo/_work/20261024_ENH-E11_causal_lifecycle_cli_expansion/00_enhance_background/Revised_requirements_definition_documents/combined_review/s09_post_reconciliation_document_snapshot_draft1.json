@@ -1,0 +1,387 @@
+{
+  "kind": "ENH-E11_S09_post_reconciliation_document_snapshot",
+  "status": "DRAFT_AUTHOR_SNAPSHOT_NOT_INDEPENDENT_AUDIT",
+  "base_branch": "prototype/ariadne_mvp",
+  "source_full_commit_sha": "f639b3ed863b1b0175a6be44aa6b1177d880a2da",
+  "created_date": "2026-11-22",
+  "purpose": "Full SHA and blob SHA record for audit; not runtime Science PASS or S09 independent QA",
+  "inventory_counts": {
+    "gate_06_07_pxx": 71,
+    "operator_entry_prompts": 7,
+    "stock_selected": 14
+  },
+  "gate_documents": [
+    {
+      "path": "10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "blob_sha": "60dcd04362f5b7aec7384016533af637104808d1"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P00_work_package_plan.md",
+      "blob_sha": "a1e40b600e4619b6380020fcdca628ab6aa47f22"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P01_local_contract_codec.md",
+      "blob_sha": "b500d06626b88e272fee12c7ddefab98c5f50b2e"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P02_atomic_publication_reader.md",
+      "blob_sha": "1eb2bdbe6bf4212cb4c362bb163f1027559e93ac"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P03_pag_graph_version.md",
+      "blob_sha": "cd60370e3686c1ede46144b0ac2ee1b1d52ae628"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P04_fci_backend_oracle.md",
+      "blob_sha": "48c07abd5c6d8957af6547fdcc06ada7f6fac645"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P05_cli_use_case_privacy.md",
+      "blob_sha": "c2084b2ba4ecd93742486c603df0eb39f6e2281a"
+    },
+    {
+      "path": "10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md",
+      "blob_sha": "c640dcde6bbda226f95e27d9fea28c7fc709d042"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md",
+      "blob_sha": "36d62c8c218630a941055d4cc14095ca7740f443"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P00_work_package_plan.md",
+      "blob_sha": "facac52fc56ed09a52be4288e29d43f9f8a13386"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P01_native_identification.md",
+      "blob_sha": "54a115104d5522c6bcee619ba32385a3623684aa"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P02_dowhy_identification.md",
+      "blob_sha": "845927a56f3cfdb549f10742280d7bc8d2c605ac"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P03_frontdoor_fd_a.md",
+      "blob_sha": "18b93a5db51f2053aec9d48c3573a5d6552c0a2a"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P04_identification_dispatch.md",
+      "blob_sha": "bcaa95741be12725ae7b4dc07caf87930ad30420"
+    },
+    {
+      "path": "10_enhance_instruction/G02/07_Ariadne_ENH-E11_G02_test_instruction.md",
+      "blob_sha": "351b72f5f7c1e95b697d8549d77cc218770b6b7a"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md",
+      "blob_sha": "c1f53e00e71000e97c88dcc372aa82700a0b6614"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P00_work_package_plan.md",
+      "blob_sha": "4c2535119c64979901f6f600d2abf066f8aa3b3a"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P01_native_effects.md",
+      "blob_sha": "f12f5eb90e2be82c6c838ba557cb210f352dc5a7"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P02_weighting_ipw_aipw.md",
+      "blob_sha": "5164a6448c164b13dece14c9896f5813f4bde816"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P03_refutation_methods.md",
+      "blob_sha": "5c1892d877d89f8856cf2625f83eeddb04a53f7e"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P04_sensitivity_methods.md",
+      "blob_sha": "e92dd870347311eb273b3f2500bba9b2d29b1131"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P05_negative_controls_ols_rv.md",
+      "blob_sha": "3cff6977e285ea8a1217b8abe43a6faffd05f206"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P06_diagnostics_pipeline.md",
+      "blob_sha": "8e1138a3424eb2c8f2647eca77c5e66854a99c6d"
+    },
+    {
+      "path": "10_enhance_instruction/G03/07_Ariadne_ENH-E11_G03_test_instruction.md",
+      "blob_sha": "3e6d52fdc3475457ee32e9bceba31ee8c55eebd8"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_Ariadne_ENH-E11_G04_implementation_instruction.md",
+      "blob_sha": "5ee2bb0885ee7d2323ae7ed3d61430f1d0d4bfb5"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P00_work_package_plan.md",
+      "blob_sha": "033f248b152eb24673612c929e1ae5277f850a9e"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P01_econml_dml_dr.md",
+      "blob_sha": "33b3918cb5ab286c283adc8c05117f8da0b84d59"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P02_s_t_x_learners.md",
+      "blob_sha": "559b03ca9782bac3ac0c2f6cd063584a3de83a91"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P03_driv_iv_slope.md",
+      "blob_sha": "873dd9810dfbe14f4a6ae322e2e1f78163cd0e2b"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P04_cate_results.md",
+      "blob_sha": "1b9352a47150f82681cec0b98fe679319bc31784"
+    },
+    {
+      "path": "10_enhance_instruction/G04/07_Ariadne_ENH-E11_G04_test_instruction.md",
+      "blob_sha": "fe706ae2e57bd50c482657927b5e1441140c4ccc"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "blob_sha": "eb6e1e79fc688d1a78fed08367768cc8765bf98d"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P00_work_package_plan.md",
+      "blob_sha": "78d53d8e48efdf16cbd0f02095a4a7f9ab8d16e6"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P01_hte_diagnostics.md",
+      "blob_sha": "185cdab3d54fc2f42800349fdc0123b0ac8967e3"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P02_row_authorization.md",
+      "blob_sha": "d2aa405e3ff277ef4733debd1c819e9518085aa3"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P03_parquet_bundle.md",
+      "blob_sha": "85e234863b22f80a65152d40c71f2ae3bd529d84"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P04_privacy_e2e.md",
+      "blob_sha": "390b8bb961bd4cae50a048bbe250b62f037c7355"
+    },
+    {
+      "path": "10_enhance_instruction/G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "blob_sha": "d294966486d3b287f1fcc9c30dee9be8f0795bb1"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md",
+      "blob_sha": "03e1f8da5375b9876869f3e8985d482afe656c9f"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P00_work_package_plan.md",
+      "blob_sha": "1db701bf061954c1c35d695a8c32f6766b497829"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P01_temporal_graph.md",
+      "blob_sha": "406d5efc382a2bae69df09f5a481b2318473ecc2"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P02_pcmci_adapters.md",
+      "blob_sha": "96a529a9b5d39ee6d72a48802f9958df64d5d4ec"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P03_temporal_bundle.md",
+      "blob_sha": "bcf945fe81ee07a5a2b9585eb8df03f9c255c035"
+    },
+    {
+      "path": "10_enhance_instruction/G06/07_Ariadne_ENH-E11_G06_test_instruction.md",
+      "blob_sha": "4b59b99d4ebd811d57719826ac3aa7552d555bae"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md",
+      "blob_sha": "c6641d2085edbf44f7478599298d01320ae40418"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P00_work_package_plan.md",
+      "blob_sha": "dc501f4cab1353fc1f1a8c250af9b13eef6a999d"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P01_did_event.md",
+      "blob_sha": "a97c2b6de86712500a5c8f1aa3c6700a50c1272f"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P02_interrupted_ts.md",
+      "blob_sha": "62c4daabddcda31d4f12d250943f6f1e24c61c0b"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P03_quasi_integration.md",
+      "blob_sha": "1b8aa97a20efa0238ef448e5fa61487f1ebaea66"
+    },
+    {
+      "path": "10_enhance_instruction/G07/07_Ariadne_ENH-E11_G07_test_instruction.md",
+      "blob_sha": "6e4960dd8480d4eb336a6296a5f1340010a9d88d"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md",
+      "blob_sha": "14aa722a70c98d45372de26c22eae2524d1a3701"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P00_work_package_plan.md",
+      "blob_sha": "4e5318f9bd8d8d3ff60813cffe9e2c80c15bd90b"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P01_rdd_sharp_fuzzy.md",
+      "blob_sha": "c723b04929cd733928c4e6c0a7596649ce31a43c"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P02_wald_late.md",
+      "blob_sha": "a41967142a4dbccb1950820bf252e32033047b28"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P03_two_sls_ar.md",
+      "blob_sha": "30ac5764b3a9bfd05a9f21808fc0f90ce05d033f"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P04_rdd_iv_result.md",
+      "blob_sha": "315be025349e476f54bd3f8c2958983b120cdc14"
+    },
+    {
+      "path": "10_enhance_instruction/G08/07_Ariadne_ENH-E11_G08_test_instruction.md",
+      "blob_sha": "720f69a06721fc4489577e4fadc8589597c3da1a"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md",
+      "blob_sha": "80fc47319464ee77ce9052bc2bc2da635cbd7b39"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P00_work_package_plan.md",
+      "blob_sha": "0b7e9ce06486440f7f214cfb5e64b89046fcfe05"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P01_scm_point.md",
+      "blob_sha": "5aa1c738ecb970bc77fbdc48a1cbd6efa00618cc"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P02_sdid_estimator.md",
+      "blob_sha": "650df767c8b6821544d312ef3333c9d0f3d0508f"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P03_synthetic_bundle.md",
+      "blob_sha": "dedce5788223c45716eb03d5c38c47ad39d8bfc4"
+    },
+    {
+      "path": "10_enhance_instruction/G09/07_Ariadne_ENH-E11_G09_test_instruction.md",
+      "blob_sha": "bc85256eced317c4712973afbec1e16f190b56c0"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "blob_sha": "7b906cb75388d815ca9332703b1adb00b8fd1a0d"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P00_work_package_plan.md",
+      "blob_sha": "fea48de4e4d4eab21ed05685e988f33205f7d7c9"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P01_registry_lock.md",
+      "blob_sha": "a74c48f2f76ef37a390871c1c2f8b89441002339"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P02_operation_matrix.md",
+      "blob_sha": "75de61e0535731f45cd2b9c5ae37290c6b4faf81"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P03_replay_manifest.md",
+      "blob_sha": "032ff408eafb29e6ecacadad82e8feea5e074229"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P04_science_benchmarks.md",
+      "blob_sha": "fd753dc70e07acd0831dacbe982ad9113542428e"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P05_compatibility_evidence.md",
+      "blob_sha": "4e7d1bb624e8f119e67ca0fa8d9ab88db15cfa7c"
+    },
+    {
+      "path": "10_enhance_instruction/G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "blob_sha": "c475967b58a39896132967f3fc16be8a026e20fe"
+    }
+  ],
+  "operator_prompts": [
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/00_variable_conventions.md",
+      "blob_sha": "f08d62ec5207265d41fcbd5e44b4a2561d9d83b2"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md",
+      "blob_sha": "0bcc63cede2673709c84834c4a4873e72c5fe388"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md",
+      "blob_sha": "0bf08ac267ff421b4e0cd8d5fdaecbe535f5c910"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md",
+      "blob_sha": "aec49b5ccdf4833cd10fbbec36984f3d4d3ebad8"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/30_independent_verification_01_test_agent_prompt.md",
+      "blob_sha": "bd301b63bce067dc15215fd99774198cedde1820"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/40_fail_remediation_01_fail_rework_coding_agent_prompt.md",
+      "blob_sha": "5a8ad31ba30d476d3b4a29c90e4c1c983a299901"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md",
+      "blob_sha": "dd29cf767fcf95945646023f6b53b9bfa7559d62"
+    }
+  ],
+  "stock_contracts": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_31_ar_estimand_inference.md",
+      "blob_sha": "b0eec9c53bac7735034192d93aef3f178e0ca5b4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md",
+      "blob_sha": "a401d42adfd4e45149fac8503a1e49291af9930f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md",
+      "blob_sha": "36386f284d9ebd8d14227d993dd135ba19be921a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md",
+      "blob_sha": "10d3b1bce6b76028afdc8087c6366918ce10d89c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md",
+      "blob_sha": "d9915aa35e18d081dcb9e97e49e910d421ab1890"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md",
+      "blob_sha": "522aa6f08889ffe4f407c336cc367bb914ed5e45"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_study_v1.schema.json",
+      "blob_sha": "5ab955acbc6dc5462f3147071bbb61cb09877ceb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_graph_v1.schema.json",
+      "blob_sha": "9632f54398112649631fc8b253a09728c2f93d22"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_cate_surface_draft1.schema.json",
+      "blob_sha": "a3d14add530aa862ccf0f11ede73dad5e537d36d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_event_time_effects_draft1.schema.json",
+      "blob_sha": "4d5a2b9bba98f6f726bd327fcafee8ff6070c1e7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_scm_gaps_draft1.schema.json",
+      "blob_sha": "7553e75e2c4eda3c93436dc54c704f91c7893daf"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/137_20261122_dec_s02_eight_simplifications_owner_approval.md",
+      "blob_sha": "92bff4a76536211d3757158b69cd441d5079248f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/150_20261122_dec_s05_ar01_owner_review_first.md",
+      "blob_sha": "ddfcf79ba7d165821197b35caf9d583c1632e24f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/156_20261122_dec_s05_02_03_owner_review_and_environment.md",
+      "blob_sha": "77577feec819e8eddf0e6be527ba03b52eb3b0a3"
+    }
+  ]
+}
