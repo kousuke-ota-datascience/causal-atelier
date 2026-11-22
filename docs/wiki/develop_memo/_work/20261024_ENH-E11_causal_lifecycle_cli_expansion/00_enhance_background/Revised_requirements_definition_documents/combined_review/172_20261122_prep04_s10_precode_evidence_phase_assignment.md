@@ -1,5 +1,7 @@
 # ENH-E11 PREP-04 → PREP-05 → PREP-06 → Coding Authorization: evidence phase assignment
 
+**2026-11-23 G01 precedence notice — DEC-G01-EXEC-01 Owner adopted:** The G01-specific pre-S10/pre-S11 evidence requirements and the “next step” prescriptions below are **historical**, superseded **only for G01** by [177](177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md). Python3.12 B02/B04 and truly independent S09/B05 are **EXTERNAL_PENDING** and become mandatory before G01_999, not before **separately Owner-approved provisional G01-S10 → separately Owner-approved limited G01-S11**. Source-level Author contract reconciliation and an explicitly acknowledged exception ledger are the pre-S10 inputs. No actual Owner S10/S11 approval, science/VM evidence or Agent authorization is implied. Other Gates retain B.
+
 **Date:** 2026-11-22 JST  
 **Purpose:** Reconnect S01–S11 simplification back to original PREP-01..06 / Gate workflow and distinguish **pre-code design-authority evidence** from **post-authorization implementation acceptance**.  
 **Status:** `DEC-PREPCODE-01_B_OWNER_ADOPTED / GATE_SCOPED_S09_S10_S11 / S09_INDEPENDENT_NOT_RUN / S10_NOT_FROZEN / S11_NOT_AUTHORIZED`.  
