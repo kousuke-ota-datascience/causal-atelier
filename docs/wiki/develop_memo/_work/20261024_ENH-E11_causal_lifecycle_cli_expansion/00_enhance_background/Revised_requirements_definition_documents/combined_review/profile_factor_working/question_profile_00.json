@@ -1,0 +1,378 @@
+{
+  "kind": "question_profile",
+  "batch": 0,
+  "methods": [
+    "P1-M01",
+    "P1-M02",
+    "P1-M03",
+    "P1-M04",
+    "P1-M05",
+    "P1-M07",
+    "P1-M08",
+    "P1-M09"
+  ],
+  "entries": [
+    {
+      "id": "P1-M01",
+      "file": "e11_p1_m01_question_profile_v1.schema.json",
+      "blob_sha": "e5412acb8c46ae82bdc3d61aa5f411f061beed2a",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m01:question_profile:draft1",
+        "title": "P1-M01 — Native randomized identification / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "IDENTIFICATION"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M02",
+      "file": "e11_p1_m02_question_profile_v1.schema.json",
+      "blob_sha": "311049b882402647653827ac1a1bc74668c949a4",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m02:question_profile:draft1",
+        "title": "P1-M02 — Native backdoor ATE identification / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "IDENTIFICATION"
+          },
+          "estimand_family": {
+            "const": "ATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M03",
+      "file": "e11_p1_m03_question_profile_v1.schema.json",
+      "blob_sha": "8dc3570731b45f0a79fd8b3dffd1b877e71a50e5",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m03:question_profile:draft1",
+        "title": "P1-M03 — DoWhy backdoor ATE identification / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "IDENTIFICATION"
+          },
+          "estimand_family": {
+            "const": "ATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M04",
+      "file": "e11_p1_m04_question_profile_v1.schema.json",
+      "blob_sha": "9ea72b0d95922b2a2618216dc2cfcb0974bcb752",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m04:question_profile:draft1",
+        "title": "P1-M04 — DoWhy frontdoor ATE identification / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "IDENTIFICATION"
+          },
+          "estimand_family": {
+            "const": "ATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M05",
+      "file": "e11_p1_m05_question_profile_v1.schema.json",
+      "blob_sha": "0c412856645ef24173cb6da491f9ba4360d86480",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m05:question_profile:draft1",
+        "title": "P1-M05 — DoWhy IV conditional complier LATE identification (B0) / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "IDENTIFICATION"
+          },
+          "estimand_family": {
+            "const": "LATE_COMPLIER"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M07",
+      "file": "e11_p1_m07_question_profile_v1.schema.json",
+      "blob_sha": "e9e3e869f44cddefb3decee157f328d7b1955505",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m07:question_profile:draft1",
+        "title": "P1-M07 — restricted single-mediator FD-A linear two-stage ATE / question_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "ATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M08",
+      "file": "e11_p1_m08_question_profile_v1.schema.json",
+      "blob_sha": "a208b2e534e20f6618d634c66b64920d2d59578e",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m08:question_profile:draft1",
+        "title": "P1-M08 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "const": "ATE"
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M09",
+      "file": "e11_p1_m09_question_profile_v1.schema.json",
+      "blob_sha": "3acf29a1cde8a207ecb423aa4309914683f4431a",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m09:question_profile:draft1",
+        "title": "P1-M09 question_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id",
+          "research_question",
+          "population",
+          "analysis_goal",
+          "estimand_family",
+          "contrast"
+        ],
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "population": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analysis_goal": {
+            "const": "EFFECT_ESTIMATION"
+          },
+          "estimand_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contrast": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}
