@@ -1,0 +1,1162 @@
+{
+  "schema_version": "e11-s05-b06-static-scan/1",
+  "status": "STATIC_PATTERN_AUDIT_FAIL_REVIEW_REQUIRED; NO_INDEPENDENT_S09",
+  "file_count": 71,
+  "gate_06_07_count": 20,
+  "p00_pxx_count": 51,
+  "matching_lines": 117,
+  "matches": [
+    {
+      "file": "G01/06_G01_P01_local_contract_codec.md",
+      "source_blob_sha": "028bd44671c1c6487645a3bb7d0858647f7a9e03",
+      "line": 68,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "**G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false,policy_ref:null}`. Row request is a denial in P05 "
+    },
+    {
+      "file": "G01/06_G01_P02_atomic_publication_reader.md",
+      "source_blob_sha": "9f98496ed2af933e5461678dc662b27a5b2f3bdc",
+      "line": 125,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "Never return private row bytes in G01: G01 is strictly aggregate-only, and G05 alone owns double-opt-in local row output. Corrupt, partial, legacy, versionless or unsafe owner/mode/symlink/nonlocal-FS runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader c"
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 30,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "| `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | stateless privacy decisions, G01 aggregate-only | G05 local double-opt-in/row minimization is outside G01 |"
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 54,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `cli_row_flag` | `bool` | explicit CLI intent, never merged into Study YAML |"
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 120,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "def authorize(self, *, study: ValidatedStudy, cli_row_flag: bool,"
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 127,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "**G01 requirements:** `privacy.row_export_requested=false` AND `--allow-row-level-export=false`, trusted same-UID private root with valid owner/mode/local FS and aggregate-only verified output shape. **Either** individual-row input flag is invalid in G01, exit3 before any row bytes or Stage; no silent fallback. G01 never executes `filter_export_columns` for individual rows or creates `row_effects.parquet`."
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 129,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "G05 alone supports optional individual-row intermediate output by the executor's Study+CLI **double opt-in**, safe non-root Linux ext4/XFS private root and Method-specific approved row/column/byte bounds. This is not an independent human approval. The G05 decision cannot expand the G01 scientific or operation scope."
+    },
+    {
+      "file": "G01/06_G01_P05_cli_use_case_privacy.md",
+      "source_blob_sha": "050226b37373e49689de247db4fd75afaae5cdf4",
+      "line": 137,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "**CLI syntax:** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`. File format must be explicitly determined and validated (not silently reinterpret Product v2). Construct Decoder, TrustedRoot Factory, Port adapters, selected FCI Method Registry and UseCase through **one** composition root; never import optional Method during ordinary CLI parsing."
+    },
+    {
+      "file": "G02/06_G02_P04_identification_dispatch.md",
+      "source_blob_sha": "c378ee387e49885ab4775c1fbeddf0c0ee72264c",
+      "line": 93,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G02/06_G02_P04_identification_dispatch.md",
+      "source_blob_sha": "c378ee387e49885ab4775c1fbeddf0c0ee72264c",
+      "line": 128,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G03/06_G03_P06_diagnostics_pipeline.md",
+      "source_blob_sha": "2d248f2a3a3e04c85a26cd0ed68d08beaaa47b7a",
+      "line": 91,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G03/06_G03_P06_diagnostics_pipeline.md",
+      "source_blob_sha": "2d248f2a3a3e04c85a26cd0ed68d08beaaa47b7a",
+      "line": 126,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2Bに列挙したOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G04/06_G04_P04_cate_results.md",
+      "source_blob_sha": "332c4e645a5386694425b4661adb9558722d44e0",
+      "line": 90,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。実行者のOS EUID/root/ACL/mountはCLI composition rootが検証。G04は個票出力禁止、G05だけがStudy+CLI double opt-inでlocal中間個票を許容する。"
+    },
+    {
+      "file": "G04/06_G04_P04_cate_results.md",
+      "source_blob_sha": "332c4e645a5386694425b4661adb9558722d44e0",
+      "line": 125,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "7. 本書§2BのOperation別Graph/Identification/Effect/Diagnostics/Status・Lineageを検査する。G04では行出力を拒否し、G05のみStudy+CLI double opt-inとEUID/private local FS・Method別RowSchemaによる許可後にG01 Staging→Publisher→Readerを利用する。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 25,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 40,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "1. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 41,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 43,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "4. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 44,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "source_blob_sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "line": 61,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "source_blob_sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "source_blob_sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "source_blob_sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "line": 24,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "source_blob_sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "line": 40,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "source_blob_sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "line": 242,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 22,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 35,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 53,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 84,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | double opt-in＋private EUID-owned ext4/XFS root/Method-specific schema・row/byte bound/negative Source反復0/G01 Readback |"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 133,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/owner/mode/FSをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 168,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "7. Operation別の正しいGraph/Identification/Effect/Diagnostics/Statusを保持し、G05行出力はStudy＋CLI double opt-inとEUID/private root＋Method Schemaを検証した後だけG01 Sinkへ送る。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 200,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 201,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 203,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "source_blob_sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "line": 255,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 24,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 40,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 249,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "1. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 251,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 267,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "source_blob_sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "line": 326,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 24,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 40,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 56,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 96,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/owner/mode/FSをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 131,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "7. Operation別の正しいGraph/Identification/Effect/Diagnostics/Statusを保持し、G05行出力はStudy＋CLI double opt-inとEUID/private root＋Method Schemaを検証した後だけG01 Sinkへ送る。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 176,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | double opt-in＋private EUID-owned ext4/XFS root/Method-specific schema・row/byte bound/negative Source反復0/G01 Readback |"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 245,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 246,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 248,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "source_blob_sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "line": 310,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+    },
+    {
+      "file": "G06/06_G06_P03_temporal_bundle.md",
+      "source_blob_sha": "08c03bae217841aa6d4f836e57153042947aa42e",
+      "line": 89,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G06/06_G06_P03_temporal_bundle.md",
+      "source_blob_sha": "08c03bae217841aa6d4f836e57153042947aa42e",
+      "line": 124,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G07/06_G07_P03_quasi_integration.md",
+      "source_blob_sha": "d3a9276fbb1d00aec47de7e078237fea0f52b030",
+      "line": 89,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G07/06_G07_P03_quasi_integration.md",
+      "source_blob_sha": "d3a9276fbb1d00aec47de7e078237fea0f52b030",
+      "line": 124,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G08/06_G08_P04_rdd_iv_result.md",
+      "source_blob_sha": "a93bc31ee2559267289c11726bb8e951a485d984",
+      "line": 91,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G08/06_G08_P04_rdd_iv_result.md",
+      "source_blob_sha": "a93bc31ee2559267289c11726bb8e951a485d984",
+      "line": 126,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G09/06_G09_P03_synthetic_bundle.md",
+      "source_blob_sha": "684d4edb3b33d65f7f727e6410bd75beb610fa9f",
+      "line": 91,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+    },
+    {
+      "file": "G09/06_G09_P03_synthetic_bundle.md",
+      "source_blob_sha": "684d4edb3b33d65f7f727e6410bd75beb610fa9f",
+      "line": 126,
+      "kinds": [
+        "REMOVED_SIGNED_ANCHOR"
+      ],
+      "excerpt": "7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+    },
+    {
+      "file": "G10/06_G10_P00_work_package_plan.md",
+      "source_blob_sha": "554b18ba63a18b5e39cbccf60a3adb9d2b72b9cb",
+      "line": 15,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P00_work_package_plan.md",
+      "source_blob_sha": "554b18ba63a18b5e39cbccf60a3adb9d2b72b9cb",
+      "line": 33,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G10/06_G10_P01_registry_lock.md",
+      "source_blob_sha": "4f5f8ef6e9751eb5d6914e982cc3ebad530a3b0a",
+      "line": 14,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P01_registry_lock.md",
+      "source_blob_sha": "4f5f8ef6e9751eb5d6914e982cc3ebad530a3b0a",
+      "line": 31,
+      "kinds": [
+        "DOUBLE_OPTIN",
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+    },
+    {
+      "file": "G10/06_G10_P01_registry_lock.md",
+      "source_blob_sha": "4f5f8ef6e9751eb5d6914e982cc3ebad530a3b0a",
+      "line": 188,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "source_blob_sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "line": 14,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "source_blob_sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "line": 31,
+      "kinds": [
+        "DOUBLE_OPTIN",
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "source_blob_sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "line": 91,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。G10はStudy＋CLI double opt-inと実行UID/TrustedRoot、Method RowSchemaの適合を検証。署名用Policy Anchorはない。"
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "source_blob_sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "line": 126,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。"
+    },
+    {
+      "file": "G10/06_G10_P02_operation_matrix.md",
+      "source_blob_sha": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+      "line": 318,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G10/06_G10_P03_replay_manifest.md",
+      "source_blob_sha": "d3df1267adf226a693f94180a9e7339b22485a4a",
+      "line": 14,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P03_replay_manifest.md",
+      "source_blob_sha": "d3df1267adf226a693f94180a9e7339b22485a4a",
+      "line": 31,
+      "kinds": [
+        "DOUBLE_OPTIN",
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+    },
+    {
+      "file": "G10/06_G10_P03_replay_manifest.md",
+      "source_blob_sha": "d3df1267adf226a693f94180a9e7339b22485a4a",
+      "line": 339,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G10/06_G10_P04_science_benchmarks.md",
+      "source_blob_sha": "d0659975a26436692b2678b2546532f601005798",
+      "line": 14,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P04_science_benchmarks.md",
+      "source_blob_sha": "d0659975a26436692b2678b2546532f601005798",
+      "line": 31,
+      "kinds": [
+        "DOUBLE_OPTIN",
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+    },
+    {
+      "file": "G10/06_G10_P04_science_benchmarks.md",
+      "source_blob_sha": "d0659975a26436692b2678b2546532f601005798",
+      "line": 320,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 14,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 31,
+      "kinds": [
+        "DOUBLE_OPTIN",
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "- **横断責務:** G10は41 Method×Operation/Estimand/Backend/Result/Manifestの再実行と統合検証を所有するが、科学計算Kernel、G01 Registry、GraphVersion writer、Publisher、Reader、G05 local executor double-opt-in eligibilityを複製しない。旧ABI・Product v2を変更せず、既存upstream Gateの同一Class・Method profileを参照する。Sourceに存在しないE11新規Classを「導入済み」と呼ばない。"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 50,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 89,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。G10はStudy＋CLI double opt-inと実行UID/TrustedRoot、Method RowSchemaの適合を検証。署名用Policy Anchorはない。"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 124,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "7. 本書§2BのOperation別Artifact/typed Result/Status、Lineage、Privacyを検証。G05の個票を要求する場合だけStudy＋CLI opt-in/非root UID所有private ext4/XFS/Method RowSchemaを満たすことを確認し、G01 Publisher/Readerへ渡す。"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 215,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | 23_41の公開Portと完全同一署名。純粋Policy、File公開副作用なし |"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 257,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_SIGNED_ANCHOR",
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)`が実行者のdouble opt-inとOS TrustedRoot/Method別出力適格性を判定する。独立Approver/Ed25519/鍵/失効/TrustedPolicyAnchorは初期G05 local個票中間成果物には適用しない。事前の行生成禁止、同一run/Study/Source/Sinkの結合、staging前・seal/publish前のroot/UID/owner/mode/FS再照合を維持し、不適格ならexit3で初期row bytes0。既存G01 Publisher/ReaderとOD-03 WriterのClass/Method署名は不変。"
+    },
+    {
+      "file": "G10/06_G10_P05_compatibility_evidence.md",
+      "source_blob_sha": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+      "line": 265,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/Method RowSchemaの実測未完"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 22,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**対象外：** `P1-M01〜05, P1-M07〜20, P2-*, P3-*`の科学的Method実装（既存Productとの互換回帰は例外）。PAGからの自動識別・効果推定、Temporal PCMCI（G06）、個票CATE／実行者double opt-inとlocal filesystem適格性（G05）、AR推論（G08）、Web/API/Worker/DB、Product migration、正本`docs/wiki/requirement_definition/`、配布・顧客利用判断。"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 86,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/owner/mode/FSとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と個票のdouble opt-in／Method別最小化はG05 | 02/11 |"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 89,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07のlocal EUID所有private rootとdouble opt-in/列最小化→G05。未実装対象をG01でPASS扱いしない。"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 101,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "**New CLI：** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`。G01は`DISCOVER`、`method.id=P1-M06`、`method.backend=causal-learn`のみを実行可能とする。他Method/Operationは未対応の型付き拒否（不正構造=exit2、Backend unavailable=exit4）であり、他Methodで代替しない。"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 106,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- 現行共通Study schemaは`estimand`必須なので、G01では`family=GRAPH_STRUCTURE`、`population=OBSERVED_VARIABLES`、`contrast=NOT_APPLICABLE`を**Discovery-onlyの非効果Target**として使用する。ATE等のDummy Effectを作らない。 `inference.requested=false`, `confidence_level=null`, `privacy.classification=AGGREGATE`, `row_export_requested=false`, `policy_ref=null`。違反時は明示的に拒否。"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 131,
+      "kinds": [
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: null}"
+    },
+    {
+      "file": "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "source_blob_sha": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+      "line": 175,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- 初期出力Rootの保護は非委譲・同一effective UIDのprivate local FS。wrong UID/owner/mode、非local ext4/XFS、symlink/path逸脱は拒否。`--allow-row-level-export`やStudyの個票要求はG01では**exit3**、row bytesをstagingにも書かない。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 34,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 50,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection | 既存/新規の共通Value・Port・Facade参照。重複実装しない |"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 81,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "1. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 82,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 84,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "4. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 85,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "source_blob_sha": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+      "line": 106,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+    },
+    {
+      "file": "G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "source_blob_sha": "fa7e618c77fc71f920468474ad31eaefb4d3c3e1",
+      "line": 7,
+      "kinds": [
+        "REMOVED_CLI_FLAG"
+      ],
+      "excerpt": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+    },
+    {
+      "file": "G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "source_blob_sha": "fa7e618c77fc71f920468474ad31eaefb4d3c3e1",
+      "line": 8,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT",
+        "REMOVED_STUDY_POLICY_FIELD"
+      ],
+      "excerpt": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+    },
+    {
+      "file": "G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "source_blob_sha": "fa7e618c77fc71f920468474ad31eaefb4d3c3e1",
+      "line": 37,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "| `G05-07-02` | Local user double opt-in + private FS | contract + Linux ext4/XFS integration | UID/owner/mode/local-FS、Method Schema・deny時Source反復0 |"
+    },
+    {
+      "file": "G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "source_blob_sha": "fa7e618c77fc71f920468474ad31eaefb4d3c3e1",
+      "line": 55,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "## 3.1. Local executor double opt-in／OS・Parquet privacy matrix（全件blocking）"
+    },
+    {
+      "file": "G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "source_blob_sha": "ebe8da02420e21f94dc5aa7a5468dc45f8199407",
+      "line": 24,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**受入命題:** 41 Method/10 UCの再実行・Manifest/依存・科学証拠・旧v2互換を統合する。"
+    },
+    {
+      "file": "G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "source_blob_sha": "ebe8da02420e21f94dc5aa7a5468dc45f8199407",
+      "line": 51,
+      "kinds": [
+        "REMOVED_RUN_CONTEXT"
+      ],
+      "excerpt": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection | 既存/新規の共通Value・Port・Facade参照。重複実装しない |"
+    },
+    {
+      "file": "G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "source_blob_sha": "ebe8da02420e21f94dc5aa7a5468dc45f8199407",
+      "line": 121,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/M"
+    },
+    {
+      "file": "G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "source_blob_sha": "c60273ef6fbc4962a3ca0e020b780e29e8bb843a",
+      "line": 12,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "このGateがPASSしたと主張するには「G01〜G09の41 MethodとOperation/Estimand/Schema/Backend/Artifactを一貫して再実行でき、厳密なManifest/Checksum/Readback・科学証拠・旧v2回帰を統合検証する。」をFull Fixed Candidate SHAで、後述の全受入軸と独立科学的Referenceに照らして証明する。Pxx COMPLETE、CLI exit0、Source上のMethod名、mock-onlyは独立Gate/Science PASSではない。"
+    },
+    {
+      "file": "G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "source_blob_sha": "c60273ef6fbc4962a3ca0e020b780e29e8bb843a",
+      "line": 40,
+      "kinds": [
+        "UNCONDITIONAL_REPLAY"
+      ],
+      "excerpt": "**対象:** G10自体は新Method IDを定義しない。しかしG10-07-04/G10-07-07は、上流G01〜G09で承認された全41 Methodのscientific evidence、current effective Backend、positive/negative、independent referenceと実際の再実行を検証する。Test AgentがGate06/Pxxや外部RDを読まなくても対象Method ID/DD/REF/ACを列挙できるよう、以下に全件保持する。Status列は**作成時点のDRAFT planning state**であり、実行結果・Gate PASS・現在のSource capabilityを意味しない。"
+    },
+    {
+      "file": "G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "source_blob_sha": "c60273ef6fbc4962a3ca0e020b780e29e8bb843a",
+      "line": 96,
+      "kinds": [
+        "DOUBLE_OPTIN"
+      ],
+      "excerpt": "- G05 restricted Row ParquetはStudy個票要求とCLI flagのdouble opt-in、Linux非root実効EUID所有private ext4/XFS root（0700/0600、owner/mode/local ext4-XFS/同一FSを検証）、Method別ApprovedRowSchema/ordered column/row/byte/memory capsに合致する場合だけ、認可後の`RowEffectsParquetWriter`がG01 StagingSinkに遅延生成する。初期denyはexit3/Source反復0/row bytes0。署名鍵・独立承認者・失効はOwner 2026-11-21限定改訂で不要。G01 Publisher/Readerが唯一の公開/readback authority。実FS/Parquet/M"
+    }
+  ],
+  "meaning": "Candidate noncompliant active draft occurrences, not a count of independently confirmed semantic defects; review line context before edits.",
+  "fingerprints": {
+    "G01/06_G01_P00_work_package_plan.md": "c868894835a01b457c8f136f7e198bfa41eea2a3",
+    "G01/06_G01_P01_local_contract_codec.md": "028bd44671c1c6487645a3bb7d0858647f7a9e03",
+    "G01/06_G01_P02_atomic_publication_reader.md": "9f98496ed2af933e5461678dc662b27a5b2f3bdc",
+    "G01/06_G01_P03_pag_graph_version.md": "53e26c6f435fa1f2764668f466860c91164a79ca",
+    "G01/06_G01_P04_fci_backend_oracle.md": "116b0549349cb7f1d53cb30673116d28eb873519",
+    "G01/06_G01_P05_cli_use_case_privacy.md": "050226b37373e49689de247db4fd75afaae5cdf4",
+    "G02/06_G02_P00_work_package_plan.md": "33e3885780adcd4c63ff097207c3a5b02db0f90b",
+    "G02/06_G02_P01_native_identification.md": "14a3793bb75b72e045dd5f972de19f91f790fdf4",
+    "G02/06_G02_P02_dowhy_identification.md": "3086b99a661dd86d502e8664954baeb547ad4279",
+    "G02/06_G02_P03_frontdoor_fd_a.md": "802c6a65806ce5bb7141f8dd700fd90dd4a25aa0",
+    "G02/06_G02_P04_identification_dispatch.md": "c378ee387e49885ab4775c1fbeddf0c0ee72264c",
+    "G03/06_G03_P00_work_package_plan.md": "6a6b78cbccf145161976b7244b29107124b89a20",
+    "G03/06_G03_P01_native_effects.md": "8f94cc21330c988d715ff9218ac6622408f154d4",
+    "G03/06_G03_P02_weighting_ipw_aipw.md": "e635bdd5fd3e7133b2d23a1d843919076ba56ecb",
+    "G03/06_G03_P03_refutation_methods.md": "456ee3d2c8b18c6ba056a1d26e136e387d4de98e",
+    "G03/06_G03_P04_sensitivity_methods.md": "3661ab7e5c0470ca2a78201d59b5c264887f2272",
+    "G03/06_G03_P05_negative_controls_ols_rv.md": "9bd1d64aebc77962f43bf5ee4465003ff3071480",
+    "G03/06_G03_P06_diagnostics_pipeline.md": "2d248f2a3a3e04c85a26cd0ed68d08beaaa47b7a",
+    "G04/06_G04_P00_work_package_plan.md": "0c98032fa3ffd9ea7d536c2a01a71f990b222f40",
+    "G04/06_G04_P01_econml_dml_dr.md": "04a845d865ca1c496c2cbb7634de8cda6ffd0ed9",
+    "G04/06_G04_P02_s_t_x_learners.md": "709c29bbd94edc27c9d3a031294b4def12121fff",
+    "G04/06_G04_P03_driv_iv_slope.md": "78b65c00c149efc55f63e09a3608a08a745d1775",
+    "G04/06_G04_P04_cate_results.md": "332c4e645a5386694425b4661adb9558722d44e0",
+    "G05/06_G05_P00_work_package_plan.md": "aeef53434ad256c004686418ed89e230fbdc53eb",
+    "G05/06_G05_P01_hte_diagnostics.md": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+    "G05/06_G05_P02_row_authorization.md": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+    "G05/06_G05_P03_parquet_bundle.md": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+    "G05/06_G05_P04_privacy_e2e.md": "00de1096e0b46398fcaf351e77408e547f7bf088",
+    "G06/06_G06_P00_work_package_plan.md": "e9fd9cd0db4c1c79d8efeb26765338e0cb8d7417",
+    "G06/06_G06_P01_temporal_graph.md": "cdf093c74d1e583834b2161a2b86cbea7eb93891",
+    "G06/06_G06_P02_pcmci_adapters.md": "aaa87846343b50bb28c267b1d5bb010b675083e1",
+    "G06/06_G06_P03_temporal_bundle.md": "08c03bae217841aa6d4f836e57153042947aa42e",
+    "G07/06_G07_P00_work_package_plan.md": "41974258a21a17ee0f2c68f86110a0493e40e15a",
+    "G07/06_G07_P01_did_event.md": "4f97a8697cf4be9de1df4f3eceea380c10665e01",
+    "G07/06_G07_P02_interrupted_ts.md": "7e16de352920c0c841de4d32a7f85848a24b4e6e",
+    "G07/06_G07_P03_quasi_integration.md": "d3a9276fbb1d00aec47de7e078237fea0f52b030",
+    "G08/06_G08_P00_work_package_plan.md": "5b0cfd5409eb7c4ae7d38dd483c8fa8c5c1fc7e4",
+    "G08/06_G08_P01_rdd_sharp_fuzzy.md": "d0370ea867a93d6f2d86f5bed94e4748e5fdd8e8",
+    "G08/06_G08_P02_wald_late.md": "2c72dcf35545560ea4d35e9b8c07ab9422d4c92f",
+    "G08/06_G08_P03_two_sls_ar.md": "cd7084498f32fe645ac3c68bb8d27cdc37a48ed0",
+    "G08/06_G08_P04_rdd_iv_result.md": "a93bc31ee2559267289c11726bb8e951a485d984",
+    "G09/06_G09_P00_work_package_plan.md": "5573044885cb110d579ef0e3a5235671fa7f3b70",
+    "G09/06_G09_P01_scm_point.md": "aa0ad017faba3d04d4a68a0fe44e021317e71c3c",
+    "G09/06_G09_P02_sdid_estimator.md": "121eb4a56515722e3994d147142cff97d799f0b1",
+    "G09/06_G09_P03_synthetic_bundle.md": "684d4edb3b33d65f7f727e6410bd75beb610fa9f",
+    "G10/06_G10_P00_work_package_plan.md": "554b18ba63a18b5e39cbccf60a3adb9d2b72b9cb",
+    "G10/06_G10_P01_registry_lock.md": "4f5f8ef6e9751eb5d6914e982cc3ebad530a3b0a",
+    "G10/06_G10_P02_operation_matrix.md": "f20a460a4d90b68f3740b08db984f8ff01fa3279",
+    "G10/06_G10_P03_replay_manifest.md": "d3df1267adf226a693f94180a9e7339b22485a4a",
+    "G10/06_G10_P04_science_benchmarks.md": "d0659975a26436692b2678b2546532f601005798",
+    "G10/06_G10_P05_compatibility_evidence.md": "dfc66bb86c476e214b13b8ac752702f409a15dbe",
+    "G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md": "508306dcfd4c9e93bc2d82cfba761533c4cc3ea9",
+    "G01/07_Ariadne_ENH-E11_G01_test_instruction.md": "80df90b715a8f470dd488856e038058dcfec6b90",
+    "G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md": "576fbb37e56ff367b55d7c3971d20aaf69f985df",
+    "G02/07_Ariadne_ENH-E11_G02_test_instruction.md": "4e9dcf653afa471ba6de9645de1d3a8687d97e2e",
+    "G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md": "3c8c39c127704ea44fbd9257981b1ccb06a5c36c",
+    "G03/07_Ariadne_ENH-E11_G03_test_instruction.md": "7f4d6e0d1d4783123237b2d01825148830c705de",
+    "G04/06_Ariadne_ENH-E11_G04_implementation_instruction.md": "32add8e6626c1b3ff3e7fdeb1716243276b5d659",
+    "G04/07_Ariadne_ENH-E11_G04_test_instruction.md": "b8f2151e1d05840a62ea53972379602381302ffd",
+    "G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md": "f6d3865e3f8fafddcca58c7be8c7234cfa335746",
+    "G05/07_Ariadne_ENH-E11_G05_test_instruction.md": "fa7e618c77fc71f920468474ad31eaefb4d3c3e1",
+    "G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md": "2137f012614005d4c735e0179989b78a5e7080ec",
+    "G06/07_Ariadne_ENH-E11_G06_test_instruction.md": "6fed0a97d393378e3f95363691d918ad9e7e6b38",
+    "G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md": "107a07667b3392ffd5217073df24ed4151af9a9b",
+    "G07/07_Ariadne_ENH-E11_G07_test_instruction.md": "5c7e118bfe8507c986b6a55f76720776fd4d9a45",
+    "G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md": "1920ca25a00d3a48eda7e9af9401a4c3432c4e67",
+    "G08/07_Ariadne_ENH-E11_G08_test_instruction.md": "c9a445517a3c3886f6b2f2e6efdc9cc786bfdc35",
+    "G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md": "446482aceacb0da21b9a673f4783adc2420dae40",
+    "G09/07_Ariadne_ENH-E11_G09_test_instruction.md": "01003a22aba03c5ac399c335745da35e7a130fe3",
+    "G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md": "ebe8da02420e21f94dc5aa7a5468dc45f8199407",
+    "G10/07_Ariadne_ENH-E11_G10_test_instruction.md": "c60273ef6fbc4962a3ca0e020b780e29e8bb843a"
+  }
+}
