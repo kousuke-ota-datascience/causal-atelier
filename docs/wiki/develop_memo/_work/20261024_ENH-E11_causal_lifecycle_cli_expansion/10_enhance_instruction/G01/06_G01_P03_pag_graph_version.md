@@ -78,17 +78,18 @@ def canonical_payload(self) -> Mapping[str, JsonValue]: ...
 
 **Scientific constraint:** FCI discovery returns PAG uncertainty; a successful schema roundtrip is **not** independent MAG/PAG scientific correctness. Do not present undirected endpoints, fixed Graph state, or potential latent confounding as verified causal truth; `GraphEvidence` is evidence, not an Effect identification permission.
 
-### 6.3. Product Version identity/parent mapping (GRAPH04)
+### 6.3. Local Graph identity and independent Product compatibility (GRAPH04)
 
-| Situation | `version_id` | `parent_version_id` | Required outcome |
-| --- | --- | --- | --- |
-| CLI standalone `DISCOVER` (G01 main path) | `null` | `null` | valid; Graph identity by semantic content hash + external ContentRef |
-| Existing Product GraphVersion no parent | actual Product ID | `null` | only when verified Product origin/linkage |
-| Existing Product GraphVersion with parent | actual Product ID | actual parent Product ID | same Project, actual parent lineage verified by Product owner |
-| Non-null parent with null version | `null` | actual parent ID | reject by Schema + semantic validator |
-| Invented local UUID masquerading as Product Version | arbitrary ID | any | reject; CLI may not assign Product ID |
+Current `e11-local-graph/1` is **Local-only**: both `version_id` and `parent_version_id` are required and `const: null` in the active draft Schema. `GraphEvidence.from_canonical_json` must reject non-null values **even when the caller claims a real Product GraphVersion ID**; no Product DB lookup, creation or import occurs in the E11 Local wire. A local revision is a new immutable Graph artifact identified by its semantic `content_hash` and external ContentRef; scientific source/parent lineage belongs to validated `provenance` and referenced artifacts, not fabricated Product Version IDs.
 
-**Domain field mapping:** `source_graph_version_id ↔ version_id`, `source_graph_parent_version_id ↔ parent_version_id`. Both keys are present and nullable in wire; parent nonnull implies version nonnull. Runtime real-ID existence and parent association are verified **at Product integration authority**, not assumed by a pure JSON parser without DB access. G01 output must always be null/null. No `GraphEvidence.make_revision`, `edit`, `fix` or Version ID issuing. The single writer remains existing `GraphVersionService` with Project/parent checks; P03 must not modify or recreate it.
+| Situation | Current E11 Local wire | Required behavior |
+| --- | --- | --- |
+| G01 standalone `DISCOVER` | `version_id=null`, `parent_version_id=null` | Accept if graph/hash/provenance and endpoint semantics pass validation |
+| Local scientific successor graph | Both Product Version fields null; scientific parent evidence in provenance/ContentRef | Preserve immutable scientific lineage and validate referenced hashes |
+| Either Product Version field non-null in E11 Local wire | Outside current Local Schema | Strictly reject as unsupported Product import, without attempting a DB lookup |
+| Existing Product GraphVersion with/without parent | Remains an **existing Product object**, not E11 Local graph wire | Keep legacy Product ABI, real Product ID/parent checks and existing `GraphVersionService`; test via a separate compatibility wrapper |
+
+Internal `source_graph_version_id` and `source_graph_parent_version_id` are nullable for the Local adapter and must both remain `None` when producing or reading current E11 wire. A distinct compatibility bridge to the existing Product domain may inspect real Product IDs on Product objects, but must not serialize those IDs as accepted current Local wire. `GraphEvidence` has no `make_revision`, `edit`, `fix` or Version ID writer.
 
 ### 6.4. Dual-hash and content identity (GRAPH01 / MAN03–04)
 
@@ -112,7 +113,7 @@ def canonical_payload(self) -> Mapping[str, JsonValue]: ...
 | --- | --- | --- |
 | GRAPH01; 07-03/04 | unit + contract | all G01 PAG endpoint pairs/reverse orientation, JCS semantic/file digests, lossless 100% |
 | GRAPH03; 07-03 | unit + contract | duplicate (including reversed), self loop, illegal mark, unknown node, lag/temporal and implicit PAG→DAG rejection |
-| GRAPH04; 07-03 | contract | standalone null/null, parent-without-version reject, verified Product parent preservation, no GraphEvidence version writer |
+| GRAPH04; 07-03 | contract | standalone null/null, parent-without-version reject, strict non-null Product import rejection, scientific provenance parent preservation, legacy Product parent checks in a separate wrapper, no GraphEvidence version writer |
 | MAN03/04; 07-07 | contract | Graph-success vs legitimate negative inventory and diagnostics, no Effect, correct Graph/ContentRef lineage |
 
 **Required Package check:** Implement focused tests in an appropriate G01 enhancement layer under the 40 placement rule; resolve actual test files and collection during execution, not in P03 acceptance semantics. Use independent expected endpoint fixtures, not a self-generated backend Oracle. Scientific MAG/PAG recovery remains G01-07-09 (P04) and BLOCKED until independently proven. Report per DD ID PASS/FAIL/BLOCKED, actual endpoint/digest evidence, fixture and source SHA; do not claim a persisted Product GraphVersion.
