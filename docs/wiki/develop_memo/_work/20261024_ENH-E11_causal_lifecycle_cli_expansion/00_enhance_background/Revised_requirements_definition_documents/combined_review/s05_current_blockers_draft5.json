@@ -1,0 +1,230 @@
+{
+  "schema_version": "e11-s05-readiness/20261123-rev6-g01-owner-provisional-s10-approved",
+  "git_head_at_review": "33da8ddd449d6cb922727e0ecfe6a417cb53d7d4",
+  "status": "G01_PROVISIONAL_S10_OWNER_APPROVED / LIMITED_S11_OWNER_PENDING / INDEPENDENT_S09_B02_B04_B05_EXTERNAL_PENDING / G01_999_BLOCKED",
+  "coding_authorization": false,
+  "contract_freeze": false,
+  "owner_decision": "DEC-PREPCODE-01_B_GATE_SCOPED_ADOPTED / DEC-S05-AR01_A_FULL_REAL_AR_PRESERVED / DEC-G01-EXEC-01_OWNER_ADOPTED_2026_11_23",
+  "s05": {
+    "B01": "200_PROFILE_SOURCE_AST_AUTHOR_PARITY_PREPARED / NON_FCI_ACCEPTANCE_GATE_SCOPED",
+    "B02": "REPHASED_POST_S11_BEFORE_G01_999 / B02_PY312_NOT_RUN",
+    "B03": "REPHASED_INDEPENDENT_AND_RUNTIME_POST_S11_BEFORE_G01_999 / AUTHOR_CONTRACT_RECONCILED",
+    "B04": "REPHASED_POST_S11_BEFORE_G01_999 / B04_THREE_CI_PY312_NOT_RUN",
+    "B05": "REPHASED_POST_S11_BEFORE_G01_999 / INDEPENDENT_MAG_PAG_BK_NOT_ACCEPTED",
+    "B06": "REPHASED_POST_S11_BEFORE_G01_999 / INDEPENDENT_S09_NOT_RUN / AUTHOR_CONTRACT_PROPAGATED"
+  },
+  "following_steps": {
+    "S06": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S07": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S08": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S09": "G01_INDEPENDENT_AFTER_S11_BEFORE_999 / EXTERNAL_PENDING",
+    "S10": "G01_PROVISIONAL_OWNER_APPROVED_2026_11_23_FROZEN_A05FD",
+    "S11": "G01_LIMITED_SEPARATE_OWNER_DECISION_PENDING_AFTER_APPROVED_S10"
+  },
+  "blockers": [
+    {
+      "blocker_id": "S05-B02-VALIDATOR",
+      "owner_action_required": false,
+      "state": "G01_PY312_STANDARD_VALIDATOR_NOT_RUN",
+      "what_is_done": "Author-only 200 source/factored AST parity; historical G01 Config identified as non-dispatch; G01 3 active P1-M06 Config/Question/Design and six common E11 public Schema known; read-only Python3.12 probe code authored, not executed. B02 author-only probe now fail-closes before Schema validation on Python !=3.12, HEAD SHA mismatch or dirty worktree (source blob 564a3dcbb9a20cdbcce1bdf95760a4f80336bd2a); execution NOT_RUN.",
+      "missing": "G01 6 public + 3 active P1-M06 Draft202012 meta-schema and independent positive/negative public/FCI instance and cross-wire validation under externally pinned Python3.12 Git checkout; 200/200 non-FCI originals for their later owning Gates, not G01.",
+      "unblock_action": "AFTER_SEPARATE_G01_S10_AND_S11: Run approved externally SHA-pinned Python3.12 G01 read-only schema probe; preserve positive/negative reports and independent cross-wire/semantics review. Preflight refusal is BLOCKED, not Schema PASS. Other 200 Method standard validators belong to owning Gates.",
+      "decision_needed": "NO PRECODE SCIENCE DECISION; retain mandatory post-code independent evidence and request Owner if actual method/contract change is required",
+      "previous_coding_entry_blocker": true,
+      "blocks_g01_provisional_s10_on_absence_alone": false,
+      "blocks_g01_limited_s11_on_absence_alone": false,
+      "mandatory_before_g01_999": true,
+      "disposition": "EXTERNAL_PENDING_OR_AFTER_CODING_GATE_ACCEPTANCE_NOT_EVIDENCE_WAIVER"
+    },
+    {
+      "blocker_id": "S05-B03-SEMANTIC",
+      "owner_action_required": false,
+      "state": "G01_AUTHOR_RECONCILED_INDEPENDENT_SEMANTIC_REVIEW_NOT_RUN",
+      "what_is_done": "Cross-wire author 19 enum/path/typed Schema comparisons, 21 ContentRef lexical guards and G01 Reader/Status/Manifest/Graph contract 06/07 alignment; no actual E11 Reader exists.",
+      "missing": "Independent G01 scoped cross-file Study/Graph/Status/Manifest/Marker/Reader semantic joins and negatives; actual secure atomic Publisher/Reader + real FS/readback after S11 in G01 07/999.",
+      "unblock_action": "AFTER_SEPARATE_G01_S10_AND_S11: Review G01 common contracts, typed synthetic positive/negative semantic fixtures and no-false-success rules at independent S09; explicitly defer actual E11 Reader/FS to post-authorized Gate07/999.",
+      "decision_needed": "NO PRECODE SCIENCE DECISION; retain mandatory post-code independent evidence and request Owner if actual method/contract change is required",
+      "previous_coding_entry_blocker": true,
+      "blocks_g01_provisional_s10_on_absence_alone": false,
+      "blocks_g01_limited_s11_on_absence_alone": false,
+      "mandatory_before_g01_999": true,
+      "disposition": "EXTERNAL_PENDING_OR_AFTER_CODING_GATE_ACCEPTANCE_NOT_EVIDENCE_WAIVER"
+    },
+    {
+      "blocker_id": "S05-B04-PY312",
+      "owner_action_required": false,
+      "state": "G01_ENV_BASE_TARGET_PY312_RUNTIME_NOT_RUN",
+      "what_is_done": "Primary upstream tagged causal-learn 0.1.4.8 FCI source blob 869b8de... inspected; node_names and BK stdout/overorientation behavior found; review-only ENV-BASE tiny-fit probe authored but not run. Author read-only Python3.12 G01 B04 probe extended to fisherz, chisq and gsq fitted API/console/Graph smoke; no diagnostic has run. B04 author-only probe now refuses before backend import/fit on wrong Python/SHA/dirty, evaluates each of fisherz/chisq/gsq with isolated exception reports, requires 1:1 node order and no duplicate pairs (source blob 2f5a38677f438498346404a0bce7e24cd57183e9); no actual fit evidence.",
+      "missing": "G01 only: effective Python3.12 ENV-BASE resolver, installed distribution versions, import/signature with node_names, three independent method-mode tiny no-BK FCI fits (continuous fisherz; integer-coded categorical chisq and gsq), invalid CI negative, stdout/Graph shape and lock provenance; no independent graph truth/conditional-support science from smoke. Other Backend environments belong to future Gates.",
+      "unblock_action": "AFTER_SEPARATE_G01_S10_AND_S11: Run approved clean externally pinned G01 Python3.12 ENV-BASE and all three FCI CI probes on the exact target checkout; preserve failures per mode, full installed distributions, lock/probe SHA and logs. No single-mode success or invocation rejection is scientific PASS.",
+      "decision_needed": "NO PRECODE SCIENCE DECISION; retain mandatory post-code independent evidence and request Owner if actual method/contract change is required",
+      "previous_coding_entry_blocker": true,
+      "blocks_g01_provisional_s10_on_absence_alone": false,
+      "blocks_g01_limited_s11_on_absence_alone": false,
+      "mandatory_before_g01_999": true,
+      "disposition": "EXTERNAL_PENDING_OR_AFTER_CODING_GATE_ACCEPTANCE_NOT_EVIDENCE_WAIVER"
+    },
+    {
+      "blocker_id": "S05-B05-REFERENCE",
+      "owner_action_required": false,
+      "state": "G01_INDEPENDENT_GRAPH_ORACLE_AND_BK_SCIENCE_NOT_ACCEPTED",
+      "what_is_done": "Owner accepted GRAPH-A principles; P1-M06 oracle candidate registry, 176 collider/mediator Gaussian CI proof candidates and DGP-011 two-variable nonidentifiability illustration; tagged FCI #266 BK over-orientation/print risk established at source level; independent reviewer approach Owner-approved.",
+      "missing": "G01 P1-M06 independent completed MAG/PAG equivalence truth and executable hashed reference/fixture, valid BK positive remedy preserving unknown endpoint and stdout, independently accepted scientific test/protocol. Actual candidate T2/T3 numeric evidence cannot exist before Coding Agent implementation.",
+      "unblock_action": "AFTER_SEPARATE_G01_S10_AND_S11: Launch truly separate independent S09/science reviewer on exact full SHA; derive and review REF-G02 and BK correction candidates without trusting Author results; freeze admissible algorithm/negative case protocol before G01 S10, then execute T2→preregister T3 after S11.",
+      "decision_needed": "NO PRECODE SCIENCE DECISION; retain mandatory post-code independent evidence and request Owner if actual method/contract change is required",
+      "previous_coding_entry_blocker": true,
+      "blocks_g01_provisional_s10_on_absence_alone": false,
+      "blocks_g01_limited_s11_on_absence_alone": false,
+      "mandatory_before_g01_999": true,
+      "disposition": "EXTERNAL_PENDING_OR_AFTER_CODING_GATE_ACCEPTANCE_NOT_EVIDENCE_WAIVER"
+    },
+    {
+      "blocker_id": "S05-B06-CONTRACT",
+      "owner_action_required": false,
+      "state": "AUTHOR_CONTRACT_PROPAGATED_INDEPENDENT_G01_S09_NOT_RUN",
+      "what_is_done": "All 71 Gate 06/Pxx/07 and seven Operator prompts reconciled for Owner DEC-PREPCODE-01=B. G01 Local Graph writer ambiguity and FCI BK stdout/endpoint contracts corrected; 402 current active normative blobs matched in last source index check. G01 07-08 now explicitly tests noninteger/mixed/sparse categorical input fail-closed before backend recoding; global/source index re-pinned. Updated 159,165,174 independent handoff now references G01 scoped draft7 with two fail-closed author probe blob SHA; unchanged global 402 normative draft13 source inventory.",
+      "missing": "Independent G01 common/owned/upstream semantics verdict on externally pinned full SHA; other Gates independently audited when reached.",
+      "unblock_action": "AFTER_SEPARATE_G01_S10_AND_S11: Review draft13 global 402 SHA impact index + scoped draft7 G01 85 initial candidates using independent reviewer, exact review HEAD pin and checks of two supplemental probe sources; do not infer independent verdict.",
+      "decision_needed": "NO PRECODE SCIENCE DECISION; retain mandatory post-code independent evidence and request Owner if actual method/contract change is required",
+      "previous_coding_entry_blocker": true,
+      "blocks_g01_provisional_s10_on_absence_alone": false,
+      "blocks_g01_limited_s11_on_absence_alone": false,
+      "mandatory_before_g01_999": true,
+      "disposition": "EXTERNAL_PENDING_OR_AFTER_CODING_GATE_ACCEPTANCE_NOT_EVIDENCE_WAIVER"
+    }
+  ],
+  "owner_decisions": [
+    {
+      "decision": "DEC-S05-AR01",
+      "choice": "A",
+      "status": "REVIEW_FIRST_ADOPTED"
+    },
+    {
+      "decision": "DEC-S05-02",
+      "choice": "A",
+      "status": "INDEPENDENT_REVIEW_AGENT_MODEL_ADOPTED_BUT_NO_AGENT_LAUNCHED"
+    },
+    {
+      "decision": "DEC-S05-03",
+      "choice": "A",
+      "status": "EXISTING_LINUX_ISOLATED_ENV_APPROVED_BUT_NO_VM_SESSION_ACCESS"
+    },
+    {
+      "decision": "DEC-PREPCODE-01",
+      "choice": "B",
+      "status": "GATE_SCOPED_S09_S10_S11_OWNER_ADOPTED_2026_11_22"
+    },
+    {
+      "decision": "DEC-G01-EXEC-01",
+      "option": "ADOPT",
+      "status": "OWNER_ADOPTED_2026_11_23_G01_ONLY_TIMING_EXCEPTION_NOT_S10_OR_S11",
+      "source": "177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md"
+    },
+    {
+      "decision": "G01_S10_PROVISIONAL",
+      "option": "APPROVE",
+      "status": "OWNER_APPROVED_PROVISIONAL_2026_11_23",
+      "source": "179_20261123_g01_provisional_s10_owner_approved.md"
+    },
+    {
+      "decision": "G01_S11_LIMITED",
+      "option": null,
+      "status": "OWNER_APPROVAL_NOT_GRANTED_UNTIL_AFTER_S10",
+      "source": "178_20261123_g01_provisional_s10_limited_s11_owner_approval_docket.md"
+    }
+  ],
+  "execution_evidence": [
+    {
+      "id": "B05_STANDARD_VALIDATOR_ONE_SCHEMA",
+      "source_blob_sha": "6dc5e9cd7df208ef226d0bb4dea86527a4bb1368",
+      "python": "3.13.5",
+      "jsonschema": "4.26.0",
+      "positive": 1,
+      "negative_rejected": 15,
+      "scope": "Only E11 prereg 1 schema; actual standard Draft202012, no science"
+    },
+    {
+      "id": "B03_DRAFT_REFINEMENT",
+      "constraints": 9,
+      "source": "157_20261122_b03_cross_field_constraints.md",
+      "scope": "Cross-field structural contract, not independent readback"
+    },
+    {
+      "id": "DEC_S05_02_03",
+      "source": "156_20261122_dec_s05_02_03_owner_review_and_environment.md"
+    },
+    {
+      "id": "G01_FCI_TAGGED_SOURCE_AUTHOR_REVIEW",
+      "source": "175_20261122_g01_fci_0148_tagged_source_bk_stdout_preflight.md",
+      "fci_tag": "0.1.4.8",
+      "source_blob_sha": "869b8de01ed495ce4738d3452e0217604dc31e9b",
+      "scope": "Static upstream FCI function signature and BK hazard; no actual Python3.12 runtime or independent science."
+    },
+    {
+      "id": "G01_GRAPH_A_ANALYTIC_CANDIDATE",
+      "source": "176_20261122_g01_p1_m06_graph_a_independent_oracle_candidate_cases.md",
+      "scope": "Author-derived collider/mediator Gaussian conditional covariance and latent nonidentification; not full accepted MAG/PAG truth or independent Reviewer proof."
+    }
+  ],
+  "unavailable_execution_paths": {
+    "owner_linux_shell": "NOT_CONNECTED",
+    "target_python312": "NOT_INSTALLED_IN_AVAILABLE_CONTAINER",
+    "github_clone_in_container": "FAILED_DNS_GITHUB_COM",
+    "notion_independent_agent": "ENTITLEMENT_REQUIRED_BUSINESS_NO_SESSION",
+    "alternate_independent_agent": "NOT_AVAILABLE_IN_THIS_TOOL_SESSION"
+  },
+  "last_review_note": "Owner explicitly adopted G01 provisional S10 freeze after DEC-G01-EXEC-01. Frozen full Git commit a05fd072cbb82a7c6e43f45e7208e078f0784a2b and uv.lock Git blob 2b83110e86b26b7969fbddf8f98a727370ae19f7; approval in 179. S11 remains separate NOT_AUTHORIZED; no Linux / independent S09/B02/B04/B05 execution, no scientific PASS. Post-freeze commits are author review/docket metadata only; do not mutate frozen normative contract just to update status.",
+  "gate_scoped_readiness": {
+    "current_gate": "G01",
+    "common_baseline_required": true,
+    "upstream_gate999_required": [],
+    "global_inventory": "s09_post_reconciliation_document_snapshot_draft14.json",
+    "g01_scoped_author_candidate": "s09_g01_scoped_review_inventory_draft8.json",
+    "source_normative_sha": "2eaaf9432b36c85a5edfef9f5f1568ef845da003",
+    "inventory_402_blob_match_at_prior_author_check": true,
+    "own_gate_paths": 11,
+    "common_paths": 69,
+    "impact_sample_paths": 5,
+    "deferred_future_gate_paths": 317,
+    "g01_s09_independent": "EXTERNAL_PENDING_AFTER_LIMITED_S11_BEFORE_G01_999",
+    "g01_s10": "APPROVED_PROVISIONAL_FROZEN_FULL_SHA_a05fd072cbb82a7c6e43f45e7208e078f0784a2b",
+    "g01_s11": "LIMITED_OWNER_APPROVAL_PENDING",
+    "g01_fci_active_schemas": 3,
+    "g01_fci_historical_non_dispatch": 1,
+    "target_python312_schema_probe": "EXTERNAL_PENDING_AFTER_S11_BEFORE_G01_999",
+    "target_python312_fci_fit": "EXTERNAL_PENDING_THREE_CI_AFTER_S11_BEFORE_G01_999",
+    "independent_ref_g02": "EXTERNAL_PENDING_AFTER_S11_BEFORE_G01_999",
+    "known_bk_source_hazard": "YES_0_1_4_8_NON_NULL_BK_OVERORIENT_STDOUT",
+    "bk_positive_scientific_acceptance": "BLOCKED_G01_999_NON_NULL_BK_STILL_DENIED",
+    "coding_candidate_tests": "AFTER_S11_ONLY",
+    "author_index_parity": "GLOBAL_402_UNIQUE_AND_G01_402_PATH_SHA_PARITY / ONE_G01_07_NORMATIVE_BLOB_DELTA_FROM_DRAFT12 / NOT_INDEPENDENT",
+    "b02_precondition_source_blob": "564a3dcbb9a20cdbcce1bdf95760a4f80336bd2a",
+    "b04_precondition_source_blob": "2f5a38677f438498346404a0bce7e24cd57183e9",
+    "review_only_preflight_executed": "NO",
+    "author_ready_provisional_s10_packet": "178_20261123_g01_provisional_s10_limited_s11_owner_approval_docket.md",
+    "author_candidate_full_sha": "a05fd072cbb82a7c6e43f45e7208e078f0784a2b",
+    "approved_frozen_source_full_sha": "a05fd072cbb82a7c6e43f45e7208e078f0784a2b",
+    "approved_frozen_uv_lock_git_blob_sha": "2b83110e86b26b7969fbddf8f98a727370ae19f7",
+    "provisional_owner_decision_record": "179_20261123_g01_provisional_s10_owner_approved.md"
+  },
+  "g01_execution_policy": {
+    "decision": "DEC-G01-EXEC-01",
+    "owner_adopted": true,
+    "owner_provisional_s10_approved": true,
+    "owner_limited_s11_approved": false,
+    "coding_start_allowed": false,
+    "independent_s09_pre_s11_required": false,
+    "independent_s09_before_999_required": true,
+    "b02_b04_pre_s11_required": false,
+    "b02_b04_before_999_required": true,
+    "b05_independent_pre_s11_required": false,
+    "b05_independent_before_999_required": true,
+    "known_nonnull_bk_prefight": "DENY_BEFORE_FCI",
+    "post_code_acceptance_required": true,
+    "previous_gate_policy_for_g02_to_g10": "DEC-PREPCODE-01=B",
+    "provisional_s10_decision_source": "179_20261123_g01_provisional_s10_owner_approved.md",
+    "frozen_source_commit": "a05fd072cbb82a7c6e43f45e7208e078f0784a2b",
+    "frozen_uv_lock_git_blob_sha": "2b83110e86b26b7969fbddf8f98a727370ae19f7",
+    "limited_s11_decision": "NOT_GRANTED"
+  }
+}
