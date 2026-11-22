@@ -322,3 +322,12 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
 - Independent tests DGP-007, DGP-024; NEG-008, NEG-025; REF-E08, REF-U01. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
 - OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
+
+
+## S02・DEC-S05-AR01：G08 Method ProfileとAR Authorityの正規境界
+
+担当Methodは`P3-M07` Sharp RDD、`P3-M08` Fuzzy RDD、`P3-M09` Binary Wald、`P3-M10` B0 2SLS、`P3-M11` B1 2SLSの5件。`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`の5 Profile Kind（method_config/question_profile/design_profile/output_profile/inference_profile）をshared core＋exact Method ID overlayへ再構成し、Dispatch Registry、200 Schema標準Draft202012/Blob SHA/正負例の検証なしには`METHOD_PROFILE_UNAVAILABLE`。Method別EstimandとInferenceを保つ。B0は二値Z/A・無調整complier LATE、B1は事前Cを含む構造的`LINEAR_IV_STRUCTURAL_COEFFICIENT`、Fuzzy RDはcutoff局所complier効果であり、名称だけでATE/ATT/CATEへのcast不可。
+
+**DEC-S05-AR01（Owner A採用）**：全実数領域での弱IV robust Anderson–Rubin信頼集合（bounded/unbounded/disconnected/ALL_REAL、退化・EMPTY等の明示判定）は既承認必須。HC1 OLS係数＋χ²(1)漸近検定＋二次式反転という**具体的計算法は独立科学Reviewerの妥当性確認前の実装候補でありFreezeしていない**。本Pxx/06/07に既存のHC1記述があっても、Ownerがそれを最終承認したと解釈しない。レビュー済み数理導出、全実数位相/弱IV/zero first-stage/分散退化/coverage、独立Oracle/実効Backend、T2-T3事前登録とOwnerによる契約確定がない場合、G08の当該方法は`BLOCKED_SCIENCE_METHOD_NOT_FROZEN`でGate999 PASS禁止。Point estimatorの可用性からAR可用性を推論しない。P3-M09 WaldにはARが自動付帯しない。
+
+共通`LocalRunContext(root,principal)`、`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`。署名Verifier/Policy Anchor・CLI row flag・Study `policy_ref`なし。G08は個票を公開しない。共通Scientific Kernelと既存Product v2を保護する。G10では41 Method全件の有効Science証拠が必要だが、推移的依存閉包のSHAが完全不変なら証拠再利用を認め、変更/不明分のみ再実行/BLOCK。
