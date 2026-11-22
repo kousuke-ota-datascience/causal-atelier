@@ -1,6 +1,6 @@
 {
-  "catalog_version": "e11-backend-api-contract/draft1",
-  "status": "PUBLIC_DOC_FEASIBILITY_ONLY; ACTUAL_REPO_ENV_NOT_PROBED",
+  "catalog_version": "e11-backend-api-contract/draft2",
+  "status": "VERSION_CANDIDATES_IDENTIFIED / ISOLATED_RESOLVER_NOT_RUN / CPYTHON312_API_NOT_PROBED / CI_NOT_VERIFIED",
   "target_python": ">=3.12,<3.13",
   "profiles": [
     {
@@ -36,7 +36,23 @@
           ]
         }
       ],
-      "warning": "Method-to-backend allocation is not guaranteed by package presence; native methods need actual independently implemented algorithms."
+      "warning": "Method-to-backend allocation is not guaranteed by package presence; native methods need actual independently implemented algorithms.",
+      "version_candidates": [
+        {
+          "distribution": "causal-learn",
+          "exact_version": "0.1.4.8",
+          "status": "EXISTING_BASE_LOCK"
+        },
+        {
+          "distribution": "statsmodels",
+          "exact_version": "0.14.6",
+          "status": "EXISTING_BASE_LOCK"
+        }
+      ],
+      "python_target": "3.12.x",
+      "resolver_status": "NOT_RUN",
+      "import_signature_status": "NOT_RUN",
+      "fit_inference_status": "NOT_RUN"
     },
     {
       "id": "ENV-DOWHY",
@@ -53,7 +69,18 @@
           ]
         }
       ],
-      "warning": "CausalModel.identify_effect exists publicly, but backend's ATE/default estimand MUST NOT be cast to binary-IV complier LATE without a separate identification/assumption validator."
+      "warning": "CausalModel.identify_effect exists publicly, but backend's ATE/default estimand MUST NOT be cast to binary-IV complier LATE without a separate identification/assumption validator.",
+      "version_candidates": [
+        {
+          "distribution": "dowhy",
+          "exact_version": "0.14",
+          "status": "PROPOSED_NOT_LOCKED"
+        }
+      ],
+      "python_target": "3.12.x",
+      "resolver_status": "NOT_RUN",
+      "import_signature_status": "NOT_RUN",
+      "fit_inference_status": "NOT_RUN"
     },
     {
       "id": "ENV-ECONML",
@@ -111,7 +138,18 @@
           ]
         }
       ],
-      "warning": "effect_interval API exists for selected estimators but not proof of method/config-specific valid confidence intervals; only accept if actual fitted instance/inference supports target estimand."
+      "warning": "effect_interval API exists for selected estimators but not proof of method/config-specific valid confidence intervals; only accept if actual fitted instance/inference supports target estimand.",
+      "version_candidates": [
+        {
+          "distribution": "econml",
+          "exact_version": "0.17.1",
+          "status": "PROPOSED_NOT_LOCKED"
+        }
+      ],
+      "python_target": "3.12.x",
+      "resolver_status": "NOT_RUN",
+      "import_signature_status": "NOT_RUN",
+      "fit_inference_status": "NOT_RUN"
     },
     {
       "id": "ENV-TIGRAMITE",
@@ -136,7 +174,18 @@
           ]
         }
       ],
-      "warning": "PCMCI.run_pcmci, PCMCI.run_pcmciplus and LPCMCI.run_lpcmci must be version-probed. Result graph labels must retain circle/arrow/temporal ambiguity."
+      "warning": "PCMCI.run_pcmci, PCMCI.run_pcmciplus and LPCMCI.run_lpcmci must be version-probed. Result graph labels must retain circle/arrow/temporal ambiguity.",
+      "version_candidates": [
+        {
+          "distribution": "tigramite",
+          "exact_version": "5.2.10.1",
+          "status": "PROPOSED_NOT_LOCKED"
+        }
+      ],
+      "python_target": "3.12.x",
+      "resolver_status": "NOT_RUN",
+      "import_signature_status": "NOT_RUN",
+      "fit_inference_status": "NOT_RUN"
     }
   ],
   "unsupported_assumption": "An API symbol being present does not prove Method+Estimand+Design+Inference semantic support. Optional imports must not happen at core startup.",
@@ -149,5 +198,16 @@
     "diagnostic and exception mapping",
     "independent DGP/reference science",
     "no silent fallback"
-  ]
+  ],
+  "metadata_sources": [
+    "https://pypi.org/project/dowhy/0.14/",
+    "https://pypi.org/project/econml/0.17.1/",
+    "https://pypi.org/project/tigramite/5.2.10.1/",
+    "https://www.pywhy.org/EconML/reference.html"
+  ],
+  "candidate_notes": {
+    "dowhy": "PyPI release 0.14; Python >=3.9,<3.14; pure-Python wheel; LATE must be independently mapped",
+    "econml": "PyPI 0.17.1 released 2026-11-18, Linux CPython3.12 wheel; public online docs currently report 0.16.0 and cannot establish 0.17.1 effective API",
+    "tigramite": "PyPI 5.2.10.1; pure Python wheel; metadata does not specify Requires-Python, license GPLv3+; test target Python3.12 and internal OSS obligations"
+  }
 }
