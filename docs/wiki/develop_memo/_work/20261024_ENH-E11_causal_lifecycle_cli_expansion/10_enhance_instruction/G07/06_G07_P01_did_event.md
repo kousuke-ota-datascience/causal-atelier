@@ -197,7 +197,7 @@ Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条�
 
 | Method | DD ID | Positive/Negative | Independent Reference | AC | 10_32 Readiness |
 |---|---|---|---|---|---|
-| `P3-M04` DiD／ATT（初期DID_2X2のみ（STAGGERED=DEFERRED）） | `DD-E11-METH-P304` | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| `P3-M04` DiD／初期DID_2X2 ATTのみ（STAGGERED=DEFERRED） | `DD-E11-METH-P304` | DGP-012（初期2×2正例）, DGP-013（P3-M04 STAGGEREDは将来・P3-M05は別）; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | `P3-M05` Event Study／event-time効果 | `DD-E11-METH-P305` | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 
 **Proof boundary:** §5のDGP/NEG/REF/ACは独立に実証すべき義務であり、Fixture/Oracleの実在やPASSを意味しない。Backend出力を自己正解にせず、時系列Graph/Quasi Methodごとの独立Referenceと実測で検証する。FWER=.05/K/R/CI coverage/MC-SE未確定はBLOCKED。外部資料から推測して決めない。
@@ -251,7 +251,7 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - Design mandatory: design_id, question_id, design_kind and unit_id, time_id, treatment, outcome, parallel_trends_assumption_ref. Panel units/cohorts/time, cutoff continuity, IV assumption declarations and first-stage support validated semantically; references do not establish assumptions as true.
 - Output: positive result.json/e11-local-effect-result/1 and G01 Reader/Marker/Manifest/Hash. P3-M05 Event Study must write its already specified typed event_time_effects.json vector; ITS level/slope components retain their separate Method-specific output rules. Neither can be coerced to a scalar point.value or an AR confidence-set. Unavailable components require typed reason.
 - Inference: requested=false/null or true/confidence-level(0,1) accepted as syntax only; actual method-specific finite/AR CI capability and coverage must be independently validated, otherwise INFERENCE_UNAVAILABLE. B0/B1 HC1 AR formula/authority discrepancy remains BLOCKED.
-- Independent tests DGP-012, DGP-013; NEG-022; REF-Q01. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
+- Independent tests DGP-012（初期2×2正例）, DGP-013（P3-M04 STAGGEREDは将来・P3-M05は別）; NEG-022; REF-Q01. In addition empty/unknown key/wrong type or target, wrong temporal/cohort/cutoff/IV roles, absent assumption refs, weak/rank-deficient first stage, backend mismatch, unsupported CI and mis-hashed upstream rejected. Do not turn scientific negatives into technical failures or fallback.
 - OPEN: actual backend API/License, proven inferential procedure, independent DGP/NEG/REF and prespecified K/R/FWER 0.05/MC-SE/coverage decision. NOT_FROZEN.
 
 
