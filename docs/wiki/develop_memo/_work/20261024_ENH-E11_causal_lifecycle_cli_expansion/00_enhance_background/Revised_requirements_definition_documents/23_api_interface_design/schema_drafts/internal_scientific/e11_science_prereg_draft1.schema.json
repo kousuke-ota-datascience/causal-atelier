@@ -5,91 +5,377 @@
   "description": "Review-only contract; validates evidence field shape, not truth, independence, or Method-specific science.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "method_id", "estimand_kind", "oracle", "fixture", "backend", "pilot", "confirmatory", "review"],
+  "required": [
+    "schema_version",
+    "method_id",
+    "estimand_kind",
+    "oracle",
+    "fixture",
+    "backend",
+    "pilot",
+    "confirmatory",
+    "review"
+  ],
   "properties": {
-    "schema_version": {"const": "e11-science-prereg/1"},
-    "method_id": {"type": "string", "pattern": "^P[123]-M[0-9]{2}$"},
-    "estimand_kind": {"type": "string", "minLength": 1},
+    "schema_version": {
+      "const": "e11-science-prereg/1"
+    },
+    "method_id": {
+      "type": "string",
+      "pattern": "^P[123]-M[0-9]{2}$"
+    },
+    "estimand_kind": {
+      "type": "string",
+      "minLength": 1
+    },
     "oracle": {
-      "type": "object", "additionalProperties": false,
-      "required": ["independent_source_sha256", "algorithm_id", "truth_derivation_ref", "negative_matrix_ref"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "independent_source_sha256",
+        "algorithm_id",
+        "truth_derivation_ref",
+        "negative_matrix_ref"
+      ],
       "properties": {
-        "independent_source_sha256": {"$ref": "#/$defs/sha256"},
-        "algorithm_id": {"type": "string", "minLength": 1},
-        "truth_derivation_ref": {"type": "string", "minLength": 1},
-        "negative_matrix_ref": {"type": "string", "minLength": 1}
+        "independent_source_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "algorithm_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "truth_derivation_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "negative_matrix_ref": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "fixture": {
-      "type": "object", "additionalProperties": false,
-      "required": ["generator_sha256", "frozen_input_sha256", "truth_sha256"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generator_sha256",
+        "frozen_input_sha256",
+        "truth_sha256"
+      ],
       "properties": {
-        "generator_sha256": {"$ref": "#/$defs/sha256"},
-        "frozen_input_sha256": {"$ref": "#/$defs/sha256"},
-        "truth_sha256": {"$ref": "#/$defs/sha256"}
+        "generator_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "frozen_input_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "truth_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "backend": {
-      "type": "object", "additionalProperties": false,
-      "required": ["environment_id", "lock_sha256", "api_probe_evidence_sha256"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment_id",
+        "lock_sha256",
+        "api_probe_evidence_sha256"
+      ],
       "properties": {
-        "environment_id": {"enum": ["ENV-BASE", "ENV-DOWHY", "ENV-ECONML", "ENV-TIGRAMITE"]},
-        "lock_sha256": {"$ref": "#/$defs/sha256"},
-        "api_probe_evidence_sha256": {"$ref": "#/$defs/sha256"}
+        "environment_id": {
+          "enum": [
+            "ENV-BASE",
+            "ENV-DOWHY",
+            "ENV-ECONML",
+            "ENV-TIGRAMITE"
+          ]
+        },
+        "lock_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "api_probe_evidence_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "pilot": {
-      "type": "object", "additionalProperties": false,
-      "required": ["seed_set_sha256", "observations_sha256", "completed", "tuning_evidence_sha256"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_set_sha256",
+        "observations_sha256",
+        "completed",
+        "tuning_evidence_sha256"
+      ],
       "properties": {
-        "seed_set_sha256": {"$ref": "#/$defs/sha256"},
-        "observations_sha256": {"$ref": "#/$defs/sha256"},
-        "completed": {"const": true},
-        "tuning_evidence_sha256": {"$ref": "#/$defs/sha256"}
+        "seed_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "observations_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "completed": {
+          "const": true
+        },
+        "tuning_evidence_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     },
     "confirmatory": {
-      "type": "object", "additionalProperties": false,
-      "required": ["seed_set_sha256", "family_id", "hypothesis_count_K", "replications_R", "mcse_max_epsilon", "familywise_alpha", "multiplicity_method", "metric", "compute_budget_ref", "predeclared_before_t3"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_set_sha256",
+        "family_id",
+        "hypothesis_count_K",
+        "replications_R",
+        "mcse_max_epsilon",
+        "familywise_alpha",
+        "multiplicity_method",
+        "metrics",
+        "compute_budget_ref",
+        "predeclared_before_t3"
+      ],
       "properties": {
-        "seed_set_sha256": {"$ref": "#/$defs/sha256"},
-        "family_id": {"type": "string", "minLength": 1},
-        "hypothesis_count_K": {"type": "integer", "minimum": 1},
-        "replications_R": {"type": "integer", "minimum": 1},
-        "mcse_max_epsilon": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.5},
-        "familywise_alpha": {"const": 0.05},
-        "multiplicity_method": {"enum": ["HOLM", "BONFERRONI", "PREDECLARED_MAX_T", "NONE_SINGLE_HYPOTHESIS"]},
-        "metric": {"oneOf": [{"$ref": "#/$defs/point_metric"}, {"$ref": "#/$defs/interval_metric"}, {"$ref": "#/$defs/graph_metric"}, {"$ref": "#/$defs/topology_metric"}, {"$ref": "#/$defs/diagnostic_metric"}]},
-        "compute_budget_ref": {"type": "string", "minLength": 1},
-        "predeclared_before_t3": {"const": true}
+        "seed_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "family_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hypothesis_count_K": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "replications_R": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mcse_max_epsilon": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.5
+        },
+        "familywise_alpha": {
+          "const": 0.05
+        },
+        "multiplicity_method": {
+          "enum": [
+            "HOLM",
+            "BONFERRONI",
+            "PREDECLARED_MAX_T",
+            "NONE_SINGLE_HYPOTHESIS"
+          ]
+        },
+        "compute_budget_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "predeclared_before_t3": {
+          "const": true
+        },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/point_metric"
+              },
+              {
+                "$ref": "#/$defs/interval_metric"
+              },
+              {
+                "$ref": "#/$defs/graph_metric"
+              },
+              {
+                "$ref": "#/$defs/topology_metric"
+              },
+              {
+                "$ref": "#/$defs/diagnostic_metric"
+              }
+            ]
+          }
+        }
       },
       "allOf": [
-        {"if": {"properties": {"multiplicity_method": {"const": "NONE_SINGLE_HYPOTHESIS"}}, "required": ["multiplicity_method"]},
-         "then": {"properties": {"hypothesis_count_K": {"const": 1}}}}
+        {
+          "if": {
+            "properties": {
+              "multiplicity_method": {
+                "const": "NONE_SINGLE_HYPOTHESIS"
+              }
+            },
+            "required": [
+              "multiplicity_method"
+            ]
+          },
+          "then": {
+            "properties": {
+              "hypothesis_count_K": {
+                "const": 1
+              }
+            }
+          }
+        }
       ]
     },
     "review": {
-      "type": "object", "additionalProperties": false,
-      "required": ["independent_reviewer_ref", "oracle_review_sha256", "acceptance_review_sha256", "approval_evidence_sha256"],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "independent_reviewer_ref",
+        "oracle_review_sha256",
+        "acceptance_review_sha256",
+        "approval_evidence_sha256"
+      ],
       "properties": {
-        "independent_reviewer_ref": {"type": "string", "minLength": 1},
-        "oracle_review_sha256": {"$ref": "#/$defs/sha256"},
-        "acceptance_review_sha256": {"$ref": "#/$defs/sha256"},
-        "approval_evidence_sha256": {"$ref": "#/$defs/sha256"}
+        "independent_reviewer_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "oracle_review_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "acceptance_review_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "approval_evidence_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
       }
     }
   },
   "$defs": {
-    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
-    "point_metric": {"type": "object", "additionalProperties": false, "required": ["kind", "max_abs_bias", "max_rmse"],
-      "properties": {"kind": {"const": "POINT"}, "max_abs_bias": {"type": "number", "minimum": 0}, "max_rmse": {"type": "number", "minimum": 0}}},
-    "interval_metric": {"type": "object", "additionalProperties": false, "required": ["kind", "min_coverage", "coverage_mcse_epsilon", "valid_interval_shape_ref"],
-      "properties": {"kind": {"const": "INTERVAL"}, "min_coverage": {"type": "number", "minimum": 0, "maximum": 1}, "coverage_mcse_epsilon": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.5}, "valid_interval_shape_ref": {"type": "string", "minLength": 1}}},
-    "graph_metric": {"type": "object", "additionalProperties": false, "required": ["kind", "graph_equivalence_rule_ref", "max_false_orientation_rate"],
-      "properties": {"kind": {"const": "GRAPH"}, "graph_equivalence_rule_ref": {"type": "string", "minLength": 1}, "max_false_orientation_rate": {"type": "number", "minimum": 0, "maximum": 1}}},
-    "topology_metric": {"type": "object", "additionalProperties": false, "required": ["kind", "all_real_domain_certificate_ref", "min_valid_set_coverage"],
-      "properties": {"kind": {"const": "TOPOLOGY"}, "all_real_domain_certificate_ref": {"type": "string", "minLength": 1}, "min_valid_set_coverage": {"type": "number", "minimum": 0, "maximum": 1}}},
-    "diagnostic_metric": {"type": "object", "additionalProperties": false, "required": ["kind", "false_positive_rate_max", "alternative_power_min"],
-      "properties": {"kind": {"const": "DIAGNOSTIC"}, "false_positive_rate_max": {"type": "number", "minimum": 0, "maximum": 1}, "alternative_power_min": {"type": "number", "minimum": 0, "maximum": 1}}}
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "point_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "max_abs_bias",
+        "max_rmse"
+      ],
+      "properties": {
+        "kind": {
+          "const": "POINT"
+        },
+        "max_abs_bias": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_rmse": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "interval_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "min_coverage",
+        "coverage_mcse_epsilon",
+        "valid_interval_shape_ref"
+      ],
+      "properties": {
+        "kind": {
+          "const": "INTERVAL"
+        },
+        "min_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "coverage_mcse_epsilon": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 0.5
+        },
+        "valid_interval_shape_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "graph_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "graph_equivalence_rule_ref",
+        "max_false_orientation_rate"
+      ],
+      "properties": {
+        "kind": {
+          "const": "GRAPH"
+        },
+        "graph_equivalence_rule_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_false_orientation_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "topology_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "all_real_domain_certificate_ref",
+        "min_valid_set_coverage"
+      ],
+      "properties": {
+        "kind": {
+          "const": "TOPOLOGY"
+        },
+        "all_real_domain_certificate_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "min_valid_set_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "diagnostic_metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "false_positive_rate_max",
+        "alternative_power_min"
+      ],
+      "properties": {
+        "kind": {
+          "const": "DIAGNOSTIC"
+        },
+        "false_positive_rate_max": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "alternative_power_min": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
   }
 }
