@@ -99,6 +99,9 @@ If `PASS_AUTHOR_FCI_TINY_FIT_DIAGNOSTIC` occurs, it proves only the listed **sel
 
 ## D. Independent Review Agent (G01 scoped and common baseline first)
 
+**G01 Science Reference preparation:** `combined_review/176_20261122_g01_p1_m06_graph_a_independent_oracle_candidate_cases.md` provides **author-only analytic CI truth** for the adopted DGP-021 collider/mediator variants and a formal DGP-011 bivariate latent nonidentification counterexample. This is **not an independently accepted complete MAG/PAG equivalence oracle**: no fixture/source SHA, independent proof, numeric K/R/seed, BK remedy or T2/T3 execution is available. The separate Reviewer must derive the full admissible MAG/PAG equivalence targets and independently challenge all assertions, not accept the document as truth.
+
+
 Start a **fresh** Codex/independent-science Review Agent session on the pinned checkout, using the applicable G01-scoped science and `combined_review/165` independent S09 instructions. `combined_review/158_20261122_s05_independent_science_reviewer_prompt.md` is the **full-41** research reviewer preparation reference, not an order to require G02–G09 40 unrelated Method scientific approvals before G01 S10. G01 science reviewer must examine P1-M06 FCI with independent MAG/PAG oracle and negative/refusal rules; the broader 41 review occurs incrementally by owner Gate and finally G10. The Reviewer must not be fed the author's verdict as trusted evidence, and must report actual independent computations, primaries, insufficiencies and **P1-M06-specific** outcomes for G01; remaining 40 Methods are `NOT_REVIEWED` and are covered at their owning Gates and G10. Do not run a coding implementation agent (S11 not authorized). If no authorized independent process can be launched, record `S05-B05-REVIEWER_NOT_LAUNCHED`.
 
 ## E. Evidence verdicts: before coding vs after authorization
