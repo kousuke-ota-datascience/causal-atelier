@@ -1,5 +1,7 @@
 # 10_enhance_instruction — Gate契約・実行指示の作成ガイド
 
+**ENH-E11 DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別独立監査・Freeze・Coding Authorization。** 全402のsource SHA索引は変更影響の全体発見用であり、全Gateの科学・契約独立PASSではない。最初に共通E11契約とG01の実依存閉包について独立S09審査、Owner G01-S10 Freeze、別個のOwner G01-S11 Coding Authorizationを得る。G02以降は当該Gate固有のS09→S10→S11と必要な先行Gate999の**実PASS**を当該GateのS11前に確認する。S09文書監査準備は先行Gateのcoding中でも可能。S11がない場合Agentを起動せず、`BLOCKED_CODING_AUTHORIZATION`を記録する。対象外GateはSHA索引には保持するが`NOT_REVIEWED`、実際のMethod別07/999・T2/T3・FS/Reader・旧Product回帰を省略しない。Owner決定記録は`combined_review/173_20261122_dec_precode01_owner_gate_scoped_s09_s10_s11.md`。**現時点S10/S11は全Gate未承認。**
+
 **Document class:** Authoring Guide  
 **Self-containment:** MUST — このREADMEだけでGate / Trial / Work Packageと06 / 07 / P00 / Pxx / 08 / Rxx / 09の作り分けが分かること。
 
