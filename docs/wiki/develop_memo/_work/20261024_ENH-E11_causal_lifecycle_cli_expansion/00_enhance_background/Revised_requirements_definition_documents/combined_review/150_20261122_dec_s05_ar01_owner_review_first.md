@@ -1,0 +1,11 @@
+# DEC-S05-AR01 — Owner approval of Independent Review First for G08 Robust Anderson–Rubin
+
+- **Decision:** 2026-11-22 11:48 JST, Owner explicitly adopted **A**: “DEC-01はA案を採用する。既承認のAR信頼集合の要求は維持し、S05の残件を続行せよ。”
+- **Authority:** Human Owner adoption of the *decision procedure*, **not** approval of specific HC1/χ² method or quantitative Science PASS.
+- **Scope:** P3-M10 B0 binary-IV complier LATE; P3-M11 B1 structural slope; P3-M09 Wald does not inherit robust AR automatically.
+- **Preserved:** Weak-IV robust Anderson–Rubin confidence-set inference, full-real-domain inversion; explicit bounded, unbounded, disconnected, ALL_REAL and qualified EMPTY/undefined mathematical topologies, no finite-grid truncation; point estimate availability independent of AR availability.
+- **A adopted:** Existing HC1 covariance, χ²(1) asymptotic null test, quadratic inversion and root solver from `combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md` and `30_63 §7.3` are an **implementation candidate pending independent scientific review**. Neither it nor any alternative is frozen at this decision. Explicit reviewer assent/objections and numeric oracle evidence are required before G08 instruction/G08 Science Freeze.
+- **Required review:** derive/invert statistic in all-real domain with checked variance/rank domain; asymptotic calibration including heteroskedasticity and weak IV; classify zero sample first stage, undefined point but potentially available AR, degenerate HC variance, near-multiple roots, EMPTY/nonempty proof under regular conditions; target-specific T2 pilot and T3 preregistered quantitative thresholds and FWER; independent reference/source+fixture SHA.
+- **No new Owner question now:** scientific reviewer proposes corrections/alternatives with primary literature and independently run evidence. Escalate only if target, inferential meaning or materially different risk requires a new Owner choice.
+- **Status:** `OWNER_ADOPTED_A_REVIEW_FIRST / AR_IMPLEMENTATION_PROVISIONAL / INDEPENDENT_REVIEW_NOT_RUN / S05_BLOCKED / CODING_NOT_AUTHORIZED`.
+- **Supersession:** This decision governs the provisional status of the concrete HC1/χ² realization wherever pre-decision detailed design reads like a frozen mandate; it does not repeal earlier accepted AR target/shape requirements or alter the unaffected 40 method targets.
