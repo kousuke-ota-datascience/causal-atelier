@@ -54,7 +54,8 @@
         },
         "relative_key": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
         },
         "sha256": {
           "type": "string",
@@ -123,7 +124,8 @@
                   },
                   "relative_key": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
                   },
                   "sha256": {
                     "type": "string",
@@ -197,7 +199,8 @@
         },
         "relative_key": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
         },
         "sha256": {
           "type": "string",
