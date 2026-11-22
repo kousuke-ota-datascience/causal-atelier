@@ -197,7 +197,37 @@
             "type": "number"
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "const": "PRE"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "phase": {
+                "const": "POST"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "minContains": 1
+        }
+      ]
     },
     "inference_status": {
       "const": "NOT_REQUESTED"

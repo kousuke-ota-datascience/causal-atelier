@@ -146,7 +146,35 @@
               }
             ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "inference_status": {
+                  "const": "AVAILABLE"
+                }
+              },
+              "required": [
+                "inference_status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_interval_ref": {
+                  "type": "object"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_interval_ref": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "observed_rows_included": {
@@ -188,5 +216,33 @@
       },
       "description": "Reference to immutable upstream Study, not the Result that may reference this payload; avoids cyclic content-hash dependencies."
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method_id": {
+            "const": "P2-M08"
+          }
+        },
+        "required": [
+          "method_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "estimand_family": {
+            "const": "CONDITIONAL_IV_STRUCTURAL_SLOPE"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "estimand_family": {
+            "const": "NON_IV_CATE"
+          }
+        }
+      }
+    }
+  ]
 }

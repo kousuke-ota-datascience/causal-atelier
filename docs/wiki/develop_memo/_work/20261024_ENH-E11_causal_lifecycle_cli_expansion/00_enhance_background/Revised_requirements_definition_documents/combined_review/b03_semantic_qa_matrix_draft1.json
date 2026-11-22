@@ -1,0 +1,128 @@
+{
+  "schema_version": "e11-b03-semantic-qa/draft1",
+  "status": "STATIC_CROSS_FIELD_CONSTRAINTS_AUTHORED_NOT_FULL_REVIEWED",
+  "constraints": [
+    {
+      "name": "CATE_P2_M08_ONLY_IV_SLOPE",
+      "method": "P2-M08",
+      "positive": {
+        "method_id": "P2-M08",
+        "estimand_family": "CONDITIONAL_IV_STRUCTURAL_SLOPE"
+      },
+      "negative": {
+        "method_id": "P2-M08",
+        "estimand_family": "NON_IV_CATE"
+      }
+    },
+    {
+      "name": "CATE_NON_IV_M01_M07",
+      "method": "P2-M01..07",
+      "positive": {
+        "method_id": "P2-M04",
+        "estimand_family": "NON_IV_CATE"
+      },
+      "negative": {
+        "method_id": "P2-M04",
+        "estimand_family": "CONDITIONAL_IV_STRUCTURAL_SLOPE"
+      }
+    },
+    {
+      "name": "CATE_CI_AVAILABLE_MUST_HAVE_REF",
+      "positive": {
+        "inference_status": "AVAILABLE",
+        "confidence_interval_ref": {
+          "identity": "ref"
+        }
+      },
+      "negative": {
+        "inference_status": "AVAILABLE",
+        "confidence_interval_ref": null
+      }
+    },
+    {
+      "name": "EVENT_CI_AVAILABLE_MUST_HAVE_REF",
+      "positive": {
+        "inference_status": "AVAILABLE",
+        "interval_ref": {
+          "identity": "ref"
+        }
+      },
+      "negative": {
+        "inference_status": "AVAILABLE",
+        "interval_ref": null
+      }
+    },
+    {
+      "name": "SCM_MUST_CONTAIN_PRE_AND_POST",
+      "positive": [
+        "PRE",
+        "POST"
+      ],
+      "negative": [
+        "PRE",
+        "PRE"
+      ]
+    },
+    {
+      "name": "IDENTIFY_P1_M05_ONLY_LATE",
+      "positive": {
+        "method_id": "P1-M05",
+        "estimand_family": "LATE_COMPLIER"
+      },
+      "negative": {
+        "method_id": "P1-M05",
+        "estimand_family": "ATE"
+      }
+    },
+    {
+      "name": "IDENTIFY_CONDITIONAL_REQUIRES_EXPRESSION_ASSUMPTION",
+      "positive": {
+        "identification_state": "IDENTIFIED_CONDITIONAL",
+        "expression": "g-formula",
+        "assumption_refs": [
+          "ref"
+        ]
+      },
+      "negative": {
+        "identification_state": "IDENTIFIED_CONDITIONAL",
+        "expression": null,
+        "assumption_refs": []
+      }
+    },
+    {
+      "name": "DIAGNOSTICS_OPERATION_PER_METHOD",
+      "positive": {
+        "method_id": "P1-M16",
+        "operation": "SENSITIVITY"
+      },
+      "negative": {
+        "method_id": "P1-M16",
+        "operation": "REFUTE"
+      }
+    },
+    {
+      "name": "COMPUTED_REQUIRES_NONEMPTY_STATISTICS",
+      "positive": {
+        "diagnostic_status": "COMPUTED",
+        "statistics": [
+          {
+            "statistic_name": "T"
+          }
+        ]
+      },
+      "negative": {
+        "diagnostic_status": "COMPUTED",
+        "statistics": []
+      }
+    }
+  ],
+  "remaining_semantic_checks": [
+    "actual ContentRef hash and verified Study/Graph/Design lineage",
+    "CATE predeclared nonobserved grid keys unique and exact",
+    "Event cohort and reference period/time indexing and pretrend",
+    "SCM gap arithmetic, unit/time ordering, donor exogeneity with independently approved numerical tolerance",
+    "actual result/manifest status and independent numeric science",
+    "row-level privacy and G05 policy isolation",
+    "per Method downstream inference availability confirmed by effective Backend"
+  ]
+}

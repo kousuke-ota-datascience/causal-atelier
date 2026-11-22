@@ -277,5 +277,67 @@
       },
       "description": "Reference to immutable upstream Study, not the Result that may reference this payload; avoids cyclic content-hash dependencies."
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method_id": {
+            "const": "P1-M05"
+          }
+        },
+        "required": [
+          "method_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "estimand_family": {
+            "const": "LATE_COMPLIER"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "estimand_family": {
+            "const": "ATE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identification_state": {
+            "const": "IDENTIFIED_CONDITIONAL"
+          }
+        },
+        "required": [
+          "identification_state"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expression": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assumption_refs": {
+            "minItems": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "expression": {
+            "type": "null"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
 }

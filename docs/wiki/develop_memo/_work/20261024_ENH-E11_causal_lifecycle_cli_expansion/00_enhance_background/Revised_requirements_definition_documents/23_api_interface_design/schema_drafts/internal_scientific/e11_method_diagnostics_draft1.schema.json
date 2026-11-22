@@ -215,5 +215,103 @@
       },
       "description": "Reference to immutable upstream Study, not the Result that may reference this payload; avoids cyclic content-hash dependencies."
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method_id": {
+            "enum": [
+              "P1-M12",
+              "P1-M13",
+              "P1-M14",
+              "P1-M15"
+            ]
+          }
+        },
+        "required": [
+          "method_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "operation": {
+            "const": "REFUTE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_id": {
+            "enum": [
+              "P1-M16",
+              "P1-M17"
+            ]
+          }
+        },
+        "required": [
+          "method_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "operation": {
+            "const": "SENSITIVITY"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method_id": {
+            "enum": [
+              "P1-M18",
+              "P1-M19",
+              "P1-M20"
+            ]
+          }
+        },
+        "required": [
+          "method_id"
+        ]
+      },
+      "then": {
+        "properties": {
+          "operation": {
+            "const": "DIAGNOSE"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "diagnostic_status": {
+            "const": "COMPUTED"
+          }
+        },
+        "required": [
+          "diagnostic_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "statistics": {
+            "minItems": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
 }

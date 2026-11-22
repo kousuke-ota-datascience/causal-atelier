@@ -112,7 +112,35 @@
               }
             ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "inference_status": {
+                  "const": "AVAILABLE"
+                }
+              },
+              "required": [
+                "inference_status"
+              ]
+            },
+            "then": {
+              "properties": {
+                "interval_ref": {
+                  "type": "object"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "interval_ref": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "pretrend_diagnostics_ref": {
