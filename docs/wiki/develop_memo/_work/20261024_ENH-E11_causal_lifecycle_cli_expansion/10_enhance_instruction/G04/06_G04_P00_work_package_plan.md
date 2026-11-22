@@ -1,5 +1,7 @@
 # ENH-E11 G04 P00 — Work Package Plan (DRAFT)
 
+**DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G04の独立S09監査は、先行Gate（G02+G03）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG04自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG04のCoding前無条件停止条件にしない。**G02_999・G03_999の実PASS→独立G04 S09 verdict→Owner G04-S10 Freeze→Owner G04-S11 Coding Authorization**を各々確認するまでG04のCoding禁止。実Adapter/FS/数値T2/T3/RegressionはG04の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
+
 **Gate:** G04 / Official Enhance Workflow Gate  
 **Class:** Planning/Operator Artifact, not Coding Agent's normative package  
 **Plan status:** OWNER_REVIEW_APPROVED / NOT_FROZEN / CODING_NOT_AUTHORIZED  
