@@ -1,0 +1,392 @@
+{
+  "baseline_head": "978bff4fe2684c6ebf1b08e321d46c7a3ada95b0",
+  "items": [
+    {
+      "file": "G04/06_G04_P04_cate_results.md",
+      "sha": "332c4e645a5386694425b4661adb9558722d44e0",
+      "hits": [
+        {
+          "line": 90,
+          "content": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。実行者のOS EUID/root/ACL/mountはCLI composition rootが検証。G04は個票出力禁止、G05だけがStudy+CLI double opt-inでlocal中間個票を許容する。"
+        },
+        {
+          "line": 96,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 119,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 125,
+          "content": "7. 本書§2BのOperation別Graph/Identification/Effect/Diagnostics/Status・Lineageを検査する。G04では行出力を拒否し、G05のみStudy+CLI double opt-inとEUID/private local FS・Method別RowSchemaによる許可後にG01 Staging→Publisher→Readerを利用する。"
+        },
+        {
+          "line": 268,
+          "content": "6. **Sequence:** ValidatedStudy→LocalCausalUseCase→typed EstimatorPort/Adapter preflight→approved Backend computation→pure typed CATE/EffectOutcome→G01 StagingSink/atomic Publisher/Reader。Application/DomainからCLI DB/FSのConcreteへ逆依存しない。"
+        }
+      ]
+    },
+    {
+      "file": "G05/06_G05_P00_work_package_plan.md",
+      "sha": "aeef53434ad256c004686418ed89e230fbdc53eb",
+      "hits": [
+        {
+          "line": 5,
+          "content": "- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。"
+        },
+        {
+          "line": 7,
+          "content": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+        },
+        {
+          "line": 8,
+          "content": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+        },
+        {
+          "line": 25,
+          "content": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+        },
+        {
+          "line": 40,
+          "content": "1. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 41,
+          "content": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 43,
+          "content": "4. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 44,
+          "content": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 61,
+          "content": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+        }
+      ]
+    },
+    {
+      "file": "G05/06_G05_P01_hte_diagnostics.md",
+      "sha": "89ce3e83e2dcf86959d01c5c29e18ac47dea27a2",
+      "hits": [
+        {
+          "line": 5,
+          "content": "- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。"
+        },
+        {
+          "line": 7,
+          "content": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+        },
+        {
+          "line": 8,
+          "content": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+        },
+        {
+          "line": 24,
+          "content": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+        },
+        {
+          "line": 39,
+          "content": "- **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。"
+        },
+        {
+          "line": 40,
+          "content": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+        },
+        {
+          "line": 59,
+          "content": "**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。"
+        },
+        {
+          "line": 242,
+          "content": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+        }
+      ]
+    },
+    {
+      "file": "G05/06_G05_P02_row_authorization.md",
+      "sha": "615ac7f1dd4342e2f3ebbfaba344dfb8aa35cd65",
+      "hits": [
+        {
+          "line": 5,
+          "content": "- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。"
+        },
+        {
+          "line": 7,
+          "content": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+        },
+        {
+          "line": 8,
+          "content": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+        },
+        {
+          "line": 22,
+          "content": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+        },
+        {
+          "line": 35,
+          "content": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+        },
+        {
+          "line": 38,
+          "content": "- **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。"
+        },
+        {
+          "line": 53,
+          "content": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+        },
+        {
+          "line": 56,
+          "content": "**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。"
+        },
+        {
+          "line": 78,
+          "content": "`__init__(self)->None`。`LocalPrivacyPolicy`はstateless pure evaluator。OS principal/rootとStudy/CLI/Method出力適格性を評価し、行の実値を保持しない。"
+        },
+        {
+          "line": 84,
+          "content": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | double opt-in＋private EUID-owned ext4/XFS root/Method-specific schema・row/byte bound/negative Source反復0/G01 Readback |"
+        },
+        {
+          "line": 91,
+          "content": "`authorize`は通常Resultへの個票混入を禁止し、G05行出力はStudy request∧CLI Flag∧EUID private ext4/XFS root∧Method別ApprovedRowSchema/column/rows/byte capを検証。fail closed。"
+        },
+        {
+          "line": 95,
+          "content": "- **Input:** `ValidatedStudy`（元CLI `LocalStudySpec`）, CLI intent, runtime principal/effective UID, trusted root/owner/owner/mode/FS証拠, independently verified policy, output shape/column Schema。"
+        },
+        {
+          "line": 133,
+          "content": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/owner/mode/FSをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。"
+        },
+        {
+          "line": 139,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 162,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 168,
+          "content": "7. Operation別の正しいGraph/Identification/Effect/Diagnostics/Statusを保持し、G05行出力はStudy＋CLI double opt-inとEUID/private root＋Method Schemaを検証した後だけG01 Sinkへ送る。"
+        },
+        {
+          "line": 200,
+          "content": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 201,
+          "content": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 203,
+          "content": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 255,
+          "content": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+        }
+      ]
+    },
+    {
+      "file": "G05/06_G05_P03_parquet_bundle.md",
+      "sha": "8273dfa63871928db551c947e7bb4f75fbb2186b",
+      "hits": [
+        {
+          "line": 5,
+          "content": "- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。"
+        },
+        {
+          "line": 7,
+          "content": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+        },
+        {
+          "line": 8,
+          "content": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+        },
+        {
+          "line": 24,
+          "content": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+        },
+        {
+          "line": 39,
+          "content": "- **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。"
+        },
+        {
+          "line": 40,
+          "content": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+        },
+        {
+          "line": 56,
+          "content": "| `RowEffectsParquetWriter` | `ariadne.interfaces.cli.local_causal.row_effects_parquet.RowEffectsParquetWriter` | P03 primary new Class | `__init__(self,*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)` / `write(self,*,source:DeferredRowEffectsSource,study:ValidatedStudy,decision:PrivacyDecision,selection:ColumnSelection,sink:StagingArtifactSink)->ArtifactDescriptor` |"
+        },
+        {
+          "line": 61,
+          "content": "**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。"
+        },
+        {
+          "line": 249,
+          "content": "1. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 251,
+          "content": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 267,
+          "content": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 326,
+          "content": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+        }
+      ]
+    },
+    {
+      "file": "G05/06_G05_P04_privacy_e2e.md",
+      "sha": "00de1096e0b46398fcaf351e77408e547f7bf088",
+      "hits": [
+        {
+          "line": 5,
+          "content": "- **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がStudy requestとCLI flagで明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。"
+        },
+        {
+          "line": 7,
+          "content": "- **Eligibility:** `Study.privacy.row_export_requested=true` ∧ `--allow-row-level-export` ∧ private verified root/UID ∧ Method別`ApprovedRowSchema`/許可列・行ID・row/byte/memory上限 ∧ 同一runのG01 staging。初期denyはPrivacy exit3、Source反復0・row bytes0、暗黙aggregate fallback無し。通常集計は個票権限と独立。"
+        },
+        {
+          "line": 8,
+          "content": "- **内部Port:** `LocalRunContext(root,principal,cli_row_flag)`、`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`、`LocalCausalUseCase`に署名Verifier依存無し。`e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。"
+        },
+        {
+          "line": 24,
+          "content": "**Scope:** Local intermediate row artifact only. Science CATE/DRIVの対象は変更せず、行出力はStudy＋CLI二重opt-inとnonroot private rootを満たす場合だけ。"
+        },
+        {
+          "line": 39,
+          "content": "- **既存:** `src/ariadne/product/application/graph_version_service.py`の`GraphVersionService.create(...)`/`fix_graph(...)`はProduct GraphVersion Authorityであり、Local CLIが同名Publisher/Version writerを作って代替しない。`src/ariadne/scientific/core_adapter.py`の`ScientificCoreAdapter.run_estimation(input_: EstimationInput, output_dir: Path)`は旧Path API、HTEと認可済Parquet Writerの実装済み証拠ではない。"
+        },
+        {
+          "line": 40,
+          "content": "**Input/output:** Studyはe11-local-study/1でpolicy_refはnull。run/Study/Data/Method ref hash、private ext4/XFS root、G01 stagingとReader一致を確認し、旧v2と混同しない。"
+        },
+        {
+          "line": 56,
+          "content": "| `LocalPrivacyPolicy` | `ariadne.interfaces.cli.local_causal.privacy.LocalPrivacyPolicy` | Port/Value/Facade integration (no duplicate implementation) | authorize(self, *, study:ValidatedStudy, cli_row_flag:bool, root:TrustedLocalRoot, principal:LocalPrincipal, output_shape:OutputShape)->PrivacyDecision / filter_export_columns(self,frame_schema:ColumnSchema,*,decision:PrivacyDecision)->ColumnSelection |"
+        },
+        {
+          "line": 59,
+          "content": "**Class boundary:** LocalPrivacyPolicyがStudy・CLI・EUID/TrustedRoot・Method ApprovedRowSchemaを検証する。RowWriter/Factoryは許可後Serializerだけを所有し、G01 Publisherは変更しない。"
+        },
+        {
+          "line": 96,
+          "content": "**Application Context:** `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal,cli_row_flag:bool)`。一般EUID/private root/owner/mode/FSをCLI composition rootが検証し、StudyとCLI両方のopt-inで行生成適格性を評価する。"
+        },
+        {
+          "line": 102,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 125,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 131,
+          "content": "7. Operation別の正しいGraph/Identification/Effect/Diagnostics/Statusを保持し、G05行出力はStudy＋CLI double opt-inとEUID/private root＋Method Schemaを検証した後だけG01 Sinkへ送る。"
+        },
+        {
+          "line": 170,
+          "content": "`__init__(self)->None`。`LocalPrivacyPolicy`はstateless pure evaluator。OS principal/rootとStudy/CLI/Method出力適格性を評価し、行の実値を保持しない。"
+        },
+        {
+          "line": 176,
+          "content": "| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | double opt-in＋private EUID-owned ext4/XFS root/Method-specific schema・row/byte bound/negative Source反復0/G01 Readback |"
+        },
+        {
+          "line": 183,
+          "content": "`authorize`は通常Resultへの個票混入を禁止し、G05行出力はStudy request∧CLI Flag∧EUID private ext4/XFS root∧Method別ApprovedRowSchema/column/rows/byte capを検証。fail closed。"
+        },
+        {
+          "line": 187,
+          "content": "- **Input:** `ValidatedStudy`（元CLI `LocalStudySpec`）, CLI intent, runtime principal/effective UID, trusted root/owner/owner/mode/FS証拠, independently verified policy, output shape/column Schema。"
+        },
+        {
+          "line": 245,
+          "content": "2. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 246,
+          "content": "3. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 248,
+          "content": "5. Study＋CLI double opt-in、nonroot Linux EUIDが所有するprivate ext4/XFS rootとMethod approved row schema/列行byte上限を検証。失敗時に個票Sourceを反復せずexit3。"
+        },
+        {
+          "line": 310,
+          "content": "This Gate's privacy threat boundary is a normal unprivileged Linux EUID and a local ext4/XFS filesystem. Enforce same-EUID ownership, private root/staging 0700, row file 0600, verified safe dirfd/O_NOFOLLOW/path and same-filesystem Publisher, Method-specific allowed schema/row/byte limits and both Study+CLI opt-in flags. **Remove as mandatory implementation/test features** independent POSIX ACL/xattr extraction/diges"
+        }
+      ]
+    },
+    {
+      "file": "G06/06_G06_P00_work_package_plan.md",
+      "sha": "e9fd9cd0db4c1c79d8efeb26765338e0cb8d7417",
+      "hits": []
+    },
+    {
+      "file": "G06/06_G06_P01_temporal_graph.md",
+      "sha": "cdf093c74d1e583834b2161a2b86cbea7eb93891",
+      "hits": [
+        {
+          "line": 63,
+          "content": "**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。"
+        }
+      ]
+    },
+    {
+      "file": "G06/06_G06_P02_pcmci_adapters.md",
+      "sha": "aaa87846343b50bb28c267b1d5bb010b675083e1",
+      "hits": []
+    },
+    {
+      "file": "G06/06_G06_P03_temporal_bundle.md",
+      "sha": "08c03bae217841aa6d4f836e57153042947aa42e",
+      "hits": [
+        {
+          "line": 89,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 91,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 95,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 118,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 124,
+          "content": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        },
+        {
+          "line": 153,
+          "content": "**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。"
+        }
+      ]
+    },
+    {
+      "file": "G07/06_G07_P00_work_package_plan.md",
+      "sha": "41974258a21a17ee0f2c68f86110a0493e40e15a",
+      "hits": []
+    }
+  ]
+}
