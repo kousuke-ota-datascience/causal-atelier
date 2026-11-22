@@ -83,7 +83,7 @@ If the resolver or API report fails, capture actual stderr and record `BLOCKED`.
 
 ### C.1 G01 P1-M06 fitted Backend API probe, and tagged BK hazard
 
-For the **first Gate G01**, `combined_review/tools/e11_g01_fci_backend_precode_probe.py` is a separate **review-only, not application** Python3.12 tiny-fit and negative-CI probe. It demands exact `causal-learn==0.1.4.8`, effective `fci` signature including `node_names`, deterministic synthetic 3-node continuous Gaussian data with BK=null, strict returned node/edge identities and no unexpected stdout/stderr, plus rejected invalid independence test. It **does not** claim independent MAG/PAG truth or T2/T3 and **intentionally never calls FCI with non-null BK**; the tagged source has known hazard (`combined_review/175`).
+For the **first Gate G01**, `combined_review/tools/e11_g01_fci_backend_precode_probe.py` is a separate **review-only, not application** Python3.12 tiny-fit and negative-CI probe. It demands exact `causal-learn==0.1.4.8`, effective `fci` signature including `node_names`, deterministic 3-node continuous Gaussian `fisherz` fit **and separate integer-coded binary categorical `chisq`/`gsq` tiny fits** (all BK=null), strict returned node/edge identities and no unexpected stdout/stderr, plus rejected invalid independence test. The categorical inputs are author-defined valid API probes; they do **not** establish Ariadne's preflight rejection of mixed/float/missing/sparse categories or the scientific validity of FCI orientation. It **does not** claim independent MAG/PAG truth or T2/T3 and **intentionally never calls FCI with non-null BK**; the tagged source has known hazard (`combined_review/175`).
 
 ```bash
 # Run after section C creates ENV-BASE; use a clean pinned review checkout.
@@ -121,3 +121,8 @@ Start a **fresh** Codex/independent-science Review Agent session on the pinned c
 B02 formal runtime, B03 actual Reader integration, B04 real target environment and B05 independent numeric science have **not** been executed by this chat. An execution probe is not a PASS without the exact expected source/lock/fixture/environments, logs and signed-off independent acceptance.
 
 No Contract Freeze/S11 Coding Authorization may be inferred from the Owner's A/A decisions.
+
+
+### C.2 Supplementary categorical coverage and SHA authority (2026-11-22)
+
+At execution time, pin a clean, externally selected full commit SHA and preserve the precise `categorical_ci_fits` reports (`chisq` and `gsq`) as well as the continuous result. Do not treat a single `fisherz` fit as complete P1-M06 three-CI feasibility. This is still author-only read-only evidence and cannot supersede independent G01 S09/B05. Review the current G01 subset against `s09_g01_scoped_review_inventory_draft4.json` (historical draft3 remains immutable).
