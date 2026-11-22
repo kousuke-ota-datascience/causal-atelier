@@ -68,3 +68,10 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - 現行監査索引: `combined_review/s09_post_reconciliation_document_snapshot_draft6.json`。Reviewer指示`165`も最新索引とAR方針に更新。
 
 **独立監査・200 Method Draft202012・Backend/数値Science・S10/S11の未実施は不変。新たなOwner判断事項なし。**
+
+## H. S09監査対象の全Stock索引化（2026-11-22／次スレッド継続）
+
+- 新規 `combined_review/s09_post_reconciliation_document_snapshot_draft7.json` を作成。`source_full_commit_sha=0d5b5971d0e5b5127a68e010cfdc83dbd6020545`。S09の監査対象に、既存の71 Gate / 7 Operator / 200 original Method Profile / 5 factored bundle / 13 public/internal Schema / 34 selected stockに加え、**全98件のactive stock Markdown**（RD=22、BD=18、IF=31〔Schema READMEを含む〕、DD=27）と**8件の追加cross-contract assets**（FCI draft 4件、Method dispatch/output catalog 2件、科学Acceptance registry/metric matrix 2件）のfull Git blob SHAを列挙。歴史的な`doc01_review/prior_drafts`の5ファイルは現行Stock索引から除外。
+- GitHub Treeのcurrent HEADで旧`draft6`の71+7+200+5+13+34各項目blob SHAが全件一致することを確認。`097f33f...`→`0d5b597...`の3 commitでは、独立レビュー指示書・証拠索引・本working noteのみ変更され、Normative契約・Profilesは不変。新規98+8のblob SHAは同じGit Tree由来。
+- `combined_review/165_20261122_s09_independent_document_audit_instruction.md`の主索引を`draft7`へ更新し、独立Reviewerに98 active Stockと8件の追加資料、歴史的draft除外、最終Review SHA再照合を明記。`draft1`〜`draft6`は履歴資料。
+- **検証限界:** 本作業はAuthorによるGit Tree/SHAとreviewer discoverabilityの静的整備であり、各98文書の意味論的整合性PASS、S09 independent verdict、S05 B02/B03/B04/B05、AR科学承認、S10/S11を意味しない。Ownerの新たな決定事項はない。次は実際の独立S09全件監査とS05の残証拠を閉じること。
