@@ -13,7 +13,7 @@
 
 ## 1. Acceptance Criteria (each blocking)
 
-- **AC01 Strict Method/Design/Estimand:** 受理されたMethod×Operation×Target×Question/Design/GraphVersion/HashとInference Policyのみ実行。unknown/mismatch/partial/unidentifiedはtyped negative。
+- **AC01 Strict Method/Design/Estimand:** 受理されたMethod×Operation×Target×Question/Design/Local Graph content hash・科学的親provenance/HashとInference Policyのみ実行。unknown/mismatch/partial/unidentifiedはtyped negative。
 - **AC02 Actual Science:** 各Methodの既知DGP・Negative・独立REF、Backend実測/現行推論API、明示Assumption/Point/UncertaintyとScience status。
 - **AC03 Portable Result:** Graph/Effect/Diagnostic/ConfidenceSet/MethodConfig/Provenanceを正しくBundle/Manifest/Readerへ保存し、hash/readback/negativeを確認。
 - **AC04 Compatibility/Safety:** G01 FS/Privacy/Atomic/JCSと旧Product v2のprotected interface/behaviorを壊さず、無言fallback/未認可出力がない。
@@ -26,7 +26,7 @@
 | `G06-07-01` | TemporalDesign・TIME_SERIES_GRAPH（cross-cutting） | unit/contract + required integration | time order/lag/endpoint schema；適格positive/negative・typed Reason |
 | `G06-07-02` | PCMCI Adapter（P3-M01） | contract + real backend integration + independent reference | CI test/effective Tigramite/API/lag；適格positive/negative・typed Reason |
 | `G06-07-03` | PCMCI+・LPCMCI Adapter（P3-M02, P3-M03） | contract + real backend integration + independent reference | contemporaneous/latent/circle endpoint Oracle；適格positive/negative・typed Reason |
-| `G06-07-04` | Temporal CLI/Manifest/Readback（cross-cutting） | unit/contract + required integration | GraphVersion/lag roundtripとnegative；適格positive/negative・typed Reason |
+| `G06-07-04` | Temporal CLI/Manifest/Readback（cross-cutting） | unit/contract + required integration | Local Graph hash/null Product version/科学的親provenance/lag roundtripとnon-null import negative；適格positive/negative・typed Reason |
 | `G06-07-05` | Whole Local CLI/Port/Artifact integration | contract + real CLI/FS integration | Strict Operation, Hash, Manifest, Reader, privacy, negative Error status |
 | `G06-07-06` | Protected v2/upstream contracts | current actual legacy suite + E11 integration | Upstream 999 invariants, no old v2 CLI/Result change |
 | `G06-07-07` | Independent Science/T2/T3 | independently verified reference + real backend integration | Method-specific DGP/NEG/REF, prereg K/R/seed/compute, predeclared quantitative decision |
