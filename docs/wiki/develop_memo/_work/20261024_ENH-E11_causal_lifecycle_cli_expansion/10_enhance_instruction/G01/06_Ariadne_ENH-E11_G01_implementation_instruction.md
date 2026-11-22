@@ -19,7 +19,7 @@
 
 **対象：** UC-01、`P1-M06`、Local causal context／GraphVersion／FCI/PAG fidelity、最低限の新Local CLI・安全なArtifact Publication・Reader・JCS・Manifest。G02以降のための共通基盤はG01で共通の入口Adapterを一度だけ作り、各Gateで複製しない。
 
-**対象外：** `P1-M01〜05, P1-M07〜20, P2-*, P3-*`の科学的Method実装（既存Productとの互換回帰は例外）。PAGからの自動識別・効果推定、Temporal PCMCI（G06）、個票CATE／実行者double opt-inとlocal filesystem適格性（G05）、AR推論（G08）、Web/API/Worker/DB、Product migration、正本`docs/wiki/requirement_definition/`、配布・顧客利用判断。
+**対象外：** `P1-M01〜05, P1-M07〜20, P2-*, P3-*`の科学的Method実装（既存Productとの互換回帰は例外）。PAGからの自動識別・効果推定、Temporal PCMCI（G06）、個票CATE／実行者Study単独opt-inとlocal filesystem適格性（G05）、AR推論（G08）、Web/API/Worker/DB、Product migration、正本`docs/wiki/requirement_definition/`、配布・顧客利用判断。
 
 **現行Source照合：** `src/ariadne/causal/discovery/algorithms.py`の`run_pc`はPC専用でありFCI実装ではない。`src/ariadne/causal/discovery/graph.py`はlossless endpointをCSVに正規化できるがE11 GraphVersionの新しいwriterではない。`src/ariadne/interfaces/cli/discovery.py`と`src/ariadne/interfaces/cli/manifest.py`はProduct v2 CLIであり書換禁止。旧Product v2 CLI contractの継続的な回帰保護は必須（実効Test Pathは40 Operatorがcurrent checkoutからdiscover。既存の旧配置を移行条件にしない）。`pyproject.toml`はPython`>=3.12,<3.13`、`uv.lock`は`causal-learn 0.1.4.8`を含む。E11新CLI scriptを追加する場合だけ[project.scripts]変更可、既存登録は保持する。
 
@@ -83,10 +83,10 @@ Where these paths conflict with an already implemented eligible shared abstracti
 | 30_62 `3 `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort` / PUB01〜10 | Public`LocalPublicationPort.begin/seal/publish`がper-run Concreteを使用。0600/0700・no-clobber・files/dirs fsync | Sealed後write禁止。rename後不定は`PUBLICATION_INDETERMINATE`、既存run削除/上書き禁止 | 02/05/06/11/12 |
 | 30_62 `4/8.3 `LocalRunManifest.from_run_evidence/validate_invariants/to_canonical_bytes/from_payload` / MAN01〜06 | G01はStudy/Status/(optional Graph)の実bytesとlineage、Version/Codecを検査。`result=null`、MarkerはInventory外 | Manifest self-hash禁止、型付き負結果はScience PASS偽装なし | 04/06/07/12 |
 | 30_62 `5/8.3 `LocalManifestReader.read_run(root:TrustedLocalRoot,run_id:RunId)` / READ01〜07 | Public`LocalManifestReaderPort.verify`からAdapter委譲。Marker→Manifest→Artifacts・Privacy→cross-ref確認 | validな`VerifiedLocalRun`だけ返す。保存破損はexit5 | 05/06/11/12 |
-| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Study行要求・CLI flagのいずれかでG01はexit3。Root private owner/owner/mode/FSとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と個票のdouble opt-in／Method別最小化はG05 | 02/11 |
+| 30_62 `6/8.4 `LocalPrivacyPolicyPort.authorize` / PRIV01〜06 | Studyの`privacy.row_export_requested=true`でG01はexit3。Root private owner/owner/mode/FSとログを確認 | Row bytes=0、aggregate-only。`filter_export_columns`と個票のStudy単独opt-in／Method別最小化はG05 | 02/11 |
 | 30_62 `8.5 `interfaces.cli.local_causal.command.main` / RUN06/PUB10/MAN06/READ06 | 新`ariadne-causal-local`のみを追加、v2 CLIの入出力・manifestは変更しない | E11 versionと旧v2別namespace、回帰不変 | 01/11/12 |
 
-**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07のlocal EUID所有private rootとdouble opt-in/列最小化→G05。未実装対象をG01でPASS扱いしない。
+**G01非適用の扱い：** 30_61 GRAPH02→G06、ID01〜04→G02以降、AR01〜05→G08、Effect推定本体→G03以降。30_62 RUN02/05の**Identification連携**→G02（Graph Evidenceの純粋なround-tripだけG01（Version編集は既存Product authority））、CAP02/03の全環境Profile→G10、CAP06の顧客配布Legal→別審査、PRIV07のlocal EUID所有private rootとStudy単独opt-in/列最小化→G05。未実装対象をG01でPASS扱いしない。
 
 ### 2.2 Method不変条件の実装順序（曖昧性防止）
 
@@ -98,12 +98,12 @@ Where these paths conflict with an already implemented eligible shared abstracti
 
 ## 3. G01専用の入力契約
 
-**New CLI：** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`。G01は`DISCOVER`、`method.id=P1-M06`、`method.backend=causal-learn`のみを実行可能とする。他Method/Operationは未対応の型付き拒否（不正構造=exit2、Backend unavailable=exit4）であり、他Methodで代替しない。
+**New CLI：** `ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json]`。G01は`DISCOVER`、`method.id=P1-M06`、`method.backend=causal-learn`のみを実行可能とする。他Method/Operationは未対応の型付き拒否（不正構造=exit2、Backend unavailable=exit4）であり、他Methodで代替しない。
 
 - Study `schema_version=e11-local-study/1`、`operation=DISCOVER`、`analysis_mode=EXPLORATORY`。CONFIRMATORYは、FCI Graphを効果推定の確定証拠と扱わないためG01では`METHOD_COMBINATION_UNSUPPORTED`（exit2）。
 - Required `inputs.question/design/dataset`は既存のE11 ContentRef 5 field。G01 DISCOVERの`inputs.graph=null`・`inputs.identification=null`（未作成Graphを入力に要求しない）。Question/Designはsemantic validationの対象で、実際のbytes hashを再計算する。OutputGraphは別run artifact。Datasetは`text/csv`または`application/vnd.apache.parquet`。列順と名前の一意性、データ行の順序を保持。
 - G01専用の[Question入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json)と[Design入力JSONプロファイル](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json)を厳格検証する。両者は**G01内部のMethod別入力バリデーション**であり、Owner採用済み5つの公開payload versionを増やすものではない。`ContentRef.schema_version=null`で参照し、`question.question_id=design.question_id=Study.inputs.question.identity`および`design.variables[].name`とDataset列名/列順の完全一致を必須とする。`design.assumptions`は研究者の事前宣言であり、Markov/faithfulness/acyclicityの成立証明ではない。`design.background_knowledge`と`Study.method.config.background_knowledge`はJCS同値であることを求め、勝手に条件を差し替えない。`fisherz`の場合すべての`measurement_scale=CONTINUOUS`、`chisq/gsq`はすべて`CATEGORICAL`。混合型はG01では`METHOD_COMBINATION_UNSUPPORTED`で拒否し、勝手な変換をしない。GraphEvidenceはCLI `DISCOVER`で生成するが、Product GraphVersion IDは発行しない。Product Versionの初版生成・編集・FIXは既存GraphVersionServiceのみが所有する。CLIはGraph ValueのFactory/round-tripを検証する（新CLI editサブコマンドは追加しない）。
-- 現行共通Study schemaは`estimand`必須なので、G01では`family=GRAPH_STRUCTURE`、`population=OBSERVED_VARIABLES`、`contrast=NOT_APPLICABLE`を**Discovery-onlyの非効果Target**として使用する。ATE等のDummy Effectを作らない。 `inference.requested=false`, `confidence_level=null`, `privacy.classification=AGGREGATE`, `row_export_requested=false`, `policy_ref=null`。違反時は明示的に拒否。
+- 現行共通Study schemaは`estimand`必須なので、G01では`family=GRAPH_STRUCTURE`、`population=OBSERVED_VARIABLES`、`contrast=NOT_APPLICABLE`を**Discovery-onlyの非効果Target**として使用する。ATE等のDummy Effectを作らない。 `inference.requested=false`, `confidence_level=null`, `privacy.classification=AGGREGATE`, `row_export_requested=false`。違反時は明示的に拒否。
 - `Study.method.config`は[FCI専用JSON Schema](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_method_config_v1.schema.json)をMethod registryが選択して厳格検証。**Method configの未知Fieldと別Method用Fieldは拒否**。全Fieldを明示させ、Backend既定値への依存を禁止。
 - `indep_test`は`fisherz`（complete continuous numeric、非定数、検定のGaussian条件を記録）、`chisq/gsq`（事前に整数カテゴリ符号化・有効カテゴリsupport確認）の3方式。自動quantile binning、勝手な欠測補完、未申告の標準化は禁止。`alpha∈(0,1)`、`depth/max_path_length`は`-1`または0以上の整数、`background_knowledge`は`null`またはrequired/forbidden ordered pairs。 `show_progress=false,verbose=false`はCLI Adapter固定。
 - Validated root内で`openat`/dirfd・`O_NOFOLLOW`等を使い、file descriptor実bytes hash・媒体型・regular file・owner/permissions/FS/mountを検査する。Path lexical checkだけでは十分でない。サポートしないFSやprivilege/mountなら**fail-closed**。
@@ -128,7 +128,7 @@ method:
   config: {indep_test: fisherz, alpha: 0.05, depth: -1, max_path_length: -1, background_knowledge: null}
 inference: {requested: false, confidence_level: null}
 randomness: {seed: 1711}
-privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: null}
+privacy: {classification: AGGREGATE, row_export_requested: false}
 ```
 **注：** 上記`<actual...>`はliteral placeholderでありそのままの入力はINVALID。QA fixture生成で実ファイルのSHA256へ置換する。Question/Design JSONのG01 domain validationは既存の文書意味（研究問い、変数、制約）を保ち、source file hashだけを妥当性証拠としない。
 
@@ -150,11 +150,11 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 - Node ordering: 学習入力の列名/順序→Backendの内部Node識別子の対応を明示的に検査。Backendが`X1`等を返す場合も無検証の文字列置換は禁止。対応不能なら`BACKEND_GRAPH_NODE_MISMATCH`。Graph `nodes`は入力観測変数のみを許す。
 - Endpoint pair: Backend `edge.get_endpoint1/2()`と`edge.get_node1/2()`を**同じ端点位置**でマップし、`TAIL/ARROW/CIRCLE`のペアをlossless保持。無向ペアはnode名の安定順に並べ、順序反転した場合はmarkも入替。重複edge・Self-loop・未知mark・missing nodesを拒否する。`ARROW/ARROW`は双方向**endpoint**であり二本の有向因果効果ではない。PAGからDAGを合成しない。
-- `e11-local-graph/1`: `kind=PAG`、`temporal=null`、全G01 `edges[].lag=null`、CLI standalone時は`version_id=null`、`parent_version_id=null`。Product GraphVersionを実際に参照した場合のみ両者の実在IDを記録し、架空のProduct Version IDを作らない。Graph `content_hash=SHA256(JCS(Graph without content_hash))`、外部`ContentRef.sha256=SHA256(actual complete graph.json bytes)`。Graph `provenance`にeffective Backend, CI-test, alpha, n, columns, runtime/library version, Graph uncertainty, permitted background knowledge, reasonsを残す。Backend固有edge propertyの取りこぼしは科学的意味を確認し、必要なら`provenance`内でキー付きに保存する。
+- `e11-local-graph/1`: `kind=PAG`、`temporal=null`、全G01 `edges[].lag=null`、CLI standalone時は`version_id=null`、`parent_version_id=null`。現行Local Graphでは両者nullに固定し（Product import未対応）、non-nullを拒否し、架空のProduct Version IDを作らない。Graph `content_hash=SHA256(JCS(Graph without content_hash))`、外部`ContentRef.sha256=SHA256(actual complete graph.json bytes)`。Graph `provenance`にeffective Backend, CI-test, alpha, n, columns, runtime/library version, Graph uncertainty, permitted background knowledge, reasonsを残す。Backend固有edge propertyの取りこぼしは科学的意味を確認し、必要なら`provenance`内でキー付きに保存する。
 - GRAPH-A: 生成DAGを唯一のPAG oracleとして用いない。潜在変数を含む小Graphから観測MAG・同値類の制約を**独立に**導出し、強制されない方向は未確定のまま評価する。PAGのどの円端点も「潜在交絡が証明された」という意味ではない。
 - BackgroundKnowledge: `required_edges`／`forbidden_edges`は変数の存在、矛盾、自己辺、cycle/precedenceの妥当性を検査。Backend内部のBK適用には**禁止方向から不要なTAILを確定させる可能性**が報告されている（[上流#266](https://github.com/py-why/causal-learn/issues/266)）。G01ではBK指定時に独立Graph motifのendpoint非過剰確定RegressionがGreenとなるまで`BACKEND_SEMANTICS_UNVERIFIED`で拒否し、結果をPAGとしてPublishしない。修正が必要ならG01内のversioned adapterに限定し、外部ライブラリの無断Patch/依存更新はしない。
 
-**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principal・row flagを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
+**正規経路（DD-E11-DISC01〜03）：** `CLI command → LocalConfigDecoder → LocalCausalUseCase.run(ValidatedStudy, LocalRunContext) → MethodCapabilityPort.resolve → DiscoveryPort.discover(ValidatedDiscoveryRequest,*,sink) → FciDiscoveryAdapter.execute → LocalPublicationPort.seal/publish → LocalManifestReaderPort.verify`。ContextはTrustedRoot・実効Principalのみを含み、Method capabilityの照合済み結果はDiscoveryRequestへ結び付ける。既存ScientificCoreAdapter.run_discoveryのPath writerは新経路から直接呼ばず、共通純粋KernelのBridgeで数値ロジックのみ再利用する。
 
 ## 5. G01 Operation別Bundle・状態・Publication
 
@@ -172,7 +172,7 @@ ROOT/runs/{run_id}/
 - `status.json`は`technical_status=COMPLETED`でも`identification_status=NOT_APPLICABLE`,`point_availability=NOT_REQUESTED`,`inference_availability=NOT_REQUESTED`、`science_acceptance=NOT_EVALUATED`を基本とする。G01テストで独立Science判定するまでは`PASS`不可。科学的に負の有効結果（例: CI不適格でMethodが構造判定を保留）を技術完了とする場合は明示reasons／graph=nullを許す。ただし実行例外やBackend unavailableは成功Bundleへ偽装しない。
 - Manifest/Markerは固定のHash連鎖：`request_hash=SHA256(JCS(typed Study))`、`manifest_sha256=SHA256(actual manifest.json bytes)`、Graph semantic digestと全File実bytes digestは区別し、cross-file run_id/method/estimand/lineageを突合する。
 - 未公開と公開済みの唯一の可視性境界は`renameat2(RENAME_NOREPLACE)`による**同一FSディレクトリのno-clobber rename**。staging files+dirs fsync、rename、両parent dir fsync、独立Reader readbackが成功して初めて`COMPLETED`を返す。結果不定時に既存runを消したり再renameしてsuccessにしない。Readerはmarker→Manifest→inventory file実bytes→schema/相互参照の順で検証する。
-- 初期出力Rootの保護は非委譲・同一effective UIDのprivate local FS。wrong UID/owner/mode、非local ext4/XFS、symlink/path逸脱は拒否。`--allow-row-level-export`やStudyの個票要求はG01では**exit3**、row bytesをstagingにも書かない。
+- 初期出力Rootの保護は非委譲・同一effective UIDのprivate local FS。wrong UID/owner/mode、非local ext4/XFS、symlink/path逸脱は拒否。廃止済みCLI Study row request（指定された場合は未知Optionとしてexit2）やStudyの個票要求はG01では**exit3**、row bytesをstagingにも書かない。
 
 ## 6. Error・CLI最小動作
 
@@ -197,3 +197,12 @@ G01 06は**詳細設計Class.Method・不変条件・DD検証IDに対応付け�
 ### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
 
 G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.
+
+
+## S02-01/02/06/07 対象Gateの確定契約（Owner採用・未実装）
+
+G01は`P1-M06`のDISCOVERのみで、個票の出力を常に拒否する。Valid Studyの`privacy.row_export_requested=false`（省略の扱いはstrict Study schemaのdefault/requiredに従う）を要求し、trueはPrivacy exit3。廃止された追加CLI row許可flagを登録せず、渡された場合は不明オプションとしてconfig exit2。Contextは`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`、Privacy Portは`authorize(*,study,root,principal,output_shape)`であり、署名Policy/Study policy_refは存在しない。G05のみStudy単独opt-in（true）とOS/Method制約の全件ANDを満たす個票中間出力を担当する。
+
+新Local Graphのimmutable identityは内容hash、parent/source科学証拠とContentRef。Product GraphVersion DBへlookup/write/edit/FIXせず、現行E11 Graph wireの`version_id`と`parent_version_id`はどちらもnullとし、non-nullは未対応importとして拒否する。既存ProductのGraphVersionServiceや旧v2は無変更。
+
+OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・dirfd/O_NOFOLLOW・same FS・symlink/race・rename前後・post-rename indeterminate・Marker/Reader/hash）に限定する。冗長なfault-permutation全順列、statx mount-ID/namespace証明、ACL/xattr digest/コンテナ推測、電源断耐久保証は追加しない。JCS RFC8785 golden bytes、no-clobber、公開後整合性、独立PAG Science Oracleは維持する。Coding Agentが未承認の広いProof強化を推測で復活させない。

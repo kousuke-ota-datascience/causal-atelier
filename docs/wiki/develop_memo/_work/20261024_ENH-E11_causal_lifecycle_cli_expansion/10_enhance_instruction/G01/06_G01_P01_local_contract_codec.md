@@ -65,7 +65,7 @@ dependency checkpoint / source state等はfactとして外部参照してよい�
 
 **Constructor/Factory:** Immutable LocalStudySpec is constructed only after strict Study DTO decoding, with all declared fields set. **Method:** `validate_local_invariants(self) -> tuple[Reason,...]`, pure; check version, safe run_id, required/ref-null rules, Operation/Estimand and Privacy intent. DTO construction alone is not `ValidatedStudy` proof. Convert using common scientific validator; Application cannot import this CLI DTO. Existing `CausalDesign.Estimand` supports ATE/ATT only: do not force the non-Effect GRAPH_STRUCTURE Target into it.
 
-**G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false,policy_ref:null}`. Row request is a denial in P05 (exit3); malformed structural combination is exit2. Never fabricate ATE, Effect Result, Identification or Science PASS.
+**G01 accepted subset:** `operation=DISCOVER`, `analysis_mode=EXPLORATORY`, required Question/Design/Dataset; `inputs.graph=null` and `inputs.identification=null`. `estimand={family:GRAPH_STRUCTURE,population:OBSERVED_VARIABLES,contrast:NOT_APPLICABLE}`; `inference={requested:false,confidence_level:null}`; `privacy={classification:AGGREGATE,row_export_requested:false}`. Row request is a denial in P05 (exit3); malformed structural combination is exit2. Never fabricate ATE, Effect Result, Identification or Science PASS.
 
 ### 6.3. `LocalConfigDecoder` — 30_60 §9 / SPEC01–04
 
@@ -171,3 +171,12 @@ source / previous checkpoint / test output / provenanceは外部参照してよ�
 ### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
 
 G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.
+
+
+## S02-01/02/06/07 対象Gateの確定契約（Owner採用・未実装）
+
+G01は`P1-M06`のDISCOVERのみで、個票の出力を常に拒否する。Valid Studyの`privacy.row_export_requested=false`（省略の扱いはstrict Study schemaのdefault/requiredに従う）を要求し、trueはPrivacy exit3。廃止された追加CLI row許可flagを登録せず、渡された場合は不明オプションとしてconfig exit2。Contextは`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`、Privacy Portは`authorize(*,study,root,principal,output_shape)`であり、署名Policy/Study policy_refは存在しない。G05のみStudy単独opt-in（true）とOS/Method制約の全件ANDを満たす個票中間出力を担当する。
+
+新Local Graphのimmutable identityは内容hash、parent/source科学証拠とContentRef。Product GraphVersion DBへlookup/write/edit/FIXせず、現行E11 Graph wireの`version_id`と`parent_version_id`はどちらもnullとし、non-nullは未対応importとして拒否する。既存ProductのGraphVersionServiceや旧v2は無変更。
+
+OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・dirfd/O_NOFOLLOW・same FS・symlink/race・rename前後・post-rename indeterminate・Marker/Reader/hash）に限定する。冗長なfault-permutation全順列、statx mount-ID/namespace証明、ACL/xattr digest/コンテナ推測、電源断耐久保証は追加しない。JCS RFC8785 golden bytes、no-clobber、公開後整合性、独立PAG Science Oracleは維持する。Coding Agentが未承認の広いProof強化を推測で復活させない。

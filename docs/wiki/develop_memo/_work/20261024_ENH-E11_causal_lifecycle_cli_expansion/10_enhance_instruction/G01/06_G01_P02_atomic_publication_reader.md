@@ -122,7 +122,7 @@ def verify(self, *, root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun: 
 
 **Readback sequence:** (1) secure run directory open under verified Root and effective principal; (2) require `_COMMITTED.json` and validate `e11-commit/1`, run ID and request hash; (3) open exact `manifest.json` safely, compare SHA256 of same FD bytes to marker; (4) strict `LocalRunManifest.from_payload` and Codec/version checks; (5) unique safe Inventory keys, real size/SHA/MIME/classification/visibility, upstream lineage, Method, Study/Status/Graph cross-schema agreement and Privacy; (6) only then return immutable `VerifiedLocalRun`. No inference of committed state from marker existence alone.
 
-Never return private row bytes in G01: G01 is strictly aggregate-only, and G05 alone owns double-opt-in local row output. Corrupt, partial, legacy, versionless or unsafe owner/mode/symlink/nonlocal-FS runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader cannot mutate, repair or delete a run.
+Never return private row bytes in G01: G01 is strictly aggregate-only, and G05 alone owns Study単独opt-in local row output. Corrupt, partial, legacy, versionless or unsafe owner/mode/symlink/nonlocal-FS runs -> typed error (`NOT_COMMITTED`, `MANIFEST_HASH_MISMATCH`, `ARTIFACT_HASH_MISMATCH`, `VERSION_UNSUPPORTED`, `PRIVATE_ARTIFACT_DENIED`); **published** readback failure maps to phase PUBLICATION / CLI exit5. Reader cannot mutate, repair or delete a run.
 
 ### 6.6. Error and ownership matrix
 
@@ -183,3 +183,12 @@ source / previous checkpoint / test output / provenanceは外部参照してよ�
 ### Owner SIM-01/02 scope cut (2026-11-21, current G01 contract)
 
 G01 supports non-root Linux effective UID owned private local ext4/XFS with directory 0700, file 0600, safe dirfd/O_NOFOLLOW, no path traversal/symlink escape and same-FS no-clobber publication/readback. Separate ACL/xattr-digest, statx mount-ID/namespace visibility attestation, and CI/container heuristic detection are **removed** as mandatory proof. This does not protect against root or same-UID actors. Retain real path/UID/mode/FS positive and negative tests. Strict RFC8785 JCS codec and all SHA256/semantic/version checks remain, but **external ECMAScript execution and Python-JavaScript parity as a blocking test are removed**; compare exact bytes to independent RFC8785 golden expectations. The independent FCI/PAG science oracle and all F03 atomic Publisher/Reader tests are unchanged. Historical PREP02 decisions are superseded solely within SIM-01/02, combined_review/131. No runtime tests, Gate999 or Coding Authorization are authorized.
+
+
+## S02-01/02/06/07 対象Gateの確定契約（Owner採用・未実装）
+
+G01は`P1-M06`のDISCOVERのみで、個票の出力を常に拒否する。Valid Studyの`privacy.row_export_requested=false`（省略の扱いはstrict Study schemaのdefault/requiredに従う）を要求し、trueはPrivacy exit3。廃止された追加CLI row許可flagを登録せず、渡された場合は不明オプションとしてconfig exit2。Contextは`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`、Privacy Portは`authorize(*,study,root,principal,output_shape)`であり、署名Policy/Study policy_refは存在しない。G05のみStudy単独opt-in（true）とOS/Method制約の全件ANDを満たす個票中間出力を担当する。
+
+新Local Graphのimmutable identityは内容hash、parent/source科学証拠とContentRef。Product GraphVersion DBへlookup/write/edit/FIXせず、現行E11 Graph wireの`version_id`と`parent_version_id`はどちらもnullとし、non-nullは未対応importとして拒否する。既存ProductのGraphVersionServiceや旧v2は無変更。
+
+OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・dirfd/O_NOFOLLOW・same FS・symlink/race・rename前後・post-rename indeterminate・Marker/Reader/hash）に限定する。冗長なfault-permutation全順列、statx mount-ID/namespace証明、ACL/xattr digest/コンテナ推測、電源断耐久保証は追加しない。JCS RFC8785 golden bytes、no-clobber、公開後整合性、独立PAG Science Oracleは維持する。Coding Agentが未承認の広いProof強化を推測で復活させない。
