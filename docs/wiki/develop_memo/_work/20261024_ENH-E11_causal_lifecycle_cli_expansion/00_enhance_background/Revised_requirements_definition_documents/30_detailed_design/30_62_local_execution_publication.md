@@ -311,6 +311,8 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 5. Private Parquetは実行者のsingle Study opt-inとOS principal/private rootの適格性なしにrow-level bytesを返さない。
 6. 未検証・partial・legacy・corruptのいずれでも`VerifiedLocalRun`を返さない。
 
+**Readerが検査する交差契約:** `e11-local-manifest/1`の`execution.technical_status`と`e11-local-status/1`の`technical_status`は同一の閉Enumであるだけでなく、同runで値の一致を要求する。読戻し成功の`VerifiedLocalRun`は、Marker/Manifest/Study/Statusのrun ID・request hash・Operation/Method・Schema dispatch・独立Artifact SHA/size・Privacyが一致し、公開状態を`COMPLETED`と証明できた場合に限る。内部科学出力のContentRefも公開ContentRefと同じ`relative_key`構文検査を必須とするが、それを理由にsymlink/../race/root外を直接Path I/Oで扱わない。verified dirfd、componentwise `O_NOFOLLOW`または同等の制約付きopen、Owner/FS/FDのidentityとhash検証を適用する。任意の未知status文字列、値不一致、無断Row出力、重複Key、不正内部ContentRefは検証失敗であり、修復せず`VerifiedLocalRun`を発行しない。
+
 ### 5.6. I/O・連携・失敗処理
 
 - **Caller:** Local causal UseCaseのReadback／CLI status command、publisherのpublication verification。
