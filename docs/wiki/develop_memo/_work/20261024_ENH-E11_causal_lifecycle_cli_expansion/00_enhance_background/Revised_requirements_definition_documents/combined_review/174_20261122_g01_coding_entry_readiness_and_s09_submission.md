@@ -29,7 +29,7 @@
 
 ### Concrete missing evidence ≠ additional Owner decision
 
-The current blocking factors are **actual execution or independent-review evidence**, not a new Method-choice vote. The approved Linux Python3.12 environment and independent Reviewer approach are already chosen by Owner DEC-S05-02/03. Connection to that VM or actual independent execution is unavailable to this chat; do not substitute self-authored assurance. No automatic Notion upgrade, customer legal workflow, detached signing, G05 approval or ENV-COMBINED profile is required for G01.
+The current blocking factors are **actual execution or independent-review evidence**, not a new Method-choice vote. Independent MAG/PAG positive-reference creation and an effective safe BK path remain genuinely open scientific work. The approved Linux Python3.12 environment and independent Reviewer approach are already chosen by Owner DEC-S05-02/03. Connection to that VM or actual independent execution is unavailable to this chat; do not substitute self-authored assurance. No automatic Notion upgrade, customer legal workflow, detached signing, G05 approval or ENV-COMBINED profile is required for G01.
 
 ## 3. G01 operation and failure-type matrix for an independent S09 reviewer
 
@@ -63,3 +63,7 @@ Independent G01 S09 review + G01 pre-code evidence → Owner G01-S10 → Owner G
 ## 6. Scope correction — canonical Method-ID FCI Schema authority
 
 `schema_drafts/README.md` identifies `e11_p1_m06_fci_method_config_v1.schema.json`, `e11_p1_m06_fci_question_profile_v1.schema.json`, `e11_p1_m06_fci_design_profile_v1.schema.json` as the **three active Method-ID P1-M06 validation profiles**. Historical `e11_g01_fci_method_config_v1.schema.json` is **reference compatibility only**; a real G01 Registry MUST NOT dispatch by Gate ID to it. It can be meta-checked and compared diagnostically but its equality does not gate S10. Initial S09 candidate remains 85 entries: 11 own, 69 common, 5 impact (one historic), 317 deferred. This is consistent with Owner B and does not relax active method-science or strict Schema acceptance.
+
+## 7. G01 GRAPH-A analytic candidate supplied for independent adjudication
+
+`combined_review/176_20261122_g01_p1_m06_graph_a_independent_oracle_candidate_cases.md` derives the `DGP-021` collider and mediator conditional-independence relations, formalizes why a two-observed-variable latent Gaussian case (stress illustration related to DGP-011) cannot prove a unique latent edge, and separates FCI BK over-orientation and stderr/stdout risks. It does **not** propose a specific accepted complete PAG for DGP-011, fabricate R/K thresholds, select an unapproved BK remedy, or count as a verified independent Graph Oracle. G01's science acceptance remains **BLOCKED** until actually independent `REF-G02` MAG/PAG equivalence derivation, source/fixture SHA and valid G01 BK/multiplicity protocols.
