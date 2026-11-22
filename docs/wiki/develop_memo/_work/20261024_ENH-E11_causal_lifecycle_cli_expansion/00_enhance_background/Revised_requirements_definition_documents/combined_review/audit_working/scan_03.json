@@ -1,0 +1,111 @@
+{
+  "baseline_head": "8ee63a32c7f3a41294cf5f53a160e9e6aeb99c11",
+  "items": [
+    {
+      "file": "G07/06_G07_P01_did_event.md",
+      "sha": "4f97a8697cf4be9de1df4f3eceea380c10665e01",
+      "hits": [
+        {
+          "line": 63,
+          "content": "**Class/Module:** `ariadne.scientific.causal_methods.quasi.PanelQuasiAdapter`。 EstimationのMethod実行Adapter。担当Method：`P3-M04, P3-M05`。**再利用:** 共通Estimand/Design/Time validationを再利用しDiD/Event Study推定を追加。入口がCLIであることを科学的な別実装の根拠にしない。"
+        }
+      ]
+    },
+    {
+      "file": "G07/06_G07_P02_interrupted_ts.md",
+      "sha": "7e16de352920c0c841de4d32a7f85848a24b4e6e",
+      "hits": []
+    },
+    {
+      "file": "G07/06_G07_P03_quasi_integration.md",
+      "sha": "d3a9276fbb1d00aec47de7e078237fea0f52b030",
+      "hits": [
+        {
+          "line": 89,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 91,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 95,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 118,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 124,
+          "content": "7. 本書§2BのOperation別必須・禁止Artifactとschema_dispatchを直接検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        },
+        {
+          "line": 268,
+          "content": "- **Positive and negative matrix:** DiD/Event Study/ITSの識別対象はすべて異なる。PanelQuasi AdapterとInterruptedTs Adapterのtyped EvidenceをLocalCausalUseCase経由でResultとManifestへルーティングし、同じSource/Design/Time/Estimand/Schemaの紐付けを検証。 G01 Publisher/Reader、Scientific MethodRegistry、Estimand eligibility、旧v2 ScientificCorePortの科学Kernelを再利用し、CLI固有数値計算や独立Method Registryを作らない。 Clock/time-index/covariance/provenanceとDiagnosticsを保存し、Panel/ITSの負例"
+        }
+      ]
+    },
+    {
+      "file": "G08/06_G08_P00_work_package_plan.md",
+      "sha": "5b0cfd5409eb7c4ae7d38dd483c8fa8c5c1fc7e4",
+      "hits": []
+    },
+    {
+      "file": "G08/06_G08_P01_rdd_sharp_fuzzy.md",
+      "sha": "d0370ea867a93d6f2d86f5bed94e4748e5fdd8e8",
+      "hits": []
+    },
+    {
+      "file": "G08/06_G08_P02_wald_late.md",
+      "sha": "2c72dcf35545560ea4d35e9b8c07ab9422d4c92f",
+      "hits": []
+    },
+    {
+      "file": "G08/06_G08_P03_two_sls_ar.md",
+      "sha": "cd7084498f32fe645ac3c68bb8d27cdc37a48ed0",
+      "hits": []
+    },
+    {
+      "file": "G08/06_G08_P04_rdd_iv_result.md",
+      "sha": "a93bc31ee2559267289c11726bb8e951a485d984",
+      "hits": [
+        {
+          "line": 91,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 93,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 97,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 120,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 126,
+          "content": "7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        }
+      ]
+    },
+    {
+      "file": "G09/06_G09_P00_work_package_plan.md",
+      "sha": "5573044885cb110d579ef0e3a5235671fa7f3b70",
+      "hits": []
+    },
+    {
+      "file": "G09/06_G09_P01_scm_point.md",
+      "sha": "aa0ad017faba3d04d4a68a0fe44e021317e71c3c",
+      "hits": []
+    },
+    {
+      "file": "G09/06_G09_P02_sdid_estimator.md",
+      "sha": "121eb4a56515722e3994d147142cff97d799f0b1",
+      "hits": []
+    }
+  ]
+}
