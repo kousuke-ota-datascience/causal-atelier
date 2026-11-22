@@ -1,0 +1,153 @@
+{
+  "catalog_version": "e11-backend-api-contract/draft1",
+  "status": "PUBLIC_DOC_FEASIBILITY_ONLY; ACTUAL_REPO_ENV_NOT_PROBED",
+  "target_python": ">=3.12,<3.13",
+  "profiles": [
+    {
+      "id": "ENV-BASE",
+      "packages": [
+        {
+          "name": "causal-learn",
+          "locked": "0.1.4.8",
+          "module": "causallearn.search.ConstraintBased.FCI",
+          "symbol": "fci",
+          "methods": [
+            "P1-M06"
+          ]
+        },
+        {
+          "name": "statsmodels",
+          "locked": "0.14.6",
+          "module": "statsmodels.api",
+          "symbol": "OLS",
+          "methods": [
+            "P1-M07",
+            "P1-M09",
+            "P3-M04",
+            "P3-M05",
+            "P3-M06",
+            "P3-M07",
+            "P3-M08",
+            "P3-M09",
+            "P3-M10",
+            "P3-M11",
+            "P3-M12",
+            "P3-M13"
+          ]
+        }
+      ],
+      "warning": "Method-to-backend allocation is not guaranteed by package presence; native methods need actual independently implemented algorithms."
+    },
+    {
+      "id": "ENV-DOWHY",
+      "packages": [
+        {
+          "name": "dowhy",
+          "locked": null,
+          "module": "dowhy",
+          "symbol": "CausalModel",
+          "methods": [
+            "P1-M03",
+            "P1-M04",
+            "P1-M05"
+          ]
+        }
+      ],
+      "warning": "CausalModel.identify_effect exists publicly, but backend's ATE/default estimand MUST NOT be cast to binary-IV complier LATE without a separate identification/assumption validator."
+    },
+    {
+      "id": "ENV-ECONML",
+      "packages": [
+        {
+          "name": "econml",
+          "locked": null,
+          "module": "econml.dml",
+          "symbols": [
+            "LinearDML",
+            "CausalForestDML"
+          ],
+          "methods": [
+            "P2-M01",
+            "P2-M02"
+          ]
+        },
+        {
+          "name": "econml",
+          "locked": null,
+          "module": "econml.dr",
+          "symbols": [
+            "DRLearner",
+            "ForestDRLearner"
+          ],
+          "methods": [
+            "P2-M03",
+            "P2-M04"
+          ]
+        },
+        {
+          "name": "econml",
+          "locked": null,
+          "module": "econml.metalearners",
+          "symbols": [
+            "SLearner",
+            "TLearner",
+            "XLearner"
+          ],
+          "methods": [
+            "P2-M05",
+            "P2-M06",
+            "P2-M07"
+          ]
+        },
+        {
+          "name": "econml",
+          "locked": null,
+          "module": "econml.iv.dr",
+          "symbols": [
+            "DRIV"
+          ],
+          "methods": [
+            "P2-M08"
+          ]
+        }
+      ],
+      "warning": "effect_interval API exists for selected estimators but not proof of method/config-specific valid confidence intervals; only accept if actual fitted instance/inference supports target estimand."
+    },
+    {
+      "id": "ENV-TIGRAMITE",
+      "packages": [
+        {
+          "name": "tigramite",
+          "locked": null,
+          "module": "tigramite.pcmci",
+          "symbol": "PCMCI",
+          "methods": [
+            "P3-M01",
+            "P3-M02"
+          ]
+        },
+        {
+          "name": "tigramite",
+          "locked": null,
+          "module": "tigramite.lpcmci",
+          "symbol": "LPCMCI",
+          "methods": [
+            "P3-M03"
+          ]
+        }
+      ],
+      "warning": "PCMCI.run_pcmci, PCMCI.run_pcmciplus and LPCMCI.run_lpcmci must be version-probed. Result graph labels must retain circle/arrow/temporal ambiguity."
+    }
+  ],
+  "unsupported_assumption": "An API symbol being present does not prove Method+Estimand+Design+Inference semantic support. Optional imports must not happen at core startup.",
+  "required_dynamic_checks": [
+    "python version compatibility",
+    "lock/dist exact versions",
+    "import and signature / actual attribute check",
+    "fit of method-specific tiny positive and negative fixture",
+    "effect/inference shape + return metadata",
+    "diagnostic and exception mapping",
+    "independent DGP/reference science",
+    "no silent fallback"
+  ]
+}
