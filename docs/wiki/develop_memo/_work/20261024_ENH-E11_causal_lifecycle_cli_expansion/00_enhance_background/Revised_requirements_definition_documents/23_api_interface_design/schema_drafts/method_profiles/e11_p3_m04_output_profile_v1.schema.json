@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:prep04-1:p3-m04:output_profile:draft1",
   "title": "P3-M04 output_profile strict Method profile — DRAFT",
-  "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+  "description": "P3-M04 Owner-adopted initial DID_2X2 ATT positive output only: result.json (e11-local-effect-result/1) with genuine scalar ATT. STAGGERED is DEFERRED and scientifically non-executable; positive_artifacts is not a promise of STAGGERED output. Validate variant eligibility before Estimator, Bundle, Result or row-source access; typed SCIENCE_CONTRACT_NOT_AVAILABLE/CAPABILITY_UNAVAILABLE on STAGGERED. No TWFE or P3-M05 fallback. Not independently scientifically or backend validated / NOT_FROZEN.",
   "type": "object",
   "additionalProperties": false,
   "required": [
