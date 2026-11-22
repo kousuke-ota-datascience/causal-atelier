@@ -30,6 +30,27 @@ sha256sum "$OUT/b02_200_schema_validator.json" > "$OUT/b02_200_schema_validator.
 
 The 200-profile compiler command below is an **optional cross-Gate diagnostic** until relevant G02–G09 ownership is reviewed; its report must say `PASS_SCHEMA_STRUCTURAL_AND_VALIDATOR_PARITY` to prove the full 200 parity, but **absence of that full report does not block G01** under Owner DEC-PREPCODE-01=B. For **G01 S10**, run standard Draft202012Validator.check_schema and independent positive/negative instance validation of the four specialized G01/P1-M06 Config/Question/Design draft Schema paths (discover exact paths from current Git), the six shared E11 v1 payload schemas, and Graph/FCI cross-wire semantic compatibility, with each schema's exact blob SHA. There is no factual claim that this G01-specific standard validation has run. A partial fake 200 PASS is prohibited.
 
+### B.1 G01-only standard validator and strict FCI profiles (read-only)
+
+A review-only G01 executor exists at `combined_review/tools/e11_g01_schema_precode_probe.py`. It checks standard `Draft202012Validator.check_schema` for **six public E11 wire draft schemas and four G01-specific FCI draft schemas**, independently enumerated **structural** positive/negative FCI Config/Question/Design instance fixtures, equality of duplicate FCI Config constraints except `$id/title`, Local Graph Product IDs `null`, Study explicit row boolean, and Manifest/Status technical status enums. It is authored test preparation, **not** independent S09 reviewer output.
+
+```bash
+# Execute in the approved Python3.12 read-only checkout, not from this chat.
+G01_REVIEW_SHA="$(git rev-parse HEAD)"
+if [[ -n "$(git status --porcelain=v1)" ]]; then
+  echo "BLOCKED: review checkout dirty" >&2; exit 1
+fi
+uv venv --python 3.12 "$OUT/env-g01-schema"
+uv pip install --python "$OUT/env-g01-schema/bin/python" 'jsonschema>=4,<5'
+"$OUT/env-g01-schema/bin/python" \
+  "$E11_DIR/combined_review/tools/e11_g01_schema_precode_probe.py" \
+  --expected-head "$G01_REVIEW_SHA" \
+  --report "$OUT/g01_b02_schema_author_diagnostic.json"
+sha256sum "$OUT/g01_b02_schema_author_diagnostic.json" > "$OUT/g01_b02_schema_author_diagnostic.sha256"
+```
+
+A `PASS_AUTHOR_STRUCTURAL_PRECODE_DIAGNOSTIC` result is evidence only for the **tested structural cases**. It does **not** validate all six public wire Schemas with complete positive/negative instances or independently prove cross-file same-run identities, FCI eligibility, BK contradiction handling, effective Backend, independent MAG/PAG truth, JCS goldens, or actual Reader/FS. Those remain explicitly required and require separate independent review/evidence. `--expected-head` is the actual newly pinned checkout SHA, not the old manifest source snapshot commit.
+
 ## C. B04 — G01 ENV-BASE first; four separately resolved Backend environments by owning Gate
 
 The following release candidates are **not** selected working versions until resolver+signature+fit results have been reviewed. Do not merge into one environment or change the project `uv.lock`.
