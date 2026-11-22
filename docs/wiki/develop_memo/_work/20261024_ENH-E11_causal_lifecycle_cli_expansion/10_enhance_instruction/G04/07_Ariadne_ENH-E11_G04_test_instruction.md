@@ -1,5 +1,7 @@
 # Ariadne ENH-E11 G04 — 07 独立テスト指示書：CATE/HTE・EconML・DRIV
 
+**DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G04の独立S09監査は、先行Gate（G02+G03）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG04自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG04のCoding前無条件停止条件にしない。**G02_999・G03_999の実PASS→独立G04 S09 verdict→Owner G04-S10 Freeze→Owner G04-S11 Coding Authorization**を各々確認するまでG04のCoding禁止。実Adapter/FS/数値T2/T3/RegressionはG04の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
+
 **Verification contract status: DRAFT / NOT_FROZEN / TESTS_NOT_RUN**
 **Owner review: 2026-11-18 JST — PREP-03 audit and G04 Gate-level verification plan reviewed/accepted, with open Method/Profile/Evidence decisions preserved. This is NOT Contract Freeze, Independent Test execution, Gate999 PASS, or Coding Authorization.**
 **Gate: G04 / Independent Test Agent / Trial01 NOT_STARTED**
