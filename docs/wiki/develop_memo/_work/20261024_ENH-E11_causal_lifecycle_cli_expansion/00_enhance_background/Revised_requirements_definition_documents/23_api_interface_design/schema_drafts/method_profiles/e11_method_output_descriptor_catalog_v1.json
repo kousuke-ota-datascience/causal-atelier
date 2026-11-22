@@ -1,0 +1,443 @@
+{
+  "catalog_version": "e11-method-output-descriptor-catalog/draft1",
+  "status": "S05 STRUCTURAL FACTORING CANDIDATE / NOT SCIENCE VALIDATED / NOT ACTIVE REGISTRY",
+  "authority": "DEC-S02 S02-03",
+  "source": "40 method-specific e11_*_output_profile_v1.schema.json drafts",
+  "method_count": 40,
+  "profiles": [
+    {
+      "method_id": "P1-M01",
+      "operation": "IDENTIFY",
+      "positive_artifacts": [
+        "identification.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "IDENTIFICATION_PROOF",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M02",
+      "operation": "IDENTIFY",
+      "positive_artifacts": [
+        "identification.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "IDENTIFICATION_PROOF",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M03",
+      "operation": "IDENTIFY",
+      "positive_artifacts": [
+        "identification.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "IDENTIFICATION_PROOF",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M04",
+      "operation": "IDENTIFY",
+      "positive_artifacts": [
+        "identification.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "IDENTIFICATION_PROOF",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M05",
+      "operation": "IDENTIFY",
+      "positive_artifacts": [
+        "identification.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "IDENTIFICATION_PROOF",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M07",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M08",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M09",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M10",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M11",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M12",
+      "operation": "REFUTE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M13",
+      "operation": "REFUTE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M14",
+      "operation": "REFUTE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M15",
+      "operation": "REFUTE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M16",
+      "operation": "SENSITIVITY",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M17",
+      "operation": "SENSITIVITY",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M18",
+      "operation": "DIAGNOSE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M19",
+      "operation": "DIAGNOSE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P1-M20",
+      "operation": "DIAGNOSE",
+      "positive_artifacts": [
+        "diagnostics.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "DIAGNOSTIC_EVIDENCE",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M01",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M02",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M03",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M04",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M05",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M06",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M07",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P2-M08",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M01",
+      "operation": "DISCOVER",
+      "positive_artifacts": [
+        "graph.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "e11-local-graph/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M02",
+      "operation": "DISCOVER",
+      "positive_artifacts": [
+        "graph.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "e11-local-graph/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M03",
+      "operation": "DISCOVER",
+      "positive_artifacts": [
+        "graph.json"
+      ],
+      "forbidden_artifacts": [
+        "result.json"
+      ],
+      "portable_result_schema": "e11-local-graph/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M04",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M05",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M06",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M07",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M08",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M09",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M10",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M11",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M12",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    },
+    {
+      "method_id": "P3-M13",
+      "operation": "ESTIMATE",
+      "positive_artifacts": [
+        "result.json"
+      ],
+      "forbidden_artifacts": [],
+      "portable_result_schema": "e11-local-effect-result/1",
+      "upstream_hashes_verified": true
+    }
+  ]
+}

@@ -1,0 +1,1038 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:method-output-profile:factored-draft1",
+  "title": "E11 Output Profile — strict factored draft for 40 non-FCI Methods",
+  "description": "S05 structural candidate only; per-Method schema positive/negative validator equivalence, actual output artifact/runtime/Backend and independent Science NOT yet accepted. Do not register as active until verified.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "method_id",
+    "operation",
+    "positive_artifacts",
+    "forbidden_artifacts",
+    "portable_result_schema",
+    "upstream_hashes_verified"
+  ],
+  "properties": {
+    "method_id": {
+      "type": "string"
+    },
+    "operation": {
+      "type": "string"
+    },
+    "positive_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "forbidden_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "portable_result_schema": {
+      "type": "string"
+    },
+    "upstream_hashes_verified": {
+      "const": true
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M01"
+        },
+        "operation": {
+          "const": "IDENTIFY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "identification.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "IDENTIFICATION_PROOF"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M02"
+        },
+        "operation": {
+          "const": "IDENTIFY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "identification.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "IDENTIFICATION_PROOF"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M03"
+        },
+        "operation": {
+          "const": "IDENTIFY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "identification.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "IDENTIFICATION_PROOF"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M04"
+        },
+        "operation": {
+          "const": "IDENTIFY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "identification.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "IDENTIFICATION_PROOF"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M05"
+        },
+        "operation": {
+          "const": "IDENTIFY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "identification.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "IDENTIFICATION_PROOF"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M07"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M08"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M09"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M10"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M11"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M12"
+        },
+        "operation": {
+          "const": "REFUTE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M13"
+        },
+        "operation": {
+          "const": "REFUTE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M14"
+        },
+        "operation": {
+          "const": "REFUTE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M15"
+        },
+        "operation": {
+          "const": "REFUTE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M16"
+        },
+        "operation": {
+          "const": "SENSITIVITY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M17"
+        },
+        "operation": {
+          "const": "SENSITIVITY"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M18"
+        },
+        "operation": {
+          "const": "DIAGNOSE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M19"
+        },
+        "operation": {
+          "const": "DIAGNOSE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P1-M20"
+        },
+        "operation": {
+          "const": "DIAGNOSE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "diagnostics.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "DIAGNOSTIC_EVIDENCE"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M01"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M02"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M03"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M04"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M05"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M06"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M07"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P2-M08"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M01"
+        },
+        "operation": {
+          "const": "DISCOVER"
+        },
+        "positive_artifacts": {
+          "const": [
+            "graph.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "e11-local-graph/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M02"
+        },
+        "operation": {
+          "const": "DISCOVER"
+        },
+        "positive_artifacts": {
+          "const": [
+            "graph.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "e11-local-graph/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M03"
+        },
+        "operation": {
+          "const": "DISCOVER"
+        },
+        "positive_artifacts": {
+          "const": [
+            "graph.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "portable_result_schema": {
+          "const": "e11-local-graph/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M04"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M05"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M06"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M07"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M08"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M09"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M10"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M11"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M12"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    },
+    {
+      "properties": {
+        "method_id": {
+          "const": "P3-M13"
+        },
+        "operation": {
+          "const": "ESTIMATE"
+        },
+        "positive_artifacts": {
+          "const": [
+            "result.json"
+          ]
+        },
+        "forbidden_artifacts": {
+          "const": []
+        },
+        "portable_result_schema": {
+          "const": "e11-local-effect-result/1"
+        },
+        "upstream_hashes_verified": {
+          "const": true
+        }
+      }
+    }
+  ]
+}
