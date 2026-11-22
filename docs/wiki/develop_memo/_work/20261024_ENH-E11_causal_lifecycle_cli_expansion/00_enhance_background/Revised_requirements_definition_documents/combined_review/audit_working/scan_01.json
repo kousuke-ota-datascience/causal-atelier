@@ -1,0 +1,96 @@
+{
+  "baseline_head": "28de0cd538b6c8ea0f4ec10f1f04480a24542616",
+  "items": [
+    {
+      "file": "G03/06_G03_P00_work_package_plan.md",
+      "sha": "6a6b78cbccf145161976b7244b29107124b89a20",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P01_native_effects.md",
+      "sha": "8f94cc21330c988d715ff9218ac6622408f154d4",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P02_weighting_ipw_aipw.md",
+      "sha": "e635bdd5fd3e7133b2d23a1d843919076ba56ecb",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P03_refutation_methods.md",
+      "sha": "456ee3d2c8b18c6ba056a1d26e136e387d4de98e",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P04_sensitivity_methods.md",
+      "sha": "3661ab7e5c0470ca2a78201d59b5c264887f2272",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P05_negative_controls_ols_rv.md",
+      "sha": "9bd1d64aebc77962f43bf5ee4465003ff3071480",
+      "hits": []
+    },
+    {
+      "file": "G03/06_G03_P06_diagnostics_pipeline.md",
+      "sha": "2d248f2a3a3e04c85a26cd0ed68d08beaaa47b7a",
+      "hits": [
+        {
+          "line": 91,
+          "content": "**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure r"
+        },
+        {
+          "line": 93,
+          "content": "**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportし"
+        },
+        {
+          "line": 97,
+          "content": "配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。"
+        },
+        {
+          "line": 120,
+          "content": "1. CLI composition rootが`schema_version`を明示dispatchし、strict YAML/JSON parseで`ValidatedStudy`を構築。旧v2と無版はE11解釈禁止。ApplicationはValidatedStudyを受け取る（再検証するべきInput/Ref/Method/Privacyの意味検査は実行する）。"
+        },
+        {
+          "line": 126,
+          "content": "7. 本書§2Bに列挙したOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。"
+        }
+      ]
+    },
+    {
+      "file": "G04/06_G04_P00_work_package_plan.md",
+      "sha": "0c98032fa3ffd9ea7d536c2a01a71f990b222f40",
+      "hits": []
+    },
+    {
+      "file": "G04/06_G04_P01_econml_dml_dr.md",
+      "sha": "04a845d865ca1c496c2cbb7634de8cda6ffd0ed9",
+      "hits": [
+        {
+          "line": 184,
+          "content": "6. **Sequence:** ValidatedStudy→LocalCausalUseCase→typed EstimatorPort/Adapter preflight→approved Backend computation→pure typed CATE/EffectOutcome→G01 StagingSink/atomic Publisher/Reader。Application/DomainからCLI DB/FSのConcreteへ逆依存しない。"
+        }
+      ]
+    },
+    {
+      "file": "G04/06_G04_P02_s_t_x_learners.md",
+      "sha": "709c29bbd94edc27c9d3a031294b4def12121fff",
+      "hits": [
+        {
+          "line": 185,
+          "content": "6. **Sequence:** ValidatedStudy→LocalCausalUseCase→typed EstimatorPort/Adapter preflight→approved Backend computation→pure typed CATE/EffectOutcome→G01 StagingSink/atomic Publisher/Reader。Application/DomainからCLI DB/FSのConcreteへ逆依存しない。"
+        }
+      ]
+    },
+    {
+      "file": "G04/06_G04_P03_driv_iv_slope.md",
+      "sha": "78b65c00c149efc55f63e09a3608a08a745d1775",
+      "hits": [
+        {
+          "line": 223,
+          "content": "5. **Sequence:** ValidatedStudy→LocalCausalUseCase→typed EstimatorPort/Adapter preflight→approved Backend computation→pure typed CATE/EffectOutcome→G01 StagingSink/atomic Publisher/Reader。Application/DomainからCLI DB/FSのConcreteへ逆依存しない。"
+        }
+      ]
+    }
+  ]
+}
