@@ -80,7 +80,6 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 | `estimators` | `EstimatorPort` | composition root | immutable; typed scientific result to staging |
 | `diagnostics` | `DiagnosticPort` | composition root | immutable; method-specific typed diagnostics |
 | `reader` | `LocalManifestReaderPort` | composition root | immutable; independent committed run readback |
-| `policy_verifier` | `LocalPolicyVerifierPort` | composition root | immutable; preauthorization from independent authority |
 | `privacy` | `LocalPrivacyPolicyPort` | composition root | immutable; explicit row release decision |
 | `publisher` | `LocalPublicationPort` | composition root | immutable; all writes staged |
 | `runtime` | `RuntimeEnvironmentPort` | composition root | immutable; effective provenance not fabricated |
@@ -88,16 +87,16 @@ External DDはこのPackage契約のprovenanceのみ。以下のClass Field/Cons
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root: TrustedLocalRoot`、`principal: LocalPrincipal`、`cli_row_flag: bool`、`policy_anchor: TrustedPolicyAnchor|None`を持つimmutable value。OS Root/Principalの型Authorityは`ariadne.shared.local_fs`、生成責務はCLI composition rootのTrustedRoot Factory。現行CLIの入力ContentRefと出力Bundleは同じRoot下の異なる相対keyで扱う。Policy AnchorはCLI composition rootがStudy外のsecure runtime trust configurationから取得する。G01集計専用のとき`policy_anchor=null`を許容するが、行出力要求では欠落を拒否する。Study YAMLからContextの信頼属性を構築してはならない。
+**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`のみ。実EUID/private RootはCLIで検証し、署名Policy Anchorと追加CLI Flagを設けない。
 
-**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_policy.LocalPolicyVerifierPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。Policy verifierはStudyと独立のTrust Anchorで事前承認証拠を検証する。
+**Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。`LocalPrivacyPolicy` ConcreteはLocalPrivacyPolicyPortの実装であり、ApplicationはCLI Concreteをimportしない。現行Local CLIは署名PolicyVerifierを使わない。
 
 #### Constructor / Factory
 
 配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
-注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`policy_verifier: LocalPolicyVerifierPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
+注入Port：`refs: ContentReferencePort`、`capabilities: MethodCapabilityPort`、`discovery: DiscoveryPort`、`identifier: IdentificationPort`、`estimators: EstimatorPort`、`diagnostics: DiagnosticPort`、`publisher: LocalPublicationPort`、`reader: LocalManifestReaderPort`、`privacy: LocalPrivacyPolicyPort`、`runtime: RuntimeEnvironmentPort`、`clock: ClockPort`。Constructor時にoptional Backendをimportしない。
 
-- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, policy_verifier: LocalPolicyVerifierPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort)`。公開ApplicationはPort抽象にのみ依存する。
+- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort)`。公開ApplicationはPort抽象にのみ依存する。
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
@@ -123,7 +122,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。`context.policy_anchor`を使って独立Policy verifierが取得した承認証拠、Study、CLI row flag、`context.principal`・Output shapeを`LocalPrivacyPolicyPort.authorize`で照合し、staging seal→一括publish→独立Reader readbackを行う。
+7. 本書§2BのOperation別必須/禁止Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。ValidatedStudy、context.root/principal、OutputShapeを`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`で照合し、staging seal→一括publish→独立Reader readbackを行う。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -360,3 +359,9 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 ## PREP-04.1 integration checks
 - P3-M12 strict owner profile and DGP-017; NEG-024; REF-Q04 required; no runtime availability inference.
 - P3-M13 strict owner profile and DGP-018; NEG-024; REF-Q05 required; no runtime availability inference.
+
+## S02簡素化・G09 Synthetic Counterfactual Profileの規範
+
+担当Methodは`P3-M12` Synthetic Controlと`P3-M13` Synthetic DiD。5 Profile Kindは`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`（method_config/question_profile/design_profile/output_profile/inference_profile）のshared core＋Method ID overlayを厳密に再構築する。Dispatch Registry/Blob SHA/200 Draft202012 positive/negative parityの証拠がないMethodは`METHOD_PROFILE_UNAVAILABLE`でfail-closed。P3-M12 SCMは**point-only**でCIを捏造しない。scalar Result.pointは`NOT_AVAILABLE`、内部`scm_gaps.json`に処置単位の時点別観測値・合成反実仮想・gap・Donor/Preperiod/Weightの独立ContentRefs/Hashを保持し、各時点`gap=observed-counterfactual`と時系列順序・donor contamination負例を検査する。P3-M13 SDIDは別のpanel平均ATTでありSCMと同一Estimand/推論を仮定しない。Method適格性・独立数値Oracle・実Backend/inferenceは未検証。
+
+Context`LocalRunContext(root,principal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を使用。Studyの`privacy.row_export_requested=true`とnonroot同一UID/private ext4/XFS/Method RowSchema/capsのAND判定による個票出力はG05のみ。本Gateでは個票の直接公開禁止。追加CLI flag、署名Verifier/Anchor、Study`policy_ref`を導入せず、Graph VersionはLocal content hash（Product Version IDs=null）で扱う。旧Product ABIとScientific Kernel共有/影響回帰/Source SHA固定、typed status／Manifest Readerの独立確認を維持し、未実行のScienceをPASSとしない。

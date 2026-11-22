@@ -260,3 +260,10 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - Positive output result.json/e11-local-effect-result/1; G01 hash/marker/manifest/Reader; privacy row output requires G05 approval. Negative case returns typed reason, not fake effect.
 - Inference: SCM point-only; requested=false, confidence_level=null; no placebo interval.
 - Independent DGP/NEG/REF DGP-017; NEG-024; REF-Q04 plus empty/unknown Config, wrong target/Time/Donor, pre-period leakage, missing upstream hash, backend unavailable, unsupported CI. Backend/License/independent oracle/K/R/FWER=.05/MC-SE/coverage not verified.
+
+
+## S02簡素化・G09 Synthetic Counterfactual Profileの規範
+
+担当Methodは`P3-M12` Synthetic Controlと`P3-M13` Synthetic DiD。5 Profile Kindは`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`（method_config/question_profile/design_profile/output_profile/inference_profile）のshared core＋Method ID overlayを厳密に再構築する。Dispatch Registry/Blob SHA/200 Draft202012 positive/negative parityの証拠がないMethodは`METHOD_PROFILE_UNAVAILABLE`でfail-closed。P3-M12 SCMは**point-only**でCIを捏造しない。scalar Result.pointは`NOT_AVAILABLE`、内部`scm_gaps.json`に処置単位の時点別観測値・合成反実仮想・gap・Donor/Preperiod/Weightの独立ContentRefs/Hashを保持し、各時点`gap=observed-counterfactual`と時系列順序・donor contamination負例を検査する。P3-M13 SDIDは別のpanel平均ATTでありSCMと同一Estimand/推論を仮定しない。Method適格性・独立数値Oracle・実Backend/inferenceは未検証。
+
+Context`LocalRunContext(root,principal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を使用。Studyの`privacy.row_export_requested=true`とnonroot同一UID/private ext4/XFS/Method RowSchema/capsのAND判定による個票出力はG05のみ。本Gateでは個票の直接公開禁止。追加CLI flag、署名Verifier/Anchor、Study`policy_ref`を導入せず、Graph VersionはLocal content hash（Product Version IDs=null）で扱う。旧Product ABIとScientific Kernel共有/影響回帰/Source SHA固定、typed status／Manifest Readerの独立確認を維持し、未実行のScienceをPASSとしない。
