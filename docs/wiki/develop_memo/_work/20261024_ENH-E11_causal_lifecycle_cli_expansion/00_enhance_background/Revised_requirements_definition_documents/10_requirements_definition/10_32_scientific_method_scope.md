@@ -45,7 +45,7 @@
 | P3-M01 | PCMCI／time-lagged graph | SCOPE:P3-02 | FR-196 | AR-036 | ENV-TIGRAMITE | DGP-009; NEG-021 | REF-G03 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G05 | PLAN:G06 / CONFIG_AND_AC_PENDING / NOT_GENERATED |
 | P3-M02 | PCMCI+／time-series CPDAG | SCOPE:P3-03 | FR-196 | AR-036 | ENV-TIGRAMITE | DGP-009, DGP-010; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
 | P3-M03 | LPCMCI／time-series PAG | SCOPE:P3-04 | FR-196 | AR-036 | ENV-TIGRAMITE | DGP-011; NEG-021, NEG-028 | REF-G03, REF-G02 | AC-D01, AC-G01, AC-G02, AC-G03, AC-G04, AC-G06 | PLAN:G06 / OWNER_ORACLE_PRINCIPLE_ACCEPTED_ORACLE_BLOCKED / NOT_GENERATED |
-| P3-M04 | DiD／ATT（2×2とstaggeredは別契約） | SCOPE:P3-07 | FR-197 | AR-037 | ENV-BASE / backend pending | DGP-012, DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
+| P3-M04 | DiD／初期2×2 ATTのみ（STAGGERED=DEFERRED、独立Estimator/Inference/Output契約は将来審議） | SCOPE:P3-07 | FR-197 | AR-037 | ENV-BASE / backend pending | DGP-012（初期2×2）, DGP-013（staggeredは将来設計・P3-M05利用を妨げない）; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M05 | Event Study／event-time効果 | SCOPE:P3-08 | FR-197 | AR-037 | ENV-BASE / backend pending | DGP-013; NEG-022 | REF-Q01 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q01 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M06 | Interrupted Time Series／介入時点のlevel | SCOPE:P3-09 | FR-197 | AR-037 | ENV-BASE / backend pending | DGP-014; NEG-023 | REF-Q02 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q02 | PLAN:G07 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
 | P3-M07 | Sharp RDD／cutoff局所効果 | SCOPE:P3-10 | FR-198 | AR-038 | ENV-BASE / backend pending | DGP-015; NEG-023 | REF-Q03 | AC-D03, AC-P01, AC-P03, AC-I01, AC-I02, AC-Q03 | PLAN:G08 / OWNER_ESTIMATOR_INFERENCE_POLICY_ACCEPTED_SCIENCE_BLOCKED / NOT_GENERATED |
@@ -85,3 +85,7 @@
 ## 5. Method Profile再利用と科学的受入
 
 全41 MethodのOperation、Estimand、Eligibility、実効Backend、Inference、Output、typed negativeおよび独立Reference/定量受入はMethod固有である。共通JSON構造は再利用できるが、40件の個別Profileが未検証なら`METHOD_PROFILE_UNAVAILABLE`としてfail-closedする。Method固有positive/negative parityとBackend/Scienceの実証が必要。G10では41件の有効独立科学証拠を確認する。証拠再利用は科学的結果に影響する推移的依存閉包が不変と証明された場合のみ可能であり、そうでなければ再実行またはBLOCKとする。
+
+### DEC-S09-P3M04-01（Owner採用A：初期DiD適格性）
+
+P3-M04の初期科学的な実行可能対象は`DID_2X2`の2×2 ATTに限る。Method Configの`STAGGERED`は将来に備えて構文上識別できるが科学的な機能は`DEFERRED`であり、推定器呼出し前に`SCIENCE_CONTRACT_NOT_AVAILABLE`／`CAPABILITY_UNAVAILABLE`（CLI exit4）としてfail-closedし、`DID_2X2`への切替、単一TWFE ATTの生成、P3-M05 Event Studyによる代用を禁止する。STAGGEREDの正例DGP・`ATT(g,t)`・Output・Inferenceは初期P3-M04 999要件ではない。41 Method/10 UCのMethod ID・Scope数は不変。将来の機能公開には追加の数理・出力・受入・Owner決定を要する。
