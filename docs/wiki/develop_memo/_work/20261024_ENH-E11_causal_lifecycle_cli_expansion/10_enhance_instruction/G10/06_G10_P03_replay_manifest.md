@@ -216,6 +216,8 @@ Assigned Coding AgentのnormativeなCoding責務は**本Pxx**。別Packageや未
 5. Private Parquetには出力Policy/OS principalの許可なしでrow-level bytesを返さない。
 6. 未検証・partial・legacy・corruptのいずれでも`VerifiedLocalRun`を返さない。
 
+**B03 cross-artifact invariant:** `manifest.execution.technical_status` and `status.technical_status` must be instances of the same closed five-status vocabulary and be **equal** for one run; a genuinely committed, independently verified run is `COMPLETED` only. Public Study/Result/Manifest and internal CATE/Event/ITS/Identification/Diagnostics/SCM ContentRef lexical key guards are identical, but a matching JSON Schema regular expression is **not** secure disk readback. Verify actual byte hash/size, opened FD/root/symlink protections, unique `artifacts[].key` and referenced files, exact Operation-dependent inventory/Status/point/inference identity, and G05 private-row authorization before access. Do not reuse or report COMPLETE when any joined reference differs. Test these on real bundles under G01/G10 07 after authorization; document/schema review before S10 establishes contractual testability, not functional execution success.
+
 #### I/O・連携・失敗処理
 
 - **Caller:** Local causal UseCaseのReadback／CLI status command、publisherのpublication verification。
