@@ -175,7 +175,7 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | IF-E11-01 | 新/旧versionの明示dispatchと旧v2 byte-level/semantic readback | versionless、legacy auto-upgrade拒否 |
 | IF-E11-02 | Question/Graph/Design/Dataset/IdentificationのhashとSchema | ref改変、wrong upstreamの実行拒否 |
 | IF-E11-03 | 41 Methodのmethod/estimand/operation/backend/inference Registry整合 | unsupported combo／silent fallback禁止 |
-| IF-E11-04 | 未確定Graph endpoint/lag/parent GraphVersionのround-trip | PAG→DAG、circle消失を拒否 |
+| IF-E11-04 | 未確定Graph endpoint/lagとLocal親科学provenanceのround-trip（Product GraphVersion親は既存互換Bridge内で別検査） | PAG→DAG、circle消失を拒否 |
 | IF-E11-05 | typed Effect/uncertainty/ScienceとAR集合のround-trip | infiniteをnull/finite CIへ丸めない |
 | IF-E11-06 | NCE/NCO/RV opt-in、individual exportの拒否／許可境界 | Study未許可時での行レベル情報流出禁止 |
 | IF-E11-07 | 4必須Profile、lock/capability、no optional import at core startup | unavailable隔離、選択Backend/Methodと旧v2。ENV-COMBINEDは必須でない |
