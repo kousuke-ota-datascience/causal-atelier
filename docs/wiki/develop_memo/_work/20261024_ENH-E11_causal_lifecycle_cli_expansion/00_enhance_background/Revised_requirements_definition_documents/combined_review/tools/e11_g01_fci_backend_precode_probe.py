@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from contextlib import redirect_stdout, redirect_stderr
 from hashlib import sha256
+import re
 import importlib.metadata
 import inspect
 import io
@@ -36,8 +37,16 @@ def main() -> int:
     if out == repo.resolve() or repo.resolve() in out.parents:
         raise ValueError("Review report must be outside repository")
 
+    if not re.fullmatch(r"[0-9a-f]{40}", args.expected_head):
+        raise ValueError("--expected-head must be the independently pinned 40-hex SHA")
     head = git(repo, "rev-parse", "HEAD")
     dirty = bool(git(repo, "status", "--porcelain=v1"))
+    lock_path = repo / "uv.lock"
+    if not lock_path.is_file():
+        raise RuntimeError("Target uv.lock missing at pinned checkout")
+    lock_sha256 = sha256(lock_path.read_bytes()).hexdigest()
+    lock_blob_sha = git(repo, "hash-object", str(lock_path))
+    script_blob_sha = git(repo, "hash-object", str(Path(__file__).resolve()))
     py312 = sys.version_info[:2] == (3, 12)
     report = {
         "warning": "Author pre-code API/fit smoke only. NOT independently reviewed Graph oracle, T2/T3, G01 S09/S10/S11 or Gate999 PASS.",
@@ -47,6 +56,9 @@ def main() -> int:
         "expected_head": args.expected_head,
         "sha_match": head == args.expected_head,
         "dirty": dirty,
+        "uv_lock_sha256": lock_sha256,
+        "uv_lock_git_blob_sha": lock_blob_sha,
+        "probe_source_blob_sha": script_blob_sha,
         "target_distribution": "causal-learn==0.1.4.8",
         "source_tag_fci_blob_sha": "869b8de01ed495ce4738d3452e0217604dc31e9b",
         "bk_nonnull_runtime": "BLOCK_PRE_FCI_KNOWN_TAGGED_SOURCE_SCIENCE_AND_STDOUT_HAZARD",
