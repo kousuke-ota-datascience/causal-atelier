@@ -1,5 +1,7 @@
 # Ariadne ENH-E11 / G05 — 06 実装指示書
 
+**DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G05の独立S09監査は、先行Gate（G04）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG05自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG05のCoding前無条件停止条件にしない。G05固有の独立S09 verdict→Owner G05-S10 Freeze→Owner G05-S11 Coding Authorizationを別々に取得する。**S11実行前にはG04_999の実PASSが必須**だが、S09文書監査の準備は先行Gateの実装中にも可能。実Adapter/FS/数値T2/T3/RegressionはG05の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
+
 ### G05現行個票出力契約 — Owner 2026-11-21改訂
 
 - **機能/範囲:** FR-195、NFR-031、P2-15。一般ユーザーがlocal Linux ext4/XFSで個票中間データを出力する場合、実行者がversioned Studyの`privacy.row_export_requested=true`で単独明示opt-inする。独立した人的承認者・暗号署名・鍵管理・承認失効はこの範囲に要求しない。
