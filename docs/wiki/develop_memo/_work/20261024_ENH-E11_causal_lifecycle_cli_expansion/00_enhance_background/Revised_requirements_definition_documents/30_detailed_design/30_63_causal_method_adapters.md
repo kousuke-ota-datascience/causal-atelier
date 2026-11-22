@@ -689,7 +689,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 
 | Method ID | 科学的対象 | Method固有のpreflight・Result契約 |
 |---|---|---|
-| `P3-M04` | DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| `P3-M04` | 初期2×2 ATTのみ；STAGGERED=DEFERRED | `DID_2X2`のparallel trends/unit-cluster/合法的Result、`STAGGERED`はscientific preflightでtyped拒否 |
 | `P3-M05` | Event Study | cohort/event time、pretrend、reference periods |
 
 Method別の定量的仮定・CI/AR/Graph/Negative Controlの意味と受入条件は本書§4〜§7に保持する。Method display nameからATE/ATT/LATE/CATE等を推測しない。
@@ -998,7 +998,7 @@ Backend importはMethod load時だけ。AdapterはResult/Graph/Diagnosticsをtyp
 | P3-M01 | `TigramiteTemporalAdapter` / PCMCI | CI test/lag window、time-series order、graph |
 | P3-M02 | `TigramiteTemporalAdapter` / PCMCI+ | contemporaneous endpoint、CPDAG-like oracle |
 | P3-M03 | `TigramiteTemporalAdapter` / LPCMCI | PAG/latent/endpoint fidelity、lag |
-| P3-M04 | `PanelQuasiAdapter` / DiD ATT | 2x2 vs staggered、parallel trends、SE/cluster |
+| P3-M04 | `PanelQuasiAdapter` / 初期2×2 ATT（STAGGERED=DEFERRED） | parallel trends、unit cluster、構文上STAGGEREDはcapability unavailable |
 | P3-M05 | `PanelQuasiAdapter` / Event Study | cohort/event time、pretrend、reference periods |
 | P3-M06 | `InterruptedTsAdapter` / level/slope change | intervention date、seasonality/autocorrelation/HAC |
 | P3-M07 | `RddAdapter` / Sharp RD local effect | bandwidth、kernel/order、density manipulation、CI |
@@ -1170,3 +1170,7 @@ Local Effect Result is scalar-only in its `point` member; for a Method whose tar
 ### Strict Method profile factoring
 
 For 40 non-FCI methods, each of the five internal profile kinds (Method Config, Question, Design, Output, Inference) has one strict **factored** schema bundle. The original 200 schema drafts remain a hash-pinned comparison baseline; the current design-authoritative *draft* is `schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json` with a shared core and per-Method overlays. The strict validator must **reconstruct** the original-equivalent Draft 2020-12 schema as a single JSON Schema object before validation. Combining separate `additionalProperties:false` fragments with `allOf` can reject valid declared fields and is forbidden. Dispatch must use exact Method ID and Profile Kind; missing, unknown, unverified or mismatched schema fails closed. The 200-file referential baseline, 40×5 coverage and reconstruction/parity obligations are governed by the method profile dispatch Registry; active runtime use requires separate Gate validation. Scientific semantics of target, identification assumptions, Backend capability, CI, scalar versus vector artifacts and cross-bundle ContentRef must be independently validated; AST identity is necessary but insufficient for scientific acceptance.
+
+### DD-E11-METH-P304 Owner DEC-S09-P3M04-01=A：Method Variant Authority
+
+`PanelQuasiAdapter`/Method Configの初期positiveは`P3-M04`+`DID_2X2`の2×2 ATTのみである。`STAGGERED`は`DEFERRED`の将来variantとして識別可能であっても、Estimator/Backendへのdispatch前にtyped`SCIENCE_CONTRACT_NOT_AVAILABLE` reason／`CAPABILITY_UNAVAILABLE` status（exit4）で拒否し、将来の`ATT(g,t)`/Weight/CIを推定済みと称しない。Data/schema malformed（exit2）とは区別する。P3-M05 Event Studyは別Methodであり黙示的な代替先ではない。G07/P01および07はDGP-012/REF-Q01を2×2初期positive、STAGGEREDを拒否negativeとして検証する。DGP-013に基づくstaggered P3-M04実行positiveは将来契約が承認されるまで不要。`result.json` scalarの正例はDID_2X2専用であり、Scopeを暗黙に広げない。
