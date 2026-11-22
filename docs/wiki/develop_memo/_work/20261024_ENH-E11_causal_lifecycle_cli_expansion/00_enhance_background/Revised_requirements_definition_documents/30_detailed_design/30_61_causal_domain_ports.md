@@ -18,8 +18,8 @@
 | `nodes` | `tuple[Node,...]` | unique identity |
 | `edges` | `tuple[EndpointEdge,...]` | endpoint/lag/identityをlossless |
 | `temporal` | `TemporalConvention|None` | lagの符号・基準時刻 |
-| `source_graph_version_id` | `str|None` | 実在するProduct GraphVersionを参照。自身はVersionを発行しない |
-| `source_graph_parent_version_id` | `str|None` | 実在する親GraphVersion ID。source_graph_version_idがnullなら必ずnull |
+| `source_graph_version_id` | `str|None` | 現行Local CLIではnull固定。Productの既存互換Bridgeに限り実在GraphVersionを扱い、GraphEvidence自身はVersionを発行しない |
+| `source_graph_parent_version_id` | `str|None` | 現行Local CLIではnull固定。既存Product互換Bridgeに限る親ID、source_graph_version_idがnullならnull |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
 #### 1.1.3. Constructor / Factory
@@ -43,7 +43,7 @@ Graph Valueの純粋操作はI/Oなし。既存Productの`endpoint_source`／`en
 
 #### 1.1.7. 検証
 
-`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・standalone両Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` 実在するProduct GraphVersion/parent参照と再識別。FR-186/196、AR-028/036/043。
+`DD-E11-GRAPH01` FCI PAG circle/arrow/bidirected・Local両Product Version null、`GRAPH02` PCMCI lag、`GRAPH03` silent PAG→DAG拒否、`GRAPH04` Local immutable content hash/parent scientific provenanceの再識別、unsupported Product import拒否、既存Productの別権限を保持。FR-186/196、AR-028/036/043。
 
 ## 2. Identification / Estimation
 

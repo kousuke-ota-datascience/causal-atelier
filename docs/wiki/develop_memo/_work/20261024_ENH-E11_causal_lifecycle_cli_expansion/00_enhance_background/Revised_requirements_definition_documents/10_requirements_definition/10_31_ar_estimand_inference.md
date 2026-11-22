@@ -23,9 +23,9 @@
 | AR-037 | Quasi Experimental Validity | DiD／Event Study／ITSでは介入時点・事前傾向・採用時期・集計単位・自己相関・Cluster等の手法固有前提と推論可否を評価しなければならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | AR-038 | Regression Discontinuity | Sharp／Fuzzy RDの局所Estimandを明示し、Cutoff・Bandwidth・DensityおよびFuzzy RDのFirst Stage適格性を区別しなければならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | AR-039 | IV Target Distinction | B0の二値Z／A・無調整complier LATEと、B1の単一二値Z／A・事前指定共変量・加法線形IV構造係数を区別し、B1を一般ATEや同一LATEと呼んではならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| AR-040 | Weak IV Confidence Sets | B0／B1のAR反転信頼集合は有界・非有界・非連結・全実数を区別し、初期の正常AR反転からEMPTYを返してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-040 | Weak IV Confidence Sets | B0／B1のAR反転信頼集合は有界・非有界・非連結・全実数などをlosslessに区別する。非退化なjust-identified設計（sample first stage非ゼロ、検定分散正）でのEMPTYは数理的不整合として拒否するが、First-stage零・分散退化等の境界では数理的なEMPTY・未定義・数値失敗を独立に判定し、finite gridでEMPTYを断定しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | AR-041 | Synthetic Design Constraints | SCM／SDIDでDonor適格性・介入前Fit・汚染・期間条件を検査し、初期SCMをpoint-onlyとして未検証CIを付与してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
-| AR-043 | Graph Revision Provenance | 研究者が未確定Graphの方向を変更する場合、元Graphを不変に保持して根拠付き新Versionとして再識別し、単なる警告Overrideで非識別を回避してはならない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+| AR-043 | Graph Revision Provenance | 研究者が未確定Graphの方向を変更する場合、元Graphを不変に保持して根拠付きimmutableな改訂Identity（Local CLIでは科学内容HashとSource/Parent provenance、既存ProductではGraphVersion）として再識別し、単なる警告Overrideで非識別を回避してはならない。現行Local CLIに新たなProduct GraphVersion DB統合は要求しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 
 ### 7.0.2. Scientific comparability contract
 
