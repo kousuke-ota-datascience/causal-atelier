@@ -69,6 +69,22 @@ done
 
 **Owner DEC-PREPCODE-01=B:** G01 pre-code evidence requires only `ENV-BASE` actual Python3.12 resolver/signature and a small standalone `causal-learn` FCI fit + negative eligibility/API probe; **no DoWhy/EconML/Tigramite acceptance is a G01-specific prerequisite**. The loop remains available to collect later Gate evidence without changing `uv.lock`; do not run optional later-Backend probes under G01 and then treat them as supported. The separate environment check returns `API_PROBED_NOT_SCIENCE_VALIDATED` at best; **not** method-specific fit/inference. If installation/symbol verification fails, preserve exact failure output and isolate compatibility/ABI/uncertain license obligations. Then run approved Method-specific tiny valid/invalid fit + CI/graph output fixture suite; no fallback method or CATE/IV target relabeling. Independently inspect the exact **tagged** package metadata and solver resolution rather than treating PyPI landing page as successful installation.
 
+### C.1 G01 P1-M06 fitted Backend API probe, and tagged BK hazard
+
+For the **first Gate G01**, `combined_review/tools/e11_g01_fci_backend_precode_probe.py` is a separate **review-only, not application** Python3.12 tiny-fit and negative-CI probe. It demands exact `causal-learn==0.1.4.8`, effective `fci` signature including `node_names`, deterministic synthetic 3-node continuous Gaussian data with BK=null, strict returned node/edge identities and no unexpected stdout/stderr, plus rejected invalid independence test. It **does not** claim independent MAG/PAG truth or T2/T3 and **intentionally never calls FCI with non-null BK**; the tagged source has known hazard (`combined_review/175`).
+
+```bash
+# Run after section C creates ENV-BASE; use a clean pinned review checkout.
+G01_REVIEW_SHA="$(git rev-parse HEAD)"
+"$OUT/env-BASE/bin/python" \
+  "$E11_DIR/combined_review/tools/e11_g01_fci_backend_precode_probe.py" \
+  --expected-head "$G01_REVIEW_SHA" \
+  --report "$OUT/g01_b04_envbase_tinyfit_author_diagnostic.json"
+sha256sum "$OUT/g01_b04_envbase_tinyfit_author_diagnostic.json" > "$OUT/g01_b04_envbase_tinyfit_author_diagnostic.sha256"
+```
+
+If `PASS_AUTHOR_FCI_TINY_FIT_DIAGNOSTIC` occurs, it proves only the listed **selected-package tiny synthetic API/shape/console smoke** on the executed Python3.12 environment and source SHA; an actual read-only independent science Reviewer still needs primary MAG/PAG oracle and scientific evidence. A non-pass must be preserved with exact logs and must **not** be relabeled as scientific-negative or G01 S10 readiness. The tagged `0.1.4.8` source (`FCI.py` Git blob `869b8de01ed495ce4738d3452e0217604dc31e9b`) calls `print` inside `fci_orient_bk` for non-null BK despite `verbose=false/show_progress=false`, and `add_directed_edge` for forbidden edges can over-orient PAG TAIL (open [#266](https://github.com/py-why/causal-learn/issues/266)). Non-null BK, including empty arrays, is therefore preflight-denied pending independent motif and stdout verification; **the Schema may allow its representation without granting execution capability**. Future G01_999 BK obligations remain, not waived.
+
 ## D. Independent Review Agent (G01 scoped and common baseline first)
 
 Start a **fresh** Codex/independent-science Review Agent session on the pinned checkout, using the applicable G01-scoped science and `combined_review/165` independent S09 instructions. `combined_review/158_20261122_s05_independent_science_reviewer_prompt.md` is the **full-41** research reviewer preparation reference, not an order to require G02–G09 40 unrelated Method scientific approvals before G01 S10. G01 science reviewer must examine P1-M06 FCI with independent MAG/PAG oracle and negative/refusal rules; the broader 41 review occurs incrementally by owner Gate and finally G10. The Reviewer must not be fed the author's verdict as trusted evidence, and must report actual independent computations, primaries, insufficiencies and 41 per-Method outcomes. Do not run a coding implementation agent (S11 not authorized). If no authorized independent process can be launched, record `S05-B05-REVIEWER_NOT_LAUNCHED`.
