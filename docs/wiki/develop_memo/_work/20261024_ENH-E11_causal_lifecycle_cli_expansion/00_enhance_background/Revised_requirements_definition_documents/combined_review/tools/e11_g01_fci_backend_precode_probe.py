@@ -64,7 +64,78 @@ def main() -> int:
         "bk_nonnull_runtime": "BLOCK_PRE_FCI_KNOWN_TAGGED_SOURCE_SCIENCE_AND_STDOUT_HAZARD",
         "bk_support_science_accepted": False,
         "fit_science_accepted": False,
+        "execution_scope": "AUTHOR_ONLY_FCI_API_SHAPE_SMOKE_NO_MAG_PAG_SCIENCE",
     }
+    # Never import or fit a backend on a different/unapproved review target.
+    # Keep a separate structured refusal artifact outside the checkout.
+    if not (py312 and head == args.expected_head and not dirty):
+        report["verdict"] = "BLOCKED_PRECONDITION_NO_BACKEND_EXECUTION"
+        report["blocked_reasons"] = [
+            name for name, failure in (
+                ("PYTHON_NOT_3_12", not py312),
+                ("HEAD_MISMATCH", head != args.expected_head),
+                ("DIRTY_WORKTREE", dirty),
+            ) if failure
+        ]
+        report["backend_invoked"] = False
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+        print(json.dumps({"verdict": report["verdict"], "report": str(out)}))
+        return 2
+
+    def probe_fci_mode(fci_func, data, cols, ci_method):
+        """Return independent structural evidence for one CI, even if it fails."""
+        captured_stdout, captured_stderr = io.StringIO(), io.StringIO()
+        result = {
+            "independence_test_method": ci_method,
+            "data_sha256": sha256(data.tobytes()).hexdigest(),
+            "n": int(data.shape[0]),
+            "n_variables": int(data.shape[1]),
+            "fit_api_structural_ok": False,
+        }
+        try:
+            with redirect_stdout(captured_stdout), redirect_stderr(captured_stderr):
+                graph, edges = fci_func(
+                    data, independence_test_method=ci_method, alpha=.05,
+                    depth=-1, max_path_length=-1, verbose=False,
+                    background_knowledge=None, show_progress=False,
+                    node_names=cols,
+                )
+            names = [node.get_name() for node in graph.get_nodes()]
+            edge_rows = [
+                {"node1": edge.get_node1().get_name(),
+                 "endpoint1": str(edge.get_endpoint1()),
+                 "node2": edge.get_node2().get_name(),
+                 "endpoint2": str(edge.get_endpoint2())}
+                for edge in edges
+            ]
+            pairs = [tuple(sorted((e["node1"], e["node2"]))) for e in edge_rows]
+            no_unknown = all(
+                e["node1"] in cols and e["node2"] in cols
+                and e["node1"] != e["node2"] for e in edge_rows
+            )
+            nodes_in_original_order = names == cols
+            no_duplicate_pairs = len(pairs) == len(set(pairs))
+            result.update({
+                "backend_node_names": names,
+                "backend_edges": edge_rows,
+                "node_order_matches_dataset": nodes_in_original_order,
+                "edge_nodes_match_dataset": no_unknown,
+                "duplicate_edge_pairs_absent": no_duplicate_pairs,
+                "fit_api_structural_ok": (
+                    nodes_in_original_order and no_unknown and no_duplicate_pairs
+                    and captured_stdout.getvalue() == ""
+                    and captured_stderr.getvalue() == ""
+                ),
+            })
+        except Exception as exc:
+            result["error"] = type(exc).__name__ + ": " + str(exc)
+            result["traceback_tail"] = traceback.format_exc()[-3000:]
+        finally:
+            result["unexpected_stdout"] = captured_stdout.getvalue()[:5000]
+            result["unexpected_stderr"] = captured_stderr.getvalue()[:5000]
+        return result
+
     fit_ok = False
     categorical_fit_ok = False
     neg_ok = False
@@ -98,45 +169,23 @@ def main() -> int:
             "signature_required_names_available": signature_ok,
         })
         if signature_ok and dist == "0.1.4.8":
-            stdout, stderr = io.StringIO(), io.StringIO()
-            with redirect_stdout(stdout), redirect_stderr(stderr):
-                graph, edges = fci(
-                    data, independence_test_method="fisherz",
-                    alpha=.05, depth=-1, max_path_length=-1,
-                    verbose=False, background_knowledge=None,
-                    show_progress=False, node_names=cols,
-                )
-            backend_names = [node.get_name() for node in graph.get_nodes()]
-            edge_rows = [
-                {
-                    "node1": edge.get_node1().get_name(),
-                    "endpoint1": str(edge.get_endpoint1()),
-                    "node2": edge.get_node2().get_name(),
-                    "endpoint2": str(edge.get_endpoint2()),
-                }
-                for edge in edges
-            ]
-            no_unknown = all(x["node1"] in cols and x["node2"] in cols
-                             and x["node1"] != x["node2"] for x in edge_rows)
-            fit_ok = (
-                len(backend_names) == len(cols)
-                and set(backend_names) == set(cols)
-                and len(set(backend_names)) == len(cols)
-                and no_unknown
-                and stdout.getvalue() == ""
-                and stderr.getvalue() == ""
+            fisherz = probe_fci_mode(fci, data, cols, "fisherz")
+            report["actual_backend_node_names"] = fisherz.get("backend_node_names")
+            report["backend_edges"] = fisherz.get("backend_edges")
+            report["backend_graph_name_and_edge_identity_valid"] = (
+                fisherz.get("node_order_matches_dataset", False)
+                and fisherz.get("edge_nodes_match_dataset", False)
+                and fisherz.get("duplicate_edge_pairs_absent", False)
             )
-            report.update({
-                "actual_backend_node_names": backend_names,
-                "backend_edges": edge_rows,
-                "backend_graph_name_and_edge_identity_valid": no_unknown,
-                "unexpected_stdout": stdout.getvalue()[:5000],
-                "unexpected_stderr": stderr.getvalue()[:5000],
-                "fit_api_structural_ok": fit_ok,
-            })
-            # The active P1-M06 config advertises three CI methods. Prove
-            # effective categorical API feasibility without claiming FCI
-            # graph truth or application-level categorical eligibility.
+            report["unexpected_stdout"] = fisherz["unexpected_stdout"]
+            report["unexpected_stderr"] = fisherz["unexpected_stderr"]
+            report["fisherz_fit"] = fisherz
+            fit_ok = fisherz["fit_api_structural_ok"]
+            report["fit_api_structural_ok"] = fit_ok
+
+            # Two categorical methods must be independently evaluated.
+            # Already declared integer categories only: this is NOT
+            # Ariadne's input eligibility or MAG/PAG science verification.
             rng_cat = np.random.default_rng(271829)
             n_cat = 2048
             cat_x = rng_cat.binomial(1, 0.5, size=n_cat)
@@ -146,42 +195,9 @@ def main() -> int:
                 (cat_x, cat_y, cat_z)).astype(np.int64)
             categorical_reports = []
             for ci_method in ("chisq", "gsq"):
-                ci_stdout, ci_stderr = io.StringIO(), io.StringIO()
-                with redirect_stdout(ci_stdout), redirect_stderr(ci_stderr):
-                    ci_graph, ci_edges = fci(
-                        categorical_data, independence_test_method=ci_method,
-                        alpha=.05, depth=-1, max_path_length=-1,
-                        verbose=False, background_knowledge=None,
-                        show_progress=False, node_names=cols,
-                    )
-                ci_names = [node.get_name() for node in ci_graph.get_nodes()]
-                ci_edge_rows = [
-                    {"node1": edge.get_node1().get_name(),
-                     "endpoint1": str(edge.get_endpoint1()),
-                     "node2": edge.get_node2().get_name(),
-                     "endpoint2": str(edge.get_endpoint2())}
-                    for edge in ci_edges
-                ]
-                ci_valid = (
-                    len(ci_names) == len(cols)
-                    and len(set(ci_names)) == len(cols)
-                    and set(ci_names) == set(cols)
-                    and all(e["node1"] in cols and e["node2"] in cols
-                            and e["node1"] != e["node2"] for e in ci_edge_rows)
-                    and ci_stdout.getvalue() == ""
-                    and ci_stderr.getvalue() == ""
-                )
-                categorical_reports.append({
-                    "independence_test_method": ci_method,
-                    "data_sha256": sha256(categorical_data.tobytes()).hexdigest(),
-                    "n": n_cat, "n_variables": len(cols),
-                    "integer_coded_categories": True,
-                    "backend_node_names": ci_names,
-                    "backend_edges": ci_edge_rows,
-                    "unexpected_stdout": ci_stdout.getvalue()[:5000],
-                    "unexpected_stderr": ci_stderr.getvalue()[:5000],
-                    "fit_api_structural_ok": ci_valid,
-                })
+                outcome = probe_fci_mode(fci, categorical_data, cols, ci_method)
+                outcome["integer_coded_categories"] = True
+                categorical_reports.append(outcome)
             report["categorical_ci_fits"] = categorical_reports
             categorical_fit_ok = (
                 len(categorical_reports) == 2
@@ -223,6 +239,7 @@ def main() -> int:
     report["unverified"] = [
         "Actual Ariadne E11 Adapter integration and strict typed input preflight",
         "Categorical CI scientific validity, support thresholds, and all typed data negatives",
+        "In-process redirect_stdout/stderr cannot establish subprocess/OS-level console containment",
         "Independently derived MAG/PAG graph truth/reference and forbidden BK motif",
         "Runtime scientific FCI soundness, stochastic T2/T3, error control and coverage",
         "Cross-process CLI stdout/log containment and atomic Publisher/Reader",
