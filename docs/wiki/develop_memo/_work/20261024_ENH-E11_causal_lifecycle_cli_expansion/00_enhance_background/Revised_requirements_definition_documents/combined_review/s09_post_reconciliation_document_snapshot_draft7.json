@@ -1,0 +1,1805 @@
+{
+  "manifest_version": "s09-candidate-source-index/draft7",
+  "status": "AUTHOR_SHA_INVENTORY_ONLY_NO_INDEPENDENT_S09_PASS",
+  "branch": "prototype/ariadne_mvp",
+  "source_full_commit_sha": "0d5b5971d0e5b5127a68e010cfdc83dbd6020545",
+  "counts": {
+    "gate_documents": 71,
+    "operator_prompts": 7,
+    "method_origins": 200,
+    "factored_bundles": 5,
+    "public_and_internal_schema": 13,
+    "selected_stock": 34,
+    "all_active_stock_markdown": 103,
+    "additional_cross_contract_assets": 8
+  },
+  "latest_author_checks": [
+    "DEC-S09-P3M04-01=A: STAGGERED DEFERRED, DID_2X2 only.",
+    "G10/P04 4 broken Markdown links fixed; author checked 198 active Gate relative links and 50 main stock relative links.",
+    "G08/P03 normative §4 and Matrix corrected: HC1 χ²(1) inversion is provisional pending independent math review.",
+    "G08 HC1 AR algebra and numerical three-topology author preflight are in working_notes/20261122_s05_ar_hc1_candidate_author_mathematical_preflight.md.",
+    "Actual Python3.12 jsonschema Draft202012 parity, target fitted Backend APIs, independent 41 science Oracles and independent reviewer decision NOT RUN.",
+    "Supplementary inventory author QA: all 98 active 10/22/23/30 stock Markdown files (including 23 Schema README guides) plus 8 cross-contract assets listed; no independent semantic review is implied."
+  ],
+  "gate_instructions": [
+    {
+      "path": "10_enhance_instruction/G01/06_Ariadne_ENH-E11_G01_implementation_instruction.md",
+      "blob_sha": "60dcd04362f5b7aec7384016533af637104808d1"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P00_work_package_plan.md",
+      "blob_sha": "a1e40b600e4619b6380020fcdca628ab6aa47f22"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P01_local_contract_codec.md",
+      "blob_sha": "b500d06626b88e272fee12c7ddefab98c5f50b2e"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P02_atomic_publication_reader.md",
+      "blob_sha": "1eb2bdbe6bf4212cb4c362bb163f1027559e93ac"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P03_pag_graph_version.md",
+      "blob_sha": "cd60370e3686c1ede46144b0ac2ee1b1d52ae628"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P04_fci_backend_oracle.md",
+      "blob_sha": "48c07abd5c6d8957af6547fdcc06ada7f6fac645"
+    },
+    {
+      "path": "10_enhance_instruction/G01/06_G01_P05_cli_use_case_privacy.md",
+      "blob_sha": "c2084b2ba4ecd93742486c603df0eb39f6e2281a"
+    },
+    {
+      "path": "10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md",
+      "blob_sha": "c640dcde6bbda226f95e27d9fea28c7fc709d042"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_Ariadne_ENH-E11_G02_implementation_instruction.md",
+      "blob_sha": "36d62c8c218630a941055d4cc14095ca7740f443"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P00_work_package_plan.md",
+      "blob_sha": "facac52fc56ed09a52be4288e29d43f9f8a13386"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P01_native_identification.md",
+      "blob_sha": "54a115104d5522c6bcee619ba32385a3623684aa"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P02_dowhy_identification.md",
+      "blob_sha": "845927a56f3cfdb549f10742280d7bc8d2c605ac"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P03_frontdoor_fd_a.md",
+      "blob_sha": "18b93a5db51f2053aec9d48c3573a5d6552c0a2a"
+    },
+    {
+      "path": "10_enhance_instruction/G02/06_G02_P04_identification_dispatch.md",
+      "blob_sha": "bcaa95741be12725ae7b4dc07caf87930ad30420"
+    },
+    {
+      "path": "10_enhance_instruction/G02/07_Ariadne_ENH-E11_G02_test_instruction.md",
+      "blob_sha": "351b72f5f7c1e95b697d8549d77cc218770b6b7a"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_Ariadne_ENH-E11_G03_implementation_instruction.md",
+      "blob_sha": "c1f53e00e71000e97c88dcc372aa82700a0b6614"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P00_work_package_plan.md",
+      "blob_sha": "4c2535119c64979901f6f600d2abf066f8aa3b3a"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P01_native_effects.md",
+      "blob_sha": "f12f5eb90e2be82c6c838ba557cb210f352dc5a7"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P02_weighting_ipw_aipw.md",
+      "blob_sha": "5164a6448c164b13dece14c9896f5813f4bde816"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P03_refutation_methods.md",
+      "blob_sha": "5c1892d877d89f8856cf2625f83eeddb04a53f7e"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P04_sensitivity_methods.md",
+      "blob_sha": "e92dd870347311eb273b3f2500bba9b2d29b1131"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P05_negative_controls_ols_rv.md",
+      "blob_sha": "3cff6977e285ea8a1217b8abe43a6faffd05f206"
+    },
+    {
+      "path": "10_enhance_instruction/G03/06_G03_P06_diagnostics_pipeline.md",
+      "blob_sha": "8e1138a3424eb2c8f2647eca77c5e66854a99c6d"
+    },
+    {
+      "path": "10_enhance_instruction/G03/07_Ariadne_ENH-E11_G03_test_instruction.md",
+      "blob_sha": "3e6d52fdc3475457ee32e9bceba31ee8c55eebd8"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_Ariadne_ENH-E11_G04_implementation_instruction.md",
+      "blob_sha": "1373c40952061ecc6532461560f23bd5ff457083"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P00_work_package_plan.md",
+      "blob_sha": "1691e64fbac97ed9408a3e6c8fdcb8b017856857"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P01_econml_dml_dr.md",
+      "blob_sha": "1b0020419a3d5d26729ef3221337e4c8646458ef"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P02_s_t_x_learners.md",
+      "blob_sha": "a396f6930f2ba23ba5249bf3fd55c7114a356fa9"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P03_driv_iv_slope.md",
+      "blob_sha": "f5e336c0a2ecdfa6601ed900e3fb84c8ad145bb1"
+    },
+    {
+      "path": "10_enhance_instruction/G04/06_G04_P04_cate_results.md",
+      "blob_sha": "79860599cc7978cc2914fd1a4516e893b9059291"
+    },
+    {
+      "path": "10_enhance_instruction/G04/07_Ariadne_ENH-E11_G04_test_instruction.md",
+      "blob_sha": "54b1637675c21af457a1d1b094405ff13914d8d5"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_Ariadne_ENH-E11_G05_implementation_instruction.md",
+      "blob_sha": "2941d0f2a4a14d8b92e3778426d3b87cc70ac92b"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P00_work_package_plan.md",
+      "blob_sha": "62b29b4175dec65be92c90b72173e1dbec2e810c"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P01_hte_diagnostics.md",
+      "blob_sha": "49c00ca84425498d5ccb17afbc12995ba64bef8d"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P02_row_authorization.md",
+      "blob_sha": "26d70cfeea520213f87c5c116c79ea00cf69aa89"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P03_parquet_bundle.md",
+      "blob_sha": "8e91688693af14027191491890aa2f0fe49f2418"
+    },
+    {
+      "path": "10_enhance_instruction/G05/06_G05_P04_privacy_e2e.md",
+      "blob_sha": "c23b03bb351e85c0d6d94dd37a6c68fca9113c28"
+    },
+    {
+      "path": "10_enhance_instruction/G05/07_Ariadne_ENH-E11_G05_test_instruction.md",
+      "blob_sha": "e02f930e107501785a7d3c584575191c107aafc8"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_Ariadne_ENH-E11_G06_implementation_instruction.md",
+      "blob_sha": "03e1f8da5375b9876869f3e8985d482afe656c9f"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P00_work_package_plan.md",
+      "blob_sha": "1db701bf061954c1c35d695a8c32f6766b497829"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P01_temporal_graph.md",
+      "blob_sha": "500b501f31ac285b5b0bcebfd57456aacd7dc538"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P02_pcmci_adapters.md",
+      "blob_sha": "96a529a9b5d39ee6d72a48802f9958df64d5d4ec"
+    },
+    {
+      "path": "10_enhance_instruction/G06/06_G06_P03_temporal_bundle.md",
+      "blob_sha": "d31dfc2c554e7a29ddf70c5507c864b8a8de03bd"
+    },
+    {
+      "path": "10_enhance_instruction/G06/07_Ariadne_ENH-E11_G06_test_instruction.md",
+      "blob_sha": "4b59b99d4ebd811d57719826ac3aa7552d555bae"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_Ariadne_ENH-E11_G07_implementation_instruction.md",
+      "blob_sha": "740df3649a974f3b3aee4d09285f75627c0dfd88"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P00_work_package_plan.md",
+      "blob_sha": "5a5f537ff7d70a0d758cbee01cff231f86c277bc"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P01_did_event.md",
+      "blob_sha": "ebf62468fab7c251e0e0664385f75904e220e407"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P02_interrupted_ts.md",
+      "blob_sha": "3bf41b6c188428bc12fdeb92527ed20ea745cd4d"
+    },
+    {
+      "path": "10_enhance_instruction/G07/06_G07_P03_quasi_integration.md",
+      "blob_sha": "f2ff46ce56b7c9eafb676e9ee11bcf7e9a7e110f"
+    },
+    {
+      "path": "10_enhance_instruction/G07/07_Ariadne_ENH-E11_G07_test_instruction.md",
+      "blob_sha": "fdd4876983b32f0333ea3863a9d1e18f75bde3aa"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_Ariadne_ENH-E11_G08_implementation_instruction.md",
+      "blob_sha": "9cc1ccf39fa13db6cd548e52d007e6f9149f166a"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P00_work_package_plan.md",
+      "blob_sha": "80cf2f65846bc172c545e155b9e4fe8078bd05fa"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P01_rdd_sharp_fuzzy.md",
+      "blob_sha": "10eabc97b672d378849483058ab1e17fe5b766b3"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P02_wald_late.md",
+      "blob_sha": "d39b05f53abe04be136fb41337af7bd2bb8ca46d"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P03_two_sls_ar.md",
+      "blob_sha": "4b489481d8122208712f29d05087662eb9e2fe54"
+    },
+    {
+      "path": "10_enhance_instruction/G08/06_G08_P04_rdd_iv_result.md",
+      "blob_sha": "86231c6073066101225240ae999a7eb4054dbf4d"
+    },
+    {
+      "path": "10_enhance_instruction/G08/07_Ariadne_ENH-E11_G08_test_instruction.md",
+      "blob_sha": "69738d0446dfe9513131e8ced68994ecc3680c09"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_Ariadne_ENH-E11_G09_implementation_instruction.md",
+      "blob_sha": "46de6ffb640a230cc37e1eef2e446ec6d2eb6ceb"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P00_work_package_plan.md",
+      "blob_sha": "0b6e693554aaa4f7b07a7b76bc038975beeff8b2"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P01_scm_point.md",
+      "blob_sha": "e725e2a6a0890400272e8aa60499b8d21941c4e5"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P02_sdid_estimator.md",
+      "blob_sha": "650df767c8b6821544d312ef3333c9d0f3d0508f"
+    },
+    {
+      "path": "10_enhance_instruction/G09/06_G09_P03_synthetic_bundle.md",
+      "blob_sha": "f77d1adb270efc1758d20a8ce85d6e03e7205dee"
+    },
+    {
+      "path": "10_enhance_instruction/G09/07_Ariadne_ENH-E11_G09_test_instruction.md",
+      "blob_sha": "4cc002f6c0c2ea7e39ac44015fc738bd7874a711"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_Ariadne_ENH-E11_G10_implementation_instruction.md",
+      "blob_sha": "0abba8bd3d7b7f5c33dc1ddbe0f35098fe9124cd"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P00_work_package_plan.md",
+      "blob_sha": "1288ce5aadd0d37be21172fa15979b742696c5b6"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P01_registry_lock.md",
+      "blob_sha": "25ffc3dc6e7d403b340a1f5ba6820e318ca9cbc3"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P02_operation_matrix.md",
+      "blob_sha": "c069737a30c07626aa9b21fb13dcbe5449684720"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P03_replay_manifest.md",
+      "blob_sha": "8ce320fbcdae39c8d6e6b4d26be4568d21d03b8f"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P04_science_benchmarks.md",
+      "blob_sha": "5360201151c05c474eaf9aa496782882916145c2"
+    },
+    {
+      "path": "10_enhance_instruction/G10/06_G10_P05_compatibility_evidence.md",
+      "blob_sha": "1011dc5c3e88650ff0f284c773f83b2165f0febb"
+    },
+    {
+      "path": "10_enhance_instruction/G10/07_Ariadne_ENH-E11_G10_test_instruction.md",
+      "blob_sha": "8f3ae7b131f88390408d332867f3edb08e18b897"
+    }
+  ],
+  "operator_prompts": [
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/00_variable_conventions.md",
+      "blob_sha": "f08d62ec5207265d41fcbd5e44b4a2561d9d83b2"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_01_single_execution_coding_agent_prompt.md",
+      "blob_sha": "0bcc63cede2673709c84834c4a4873e72c5fe388"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md",
+      "blob_sha": "0bf08ac267ff421b4e0cd8d5fdaecbe535f5c910"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md",
+      "blob_sha": "aec49b5ccdf4833cd10fbbec36984f3d4d3ebad8"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/30_independent_verification_01_test_agent_prompt.md",
+      "blob_sha": "bd301b63bce067dc15215fd99774198cedde1820"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/40_fail_remediation_01_fail_rework_coding_agent_prompt.md",
+      "blob_sha": "5a8ad31ba30d476d3b4a29c90e4c1c983a299901"
+    },
+    {
+      "path": "40_operator_workflows/agent_entry_prompts/50_orchestration_01_gate_orchestrator_prompt.md",
+      "blob_sha": "dd29cf767fcf95945646023f6b53b9bfa7559d62"
+    }
+  ],
+  "original_method_profiles": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m01_design_profile_v1.schema.json",
+      "blob_sha": "f6ff45309392763651ff46dd48998f6cdfef7910"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m01_inference_profile_v1.schema.json",
+      "blob_sha": "3472a795f5354b5ae56705536e8eba4ada3fe8f0"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m01_method_config_v1.schema.json",
+      "blob_sha": "f6b48072399737f7878fac6996e18f4369bede54"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m01_output_profile_v1.schema.json",
+      "blob_sha": "f28df19363bdc3630ed35d062c5a2b0909c47968"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m01_question_profile_v1.schema.json",
+      "blob_sha": "e5412acb8c46ae82bdc3d61aa5f411f061beed2a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m02_design_profile_v1.schema.json",
+      "blob_sha": "3f2a79e4303a305807d12be31862e9bd5e3a793b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m02_inference_profile_v1.schema.json",
+      "blob_sha": "b9afae36a201b9e8f1726d65abe22aa269c56310"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m02_method_config_v1.schema.json",
+      "blob_sha": "1eee832a166b7651c4d36410e6d49ca62a13541f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m02_output_profile_v1.schema.json",
+      "blob_sha": "e76ba54cbd7c52c7aec990e8add5c9593fbff8ba"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m02_question_profile_v1.schema.json",
+      "blob_sha": "311049b882402647653827ac1a1bc74668c949a4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m03_design_profile_v1.schema.json",
+      "blob_sha": "eb3fc37680a2654798a61068ad9f464442ed5c6c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m03_inference_profile_v1.schema.json",
+      "blob_sha": "37bf526cf61da7b88bf4a10f197812ab3b90bdbc"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m03_method_config_v1.schema.json",
+      "blob_sha": "bd065fcd0ce0de18ca3d1ecfa5b806d12fee0eec"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m03_output_profile_v1.schema.json",
+      "blob_sha": "de0879e0752446a94a5b177d1ed12158b231472b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m03_question_profile_v1.schema.json",
+      "blob_sha": "8dc3570731b45f0a79fd8b3dffd1b877e71a50e5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m04_design_profile_v1.schema.json",
+      "blob_sha": "7fcd75f32006966f7909b368fba4043ed2a79659"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m04_inference_profile_v1.schema.json",
+      "blob_sha": "f7328f4cfca7e8146123888df95a290e2fc09b49"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m04_method_config_v1.schema.json",
+      "blob_sha": "e060f5075e578d288019a040448c43836c44c01b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m04_output_profile_v1.schema.json",
+      "blob_sha": "365238e02499907a6bdd7c1b9c38d29380d7270e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m04_question_profile_v1.schema.json",
+      "blob_sha": "9ea72b0d95922b2a2618216dc2cfcb0974bcb752"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m05_design_profile_v1.schema.json",
+      "blob_sha": "d3489e955f428ce7b59d44896abd8a8ff2baa244"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m05_inference_profile_v1.schema.json",
+      "blob_sha": "e360e59bb7e99d8cbfa6de6a37eabd06a872d998"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m05_method_config_v1.schema.json",
+      "blob_sha": "ce6f12016d87d7431cecc47dfc5795247acf129f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m05_output_profile_v1.schema.json",
+      "blob_sha": "d0a43618b76414d722ae2ea901bf230be3ec0d52"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m05_question_profile_v1.schema.json",
+      "blob_sha": "0c412856645ef24173cb6da491f9ba4360d86480"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m07_design_profile_v1.schema.json",
+      "blob_sha": "4752755d4fb834930e90e9131aab5871426680ca"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m07_inference_profile_v1.schema.json",
+      "blob_sha": "c868833e46145712c9851449176255e3e96e3312"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m07_method_config_v1.schema.json",
+      "blob_sha": "e4af6557f6dc2b07c87a5bbceb6e130375aca979"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m07_output_profile_v1.schema.json",
+      "blob_sha": "df26cc8182770ec67a9baeb2e2a18e8f8e35b4e1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m07_question_profile_v1.schema.json",
+      "blob_sha": "e9e3e869f44cddefb3decee157f328d7b1955505"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m08_design_profile_v1.schema.json",
+      "blob_sha": "e5fe2c6b5d330bac28cb475c907c68325425bed5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m08_inference_profile_v1.schema.json",
+      "blob_sha": "d330780911f90324dc81fed386aa46ef0e58197e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m08_method_config_v1.schema.json",
+      "blob_sha": "3852162aaac7b59b374937ca7114739a53ff6729"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m08_output_profile_v1.schema.json",
+      "blob_sha": "34cc171a2538065d441551a24ec9bb117a11d3ac"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m08_question_profile_v1.schema.json",
+      "blob_sha": "a208b2e534e20f6618d634c66b64920d2d59578e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m09_design_profile_v1.schema.json",
+      "blob_sha": "d9fb7e370ce5bf15d7f5491962e62dd4454edf95"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m09_inference_profile_v1.schema.json",
+      "blob_sha": "9e44152b4119a5ce035b50b5e77d7beb43b9dc76"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m09_method_config_v1.schema.json",
+      "blob_sha": "337fae3686eee20694da35575d1137dd8bedcb9a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m09_output_profile_v1.schema.json",
+      "blob_sha": "809d83791811e109e68d82abae15dcce9a0ef1d7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m09_question_profile_v1.schema.json",
+      "blob_sha": "3acf29a1cde8a207ecb423aa4309914683f4431a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m10_design_profile_v1.schema.json",
+      "blob_sha": "eaa14ad4049653724d7b429b133bef1c7ed5eb4b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m10_inference_profile_v1.schema.json",
+      "blob_sha": "3ae5558b7252d99910e6b19ccdcaa7565ccf2cde"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m10_method_config_v1.schema.json",
+      "blob_sha": "8f108eef1191ddf8112b0599bc632021c10c9766"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m10_output_profile_v1.schema.json",
+      "blob_sha": "79257270fa547853ba0a39f5b77e37673d5ad79b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m10_question_profile_v1.schema.json",
+      "blob_sha": "6dbbdb9781596a66b1e3c66ad0c3f78ccb2c612d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m11_design_profile_v1.schema.json",
+      "blob_sha": "97cc69f34581c2f03718f190cc7b40496e75f8cf"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m11_inference_profile_v1.schema.json",
+      "blob_sha": "83060fd5ce7f1e88633c442be6e8abf26bea093c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m11_method_config_v1.schema.json",
+      "blob_sha": "91ceff850df6c3f3aa0ee9c4bea03f0b63a9e9d5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m11_output_profile_v1.schema.json",
+      "blob_sha": "3054ae57c9f68a16c5f00ff934a6a1a26a2f6aa7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m11_question_profile_v1.schema.json",
+      "blob_sha": "4cea533cecf23732f37fcb4bf2e1d264c21c6ff9"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m12_design_profile_v1.schema.json",
+      "blob_sha": "08a5ed142ee2dc4cf9d1cb921b2bec7fbee6a231"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m12_inference_profile_v1.schema.json",
+      "blob_sha": "8b75fa82251b8e5f028b8207a0e664e0e37b30f4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m12_method_config_v1.schema.json",
+      "blob_sha": "745136019b046790a71d3151f21ab9bd61b9b00d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m12_output_profile_v1.schema.json",
+      "blob_sha": "dfdcac9314f5175bf144152cd99680eb6d4c7756"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m12_question_profile_v1.schema.json",
+      "blob_sha": "4b86eb0ddada8dbcc77e276e00fdd06855828288"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m13_design_profile_v1.schema.json",
+      "blob_sha": "eba4780eb722c52bd9fa5a4cb68a5db5a18bec4e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m13_inference_profile_v1.schema.json",
+      "blob_sha": "b8c7b71324b1ede3d3acb5dc7d929673b136601b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m13_method_config_v1.schema.json",
+      "blob_sha": "d97a2eff5e6a5ddbf09bd7d2a845e69b7084ae63"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m13_output_profile_v1.schema.json",
+      "blob_sha": "3a9a3db1f2ae62f746298225eb73e5c84c45d44a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m13_question_profile_v1.schema.json",
+      "blob_sha": "294d75e148cf9d2d4768e17f458427281e512b17"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m14_design_profile_v1.schema.json",
+      "blob_sha": "224f4a7426638a7f0a1abc70ae904892b1cbe4d7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m14_inference_profile_v1.schema.json",
+      "blob_sha": "6a7e8c1d92e2340cb29ce7a60833648df9e9ef6f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m14_method_config_v1.schema.json",
+      "blob_sha": "532d62fa07aca1a7c951b4a761a197d9220bc461"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m14_output_profile_v1.schema.json",
+      "blob_sha": "81ba31f76e77dc5528f3ea5043d44e62abeb198a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m14_question_profile_v1.schema.json",
+      "blob_sha": "c6139c0b42dd9dc0634e9b0c8409103c0184b741"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m15_design_profile_v1.schema.json",
+      "blob_sha": "ee96deed9413f13689b4143df1e205c1765e2e33"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m15_inference_profile_v1.schema.json",
+      "blob_sha": "0956f34d1dc820df0cfdaa7a879da342a85858a7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m15_method_config_v1.schema.json",
+      "blob_sha": "604f89ea717eaa04eea04217b642fd35a1491b28"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m15_output_profile_v1.schema.json",
+      "blob_sha": "ba3481827b05a52fd79acba3843a6751a47cd337"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m15_question_profile_v1.schema.json",
+      "blob_sha": "6e4906a8f526cd219dcda701a4c9e44b6b6d3185"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m16_design_profile_v1.schema.json",
+      "blob_sha": "785e5d4697d511f00aedd09ea0c1807a96fd0e47"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m16_inference_profile_v1.schema.json",
+      "blob_sha": "022055a75b19161769452ccb7fa852ddb7f50b80"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m16_method_config_v1.schema.json",
+      "blob_sha": "3c7464ffd539d8509fc8b68d888cdf4499939564"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m16_output_profile_v1.schema.json",
+      "blob_sha": "b198151aaad43f4c8eba9b5540683a86f66eb3c4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m16_question_profile_v1.schema.json",
+      "blob_sha": "b357f8e7bb85e6fe3c69628abaede9b5d7e6ea48"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m17_design_profile_v1.schema.json",
+      "blob_sha": "5144e1077ceaa89d554009758f6accf051f9ec7d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m17_inference_profile_v1.schema.json",
+      "blob_sha": "2915293d4a41c6f3f66dfd52853b37b8c90c63ba"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m17_method_config_v1.schema.json",
+      "blob_sha": "580ac16c2ddf7b49de340f150649db9b07ee0b2e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m17_output_profile_v1.schema.json",
+      "blob_sha": "c2d3fb21da59dc6066401dec4f39e8d63f1151bd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m17_question_profile_v1.schema.json",
+      "blob_sha": "5934f3cf98644bf20bb1d0a004c212e8dd3bec2c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m18_design_profile_v1.schema.json",
+      "blob_sha": "f4692cef4fdc526eeeb94c18c9d16e1baa6a6a25"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m18_inference_profile_v1.schema.json",
+      "blob_sha": "1952a0c498e837114ed8baa1c825d61fa1e87da4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m18_method_config_v1.schema.json",
+      "blob_sha": "e96170688098fa32001f34621896331cb5de741e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m18_output_profile_v1.schema.json",
+      "blob_sha": "29ed4533f8d53fd4e6043a84944ba70c296a1fe5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m18_question_profile_v1.schema.json",
+      "blob_sha": "6276f47f7bf11e272d9489042f60faec41465173"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m19_design_profile_v1.schema.json",
+      "blob_sha": "ef941c3ab9b95d67c899521a13970cd66e8ec81e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m19_inference_profile_v1.schema.json",
+      "blob_sha": "d216a1afd41dec668157501a68a58396369ac653"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m19_method_config_v1.schema.json",
+      "blob_sha": "64ec5aa91a4bea1875f08053bad3ee2adb0245ea"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m19_output_profile_v1.schema.json",
+      "blob_sha": "11384051fe267baf046b493f29137b6c9e353ca1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m19_question_profile_v1.schema.json",
+      "blob_sha": "0a01014b6d78ed265e07f2c7d1804e358c6d4181"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m20_design_profile_v1.schema.json",
+      "blob_sha": "bc30ab8f2031ba01a54af739ece3fa08f8871ef5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m20_inference_profile_v1.schema.json",
+      "blob_sha": "f50a6ad40e862b0246f6f077e435b797e750e6ff"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m20_method_config_v1.schema.json",
+      "blob_sha": "8ab2f29a5b07257cf1a45d9efc171afa635e2675"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m20_output_profile_v1.schema.json",
+      "blob_sha": "02bb67feb51e9060a8217c8d2d8929577718893e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p1_m20_question_profile_v1.schema.json",
+      "blob_sha": "ab09bd0ce23713c7fb3695c23a825336dcd1b93c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m01_design_profile_v1.schema.json",
+      "blob_sha": "47202fe10220babea93dee101487710e7df4683b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m01_inference_profile_v1.schema.json",
+      "blob_sha": "4ce72ca24813b58e8452423a1de78d8b0da7e224"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m01_method_config_v1.schema.json",
+      "blob_sha": "161d81ae2936e8974b67dd70ac9d1392678f8127"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m01_output_profile_v1.schema.json",
+      "blob_sha": "adad911c3ef60b6e806ac50be4cb40d1b283c903"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m01_question_profile_v1.schema.json",
+      "blob_sha": "d3e9854cd4c6c1345b2499946a259fcf6687ac4c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m02_design_profile_v1.schema.json",
+      "blob_sha": "d170cf985d1410eaef5b1c35904df21506ac6f77"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m02_inference_profile_v1.schema.json",
+      "blob_sha": "abe87cd339a65458d31fb1e78fdbee9b84bf715d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m02_method_config_v1.schema.json",
+      "blob_sha": "4a1fd539ddaa55c1475b948181e9de674ce4f0b8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m02_output_profile_v1.schema.json",
+      "blob_sha": "ded6f0c94e5bb13662c4a7c9e760e831905d7d9c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m02_question_profile_v1.schema.json",
+      "blob_sha": "c7e550e6e2c13f0cb2a35c2e8ce45ab653fda922"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m03_design_profile_v1.schema.json",
+      "blob_sha": "116ade590815a58dc49802b15887dc77309e49a9"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m03_inference_profile_v1.schema.json",
+      "blob_sha": "4e90a2ae10047562e91f93ea4e989af1b678a55a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m03_method_config_v1.schema.json",
+      "blob_sha": "96c7c388ec657adb971de2cefec9f0553591d4c2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m03_output_profile_v1.schema.json",
+      "blob_sha": "3988570315c4e8f85a27ed67d9e7409766e4d40e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m03_question_profile_v1.schema.json",
+      "blob_sha": "85e5ede7b5bb7ca23259212d0fc14cfcc1b56eeb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m04_design_profile_v1.schema.json",
+      "blob_sha": "f84b7b8484696278326ee6ef302078154e338d69"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m04_inference_profile_v1.schema.json",
+      "blob_sha": "e190de37e44369ce49280c5ea47fddf0704c5cff"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m04_method_config_v1.schema.json",
+      "blob_sha": "2db8a0087bfb9b714a19da5550c7854cd98d7e41"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m04_output_profile_v1.schema.json",
+      "blob_sha": "e0ae9a66f795d984b21b991f914f26ff39d0ca25"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m04_question_profile_v1.schema.json",
+      "blob_sha": "ae89e062d2de27111b68a8523b387a741bb5e227"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m05_design_profile_v1.schema.json",
+      "blob_sha": "c37db1e35d171fa97b9e46ac736b2b607de6b103"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m05_inference_profile_v1.schema.json",
+      "blob_sha": "8baa01f264b6445b400cddd1de341d482f7181e3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m05_method_config_v1.schema.json",
+      "blob_sha": "55f736b0940dd1419d31b7e984090142325d5055"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m05_output_profile_v1.schema.json",
+      "blob_sha": "d2b78f825f179b2774c88eaee6f576f832436350"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m05_question_profile_v1.schema.json",
+      "blob_sha": "39675165c6a9d5873aabf18aa448b00ef88860f8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m06_design_profile_v1.schema.json",
+      "blob_sha": "7d75aeb12dd3d0461ab42a9a241f61cae7e379a6"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m06_inference_profile_v1.schema.json",
+      "blob_sha": "290dfbdd9f2a5de860b39a98bf151bcc5f6baa57"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m06_method_config_v1.schema.json",
+      "blob_sha": "4dfd6ef5ed39f18879009ba2db8bcefff2575906"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m06_output_profile_v1.schema.json",
+      "blob_sha": "7cf4e400af6061fd3d79fded5701d910b31cf236"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m06_question_profile_v1.schema.json",
+      "blob_sha": "feb0693b0617bcf8881053bc1f0d7b80c1574b77"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m07_design_profile_v1.schema.json",
+      "blob_sha": "79f36bf17974c993b812984347be2219c0e3c791"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m07_inference_profile_v1.schema.json",
+      "blob_sha": "f3fed317f356cd1093ec7b2da7c48ac3fc0f1585"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m07_method_config_v1.schema.json",
+      "blob_sha": "4875450b1ba91d5cf7046c7ff94ddeeef433d283"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m07_output_profile_v1.schema.json",
+      "blob_sha": "e226a4a6503a333651b203805a4ea1a0fe894736"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m07_question_profile_v1.schema.json",
+      "blob_sha": "78841439c140d72f224ac278b236dfbec1a1a03f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m08_design_profile_v1.schema.json",
+      "blob_sha": "fa4cb8e6318fde90ed152edba88f6d7e23ad0f1d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m08_inference_profile_v1.schema.json",
+      "blob_sha": "a89018ead1c6352b54250e1fe21e8b0463873e7b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m08_method_config_v1.schema.json",
+      "blob_sha": "a1bc50048260efb097d495b4a761c61a80a468b2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m08_output_profile_v1.schema.json",
+      "blob_sha": "2918a4b44ee4ee94177351ace15d21e2d9e2dedc"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p2_m08_question_profile_v1.schema.json",
+      "blob_sha": "2e2178d911529f42c0501c36dfcb0935391708d7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m01_design_profile_v1.schema.json",
+      "blob_sha": "4c9b248f41e5677b1799e4ef915bfcc0345df3ce"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m01_inference_profile_v1.schema.json",
+      "blob_sha": "4a15a47c082ec6b5056cf6daaf2a2ac35a9fc198"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m01_method_config_v1.schema.json",
+      "blob_sha": "ec96bcbe4917cf0aadcc319d6638fba66b57d434"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m01_output_profile_v1.schema.json",
+      "blob_sha": "7fdd72dad286d95f38c8ba35cb75627e5cf6b82d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m01_question_profile_v1.schema.json",
+      "blob_sha": "959eba1a798ca21f7c18cfbcc051f11e45a8310c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m02_design_profile_v1.schema.json",
+      "blob_sha": "5c9b22fa3d7afd55f81e8f37e3e3b75f381ad23f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m02_inference_profile_v1.schema.json",
+      "blob_sha": "06ec2c470e6db18165762a2e7f1fecf388298dbd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m02_method_config_v1.schema.json",
+      "blob_sha": "47dd01dff9a2c1ec4bed85bd35bcb7fbce04f9b3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m02_output_profile_v1.schema.json",
+      "blob_sha": "bd8378222c29d4a839d84b2287959b215675bd4b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m02_question_profile_v1.schema.json",
+      "blob_sha": "ddaeaaa5621373eae700faec62f769c566c7a195"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m03_design_profile_v1.schema.json",
+      "blob_sha": "7b584c3293fd8437163e743c219fda622c525642"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m03_inference_profile_v1.schema.json",
+      "blob_sha": "c2de9e89c4808433988e82146898d05dcd013b80"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m03_method_config_v1.schema.json",
+      "blob_sha": "267928269de913f14400026387f577114ee8db49"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m03_output_profile_v1.schema.json",
+      "blob_sha": "fafffc5b06846475d7e326f13a2d2fdc08a120a3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m03_question_profile_v1.schema.json",
+      "blob_sha": "68d53741da186501fb2c6bf5d7f2e02fa5d33190"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m04_design_profile_v1.schema.json",
+      "blob_sha": "e21b8e426fe06bc79572c41ad95f7be960662859"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m04_inference_profile_v1.schema.json",
+      "blob_sha": "d7b067e2967e65a24bd95e229fc5650f2197353b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m04_method_config_v1.schema.json",
+      "blob_sha": "fd8bc7120b586fe08c8708dab58ba457bf7a69a0"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m04_output_profile_v1.schema.json",
+      "blob_sha": "5685a71881af5a56519121f3917aa654d00f9870"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m04_question_profile_v1.schema.json",
+      "blob_sha": "8c9f2f4a77e26b2a6275f215734ddd8792e1678d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m05_design_profile_v1.schema.json",
+      "blob_sha": "e145fcf1293a1f35986ab6d3c7fc51407a2b2356"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m05_inference_profile_v1.schema.json",
+      "blob_sha": "f4db594257897fd5ecb7e63b0a578fee6ee66316"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m05_method_config_v1.schema.json",
+      "blob_sha": "6dabe810bf93995ef9034840aa791f14819ff276"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m05_output_profile_v1.schema.json",
+      "blob_sha": "da14c27309dd89ed7f6c6f02aaea020819301308"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m05_question_profile_v1.schema.json",
+      "blob_sha": "d4307f61c7d8a09a2b7b2fea5ac8dfbffad4a71d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m06_design_profile_v1.schema.json",
+      "blob_sha": "19e36ca4c3c91f1506036b23f75aa690241e6ffc"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m06_inference_profile_v1.schema.json",
+      "blob_sha": "593401ea4edf9967c8b9c8cc1d86852b843ccb99"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m06_method_config_v1.schema.json",
+      "blob_sha": "a969e128dfb9af0f187ffac90213d1884265ff59"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m06_output_profile_v1.schema.json",
+      "blob_sha": "bb3a8500f5ad477032a3ef6fe8647b865037ef47"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m06_question_profile_v1.schema.json",
+      "blob_sha": "0a45b29fbd7455057c4f65bb2930524fb5c7449a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m07_design_profile_v1.schema.json",
+      "blob_sha": "29448d6f102c2be74a854a5f6d183871449ca2db"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m07_inference_profile_v1.schema.json",
+      "blob_sha": "a66c2d834010d0b87869a807245fc97413960262"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m07_method_config_v1.schema.json",
+      "blob_sha": "34ca12dd5c72ec65c90919e1884929539063a7eb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m07_output_profile_v1.schema.json",
+      "blob_sha": "bf7c571d1e0b6f31ca6449918a1f0c70d0b1189e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m07_question_profile_v1.schema.json",
+      "blob_sha": "9f9a67733e2c2ff5bc3b97ff00f14d6d905a0e99"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m08_design_profile_v1.schema.json",
+      "blob_sha": "324e44f94d7d9c11e9b5ac63eff502b40f93c3f2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m08_inference_profile_v1.schema.json",
+      "blob_sha": "87e4f60cc8d2f3a86af633ea9dbbd38e1fe23105"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m08_method_config_v1.schema.json",
+      "blob_sha": "79722f95d2cdfbaff89db5a4bed9076361c9c18f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m08_output_profile_v1.schema.json",
+      "blob_sha": "5b3ec219948f3fd26834f20907b30bf1cb693541"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m08_question_profile_v1.schema.json",
+      "blob_sha": "fba5ec22637f1d54bca6cfe01c047fffda8b9e1e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m09_design_profile_v1.schema.json",
+      "blob_sha": "d540ab3f3ef122dd0cbde59b77f322008d4d8a34"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m09_inference_profile_v1.schema.json",
+      "blob_sha": "3bea553759761c1ef80f37a4ee98a04655fed435"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m09_method_config_v1.schema.json",
+      "blob_sha": "843c2f47eb7214c1265701114d2069c646f471c5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m09_output_profile_v1.schema.json",
+      "blob_sha": "399748e31504d4388414c52903494b28f23697b1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m09_question_profile_v1.schema.json",
+      "blob_sha": "b3b5b82e19621376fdd5e8cd9a18e5388dc29436"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m10_design_profile_v1.schema.json",
+      "blob_sha": "d86dd6cec9b8a743548c62e65c1f4e78a9fc622d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m10_inference_profile_v1.schema.json",
+      "blob_sha": "03862ba88b78c7f719dd06fc2fb41271d813a312"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m10_method_config_v1.schema.json",
+      "blob_sha": "d1af555d27619a3bbe16dafe5f1a2629ab7f0672"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m10_output_profile_v1.schema.json",
+      "blob_sha": "82acfda26bc006e1e10a8a6dcd09084bd435db07"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m10_question_profile_v1.schema.json",
+      "blob_sha": "bcfd60a207bb468839681076bcb1426823b33270"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m11_design_profile_v1.schema.json",
+      "blob_sha": "3e4b23a34976a2b2859ebdb96cbfccfad13cbbf0"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m11_inference_profile_v1.schema.json",
+      "blob_sha": "ee08f2192be9e5c999c6fee02fedabe156cc90e1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m11_method_config_v1.schema.json",
+      "blob_sha": "83f158f662436653009056901998a4a94916b54c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m11_output_profile_v1.schema.json",
+      "blob_sha": "1f7ee6eadd97adca3f454bb62bb4bb49605d2cc5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m11_question_profile_v1.schema.json",
+      "blob_sha": "46cc482f8a0011aac33a6229caddc071baf4b4e0"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m12_design_profile_v1.schema.json",
+      "blob_sha": "5a183c949a17cf4ed05fb7bea0de96dd37ffe50d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m12_inference_profile_v1.schema.json",
+      "blob_sha": "79c6cfd6207bb61588ad6ce1862aab07cd41f6fc"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m12_method_config_v1.schema.json",
+      "blob_sha": "541be51f9e47d6e3aef0fa7c0a05a4f22964a555"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m12_output_profile_v1.schema.json",
+      "blob_sha": "7ccb1b518dcab5dd39677ad01d6ff8de2155e195"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m12_question_profile_v1.schema.json",
+      "blob_sha": "59085e1975bead8b3445ac8a322418cf61c8f9ae"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m13_design_profile_v1.schema.json",
+      "blob_sha": "09d06398354294f308756942c38e7ae2f6d0c282"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m13_inference_profile_v1.schema.json",
+      "blob_sha": "8fe31fbf98a11399b446399ea899279629a5915a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m13_method_config_v1.schema.json",
+      "blob_sha": "e4fb4dfc3f8a880626e5aaf0b8385e951be9ae3b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m13_output_profile_v1.schema.json",
+      "blob_sha": "518df3d561e051254588408388e8e9862e406cf7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_p3_m13_question_profile_v1.schema.json",
+      "blob_sha": "67065462a5a796286666850637bfc5e6d243d362"
+    }
+  ],
+  "factored_bundles": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_design_profile_factored_v1.json",
+      "blob_sha": "ca121006489986f243a702503832aac726bc2b5c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_inference_profile_factored_v1.json",
+      "blob_sha": "2e1d19086fc1a74628d7d898fc407d27fcbd0a62"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_method_config_factored_v1.json",
+      "blob_sha": "c745234dd8b56d2bb42cf9006299934685fda8d2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_output_profile_factored_v1.json",
+      "blob_sha": "63f08051212a9f3030b3668a8c57ed3060bc6d78"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/e11_question_profile_factored_v1.json",
+      "blob_sha": "5624a88216b74667b8b7a7187a548b63a7d38d4f"
+    }
+  ],
+  "public_and_internal_schemas": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_commit_marker_v1.schema.json",
+      "blob_sha": "234012ee95a2dc2dcb5d27b404e88f2c7ab7bd65"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_effect_result_v1.schema.json",
+      "blob_sha": "164c8831cc2789b3419be408de3fd2b23560fa51"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_graph_v1.schema.json",
+      "blob_sha": "9632f54398112649631fc8b253a09728c2f93d22"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_manifest_v1.schema.json",
+      "blob_sha": "cbba05a1d9b4056c14afd0cd56fc7a022a5081b9"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_status_v1.schema.json",
+      "blob_sha": "2e4786b965a3e6dabec9e44f49475c5ef31c1e0d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_local_study_v1.schema.json",
+      "blob_sha": "5ab955acbc6dc5462f3147071bbb61cb09877ceb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_cate_surface_draft1.schema.json",
+      "blob_sha": "a3d14add530aa862ccf0f11ede73dad5e537d36d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_event_time_effects_draft1.schema.json",
+      "blob_sha": "4d5a2b9bba98f6f726bd327fcafee8ff6070c1e7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_identification_proof_draft1.schema.json",
+      "blob_sha": "be199c96dc2b85ed202592d6ecfe7ae1e5ed9369"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_its_components_draft1.schema.json",
+      "blob_sha": "690f293aeb434d236213e1ac008767d9827a51e4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_method_diagnostics_draft1.schema.json",
+      "blob_sha": "559f50d70b4885e7c9c4d1c3f724fd9a09583912"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_science_prereg_draft1.schema.json",
+      "blob_sha": "6dc5e9cd7df208ef226d0bb4dea86527a4bb1368"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/internal_scientific/e11_scm_gaps_draft1.schema.json",
+      "blob_sha": "7553e75e2c4eda3c93436dc54c704f91c7893daf"
+    }
+  ],
+  "selected_stock": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_00_overall_RD.md",
+      "blob_sha": "3f0228fa78335fa049971a53fb3c840ade53157a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_13_fr_causal.md",
+      "blob_sha": "4a8443e85639bcc2fe62ed0abbf1950c6c58350c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_21_nfr_reliability_performance.md",
+      "blob_sha": "95aacf593e823acf8f4bac803baf5082b13a00a6"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_22_nfr_security_compatibility.md",
+      "blob_sha": "744e55f3054e0dd99ec96bfc5d62bed3f84cc0b8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_30_ar_scientific_integrity.md",
+      "blob_sha": "c6764af810f6ecb5b364b213fd514ea9792f7cb8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_31_ar_estimand_inference.md",
+      "blob_sha": "b0eec9c53bac7735034192d93aef3f178e0ca5b4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md",
+      "blob_sha": "fc2ae07bf7f35a375c0c4ec42194dd202e27fd5b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_90_scope_exclusions.md",
+      "blob_sha": "ebddd59ff3bbf00118a1d28f4bd51ce979067fea"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_91_acceptance_conditions.md",
+      "blob_sha": "49782237028fb7810602b3d0f105ce8bd07dec7d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_00_overall_BD.md",
+      "blob_sha": "a12fe91dd516d2a8bbfc63ff118b0a80621a04bd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_01_information_architecture.md",
+      "blob_sha": "2ecff3cf1e09ac32ea6810da93303443383da134"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_02_web_operation.md",
+      "blob_sha": "318e3458aba33a17d8f6bff834e638f9480d44e2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_03_navigation_application.md",
+      "blob_sha": "826eb7c2662fdf635fe35b93ff36b1e85aae8bfd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_04_workflow_core.md",
+      "blob_sha": "0b457138debf92f0c3e971f9ca3560b795d791b6"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_05_family_exploratory.md",
+      "blob_sha": "1955ae4a2f02efca19b3fd73be7d4e0b1e4d7784"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_06_family_causal.md",
+      "blob_sha": "f6c1a0b45db222c15ef8e658cf3d46e53e0762f7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_07_family_predictive.md",
+      "blob_sha": "38f61184003fa9164ba5c6b4575369a38929042d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_08_validation_architecture.md",
+      "blob_sha": "128f3d4d1ddc74153cf3d56f079b36695e3b4098"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_09_results_artifacts_lineage.md",
+      "blob_sha": "9da97e394e1acfe26bc32fe114bf7435fd96a420"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_10_comparison.md",
+      "blob_sha": "66fa0cef7e1c29ce02f72efa34a03c9494a20575"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_11_frontend_state.md",
+      "blob_sha": "9dbc0373a2bd61e4823586658684b2c9b6be7228"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_12_security.md",
+      "blob_sha": "6c78e829adde1e70c25dd5ae2615c2ceff83e1fb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_13_deployment.md",
+      "blob_sha": "17bd00fb81ac58484c903c50769e14054b1a0bd2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_14_failure_model.md",
+      "blob_sha": "b4746c6279aff5a436b557fe03007e06f452e60c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_15_schema_dependency.md",
+      "blob_sha": "a66ed2264271dad10209d5801485c75cbd475b99"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_16_test_architecture.md",
+      "blob_sha": "3e2ded82e52bed3b80dfc09a18396c1fa76cf101"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_17_stage_contents.md",
+      "blob_sha": "b878ffe3c0193a7d5d703ef5e2aa4fba17daa4dd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md",
+      "blob_sha": "36386f284d9ebd8d14227d993dd135ba19be921a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md",
+      "blob_sha": "ef04689c261e3ed3a340a34bc901f1d07bbda4ae"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_60_cli_adapters.md",
+      "blob_sha": "1a1528666feb1228591fa4d22e1c097dcc74c9ac"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md",
+      "blob_sha": "d9915aa35e18d081dcb9e97e49e910d421ab1890"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md",
+      "blob_sha": "73c4ba8937ebff13cb104c49cb8b2a7ad5b657f5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md",
+      "blob_sha": "28224014a8c6d84c13d0a5d95c326bdc8df43162"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/22_product_basic_design/22_17_stage_contents_e8_effective_snapshot.md",
+      "blob_sha": "33d435f7a74823639eb1875c457670977276b572"
+    }
+  ],
+  "all_active_stock_markdown": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_00_overall_RD.md",
+      "blob_sha": "3f0228fa78335fa049971a53fb3c840ade53157a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_01_business_capabilities.md",
+      "blob_sha": "86ed2aa6f35a8911b5690d576e0f7f966cc2b87c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_02_use_cases_e2e.md",
+      "blob_sha": "cd6347c6ed52f8d0824ae4c0e331b1a60618f931"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_10_fr_project_context_data.md",
+      "blob_sha": "08a1b8a4ae6cf32585e533e8b318625331d97ee8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_11_fr_exploratory.md",
+      "blob_sha": "4dd573a8992d8fbaeaca3cb12767d058a3c8b3af"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_12_fr_predictive.md",
+      "blob_sha": "61c8f9e505b6a9ac6bee6cd15446060e36fc1683"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_13_fr_causal.md",
+      "blob_sha": "4a8443e85639bcc2fe62ed0abbf1950c6c58350c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_14_fr_workflow_execution.md",
+      "blob_sha": "68e28c5fed65655187ac14e2086936edd4f28bf8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_15_fr_results_lineage.md",
+      "blob_sha": "31692db6ae310207a9ffd77fb1467abd38c1944d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_16_fr_navigation_ui.md",
+      "blob_sha": "b850eed151ce7d45335aa6b1f8514c436ebdba53"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_17_fr_api_cli.md",
+      "blob_sha": "957b1775a33b66e4c270feca2334fc5fb75f9d73"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_18_fr_security_operations.md",
+      "blob_sha": "b3dcffaf83ac1f10f48130f1ecd331a42135c988"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_20_nfr_reproducibility.md",
+      "blob_sha": "4079ad4365150d7f4894fe88fe75a233da77eb0d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_21_nfr_reliability_performance.md",
+      "blob_sha": "95aacf593e823acf8f4bac803baf5082b13a00a6"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_22_nfr_security_compatibility.md",
+      "blob_sha": "744e55f3054e0dd99ec96bfc5d62bed3f84cc0b8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_30_ar_scientific_integrity.md",
+      "blob_sha": "c6764af810f6ecb5b364b213fd514ea9792f7cb8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_31_ar_estimand_inference.md",
+      "blob_sha": "b0eec9c53bac7735034192d93aef3f178e0ca5b4"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md",
+      "blob_sha": "fc2ae07bf7f35a375c0c4ec42194dd202e27fd5b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_40_state_lifecycle.md",
+      "blob_sha": "d2adcd4fb430ea98e3aa54e9ef3d9c386bc2641a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_50_authorization_retention.md",
+      "blob_sha": "7d2cbc6f54af0352ce81a2fc3ae8af5eb5519295"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_90_scope_exclusions.md",
+      "blob_sha": "ebddd59ff3bbf00118a1d28f4bd51ce979067fea"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_91_acceptance_conditions.md",
+      "blob_sha": "49782237028fb7810602b3d0f105ce8bd07dec7d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_00_overall_BD.md",
+      "blob_sha": "a12fe91dd516d2a8bbfc63ff118b0a80621a04bd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_01_information_architecture.md",
+      "blob_sha": "2ecff3cf1e09ac32ea6810da93303443383da134"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_02_web_operation.md",
+      "blob_sha": "318e3458aba33a17d8f6bff834e638f9480d44e2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_03_navigation_application.md",
+      "blob_sha": "826eb7c2662fdf635fe35b93ff36b1e85aae8bfd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_04_workflow_core.md",
+      "blob_sha": "0b457138debf92f0c3e971f9ca3560b795d791b6"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_05_family_exploratory.md",
+      "blob_sha": "1955ae4a2f02efca19b3fd73be7d4e0b1e4d7784"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_06_family_causal.md",
+      "blob_sha": "f6c1a0b45db222c15ef8e658cf3d46e53e0762f7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_07_family_predictive.md",
+      "blob_sha": "38f61184003fa9164ba5c6b4575369a38929042d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_08_validation_architecture.md",
+      "blob_sha": "128f3d4d1ddc74153cf3d56f079b36695e3b4098"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_09_results_artifacts_lineage.md",
+      "blob_sha": "9da97e394e1acfe26bc32fe114bf7435fd96a420"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_10_comparison.md",
+      "blob_sha": "66fa0cef7e1c29ce02f72efa34a03c9494a20575"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_11_frontend_state.md",
+      "blob_sha": "9dbc0373a2bd61e4823586658684b2c9b6be7228"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_12_security.md",
+      "blob_sha": "6c78e829adde1e70c25dd5ae2615c2ceff83e1fb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_13_deployment.md",
+      "blob_sha": "17bd00fb81ac58484c903c50769e14054b1a0bd2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_14_failure_model.md",
+      "blob_sha": "b4746c6279aff5a436b557fe03007e06f452e60c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_15_schema_dependency.md",
+      "blob_sha": "a66ed2264271dad10209d5801485c75cbd475b99"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_16_test_architecture.md",
+      "blob_sha": "3e2ded82e52bed3b80dfc09a18396c1fa76cf101"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/22_product_basic_design/22_17_stage_contents.md",
+      "blob_sha": "b878ffe3c0193a7d5d703ef5e2aa4fba17daa4dd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_00_overall_IF.md",
+      "blob_sha": "4cd14d2a80c8c5861b4789b134f381134b58de08"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_01_common_conventions.md",
+      "blob_sha": "2812cb125faadd514a06e7013c9acee351446cbf"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_10_api_project_context.md",
+      "blob_sha": "c3ca5f3e592605e27926975cf7745ea47a666800"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_11_api_dataset_view.md",
+      "blob_sha": "b5c5f4bacc5ddcf18c77956e61e9b9774d760c15"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_12_api_analysis_specification.md",
+      "blob_sha": "0c77aee34ecebc3c8962ffb2fda07273edfc89de"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_13_api_exploratory.md",
+      "blob_sha": "da622c95559c1fd88e9148a0b41fc52d54cca054"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_14_api_causal.md",
+      "blob_sha": "45243edf042ff120def29c80b1c11e36cd43b68e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_15_api_predictive.md",
+      "blob_sha": "a7bb19cfc295bf5cc03ff29a37ec7e18f48538fb"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_16_api_execution.md",
+      "blob_sha": "2c41bef57690929dff87928af118d164c673d968"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_17_api_result_comparison_lineage.md",
+      "blob_sha": "8dbb1c50b002dbd27fa14f81b5e0934f4d6b7a7e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_18_api_annotation_artifact.md",
+      "blob_sha": "402b5e396485d9666244d8c6e72afb5e1ddd4e93"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_19_api_frontend_support.md",
+      "blob_sha": "110a7981c3e30bc37f43842cc8d2c905e8db45b5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_20_browser_navigation.md",
+      "blob_sha": "7106df3ced1cad4041316cc08307d6f19e523d8f"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_30_worker_runtime.md",
+      "blob_sha": "03816af7f1e0edd5b02d0da17f7d7742f4d49772"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_40_cli_library.md",
+      "blob_sha": "ff35cb281f65859cc3e2ba3f7a3b8766a664dc84"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md",
+      "blob_sha": "36386f284d9ebd8d14227d993dd135ba19be921a"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md",
+      "blob_sha": "ef04689c261e3ed3a340a34bc901f1d07bbda4ae"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_50_error_contract.md",
+      "blob_sha": "e112d75dbe49828a1e6fa114f4c33b3fd3b846a8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_51_idempotency_contract.md",
+      "blob_sha": "67922930357d01c55a7717b0eb389581ad3c6dd2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_52_versioning_compatibility.md",
+      "blob_sha": "26bf0a916535435c28d7bf02ce31c69ba52a9829"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_90_interface_verification.md",
+      "blob_sha": "4f0e51212c7dc859f6a255e20e26b2b65a09d605"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/factored/README.md",
+      "blob_sha": "568217dde05e4d1a601f360f808c4afe8be88455"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G02_PREP04_1.md",
+      "blob_sha": "576e176beb53ab58ab6f8f8663e5a1a0e0e2321d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G03_PREP04_1.md",
+      "blob_sha": "b5c13dcfbe307fc7038f0b14fdc492227ddb0896"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G04_PREP04_1.md",
+      "blob_sha": "9c2acfd31d954e2b1c5b6c21ba0fdd2adc318435"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G06_PREP04_1.md",
+      "blob_sha": "852373612ae8fa53ba2d1a1eb48b46089a601380"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G07_PREP04_1.md",
+      "blob_sha": "baead9efcba32a71ca88306031bc71197b5f79db"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G08_PREP04_1.md",
+      "blob_sha": "b6713aa682fef886e9b131fb2c2baefb8352853c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_G09_PREP04_1.md",
+      "blob_sha": "17d3ca39a3f0163a724f21a1a12b95d1e6d8514c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/README_OUTPUT_PROFILE_FACTORIZATION.md",
+      "blob_sha": "c18f606f3295790aeb6ba62c36399302b8534558"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/README.md",
+      "blob_sha": "8c6fb46291047095c6e82ef9dbf014b6eb6cfbba"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_00_overall_DD.md",
+      "blob_sha": "5fed1206165bc1ac8b2b0679b9289d43e4af3b32"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_01_class_design_template.md",
+      "blob_sha": "8d3531ccd52ae54a5877476f277962c636ba0837"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_10_domain_resources.md",
+      "blob_sha": "877946170e18e6f73f6e8b3e98c4663e23740444"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_11_schema_canonicalization.md",
+      "blob_sha": "f7b303e9878209ed2567e9261034e899f0ac03d0"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_12_context_analysis_view.md",
+      "blob_sha": "538ff2ec8293af6a7507466a62747ff4ad4c2c34"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_20_planning_validation.md",
+      "blob_sha": "b3c4ada49ba9a6774632833cdd3fa0b8d284c8a1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_21_execution_runtime.md",
+      "blob_sha": "6381b2d6a844d40b63954c3b37aea2df7dae1a46"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_30_exploratory.md",
+      "blob_sha": "57b66821d53ca7b8069bc17e2502756b8a424381"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_31_causal_setup_discovery.md",
+      "blob_sha": "6ac747b0d38e93564b39b56d699aa725cf420e29"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_32_causal_identification.md",
+      "blob_sha": "0d6383c7f69f080337aabb636e3e23f42662b6f3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_33_causal_estimation_effects.md",
+      "blob_sha": "f39a12ebb67d10a12f567fcd1301057e5accd2b1"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_34_causal_diagnostics_sensitivity.md",
+      "blob_sha": "553aed637b8da85ce372449fd7c3e2886943aad9"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_35_predictive_training.md",
+      "blob_sha": "5c977678f269171d0f2a433834d2fd6c4aa4baa2"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_36_predictive_explanation.md",
+      "blob_sha": "5fed1035bf86d3a236324440016573b3b59605d7"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_37_predictive_model_management.md",
+      "blob_sha": "e1676b39cbd06e8c91405bcc80ffe34a7c13cc80"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_40_project_workspace.md",
+      "blob_sha": "4fcf45edd2a60eac3eba5765ca7beea307b637c5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_41_navigation_routing.md",
+      "blob_sha": "fe60bacc2b3ab52bf5580536ad3af81ee674da53"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_42_results_lineage.md",
+      "blob_sha": "8fecbc6fdcb8213a733c1fbfb98cd6eb59e122c3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_43_operation_availability.md",
+      "blob_sha": "da4081efd5c516085f55d23f2f312b4d81c7acf3"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_50_persistence_artifacts.md",
+      "blob_sha": "dd5511634779f8dab52468c985fb3da7c38ab265"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_51_security.md",
+      "blob_sha": "fa51e1d05b03d2b5cb76e7815e5bfa42e265aa6e"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_52_failure_handling.md",
+      "blob_sha": "3f37c697d8ae4c96f6a0ba00c408bc8343585430"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_60_cli_adapters.md",
+      "blob_sha": "1a1528666feb1228591fa4d22e1c097dcc74c9ac"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md",
+      "blob_sha": "d9915aa35e18d081dcb9e97e49e910d421ab1890"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md",
+      "blob_sha": "73c4ba8937ebff13cb104c49cb8b2a7ad5b657f5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md",
+      "blob_sha": "28224014a8c6d84c13d0a5d95c326bdc8df43162"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_90_verification_traceability.md",
+      "blob_sha": "d5813e46184f059ca85462bf16ff083ce1e7edba"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/10_requirements_definition/enh_e11_formal_requirement_publication_draft.md",
+      "blob_sha": "2f44bd0ee5a0c9da5559e59dcdab4bfd231784e5"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/22_product_basic_design/22_17_stage_contents_e8_effective_snapshot.md",
+      "blob_sha": "33d435f7a74823639eb1875c457670977276b572"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/22_product_basic_design/enh_e11_causal_cli_basic_design_draft.md",
+      "blob_sha": "35246f83d6d6a2fadc3291ea414a69c54feb9e98"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/23_api_interface_design/enh_e11_cli_and_port_interface_draft.md",
+      "blob_sha": "d33a4a540ed9492e86c3c369f8a58a781b3ea63b"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/30_detailed_design/enh_e11_proposed_physical_class_design.md",
+      "blob_sha": "2629a27e2c8dc7b175e36e2b98d8dc3f8a56a347"
+    }
+  ],
+  "additional_cross_contract_assets": [
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_g01_fci_method_config_v1.schema.json",
+      "blob_sha": "dd3e29c492bfe46728fbcc784d02f8d945a18a97"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_design_profile_v1.schema.json",
+      "blob_sha": "27b5d6f69f4576a4a8ffcabba932231655463966"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_method_config_v1.schema.json",
+      "blob_sha": "c06f35852cfa98473f9939846060b4e40d47dc1d"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/e11_p1_m06_fci_question_profile_v1.schema.json",
+      "blob_sha": "ebda44d44fdf673e1ea5d35213a3d6ade66330cd"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_method_output_descriptor_catalog_v1.json",
+      "blob_sha": "ff5cd4e9bbc4b7b26ff54e9bee5a43837a0eb8b8"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts/method_profiles/e11_method_profile_dispatch_registry_draft1.json",
+      "blob_sha": "77d1a538a0a0aec7cfca0fa4d345ac14245d1419"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/independent_science_acceptance_registry_draft1.json",
+      "blob_sha": "b2ee1d6b8a805d660165ec374abf7e10cf4c244c"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/154_20261122_s05_b05_41_method_metric_matrix.md",
+      "blob_sha": "6881633c7cd27b9fec7c1d37947b46ef01c5401a"
+    }
+  ],
+  "inventory_scope_note": "This is a source-identity discovery index, not an independent S09 verdict. Existing selected_stock (34) remains for historical continuity; all_active_stock_markdown is the exhaustive current 10/22/23/30 Markdown-tree snapshot at source_full_commit_sha (22 RD + 18 BD + 31 IF incl schema READMEs + 27 DD). Method Profiles/6 local Schemas/7 internal science draft Schemas/FCI/dispatch/output catalog are separately indexed. At review, pin the final Git full SHA and re-enumerate all artifacts and refs; review target may postdate index creation commits without changing normative blobs."
+}
