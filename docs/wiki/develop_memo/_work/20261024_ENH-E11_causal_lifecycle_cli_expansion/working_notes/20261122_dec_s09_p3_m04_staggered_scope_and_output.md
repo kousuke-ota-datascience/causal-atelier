@@ -1,7 +1,7 @@
-# DEC-S09-P3M04-01 — Staggered DiD初期ScopeとOutput契約のOwner判断（OPEN）
+# DEC-S09-P3M04-01 — Staggered DiD初期ScopeとOutput契約のOwner判断（Owner A採用）
 
 **作成日:** 2026-11-22  
-**状態:** `OWNER_DECISION_REQUIRED / NOT_ADOPTED / S10_NOT_FROZEN / S11_CODING_NOT_AUTHORIZED`。本メモだけでは本番要件・06/07・Method JSON Schemaを変更しない。  
+**状態:** `OWNER_A_ADOPTED / STAGGERED_DEFERRED / S10_NOT_FROZEN / S11_CODING_NOT_AUTHORIZED`。本メモはOwnerの2026-11-22明示回答「A案を採用する」の決定記録。要求・06/07・Method JSON Schemaへの反映は別途実施する。  
 **責務:** S09 authorが確認した科学的対象と現行Method profileの不一致をOwnerへ明示し、実装者による無断既定値選択を防ぐ。
 
 ## 1. 既知の事実と証拠
@@ -43,4 +43,14 @@
 - Owner **B** 採用: vector/aggregation/CIの固有science profileとbackend capabilityは不明な値を補完せず追加の小決定に分解。承認済み部分から下書き・Scope配分・文書を更新。
 - どちらもS09 Author修正 ≠ S09 independent PASS、B02 validator ≠ Backend/Science PASS、S10 Freeze/S11 Coding Authorizationは別。
 
-**Ownerが決めること:** **DEC-S09-P3M04-01 = A あるいは B**。現時点の採用状態はOPEN。
+**Owner決定：DEC-S09-P3M04-01 = A（2026-11-22）。** STAGGEREDは`DEFERRED`であり`RETIRED`ではない。Method IDは残し、将来の別科学契約/Owner承認まで実行不可。DEC-S05/S02等の既承認は不変。S09独立PASS/S10/S11を含意しない。
+
+## 5. 実装への確定伝播（2026-11-22）
+
+**規範的適用境界：** P3-M04の初期提供対象は`DID_2X2`のATTだけ。Staggeredはschema上の識別可能な将来variantとして保持してもよいが、scientific availabilityは`DEFERRED`。既存の `e11-local-study/1` やMethod Configで`STAGGERED`を識別しても、Methodのscientific preflightで必ずtyped`SCIENCE_CONTRACT_NOT_AVAILABLE`/`CAPABILITY_UNAVAILABLE`（CLI exit4）としてfail closedし、Effect Estimator/Backend・個票ソース・成功Bundleを開始しない。これをData/Config validation exit2と混同しない。unknown variant、Method ID違い、required field欠落は通常のstrict Schema validation exit2。
+
+**なぜSchema enumを現時点で削除しないか：** A案におけるDEFERREDを将来能力として機械的に識別し、入力構文の存在とscience-executable capabilityを区別するため。実装エントリはconfig syntax passだけでexecution PASSにならない。実装開始時に必ず同じvariant-capability registryの `DEFERRED` を参照し、否認経路を独立07で実証する。
+
+**Positive/Negative:** `DID_2X2` → Method/Design/Assumptions/Backend適格時のみscalar Result `ATT_{2x2}`（finite point）、DGP-012/REF-Q01・unit cluster CI適格性、unknown/invalid/parallel trends/cluster/negativeが独立試験対象。`STAGGERED`→科学実行不能・no fallback/no fake scalar/no P3-M05 surrogate。P3-M05は独立Event Study Methodとして保持し、STAGGEREDへの暗黙転用禁止。
+
+**旧仕様の扱い：** Owner採用済みDEC-05-1・DGP-013のstaggeredに関連する科学記述は将来検討用として履歴を維持するが、現在のP3-M04初期Gate 999で「STAGGERED正例成功」やDGP-013正式計算済みを要求しない。将来の正式Scope拡張にはOwner個別決定を必要とする。
