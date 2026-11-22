@@ -169,3 +169,27 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - G01 coding前に必要なのは、外部に固定したexact `G01_REVIEW_TARGET_FULL_SHA` のclean checkoutで `159` 手順のPython3.12 B02・ENV-BASE B04を実行し、全3方式のAPI/console結果をそのまま保全すること、および別担当のG01 S09と独立MAG/PAG Oracle/BK方法のscience review。BK非nullは引き続きfail-closed、Positive BKのG01_999義務を削減しない。
 - S10 owner Freeze, S11 owner Coding Authorization, coding, Trial, Independent 07/999 は**いずれも未実施**。新たなOwner判断はこのSource/契約修正そのものには不要。独立Scienceで新たなEstimatorやBK救済算法の選択が必要と判明した場合だけOwnerへエスカレーションする。
 
+## Q. G01 B02/B04 Review-only Probe のfail-close / CI結果隔離是正（2026-11-22、計画⑮）
+
+**分類**: `AUTHOR_PRECODE_SOURCE_REMEDIATION_ONLY`。実Python3.12/VMの実行、独立Reviewer、MAG/PAG真値検証、S09 PASS、S10 Freeze、S11 Coding Authorizationはいずれも未実施。Owner新規科学判断なし。
+
+### Q.1 実装前の2件の検査不備
+
+1. `tools/e11_g01_fci_backend_precode_probe.py` は改訂前、外部pinのfull Git SHA、clean worktree、実Python3.12を最終判定に含めるだけで、**不一致のままBackend import/fitを試み得た**。さらに連続 `fisherz` やカテゴリ `chisq` の例外1件で他CIの診断を途中停止した。この場合、原因別証拠が欠落する。
+2. `tools/e11_g01_schema_precode_probe.py` も同様に、HEAD/Python不一致でも9 active SchemaのDraft202012検証を行ってから最終判定していた。監査前提のfail-closeと試験負例報告の整合性が不足。
+
+### Q.2 修正内容とソース実体
+
+- B04 3-CI Probe Git blob: `2f5a38677f438498346404a0bce7e24cd57183e9`。Python3.12でない、外部pin HEAD不一致、dirty worktreeの場合は `BLOCKED_PRECONDITION_NO_BACKEND_EXECUTION` をout-of-repo JSONへ記録し、FCI呼出を禁止。適正preflightを通過した場合は `fisherz/chisq/gsq` のsmall fitted APIを各々try/exceptで診断し、一方式の失敗が他の診断・invalid-CI negative取得を妨げない。Dataset列名順とBackend Graph nodesの一致、self-loop/未知Node/重複edge-pair拒否、stdout/stderr零を要求。これは単なるAPI/shape smokeで、Backend SCIENCE oracleではない。
+- B02 Schema Probe Git blob: `564a3dcbb9a20cdbcce1bdf95760a4f80336bd2a`。同じ3条件不一致時には `BLOCKED_PRECONDITION_NO_SCHEMA_VALIDATION` で実Schema検査前に止める。非実行拒否Reportは保全するがSchema PASSではない。
+- 規範文書の既存402件を新たに改訂していない。Global impact inventoryは `combined_review/s09_post_reconciliation_document_snapshot_draft13.json`（`source_full_commit_sha=17e51b095f7b436eeca35b8f79ffe60fbb0a5b0b`）を引き継ぎ。G01 scoped/indexは2 Probeのblob SHAを更新した `combined_review/s09_g01_scoped_review_inventory_draft7.json`。全体402 Path/Blob SHAとscoped 402の照合は**0不一致**。G01の独立意味論Review候補85は不変。
+- `combined_review/159` Runbook（B02とB04）、`165` 独立Reviewer指示（S09-R23）、`174` G01 readinessへ更新を反映。`s05_current_blockers_draft3.json`にB02/B04の新preflight実施必要性を記録。
+
+### Q.3 残る実行Blockerの境界
+
+- **実証未了**：承認されたclean Git checkoutの外部pin、Python3.12環境からのB02標準ValidatorおよびB04 ENV-BASE全3方式fitは未実行。Authorのローカル静的sourceレビュー ≠ 実run Report。
+- **独立性未了**：G01 S09独立意味論審査、P1-M06完全MAG/PAG・BK補正の独立Reference/Fixture/算法、B03 cross-wire独立審査は依然未実施。
+- **将来実行**：本E11 Publisher/Reader実FS/Reader readback・T2/T3・Independent Gate999はS11後であり、現在成功扱いしない。
+- B05で科学的BK算法やEstimandの解釈が複数合理的に生じた場合のみOwnerへ案を提示し、それまでは既承認Scopeを縮小せずG01前提を**BLOCKED**と扱う。
+
+次工程は承認済みLinux実行環境での別担当B02/B04 evidence取得と、真に独立したG01 Scoped S09/B05 science reviewである。Agent起動・Coding/Tests変更・本稼働は行っていない。
