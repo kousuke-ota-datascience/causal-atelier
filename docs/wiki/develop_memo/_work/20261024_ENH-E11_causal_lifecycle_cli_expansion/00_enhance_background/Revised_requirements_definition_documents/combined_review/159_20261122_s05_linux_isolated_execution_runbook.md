@@ -16,19 +16,21 @@ uv python list --only-installed
 
 If the checkout is dirty or source SHA differs from frozen review candidate, record BLOCKED. Never silently run on another Git state. This step is not a Git repository clone instruction.
 
-## B. Schema B02 — G01 FCI-specific standard validation first; 200 factored later by owning Gate
+## B. Schema B02 — **G01-only** Draft202012 validation entry
+
+Owner `DEC-PREPCODE-01=B` sets **G01 common E11 wire + P1-M06** as the current S09/S10 scope. The following setup does **not** execute 200 non-FCI Profiles or any later Gate's science:
 
 ```bash
 E11_DIR="$REPO_ROOT/docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents"
-OUT="$HOME/_work/e11_s05_review_$(git rev-parse --short=12 HEAD)"
+OUT="$HOME/_work/e11_g01_review_$(git rev-parse --short=12 HEAD)"
 mkdir -p "$OUT"
-uv venv --python 3.12 "$OUT/env-schema"
-uv pip install --python "$OUT/env-schema/bin/python" 'jsonschema>=4,<5'
-"$OUT/env-schema/bin/python" "$E11_DIR/combined_review/tools/e11_profile_factor_compiler.py" --report "$OUT/b02_200_schema_validator.json"
-sha256sum "$OUT/b02_200_schema_validator.json" > "$OUT/b02_200_schema_validator.sha256"
+G01_REVIEW_SHA="$(git rev-parse HEAD)"
+if [[ -n "$(git status --porcelain=v1)" ]]; then
+  echo "BLOCKED: review checkout dirty" >&2; exit 1
+fi
 ```
 
-The 200-profile compiler command below is an **optional cross-Gate diagnostic** until relevant G02–G09 ownership is reviewed; its report must say `PASS_SCHEMA_STRUCTURAL_AND_VALIDATOR_PARITY` to prove the full 200 parity, but **absence of that full report does not block G01** under Owner DEC-PREPCODE-01=B. For **G01 S10**, run standard Draft202012Validator.check_schema and independent positive/negative instance validation of the four specialized G01/P1-M06 Config/Question/Design draft Schema paths (discover exact paths from current Git), the six shared E11 v1 payload schemas, and Graph/FCI cross-wire semantic compatibility, with each schema's exact blob SHA. There is no factual claim that this G01-specific standard validation has run. A partial fake 200 PASS is prohibited.
+**Only after a later owning Gate needs it:** `combined_review/tools/e11_profile_factor_compiler.py --report "$OUT/b02_200_schema_validator.json"` performs the **full 40×5=200** factorization check. It is **not invoked by the G01 commands below**, and its absence does **not** block G01 S10. The G01-specific validator is run in §B.1. A full source Profile SHA parity test does not replace G01-specific strict semantic joins, public Schema instances or independent MAG/PAG truth.
 
 ### B.1 G01-only standard validator and strict FCI profiles (read-only)
 
@@ -51,23 +53,22 @@ sha256sum "$OUT/g01_b02_schema_author_diagnostic.json" > "$OUT/g01_b02_schema_au
 
 A `PASS_AUTHOR_STRUCTURAL_PRECODE_DIAGNOSTIC` result is evidence only for the **tested structural cases**. It does **not** validate all six public wire Schemas with complete positive/negative instances or independently prove cross-file same-run identities, FCI eligibility, BK contradiction handling, effective Backend, independent MAG/PAG truth, JCS goldens, or actual Reader/FS. Those remain explicitly required and require separate independent review/evidence. `--expected-head` is the actual newly pinned checkout SHA, not the old manifest source snapshot commit.
 
-## C. B04 — G01 ENV-BASE first; four separately resolved Backend environments by owning Gate
+## C. B04 — **G01 ENV-BASE only**, additional Backend profiles deferred to their owning Gates
 
-The following release candidates are **not** selected working versions until resolver+signature+fit results have been reviewed. Do not merge into one environment or change the project `uv.lock`.
+The following **runs only ENV-BASE**, `causal-learn==0.1.4.8` and `statsmodels==0.14.6` as locked **candidates**. Do not change the project `uv.lock`; save full resolver/installed freeze, probes and hashes outside the checkout. A package name in lock or a tagged source file is **not** an observed installed API/fit or scientific correctness result.
 
 ```bash
-for pair in 'BASE causal-learn==0.1.4.8 statsmodels==0.14.6' 'DOWHY dowhy==0.14' 'ECONML econml==0.17.1' 'TIGRAMITE tigramite==5.2.10.1'; do
-  read -ra fields <<< "$pair"
-  name="${fields[0]}"; packages=("${fields[@]:1}")
-  uv venv --python 3.12 "$OUT/env-$name"
-  uv pip install --python "$OUT/env-$name/bin/python" "${packages[@]}"
-  uv pip list --python "$OUT/env-$name/bin/python" --format freeze > "$OUT/ENV-$name.freeze"
-  "$OUT/env-$name/bin/python" "$E11_DIR/combined_review/tools/e11_backend_probe.py" --profile "ENV-$name" --output "$OUT/ENV-$name.api.json"
-  sha256sum "$OUT/ENV-$name.freeze" "$OUT/ENV-$name.api.json" > "$OUT/ENV-$name.sha256"
-done
+uv venv --python 3.12 "$OUT/env-BASE"
+uv pip install --python "$OUT/env-BASE/bin/python" 'causal-learn==0.1.4.8' 'statsmodels==0.14.6'
+uv pip list --python "$OUT/env-BASE/bin/python" --format freeze > "$OUT/ENV-BASE.freeze"
+"$OUT/env-BASE/bin/python" "$E11_DIR/combined_review/tools/e11_backend_probe.py" \
+  --profile ENV-BASE --output "$OUT/ENV-BASE.api.json"
+sha256sum "$OUT/ENV-BASE.freeze" "$OUT/ENV-BASE.api.json" > "$OUT/ENV-BASE.sha256"
 ```
 
-**Owner DEC-PREPCODE-01=B:** G01 pre-code evidence requires only `ENV-BASE` actual Python3.12 resolver/signature and a small standalone `causal-learn` FCI fit + negative eligibility/API probe; **no DoWhy/EconML/Tigramite acceptance is a G01-specific prerequisite**. The loop remains available to collect later Gate evidence without changing `uv.lock`; do not run optional later-Backend probes under G01 and then treat them as supported. The separate environment check returns `API_PROBED_NOT_SCIENCE_VALIDATED` at best; **not** method-specific fit/inference. If installation/symbol verification fails, preserve exact failure output and isolate compatibility/ABI/uncertain license obligations. Then run approved Method-specific tiny valid/invalid fit + CI/graph output fixture suite; no fallback method or CATE/IV target relabeling. Independently inspect the exact **tagged** package metadata and solver resolution rather than treating PyPI landing page as successful installation.
+If the resolver or API report fails, capture actual stderr and record `BLOCKED`. A successful `e11_backend_probe.py` is **API-only**, not fitted FCI/Graph-science evidence. Run the actual tiny-fit smoke in §C.1 and independent MAG/PAG reference review separately. Tagged `causal-learn 0.1.4.8` `FCI.py` includes a non-null BK bug and stdout leak as recorded in `175`; **do not** enable BK solely because Python import succeeds.
+
+**Deferred envs (not run for G01):** `ENV-DOWHY (dowhy==0.14)`, `ENV-ECONML (econml==0.17.1)`, `ENV-TIGRAMITE (tigramite==5.2.10.1)`. The applicable owning Gates have separate S09/S10; they must execute their own isolated Python3.12 dependency/API/fit suites at that time. This is a **timing deferral, not a waiver** of later scientific acceptance. Do not merge environments or install all extra dependencies during G01 review.
 
 ### C.1 G01 P1-M06 fitted Backend API probe, and tagged BK hazard
 
@@ -87,11 +88,11 @@ If `PASS_AUTHOR_FCI_TINY_FIT_DIAGNOSTIC` occurs, it proves only the listed **sel
 
 ## D. Independent Review Agent (G01 scoped and common baseline first)
 
-Start a **fresh** Codex/independent-science Review Agent session on the pinned checkout, using the applicable G01-scoped science and `combined_review/165` independent S09 instructions. `combined_review/158_20261122_s05_independent_science_reviewer_prompt.md` is the **full-41** research reviewer preparation reference, not an order to require G02–G09 40 unrelated Method scientific approvals before G01 S10. G01 science reviewer must examine P1-M06 FCI with independent MAG/PAG oracle and negative/refusal rules; the broader 41 review occurs incrementally by owner Gate and finally G10. The Reviewer must not be fed the author's verdict as trusted evidence, and must report actual independent computations, primaries, insufficiencies and 41 per-Method outcomes. Do not run a coding implementation agent (S11 not authorized). If no authorized independent process can be launched, record `S05-B05-REVIEWER_NOT_LAUNCHED`.
+Start a **fresh** Codex/independent-science Review Agent session on the pinned checkout, using the applicable G01-scoped science and `combined_review/165` independent S09 instructions. `combined_review/158_20261122_s05_independent_science_reviewer_prompt.md` is the **full-41** research reviewer preparation reference, not an order to require G02–G09 40 unrelated Method scientific approvals before G01 S10. G01 science reviewer must examine P1-M06 FCI with independent MAG/PAG oracle and negative/refusal rules; the broader 41 review occurs incrementally by owner Gate and finally G10. The Reviewer must not be fed the author's verdict as trusted evidence, and must report actual independent computations, primaries, insufficiencies and **P1-M06-specific** outcomes for G01; remaining 40 Methods are `NOT_REVIEWED` and are covered at their owning Gates and G10. Do not run a coding implementation agent (S11 not authorized). If no authorized independent process can be launched, record `S05-B05-REVIEWER_NOT_LAUNCHED`.
 
 ## E. Evidence verdicts: before coding vs after authorization
 
-**Authority:** Owner **DEC-PREPCODE-01=B is adopted**. Each Gate needs its own independent scoped S09 plus common/actual-upstream closure, followed by **separate Owner S10 Freeze** and **separate Owner S11 Coding Authorization**. G01 starts; G02+ need upstream Gate999. No Gate automatic permission follows from this runbook. This runbook does **not** approve gate-scoped Freeze or exempt any Method from its eventual 07/999.
+**Authority:** Owner **DEC-PREPCODE-01=B is adopted**. Each Gate needs its own independent scoped S09 plus common/actual-upstream closure, followed by **separate Owner S10 Freeze** and **separate Owner S11 Coding Authorization**. G01 starts; G02+ need upstream Gate999. No Gate automatic permission follows from this runbook. This runbook **implements the already Owner-adopted gate-scoped procedure** but does not itself grant a G01 S09 PASS, S10 Freeze or S11 authorization, and exempts no Method from its eventual 07/999.
 
 | ID | Pre-code contract readiness | Actual E11 candidate Gate07/999 |
 | --- | --- | --- |
