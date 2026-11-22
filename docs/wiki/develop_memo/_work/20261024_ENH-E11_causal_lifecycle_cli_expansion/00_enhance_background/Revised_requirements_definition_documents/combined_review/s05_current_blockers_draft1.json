@@ -1,70 +1,70 @@
 {
-  "schema_version": "e11-s05-readiness/20261122-rev2",
-  "git_head_at_review": "91d7d9d4631d2248bcc012f9b48ae2f0e1ac5007",
-  "status": "S05_IN_PROGRESS_BLOCKED",
+  "schema_version": "e11-s05-readiness/20261122-rev3-owner-B-G01-scoped",
+  "git_head_at_review": "7a969a675e0fa5ad1228b69d0d22c45f65e417fa",
+  "status": "G01_PRECODE_EVIDENCE_BLOCKED / AUTHOR_CONTRACT_READY_FOR_INDEPENDENT_S09_SUBMISSION",
   "coding_authorization": false,
   "contract_freeze": false,
-  "owner_decision": "DEC-S05-AR01_A_ADOPTED",
+  "owner_decision": "DEC-PREPCODE-01_B_GATE_SCOPED_ADOPTED / DEC-S05-AR01_A_FULL_REAL_AR_PRESERVED",
   "s05": {
-    "B01": "200_SCHEMA_LOSSLESS_AST_DONE",
-    "B02": "STRUCTURAL_200_PASS_FORMAL_VALIDATOR_NOT_RUN",
-    "B03": "5_INTERNAL_DRAFTS_9_CROSS_FIELD_RULES_ADDED; FULL_SEMANTIC_REVIEW_PENDING",
-    "B04": "VERSIONS_PROPOSED_TARGET_PY312_NOT_RUN",
-    "B05": "41_PLAN_ORACLES_ONLY; PREREG_SCHEMA_STD_VALIDATOR_1_POS_15_NEG_PASS; INDEPENDENT_REFS_T2_T3_NOT_RUN",
-    "B06": "STATIC_71_DOCUMENT_SCAN_FINISHED_FAIL"
+    "B01": "200_PROFILE_SOURCE_AST_AUTHOR_PARITY_PREPARED / NON_FCI_ACCEPTANCE_GATE_SCOPED",
+    "B02": "G01_6_PUBLIC_PLUS_3_ACTIVE_FCI_DRAFT202012_PY312_NOT_RUN / HISTORICAL_G01_CONFIG_DIAGNOSTIC_ONLY",
+    "B03": "G01_PUBLIC_WIRE_AND_READER_CONTRACT_AUTHOR_RECONCILED / REAL_READER_AFTER_CODING / INDEPENDENT_S09_NOT_RUN",
+    "B04": "G01_ENV_BASE_PY312_API_AND_TINY_FIT_NOT_RUN / OPTIONAL_OTHERS_DEFERRED_OWNING_GATES",
+    "B05": "G01_P1_M06_ANALYTIC_CI_ORACLE_CANDIDATES_ONLY / INDEPENDENT_MAG_PAG_AND_BK_REMEDY_NOT_ACCEPTED / POST_S11_T2_T3_NOT_RUN",
+    "B06": "71_GATE_CONTRACTS_PLUS_7_OPERATOR_PROMPTS_AUTHOR_UPDATED / G01_S09_INDEPENDENT_NOT_RUN"
   },
   "following_steps": {
-    "S06": "NOT_STARTED",
-    "S07": "NOT_STARTED",
-    "S08": "NOT_STARTED",
-    "S09": "NOT_STARTED",
-    "S10": "NOT_FROZEN",
-    "S11": "NOT_AUTHORIZED"
+    "S06": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S07": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S08": "AUTHOR_UPDATED_FOR_ALL_10_GATES / INDEPENDENT_NOT_ACCEPTED",
+    "S09": "G01_SCOPED_INDEPENDENT_NOT_RUN",
+    "S10": "G01_NOT_FROZEN_ALL_GATES_NOT_FROZEN",
+    "S11": "G01_NOT_AUTHORIZED_ALL_GATES_NOT_AUTHORIZED"
   },
   "blockers": [
     {
       "blocker_id": "S05-B02-VALIDATOR",
       "owner_action_required": false,
-      "state": "BLOCKED_RUN_NOT_EXECUTED",
-      "what_is_done": "All 200 source Git blob SHAs equal, 200 exact JSON AST reassemblies, 772 custom JS shape positives/negatives",
-      "missing": "Independent standard Draft202012Validator.check_schema + positive/negative 200 source-versus-factored parity run in checked-out Git SHA",
-      "unblock_action": "In read-only checkout run combined_review/tools/e11_profile_factor_compiler.py --report /tmp/e11_b02_report.json using review-only jsonschema>=4",
+      "state": "G01_PY312_STANDARD_VALIDATOR_NOT_RUN",
+      "what_is_done": "Author-only 200 source/factored AST parity; historical G01 Config identified as non-dispatch; G01 3 active P1-M06 Config/Question/Design and six common E11 public Schema known; read-only Python3.12 probe code authored, not executed.",
+      "missing": "G01 6 public + 3 active P1-M06 Draft202012 meta-schema and independent positive/negative public/FCI instance and cross-wire validation under externally pinned Python3.12 Git checkout; 200/200 non-FCI originals for their later owning Gates, not G01.",
+      "unblock_action": "Use externally pinned G01_REVIEW_TARGET_FULL_SHA and clean Linux Python3.12 to run tools/e11_g01_schema_precode_probe.py plus independent public wire/semantic fixtures and actual S09 reviewer; retain later 40×5 full check per owning Gates.",
       "decision_needed": "NO"
     },
     {
       "blocker_id": "S05-B03-SEMANTIC",
       "owner_action_required": false,
-      "state": "BLOCKED_SEMANTIC_ORACLES",
-      "what_is_done": "Five draft typed scientific artifacts, 10 non-scalar Output profiles and descriptor catalog",
-      "missing": "Independently checked cross-file Method/Estimand/CI/ref/privacy/status validators and negative/round-trip fixtures",
-      "unblock_action": "Complete semantic validation contract in S05 and integrate later in S06/S07; don't assign scalar point to vector effects",
-      "decision_needed": "NO unless science target changes"
+      "state": "G01_AUTHOR_RECONCILED_INDEPENDENT_SEMANTIC_REVIEW_NOT_RUN",
+      "what_is_done": "Cross-wire author 19 enum/path/typed Schema comparisons, 21 ContentRef lexical guards and G01 Reader/Status/Manifest/Graph contract 06/07 alignment; no actual E11 Reader exists.",
+      "missing": "Independent G01 scoped cross-file Study/Graph/Status/Manifest/Marker/Reader semantic joins and negatives; actual secure atomic Publisher/Reader + real FS/readback after S11 in G01 07/999.",
+      "unblock_action": "Review G01 common contracts, typed synthetic positive/negative semantic fixtures and no-false-success rules at independent S09; explicitly defer actual E11 Reader/FS to post-authorized Gate07/999.",
+      "decision_needed": "NO unless accepted wire/semantics requires Owner change"
     },
     {
       "blocker_id": "S05-B04-PY312",
       "owner_action_required": false,
-      "state": "BLOCKED_RUNTIME_UNAVAILABLE",
-      "what_is_done": "Candidate DoWhy0.14, EconML0.17.1, Tigramite5.2.10.1, base lock known; exact method API symbols classified",
-      "missing": "Four isolated Python3.12 dependency resolutions, actual version/import/signature, fitted method, CI/graph output probes, known-good optional license/pin evidence",
-      "unblock_action": "Run separate, hash-pinned Python3.12 local probes; review-only venv; no pyproject/uv.lock production edit",
-      "decision_needed": "DEC-02 only if genuine incompatible versions/method API"
+      "state": "G01_ENV_BASE_TARGET_PY312_RUNTIME_NOT_RUN",
+      "what_is_done": "Primary upstream tagged causal-learn 0.1.4.8 FCI source blob 869b8de... inspected; node_names and BK stdout/overorientation behavior found; review-only ENV-BASE tiny-fit probe authored but not run.",
+      "missing": "G01 only: effective Python3.12 ENV-BASE resolver, installed distribution versions, import/signature with node_names, small no-BK FCI fit, invalid CI negative, stdout/Graph shape and lock provenance; DoWhy/EconML/Tigramite isolated environments belong to future Gates.",
+      "unblock_action": "Run clean SHA-pinned section C of 159 (ENV-BASE only), tools/e11_backend_probe.py plus tools/e11_g01_fci_backend_precode_probe.py; preserve real failure output. Other environments on owning Gate schedule.",
+      "decision_needed": "NO unless actual API/version incompatibility requires scientific target or dependency choice"
     },
     {
       "blocker_id": "S05-B05-REFERENCE",
-      "owner_action_required": true,
-      "state": "BLOCKED_INDEPENDENT_SCIENCE",
-      "what_is_done": "41 oracle algorithm recipes, 41 metric-kind candidate maps, eight-kind prereg schema standard-validator passes, B0/B1 exploratory HC1 moments",
-      "missing": "Independent scientific reviewer authority and reviewed 41 analytic/data/graph references, T2 pilot, K/R/eps/seed/tolerances/family/compute prereg, separate T3; G08 AR candidate review",
-      "unblock_action": "Assign independent science reviewer(s), build independent hashed oracles, calibrate and preregister no post-hoc numbers; scientific A decision already adopted",
-      "decision_needed": "Only assignment and reviewer signoff now; DEC-03 if budget/accuracy conflict after pilot"
+      "owner_action_required": false,
+      "state": "G01_INDEPENDENT_GRAPH_ORACLE_AND_BK_SCIENCE_NOT_ACCEPTED",
+      "what_is_done": "Owner accepted GRAPH-A principles; P1-M06 oracle candidate registry, 176 collider/mediator Gaussian CI proof candidates and DGP-011 two-variable nonidentifiability illustration; tagged FCI #266 BK over-orientation/print risk established at source level; independent reviewer approach Owner-approved.",
+      "missing": "G01 P1-M06 independent completed MAG/PAG equivalence truth and executable hashed reference/fixture, valid BK positive remedy preserving unknown endpoint and stdout, independently accepted scientific test/protocol. Actual candidate T2/T3 numeric evidence cannot exist before Coding Agent implementation.",
+      "unblock_action": "Launch truly separate independent S09/science reviewer on exact full SHA; derive and review REF-G02 and BK correction candidates without trusting Author results; freeze admissible algorithm/negative case protocol before G01 S10, then execute T2→preregister T3 after S11.",
+      "decision_needed": "NO CURRENT OWNER CHOICE. Escalate if independent review finds genuinely different mandatory scientific algorithm or BK method scope choice."
     },
     {
       "blocker_id": "S05-B06-CONTRACT",
       "owner_action_required": false,
-      "state": "AUDIT_FAIL_DEFER_FIX_S06_S07",
-      "what_is_done": "Static scans of 20 Gate 06/07 plus 51 Gate Pxx, 117 candidate outdated occurrences recorded with file SHA and line",
-      "missing": "Propagate Owner S02 simplifications and B03/05 into all affected instructions and independent 07, all 40 prompts; S09 independent semantic audit",
-      "unblock_action": "This is an S06–S09 work item, not a reason to falsify S05-B02–B05 completion; sequence remains unchanged",
+      "state": "AUTHOR_CONTRACT_PROPAGATED_INDEPENDENT_G01_S09_NOT_RUN",
+      "what_is_done": "All 71 Gate 06/Pxx/07 and seven Operator prompts reconciled for Owner DEC-PREPCODE-01=B. G01 Local Graph writer ambiguity and FCI BK stdout/endpoint contracts corrected; 402 current active normative blobs matched in last source index check.",
+      "missing": "Independent G01 common/owned/upstream semantics verdict on externally pinned full SHA; other Gates independently audited when reached.",
+      "unblock_action": "Use 165 scoped independent S09 instruction + global draft12 402 impact index + G01 scoped draft3 85 Author candidate paths + 174 evidence readiness. Re-pin current target full SHA at actual review start; correct and repeat if any active contract contradiction.",
       "decision_needed": "NO"
     }
   ],
@@ -83,6 +83,11 @@
       "decision": "DEC-S05-03",
       "choice": "A",
       "status": "EXISTING_LINUX_ISOLATED_ENV_APPROVED_BUT_NO_VM_SESSION_ACCESS"
+    },
+    {
+      "decision": "DEC-PREPCODE-01",
+      "choice": "B",
+      "status": "GATE_SCOPED_S09_S10_S11_OWNER_ADOPTED_2026_11_22"
     }
   ],
   "execution_evidence": [
@@ -104,6 +109,18 @@
     {
       "id": "DEC_S05_02_03",
       "source": "156_20261122_dec_s05_02_03_owner_review_and_environment.md"
+    },
+    {
+      "id": "G01_FCI_TAGGED_SOURCE_AUTHOR_REVIEW",
+      "source": "175_20261122_g01_fci_0148_tagged_source_bk_stdout_preflight.md",
+      "fci_tag": "0.1.4.8",
+      "source_blob_sha": "869b8de01ed495ce4738d3452e0217604dc31e9b",
+      "scope": "Static upstream FCI function signature and BK hazard; no actual Python3.12 runtime or independent science."
+    },
+    {
+      "id": "G01_GRAPH_A_ANALYTIC_CANDIDATE",
+      "source": "176_20261122_g01_p1_m06_graph_a_independent_oracle_candidate_cases.md",
+      "scope": "Author-derived collider/mediator Gaussian conditional covariance and latent nonidentification; not full accepted MAG/PAG truth or independent Reviewer proof."
     }
   ],
   "unavailable_execution_paths": {
@@ -113,5 +130,29 @@
     "notion_independent_agent": "ENTITLEMENT_REQUIRED_BUSINESS_NO_SESSION",
     "alternate_independent_agent": "NOT_AVAILABLE_IN_THIS_TOOL_SESSION"
   },
-  "last_review_note": "Owner A/A adopted, no actual remote VM or independent Reviewer execution; S05/S06/S09/S10/S11 no-go unchanged"
+  "last_review_note": "Owner B adopted Gate-scoped S09/S10/S11. S06–S08 author propagated, G01 initial 85 candidate sources (11 own+69 common+5 impact); other Gate Method-specific science deferred, not waived. G01 Python3.12 validators+ENV-BASE fitted API, independent REF-G02 MAG/PAG and BK remedy, independent S09 all NOT_RUN/BLOCKED. No Owner S10 Freeze or S11 Coding Authorization. Last file is an updated current status, not independent verifier signature.",
+  "gate_scoped_readiness": {
+    "current_gate": "G01",
+    "common_baseline_required": true,
+    "upstream_gate999_required": [],
+    "global_inventory": "s09_post_reconciliation_document_snapshot_draft12.json",
+    "g01_scoped_author_candidate": "s09_g01_scoped_review_inventory_draft3.json",
+    "source_normative_sha": "7668d7aceadd25998687ada631c875e282103e42",
+    "inventory_402_blob_match_at_prior_author_check": true,
+    "own_gate_paths": 11,
+    "common_paths": 69,
+    "impact_sample_paths": 5,
+    "deferred_future_gate_paths": 317,
+    "g01_s09_independent": "NOT_RUN",
+    "g01_s10": "NOT_FROZEN",
+    "g01_s11": "NOT_AUTHORIZED",
+    "g01_fci_active_schemas": 3,
+    "g01_fci_historical_non_dispatch": 1,
+    "target_python312_schema_probe": "NOT_RUN",
+    "target_python312_fci_fit": "NOT_RUN",
+    "independent_ref_g02": "NOT_VERIFIED",
+    "known_bk_source_hazard": "YES_0_1_4_8_NON_NULL_BK_OVERORIENT_STDOUT",
+    "bk_positive_scientific_acceptance": "BLOCKED",
+    "coding_candidate_tests": "AFTER_S11_ONLY"
+  }
 }
