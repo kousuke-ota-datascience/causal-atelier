@@ -6,7 +6,7 @@
   "gate_id": "G01",
   "upstream_gate999": [],
   "scoping_status": "AUTHOR_CANDIDATE_85_PATHS / INDEPENDENT_CLOSURE_NOT_ESTABLISHED",
-  "status": "OWNER_B / G01_3_ACTIVE_FCI_SCHEMAS_AND_1_HISTORICAL_NONDISPATCH / 85_AUTHOR_CANDIDATES / NOT_INDEPENDENT_S09",
+  "status": "G01_85_AUTHOR_CANDIDATES_11_OWNED_69_COMMON_5_IMPACT_317_DEFERRED / 4_UNTRUSTED_SUPPLEMENTS / S09_NOT_RUN",
   "rules": [
     "402 entries remain a global full-SHA inventory, not 402 independently reviewed semantic documents",
     "Common Contract + G01 06/P00/P01–P05/07 + FCI strict profiles + actual Source ABI/ENV-BASE/MAG-PAG/Privacy/atomic Reader are mandatory; included lists are candidates and may expand with proven dependency",
@@ -15,7 +15,8 @@
     "Independent reviewer must check every candidate blob against actual current review full SHA and independently extend on any discovered cross-Gate dependency",
     "Any shared contract or previously frozen upstream change invalidates impacted Gate S09/S10 until re-reviewed",
     "S10 and S11 remain individual explicit Owner approvals; no agent launch",
-    "Only 3 P1-M06 FCI config/question/design schemas are active dispatch; e11_g01_fci_method_config_v1.schema.json is HISTORICAL_NONDISPATCH per schema_drafts/README.md and may not become an extra mandatory Method active contract."
+    "Only 3 P1-M06 FCI config/question/design schemas are active dispatch; e11_g01_fci_method_config_v1.schema.json is HISTORICAL_NONDISPATCH per schema_drafts/README.md and may not become an extra mandatory Method active contract.",
+    "Supplemental 176 analytic CI identities and DGP proof candidates are not independent MAG/PAG equivalence or accepted BK runtime scientific correctness; remain G01-S09 reviewer inputs."
   ],
   "summary_counts": {
     "total": 402,
@@ -3260,6 +3261,11 @@
       "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/175_20261122_g01_fci_0148_tagged_source_bk_stdout_preflight.md",
       "blob_sha": "7070a6ddd2fe28845a826616e66f8bf078e9b2f7",
       "role": "author upstream source read-only findings; independent science NOT_RUN"
+    },
+    {
+      "path": "00_enhance_background/Revised_requirements_definition_documents/combined_review/176_20261122_g01_p1_m06_graph_a_independent_oracle_candidate_cases.md",
+      "blob_sha": "d03914082260c5fde801f5796f9f98c792f0a2d3",
+      "role": "AUTHOR_ONLY GRAPH-A DGP-021 collider/mediator proof candidates, DGP-011 nonidentifiability; no independently reviewed full PAG oracle or BK remedy"
     }
   ]
 }
