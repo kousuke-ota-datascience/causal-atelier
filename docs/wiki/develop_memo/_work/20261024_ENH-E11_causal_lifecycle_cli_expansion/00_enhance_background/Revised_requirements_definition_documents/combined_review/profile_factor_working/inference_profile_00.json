@@ -1,0 +1,333 @@
+{
+  "kind": "inference_profile",
+  "batch": 0,
+  "methods": [
+    "P1-M01",
+    "P1-M02",
+    "P1-M03",
+    "P1-M04",
+    "P1-M05",
+    "P1-M07",
+    "P1-M08",
+    "P1-M09"
+  ],
+  "entries": [
+    {
+      "id": "P1-M01",
+      "file": "e11_p1_m01_inference_profile_v1.schema.json",
+      "blob_sha": "3472a795f5354b5ae56705536e8eba4ada3fe8f0",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m01:inference_profile:draft1",
+        "title": "P1-M01 — Native randomized identification / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M02",
+      "file": "e11_p1_m02_inference_profile_v1.schema.json",
+      "blob_sha": "b9afae36a201b9e8f1726d65abe22aa269c56310",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m02:inference_profile:draft1",
+        "title": "P1-M02 — Native backdoor ATE identification / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M03",
+      "file": "e11_p1_m03_inference_profile_v1.schema.json",
+      "blob_sha": "37bf526cf61da7b88bf4a10f197812ab3b90bdbc",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m03:inference_profile:draft1",
+        "title": "P1-M03 — DoWhy backdoor ATE identification / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M04",
+      "file": "e11_p1_m04_inference_profile_v1.schema.json",
+      "blob_sha": "f7328f4cfca7e8146123888df95a290e2fc09b49",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m04:inference_profile:draft1",
+        "title": "P1-M04 — DoWhy frontdoor ATE identification / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M05",
+      "file": "e11_p1_m05_inference_profile_v1.schema.json",
+      "blob_sha": "e360e59bb7e99d8cbfa6de6a37eabd06a872d998",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m05:inference_profile:draft1",
+        "title": "P1-M05 — DoWhy IV conditional complier LATE identification (B0) / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "const": false
+          },
+          "confidence_level": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "id": "P1-M07",
+      "file": "e11_p1_m07_inference_profile_v1.schema.json",
+      "blob_sha": "c868833e46145712c9851449176255e3e96e3312",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m07:inference_profile:draft1",
+        "title": "P1-M07 — restricted single-mediator FD-A linear two-stage ATE / inference_profile",
+        "description": "PREP-04.1 authoring DRAFT, strict internal Method profile; schema validity is not method availability, Backend API validation, independent Science PASS or Contract Freeze. Unknown keys rejected. No numeric or statistical defaults. ContentRef.schema_version remains null for unversioned internal Question/Design payload.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "requested": {
+                  "const": false
+                }
+              },
+              "required": [
+                "requested"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_level": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_level": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "P1-M08",
+      "file": "e11_p1_m08_inference_profile_v1.schema.json",
+      "blob_sha": "d330780911f90324dc81fed386aa46ef0e58197e",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m08:inference_profile:draft1",
+        "title": "P1-M08 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "requested": {
+                  "const": false
+                }
+              },
+              "required": [
+                "requested"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_level": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_level": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "P1-M09",
+      "file": "e11_p1_m09_inference_profile_v1.schema.json",
+      "blob_sha": "9e44152b4119a5ce035b50b5e77d7beb43b9dc76",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:ariadne:e11:prep04-1:p1-m09:inference_profile:draft1",
+        "title": "P1-M09 inference_profile strict Method profile — DRAFT",
+        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requested",
+          "confidence_level"
+        ],
+        "properties": {
+          "requested": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "oneOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "requested": {
+                  "const": false
+                }
+              },
+              "required": [
+                "requested"
+              ]
+            },
+            "then": {
+              "properties": {
+                "confidence_level": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "confidence_level": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
