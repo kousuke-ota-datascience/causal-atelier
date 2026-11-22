@@ -69,13 +69,13 @@ Artifact materializationはlogical Execution/Stage/output slot/typeからdetermi
 | Input Path | Root/path allowlist、traversal・symlink escapeを拒否 | canonical root/reparse/TOCTOU strategy |
 | Config / Serialization | Versioned typed inputのみ受入。未信頼のpickleなど任意code実行を既定経路で許さない | exact parser/allowlist |
 | Output directory | private artifact root、owner UIDと0700/0600を検証し、失敗時も保護 | local ext4/XFS、dirfd/path・mode |
-| Row-level CATE and individual explanations | Study＋CLI double opt-inと機微Artifact扱い、private local FSでの限定export | 一般Linux実行者自身のopt-in、owner-only mode・Method別列/行/byte制限。外部Approver/署名鍵・独立ACL/namespace証明不要 |
+| Row-level CATE and individual explanations | Study単独の明示opt-inと機微Artifact扱い、private local FSでの限定export | 一般Linux実行者自身のopt-in、owner-only mode・Method別列/行/byte制限。外部Approver/署名鍵・独立ACL/namespace証明不要 |
 | Manifest/Logs | Credential・機微列・個票値を原則含めず、hashや統計量を記録 | deidentification/log retention |
 | Backend | optional codeを実効版・license・安全性基準で選別 | package audit and runtime isolation |
 
 Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**Local CLIの個票出力の認可をProduct membershipなしで説明できる設計**が必要。これは未解決のBD-01 blocking itemである。明示opt-inだけであらゆる漏洩対策が完成したと解釈しない。
 
-既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportには一般Linux EUID/private ext4-XFS所有root、0700/0600、安全なdirfdとStudy＋CLIのdouble opt-inを適用する。独立ACL/xattr証明・mount namespace追跡・CI/container環境種別検出は要求しない。同一UID/rootに対する隔離は保証しない。
+既存ProductのProject RBACをLocal CLIへ強制適用しない。個票CATE/exportには一般Linux EUID/private ext4-XFS所有root、0700/0600、安全なdirfdとStudy単独の明示opt-inを適用する。独立ACL/xattr証明・mount namespace追跡・CI/container環境種別検出は要求しない。同一UID/rootに対する隔離は保証しない。
 
 **当該機能に適用する設計制約（関連Requirement）**
 
@@ -101,4 +101,8 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 
 ## Local scientific individual-row output
 
-初期E11 G05の個票中間成果物は、2026-11-21 Owner限定改訂により、第三者の独立署名承認ではなくStudy＋CLI二重opt-inと実行EUID所有のprivate ext4/XFS TrustedRootに基づいて出力する。Directory0700・File0600、列/行/byte最小化とG01のatomic Publisher／Readerを維持し、FR-195/NFR-031の保護要件とProduct RBACは変更しない。過去のF05/OD02署名判断は歴史的記録として保存し、現行例外は`combined_review/129_20261121_dec_g05_local_row_export_simplification.md`で追跡する。
+初期E11 G05の個票中間成果物は、2026-11-21 Owner限定改訂により、第三者の独立署名承認ではなくStudy単独の明示opt-inと実行EUID所有のprivate ext4/XFS TrustedRootに基づいて出力する。Directory0700・File0600、列/行/byte最小化とG01のatomic Publisher／Readerを維持し、FR-195/NFR-031の保護要件とProduct RBACは変更しない。過去のF05/OD02署名判断は歴史的記録として保存し、現行例外は`combined_review/129_20261121_dec_g05_local_row_export_simplification.md`で追跡する。
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.

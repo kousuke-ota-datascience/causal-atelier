@@ -31,7 +31,7 @@
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
-**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`、`cli_row_flag:bool`をimmutableに保持。実行EUIDとprivate root ownerの一致、ext4/XFS local FSの種別と所有UID/owner-only mode/same-FS/dirfdをTrustedRoot Factoryが検証。G05個票はStudy requestとCLI Flagのdouble opt-inであり署名Policy Anchorは持たない。
+**Application Context：** `ariadne.capabilities.causal.local_execution.LocalRunContext`は`root:TrustedLocalRoot`、`principal:LocalPrincipal`をimmutableに保持。実行EUIDとprivate root ownerの一致、ext4/XFS local FSの種別と所有UID/owner-only mode/same-FS/dirfdをTrustedRoot Factoryが検証。G05個票はStudyの単一明示opt-inであり署名Policy Anchorは持たない。
 
 **Application Port配置：** `ariadne.capabilities.causal.ports.content_ref.ContentReferencePort`、`ariadne.capabilities.causal.ports.local_io.LocalPublicationPort/LocalManifestReaderPort`、`ariadne.capabilities.causal.ports.local_privacy.LocalPrivacyPolicyPort`。ApplicationはPortのみに依存する。独立署名Policy Verifierは初期G05の責務外。
 
@@ -66,7 +66,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 4. 選択済CapabilityをOperation別のValidated Requestに束縛する。`DISCOVER`では`DiscoveryPort.discover(ValidatedDiscoveryRequest, *, sink)`を呼び、同一Method Registryから解決したFCI Adapterを使用する。Identificationを要求せず、未確定Graphを識別済みと扱わない。その他OperationはIdentifier/Estimator/Diagnostic Portへ明示dispatchする。
 5. Data EligibilityとEstimator Requestを再評価。NOT_IDENTIFIED、REQUIRES_REVIEW、PARTIALLY_IDENTIFIEDの自動点推定禁止。列挙された緩和可能WARNのみ理由付きoverride可。
 6. Adapter実行。Outputはstaging sink限定。Method-specific inference、診断、scientific negative、effective env/seed/foldを収集。
-7. 23_42 `2.1のOperation別Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。G05個票はStudy request、CLI Flag、実行UID/private root、Method別OutputShapeを`LocalPrivacyPolicyPort.authorize`でAND評価し、許可後のみG01 staging→Publisher→独立Readerで公開・readbackする。
+7. 23_42 `2.1のOperation別Artifactとschema_dispatchを検証し、typed Graph/Identification/Effect/Diagnostics、Status/Manifestを生成。G05個票はStudy request、実行UID/private root、Method別OutputShapeを`LocalPrivacyPolicyPort.authorize`でAND評価し、許可後のみG01 staging→Publisher→独立Readerで公開・readbackする。
 8. `LocalRunOutcome`は `technical_status` と `identification_status/point/inference/science_acceptance` を別軸として返す。
 
 **Precondition:** Input Spec passed strict schema/version check and trusted content refs. **Postcondition:** either immutable fully validated bundle with commit marker, or typed non-success/negative without false completed marker. Method/estimand/Graph conditional result is never guessed from a Backend label.
@@ -308,7 +308,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 2. `_COMMITTED.json`存在/strict schema/version/request hashを確認。
 3. `manifest.json`を同一安全dirfd scopeでopen、markerに保存されたManifest SHA256と照合し、`LocalRunManifest`をstrict decode。
 4. Artifactの相対key重複、SHA256/size/MediaType、privacy class、必要なLineage Refの一致を検査。
-5. Private Parquetは実行者のdouble opt-inとOS principal/private rootの適格性なしにrow-level bytesを返さない。
+5. Private Parquetは実行者のsingle Study opt-inとOS principal/private rootの適格性なしにrow-level bytesを返さない。
 6. 未検証・partial・legacy・corruptのいずれでも`VerifiedLocalRun`を返さない。
 
 ### 5.6. I/O・連携・失敗処理
@@ -336,24 +336,24 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 6.3. Constructor / Factory
 
-`__init__(self) -> None`。外部I/O、run情報、Backendを保持しない。CLI composition rootからPortとして注入する。Study requestとCLI Flag単独には権限を与えず、実行EUIDが所有するprivate TrustedRoot・Method別出力適格性とAND評価する。
+`__init__(self) -> None`。外部I/O、run情報、Backendを保持しない。CLI composition rootからPortとして注入する。Study requestとStudy未許可時には権限を与えず、実行EUIDが所有するprivate TrustedRoot・Method別出力適格性とAND評価する。
 
 ### 6.4. メソッド
 
 | Signature | Result | Side effect / failure |
 | --- | --- | --- |
-| `authorize(self, *, study: ValidatedStudy, cli_row_flag: bool, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | 23_41の公開Portと完全同一署名。純粋Policy、File公開副作用なし |
+| `authorize(self, *, study: ValidatedStudy, root: TrustedLocalRoot, principal: LocalPrincipal, output_shape: OutputShape) -> PrivacyDecision` | immutable typed allow / reject | 23_41の公開Portと完全同一署名。純粋Policy、File公開副作用なし |
 | `filter_export_columns(self, frame_schema: ColumnSchema, *, decision: PrivacyDecision) -> ColumnSelection` | bounded allowlist | 上記Decisionがrow releaseを許すときにのみ使用。未知・禁止列を拒否 |
 
 `filter_export_columns`はRaw DataFrameではなくColumnSchemaと検証済みDecisionから許可列集合を導出する。行数制限はOutput writerとReaderの両方で再検証し、`PrivacyDecision`に上限・許可列・Study/Method/Run identityを結び付ける。
 
 ### 6.5. 処理仕様
 
-`authorize`は集計結果に個票を含まないことを確認し、G05個票ではStudy明示request ∧ CLI Flag ∧ 実行EUID=root owner ∧ private 0700/0600/local ext4/XFS/owner/dirfd適格 ∧ `RESTRICTED_ROW_LEVEL` ∧ Method別`ApprovedRowSchema`/許可列・row/byte/memory上限をAND評価する。Unknown/unsafeはfail-closedでrow bytesを生成しない。aggregate Result/Manifest/stdout/logにrow valuesを含めない。
+`authorize`は集計結果に個票を含まないことを確認し、G05個票ではStudy明示request ∧ 実行EUID=root owner ∧ private 0700/0600/local ext4/XFS/owner/dirfd適格 ∧ `RESTRICTED_ROW_LEVEL` ∧ Method別`ApprovedRowSchema`/許可列・row/byte/memory上限をAND評価する。Unknown/unsafeはfail-closedでrow bytesを生成しない。aggregate Result/Manifest/stdout/logにrow valuesを含めない。
 
 ### 6.6. I/O・連携・失敗処理
 
-- **Input:** `ValidatedStudy`、CLI intent、runtime EUID、verified private root/owner/mode/local FS、OutputShape、Method別`ApprovedRowSchema`。外部署名Policyなし。
+- **Input:** `ValidatedStudy`、runtime EUID、verified private root/owner/mode/local FS、OutputShape、Method別`ApprovedRowSchema`。外部署名Policyなし。
 - **Output:** allow/reject（含むReason）と許可されたColumnSelection。Raw rows不要。
 - **Side effect:** N/A（純粋Policy）。File create/0600・dir0700とaudit event emissionはPublisher/CLI adapterの責務。
 - **Failure:** missing flag、UID mismatch、shared accessible mount、unauthorized column、rows limit、secret/row data leak。No retryで許可状態を推測しない。
@@ -413,7 +413,7 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 | `LocalArtifactPublisher` / `ariadne.interfaces.cli.local_causal.publication` | `product.ports.artifact_store.ArtifactStorePort`、`adapters.local_artifact_store.LocalArtifactStore`のhash/path処理 | 複数Artifact・Manifest・Markerをrun単位でimmutable/atomic no-clobber公開。単一Object storeの`store`とは異なる；既存Product Storeを無条件に置換しない |
 | `LocalRunManifest` / `ariadne.interfaces.cli.local_causal.manifest` | `interfaces.cli.manifest.CliManifest`（既存v2のReader/Writerは変更しない） | `e11-local-manifest/1` wireは既存のversioned識別子として保持。typed status/lineage/codecを検証し旧v2への暗黙castを禁止 |
 | `LocalManifestReader` / `ariadne.interfaces.cli.local_causal.manifest_reader` | Product ArtifactStoreのbyte fetch自体は共通化可能 | Marker→Manifest→Artifact→Privacyのbundle全体を検証する独立Readerで、File存在だけで成功にしない |
-| `LocalPrivacyPolicy` / `ariadne.interfaces.cli.local_causal.privacy` | ProductのMembership/RBACはProduct DB資源だけに適用 | 実行者のStudy＋CLI double opt-in、OS owner/mode/local FS、Method別列・行・byte上限を評価。署名鍵や第三者承認は不要 |
+| `LocalPrivacyPolicy` / `ariadne.interfaces.cli.local_causal.privacy` | ProductのMembership/RBACはProduct DB資源だけに適用 | 実行者のStudy単独の明示opt-in、OS owner/mode/local FS、Method別列・行・byte上限を評価。署名鍵や第三者承認は不要 |
 | `BackendCapabilityRecord` / `ariadne.scientific.capabilities` | 既存Method compatibility checksとscientific runtime probe | 実効distribution/API signatureとMethod supportを証拠化するimmutable value。Backend importやRegistry mutationは持たない |
 
 ### 8.1. Port FacadeとMethod Registry
@@ -436,7 +436,7 @@ Concrete `LocalManifestReader.read_run(trusted_root:TrustedLocalRoot,run_id:RunI
 
 ### 8.4. ローカル実行者の個票出力適格性
 
-一般ユーザーのStudy requestとCLI Flagのdouble opt-in、実行EUID/private TrustedRoot owner一致、local ext4/XFS・0700/0600・owner/mode/dirfd、Method別`ApprovedRowSchema`と出力上限を`LocalPrivacyPolicyPort.authorize`で検証する。署名鍵、第三者Approver、Trust Anchor、失効は要求しない。RowSource反復前・Stage/Seal/Publish前にOS/root/lineageを再検証し、未知状態はFail Closedとする。Aggregate-onlyを不必要に阻害しない。
+一般ユーザーのStudyの単一明示opt-in、実行EUID/private TrustedRoot owner一致、local ext4/XFS・0700/0600・owner/mode/dirfd、Method別`ApprovedRowSchema`と出力上限を`LocalPrivacyPolicyPort.authorize`で検証する。署名鍵、第三者Approver、Trust Anchor、失効は要求しない。RowSource反復前・Stage/Seal/Publish前にOS/root/lineageを再検証し、未知状態はFail Closedとする。Aggregate-onlyを不必要に阻害しない。
 
 ### 8.5. CLI entrypoint／error envelope
 
@@ -453,10 +453,10 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 ### 9.1. Local executor / private root
 
 - 実行主体はLinux非root effective UID。所属部署・外部Reviewer・Product Membershipを確認しない。
-- Study.privacy.row_export_requested=true、CLI --allow-row-level-export、privacy.classification=RESTRICTED_ROW_LEVEL、実行EUID=TrustedRoot owner、同一local ext4/XFS、private owner-only root/staging0700・row file0600をAND評価する。
+- Study.privacy.row_export_requested=true、privacy.classification=RESTRICTED_ROW_LEVEL、実行EUID=TrustedRoot owner、同一local ext4/XFS、private owner-only root/staging0700・row file0600をAND評価する。
 - owner/mode/local FS/symlink・path traversal/UID/root identityを実効OSで検証する。共有・不明・異FS・non-owner・容認不能なアクセス権はfail-closed。rootや同じUID processを攻撃者として隔離したという主張はしない。
-- `e11-local-study/1`の任意`privacy.policy_ref`は現行unsigned modeではnullのみ。旧署名Policy Schemaは歴史的Draftとしてのみ保持。新たな署名Policy Envelopeの生成や鍵配備を要求しない。
-- `LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)->PrivacyDecision`。個票失敗はexit3、`read_rows`呼出0・個票bytes0、silent aggregate fallbackなし。Method別`ApprovedRowSchema`・Capsの欠落は個票をdenyし、科学計算結果を偽のFAILに変換しない。
+- `e11-local-study/1`に`privacy.policy_ref`は存在しない。未知Keyはstrictに拒否。旧署名Policy Schemaは歴史的Draftとしてのみ保持。新たな署名Policy Envelopeの生成や鍵配備を要求しない。
+- `LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)->PrivacyDecision`。個票失敗はexit3、`read_rows`呼出0・個票bytes0、silent aggregate fallbackなし。Method別`ApprovedRowSchema`・Capsの欠落は個票をdenyし、科学計算結果を偽のFAILに変換しない。
 
 ### 9.2. `RowEffectsParquetWriter` / Factory — Owner承認済み署名を維持
 
@@ -465,15 +465,19 @@ CLIのVersion dispatch・終了codeは[CLI Interface](../23_api_interface_design
 - **Method:** `write(self, *, source: DeferredRowEffectsSource, study: ValidatedStudy, decision: PrivacyDecision, selection: ColumnSelection, sink: StagingArtifactSink) -> ArtifactDescriptor`。
 - **Factory:** `create(self, *, serializer: ValidatedParquetSerializer, max_memory_bytes: int) -> RowEffectsParquetWriter`。
 - **Protocols:** `DeferredRowEffectsSource.schema()->ColumnSchema`、`read_rows()->Iterable[Mapping[str,JsonValue]]`；`ValidatedParquetSerializer.encode(*,rows:BoundedRowBatch,schema:ApprovedRowSchema)->bytes`。
-- **Precondition:** trusted LocalCausalUseCase has validated same-run Study/Method/Data/OutputShape, effective UID/root, explicit double opt-in and a Method-approved ordered ColumnSelection. The typed `PrivacyDecision` cannot be accepted as an unverified user-originated object or used to escape the UseCase/Sink boundary.
+- **Precondition:** trusted LocalCausalUseCase has validated same-run Study/Method/Data/OutputShape, effective UID/root, explicit single Study opt-in and a Method-approved ordered ColumnSelection. The typed `PrivacyDecision` cannot be accepted as an unverified user-originated object or used to escape the UseCase/Sink boundary.
 - **Algorithm:** schema-only inspection→approved ordered allowlist/row ID/dtype/units→after eligibility, lazily read a maximum of max_rows+1 rows→reject duplicate IDs, nonfinite values, unknown columns, wrong types, row/byte/memory limit→encode bounded Parquet→recheck root/UID/FS/owner/mode/source identity→stage `row_effects.parquet` / `application/vnd.apache.parquet` / `RESTRICTED_ROW_LEVEL` to existing G01 Sink only.
 - **Publication:** G01 Publisher alone validates/schema/hash/Manifest/Marker and performs same-FS atomic no-clobber rename and independent Reader readback. Row Writer never writes to final runs/, produces a new Manifest or signs an export.
 - **Failure:** initially unapproved ⇒ row iterator zero and row bytes zero. Post-stage FS problem ⇒ no success/marker, private staging quarantined; do not claim old staging bytes vanished. JSON/Manifest/CLI/log contains no row values or secrets.
 
 ### 9.3. Independent verification / remaining blockers
 
-G05/P02: both opt-in flags separately/AND, actual nonroot UID/private ext4/XFS/root/owner-mode/symlink/dirfd/same-FS tests; G05/P03: Method `ApprovedRowSchema`, ordered columns, row/byte/memory caps, real Parquet API and readback; G05/P04/07: row source pre-auth calls zero, stage/commit races, G01 marker/hash/fault/no-clobber, no row leak, legacy Product v2 regression. Key/signature/revocation tests are excluded. ApprovedRowSchema/Parquet effective ABI/Linux filesystem tests still missing. No G05 Freeze, Coding Authorization or Gate999 pass.
+G05/P02: Study-only explicit request true/false and root/Method eligibility, actual nonroot UID/private ext4/XFS/root/owner-mode/symlink/dirfd/same-FS tests; G05/P03: Method `ApprovedRowSchema`, ordered columns, row/byte/memory caps, real Parquet API and readback; G05/P04/07: row source pre-auth calls zero, stage/commit races, G01 marker/hash/fault/no-clobber, no row leak, legacy Product v2 regression. Key/signature/revocation tests are excluded. ApprovedRowSchema/Parquet effective ABI/Linux filesystem tests still missing. No G05 Freeze, Coding Authorization or Gate999 pass.
 
 ### 9.4. SIM-01 current local-FS proof boundary（Owner 2026-11-21）
 
 初期G05のローカルFS保護は非root EUIDの所有・root/staging 0700・row file 0600・real ext4/XFS・same filesystem・dirfd/O_NOFOLLOW・Symlink/Path拒否で成立する。旧PREP02のACL xattr digest、statx mount-ID追跡、mount namespace可視性の独立証明、CI/container環境検知は必須でない。同じUIDおよびroot管理者からの隔離を保証しない。実行時のOwner/ModeとFS identity・Pathを適切な公開境界で再確認する。NFR-030/031とG01原子的Publisher・独立Readerは継続。内部CLIのSBOM/顧客配布License stateは要求しない。元のFreeze履歴はcombined_review/131により限定的にsupersedeされ、実Linux/FSテストはNOT_RUN。
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.

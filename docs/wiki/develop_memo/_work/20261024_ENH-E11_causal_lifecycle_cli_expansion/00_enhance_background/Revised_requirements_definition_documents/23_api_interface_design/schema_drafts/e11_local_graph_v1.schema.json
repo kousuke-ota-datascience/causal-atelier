@@ -25,28 +25,12 @@
       "minLength": 1
     },
     "version_id": {
-      "oneOf": [
-        {
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "description": "Existing Product GraphVersion ID, or null for standalone local discovery. Never invent a Product GraphVersion ID."
+      "const": null,
+      "description": "Current standalone Local CLI: null. Product GraphVersion integration/import is not implemented in E11."
     },
     "parent_version_id": {
-      "oneOf": [
-        {
-          "type": "string",
-          "minLength": 1
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "description": "Existing Product parent GraphVersion ID; null when no Product parent, including standalone CLI graph. When non-null, version_id must also be a non-null existing Product GraphVersion ID; real Product lineage is verified by the semantic validator."
+      "const": null,
+      "description": "Current standalone Local CLI: null; future Product interop requires separately approved new contract."
     },
     "nodes": {
       "type": "array",
@@ -153,26 +137,5 @@
         }
       }
     }
-  },
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "parent_version_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "parent_version_id"
-        ]
-      },
-      "then": {
-        "properties": {
-          "version_id": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

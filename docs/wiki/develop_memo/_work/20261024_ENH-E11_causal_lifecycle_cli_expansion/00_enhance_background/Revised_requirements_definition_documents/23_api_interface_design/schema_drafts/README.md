@@ -20,7 +20,7 @@ The current schemas are structurally strict at top-level and some subobjects, bu
 ## Owner採用 D-F07-EMPTY / D-F05-POLICY / D-F06-CODEC・ROW-EXIT（2026-11-17）
 
 - Generic AR Confidence Setは`EMPTY` topologyの0 componentを受理。Effect schemaへ同じ規則を複製して更新。Method別just-ID拒否は科学的検証に残る。
-- Study側`privacy.policy_ref`は入力であり、それ単体は行出力許可ではない。事前Policyの権威・Scope・Policy digestの証明が必要。
+- **Current Owner S02:** Studyでは`privacy.row_export_requested=true`を単一明示opt-inとし、未公開の`privacy.policy_ref`を削除。撤回済み署名Policy/独立鍵の記述は履歴であり現行実装の要件ではない。
 - E11 strict canonicalizationはOwner採用済み方向性。RFC8785 JCSを技術候補とし、Manifestに`canonical_codec_version`を持つDraft、`default=str`は禁止。実装・クロス言語検証は残る。
 - Privacy/authorization denialはExit 3。No silent aggregate-only fallback。
 
@@ -31,7 +31,7 @@ The current schemas are structurally strict at top-level and some subobjects, bu
 
 - [DEC-PREP02-D](../../combined_review/decisions/95_20261117_dec_prep02_four_owner_choices.md) adopted generic mathematically `EMPTY` AR confidence sets. The `e11_ar_inference_defs` and embedded Effect Result `$defs` both contain `EMPTY`/`components=[]` and require nonempty components for nonEMPTY topologies. Semantic set validation and just-ID Method-specific nonempty assertions are separate.
 - Owner adopted an **independent strict canonical Codec**, not a specific implementation standard. RFC8785 JCS is the engineering candidate, with [7 positive / 7 negative golden vectors](e11_jcs_golden_vectors.json) and [design reasoning](../../combined_review/107_20261117_prep02_jcs_codec_vectors.md). Proposed `canonical_codec_version=e11-json-jcs-rfc8785/1` has been added to the Manifest Schema draft; Python↔ECMAScript bytes conformance is **not verified**.
-- Privacy authorization denial = CLI exit3; Policy proof must derive from independent preauthorization authority. The Study's `privacy.policy_ref` is only a reference and not standalone authorization.
+- Privacy authorization denial = CLI exit3; root/UID/Method/schema/caps and explicit Study-only opt-in are mandatory before row access. No independent signed-policy proof in current E11.
 
 
 ## Cross-schema semantics for F06 (current design candidate)
@@ -48,12 +48,16 @@ Method P1-M06の`Study.method.config`だけを[FCI config schema](e11_p1_m06_fci
 
 ## Graph identity and parent linkage
 
-`e11-local-graph/1`では両Versionキーは存在必須・nullableとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、Product由来のGraphだけ実在するProduct GraphVersion識別子を設定する。parentが非nullならversionも非nullであることはJSON Schemaの条件式で拒否可能。**ID実在性、親子の対応、graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
+`e11-local-graph/1`では両Versionキーは存在必須・nullableとする。CLI standalone discoveryは`version_id=null,parent_version_id=null`を正規形とし、現行Local GraphにはProduct由来の識別子を設定しない（両方null）。将来のProduct importは別契約・別Schemaで審議する。**ID実在性、親子の対応、graph content_hash/JCS、endpointの科学意味**は外部semantic Validatorで検証し、JSON SchemaだけでProduct linkageの正しさを宣言しない。公開Version文字列は変更しない。
 
 ## PREP-03 OD-02/03 Owner採用（2026-11-19）
 
-- [e11_local_row_export_policy_v1.schema.json](e11_local_row_export_policy_v1.schema.json) — Ed25519署名Envelope/strict signed payloadの**構造Draft**。Version `e11-local-row-export-policy/1`は独立承認Policy artifactのVersionであり、Study/Graph/Effect/Manifest/Statusの既存5 Public payload Versionを増やさない。
-- 実署名検証はdomain-separated RFC8785 JCS payload + admin-only trust-storeのissuer/key/role、署名鍵の実際の独立所持、revocation/UTC/Study digest/run_id/ACL/mountの意味Validatorが必須。JSON Schemaだけで独立承認や本番鍵が存在したと判断しない。
+- [e11_local_row_export_policy_v1.schema.json](e11_local_row_export_policy_v1.schema.json) — **WITHDRAWN HISTORICAL DRAFT / NOT REGISTERED / NOT DISPATCHED**。Current v1では署名Policyと`policy_ref`を使用しない。
+- Historical signed-policy authority is not an initial E11 functionality; no keys, Trust Store, independent reviewer or revocation contract are required.
 - G05 Row WriterのParquet columns/dtypesとMethod固有`ApprovedRowSchema`は別に確定が必要。G02〜G09の40件Method Config/Question/Design/Output/Inference Schemaを本Owner採用で一括生成済みと扱わない。
 
 Decision: [DEC-PREP03-OD01–05](../../combined_review/122_20261119_dec_prep03_od01_od05_owner_adoption.md)。Runtime/Security review, Gate Freeze and Coding Authorization remain pending.
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.

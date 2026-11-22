@@ -19,12 +19,12 @@ DomainはQuestion／Design／Graph／Estimandの意味と科学的適格性を�
 | Run manifest | `e11-local-manifest/1` | 旧 `manifest_version=2.0` に新Fieldを黙示追加しない |
 | Run status | `e11-local-status/1` | Technical statusとScientific statusを一軸へ併合しない |
 
-CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json] [--allow-row-level-export]`。
+CLI引数契約：`ariadne-causal-local --config STUDY.yaml --output-root ROOT [--check-only] [--json]`。
 - `--config`：必須。ファイル読取、版識別、schema validationをしてからpath解決を行う。
 - `--output-root`：必須。成功時のimmutabilityと公開境界。作業ディレクトリの暗黙採用は禁止。
 - `--check-only`：実行・出力publish無しでconfig／path／hash／静的capability／eligibilityを検査。外部Backendが必要な深い科学実行のPASSを主張しない。
 - `--json`：stdoutへ機械可読の制御Envelopeのみ。個票・秘匿データをstdoutへ流さない。
-- `--allow-row-level-export`：実行者の明示的opt-in。Studyの`privacy.row_export_requested=true`、実効UID所有のprivate TrustedRoot、Method別の行・列・byte上限とAND判定。独立承認者や署名鍵は不要。
+- 個票出力はStudyの`privacy.row_export_requested=true`で明示opt-in。外部CLI再確認Flagは設けない。実効UID所有private TrustedRootとMethod別schema/row/byte制限のAND判定は維持。
 - 5つの`e11-local-*/1`識別子は固定。Marker`e11-commit/1`は別の内部versionである。無版入力を既定Versionとして推測しない。
 
 ## 3. Config request（Schema contract）
@@ -46,7 +46,7 @@ estimand: {family: ATE, population: specified-target-population, contrast: treat
 method: {id: P1-M08, backend: native, config: {}}
 inference: {requested: false, confidence_level: null}
 randomness: {seed: 1234}
-privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: null}
+privacy: {classification: AGGREGATE, row_export_requested: false}
 ~~~
 
 - `operation` は`DISCOVER / IDENTIFY / ESTIMATE / REFUTE / SENSITIVITY / DIAGNOSE`の**操作型**でありMethod IDの別名ではない。41 Methodは認可済みMethod registryにおける固定IDにより選択し、対応するOperation／Estimand／Backendを別途検証する。
@@ -66,7 +66,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 | `IdentificationPort.identify(request)` | `IdentificationOutcome` | validated proof・Graph/upstream hash |
 | `EstimatorPort.estimate(request, *, sink)` | `EffectOutcome` | validated eligibility、stagingだけに出力 |
 | `DiagnosticPort.run(request, *, sink)` | `DiagnosticOutcome` | Validated upstream/Method |
-| `LocalPrivacyPolicyPort.authorize(*, study, cli_row_flag, root, principal, output_shape)` | `PrivacyDecision` | Study＋CLIの明示要求・実行UID所有のprivate Root・Method別column/row/byte上限 |
+| `LocalPrivacyPolicyPort.authorize(*, study, root, principal, output_shape)` | `PrivacyDecision` | Study内の明示要求・実行UID所有のprivate Root・Method別column/row/byte上限 |
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
 
@@ -74,7 +74,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false, policy_ref: nu
 
 ### 4.1. Port間の正規署名と相互整合
 
-上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はnonroot EUID/owner/mode・local ext4/XFS・same-FS/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal, cli_row_flag:bool)`はCLI composition rootが検証済みOS Capabilityから生成し、StudyにCLI Flag・任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
+上表の`Validated*Request`は自己申告型名でなく、factory検証とAdapter直前の再検証を要する。`TrustedLocalRoot`はnonroot EUID/owner/mode・local ext4/XFS・same-FS/dirfdを検証したCapability。UseCaseは`preflight(spec: ValidatedStudy, context: LocalRunContext)`／`run(spec,context)`を受ける。`LocalRunContext(root:TrustedLocalRoot, principal:LocalPrincipal)`はCLI composition rootが検証済みOS Capabilityから生成し、Studyに任意Pathを混入させない。現行CLIでは入力と出力を同一TrustedRoot配下の別相対keyに置く。公開Facade `LocalPublicationPort.begin(*,run_id,request_hash,root)`、`seal(*,sink,manifest,privacy)`、`publish(*,bundle,root)`をConcrete run-scoped Publisherに委譲する。Reader Facadeの`verify(*,root,run_id)`はConcrete `read_run(root,run_id)`へ委譲する。非公開Portへ外部Backend object/任意最終Pathを渡さない。
 
 ### 4.2. Class配置・署名のAuthoritative Owner
 
@@ -86,7 +86,7 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 
 | 公開Contract | 再利用する既存Owner | 分離すべき責務 |
 |---|---|---|
-| CLI Decoder → `ValidatedStudy` | `ariadne.causal.design.schemas.CausalDesign`、既存`AnalysisSpecification` Validator | YAML/JSON構文・CLI FlagはCLI、Method/Estimand科学的不変条件はCausal側の共通Policy |
+| CLI Decoder → `ValidatedStudy` | `ariadne.causal.design.schemas.CausalDesign`、既存`AnalysisSpecification` Validator | YAML/JSON構文はCLI、Method/Estimand科学的不変条件はCausal側の共通Policy |
 | Scientific typed Ports | 旧`product.ports.scientific_core.ScientificCorePort`と`scientific.core_adapter.ScientificCoreAdapter` | 旧v2の5 Operation署名は維持し、共通Scientific KernelへBridge。別の推定器を二重化しない |
 | Method Capability | 既存`ScientificValidationService`とMethod Registry | Method×Estimand/Inferenceと実効Backend probeは分け、唯一のMethod適格性規則を使う |
 | Graph Evidence | 既存`GraphVersionService`とGraph意味Validator | ProductのGraphVersion/EDIT/FIXはProduct側。CLI Graph作成時に架空のVersionを発行しない |
@@ -96,7 +96,7 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 
 - `LocalCausalUseCase.run(spec,context)`は`MethodCapabilityPort.resolve(ValidatedCapabilityRequest)`でOperation/Estimand/Backend/Inference/Method configを確認し、選択済`BackendCapabilityRecord`を`ValidatedDiscoveryRequest`等に結合する。具体Scientific Portは同一Method Registryの`load_adapter(capability)`を利用し、別Methodへのfallbackを禁止する。
 - `DISCOVER`は`DiscoveryPort.discover(request:ValidatedDiscoveryRequest, *, sink:StagingArtifactSink)->DiscoveryGraphOutcome`へdispatchする。IDENTIFYはIdentificationPort、ESTIMATEはEstimatorPort、REFUTE/SENSITIVITY/DIAGNOSEはDiagnosticPortへdispatchする。Resultの型とOperation別Publication義務は23_42 §2.1に従う。
-- G05ではStudyの個票出力要求とCLI flag、実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別出力制限を`LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)`で確認する。第三者承認や鍵管理は必要としない。G01では個票出力を拒否する。
+- G05ではStudyの個票出力要求、実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別出力制限を`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`で確認する。第三者承認や鍵管理は必要としない。G01では個票出力を拒否する。
 - `LocalPublicationPort`と`LocalManifestReaderPort`はApplication Portであり、Concrete CLI Publisher/Readerへ委譲する。独立Readerが`VerifiedLocalRun`を返す前にCOMPLETEDへ昇格しない。
 
 
@@ -104,7 +104,7 @@ GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所�
 
 **P1-M05:** strict Method Requestは`operation=IDENTIFY, estimand.family=LATE_COMPLIER, design_profile=B0_BINARY_IV`を必須とし、二値Z/A単一IV・追加C無し・宣言済みrelevance/independence/exclusion/monotonicity/consistencyのconditional Proofと上流Hashを検査。DoWhy backendの出力labelからTargetを推定せず、有効なIV式とAPIの対応がないときtyped failureとする。IDENTIFYにEffect Result禁止、G08数値推定へ暗黙接続しない。
 
-**G05 local row eligibility（Owner改訂）:** `LocalPrivacyPolicyPort.authorize(*,study,cli_row_flag,root,principal,output_shape)` がStudy request∧CLI flag∧非root実行UID所有のprivate ext4/XFS TrustedRoot∧Method別ApprovedRowSchema/行列/byte制限を判断。`LocalPolicyVerifierPort`、`TrustedPolicyAnchor`、Ed25519/署名Key/失効は本local intermediate row exportのactive実装対象外。既存`e11-local-study/1`の任意`privacy.policy_ref`は現行modeではnullのみ。初期拒否はexit3でrow iterator呼出0回、row bytes0。
+**G05 local row eligibility（Owner改訂）:** `LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)` がStudy request∧非root実行UID所有のprivate ext4/XFS TrustedRoot∧Method別ApprovedRowSchema/行列/byte制限を判断。`LocalPolicyVerifierPort`、`TrustedPolicyAnchor`、Ed25519/署名Key/失効は本local intermediate row exportのactive実装対象外。未公開`e11-local-study/1`の`privacy.policy_ref`は削除。初期拒否はexit3でrow iterator呼出0回、row bytes0。
 
 **Row writer（OD-03署名保持）:** `RowEffectsParquetWriter.write(*,source:DeferredRowEffectsSource,study:ValidatedStudy,decision:PrivacyDecision,selection:ColumnSelection,sink:StagingArtifactSink)->ArtifactDescriptor`と`RowEffectsWriterFactory.create(*,serializer:ValidatedParquetSerializer,max_memory_bytes:int)->RowEffectsParquetWriter`を維持。G05でlocal eligibilityの成立後のみ行を遅延反復し、strict row schema/allowlist/limitsを検査してG01 sinkへstage。Writerは独立Publisher・Signer・Readerを持たず、同一run/Study/Source/RootとDecisionを検証。
 
@@ -177,7 +177,7 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 | IF-E11-03 | 41 Methodのmethod/estimand/operation/backend/inference Registry整合 | unsupported combo／silent fallback禁止 |
 | IF-E11-04 | 未確定Graph endpoint/lag/parent GraphVersionのround-trip | PAG→DAG、circle消失を拒否 |
 | IF-E11-05 | typed Effect/uncertainty/ScienceとAR集合のround-trip | infiniteをnull/finite CIへ丸めない |
-| IF-E11-06 | NCE/NCO/RV opt-in、individual exportの拒否／許可境界 | CLI flag単独での行レベル情報流出禁止 |
+| IF-E11-06 | NCE/NCO/RV opt-in、individual exportの拒否／許可境界 | Study未許可時での行レベル情報流出禁止 |
 | IF-E11-07 | 4必須Profile、lock/capability、no optional import at core startup | unavailable隔離、選択Backend/Methodと旧v2。ENV-COMBINEDは必須でない |
 | IF-E11-08 | technical exitとscientific negative、stderr/stdout非漏洩 | Science FAILをCLI error扱い・Science PASS偽装禁止 |
 | IF-E11-09 | manifest/version/effective API/hash/readback | corrupted artifactやpartial publishを成功扱いしない |
@@ -187,9 +187,13 @@ Method-specific confidence intervalの欠落は `null + reason`。推論Registry
 
 ### Publication・Privacy・Errorの恒久契約
 
-PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、CLI flag、same-UID private TrustedRoot、Method別column/row/byte制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。
+PublisherはLinux同一FS`renameat2(RENAME_NOREPLACE)`を必要とし、通常renameやcheck-then-rename代替は禁止。rename後fsync/readbackが不確定なら`PUBLICATION_INDETERMINATE`、既存run削除・上書き禁止。個票許可は明示Study request、same-UID private TrustedRoot、Method別column/row/byte制限のANDで、拒否時exit3、暗黙aggregate fallback禁止。Errorはreason codeとphaseを区別し、入力Schema破損=exit2、保存済みBundle readback破損=exit5。Exit0は科学的PASSではない。
 
 
 ## 5. Internal strict Method Profile overlays
 
 The public e11-local-study/1 Study.method.id dispatches to a registered strict Config/Question/Design/Output/Inference validator. Per-Method validators apply to existing unversioned Question/Design ContentRef bytes with independent hash check and cross-asset semantic equality; they do not introduce a new public wire version. Method-positive Output is still normalized to canonical Effect/Graph/diagnostic Artifact and G01 Publisher/Reader. Syntactic Study.inference.requested=true does not authorize unavailable finite or AR intervals or confirmatory PASS. Unknown, mismatched, unsupported or unavailable Method/Backend/CI reject with canonical typed reasons; no fallback.
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.

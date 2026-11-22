@@ -8,7 +8,7 @@
 
 #### 1.1.1. 識別情報・責務
 
-**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
+**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。現行Local Graph Wireの`version_id`/`parent_version_id`は常に`null`（Product GraphVersion import未対応）とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
 
 #### 1.1.2. フィールド
 
@@ -459,3 +459,7 @@ Product `GraphVersionService`はGraph Versionの唯一のWriter。`GraphEvidence
 **Backend independence：** `StagingArtifactSink`のProtocolは`scientific.ports.artifacts`へ置き、Local PublisherはそのConcreteを提供する。Domain ValueはOS/FS/CLI/HTTPやBackend objectをimportしない。
 
 **Version／wire compatibility：** Method Signatureの補助型は設計上の確定配置だが、旧Product `ScientificCorePort`・`GraphVersionService`のSource/ABIをこの設計記述で変更したことにはならない。Methodの具象Type factory、科学計算、wire round-tripの実証は別の実装・検証工程で行う。
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.

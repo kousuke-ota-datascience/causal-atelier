@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:draft:study:1",
   "title": "E11 study v1 schema — PREP-02 review draft only",
-  "description": "Strict local Study wire shape (e11-local-study/1). G05 row export in current unsigned local mode requires double Study/CLI opt-in and safe private ext4/XFS root; any supplied optional privacy.policy_ref must be null under the current semantic validator. Scientific Method-specific and output/privacy eligibility require separate validation. No signing key or independent approver.",
+  "description": "Unshipped strict local Study/1 draft updated under DEC-S02: explicit Study-only row opt-in, no reserved signed policy_ref. Method-specific scientific strict validation and runtime evidence still pending.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -204,19 +204,9 @@
         },
         "row_export_requested": {
           "type": "boolean"
-        },
-        "policy_ref": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/contentRef"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Optional historical/reserved reference. In the current G05 unsigned local intermediate row-output mode, this field is null when present; a nonnull value is not a valid row authorization. Public schema_version and field shape unchanged."
         }
-      }
+      },
+      "description": "Current S02 adopted local row mode: single explicit Study row_export_requested, default deny, no CLI duplicate confirmation, no policy_ref or signed approval. Privilege/root/Method/row bounds require independent runtime validation."
     }
   },
   "$defs": {

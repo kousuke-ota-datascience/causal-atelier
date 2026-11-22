@@ -228,7 +228,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 
 ## 8. Local privacy／distribution
 
-- 個票を含む `row_effects.parquet` は `RESTRICTED_ROW_LEVEL`。通常出力では作らない。明示Study requestとCLI flagのdouble opt-in、非root実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別の列/行/byte/memory上限を全件検証する。独立承認や署名鍵を要求しない。
+- 個票を含む `row_effects.parquet` は `RESTRICTED_ROW_LEVEL`。通常出力では作らない。明示Studyの単一明示opt-in、非root実行UIDが所有するprivate ext4/XFS TrustedRoot、Method別の列/行/byte/memory上限を全件検証する。独立承認や署名鍵を要求しない。
 - Local OS PrincipalはProduct ProjectMembershipを代替する認証ではない。初期対象は非root EUID所有のprivate local ext4/XFS root/0700、row file/0600で、safe dirfd・Path・same-FSを検証する。独立ACL/xattr/namespace/mount visibility証明やCI/container環境種別判定を要件化しない。同一UIDとOS管理者からの隔離は保証しない。stdout/stderr/log/exception traceに個票やsecretを出さない。
 - Customer delivery可否は科学的結果・内部実行の状態とは別。GPL系Backendを含む受領者別Bundleの法務レビュー未完は `CUSTOMER_DELIVERY_BLOCKED` として扱う。
 
@@ -252,7 +252,7 @@ Manifestに全source pathを生の絶対パスで記録せず、再現に必要�
 
 AR集合は`EMPTY/ALL_REAL/DISCONNECTED/UNBOUNDED/BOUNDED`の5分類。`EMPTY`は数学的に正常に反転した0成分で`AVAILABLE + inversion_evidence`と共存しうる一方、計算失敗は`FAILED + reason`。端点で双方openの接触区間はgapを保存する。非退化なB0/B1 HC1 ARの非空条件はMethod固有Validatorで判定し、CodecやSchemaの検証を統計的Coverageの証明としない。
 
-行出力はStudyとCLI両方の明示opt-inを実行UIDのprivate root・Method別schemaとAND検証し、不成立なら個票を生成せずexit3。出版前の検証だけでなく、ReaderもMarker/Manifest/Filesの実bytes・size/type、private Artifactの権限とLineageを再検証する。
+行出力はStudyの単一明示opt-inを実行UIDのprivate root・Method別schemaとAND検証し、不成立なら個票を生成せずexit3。出版前の検証だけでなく、ReaderもMarker/Manifest/Filesの実bytes・size/type、private Artifactの権限とLineageを再検証する。
 
 ### 9.1. Class・Portとの単一Authority／互換性
 
@@ -265,18 +265,22 @@ Schemaの`e11-local-*/1`、`e11-commit/1`、`e11-json-jcs-rfc8785/1`は既存Wir
 ### 10.1. Opt-in and compatibility
 
 - 対象は一般権限Linuxユーザーがlocal ext4/XFS上で生成する個票中間成果物。実行者自身による明示的な出力指示であり、独立Approver・Ed25519署名・署名鍵Store・失効を求めない。従前の独立承認方式はOwnerの2026-11-21限定改訂により撤回。
-- Studyは既存`e11-local-study/1`を保持。`privacy.row_export_requested=true`かつCLI `--allow-row-level-export`を必須とし、任意の`privacy.policy_ref`は現行unsigned modeではnullのみ受理（non-nullを承認として認めない）。
+- Studyは既存`e11-local-study/1`を保持。`privacy.row_export_requested=true`を唯一の明示出力選択とし、未公開`privacy.policy_ref`はStudy Schemaから削除、未知Fieldとして拒否する。
 - `RESTRICTED_ROW_LEVEL`、対象Methodの`ApprovedRowSchema`、許可列順・row ID・dtype・max_rows・max_output_bytes・max_memory_bytesを照合。Method固有数値や列名を推測しない。
 - 実行EUIDが所有するprivate TrustedRoot・同一local filesystem、root/staging 0700、row artifact 0600、実行UID/owner/mode/FS/symlink/dirfd安全性を実行時に確認。rootまたは同一UID processからの分離は保証しない。
 - 初期拒否はexit3、Source iteration0、row bytes0、aggregateへ暗黙fallbackしない。認可後のprivate staging失敗は公開せず、過去の生成bytesが0だったと偽らない。
 
 ### 10.2. Authorized bounded Parquet and G01 publication
 
-1. `LocalPrivacyPolicy.authorize(*,study,cli_row_flag,root,principal,output_shape)`でStudy、CLI、UID/root、Method出力適格性をAND検証し、`filter_export_columns`で列順を確定する。
-2. Owner採用済み`RowEffectsParquetWriter.write(*,source,study,decision,selection,sink)`とFactory/Serializer/Deferred Source署名は維持。Source.schema()とMethod別RowSchemaを検査した後、両opt-inかつOS適格性を確認した時のみ`read_rows()`を反復し`max_rows+1`で超過を拒否。重複行ID/unknown columns/不正dtype/NaN/Inf/上限超過はfail closed。
+1. `LocalPrivacyPolicy.authorize(*,study,root,principal,output_shape)`でStudy、UID/root、Method出力適格性をAND検証し、`filter_export_columns`で列順を確定する。
+2. Owner採用済み`RowEffectsParquetWriter.write(*,source,study,decision,selection,sink)`とFactory/Serializer/Deferred Source署名は維持。Source.schema()とMethod別RowSchemaを検査した後、Study opt-inかつOS適格性を確認した時のみ`read_rows()`を反復し`max_rows+1`で超過を拒否。重複行ID/unknown columns/不正dtype/NaN/Inf/上限超過はfail closed。
 3. `row_effects.parquet`、media type `application/vnd.apache.parquet`、classification `RESTRICTED_ROW_LEVEL`を既存G01 `StagingArtifactSink.stage_bytes`へ渡す。Writerが直接final runs/、Manifest、markerを発行することは禁止。G01 Publisherが唯一のatomic no-clobber authority、Readerが独立readbackを行う。
 4. Stage/Seal/Publish前にroot/UID/FS identity/同一Sinkとinput hashを再検証。異常時にcommit markerなし。行値をResult/Manifest/status/CLI stdout・stderr・logに転記しない。
 
 ### 10.3. Independent acceptance
 
-`IO-E11-06`：double opt-in正例とflag単独/Study単独/両false負例、wrong UID/root、owner/mode/symlink/dirfd/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。
+`IO-E11-06`：single Study opt-in正例とflag単独/Study単独/両false負例、wrong UID/root、owner/mode/symlink/dirfd/cross-filesystem、pre-authorization Source iteration0、row/byte/memory/column/schemaエラー、実ext4/XFSでのParquet読戻し、G01 fault injection/Marker/Readback/旧v2 regressionを必須とする。署名・鍵rotation/失効試験は対象外。実行証拠・Method別RowSchema/Parquet ABIは未確認であり、07/Gate999/Freeze/Coding AuthorizationをPASS扱いしない。
+
+## S02 Owner-adopted current Local CLI contract (2026-11-22)
+
+The 2026-11-22 Owner decision (combined_review/137) **supersedes only contradictory E11 draft implementation mechanisms** in preceding sections: a single versioned Study `privacy.row_export_requested=true` is the explicit row-export opt-in, with no additional CLI flag or `cli_row_flag` argument. The unpublished `e11-local-study/1` has **no `privacy.policy_ref` field**; the withdrawn signed-policy Schema is historical/non-dispatched. Permission is rechecked for each run and before row iteration using source/Method identity, verified private nonroot same-UID local ext4/XFS TrustedRoot and strict Method-specific output shape/limits. Unregistered or ineligible output is denied, not silently downgraded. No new Product GraphVersion import/mutation: standalone Local Graph refs must be null; Product GraphVersion remains Product-owned. Shared Schema/RowSchema/Port shapes and targeted regressions may replace duplicate implementation **only after strict per-Method Positive/Negative parity, dependency/ABI and old Product v2 compatibility are established**. G10 checks independently accepted evidence for **all 41 Methods** and reruns changed/affected Method science; upstream evidence reuse needs a proven transitive behavior-affecting dependency closure, else rerun/BLOCK. G01 invariant-based real-FS failure tests remain obligatory for NFR-030 no-false-success; no untested power-loss certification. This is a normative design revision, not scientific/OS/backend PASS or Coding Authorization.
