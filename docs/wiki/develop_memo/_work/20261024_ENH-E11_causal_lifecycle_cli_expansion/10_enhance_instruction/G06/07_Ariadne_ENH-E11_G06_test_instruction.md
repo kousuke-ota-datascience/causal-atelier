@@ -95,3 +95,10 @@ Method-specific strict Schema・positive/negative・独立Reference/推論Method
 - Positive output: graph.json/e11-local-graph/1, no result.json; status/marker/manifest and Reader hash/readback required; negative science typed and no fictitious positive.
 - Inference: requested=false, confidence_level=null. CONFIRMATORY is not granted by schema syntax.
 - Independent AC: DGP-011; NEG-021, NEG-028; REF-G03, REF-G02. Negative matrix includes empty/unknown/malformed config, wrong operation/target, missing/mismatched upstream hash, unsupported CI, unavailable backend and Method-specific NEG. Real backend and independent DGP/REF/K/R/MC-SE/FWER 0.05 remain NOT_VERIFIED.
+
+
+## S02簡素化・G06 Temporal GraphとMethod Profileの規範
+
+担当Methodは`P3-M01` PCMCI、`P3-M02` PCMCI+、`P3-M03` LPCMCIの3件。5 Profile kind（method_config/question_profile/design_profile/output_profile/inference_profile）は`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`のshared core＋exact Method ID overlayから再構成し、Dispatch Registry/200 Schema標準Draft202012/正負例/parityの確認が不足すれば`METHOD_PROFILE_UNAVAILABLE`でfail-closed。科学的契約は各Methodで異なり、time-lag端点の向き/ラグ0、PAG/CPDAG同値類、潜在交絡・CIテストの意味を厳格保存し、グラフ方向を自動確定しない。ENV-TIGRAMITEの実効Python3.12 APIと独立時系列Graph Oracleの実測は後続検証事項。
+
+新Local Graphは内容hashとsource/parent科学由来を保持するがProduct GraphVersion DBはlookup/edit/write/FIXしない。`version_id=parent_version_id=null`のみ提供し、non-null importは未対応として拒否。共通`LocalRunContext(root,principal)`、`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を利用し、署名Verifier/Policy Anchorと追加CLI flagを作らない。G06は個票を直接公開せず、旧Product v2のABIと共通Kernelを保護する。独立Testは時系列順序・PAG/CPDAG同値類・Graph hash/Manifest/readback・wrong Method/unsupported CIの負例を確認する。未実測をScience PASSとしない。
