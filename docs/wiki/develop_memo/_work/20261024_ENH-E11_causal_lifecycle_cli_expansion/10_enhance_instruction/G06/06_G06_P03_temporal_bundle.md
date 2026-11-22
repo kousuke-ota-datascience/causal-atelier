@@ -149,7 +149,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 
 #### 識別情報・責務
 
-**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。Wireの`version_id`はProduct GraphVersionの実在IDだけを指し、CLI単独Graphでは`null`とする。`source_graph_version_id`／`source_graph_parent_version_id`をWireの`version_id`／`parent_version_id`へ写像し、Product由来でないときは両者nullを要求する。
+**Class / module:** `ariadne.causal.discovery.graph_evidence.GraphEvidence`。PAG/CPDAG/DAG/temporal等の科学的Graph Evidenceを保持するimmutable Value。Product `GraphVersion`のVersion作成・編集・FIX権限を持たない。現行E11 Local GraphのWireでは`version_id`／`parent_version_id`はともにconst nullとする。Product GraphVersion IDを現行Local wireへ写像してはならない。Localの科学的親はprovenanceと入力ContentRef/hashで検証し、Product実在IDは旧Product互換Bridgeでのみ扱う。
 
 #### フィールド
 
@@ -159,7 +159,7 @@ preflightはversion／secure Input Ref／static capability／privacy／pathと�
 | `nodes` | `tuple[Node,...]` | unique identity |
 | `edges` | `tuple[EndpointEdge,...]` | endpoint/lag/identityをlossless |
 | `temporal` | `TemporalConvention|None` | lagの符号・基準時刻 |
-| `source_graph_version_id` | `str|None` | 実在するProduct GraphVersionを参照。自身はVersionを発行しない |
+| `source_graph_version_id` | `str|None` | 現行Localでは常にNone。既存Product互換Bridgeで実在Product IDを別検査 |
 | `source_graph_parent_version_id` | `str|None` | 現行Localではnull固定。既存Product互換Bridgeのみ実在Product親を別検査し、Local wireには設定しない |
 | `provenance, content_hash` | `GraphProvenance, str` | Graph意味射影に一致するdigest |
 
