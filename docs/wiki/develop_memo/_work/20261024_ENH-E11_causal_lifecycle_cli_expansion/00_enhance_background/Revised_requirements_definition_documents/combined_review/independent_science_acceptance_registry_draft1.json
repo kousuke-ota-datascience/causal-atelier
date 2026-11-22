@@ -1,9 +1,9 @@
 {
-  "catalog_version": "e11-independent-science-acceptance/draft1",
+  "catalog_version": "e11-independent-science-acceptance/draft2",
   "source": "10_32_scientific_method_scope.md",
   "source_blob_sha": "a401d42adfd4e45149fac8503a1e49291af9930f",
   "record_count": 41,
-  "status": "REFERENCE_IDS_AND_ACCEPTANCE_IDS_TRACED; INDEPENDENT_REFERENCE_AND_QUANTITATIVE_AC_NOT_FINALIZED; NO_TEST_RUN",
+  "status": "41_EXPLICIT_ORACLE_ALGORITHM_CANDIDATES / 41_NEGATIVE_SCENARIO_DESCRIPTORS / INDEPENDENT_IMPL_AND_NUMERIC_AC_BLOCKED",
   "method_records": [
     {
       "method_id": "P1-M01",
@@ -54,7 +54,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Graphical d-separation with randomized A independent of parents of potential Y; verify no A backdoor path",
+        "positive_dgp_specification": "Declared randomization and no post-treatment adjustments; graph oracle yields identification, not numerical estimate",
+        "negative_scenarios": [
+          "INVALID_RANDOMIZATION",
+          "FALSE_PRETREATMENT_CLASSIFICATION"
+        ],
+        "metric_family": "IDENTIFICATION_TRUTH",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M02",
@@ -107,7 +137,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent DAG backdoor-path enumeration and d-separation under proposed adjustment set",
+        "positive_dgp_specification": "Known observed-confounder DAG; identified ATE adjustment set, plus unblocked backdoor counterexample",
+        "negative_scenarios": [
+          "UNBLOCKED_BACKDOOR",
+          "POST_TREATMENT_ADJUSTMENT"
+        ],
+        "metric_family": "GRAPH_IDENTIFICATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M03",
@@ -159,7 +219,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent native d-separation oracle (not DoWhy identify_effect output)",
+        "positive_dgp_specification": "Same graph and adjustment-set truth as P1-M02, with DoWhy result compared only after target mapping",
+        "negative_scenarios": [
+          "BACKEND_ATELABEL_MISMATCH",
+          "WRONG_ADJUSTMENT"
+        ],
+        "metric_family": "GRAPH_IDENTIFICATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M04",
@@ -209,7 +299,36 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Frontdoor graphical criteria; discrete frontdoor functional or linear SCM product alpha*beta with unobserved A-Y confounding",
+        "positive_dgp_specification": "A->M->Y mediated treatment path, no unblocked A-M backdoor, all M-Y backdoors blocked by A",
+        "negative_scenarios": [
+          "FRONTDOOR_CRITERIA_VIOLATED"
+        ],
+        "metric_family": "GRAPH_IDENTIFICATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M05",
@@ -260,7 +379,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent principal-strata binary IV potential-outcome model: E[Y|Z=1]-E[Y|Z=0] divided by E[A|Z=1]-E[A|Z=0] conditional on assumptions",
+        "positive_dgp_specification": "Binary Z,A; nonzero first stage; monotone A(1)>=A(0), independent assignment, exclusion; report LATE_COMPLIER as conditional only",
+        "negative_scenarios": [
+          "IV_INVALID_EXCLUSION_OR_MONOTONICITY",
+          "WEAK_IV",
+          "WRONG_TARGET"
+        ],
+        "metric_family": "IV_CONDITIONAL_IDENTIFICATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M06",
@@ -315,7 +465,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Latent-variable DAG -> observed MAG/PAG equivalence-class oracle using independent m-separation; not FCI backend output",
+        "positive_dgp_specification": "Graph truth contains orientation ambiguities and latent confounders; verify valid PAG endpoints / equivalence",
+        "negative_scenarios": [
+          "FALSE_ORIENTATION",
+          "CI_TEST_MISMATCH"
+        ],
+        "metric_family": "GRAPH_EQUIVALENCE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M07",
@@ -368,7 +548,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent linear single mediator SEM Y=beta*M+gamma*U+eY, M=alpha*A+eM; frontdoor total ATE alpha*beta only under approved zero-direct-path and identification assumptions",
+        "positive_dgp_specification": "Single mediator, strictly linear functional and eligible backdoor paths; direct A->Y path absent",
+        "negative_scenarios": [
+          "MULTIPLE_MEDIATORS",
+          "DIRECT_EFFECT",
+          "INELIGIBLE_ADJUSTMENT"
+        ],
+        "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M08",
@@ -422,7 +633,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Population difference in potential-outcome means E[Y(1)-Y(0)] under randomized assignment",
+        "positive_dgp_specification": "Independent Bernoulli A and known analytic Y(1),Y(0) generating formula",
+        "negative_scenarios": [
+          "UNBALANCED_ASSIGNMENT",
+          "EMPTY_TREATMENT_ARM"
+        ],
+        "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M09",
@@ -479,7 +720,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent exact-population linear regression projection or analytic linear SEM with correct ATE/ATT target mapping",
+        "positive_dgp_specification": "Known conditional linear effect; separate ATE/ATT only where equal or explicitly identified",
+        "negative_scenarios": [
+          "POSTTREATMENT_ADJUSTMENT",
+          "WRONG_TARGET",
+          "RANK_DEFICIENT"
+        ],
+        "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M10",
@@ -535,7 +807,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Population normalized IPW score: ATE E[AY/e(W)-(1-A)Y/(1-e(W))]; ATT E[AY]/P(A=1)-E[(1-A)e(W)Y/(1-e(W))]/P(A=1)",
+        "positive_dgp_specification": "Known e(W) with overlap bounded away from 0/1 and known potential outcomes; separate ATE/ATT",
+        "negative_scenarios": [
+          "POSITIVITY_FAILURE",
+          "PROPENSITY_MISSPECIFIED"
+        ],
+        "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M11",
@@ -591,7 +893,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent augmented-IPW influence-function expectation using analytic propensity and outcome regressions",
+        "positive_dgp_specification": "Known propensity and conditional outcome functions; double-robust cases and both nuisance-wrong negative",
+        "negative_scenarios": [
+          "PROPENSITY_AND_OUTCOME_BOTH_MISSPECIFIED",
+          "CROSS_FIT_LEAKAGE"
+        ],
+        "metric_family": "ESTIMATION_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M12",
@@ -640,7 +972,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Permutation/placebo assignment with known null treatment effect and preregistered null statistic",
+        "positive_dgp_specification": "Placebo independent of Y given design, preserved randomization structure",
+        "negative_scenarios": [
+          "PLACEBO_OUTCOME_LEAKAGE",
+          "WRONG_NULL"
+        ],
+        "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M13",
@@ -690,7 +1052,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent stratified subset draw and reference estimator stability expectation",
+        "positive_dgp_specification": "Stable iid DGP with known target; deliberate subgroup treatment effect shift as negative",
+        "negative_scenarios": [
+          "NONREPRESENTATIVE_SUBSET",
+          "WRONG_EFFECT_REF"
+        ],
+        "metric_family": "STABILITY_DEVIATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M14",
@@ -739,7 +1131,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent injected irrelevant common-cause variable and paired-estimator comparison",
+        "positive_dgp_specification": "Noise variable independent of treatment/outcome given confounders; parameterized perturbation strength",
+        "negative_scenarios": [
+          "PERTURBATION_TARGET_CHANGE",
+          "WRONG_SOURCE_HASH"
+        ],
+        "metric_family": "STABILITY_DEVIATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M15",
@@ -789,7 +1211,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent seeded bootstrap resampling distribution and interval conventions",
+        "positive_dgp_specification": "IID row-index resampling; known small-sample analytic benchmark where possible",
+        "negative_scenarios": [
+          "WRONG_RESAMPLING_UNIT",
+          "BOOTSTRAP_LEAKAGE"
+        ],
+        "metric_family": "STABILITY_DEVIATION",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M16",
@@ -840,7 +1292,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent DAG backdoor identification for each predeclared adjustment set and corresponding target contrast",
+        "positive_dgp_specification": "Two valid backdoor sets with equal analytic causal target versus known invalid collider adjustment",
+        "negative_scenarios": [
+          "COLLIDER_ADJUSTMENT",
+          "OMITTED_CONFOUNDER"
+        ],
+        "metric_family": "GRAPH_IDENTIFICATION_AND_SENSITIVITY",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M17",
@@ -891,7 +1373,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic IPW score under fixed prespecified clipping and known propensity distribution",
+        "positive_dgp_specification": "Known DGP with near-boundary propensity; compare clipping-induced bias and effective overlap",
+        "negative_scenarios": [
+          "CLIP_BOUNDARY_OUTSIDE_SUPPORT",
+          "SILENT_TARGET_SHIFT"
+        ],
+        "metric_family": "SENSITIVITY_CURVE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M18",
@@ -944,7 +1456,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Under NCE exclusion restriction, independent conditional-moment null E[(Z-E[Z|A,W])*(Y-E[Y|A,W])]=0 when DGP null is true",
+        "positive_dgp_specification": "NCE surrogate known not to affect Y; null and unobserved-confounding alternative fully specified",
+        "negative_scenarios": [
+          "NEGATIVE_CONTROL_EXCLUSION_VIOLATED",
+          "NULL_WRONG_INTERPRETATION"
+        ],
+        "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M19",
@@ -997,7 +1539,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Under NCO exclusion restriction, independent conditional-moment null E[(Y_N-E[Y_N|A,W])*(A-E[A|W])]=0 where valid",
+        "positive_dgp_specification": "NCO potential outcome unaffected by A; alternative confounding DGP separate",
+        "negative_scenarios": [
+          "NEGATIVE_CONTROL_OUTCOME_AFFECTED",
+          "NULL_WRONG_INTERPRETATION"
+        ],
+        "metric_family": "DIAGNOSTIC_TYPE1_AND_POWER",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P1-M20",
@@ -1047,7 +1619,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent partial R-squared from nested OLS residual sums of squares; RV(q=1) checked against algebraic sensitivity curve",
+        "positive_dgp_specification": "Predeclared linear OLS model, treatment t-statistic, df, exact partial R2; exact RV formula requires independent literature/owner contract match",
+        "negative_scenarios": [
+          "NONLINEAR_MODEL",
+          "INVALID_DF",
+          "WRONG_RV_CONVENTION"
+        ],
+        "metric_family": "NUMERIC_FORMULA_AND_SENSITIVITY",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M01",
@@ -1102,7 +1705,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic non-IV CATE(x)=tau0+tau1*x from known heterogeneous potential-outcome SEM; independent grid oracle",
+        "positive_dgp_specification": "Predeclared aggregate evaluation grid; X effect modifier; W confounder; no observed-row disclosure",
+        "negative_scenarios": [
+          "X_W_MIXUP",
+          "CI_UNSUPPORTED",
+          "GRID_LEAK"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M02",
@@ -1157,7 +1791,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Known nonlinear CATE(x) smooth piecewise function and analytic independent grid oracle",
+        "positive_dgp_specification": "Heterogeneous nonlinear effect plus positivity/support; prespecified evaluation grid",
+        "negative_scenarios": [
+          "LEAF_SUPPORT_FAILURE",
+          "CI_UNSUPPORTED",
+          "GRID_LEAK"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M03",
@@ -1214,7 +1879,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic conditional treatment contrast mu1(x,w)-mu0(x,w) integrated over approved W distribution",
+        "positive_dgp_specification": "Binary A, known propensity and conditional outcome DGP; individual grid independent of sample rows",
+        "negative_scenarios": [
+          "WRONG_TREATMENT_ENCODING",
+          "NUISANCE_MISSPECIFICATION"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M04",
@@ -1270,7 +1965,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic nonlinear heterogeneous effect and known propensity for forest DR",
+        "positive_dgp_specification": "Nonlinear CATE and overlap away from zero, known truth evaluation grid",
+        "negative_scenarios": [
+          "POOR_OVERLAP",
+          "CI_UNSUPPORTED",
+          "NUISANCE_MISSPECIFICATION"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M05",
@@ -1326,7 +2052,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic S-learner pseudo-truth E[Y|A=1,X=x]-E[Y|A=0,X=x] only under valid adjustment and model class",
+        "positive_dgp_specification": "Single joint outcome regression with correct adjustment; known CATE(x)",
+        "negative_scenarios": [
+          "MODEL_INTERACTION_OMISSION",
+          "CI_NOT_CALIBRATED"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M06",
@@ -1381,7 +2137,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic T-learner pair of conditional outcome surfaces mu1(x), mu0(x)",
+        "positive_dgp_specification": "Independent nuisance functions, balanced support, known CATE(x)",
+        "negative_scenarios": [
+          "ONE_ARM_SUPPORT_FAILURE",
+          "CI_NOT_CALIBRATED"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M07",
@@ -1437,7 +2223,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic X-learner known potential outcomes and propensity-weighted pseudo-effects",
+        "positive_dgp_specification": "Known heterogeneous conditional effect with both arms and valid propensity",
+        "negative_scenarios": [
+          "PSEUDOEFFECT_CROSSLEAK",
+          "NO_TREATMENT_SUPPORT"
+        ],
+        "metric_family": "CATE_SURFACE_BIAS",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P2-M08",
@@ -1492,7 +2308,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Structural IV heterogeneous coefficient theta_IV(x) in Y=theta_IV(X)*A+g(X,W)+U; independent structural equation oracle",
+        "positive_dgp_specification": "Z relevance/exclusion/conditional independence and heterogeneous slope; no non-IV CATE relabeling",
+        "negative_scenarios": [
+          "IV_EXCLUSION_VIOLATION",
+          "WEAK_IV",
+          "MISLABELED_CATE"
+        ],
+        "metric_family": "IV_CONDITIONAL_SLOPE_BIAS_AND_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M01",
@@ -1543,7 +2390,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Analytic lagged VAR structural graph truth with lag adjacency and allowed CI independences",
+        "positive_dgp_specification": "Stationary finite-lag VAR with known coefficients and innovations",
+        "negative_scenarios": [
+          "LAG_SIGN_INVERTED",
+          "CONTEMPORANEOUS_FALSE_EDGE"
+        ],
+        "metric_family": "GRAPH_EQUIVALENCE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M02",
@@ -1598,7 +2475,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Known contemporaneous+lagged causal structural VAR, graph-class oracle preserving CPDAG ambiguity",
+        "positive_dgp_specification": "Stationary time-series SCM with predeclared contemporaneous order and lag structure",
+        "negative_scenarios": [
+          "FALSE_ORIENTATION",
+          "CYCLIC_CONTEMPORANEOUS"
+        ],
+        "metric_family": "GRAPH_EQUIVALENCE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M03",
@@ -1652,7 +2559,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Latent-variable time series SCM to target time-lag PAG/m-separation oracle",
+        "positive_dgp_specification": "Stationary lagged SCM with known latent common cause; circle endpoint ambiguity retained",
+        "negative_scenarios": [
+          "LATENT_CONFOUNDER_IGNORED",
+          "FALSE_ORIENTATION"
+        ],
+        "metric_family": "GRAPH_EQUIVALENCE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M04",
@@ -1705,7 +2642,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "2x2 DiD ATT=(post_t-post_c)-(pre_t-pre_c) for parallel counterfactual trends; staggered separate cohort-time ATT oracle",
+        "positive_dgp_specification": "Known untreated group-time effects plus treatment effect only post-adoption; no anticipatory effects",
+        "negative_scenarios": [
+          "NONPARALLEL_TRENDS",
+          "NEGATIVE_WEIGHTS_TWFE"
+        ],
+        "metric_family": "PANEL_ATT_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M05",
@@ -1757,7 +2724,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Event-time ATT(g,t)=E[Y(1)-Y(0)|cohort=g,time=t], predeclared reference event period",
+        "positive_dgp_specification": "Known cohort/event-time treatment effects including null leads under no anticipation",
+        "negative_scenarios": [
+          "REFERENCE_PERIOD_MISSING",
+          "COHORT_MIXUP",
+          "FALSE_PRETREND"
+        ],
+        "metric_family": "EVENT_TIME_VECTOR_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M06",
@@ -1809,7 +2807,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Segmented ITS Y_t=beta0+beta1*t+delta*I(t>=t0)+gamma*(t-t0)_+ + errors, level shift delta",
+        "positive_dgp_specification": "Known intervention time and level/slope coefficient, predeclared AR noise and covariance",
+        "negative_scenarios": [
+          "SEASONALITY_UNMODELED",
+          "HAC_MISMATCH",
+          "WRONG_T0"
+        ],
+        "metric_family": "ITS_LEVEL_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M07",
@@ -1861,7 +2890,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Sharp RD continuity: lim(x down c)E[Y|X=x]-lim(x up c)E[Y|X=x]=tau(c)",
+        "positive_dgp_specification": "Known smooth potential outcome surfaces with discontinuity at cutoff",
+        "negative_scenarios": [
+          "DENSITY_MANIPULATION",
+          "BANDWIDTH_EXTRAPOLATION"
+        ],
+        "metric_family": "LOCAL_RD_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M08",
@@ -1915,7 +2974,37 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Fuzzy RD local Wald ratio of Y discontinuity divided by A discontinuity; local complier treatment effect under assumptions",
+        "positive_dgp_specification": "Known cutoff instrument and monotone compliance, nonzero discontinuity",
+        "negative_scenarios": [
+          "ZERO_FIRST_STAGE_JUMP",
+          "INVALID_MONOTONICITY"
+        ],
+        "metric_family": "LOCAL_RD_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M09",
@@ -1968,7 +3057,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Population Wald = [E(Y|Z1)-E(Y|Z0)]/[E(A|Z1)-E(A|Z0)] under binary IV assumptions",
+        "positive_dgp_specification": "Complier potential outcomes, independent binary instrument, nonzero first stage",
+        "negative_scenarios": [
+          "WEAK_IV",
+          "EXCLUSION_VIOLATED",
+          "WRONG_LATE"
+        ],
+        "metric_family": "IV_POINT_BIAS",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M10",
@@ -2028,7 +3148,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "B0 just-identified 2SLS point equals sample binary-IV Wald under same conventions; independent HC1 AR set computed by full-real inversion",
+        "positive_dgp_specification": "Binary A,Z with no controls, known complier LATE assumptions; degenerate/weak cases separate",
+        "negative_scenarios": [
+          "HC1_AR_TOPOLOGY",
+          "AR_ZERO_FIRST_STAGE",
+          "INVALID_IV"
+        ],
+        "metric_family": "IV_POINT_AND_AR_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M11",
@@ -2088,7 +3239,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "B1 IV slope from population residualized moments beta=E[(Z-E[Z|C])*(Y-E[Y|C])]/E[(Z-E[Z|C])*(A-E[A|C])]; full-real AR set",
+        "positive_dgp_specification": "Additive linear structural model with pre-treatment C and full-rank Q; structural slope not LATE",
+        "negative_scenarios": [
+          "COLLINEAR_Q",
+          "AR_SINGULAR_ROOT",
+          "INVALID_IV"
+        ],
+        "metric_family": "IV_STRUCTURAL_SLOPE_AND_AR_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M12",
@@ -2138,7 +3320,38 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "SCM known counterfactual untreated path Y0_t=sum_j w_j Y_donor_j,t, gap_t=Yobs_t-Y0_t by time",
+        "positive_dgp_specification": "Preperiod donor weight simplex, noncontaminated donor pool, post-treatment known treatment path; point-only",
+        "negative_scenarios": [
+          "CONTAMINATED_DONOR",
+          "UNIDENTIFIED_WEIGHTS",
+          "FALSE_CI"
+        ],
+        "metric_family": "SCM_GAP_TIME_VECTOR",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     },
     {
       "method_id": "P3-M13",
@@ -2190,7 +3403,40 @@
       },
       "inference_mechanism_verified": false,
       "prereg_status": "PENDING",
-      "test_observation": "NOT_RUN"
+      "test_observation": "NOT_RUN",
+      "independent_oracle_spec": {
+        "oracle_algorithm": "Independent SDID doubly weighted untreated time/unit contrasts and known ATT in panel potential outcomes",
+        "positive_dgp_specification": "Known panel unit/time weights, pre/post periods, appropriate parallel-trend-like assumptions",
+        "negative_scenarios": [
+          "DONOR_CONTAMINATION",
+          "WRONG_WEIGHT_NORMALIZATION",
+          "SE_UNSUPPORTED"
+        ],
+        "metric_family": "SDID_ATT_BIAS_COVERAGE",
+        "independence_boundary": "Compute truth from stipulated generating equations, graph oracle, analytic contrast or separately reviewed reference; NEVER reuse Ariadne/backend-under-test output as the oracle",
+        "oracle_algorithm_status": "DESIGN_PROPOSAL_NOT_IMPLEMENTED",
+        "reference_path": null,
+        "fixture_identity_sha256": null
+      },
+      "acceptance_plan": {
+        "technical_T1": "STRICT_OPERATION_CONFIG_SCHEMA_SOURCE_HASH_NEGATIVE_STATUS_AND_ARTIFACT_BYTES",
+        "pilot_T2": "ESTIMATE_VARIANCE_RUNTIME_AND_CALIBRATION_WITH_NONCONFIRMATORY_SEEDS",
+        "confirmatory_T3": "PREREGISTER_BEFORE_SEEDS / BLOCKED_UNTIL_PARAMETERS_SET",
+        "familywise_alpha": 0.05,
+        "multiplicity_unit": "METHOD_X_ESTIMAND_X_PREDECLARED_OUTCOME_FAMILY",
+        "repetitions_R": null,
+        "comparisons_K": null,
+        "mcse_max_epsilon": null,
+        "bias_tolerance": null,
+        "coverage_target": null,
+        "coverage_tolerance": null,
+        "seed_manifest_sha256": null,
+        "reference_impl_sha256": null,
+        "backend_lock_sha256": null,
+        "prereg_status": "MISSING_VALUES_BLOCK_CONFIRMATORY_PASS"
+      }
     }
-  ]
+  ],
+  "updated_at_utc": "2026-11-22T02:36:02Z",
+  "owner_adoption": "Proposals only; no unapproved target change, no arbitrary K/R/threshold"
 }
