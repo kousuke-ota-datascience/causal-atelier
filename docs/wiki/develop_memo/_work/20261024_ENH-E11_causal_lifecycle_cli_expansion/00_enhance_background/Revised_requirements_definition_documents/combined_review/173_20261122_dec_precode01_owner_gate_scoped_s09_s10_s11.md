@@ -1,5 +1,7 @@
 # DEC-PREPCODE-01 — Gate-scoped independent review, Contract Freeze and Coding Authorization
 
+**G01 exception effective 2026-11-23 — Owner DEC-G01-EXEC-01:** This document remains authoritative for **G02–G10** and all shared science/privacy/ABI standards. For **G01 only**, its requirements that independent S09 verdict, B02/B04 target Python3.12 and independent B05 MAG/PAG/BK acceptance precede S10/S11 are superseded by [177](177_20261123_dec_g01_exec01_owner_adopted_evidence_rephasing.md): `AUTHOR_CONTRACT_RECONCILED + EXCEPTION_LEDGER → separate Owner PROVISIONAL_S10_FREEZE → separate Owner LIMITED_S11_CODING_AUTHORIZATION → real independent S09/B02/B04/B05/07 before G01_999`. None of these actual S10/S11 decisions has been issued yet; G01_999 and all downstream dependent Gates remain blocked pending genuine independent evidence.
+
 **Date:** 2026-11-22 JST  
 **Authority:** Human Owner's explicit current message: `B案を採用する。引き続き進めよ`.  
 **Decision:** `B / OWNER_ADOPTED / CONTROL_PLANE_CHANGED`.  
