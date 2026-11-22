@@ -253,3 +253,10 @@ TestはLifecycle（enhancement/regression/characterization/benchmark/support/leg
 - Inference: requested=false; confidence_level=null; confirmatory requires independently supported method and coverage, else INFERENCE_UNAVAILABLE.
 - Independent positive/negative obligations: DGP-001, DGP-002; NEG-016; REF-R01; additionally config omitted/unknown/malformed, operation/target mismatch, upstream-hash mismatch, missing backend, unsupported inference, no silent fallback. SCIENCE DGP/NEG/REF are not generated.
 - BLOCKED: actual backend API/version/licence, nuisance/variance algorithm where unsettled, exact K/R/MC-SE/FWER=.05/threshold and oracle. NOT_FROZEN, REGISTRY_NOT_IMPLEMENTED.
+
+
+## S02：担当Method Profile・共通署名の規範（G03 / Owner承認）
+
+担当Methodは`P1-M08〜P1-M20`の13件。共通5 Profile Kind（method_config/question_profile/design_profile/output_profile/inference_profile）は`23_api_interface_design/schema_drafts/method_profiles/factored/e11_<kind>_factored_v1.json`のshared core＋Method ID overlayを再構成して使用する。`e11_method_profile_dispatch_registry_draft1.json`とsource Git blob SHAを照合し、200 Profileの標準Draft202012チェック・Method別正負例未確認なら`METHOD_PROFILE_UNAVAILABLE`でfail-closedする。Method別OperationはP1-M08〜11がESTIMATE、M12〜15がREFUTE、M16〜17がSENSITIVITY、M18〜20がDIAGNOSE。後3群は正規`diagnostics.json`であり、架空のEffect Resultを作らない。共通Schema化は各Method固有のATE/ATT/統計量/推論条件を緩和しない。閉objectの別`allOf`合成禁止。実Backend/CIと独立Science DGP/NEG/REF/ACは別途実証が必須。
+
+`LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`および`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`が正規署名。追加のCLI row flag・`cli_row_flag`・`privacy.policy_ref`・独立署名PolicyVerifier/Anchorを実装しない。G05のみStudy `row_export_requested=true`と非root同一UID/private ext4/XFS・Method Schema/capsのANDで個票中間出力可。E11 Local GraphはProduct GraphVersion ID=null、content hashで科学由来を維持。旧Product v2 ABIと共通Scientific Kernelを保護し、無関係Product回帰の全件無条件再試験を課さず、変更影響を証明できない場合は実行またはBLOCK。科学受入・Coding Authorizationは未実施。
