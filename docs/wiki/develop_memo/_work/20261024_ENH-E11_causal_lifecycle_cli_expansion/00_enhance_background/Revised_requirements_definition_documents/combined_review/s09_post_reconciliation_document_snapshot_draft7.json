@@ -10,7 +10,7 @@
     "factored_bundles": 5,
     "public_and_internal_schema": 13,
     "selected_stock": 34,
-    "all_active_stock_markdown": 103,
+    "all_active_stock_markdown": 98,
     "additional_cross_contract_assets": 8
   },
   "latest_author_checks": [
@@ -19,7 +19,7 @@
     "G08/P03 normative §4 and Matrix corrected: HC1 χ²(1) inversion is provisional pending independent math review.",
     "G08 HC1 AR algebra and numerical three-topology author preflight are in working_notes/20261122_s05_ar_hc1_candidate_author_mathematical_preflight.md.",
     "Actual Python3.12 jsonschema Draft202012 parity, target fitted Backend APIs, independent 41 science Oracles and independent reviewer decision NOT RUN.",
-    "Supplementary inventory author QA: all 98 active 10/22/23/30 stock Markdown files (including 23 Schema README guides) plus 8 cross-contract assets listed; no independent semantic review is implied."
+    "Supplementary inventory author QA: all 98 active 10/22/23/30 stock Markdown files (22 RD, 18 BD, 31 IF including 10 Schema README guides, 27 DD; archival doc01_review/prior_drafts excluded) and 8 cross-contract assets listed; no independent semantic review implied."
   ],
   "gate_instructions": [
     {
@@ -1745,26 +1745,6 @@
     {
       "path": "00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_90_verification_traceability.md",
       "blob_sha": "d5813e46184f059ca85462bf16ff083ce1e7edba"
-    },
-    {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/10_requirements_definition/enh_e11_formal_requirement_publication_draft.md",
-      "blob_sha": "2f44bd0ee5a0c9da5559e59dcdab4bfd231784e5"
-    },
-    {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/22_product_basic_design/22_17_stage_contents_e8_effective_snapshot.md",
-      "blob_sha": "33d435f7a74823639eb1875c457670977276b572"
-    },
-    {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/22_product_basic_design/enh_e11_causal_cli_basic_design_draft.md",
-      "blob_sha": "35246f83d6d6a2fadc3291ea414a69c54feb9e98"
-    },
-    {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/23_api_interface_design/enh_e11_cli_and_port_interface_draft.md",
-      "blob_sha": "d33a4a540ed9492e86c3c369f8a58a781b3ea63b"
-    },
-    {
-      "path": "00_enhance_background/Revised_requirements_definition_documents/doc01_review/prior_drafts/30_detailed_design/enh_e11_proposed_physical_class_design.md",
-      "blob_sha": "2629a27e2c8dc7b175e36e2b98d8dc3f8a56a347"
     }
   ],
   "additional_cross_contract_assets": [
@@ -1801,5 +1781,5 @@
       "blob_sha": "6881633c7cd27b9fec7c1d37947b46ef01c5401a"
     }
   ],
-  "inventory_scope_note": "This is a source-identity discovery index, not an independent S09 verdict. Existing selected_stock (34) remains for historical continuity; all_active_stock_markdown is the exhaustive current 10/22/23/30 Markdown-tree snapshot at source_full_commit_sha (22 RD + 18 BD + 31 IF incl schema READMEs + 27 DD). Method Profiles/6 local Schemas/7 internal science draft Schemas/FCI/dispatch/output catalog are separately indexed. At review, pin the final Git full SHA and re-enumerate all artifacts and refs; review target may postdate index creation commits without changing normative blobs."
+  "inventory_scope_note": "This is a source-identity discovery index, not an independent S09 verdict. Existing selected_stock (34) remains for historical continuity; all_active_stock_markdown indexes all 98 current normative stock Markdown files at source_full_commit_sha (22 RD + 18 BD + 31 IF incl Schema READMEs + 27 DD), excluding historical doc01_review/prior_drafts. Method Profiles, six local schemas, seven internal scientific drafts, FCI, dispatch and output catalog are indexed separately. At review, pin final Git full SHA and re-enumerate all artifacts; an index commit may postdate the source commit without changing normative blobs."
 }
