@@ -8,7 +8,7 @@
   "required": [
     "schema_version",
     "method_id",
-    "source_ref",
+    "study_ref",
     "treated_unit_ref",
     "preperiod_ref",
     "donor_ref",
@@ -22,41 +22,6 @@
     },
     "method_id": {
       "const": "P3-M12"
-    },
-    "source_ref": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "identity",
-        "relative_key",
-        "sha256",
-        "media_type",
-        "schema_version"
-      ],
-      "properties": {
-        "identity": {
-          "type": "string",
-          "minLength": 1
-        },
-        "relative_key": {
-          "type": "string",
-          "minLength": 1
-        },
-        "sha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        },
-        "media_type": {
-          "type": "string",
-          "minLength": 1
-        },
-        "schema_version": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
     },
     "treated_unit_ref": {
       "type": "object",
@@ -236,6 +201,42 @@
     },
     "inference_status": {
       "const": "NOT_REQUESTED"
+    },
+    "study_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "description": "Reference to immutable upstream Study, not the Result that may reference this payload; avoids cyclic content-hash dependencies."
     }
   }
 }

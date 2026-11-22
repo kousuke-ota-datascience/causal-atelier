@@ -14,7 +14,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 
 KINDS = ("method_config", "question_profile", "design_profile", "output_profile", "inference_profile")
-ROOT = Path(__file__).resolve().parents[1] / "23_api_interface_design" / "schema_drafts" / "method_profiles"
+ROOT = Path(__file__).resolve().parents[2] / "23_api_interface_design" / "schema_drafts" / "method_profiles"
 
 def canonical(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
