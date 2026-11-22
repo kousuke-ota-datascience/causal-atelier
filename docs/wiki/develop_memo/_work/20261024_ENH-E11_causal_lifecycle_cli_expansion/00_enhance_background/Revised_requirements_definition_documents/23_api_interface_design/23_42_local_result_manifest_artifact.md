@@ -206,6 +206,8 @@ Graph JSONは `e11-local-graph/1`。現行Local CLIで生成・消費するGraph
 
 `_COMMITTED.json` は `{"marker_version":"e11-commit/1","run_id":"...","manifest_sha256":"...","request_hash":"..."}`。Manifestは自身のhashを含めず、markerがManifestのbytes hashを指す。Markerはartifact一覧の外側にあり循環hash参照を作らない。Readerは marker→Manifest→各Artifact hash/size/MediaType→Operation別必須/禁止Artifact、schema_dispatch、Status、Method、upstream lineage cross-refを検証する。外部からの上流参照もtrusted root＋hashの範囲で再照合する。
 
+**Status/Manifestの型と実行事実:** `manifest.execution.technical_status`および`status.technical_status`は`COMPLETED/VALIDATION_FAILED/CAPABILITY_UNAVAILABLE/EXECUTION_FAILED/PUBLICATION_FAILED`の同一閉Enumであり、当該runについて値も一致しなければならない。成功公開済みrunの`COMPLETED`はMarker・Manifest・Inventory・Status・必要Artifactの独立Reader検証後に限る。各JSON Schemaの同一Enumは**単一ファイルの構造整合性**しか保証せず、別ファイル間の等号はOperation Bundle/Readerが検証する。すべての内部科学ContentRefについても公開E11 ContentRefと同じ安全な`relative_key`構文を要求するが、正規表現だけでFS内の実在・symlink/race・owner/mode・実bytes SHAを証明したとは扱わない。Readerのverified dirfd／同一FD／hash／privilege判定が引き続き必要である。
+
 Manifestに全source pathを生の絶対パスで記録せず、再現に必要な参照とdigest、非機微な環境要約を格納する。内部CLIのManifestにはSBOM referenceや顧客配布承認状態を要求しない。個票Parquetをdefault summary／console／JSONに含めない。
 
 ### 6.1. Operation dispatch・Hashの非循環性
