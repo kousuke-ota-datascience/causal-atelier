@@ -53,3 +53,9 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 4. 独立S09/S05実測は実際に実行していない限りPASS扱いせず、実行権限がないこと自体ではdocument-authoringを停止しない。
 
 **NOTE:** 今回のITS追加は依然DRAFTであり、S10へ向けて独立監査・科学的適格性確認が必要。
+
+## F. Owner A判断後の追記（2026-11-22）
+
+`DEC-S09-P3M04-01=A`はOwner明示採用済み。P3-M04初期対象は`DID_2X2`の2×2 ATTのみ。`STAGGERED`は`DEFERRED`（NOT RETIRED）であり、構文上認識できても科学的preflightで`SCIENCE_CONTRACT_NOT_AVAILABLE`/`CAPABILITY_UNAVAILABLE`（exit4）として拒否。Unknown Configは構造検証exit2と区別する。M04 STAGGEREDをDID_2X2/TWFE/P3-M05へ無言fallbackしない。元Method Config/Output 2 Schema＋factored 2 overlay、200-profile Dispatch、Output Catalog、G07 6文書、G10 8文書、Stock 10_32/23_42/30_63、独立監査165へ反映。詳細は`combined_review/167_20261122_dec_s09_p3m04_owner_a_propagation_audit.md`。
+
+静的再照合: 200元Schema blob SHA一致、40×5 ID/dispatch一意、両変更Schemaのoverlay AST一致、Output CatalogのDID_2X2 positive/STAGGERED deferred一致。実Python Draft202012 200 Validator・独立S09・Backend/Scienceは未実行。監査用新Source SHA index `combined_review/s09_post_reconciliation_document_snapshot_draft5.json` を使用し、以前のdraft1–4はhistoricalとして扱う。S10/S11は未承認。
