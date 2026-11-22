@@ -962,11 +962,11 @@
     },
     "P3-M06": {
       "source_file": "e11_p3_m06_output_profile_v1.schema.json",
-      "source_blob_sha": "bd66bc41e8ca836b4ad1097cdcab363d69492ac9",
+      "source_blob_sha": "bb3a8500f5ad477032a3ef6fe8647b865037ef47",
       "overlay": {
         "$id": "urn:ariadne:e11:prep04-1:p3-m06:output_profile:draft1",
         "title": "P3-M06 output_profile strict Method profile — DRAFT",
-        "description": "PREP-04.1 internal validation DRAFT / NOT_FROZEN / NO_BACKEND_OR_SCIENCE_APPROVAL. Strict JSON shape does not validate scientific assumptions, Backend API, causal identification or CI coverage. No defaults.",
+        "description": "PREP-04.1 internal Method output profile DRAFT. P3-M06 LEVEL emits a scalar level-change point; LEVEL_AND_SLOPE emits a non-scalar target with Result nested point.availability=NOT_AVAILABLE and typed its_components.json. Mandatory separate ITS artifact carries β_L, optional β_S and only predeclared post-horizon effects. HAC validity, covariance, scalar Result/Status and cross-file hashes are separate semantic checks, not proven by this JSON Schema.",
         "properties": {
           "method_id": {
             "const": "P3-M06"
@@ -976,7 +976,8 @@
           },
           "positive_artifacts": {
             "const": [
-              "result.json"
+              "result.json",
+              "its_components.json"
             ]
           },
           "forbidden_artifacts": {
@@ -1192,6 +1193,8 @@
     "distinct_method_ids": 40,
     "source_blob_hashes_checked": "recorded but not independently recounted",
     "positive_negative_validator_execution": "NOT_RUN",
-    "science_and_backend": "NOT_EVALUATED"
+    "science_and_backend": "NOT_EVALUATED",
+    "status": "AUTHOR_TARGETED_P3_M06_CHANGED_VALIDATOR_RERUN_REQUIRED",
+    "message": "P3-M06 output shape updated to typed ITS components. 200-source AST/Draft202012 parity must be rerun at latest SHA; historical proof predates changed source."
   }
 }
