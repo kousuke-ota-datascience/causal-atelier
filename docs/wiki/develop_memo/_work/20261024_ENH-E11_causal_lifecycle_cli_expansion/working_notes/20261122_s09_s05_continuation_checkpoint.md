@@ -141,3 +141,31 @@ Owner採用済み `working_notes/20261116_sr04_dec05_quasi_experimental_seven_me
 - **実際のB05科学課題:** `causal-learn 0.1.4.8` FCI BK #266の不正TAIL過剰確定とnon-null BK stdout `print`を証拠とし、非null BKは現時点でfail-closed。P1-M06 positive BKをG01_999で合格させるには、独立科学的に正しいendpoint処理とstdout containmentの具体方法の検証が必要。安易なno-BKのみの本受入は不可。Linux Python3.12 actual fitted backend/独立MAG/PAG Oracle/ReviewerはNOT_RUN。
 - **ステータス機械可読化:** `combined_review/s05_current_blockers_draft1.json`をOwner B/ G01 scopeで更新し、古い`S06–S08 NOT_STARTED`、全200 Profile/4環境/全41科学をG01前提にする記載を撤回。S06–S08はAuthor改訂済み（独立PASS未取得）。G01 S09 NOT_RUN, S10 NOT_FROZEN, S11 NOT_AUTHORIZED。
 - **最新チェック:** Global source index draft12の**402 unique Git blob一致 402/402**、G01 scope draft3の402全entry一致、補助資料4件SHA一致。チェックは書類/ソース整合性のみでScience/Backend実行ではない。最新HEADは検証のたび変わるため、実S09の真の`REVIEW_TARGET_FULL_SHA`は独立Reviewer起動前に別途固定すること。
+
+## P. G01 P1-M06 三CI pre-code実効性と07独立テスト境界の追補（2026-11-22、計画⑮）
+
+**証拠の分類:** `AUTHOR_SOURCE_INSPECTION_AND_PRECODE_CONTRACT_PREPARATION / PY312_NOT_RUN / G01_INDEPENDENT_S09_NOT_RUN / S10_NOT_FROZEN / S11_NOT_AUTHORIZED`。
+
+### P.1 新規発見
+
+- 現行 P1-M06 Config とG01主06/P04/07は `fisherz/chisq/gsq` を許可し、タグ付き `causal-learn 0.1.4.8` の `FCI.py` が3方式をCITへdispatchすること、`cit.py` に `Chisq_or_Gsq` があることを上流tag実Sourceで確認。一方、従来のreview-only `e11_g01_fci_backend_precode_probe.py` は連続Gaussian `fisherz` fitのみだったため、カテゴリ2方式の**実効API feasibilityが未評価になる検査漏れ**があった。
+- 上流 `Chisq_or_Gsq.__init__` は `np.apply_along_axis(_unique,0,data)` を用い各列の観測値を自動的に一意カテゴリ番号へ振り直す。これは既に整数カテゴリとして宣言され事前検証されたデータの符号付け直しとは区別する必要があり、Ariadneが未検証float/連続/混合scaleを無言でカテゴリとして受理する正当化にはならない。G01/P04のpreflight/科学適格性は引き続き必須。
+- 上流一次Source:
+  `https://raw.githubusercontent.com/py-why/causal-learn/0.1.4.8/causallearn/search/ConstraintBased/FCI.py`
+  および `https://raw.githubusercontent.com/py-why/causal-learn/0.1.4.8/causallearn/utils/cit.py`。
+  以上は**tag Sourceの静的確認**であり、承認済みPython3.12でのimport/fit証拠ではない。
+
+### P.2 Author修正の実体
+
+1. `combined_review/tools/e11_g01_fci_backend_precode_probe.py`：固定seedの整数binary `chisq/gsq` tiny fitted API/GraphNode/Edge/stdout-stderr検査を既存`fisherz`と同居させる。3方式全部・invalid CI負例・tag exact versionをPASS条件とし、probe Source Git blob `ec57e483891db0fa296e124fe4706c33ad8a374b`。**実行NOT_RUN、Science OracleでもBackend adapter実装でもない**。
+2. 規範 `10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md`：`G01-07-08`に3方式の実fit正例、mixed/non-integer categorical、type/宣言値不一致、条件付けsupport不足、Backend呼出前typed denyを明示。数値support閾値はOwner未採用のものを創作せず、独立科学契約から定める。新Git blob `6dfe3df42d41b4da98b6bee0d50132911e39feae`。**07は実独立テスト未実行**。
+3. `combined_review/159` Runbook：3方式のisolated Python3.12 tiny fitとread-only AST syntax-checkを明示、Reportは外部保存。`165` 独立S09指示および`174` G01 Coding Entryへ未検証範囲と索引を伝播。
+4. 新監査索引：`combined_review/s09_post_reconciliation_document_snapshot_draft13.json` の `source_full_commit_sha=17e51b095f7b436eeca35b8f79ffe60fbb0a5b0b`（最後の規範G01 07変更Commit）、402 unique norm paths。G01対象 `s09_g01_scoped_review_inventory_draft5.json` はOWN11/COMMON69/IMPACT5/DEFERRED317の402 path、初期Review candidate85を維持。旧draft12→13のnormative差分はG01 07の1 blobのみ。新draft13とdraft5の**402件のpath/blob SHA照合は不一致0**。Probe Source blobも現行GitHub fetch SHAと一致。
+5. Machine-readable blocker statusは `combined_review/s05_current_blockers_draft2.json`。B04の3CI runtime、B02 Python3.12標準Validator、B03独立semantic、B05完全MAG/PAG/BK科学、S09独立監査は依然BLOCKED/NOT_RUN。
+
+### P.3 判定境界・次の独立実行
+
+- `fisherz/chisq/gsq`のAuthor probeは、**実環境で未実行**。合成binaryデータのfitが成功しても、数理/統計的な独立検定のサイズ、弱信号/カテゴリsupportの閾値、FCI PAG真値、Ariadne CLI preflight、G01_999科学受入は証明されない。
+- G01 coding前に必要なのは、外部に固定したexact `G01_REVIEW_TARGET_FULL_SHA` のclean checkoutで `159` 手順のPython3.12 B02・ENV-BASE B04を実行し、全3方式のAPI/console結果をそのまま保全すること、および別担当のG01 S09と独立MAG/PAG Oracle/BK方法のscience review。BK非nullは引き続きfail-closed、Positive BKのG01_999義務を削減しない。
+- S10 owner Freeze, S11 owner Coding Authorization, coding, Trial, Independent 07/999 は**いずれも未実施**。新たなOwner判断はこのSource/契約修正そのものには不要。独立Scienceで新たなEstimatorやBK救済算法の選択が必要と判明した場合だけOwnerへエスカレーションする。
+
