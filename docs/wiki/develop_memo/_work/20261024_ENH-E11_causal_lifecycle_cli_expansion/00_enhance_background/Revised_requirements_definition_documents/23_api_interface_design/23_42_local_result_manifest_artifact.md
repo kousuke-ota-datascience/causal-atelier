@@ -46,6 +46,8 @@ ROOT/
 | ESTIMATE | `study.json`、`status.json`、`result.json` | `schema_dispatch.result=e11-local-effect-result/1`。Point不在はnull+reason。Estimator未呼出のnegativeを架空の推定値に置換しない |
 | REFUTE / SENSITIVITY / DIAGNOSE | `study.json`、`status.json`、`diagnostics.json` | Method別診断のtyped result、上流Effect/Graph/Design hash、seed、適用条件を検証。Effectを再発行しない |
 
+**G01 DISCOVERのlineage参照意味:** `Study.inputs.graph=null`は入力Graph不使用を意味する。一方、`Manifest.lineage.graph`はGraph-positive時に**生成された出力 `graph.json` のContentRef**を表し、Graph-negative時はnull。`lineage.identification=null`。Graph-positiveでは出力Refの`relative_key/sha256/media_type`が`graph.json` Inventory Descriptorと一致し、Graph-negativeではnonempty typed reasonと`diagnostics.json`が必須。Manifest Artifact Descriptor自体には`upstream_ref`を追加しない。P01はStudy入力Ref↔Manifest lineage値、出力Graph Ref↔Inventory Descriptorの純粋な値の等号を検証し、P02/P05/Readerは実ファイルbytesと上流Source/Graph/Statusの意味的joinを再照合する。このG01注記は他OperationのGraph入出力契約を変更しない。
+
 全Operationで`manifest.json`と`_COMMITTED.json`が必要で、どちらもartifact inventory外に置く。Inventoryは実在するstudy/status/Graph/Identification/Effect/Diagnosticsと対応するbytes hash、size、MediaType、Privacyを全件列挙する。各Operation/Method固有の内部JSON profileをstrictに検証し、Method profile未登録を実行許可としない。内部profileは5種類の公開payload versionを増やさない。
 
 DISCOVER成功時はGraphが必須。科学的に正当なGraph無しnegativeを技術的Backend失敗と区別し、後者を成功Bundleに変換しない。その他OperationのMethod-specific profileは当該Method提供前に厳格化してpositive/negative fixturesを検証する。

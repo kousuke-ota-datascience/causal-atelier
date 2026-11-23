@@ -247,7 +247,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.3. Constructor / Factory
 
-- **Factory:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。
+- **Factory:** `from_payload(payload: Mapping[str, JsonValue]) -> LocalRunManifest`、`from_run_evidence(evidence: ValidatedRunEvidence) -> LocalRunManifest`。`ValidatedRunEvidence`は同じLocal Manifest境界に属するimmutable内部DTOであり、`study:ValidatedStudy`、ValidatedStudyと完全一致する`study_payload`、`e11-local-status/1`の`status_payload`、実測`RuntimeEvidence`、`stochastic`、P02が実bytesからstageした`tuple[ArtifactDescriptor,...]`、`output_graph_ref:ContentRef|None`、`graph_negative_reason_codes:tuple[str,...]`、`review_science_evidence_ref:ContentRef|None`を必須フィールドとする。各Mappingは深いimmutable snapshotを保持し、可変参照を残さない。`ArtifactDescriptor`の公開フィールドは`key/sha256/size_bytes/media_type/privacy_class/visibility`の6個のみで、upstream_refフィールドは追加しない。
 - **Precondition:** strict schema/version + no unknown critical keys; content hash references are normalized; `Manifest` must **not** include its own bytes hash; marker is outside Artifact list. Factories do not read the filesystem.
 - **N/A:** runtime backend import is not part of this DTO. Factoryはstrict Schema違反を型付きErrorとして返す。
 
@@ -261,10 +261,11 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 4.5. 処理仕様
 
-1. Normalize schema version and all typed scientific statuses without collapsing negative outcomes.
-2. Validate artifact keys unique and safe relative; no absolute input path/secret/row data in Manifest.
-3. Validate lineage digest/target and effective runtime evidence with missing values distinguished from fabricated defaults.
-4. Produce canonical bytes deterministically, independent of map insertion order or local time display. Result identity is a logical run identity, **not** evidence of successful file publication.
+1. Normalize schema version and all typed scientific statuses without collapsing negative outcomes. `request_hash=SHA256(JCS(typed validated Study wire))`を再計算し、Study/Status/Manifestのrun_id、Operation、Method、Estimand、Privacy、technical/scientific statusを純粋な値として照合する。
+2. G01 DISCOVERではManifestの`lineage.question/design/dataset`はStudy入力の各5-field ContentRefと完全一致し、`lineage.identification=null`。**`lineage.graph`は生成Graphの出力ContentRef**（Graph-positiveのみ）であり、G01の`Study.inputs.graph=null`とは区別する。生成Graph参照の相対key/sha256/MIMEを`graph.json` Descriptorと照合する。Graphの意味/科学的正当性と実bytes hashの証明はP03/P05/P02に委ねる。
+3. G01 Graph-positiveは`study.json/status.json/graph.json`、科学的Graph-negativeは`study.json/status.json/diagnostics.json`をInventoryに厳密要求し、Graph-negativeは非空の型付き理由がStatusに存在することを要求する。`schema_dispatch.result=null`、Manifest/Markerの自己Inventory混入禁止、個票禁止。G01のindependent Scienceは`NOT_EVALUATED`でreview ref null。
+4. Validate inventory keys unique/safe and exact six-field Descriptor schema; runtime requires actual repo/dirty/Python/platform/uv.lock bytes SHA/distributions/API probes, while pure Manifest validation **must not claim measurement or trusted FD bytes**. Missing facts must not be fabricated. Exact bytes SHA/size, file-to-wire content and atomic publication/readback are P02/P05 responsibilities.
+5. Produce canonical bytes deterministically (sorted inventory keys, strict JCS), independent of map insertion order or local time display. A staged `COMPLETED` Status/Manifest is a candidate statement; only P02 independent committed Reader verification permits an externally returned `COMPLETED` outcome. Result identity is a logical run identity, **not** evidence of successful file publication.
 
 ### 4.6. I/O・連携・失敗処理
 

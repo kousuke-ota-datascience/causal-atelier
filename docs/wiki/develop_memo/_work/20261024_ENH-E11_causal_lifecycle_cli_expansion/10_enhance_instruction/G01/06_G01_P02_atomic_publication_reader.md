@@ -75,6 +75,8 @@ def publish(self, *, bundle: ValidatedStagedBundle, root: TrustedLocalRoot) -> C
 def verify(self, *, root: TrustedLocalRoot, run_id: RunId) -> VerifiedLocalRun: ... # Reader Port
 ~~~
 
+**P01/P02 evidence boundary (amended G01 P01 contract):** `stage_bytes` returns exactly the six-field `ArtifactDescriptor(key,sha256,size_bytes,media_type,privacy_class,visibility)` calculated from bytes of the same staged FD. P05 passes the immutable descriptors and typed Study/Status/Runtime/Graph-or-negative evidence to P01 `ValidatedRunEvidence`; P01 checks pure joins and creates Manifest before `seal`. Do not add `upstream_ref` to ArtifactDescriptor. `Manifest.lineage.graph` in G01 is the **output** `graph.json` ContentRef; validate its descriptor SHA/key/media and separately verify actual graph bytes and semantic provenance through P03/P05. A staged candidate Manifest/Status with `technical_status=COMPLETED` is not a published success; `publish` must not return `COMPLETED` until verified `read_run` as below.
+
 Publisher facade creates/binds **one** run-scoped `LocalArtifactPublisher` to `StagingArtifactSink`; `seal` delegates to its `validate` and `publish` to its `commit`. Do not implement a second staging/commit transaction inside the facade. Scientific code sees only `StagingArtifactSink` Protocol (`ariadne.scientific.ports.artifacts`) and never receives final `runs/` path or CLI Concrete type. Reader Port delegates to `LocalManifestReader.read_run`. Runtime type/ownership of sink and bundle must match same run_id, request_hash and root; cross-run substitution rejects.
 
 ### 6.4. `LocalArtifactPublisher` (30_62 §3 / PUB01–10)

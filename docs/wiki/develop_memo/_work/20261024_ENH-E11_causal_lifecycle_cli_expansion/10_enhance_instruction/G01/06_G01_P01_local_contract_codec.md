@@ -31,7 +31,7 @@ G01は正式Gate IDでPxxはbounded Coding Unit。Local laneとProduct v2を分�
 | `ariadne.interfaces.cli.local_causal.config_decoder.LocalConfigDecoder` | strict YAML/JSON -> validated request | No unverified file access in pure parser |
 | `ariadne.causal.design.study.ValidatedStudy` / `ariadne.causal.inference.contracts.EstimandRef` | Common validated scientific Target, including GRAPH_STRUCTURE | Existing Product ATE/ATT Enum unchanged |
 | `ariadne.shared.serialization.jcs` | Strict RFC8785 JCS bytes/digest | Projection-specific Graph digest owned by P03 |
-| `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest` | Pure wire DTO and `from_payload/from_run_evidence/validate_invariants/to_canonical_bytes` | Staging, Marker and readback belong to P02 |
+| `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest` / `ValidatedRunEvidence` / `ArtifactDescriptor` / `RuntimeEvidence` | Pure wire DTO, immutable typed evidence envelope, `from_payload/from_run_evidence/validate_invariants/to_canonical_bytes`; no I/O | P02 stages/reads exact bytes, P03 validates Graph meaning, P05 supplies verified input and cross-asset runtime facts |
 
 The Package produces typed values, verified **schema** and canonical bytes; it does not claim verified physical input, Product GraphVersion ownership or independent Graph science.
 
@@ -103,24 +103,99 @@ Implement versioned deterministic `e11-json-jcs-rfc8785/1` canonicalization. Inp
 
 Run the repository's `e11_jcs_golden_vectors.json` (7 positive/7 negative) against independently sourced, pre-registered RFC8785 expected byte vectors. No external ECMAScript runtime or cross-language parity execution is required. Self-generated expected fixtures are NOT independent references. No UTF normalization that changes the supplied code points.
 
-### 6.5. `LocalRunManifest` — 30_62 §4 / MAN01–06
+### 6.5. `LocalRunManifest` / `ValidatedRunEvidence` — 30_62 §4 / MAN01–06
 
-**Module/Class:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`; immutable DTO. **Constructor/Factory:** Use the strict `from_payload` or `from_run_evidence` factories below; no raw dict cast can substitute for validation. Logical fields `manifest_version:Literal["e11-local-manifest/1"]`, `run_id`, `operation`, `request_hash`, `lineage` (typed refs), `execution_status` (technical and science independent), `runtime` (actual runtime evidence), `artifacts:tuple[ArtifactDescriptor,...]` and `review`. These are logical groups: public serialized keys must conform to `e11_local_manifest_v1.schema.json`, not a newly invented representation.
+**Module/Class:** `ariadne.interfaces.cli.local_causal.manifest.LocalRunManifest`; immutable DTO using precisely `e11_local_manifest_v1.schema.json` public wire keys. **P01 also owns the immutable pure values** `ValidatedRunEvidence`, `RuntimeEvidence`, and `ArtifactDescriptor` in this module or a private P01-owned helper. These are *internal* Python values, not new public E11 JSON versions. No dependency on P02/P03/P04/P05 concrete classes is allowed.
 
-~~~python
-@classmethod
-def from_payload(cls, payload: Mapping[str,JsonValue]) -> LocalRunManifest: ...
-@classmethod
-def from_run_evidence(cls, evidence: ValidatedRunEvidence) -> LocalRunManifest: ...
-def validate_invariants(self) -> tuple[Reason,...]: ...
-def to_canonical_bytes(self) -> bytes: ...
-~~~
+#### 6.5.1. Exact factory input contract (normative; no unspecified upstream type)
 
-**Factory invariants:** fixed E11 version, mandatory fields, no v2 fallback, typed status/lineage, actual environment/method/seed evidence (no synthetic values), safe unique artifact keys and hashes; cannot include raw secrets, row data, absolute source paths. Factories and invariant validation are pure; no disk I/O.
+```python
+@dataclass(frozen=True)
+class ArtifactDescriptor:
+    key: str
+    sha256: str
+    size_bytes: int
+    media_type: str
+    privacy_class: Literal["AGGREGATE", "RESTRICTED_ROW_LEVEL"]
+    visibility: Literal["PRIVATE", "RESTRICTED"]
 
-**DISCOVER Operation bundle:** Graph-success => actual `study.json/status.json/graph.json`, `schema_dispatch.graph="e11-local-graph/1"`, `result=null`. Valid scientific Graph-negative => `study.json/status.json/diagnostics.json` with nonempty typed reason, `graph=null` and `result=null`. Never create dummy Effect or silently omit diagnostics. P03 provides typed Graph; P02 creates files, marker and verifies Inventory. Neither `manifest.json` nor `_COMMITTED.json` may be listed in Manifest inventory. Each listed artifact requires exact bytes SHA, size, MIME, privacy class and visibility, plus upstream ref join.
+@dataclass(frozen=True)
+class RuntimeEvidence:
+    repo_commit: str
+    dirty: bool
+    python_version: str
+    platform: str
+    uv_lock_sha256: str
+    distributions: Mapping[str, JsonValue]
+    api_probes: Mapping[str, JsonValue]
 
-**Status:** G01 independent Science approval is not produced by run: `identification_status=NOT_APPLICABLE`, `point_availability=NOT_REQUESTED`, `inference_availability=NOT_REQUESTED`, `science_acceptance=NOT_EVALUATED`. A return of `COMPLETED` is only valid after P02 publication/Reader; DTO creation alone never asserts completed publication. Errors: `SCHEMA_INVALID`, `VERSION_UNSUPPORTED`, `HASH_INVALID`, `PRIVACY_POLICY_CONFLICT` with typed reason and phase.
+@dataclass(frozen=True)
+class ValidatedRunEvidence:
+    study: ValidatedStudy
+    study_payload: Mapping[str, JsonValue]
+    status_payload: Mapping[str, JsonValue]
+    runtime: RuntimeEvidence
+    stochastic: Mapping[str, JsonValue]
+    artifact_descriptors: tuple[ArtifactDescriptor, ...]
+    output_graph_ref: ContentRef | None
+    graph_negative_reason_codes: tuple[str, ...]
+    review_science_evidence_ref: ContentRef | None
+
+class LocalRunManifest:
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, JsonValue]) -> LocalRunManifest: ...
+    @classmethod
+    def from_run_evidence(cls, evidence: ValidatedRunEvidence) -> LocalRunManifest: ...
+    def validate_invariants(self) -> tuple[Reason, ...]: ...
+    def to_canonical_bytes(self) -> bytes: ...
+```
+
+- `study_payload` is the **validated typed E11 Study wire projection** of `study`, including exactly its full `schema_version/run_id/operation/analysis_mode/inputs/estimand/method/inference/randomness/privacy` fields. It is not arbitrary raw user YAML or an unverified replacement Study. P01 must check exact semantic equality of this projection and `ValidatedStudy`, including Method config and all five-field ContentRefs; a discrepancy is `SCHEMA_INVALID`. Compute `request_hash=SHA256(JCS(study_payload))` with §6.4; P05 writes `study.json` from precisely this validated projection. Do not hash an alternate serialization, inject a hash without checking, or treat a lexical ContentRef as physically verified.
+- `status_payload` is a strict, immutable `e11-local-status/1` snapshot that P05 serializes as `status.json`; it must contain `schema_version/run_id/technical_status/identification_status/point_availability/inference_availability/science_acceptance/reason_codes/manifest_relative_path`. Reject missing/extra keys, invalid enum/types or a different run. For a *candidate successful G01 publication*, `technical_status=COMPLETED` in the prepared file and Manifest; that field is a **candidate assertion, not evidence of publication**. P02 must withhold an externally returned `COMPLETED` outcome until committed independent Reader verification; failed publication never returns a successful run.
+- `runtime` is the exact required wire runtime group: `repo_commit` (nonempty actual commit), `dirty` (bool), `python_version` (nonempty), `platform` (nonempty), `uv_lock_sha256` (lowercase 64-hex **byte** digest), `distributions` and `api_probes` (JSON objects). P05 supplies effective measurements; the pure factory checks schema only, does not import a Backend, perform a probe, or synthesize values. `stochastic` is a JSON-object snapshot of actual seed/stream/split/fold information when applicable, with no invented default. All mutable mappings/lists must be deep-copied into immutable internal values; do not keep external mutable aliases.
+- `artifact_descriptors` are immutable descriptors returned by P02's staging `stage_bytes` from **the exact bytes already written**; P05 passes these to the P01 factory. P01 can validate their types, hash grammar and logical joins but cannot prove FD/path/bytes authenticity, owner/mode/atomicity or Reader success. P02 rechecks all physical facts independently. `ArtifactDescriptor` has **only** the six public schema keys above; do **not** add an `upstream_ref` or invent a new wire format.
+- `output_graph_ref` is the generated output Graph's five-field `ContentRef`, supplied by P05 from the P03-validated Graph identity **and P02's actual staged `graph.json` descriptor**. For G01 it is **not** the Study's input `inputs.graph`, which remains null. `graph_negative_reason_codes` represents a scientifically justified no-Graph result, not Backend/schema/IO failure; P05 provides it from a typed negative. `review_science_evidence_ref` must be null in G01: run execution cannot self-approve independent science.
+- The factory checks every field and does not trust the name `ValidatedRunEvidence` as proof of validity. Invalid shapes or cross-refs raise typed `SCHEMA_INVALID`/`HASH_INVALID`/`PRIVACY_POLICY_CONFLICT` with phase and reason. No disk I/O, mutable output, warning-only acceptance or silent defaulting.
+
+#### 6.5.2. Deterministic public Manifest projection
+
+The pure factory emits **only** these top-level wire keys, with the following origins:
+
+| Wire key | Required value / provenance |
+| --- | --- |
+| `manifest_version` | `e11-local-manifest/1` |
+| `run_id`, `operation`, `request_hash` | `study_payload.run_id`, `DISCOVER`, `SHA256(JCS(study_payload))` |
+| `schema_dispatch` | `study="e11-local-study/1"`, `status="e11-local-status/1"`, `result=null`, `graph="e11-local-graph/1"` for positive or null for scientific-negative |
+| `lineage` | `question/design/dataset` = exactly `study_payload.inputs.question/design/dataset`; `graph` = generated `output_graph_ref` for positive, null for negative; `identification=null`. All nonnull refs use exact five-field ContentRef wire form |
+| `estimand` | Exact `study_payload.estimand`; G01 requires GRAPH_STRUCTURE / OBSERVED_VARIABLES / NOT_APPLICABLE |
+| `execution` | `technical_status=status_payload.technical_status`, `analysis_mode=study_payload.analysis_mode`, `method=study_payload.method.id`, `backend=study_payload.method.backend`, `inference_config=study_payload.inference`; `scientific_axes` mirrors status identification/point/inference/science values without asserting independent approval |
+| `runtime`, `stochastic` | Exact strictly typed supplied effective `runtime` and `stochastic` snapshots, never synthetic |
+| `artifacts` | The supplied staged descriptors, keyed uniquely and ordered deterministically by ascending `key` in serialized arrays |
+| `review` | `{"science_evidence_ref":null}` for G01, never a fabricated PASS |
+| `canonical_codec_version` | `e11-json-jcs-rfc8785/1` |
+
+`from_payload` independently validates this exact versioned public shape, rejected unknown keys and the same purely internal invariants. `to_canonical_bytes` runs strict §6.4 JCS on the public projection; the Manifest contains neither its own SHA nor marker data. No Product v2 `CliManifest` reinterpretation.
+
+#### 6.5.3. Exact G01 upstream-ref joins and bundle acceptance matrix
+
+`upstream ref join` **means the following explicit pure equalities**, not a seventh ArtifactDescriptor field. Perform all checks before returning from either factory insofar as fields exist in the supplied Manifest/evidence. **Physical bytes and cross-file contents remain P02/P05/Reader checks**.
+
+| Check | P01 pure rejection rule | Downstream independent recheck |
+| --- | --- | --- |
+| Study identity | `study_payload.run_id = status_payload.run_id = manifest.run_id`; `study_payload.operation=manifest.operation=DISCOVER`; recomputed `request_hash` matches Manifest | P02 Reader reopens Study/Status file bytes and checks both against Manifest and marker |
+| Input refs | Each of `manifest.lineage.question/design/dataset` is **all-five-fields equal** to the corresponding `study_payload.inputs` ref; `study_payload.inputs.graph/identification` both null in G01 | P05 verifies physical input references via ContentReferencePort; Reader rechecks same root/hash |
+| Method / estimand | `manifest.execution.method=study_payload.method.id="P1-M06"`, `backend=study_payload.method.backend="causal-learn"`, `analysis_mode="EXPLORATORY"`, `estimand=study_payload.estimand`, no requested inference | P05 compares verified Question/Design/Dataset, Method profile and effective Adapter; P02 Reader checks written files |
+| Status axes | Manifest `execution.technical_status` equals Status `technical_status=COMPLETED` for candidate; `identification_status=NOT_APPLICABLE`, `point_availability=NOT_REQUESTED`, `inference_availability=NOT_REQUESTED`, `science_acceptance=NOT_EVALUATED` | Reader verifies **actual** status.json bytes and only then grants published status |
+| Graph-positive | Exactly `study.json`, `status.json`, `graph.json` (not Manifest/Marker); `output_graph_ref` nonnull, `graph_negative_reason_codes=()`; `lineage.graph` exactly this ref; its `relative_key="graph.json"`, `sha256` and `media_type` match `graph.json` descriptor; `schema_version="e11-local-graph/1"`; dispatch graph version set | P03 validates Graph semantic hash/endpoints/provenance; P05/Reader check Graph file's actual content and its source refs |
+| Scientific Graph-negative | Exactly `study.json`, `status.json`, `diagnostics.json`; `output_graph_ref=null`, `lineage.graph=null`, `schema_dispatch.graph=null`, `graph_negative_reason_codes` nonempty and every code present in `status_payload.reason_codes`; no `graph.json` / Effect result | P05 validates typed scientific negative and diagnostics reason bytes; Reader validates actual negative sidecar; technical failures do not qualify |
+| Artifact inventory | Every descriptor has unique safe POSIX key, lowercase SHA256 hex64, `size_bytes>0`, `media_type="application/json"`, `privacy_class="AGGREGATE"`, `visibility="PRIVATE"`; no unknown, extra, missing or duplicate key; no `result.json`, `manifest.json`, `_COMMITTED.json` or row data | P02 same-FD actual bytes SHA/size/MIME, private FS, atomic publication and full independent Reader |
+| Review/privacy/runtime | `review.science_evidence_ref=null`, Study `privacy={classification:AGGREGATE,row_export_requested:false}`; no raw path, secrets, unsupported non-JSON value, self hash or unmeasured runtime invention | P05 enforces effective privacy and runtime provenance; Reader checks run/artifact privacy |
+
+G01 has **two and only two** publishable DISCOVER variants above. An actual Backend exception, missing/malformed Graph, bad file/hash or privacy violation is a technical failure and must **not** be converted into a scientific-negative bundle. No Graph content-hash-versus-Artifact SHA equality: `Graph.content_hash` is the semantic hash of Graph without its own hash, while `ContentRef.sha256` and Descriptor SHA are the exact completed `graph.json` file-byte hash. The Graph's scientific provenance, graph internal ref semantics and file-to-wire value equality cannot be inferred from descriptors alone and are rechecked by P03/P05/P02 Reader.
+
+#### 6.5.4. Failure, no-side-effect and handoff
+
+P01 must reject rather than default: absent/wrong-type/unknown fields, source Study↔typed Study mismatch, Method/Status/run/hash mismatch, impossible positive/negative combination, invalid graph output ref, missing/extra/duplicate Artifact, bad privacy/row release, and false Science PASS. Return typed schema/hash/privacy reasons consistent with G01 CLI mapping, without mutating input or opening files. The `e11_local_manifest_v1.schema.json` and `e11_local_status_v1.schema.json` apply to serialized structure; P01's operation-specific semantic validator enforces the additional equalities above. `P02.stage_bytes` supplies actual descriptors; `P05` constructs the immutable evidence after staging and before seal; `P02.seal/publish/Reader` alone proves committed bytes. A candidate Manifest/Status carrying `COMPLETED` is **not** an externally returned completed run before Reader verification.
 
 ### 6.6. Dependency boundaries / handoff
 
@@ -134,6 +209,8 @@ P01 outputs `ContentRef`, `ValidatedStudy`, strict JCS/Manifest DTO and pure Pro
 | SPEC01–04; 07-01 | unit + contract | E11 dispatch vs legacy/unknown, YAML/JSON duplicate/unknown, Method Config/Estimand/inference/privacy failures; typed reason and no Backend import |
 | MAN01–03; 07-04 | unit + contract | strict JCS independent 7+7 vectors, stable exact bytes, 4 distinct digest projections, no self hash/inventory |
 | MAN04–06; 07-07/12 | contract | typed DISCOVER Graph-positive versus scientific-negative inventory/status, no Effect, no silent Product v2 upgrade |
+
+**Additional focused MAN04/05 contract cases:** Construct both valid G01 evidence variants with staged-descriptor stand-ins (not claimed physical proofs), then reject each missing/extra/duplicate descriptor, mismatched Study↔status run/hash/method, differing input five-field ref, wrong output Graph ref SHA/key/MIME, Graph-positive-with-diagnostics, Graph-negative-without-typed reason, missing science-negative diagnostics, false Science PASS/row output, and mutable evidence aliasing. Exercise `from_payload` and `from_run_evidence` on matching public projections. Never claim P02 FD/Reader verification from this suite.
 
 **Required Package check:** Coding Agent creates or discovers G01-focused tests according to *instantiated 40 Operator placement policy*; current filename/pytest command is selected only after checkout/collection. No filename is normative here. Unit or synthetic typed evidence does not pass P02 physical REF02/03, P04 science, or P05 cross-asset trusted-byte joins. Verify each DD ID's relevant positive/negative cases, source SHA, fixture SHA, observed error/bytes and status. P01 DoD requires scoped focused tests and checkpoint evidence; unrun or unproved independent JCS reference stays BLOCKED.
 
@@ -154,7 +231,7 @@ Package completion時:
 
 - [ ] `ContentRef` 5 fields and `from_payload`, `LocalStudySpec.validate_local_invariants`, `LocalConfigDecoder.decode` implement strict versions, error classification and pure handoffs.
 - [ ] Common `ValidatedStudy`/`EstimandRef` implements GRAPH_STRUCTURE without changing Product v2 ATE/ATT ABI or silently validating unread Question/Design files.
-- [ ] Strict JCS bytes/digest and immutable `LocalRunManifest` factories/invariant/serialization complete; independently verified golden vectors or explicit evidence-backed BLOCKED.
+- [ ] Strict JCS bytes/digest and immutable `LocalRunManifest` factories/invariant/serialization complete; `ValidatedRunEvidence`/`RuntimeEvidence`/`ArtifactDescriptor` types, exact Study/Status projection, operation-specific inventory and upstream-ref equalities from §6.5 verified with positive/negative pure tests; independently verified golden vectors or explicit evidence-backed BLOCKED.
 - [ ] G01 Operation success vs scientific-negative typed bundle shapes, MAN01–06 pure constraints, no Effect/Manifest self-hash are covered by focused tests.
 - [ ] **P01 covers REF01/04 lexical components; REF02/03 actual symlink/race/FD security are P02-owned and cannot be marked passed by P01.** Full cross-asset Question/Design/Dataset byte validation is P05-owned.
 - [ ] Focused unit/contract verification cases and actual resolved test evidence, fixture/version/commit full SHA, DD-ID case-by-case evidence, package checkpoint report and `*_in_progress.md` recorded. Remaining P02/P03/P04/P05/G01-999 checks are not promoted to P01 PASS.
