@@ -185,6 +185,13 @@
 - **P02 explicit Owner gate:** `DEC-G01-P03-P02-COMPAT-01` needed prior to modifying completed P02 Reader/code/tests. Current Reader only checks provenance dict; new Graph schema can break historic input compatibility. P01 `9bff61f0eae25236f95f31f2cd3e7c81291f0167`, P02 `3a76a0aa1698037354b284ba7b5a875300473ce6` kept immutable.
 - Status: `DESIGN_A_APPROVED / AUTHOR_CONTRACT_REVISED / FORMAL_09_OWNER_PENDING / NEW_S10_PENDING / NEW_S11_PENDING / P02_COMPAT_PENDING`. No new scientific or G01_999 approval.
 
+### G01/P03→完了済みP02 Reader限定互換修正のOwner承認（2026-11-23）
+
+- **Owner決定:** `DEC-G01-P03-P02-COMPAT-01=APPROVED`。正式記録 `combined_review/221_20261123_g01_p03_p02_reader_compat_owner_approved.md`。P03のGraphProvenance A案に合わせ、完了済みP02 Reader `manifest_reader.py::_validate_graph` と限定P02/P03 readback回帰テストの**必要最小改修のみ**認める。
+- **禁止事項:** P02 Publisher、PrivacyDecision、FS公開・no-clobber・Reader以外のABI、P01、Product v2、独立G01_999の勝手な変更。P01 `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、P02 `3a76a0aa1698037354b284ba7b5a875300473ce6`のPACKAGE_READY/元checkpointを歴史として保持し、無断上書き不可。
+- **実装許可の追加前提:** 新`AMD-E11-G01-P03-001`正式09承認→改訂S10完全SHA Freeze→別個S11承認。今回のOwner承認だけではソース変更を開始しない。
+- **互換性リスク:** 既存の`provenance={}` Graphが新Readerから拒否される可能性を明記。実施後は新Trace/回帰証拠を別途残す。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
