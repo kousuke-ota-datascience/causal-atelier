@@ -178,6 +178,13 @@
 - **Critical completed-P02 impact:** P02 Reader `manifest_reader.py::_validate_graph` currently checks `provenance` is merely dict and JCS hash, not nested source/method joins. Tightening E11 Graph public schema alone can break P02 compatibility / leave Reader inconsistent. Actual P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6` is preserved. A later P02 edit requires explicit decision `DEC-G01-P03-P02-COMPAT-01` if unavoidable.
 - P03 `DEC-G01-P03-PROVENANCE-01` remains unselected. No normative RD/LDD/BD/IF/DD/06/07, public Graph Schema or completed P01/P02 code edited; historical S10 `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8` remains frozen.
 
+### G01/P03 A案選択：GraphProvenance strict nested contract（2026-11-23）
+
+- Owner `DEC-G01-P03-PROVENANCE-01=A_APPROVED`; existing Graph provenance's six fields `method_id/backend/ci_test/assumptions/source_refs/parent_graph_ref` with exact Study/Manifest and actual ContentRef joins. Full RD/LDD/BD/IF/DD/P03 06/G01 07 and Graph Schema updated at `d0dbee56c806a0d8142492416fb3130f24456f0b`.
+- Formal 09 draft `AMD-E11-G01-P03-001`; technical impact audit `combined_review/220_20261123_g01_p03_A_contract_and_p02_compatibility_impact.md`.
+- **P02 explicit Owner gate:** `DEC-G01-P03-P02-COMPAT-01` needed prior to modifying completed P02 Reader/code/tests. Current Reader only checks provenance dict; new Graph schema can break historic input compatibility. P01 `9bff61f0eae25236f95f31f2cd3e7c81291f0167`, P02 `3a76a0aa1698037354b284ba7b5a875300473ce6` kept immutable.
+- Status: `DESIGN_A_APPROVED / AUTHOR_CONTRACT_REVISED / FORMAL_09_OWNER_PENDING / NEW_S10_PENDING / NEW_S11_PENDING / P02_COMPAT_PENDING`. No new scientific or G01_999 approval.
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
