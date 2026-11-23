@@ -158,6 +158,13 @@
 - **保全:** P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、G01科学的・独立07/G01_999受入条件を維持。新S10承認はCoding許可ではない。旧S11 209は旧WHATのみ。
 - **状態:** `FORMAL_09_APPROVED / PROVISIONAL_S10_REFROZEN / NEW_LIMITED_S11_PENDING`。P02/Trial01は引き続き実装前待機。
 
+### AMD-E11-G01-P02-003 — 新しい独立限定G01-S11 Owner承認（2026-11-23）
+
+- Owner決定 `DEC-G01-P02-003-S11-REAUTH-01=APPROVED`; 対象G01/P01–P05、**次はP02/Trial01**。正式09承認212→暫定S10再Freeze214→独立S11承認216。
+- 新S11記録 `combined_review/216_20261123_g01_p02_003_limited_s11_owner_authorization.md`; 再開handoff `combined_review/217_20261123_g01_p02_003_trial01_restart_handoff_after_s11.md`; Frozen WHAT Git SHA `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8`。旧S11 209は別WHAT。
+- P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を維持し再実装禁止。実Linux FS/Reader、P02検証、独立科学・G01_999、Product v2互換は条件緩和なし。Codingは現地Agent preflight成功後のみ開始。
+- 実P02コード/テスト/Package checkpointを本承認記録は作成していない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
