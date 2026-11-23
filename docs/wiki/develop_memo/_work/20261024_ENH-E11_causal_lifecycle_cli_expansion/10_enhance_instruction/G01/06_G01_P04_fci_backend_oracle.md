@@ -87,7 +87,7 @@ def discover(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactS
 
 **Dispatch:** `LocalCausalUseCase -> MethodCapabilityPort.resolve -> DiscoveryPort.discover -> Registry.load_adapter(selectedCapability) -> FciDiscoveryAdapter.preflight -> FciDiscoveryAdapter.execute`. Verify loaded Adapter matches Method and Backend of the record exactly. No direct `ScientificCorePort.run_discovery(DiscoveryInput,Path)` because its old API writes paths; any shared pure kernel must be bridged without signature changes or second FCI implementation. No fallback to PC/GES.
 
-**Outcome:** `ariadne.causal.discovery.contracts.DiscoveryGraphOutcome` is either immutable valid `GraphEvidence` (P03) or typed legitimate scientific Graph-negative with nonempty reasons. Technical Backend exception, malformed Graph, schema or input is a technical failure, **not** an alternate "negative scientific discovery." Artifact output goes to `StagingArtifactSink` only; no write to final `runs/`.
+**Outcome:** `ariadne.causal.discovery.contracts.DiscoveryGraphOutcome` is either immutable valid `GraphEvidence` (P03) or typed legitimate scientific Graph-negative with nonempty reasons. Technical Backend exception, malformed Graph, schema or input is a technical failure, **not** an alternate "negative scientific discovery." For G01 the only P01-accepted scientific-negative code is SCI_NO_ADMISSIBLE_PAG. Its meaning is a scientifically *proved* absence of any admissible PAG after otherwise eligible successful FCI and method-specific verification; no actual producer/proof is established currently. Do not emit this code without that verified scientific evidence. An empty-edge or uncertain PAG remains a valid Graph if its GraphEvidence validates. Backend/API/eligibility/BK errors are typed technical errors even if a caller attempts to relabel their string. Artifact output goes to `StagingArtifactSink` only; no write to final `runs/`.
 
 ### 6.4. `FciDiscoveryAdapter` exact signatures and Instance Fields (30_63 §1.3/4.4; METH-P106)
 
@@ -130,7 +130,7 @@ def execute(self, request: ValidatedDiscoveryRequest, *, sink: StagingArtifactSi
 | Unsupported Method/Estimand/config | typed unsupported | exit2, no scientific run |
 | Missing extra / API incompatible / engine exception | typed Backend error | exit4, no committed success |
 | Malformed backend edge/node/endpoint | typed data/Backend semantic error | no false negative or valid PAG |
-| Valid scientific negative | `DiscoveryGraphOutcome` with reason and no Graph | P05 may publish diagnostics/status via P02; not Science PASS |
+| Valid scientific negative (if Method proof exists) | Typed P04 scientific-negative, exact SCI_NO_ADMISSIBLE_PAG and validated scientific proof of no admissible PAG; **not** a missing/malformed Graph or technical error | P05 may publish only after authentic P04 provenance and diagnostics are verified; otherwise fail closed; no Science PASS |
 | Valid Graph | typed `GraphEvidence` with provenance, dual hash | P05 stages via P02, independent Reader required |
 
 G01 does not implement other 40 Methods, Product v2 GraphVersion edit, PCMCI or effect identification. Unregistered Method-specific Profile -> fail-closed.
