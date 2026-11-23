@@ -17,7 +17,7 @@ TRIAL_NO={{TRIAL_NO}}
 PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E11
 ENHANCE_SHORT_ID=E11
-BRANCH_NAME=prototype/ariadne_mvp
+BRANCH_NAME=feature/ariadne_mvp_e11
 REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion
 ```
@@ -57,7 +57,7 @@ git rev-parse HEAD
 
 以下を確認する。
 
-* current branch が `prototype/ariadne_mvp` であること
+* current branch が `feature/ariadne_mvp_e11` であること
 * working tree が clean であること
 * 実行開始時 HEAD を `START_SHA` として記録すること
 
@@ -262,7 +262,7 @@ git diff --cached
 
 ```bash
 git commit -m "ENH-E11 Gate {{GATE_ID}} Trial {{TRIAL_NO}} implementation evidence"
-git push -u causal-atelier prototype/ariadne_mvp
+git push -u causal-atelier feature/ariadne_mvp_e11
 git log -2 --oneline
 git status
 ```
@@ -340,7 +340,7 @@ Enhancement-fixed values:
 PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E11
 ENHANCE_SHORT_ID=E11
-BRANCH_NAME=prototype/ariadne_mvp
+BRANCH_NAME=feature/ariadne_mvp_e11
 REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion
 WORK_DIR_NAME=20261024_ENH-E11_causal_lifecycle_cli_expansion
