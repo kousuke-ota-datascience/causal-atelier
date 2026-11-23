@@ -144,6 +144,13 @@
 - Formal 09 candidate: 10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P02-003_Gate_Contract_Amendment.md ; audit 211_20261123_g01_p02_negative_diagnostics_contract_impact.md.
 - Status: AUTHOR_PREPARED / OWNER_FORMAL_09_PENDING / NEW_S10_PENDING / SEPARATE_S11_PENDING. Preserve P01 9bff61f0eae25236f95f31f2cd3e7c81291f0167 and Trial01.
 
+### AMD-E11-G01-P02-003 — 正式09 Owner承認（2026-11-23）
+
+- **Owner明示承認:** 「AMD-E11-G01-P02-003 の正式09承認 — 承認する」。正式09記録は`combined_review/212_20261123_g01_p02_003_formal_09_owner_approved.md`。
+- **承認した規範契約の完全Git SHA:** `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8`。差分はG01 Graph-negative typed `diagnostics.json` の内部4-field Profile、Status/Manifest照合、Publisher/Reader検証の明確化。
+- **次Owner判断:** `DEC-G01-P02-003-S10-REFREEZE-01`。資料は`combined_review/213_20261123_g01_p02_003_s10_refreeze_decision_docket.md`。S10と独立S11は未承認。
+- **保全:** P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、実装・科学的独立検証・G01_999受入条件を維持。Trial01・P02未実装状態を変えない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
