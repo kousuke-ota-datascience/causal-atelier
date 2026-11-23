@@ -44,3 +44,7 @@ If Owner approves, record a distinct positive S11 authorization (201) **before**
 ## 5. Five-layer instruction parity audit (Owner supplementary instruction)
 
 Owner explicitly requires cross-layer alignment of `10_enhance_instruction/{GATE_ID}/06_*.md` and `07_*.md` against RD/21 LDD/22 BD/23 IF/30 DD, all under the stated ENH-E11 relative base. The G01 P01/P02-specific reconciliation records are 197 and 195/196; new Gate-wide trace / no-unapproved-postfreeze-change control is `combined_review/202_20261123_g01_06_07_five_layer_contract_concordance_protocol.md`. Current immutable source remains `6df4b94de72a6ec8619f315e55ba7821e1eb157c`; new normative discrepancies must be handled through 09/S10/S11 and not edited after freeze without Owner approval. This audit is not independent S09 PASS.
+
+## 6. Owner approval disposition (later event; docket retained as original decision input)
+
+**APPROVED:** Owner explicitly wrote `DEC-G01-P02-S11-REAUTH-01 を承認する` on 2026-11-23 JST. Positive authorization authority is `combined_review/201_20261123_g01_p02_revised_limited_s11_owner_authorization.md`; current P02/Trial01 execution handoff is `combined_review/203_20261123_g01_p02_trial01_restart_handoff_after_s11.md`. This section supersedes the docket's issuance-time `OWNER_DECISION_PENDING` heading only; historical text remains unchanged. Frozen WHAT SHA is still `6df4b94de72a6ec8619f315e55ba7821e1eb157c`. Actual runtime preflight and independent Gate acceptance remain outstanding.

@@ -99,6 +99,13 @@
 - **照合記録:** `combined_review/202_20261123_g01_06_07_five_layer_contract_concordance_protocol.md`。G01 P01–P05と07をRD/LDD/BD/IF/DDに責務トレース。現行G01/P01とP02は197/195/196で修正済み。未検出の新契約不整合は捏造しない。
 - **Freeze維持:** `6df4b94de72a6ec8619f315e55ba7821e1eb157c`の06/07自体はこの管理追記では改変していない。新たな06/07正規契約改訂は正式09→新S10→別S11を要求。P01逆方向整合化は既承認の一回限り例外。現時点のS11未承認状態を保持。
 
+### G01/P02 別個限定 S11 Owner 承認：DEC-G01-P02-S11-REAUTH-01（2026-11-23）
+
+- **明示Owner承認:** 「`DEC-G01-P02-S11-REAUTH-01` を承認する」。198正式09承認→199暫定S10再Freeze→**201新限定S11承認**の順を維持。
+- **権威記録:** `combined_review/201_20261123_g01_p02_revised_limited_s11_owner_authorization.md`。凍結WHAT完全Git SHA `6df4b94de72a6ec8619f315e55ba7821e1eb157c`。参照200は承認前docket、202は5階層整合性監査。
+- **再開:** `GATE_ID=G01 PACKAGE_ID=P02 TRIAL_NO=01`。再開ハンドオフ `combined_review/203_20261123_g01_p02_trial01_restart_handoff_after_s11.md`。P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167` を保全。実行Agentの環境preflightは未実施、実FS・G01独立受入はPASS未宣言。
+- **条件:** 凍結WHATからの差分は正式承認/管理文書のみ、正本05階層とG01 06/07の意味整合を維持。新たな06/07改訂は別途09/S10/S11、P02本体のコード変更だけが許可範囲。旧193は新P02契約への権限ではない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
