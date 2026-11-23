@@ -172,6 +172,12 @@
 - Formal 09 **proposal only** `10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P03-001_Gate_Contract_Amendment.md`. Normative RD/LDD/BD/IF/DD/schema/06/07 remain untouched until Owner chooses. Subsequent formal 09→new S10→separate S11.
 - P01 checkpoint 9bff61f0eae25236f95f31f2cd3e7c81291f0167, P02 checkpoint 3a76a0aa1698037354b284ba7b5a875300473ce6, S10 c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8, G01 Trial01 and all scientific/independent acceptance preserved.
 
+### G01/P03 GraphProvenance predecision compatibility refinement (2026-11-23)
+
+- New audit: `combined_review/219_20261123_g01_p03_graph_provenance_field_and_p02_compatibility_audit.md`. Candidate A six nested key families `method_id/backend/ci_test/assumptions/source_refs/parent_graph_ref` pending Owner; no binding new public fields yet.
+- **Critical completed-P02 impact:** P02 Reader `manifest_reader.py::_validate_graph` currently checks `provenance` is merely dict and JCS hash, not nested source/method joins. Tightening E11 Graph public schema alone can break P02 compatibility / leave Reader inconsistent. Actual P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6` is preserved. A later P02 edit requires explicit decision `DEC-G01-P03-P02-COMPAT-01` if unavoidable.
+- P03 `DEC-G01-P03-PROVENANCE-01` remains unselected. No normative RD/LDD/BD/IF/DD/06/07, public Graph Schema or completed P01/P02 code edited; historical S10 `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8` remains frozen.
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
