@@ -46,3 +46,8 @@ Batch View
 - **`NFR-001b`**：actual scientific library versionとStageAttempt effective seedを含むenvironment再構築metadataを保持する
 - **`NFR-013`**：schema versionはversioned Spec/Plan/payload/descriptor等のcontract boundaryで識別し、全persistent Result/Artifact entityへgeneric schema_version fieldを要求しない
 - **`AR-019`**：random seedだけでなくsplit indexまたはpartition artifactを保存する
+
+
+### Local scientific PrivacyDecision — transient logical value (G01)
+
+The local CLI path uses an immutable **ephemeral value**, not a Product Execution or database entity: `PrivacyDecision = (allowed:bool, run_id:RunId, request_hash:SHA256[JCS(ValidatedStudy)], root_identity:VerifiedRootIdentity, principal_uid:int, classification:AGGREGATE, row_export_requested:false, output_shape:DISCOVER_AGGREGATE_ONLY)`. `VerifiedRootIdentity` captures the verified live root FD identity (device/inode/owner/mode and local filesystem facts), **not a bare user path or persistent authorization credential**. The same `run_id/request_hash` refer to the Study and run-scoped sink; the decision governs an **aggregate-only class**, while the exact staged Graph/diagnostics inventory is checked later. This value is derived by policy evaluation, not caller input; it remains internal/transient and is not a new public Study/Status/Manifest field or Product relational entity. Status/Manifest retain existing outcome and hash semantics.

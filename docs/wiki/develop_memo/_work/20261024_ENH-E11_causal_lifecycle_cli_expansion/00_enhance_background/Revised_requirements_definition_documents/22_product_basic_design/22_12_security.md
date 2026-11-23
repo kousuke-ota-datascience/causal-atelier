@@ -106,3 +106,8 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 ## Local scientific row output boundary
 
 個票中間成果物は、versioned Studyで明示要求され、Linux非root実行者が所有するprivate ext4/XFS TrustedRoot、厳格なMethod別出力Schema・許可列・資源上限を満たした場合のみ生成する。個票反復前に適格性を確認し、集計・Manifest・ログへ個票値を露出しない。独立署名承認や二重CLI確認は行わない。既存Product RBACとは別のLocal実行境界であり、同一UID process/特権管理者への隔離を保証しない。公開は既存の原子的Publisher・独立Readerに限定する。
+
+
+### TrustedRoot-bound local privacy authorization at seal
+
+A supplied decision is not itself a security capability. Authorization to stage and publish must match the *same* validated Study/run/JCS request digest, effective user, verified current TrustedRoot FD (not merely equal path text) and authorized aggregate-only output class. Recompute the local stateless privacy evaluator on actual staged Study and artifact inventory at seal; do not accept a decision for a different run/root/actor, a denied outcome or a changed row artifact. Fail before Marker and atomic rename, then recheck live root/UID and sealed inventory at commit. G01 remains aggregate-only; future G05 row opt-in policy is not expanded. No external signature, trust anchor or key handling is introduced.

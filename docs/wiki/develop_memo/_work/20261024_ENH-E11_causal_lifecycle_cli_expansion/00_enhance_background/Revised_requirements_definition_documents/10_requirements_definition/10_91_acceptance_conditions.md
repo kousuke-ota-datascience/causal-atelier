@@ -49,3 +49,8 @@
 3. `NFR-030`：G01実OS上でatomic no-clobber、stage/rename/marker/Reader、失敗時のfalse-success防止と不定状態を確認する。全故障組合せや未検証の電源断耐久性を主張しない。
 4. `NFR-035/AR-044`：独立DGP/NEG/REFと定量推論・FWERについて全41 Methodに有効証拠を必要とする。G10再利用にはMethod・共有Kernel・依存Lock・Fixture・Reference・Backend・評価契約を含む推移的影響閉包の不変性を検証し、変化/不明ならMethod再試験またはBLOCK。最終候補の横断統合/旧Product互換性は実測する。
 5. 共有Method Schema/RowSchema/Graph/Portsは各Methodの科学的区別、厳格Positive/Negative parityとPrivacyを保持して初めて利用可能とする。設計承認はMethod/Profile/Backend実測やGate PASSを意味しない。
+
+
+### G01 publication authorization consistency (NFR-030/031; G01-07-05/06/11)
+
+Acceptance requires both valid same-run aggregate publication and denied cases for decision absence, denial, forgery, wrong run/request hash, wrong verified root FD, changed EUID, policy re-evaluation disagreement, and staged inventory/classification mutation. **All rejected cases must prevent a successfully sealed/published run**; actual Linux FD, secure stage, atomic no-replace, Reader and filesystem checks remain necessary. Pure decision tests alone cannot pass G01_999. This is a clarification of existing NFR-030/031 and related Gate tests, not an additional deferred product feature.

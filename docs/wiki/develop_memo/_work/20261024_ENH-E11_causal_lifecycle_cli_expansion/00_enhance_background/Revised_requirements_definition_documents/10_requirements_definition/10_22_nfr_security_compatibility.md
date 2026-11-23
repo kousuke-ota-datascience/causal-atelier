@@ -29,3 +29,8 @@
 ### NFR-031 local output boundary
 
 非root EUID・所有者一致のprivate ext4/XFS TrustedRoot（owner-only mode、safe dirfd/path/symlink）、Method別列・row/byte/memory制限、Study上の明示単独opt-inをPositive/Negativeで検証する。不許可時は個票生成に先立ちfail-closedし、個票値をログ/集計/Manifestへ含めない。同一UID別processや特権管理者に対する隔離を保証しない。未実装の署名Policy／二重CLI flagは初期提供外。
+
+
+### Local per-run privacy authorization invariant (NFR-031)
+
+Local scientific output requires an effective privacy decision tied to the **same validated Study/run ID and JCS-derived request hash, same live verified TrustedRoot FD identity, current principal EUID, permitted output classification and actual staged artifacts**. A permit for a different run, request, root, principal, or artifact classification must be rejected before publication even when the supplied decision says allowed. The staged files are checked again by the publisher's policy evaluator; denied or stale decisions fail closed, and aggregate-only G01 never authorizes row/Parquet output. This extends the existing NFR-031 security meaning, not Product RBAC, an independently signed policy, or a new wire field.

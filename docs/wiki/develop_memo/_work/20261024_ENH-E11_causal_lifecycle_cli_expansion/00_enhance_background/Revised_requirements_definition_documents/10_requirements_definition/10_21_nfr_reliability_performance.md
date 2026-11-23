@@ -28,3 +28,8 @@
 | NFR-030 | Reliability | ローカル成果物の保存に失敗した場合、部分的な書込みや不完全な成果物を正常な正本として公開しない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | NFR-035 | Scientific Acceptance | 採用Methodの科学的受入を独立した既知真値・負例・再現性・推論品質の検証で実施し、事前登録した比較と多重性を考慮する | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
 | NFR-036 | Backward Compatibility | 新Local CLI機能が既存Scientific CLI、Product API／UI／Worker／DBおよび因果分析仕様・結果の互換性を損なわない | MUST | ACTIVE | UNVERIFIED | ENH-E11 |
+
+
+### Local publish authorization freshness (NFR-030 / G01)
+
+For a local run, a previously issued allow decision cannot itself prove that the actual staged files still satisfy the approved output policy. Revalidate the current staged Study, run/request identity, effective trusted root/actor, and complete artifact inventory **before** sealing the manifest/commit marker and atomically publishing. A missing, denied, inconsistent, or stale privacy authorization must not lead to a published COMPLETE result; later uncertainty after rename follows the existing indeterminate/readback requirements. This is an elaboration of NFR-030, not a new public authorization token or a relaxation of atomicity.

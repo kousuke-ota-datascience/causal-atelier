@@ -300,3 +300,8 @@ P3-M06 has two explicitly declared Config variants. For `effect_components=LEVEL
 ### P3-M04 DiD initial 2×2 ATT / deferred STAGGERED (Owner DEC-S09-P3M04-01=A)
 
 `P3-M04` ESTIMATEの初期positive Outputは、明示的に`design_variant=DID_2X2`かつ科学/Backend/Design/cluster適格である場合に限るscalar ATTの`result.json`（Effect Result）である。`STAGGERED`はrecognizable Config syntaxとして保持しても**scientific capability=DEFERRED**であり、Operation/Method preflight時にtyped `SCIENCE_CONTRACT_NOT_AVAILABLE`／`CAPABILITY_UNAVAILABLE`（exit4）で停止する。成功RunのResult/Manifest/Marker、Estimator実行、単一TWFE scalar、P3-M05への自動ルーティングは発生してはならない。Schema受理は科学実行許可ではない。将来`ATT(g,t)`等を初期提供とするには別Owner決定・typed Output/Inference/Referenceが必要。構文誤り・unknown variantはstrict validation exit2と区別する。
+
+
+### Publication authorization and bundle privacy join (local scientific CLI)
+
+A staged local bundle is a candidate, not proof of authorization or committed status. The `seal` path binds an internal `PrivacyDecision` to the same Study/run ID, JCS request hash, verified root FD identity and current principal; the Publisher checks *actual* staged Study bytes and all Inventory descriptors, then re-evaluates policy. Denied/missing/forged or mismatched decisions (run/hash/root/UID/class/output shape) prohibit sealing the Marker and final rename. The public `e11-local-study/1`, Status, Manifest, Marker and six-field ArtifactDescriptor shapes are unchanged; the decision is not serialized as a new field. Independent Reader still validates all final bytes/permissions and no result is reported complete until readback.

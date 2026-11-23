@@ -484,3 +484,8 @@ G05/P02: Study-only explicit request true/false and root/Method eligibility, act
 ## Local execution, privacy and publication invariants
 
 `LocalRunContext(root:TrustedLocalRoot,principal:LocalPrincipal)`と`LocalPrivacyPolicyPort.authorize(*,study,root,principal,output_shape)`を正規契約とする。Studyの明示`row_export_requested`はrequest identityに含め、private Root/同一UID/Method別allowlistとbounded outputを実行ごとに検証する。許可されるまで個票Sourceを反復せず、拒否はaggregateへのsilent fallbackとしない。Reader検証前にCOMMITTEDと報告せず、rename後の判定不能を`PUBLICATION_INDETERMINATE`とする。共通WriterはIV構造係数と非IV CATEの列意味を混同せずMethod固有制約を検証する。
+
+
+### G01 P02 privacy decision logical authority trace
+
+Authority chain: P05 evaluates initial policy with the exact validated Study, live TrustedRoot/Principal and declared G01 aggregate-only output shape; LocalPublicationPort.seal forwards *unchanged* PrivacyDecision to the single publisher's `validate(manifest,*,privacy)`; Publisher reopens same staged Study, compares run_id and strict JCS request hash, checks verified root FD dev/inode/owner/mode/local FS, actual EUID and complete artifact inventory, and recomputes injected stateless policy before Marker. The immutable decision's permitted shape is a **class**, not a future graph.json digest. A row artifact or cross-run/root/UID decision fails closed. Commit rechecks live identity; Reader verifies bytes after atomic rename. Pure schema test does not prove real OS/FS compliance.

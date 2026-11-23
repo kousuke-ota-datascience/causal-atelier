@@ -123,3 +123,8 @@ Dataset schemaを参照するvalidator / application serviceは、`DatasetVersio
 **適用する論理データ制約（関連Requirement）**
 
 - **`NFR-011a`**：current request/execution/stage correlation identifiersをlogへ出力する
+
+
+### Local decision-to-bundle integrity constraint (G01)
+
+A local publication can be sealed only if the supplied PrivacyDecision, actual staged `study.json` decoded by strict schema/JCS, run-scoped sink and publisher, verified root FD, live effective principal and **all staged artifact descriptors** agree. The publisher must recompute its stateless policy on this actual state; `allowed=true` alone is never an authority. A changed run/hash/root/UID, denied policy or restricted-row output in G01 violates integrity and prevents Marker/rename. Decision identity is transient; no extra key is inserted into public Manifest artifacts or Product entity tables. Same physical-file and root identity are verified again at publish; independent Reader validates committed bytes.

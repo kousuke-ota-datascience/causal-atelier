@@ -85,3 +85,8 @@ Manifestは科学的根拠と実行条件の来歴であり、実行結果のbit
 **当該機能に適用する設計制約（関連Requirement）**
 
 - **`NFR-020a`**：Artifact storageを`ArtifactStore` Port abstraction越しに利用する
+
+
+### Local publish privacy decision authority boundary
+
+In the local run path the Application authorizes the *declared output capability* once before staging, and passes the immutable run/hash/root/UID-bound decision into the **single run-scoped Publisher**. The Publisher is the final pre-publication authority: it reopens the staged Study, matches the JCS request hash, current verified root/principal and complete real artifact inventory, and independently re-evaluates privacy policy. The declared aggregate-only G01 output class includes approved Graph or scientifically justified diagnostics without advance knowledge of eventual artifact hashes; an extra row/Parquet/Result artifact never fits. Missing/denied/stale or cross-run/root decisions are rejected **before** sealing/rename; publish rechecks the sealed identity and the independent Reader verifies the final run. This requirement refines existing atomic publication and Local/ Product boundary but adds no separate persistent Policy service.
