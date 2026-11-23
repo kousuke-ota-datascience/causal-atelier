@@ -199,6 +199,13 @@
 - **次判断:** 新暫定S10 `DEC-G01-P03-001-S10-REFREEZE-01`、Owner判断資料 `combined_review/223_20261123_g01_p03_001_s10_refreeze_decision_docket.md`。その後**別個の新S11**が必要。正式09承認のみではCoding再開不可。
 - P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、Gate科学的/独立/G01_999 ACを保持。実P02 Reader改修・P03実装・テストは本承認では未実施。
 
+### AMD-E11-G01-P03-001 — 改訂暫定G01-S10 Owner再Freeze（2026-11-23）
+
+- **Owner明示決定:** `DEC-G01-P03-001-S10-REFREEZE-01=APPROVED`。Ownerは変更契約の完全Git SHA `52e5c60176d6b72c91f839ef267f46657bd380b5` を暫定G01-S10として再Freeze。承認記録 `combined_review/224_20261123_g01_p03_001_s10_owner_refreeze.md`。
+- **正式09:** 222（AMD-E11-G01-P03-001 APPROVED）、A案採用とP02 Reader限定例外221が前提。直前の旧S10 `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8` は改訂P03のWHATを含まない。
+- **別個S11未承認:** `DEC-G01-P03-001-S11-REAUTH-01`。Owner判断資料 `combined_review/225_20261123_g01_p03_001_s11_decision_docket.md`。P03/Trial01 CodingとP02 Reader限定改修は新S11まで実行不可。
+- **保全:** P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、独立科学・G01 07/S09/G01_999受入条件不変。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
