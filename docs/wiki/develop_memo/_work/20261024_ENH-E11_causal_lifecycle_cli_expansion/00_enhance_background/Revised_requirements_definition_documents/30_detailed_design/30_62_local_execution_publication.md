@@ -28,6 +28,7 @@
 | `publisher` | `LocalPublicationPort` | composition root | immutable; all writes staged |
 | `runtime` | `RuntimeEnvironmentPort` | composition root | immutable; effective provenance not fabricated |
 | `clock` | `ClockPort` | composition root | immutable; injected timestamp authority |
+| `manifest_factory` | `LocalManifestFactoryPort` | CLI composition root (Adapter injection) | immutable; pure P01 Manifest conversion through Application Port |
 
 No shared mutable per-run state is retained in the use-case object; per-run staged artifacts/status are returned via typed RunOutcome or scoped Context. UseCaseのper-run状態非共有を不変条件とする。
 
@@ -38,9 +39,9 @@ No shared mutable per-run state is retained in the use-case object; per-run stag
 ### 1.3. Constructor / Factory
 
 配置：`ariadne.capabilities.causal.local_execution.LocalCausalUseCase`。`LocalConfigDecoder`は**CLI composition root**に属し、Strict parse/Version検証済み`ariadne.causal.design.study.ValidatedStudy`のみApplicationへ渡す（Application内で別のdecodeを暗黙に行わない）。
-注入Port：`refs:ContentReferencePort`、`capabilities:MethodCapabilityPort`、`discovery:DiscoveryPort`、`identifier:IdentificationPort`、`estimators:EstimatorPort`、`diagnostics:DiagnosticPort`、`publisher:LocalPublicationPort`、`reader:LocalManifestReaderPort`、`privacy:LocalPrivacyPolicyPort`、`runtime:RuntimeEnvironmentPort`、`clock:ClockPort`。科学BackendはConstructorでimportしない。
+注入Port：`refs:ContentReferencePort`、`capabilities:MethodCapabilityPort`、`discovery:DiscoveryPort`、`identifier:IdentificationPort`、`estimators:EstimatorPort`、`diagnostics:DiagnosticPort`、`publisher:LocalPublicationPort`、`reader:LocalManifestReaderPort`、`privacy:LocalPrivacyPolicyPort`、`runtime:RuntimeEnvironmentPort`、`clock:ClockPort`、`manifest_factory:LocalManifestFactoryPort`。科学BackendはConstructorでimportしない。
 
-- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort)`。旧Product v2 APIには変更を加えない。
+- **Constructor signature:** `__init__(self, *, refs: ContentReferencePort, capabilities: MethodCapabilityPort, discovery: DiscoveryPort, identifier: IdentificationPort, estimators: EstimatorPort, diagnostics: DiagnosticPort, publisher: LocalPublicationPort, reader: LocalManifestReaderPort, privacy: LocalPrivacyPolicyPort, runtime: RuntimeEnvironmentPort, clock: ClockPort, manifest_factory: LocalManifestFactoryPort)`。旧Product v2 APIには変更を加えない。
 - **Precondition:** Required Ports non-null and no optional scientific Backend import at construction. Factory wiring belongs to CLI adapter, not Product Web API. 失敗は契約に対応する型付きErrorとして返す。
 - **Postcondition:** A reusable stateless orchestration instance. Constructors must not create run directories or claim science readiness.
 
