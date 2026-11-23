@@ -151,6 +151,13 @@
 - **次Owner判断:** `DEC-G01-P02-003-S10-REFREEZE-01`。資料は`combined_review/213_20261123_g01_p02_003_s10_refreeze_decision_docket.md`。S10と独立S11は未承認。
 - **保全:** P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、実装・科学的独立検証・G01_999受入条件を維持。Trial01・P02未実装状態を変えない。
 
+### AMD-E11-G01-P02-003 — 暫定G01-S10再Freeze Owner承認（2026-11-23）
+
+- **Owner決定:** `DEC-G01-P02-003-S10-REFREEZE-01=APPROVED`。改訂契約のimmutable full Git SHA `c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8` を新しい暫定G01-S10に再Freeze。正式09は先行212にて承認。
+- **新しいFreeze記録:** `combined_review/214_20261123_g01_p02_003_s10_owner_refreeze.md`。追加のS11判断資料は`combined_review/215_20261123_g01_p02_003_limited_s11_decision_docket.md`、`DEC-G01-P02-003-S11-REAUTH-01`はOwner承認待ち。
+- **保全:** P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、G01科学的・独立07/G01_999受入条件を維持。新S10承認はCoding許可ではない。旧S11 209は旧WHATのみ。
+- **状態:** `FORMAL_09_APPROVED / PROVISIONAL_S10_REFROZEN / NEW_LIMITED_S11_PENDING`。P02/Trial01は引き続き実装前待機。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
