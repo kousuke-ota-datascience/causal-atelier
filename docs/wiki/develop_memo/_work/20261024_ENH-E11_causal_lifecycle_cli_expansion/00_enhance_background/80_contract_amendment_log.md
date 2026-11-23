@@ -128,6 +128,13 @@
 - **次の独立判断:** `DEC-G01-P02-002-S11-REAUTH-01` は**未承認**。判断資料 `combined_review/208_20261123_g01_p02_002_limited_s11_reauth_docket.md`。S10記録のみではG01/P02のCoding再開不可。
 - **保存条件:** P01 PACKAGE_READY `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、G01 07・999の独立受入条件を維持。P02実装・実FSテスト未実施。
 
+### AMD-E11-G01-P02-002 — 新限定G01-S11 Owner承認（2026-11-23）
+
+- **明示Owner決定:** `DEC-G01-P02-002-S11-REAUTH-01=APPROVED`。「AMD-E11-G01-P02-002に基づく暫定G01-S10凍結SHA `0e36d5d8ce5a4fb9880c4ecff07f4e2256cde492` を対象に、G01/P01〜P05の限定Coding Authorizationを再発行せよ。次の実行はG01/P02/Trial01」。
+- **承認順序:** 205（正式09）→207（暫定G01-S10再Freeze）→**209（新S11限定Coding Authorization）**。旧S11 201は旧WHATのみ。
+- **Agent handoff:** `combined_review/210_20261123_g01_p02_002_trial01_restart_handoff_after_s11.md`。依存P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`を維持。P02の再実装開始は現地Preflight成功後。
+- **維持する未完了:** Linux実FS/P02 tests、P03/P04/P05、独立科学/S09/B02–B05/T2/T3/G01 07/999、Product v2回帰。承認記録は独立テストPASSでない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
