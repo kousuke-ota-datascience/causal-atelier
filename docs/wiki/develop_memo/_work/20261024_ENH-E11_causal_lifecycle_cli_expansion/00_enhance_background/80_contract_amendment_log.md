@@ -78,6 +78,13 @@
 - **不変:** P01実装・Checkpoint、P03/P04 WHAT、Status/Manifest public Schema、旧Product v2、G01個票禁止、lock blob、独立科学・FS受入要件。
 - **依然として未許可:** AMD-001およびAMD-002時代のOwner S10/S11を今回の実装変更へ流用しない。今回の全階層の改訂後full SHAを対象に、新09→新暫定G01-S10→別個のS11のOwner明示承認が必要。
 
+### P01 実装後の例外的上位文書逆方向整合（2026-11-23）
+
+- **Owner指示:** G01/P01は既に実装が完了しているため、**今回限り**G01/P01の`06_G01_P01_local_contract_codec.md`と恒久設計`30_60/30_62`を技術的基準に、要件定義・論理データ・基本設計・IFを後追いで整合化する。通常のRD→設計→実装のAuthority方向を一般に逆転させない。
+- **修正:** RD `10_17/10_20/10_91`、LDD `21_25/21_40`、BD `22_06/22_09/22_15`、IF `23_41/23_42`。P01 `06`/G01 `07`/DD `30_60/30_62`/コード・テスト自体を変更せず、MUST/ACを緩和していない。
+- **監査:** `combined_review/197_20261123_g01_p01_post_implementation_reverse_trace_alignment.md`。P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を保持。developerテスト76件の報告は独立G01_999 PASSでない。
+- **G01/P02の再承認境界:** `AMD-E11-G01-P02-001`の09正式承認、新暫定S10 Freezeと別S11は依然必要。後追いP01整合化を含む**最新full commit SHA**をOwner判断対象に用いること。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
