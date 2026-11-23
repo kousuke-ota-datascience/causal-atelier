@@ -173,7 +173,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `state` | `PublishState` | FactoryでPREPARING | PREPARING→STAGING→VALIDATING→PUBLISHING→COMMITTED/INDETERMINATE、公開前のみABORTED |
 | `staging_handle` | `StagingHandle|None` | begin | State依存。Trusted FS descriptorを閉鎖管理 |
 | `artifacts` | `tuple[ArtifactDescriptor,...]` | stage_bytes | Commitまで追加、公開後immutable |
-| `permission_policy` | `LocalPrivacyPolicy` | 注入Policy | Resultのrelease policyと一致を要求 |
+| `permission_policy` | `LocalPrivacyPolicy` | 注入stateless evaluator。P05のDecisionを無条件採用せず、stage済みStudyと現行TrustedRoot/EUID/全成果物からauthorizeを再実行 |
 
 ### 3.3. Constructor / Factory
 
@@ -186,7 +186,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | --- | --- | --- | --- |
 | `begin(self) -> StagingArtifactSink` | staging sink | 0700 staging dir作成、state遷移 | 重複begin/権限不一致拒否。未公開ならabort可 |
 | `stage_bytes(self, key: RelativeArtifactKey, data: bytes, media_type: str, classification: PrivacyClass) -> ArtifactDescriptor` | descriptor | dirfd相当のroot閉じ込めで0600 file作成/追加 | traversal/symlink/サイズ/重複key拒否 |
-| `validate(self, manifest: LocalRunManifest) -> ValidatedBundle` | readback済み候補 | 各Artifact→Manifest→markerのhash/Schema/Privacy検証 | missing/hash mismatch/個票漏洩ならfail-closed |
+| `validate(self, manifest: LocalRunManifest, *, privacy: PrivacyDecision) -> ValidatedBundle` | readback済み候補 | Seal由来Decisionと実staged Study/root/UID/run/hash/inventoryを照合し注入Policyを再評価してからManifest/Marker seal | 欠損・拒否・別run/root/actor・row Artifactはrename前にdeny |
 | `commit(self, validated: ValidatedBundle) -> CommittedRunRef` | published run ref | PUBLISHING状態でno-clobber rename、親dir fsync、独立Reader readbackを終えた場合にだけCOMMITTED | rename実施後の失敗・判定不能はINDETERMINATE。既存runは削除・上書きしない |
 | `abort(self, reason: str) -> None` | None | 未公開stagingを隔離しHandle解放 | rename後は既公開の可能性があるため破壊的abort禁止 |
 
@@ -195,7 +195,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 1. `PREPARING`でroot/safe run ID・output policy・同一FSを検査する。
 2. `begin`で`root/.staging/{random-token}`を0700作成。Path文字列チェックだけでなく、全componentをtrusted dirfd下に開くか同等のanti-symlink手法を適用。
 3. `STAGING`でArtifactを0600でcreate。全bytesのhash/size/schema/Parquet列/Privacyを検証し、同じkeyの二重書込を拒否。
-4. `VALIDATING`でManifestを作り、Artifactリストを走査。Manifest自体のhashを外側の`_COMMITTED.json`へ格納し、Readerと同一アルゴリズムでstagingをreadbackする。File・Directoryをfsync。
+4. `VALIDATING`はseal(sink,manifest,privacy)から同一Publisher validate(manifest,*,privacy)へ判断を転送。Decisionにはallowed/run_id/request_hash/VerifiedRootIdentity(生きたroot dirfd dev/inode/owner/mode/FS)/principal_uid/AGGREGATE/row_export_requested=false/DISCOVER_AGGREGATE_ONLYをimmutableに保持し、staged study.jsonの実bytes・JCS hash・全Artifactを再検証して現行注入LocalPrivacyPolicyで再評価。異run/root/actor/後追加された個票成果物、欠損・拒否・Policy相違はMarker/rename前にPRIVACY_DENIED。公開直前もroot/UID/封印inventoryを再照合。これは内部値の契約でPublic wire変更や署名は不要。`VALIDATING`でManifestを作り、Artifactリストを走査。Manifest自体のhashを外側の`_COMMITTED.json`へ格納し、Readerと同一アルゴリズムでstagingをreadbackする。File・Directoryをfsync。
 5. `commit`は`runs/{run_id}`未存在を**非原子的exists判定に依存せず**保証するLinux `renameat2(RENAME_NOREPLACE)`（同mount/FSの実効対応を確認）を要求。Process lock、排他FS lockのみ、check-then-rename、通常の`Path.rename()`は代替として**禁止**。未対応FSはfail-closed。
 6. 同一FSで一括公開後、親directory fsyncと公開版の完全readbackが成功して初めて`COMMITTED`。再試行は既存runのrequest hash一致かつ全readback PASSのときのみ同じrefを返す。
 7. Renameの成否が不明、またはRename後のfsync/readbackで異常がある場合は`PublishState=INDETERMINATE`（error `PUBLICATION_INDETERMINATE`）を返し、`COMMITTED`と断定しない。後続の再照合はReaderによる全検査が前提で、既存runを削除・上書きしない。異なるrequest hashは`RUN_ID_CONFLICT`。科学計算のexactly-onceは保証しない。
@@ -429,7 +429,7 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 
 Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`を用いるFacade。二重の公開アルゴリズムにしない。staging全File/Directory fsync→同一FSの`renameat2(RENAME_NOREPLACE)`→親dir fsync→独立Reader readbackまで成功して初めてCOMMITTED。EEXIST時の同request hash再利用は全bytes/Manifest/Privacy検証済みに限る。rename後の失敗は`PUBLICATION_INDETERMINATE`、削除・上書き禁止。
 
-**公開Portの正規署名：** `LocalPublicationPort.begin(*,run_id,request_hash,root)->StagingArtifactSink`、`seal(*,sink,manifest,privacy)->ValidatedStagedBundle`、`publish(*,bundle,root)->CommittedLocalRun`。`LocalManifestReaderPort.verify(*,root,run_id)->VerifiedLocalRun`。Publisher Concreteはrun-scopedで、Sinkが同一run handleを保持する。Reader readbackは公開成功の必要条件である。
+**公開Portの正規署名：** `LocalPublicationPort.begin(*,run_id,request_hash,root)->StagingArtifactSink`、`seal(*,sink,manifest,privacy)->ValidatedStagedBundle`、`publish(*,bundle,root)->CommittedLocalRun`。sealはPrivacyDecisionを同一Publisher Concrete validate(manifest,*,privacy)へ透過転送し、stage済みStudy/実TrustedRoot/EUID/Artifact InventoryからPolicy再評価を必須とする。`LocalManifestReaderPort.verify(*,root,run_id)->VerifiedLocalRun`。Publisher Concreteはrun-scopedで、Sinkが同一run handleを保持する。Reader readbackは公開成功の必要条件である。
 
 ### 8.3. Canonical Codec・Operation dispatch・Reader
 
