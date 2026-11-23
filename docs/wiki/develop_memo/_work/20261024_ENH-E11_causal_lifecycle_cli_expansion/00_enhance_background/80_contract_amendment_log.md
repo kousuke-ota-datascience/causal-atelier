@@ -192,6 +192,13 @@
 - **実装許可の追加前提:** 新`AMD-E11-G01-P03-001`正式09承認→改訂S10完全SHA Freeze→別個S11承認。今回のOwner承認だけではソース変更を開始しない。
 - **互換性リスク:** 既存の`provenance={}` Graphが新Readerから拒否される可能性を明記。実施後は新Trace/回帰証拠を別途残す。
 
+### AMD-E11-G01-P03-001 — 正式09 Owner承認（2026-11-23）
+
+- Owner正式09：`AMD-E11-G01-P03-001 = APPROVED`。明示前提はA案 `DEC-G01-P03-PROVENANCE-01` と完了済みP02 Reader限定修正 `DEC-G01-P03-P02-COMPAT-01`（221）。正式09記録 `combined_review/222_20261123_g01_p03_001_formal_09_owner_approved.md`。
+- **承認対象改訂ソース完全Git SHA:** `52e5c60176d6b72c91f839ef267f46657bd380b5`。Nested GraphProvenance 6必須key、実ContentRef、方法・CI・出典照合をRD/LDD/BD/IF/DD/06/07+existing Graph schemaで確定。ただし旧`provenance={}`受入との互換性差は存在する。
+- **次判断:** 新暫定S10 `DEC-G01-P03-001-S10-REFREEZE-01`、Owner判断資料 `combined_review/223_20261123_g01_p03_001_s10_refreeze_decision_docket.md`。その後**別個の新S11**が必要。正式09承認のみではCoding再開不可。
+- P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、Gate科学的/独立/G01_999 ACを保持。実P02 Reader改修・P03実装・テストは本承認では未実施。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
