@@ -184,6 +184,9 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 | `artifacts` | `tuple[ArtifactDescriptor,...]` | stage_bytes | Commitまで追加、公開後immutable |
 | `permission_policy` | `LocalPrivacyPolicy` | 注入stateless evaluator。P05のDecisionを無条件採用せず、stage済みStudyと現行TrustedRoot/EUID/全成果物からauthorizeを再実行 |
 
+| `_issuer` | `LocalPublicationAdapter \| None` | Adapter.begin / constructor | Private identity binding, assigned once; no setter |
+| `_session` | `PublicationSessionToken \| None` | caller token via Adapter.begin / constructor | Private identity binding, assigned once; None legacy-only for facade abort |
+
 ### 3.3. Constructor / Factory
 
 - **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy, *, issuer: LocalPublicationAdapter | None = None, session: PublicationSessionToken | None = None)`。rootはOS EUID/owner/owner-only mode/同一local ext4-XFS/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
@@ -438,7 +441,7 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 
 ### 8.2. Publisher FacadeとConcrete handle
 
-Applicationの`LocalPublicationPort.begin/seal/publish`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`を用いるFacade。二重の公開アルゴリズムにしない。staging全File/Directory fsync→同一FSの`renameat2(RENAME_NOREPLACE)`→親dir fsync→独立Reader readbackまで成功して初めてCOMMITTED。EEXIST時の同request hash再利用は全bytes/Manifest/Privacy検証済みに限る。rename後の失敗は`PUBLICATION_INDETERMINATE`、削除・上書き禁止。
+Applicationの`LocalPublicationPort.begin/seal/publish/abort`はrun-scoped `LocalArtifactPublisher.begin/stage_bytes/validate/commit/abort`を用いるFacade。二重の公開アルゴリズムにしない。staging全File/Directory fsync→同一FSの`renameat2(RENAME_NOREPLACE)`→親dir fsync→独立Reader readbackまで成功して初めてCOMMITTED。EEXIST時の同request hash再利用は全bytes/Manifest/Privacy検証済みに限る。rename後の失敗は`PUBLICATION_INDETERMINATE`、削除・上書き禁止。
 
 **公開Portの正規署名：** `LocalPublicationPort.begin(*,run_id,request_hash,root,session=None)->StagingArtifactSink`、`seal(*,sink,manifest,privacy)->ValidatedStagedBundle`、`publish(*,bundle,root)->CommittedLocalRun`、および内部pre-publication制御`abort(*,sink:StagingArtifactSink,session:PublicationSessionToken,run_id:str,request_hash:str,root:TrustedLocalRoot,reason:str)->None`。sealはPrivacyDecisionを同一Publisher Concrete validate(manifest,*,privacy)へ透過転送し、stage済みStudy/実TrustedRoot/EUID/Artifact InventoryからPolicy再評価を必須とする。`LocalManifestReaderPort.verify(*,root,run_id)->VerifiedLocalRun`。Publisher Concreteはrun-scopedで、Sinkが同一run handleを保持する。Reader readbackは公開成功の必要条件である。
 
