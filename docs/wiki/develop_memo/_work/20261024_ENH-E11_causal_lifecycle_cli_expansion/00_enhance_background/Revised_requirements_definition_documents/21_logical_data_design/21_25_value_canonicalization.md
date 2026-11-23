@@ -30,3 +30,8 @@ canonical hash対象JSONは次のruleで正規化する。
 5. NaN / Infinityを禁止する。
 6. numpy/pandas/sklearn等のlibrary objectを直接JSONへ保存しない。
 7. schema versionをsnapshotとともに保持する。
+
+
+### Local JCS and digest domain distinctions (G01 P01)
+
+For the Local Study, `request_hash = SHA256(JCS(exact validated e11-local-study/1 wire projection))`. `Graph.content_hash` uses the Graph semantic projection **without** its own hash; five-field `ContentRef.sha256` and `ArtifactDescriptor.sha256` denote exact saved artifact bytes; `_COMMITTED.json.manifest_sha256` denotes strict serialized Manifest file bytes. These are **distinct logical digest domains** even when they share SHA-256. Canonicalization rejects non-JSON/nonfinite/unpaired-surrogate/duplicate-key input and cannot silently map legacy v2. This is a local value constraint, not a new Product entity, persistence column or public wire field.

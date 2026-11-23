@@ -54,3 +54,8 @@
 ### G01 publication authorization consistency (NFR-030/031; G01-07-05/06/11)
 
 Acceptance requires both valid same-run aggregate publication and denied cases for decision absence, denial, forgery, wrong run/request hash, wrong verified root FD, changed EUID, policy re-evaluation disagreement, and staged inventory/classification mutation. **All rejected cases must prevent a successfully sealed/published run**; actual Linux FD, secure stage, atomic no-replace, Reader and filesystem checks remain necessary. Pure decision tests alone cannot pass G01_999. This is a clarification of existing NFR-030/031 and related Gate tests, not an additional deferred product feature.
+
+
+### G01 P01 pure-contract and cross-file acceptance distinction (FR-201/NFR-029)
+
+G01 must separately prove (a) strict versioned Study/ContentRef/Method/Estimand/privacy decoding, (b) deterministic JCS golden bytes and four distinct hashes, (c) pure positive and synthetic justified-negative Manifest envelopes, five-field input lineage joins, safe output Graph Ref relative to TrustedRoot and exact inventory / Status consistency, and (d) physical P02/P05 Reader verification of actual Study/Status/Graph and secure files. A scientific-negative pure fixture may use the reserved G01 reason SCI_NO_ADMISSIBLE_PAG but **must not** establish that a real FCI run proves no admissible PAG. Technical reasons even when repeated in Status and factory evidence are rejected. P01 developer tests cannot be promoted to G01_999 independent science/OS PASS.

@@ -69,3 +69,8 @@ Navigation側の`Setup / Discovery / Identification / Estimation / Effects / Dia
 - **`FR-043`**：Identificationは全reasonを収集後、確定的不整合をreview statusより優先してstatus決定する
 - **`FR-045`**：Treatment / Outcome inferred typeを正規化文字列で保存し、外部型objectを永続化しない
 - **`FR-048`**：estimator/analysisに適用可能なoverlap、balance、weight、sample loss等のdiagnosticをResultとして保存する。全estimatorへ同一diagnostic setを強制しない
+
+
+### Local G01 DISCOVER input and negative classification boundary
+
+The local G01 implementation supports only DISCOVER with P1-M06/causal-learn, EXPLORATORY, GRAPH_STRUCTURE/OBSERVED_VARIABLES/NOT_APPLICABLE, no requested inference and no input Graph/Identification, in a separate versioned CLI lane. Valid uncertain or empty-edge PAG output is a Graph-positive result; it must not be replaced by a fabricated DAG or dummy Effect. Pure Study/Manifest parsing checks typed structure and reason-code grammar, while actual method execution, eligibility and independently verified scientific-negative proof remain P04/P05 responsibilities. The reserved SCI_NO_ADMISSIBLE_PAG code is **not evidence** that an actual FCI negative producer exists. Backend, schema, input, privacy and FS failures never become successful science-negative bundles.

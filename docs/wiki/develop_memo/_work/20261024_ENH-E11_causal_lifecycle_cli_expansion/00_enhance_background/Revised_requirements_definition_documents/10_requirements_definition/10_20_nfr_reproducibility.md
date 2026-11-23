@@ -44,3 +44,8 @@ Current contractでは`StageAttempt.effective_random_seed: int | null`を追加�
 `runtime_version_json`は最低限`ariadne_code_version / python_version / platform_system / platform_release / machine / libraries`を保持する。これはbit-for-bit numerical identity保証ではなくenvironment再構築情報である。
 
 Idempotencyはduplicate durable side effectを生成し得るCommandに適用し、scopeを`(project_id, command_scope, idempotency_key)`とする。exactly-once executionは保証しないが、retryで同一successful Stage outputのdurable Artifactを重複materializeしてはならない。
+
+
+### G01 local Study and publication identity (NFR-029)
+
+For local scientific runs, request identity is derived from **strict JCS/RFC8785 canonical bytes of the validated, versioned Study**, not from a raw YAML string, an unsorted Python mapping, a filesystem path label or a fabricated default. The Study and downstream Status/Manifest share an exact run ID; input Question/Design/Dataset provenance is carried by five-field ContentRefs (identity, relative key, exact-file-byte SHA256, media type, nullable schema version). The request digest, a Graph semantic digest, each artifact file-byte digest and the commit marker's Manifest-byte digest represent **different projections** and must not be substituted. Lexically valid refs do not attest actual files; independent trusted-root physical bytes verification is still required. This refines NFR-029 rather than asserting independent reproducibility acceptance.

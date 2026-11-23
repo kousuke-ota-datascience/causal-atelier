@@ -74,3 +74,8 @@ F07の区間表現はextended-real tagged endpoints・nonempty canonical compone
 ### 18.6. E11 Cross Port・Scientific/Schema不変条件
 
 Typed Local Port/DTOの境界は[共通契約](../combined_review/112_20261117_prep02_f03_f07_shared_port_signature_contract.md)に統合。Graphのsemantic hashと外部File hashは別計算として扱い、ManifestはOperation別のEffect存在性を厳格判定する。B0/B1のARは一律EMPTY拒否ではなくjust-ID**非退化条件**を伴うMethod固有validatorを設計する。個票の事前Policyの独立Trust AnchorとOSの実効Principalを別検証する。詳細：[F06 semantic join](../combined_review/114_20261117_prep02_f06_schema_semantic_invariants.md)、[F07統計量](../combined_review/111_20261117_prep02_b0_b1_ar_science_method_contract.md)、[F05信頼Anchor](../combined_review/113_20261117_prep02_f05_policy_trust_anchor_candidate.md)。これらはmechanical/scientific review inputsであり、Port/Schema Freezeを宣言しない。
+
+
+### G01 P01 contract ownership and E11 codec isolation
+
+P01 is the pure typed Study/ContentRef/JCS/Manifest value boundary. The strict e11-local-study/1 and e11-local-manifest/1 wire decoders reject unknown keys, wrong version, legacy v2 interpretation, incompatible Operation/Method/Estimand/privacy, bad cross-ref and invalid scientific-negative reason combinations. P02 owns FD-rooted input/Artifact bytes, atomic staging/publish and independent Reader; P03 Graph scientific-structure serialization; P04 actual FCI execution and science proof; P05 caller orchestration and effective runtime facts. `from_payload` cannot recompute a request hash from absent external Study or recheck Status code bytes; the full evidence factory/P05/Reader must perform cross-file joins. Existing public JSON versions and Product ABI are unchanged.
