@@ -1067,6 +1067,18 @@ Backend nodeとDataset列を1:1で対応させ、node1/node2に対応するendpo
 
 `DD-E11-METH-P106`は実効API/eligibility、独立MAG/PAG同値類Oracle、BK/latent negativeの検証契約。Backendの出力を自らの正解Oracleにしない。
 
+
+### DEC-G01-P04-CI-ELIG-01 — Owner adopted A: conservative exhaustive CI preflight (formal 09/S10/S11 pending)
+
+For G01/P1-M06, before invoking the FCI backend, enumerate every unordered pair (X,Y) from the p ordered observed variables V and every S subset of V excluding X,Y, including the empty set and |S|=p-2. The required count is C(p,2)*2^(p-2). The FCI Possible-D-Sep stage in the pinned causal-learn 0.1.4.8 source may inspect conditioning sets beyond the user-configured adjacency-search depth; neither depth nor max_path_length may truncate this preflight. This screening is a deliberately conservative sufficient G01 policy, not a claim that FCI uses every triple.
+
+- fisherz: require declared continuous complete finite, nonconstant numeric columns; for every triple require n > |S|+3 and a finite, positive-definite and reliably invertible empirical correlation submatrix over X,Y,S. Reject singular cases; if numerical reliability cannot be established, return unresolved/blocked rather than PASS. Gaussianity, independent observations and faithfulness are scientific assumptions, not proved by preflight. A numeric condition-number tolerance is not newly authorized.
+- chisq and gsq: require exact integer-coded categorical values compatible with declared category domains; Backend implicit recoding does not validate them. For each triple and each declared conditioning category combination S=s, require positive stratum count, nondegenerate X-by-Y contingency table with positive degrees of freedom, and null-independence expected count E(x,y|s)=N(x,+|s)*N(+,y|s)/N(+,+|s) >= 5 for every declared X/Y cell. Empty/unsupported strata, a zero-degree table, or any expected count below 5 are ineligible. The adopted A proposal treats 5 as a conservative G01 screening floor, not a universal statistical validity guarantee.
+- Exhaustive review must finish; absent verified resources, exhausted budget, unresolved category domain or unstable numerical matrix gives a typed eligibility-unresolved/technical block before FCI. Never truncate, skip difficult triples, silently switch CI, or label error SCI_NO_ADMISSIBLE_PAG. No new public wire/exit code is authorized. A fixed maximum-p/resource limit or numerical stability tolerance, if necessary for deterministic positive eligibility, remains a separate specification requiring justification.
+- Log only non-row eligibility evidence: method/CI, p,n, total and examined triple counts, aggregate minimum expected count, typed reason and evaluation completeness; no raw observations, secret values or variable-name leakage in CLI JSON. Non-null BK remains pre-FCI rejected as separately agreed. Passing these screens is not FCI fit, independence-assumption verification, correct PAG, or independent science acceptance.
+
+Independent tests must cover FisherZ n=|S|+3 (reject) and n=|S|+4 (only algebraically sufficient), singular/near-singular matrices, discrete E=5 versus E<5, fully supported and marginal-only-supported categorical tables, declared empty strata, depth=0 with possible larger FCI conditioning sets, wrong categorical codes, incomplete enumeration and zero Backend invocation on all preflight failures. Keep G01-07-09/10 and G01_999 obligations unchanged.
+
 ## 5. P2 CATE / DRIV
 
 ### 5.1. Non-IV 7 Method
