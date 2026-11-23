@@ -452,6 +452,8 @@ Product `GraphVersionService`はGraph Versionの唯一のWriter。`GraphEvidence
 
 **依存制約：** `ariadne.capabilities.causal.local_execution.LocalCausalUseCase`が受け取る`ValidatedStudy`は`ariadne.causal.design.study`の純粋な共通型である。CLIの`LocalStudySpec`（`ariadne.interfaces.cli.local_causal.study`）をApplicationに渡さない。Decoderは厳格なVersion/Field/Ref検証と共通科学Validatorを通して`ValidatedStudy`を構築する。型の名前だけでverifiedと判断しない。
 
+**G01/P04 Product v2 policy bridge の段階的適用（DEC-G01-P04-PRODUCT-POLICY-SHARING-01=B）：** 最終ArchitectureではMethod×Estimand適格性のpure policyを単一Authorityとして再利用し、旧`ScientificValidationService`も互換Bridgeから同じ規則を利用する。ただしG01/P04のCoding範囲は新Local `P1-M06`のpure適格性・Method metadata authorityとFCI Adapterに限り、既存Product v2 `validate_submission`・`ESTIMATOR_CAPABILITIES`・旧Estimatorの移行は`DEFERRED_PRODUCT_POLICY_BRIDGE`とする。現行の旧表は既存Productの互換性baselineであり、P1-M06または新Methodの代替Registryではない。旧Estimator metadataを複製して「共有済み」としてはならず、既存Productサービスへの実行時委譲が完了したと主張しない。後続のOwner承認による互換Bridge、全旧Operation/Estimatorの挙動同等性と回帰実証、単一Authorityへの収束が完了条件である。G01_999ではこの残件を独立した`DEFERRED`依存として追跡し、別途Ownerが受入工程を変更しない限り共通化要件をPASSとして扱わない。
+
 **既存CausalDesignの再利用限界：** 現行`ariadne.causal.design.schemas.CausalDesign.Estimand`はATE/ATTのみを持つ。LATE/CATE/IV slope/Graph Structure等のTargetは共通`EstimandRef`で意味を表現する。既存CausalDesignのTreatment/Outcome/AssumptionとATE/ATT検証は対応可能な場合だけ明示Bridgeで再利用し、未対応Estimandを既存Enumへ無検証castしない。Method×Estimandの適格性規則は共通pure policy一箇所へ集約し、旧`ScientificValidationService`も互換呼出を通して同規則を使う。
 
 **既存Graph互換：** `product.domain.graph_semantics.validate_graph_document/canonical_graph`が持つDAG/CPDAG/PAGの意味を`shared.graph_semantics`の共通純関数に移し、Productの既存importを互換wrapperで維持する。PAG端点の科学的検証は1箇所の実装を使い、`GraphEvidence`側ではtemporal lag/Version参照の追加不変条件を検証する。
