@@ -80,6 +80,8 @@ privacy: {classification: AGGREGATE, row_export_requested: false}
 
 `ContentRef`=`ariadne.shared.content_ref.ContentRef`、CLI wire DTO `LocalStudySpec`=`ariadne.interfaces.cli.local_causal.study.LocalStudySpec`、Application受理型 `ValidatedStudy`=`ariadne.causal.design.study.ValidatedStudy`、`GraphEvidence`=`ariadne.causal.discovery.graph_evidence.GraphEvidence`、`BackendCapabilityRecord`=`ariadne.scientific.capabilities.BackendCapabilityRecord`。各ClassのField/Constructor/Method・検証の7区分は30_60 §11〜12、30_61 §1〜5、30_62 §7が所有する。
 
+**G01/P04 Method policy dispatchの移行契約（DEC-G01-P04-PRODUCT-POLICY-SHARING-01=B）：** Local P1-M06に対する`MethodCapabilityPort.resolve(ValidatedCapabilityRequest)`は新LocalのMethod metadata/pure eligibility authorityを利用し、検証済みMethod/Estimand/Design/Inference/Backend条件を保持する。旧Product v2 `ScientificValidationService`の`validate_submission`は**G01/P04から呼ばず、変更しない**。既存`ESTIMATOR_CAPABILITIES`は旧Product互換実装として存置するが、P1-M06のRegistry情報源または二重の新Method適格性規則ではない。将来の共通pure policyへの旧Product接続は`DEFERRED_PRODUCT_POLICY_BRIDGE`であり、現時点で呼出統合を実施・検証したと記載しない。公共Port署名、Product v2の既存契約、E11 wire Schema Versionは不変。旧ProductへのBridgeは別個のOwner承認と旧Product全Operation/Estimator回帰を経て適用し、未完了状態はG01_999の受入依存として可視化する。
+
 GraphのEDIT/FIXとVersion ID発行は既存Product `GraphVersionService`が所有する。`GraphEvidence`はVersion writerではなく、`make_revision`は定義しない。Domain側のEstimator適格性は既存`ScientificValidationService`の判定を共通pure policyに統合し、Backend availabilityは`MethodCapabilityPort.resolve(request)`で独立検査する。
 
 ### 4.3. 既存Classとの再利用・依存方向
