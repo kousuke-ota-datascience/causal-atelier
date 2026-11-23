@@ -1,5 +1,8 @@
 # 188 — G01/P01 Trial01 Coding Agent restart handoff (revised S10/S11)
 
+> **SUPERSEDED AFTER THIRD PRE-CODING BLOCK (2026-11-23):** The 185/186/187 authorization chain and S10 SHA 707f6aa... below are HISTORICAL for the earlier G01/P01 WHAT. A further CONTRACT_DEFECT was recorded: AMD-E11-G01-P01-002 (Graph-negative reason code). Revised G01/P01, G01/P04, G01/P05, 07, stock design, and a new proposed 09 were written after that freeze. **Do not restart coding under the authorization or variables below.** A new distinct Owner approval of 09+re-S10 and subsequently a separate re-S11 are required, then the latest authorization handoff must be used. This warning is a control-plane annotation, not a change to the frozen implementation WHAT.
+
+
 **Date:** 2026-11-23 JST  
 **Status:** `RESTART_AUTHORIZED_SUBJECT_TO_RUNTIME_PREFLIGHT / NO_CODING_OBSERVED`  
 **Current human authority:** `185` = formal 09 approved, `186` = revised provisional S10 approved, **`187` = separate revised limited S11 approved**. Old `179/180` and earlier `181` handoff are historical for superseded contract; their old source identity must not be used for restart.

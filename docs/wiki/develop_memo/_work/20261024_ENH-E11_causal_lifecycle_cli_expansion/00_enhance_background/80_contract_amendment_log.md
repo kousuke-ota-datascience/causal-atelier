@@ -40,6 +40,15 @@
 - **再開状態:** `G01/P01/Trial01=AUTHORIZED_TO_RESTART_SUBJECT_TO_RUNTIME_PREFLIGHT`。対象はG01/P01–P05の実装・開発者テストのみ。Coding Agentの実装、実Linux環境でのpreflight、focused verification、checkpoint、pushは**この承認記録では未観測**。二度のBLOCKED停止記録を保存し、formal FAIL/08がない限りTrial自動増番は行わない。
 - **受入義務の不変更:** 独立S09/B02/B03/B04/B05/T2/T3/07/999及びProduct v2回帰は引き続き必要。G01_999=BLOCKED、G02–G10未許可。過去のPENDING行は当時の履歴であり、最新の状態は本追記を優先する。
 
+### AMD-E11-G01-P01-002 — Graph-negative reason code contract defect (2026-11-23)
+
+- **発生:** G01/P01/Trial01の3回目の実装前停止 BLOCKED_CONTRACT_AMBIGUITY。START_SHA=f33a6a614881f69cc8db4216ce295072ff87b58c、PACKAGE_CHECKPOINT_SHAなし。前回の暫定S10 SHA=707f6aaac1df5393dbf762448c41db2f1c9dbf35、185/186/187承認は確認されていた。原因は同じ技術的エラー文字列がgraph_negative_reason_codesとStatusに入っても旧P01が受理し得た、科学的理由コード判別の欠落。
+- **修正種別:** CONTRACT_DEFECT。G01/P01 §6.5.1aの閉集合 SCI_NO_ADMISSIBLE_PAG 以外は科学的Graph-negative候補として拒否。G01/P04では科学的不存在のMethod別証拠なしに負結果を発行禁止、P05では真正P04 outcomeとdiagnosticsを別途照合。P04による現実の科学的Graph-negative生成が可能と実証したわけではない。汎用公開Schema/lock/コードは未変更。
+- **影響:** G01/P01・P04・P05の06、G01 07、stock 23_42/30_62、09新規契約変更、既存Ledger・運用ハンドオフ。P02/P03/P00、G02〜G10、旧Product v2・科学的受入条件に変更なし。
+- **証跡:** 09_ENH-E11_G01_AMD-E11-G01-P01-002_Gate_Contract_Amendment.md および combined_review/189_20261123_g01_p01_negative_reason_contract_defect_impact.md。Author作業だけでは独立S09や実テストPASSを証明しない。
+- **現時点:** AMENDMENT_PROPOSED / NEW_OWNER_09_RE_S10_RE_S11_PENDING。従前185/186/187は旧凍結契約の承認履歴として保存するが、今回の改訂WHATへのCoding許可として流用禁止。旧Trial01の3件のBLOCKED停止記録は保持し、正式FAIL/08がなければTrial増番しない。
+
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
