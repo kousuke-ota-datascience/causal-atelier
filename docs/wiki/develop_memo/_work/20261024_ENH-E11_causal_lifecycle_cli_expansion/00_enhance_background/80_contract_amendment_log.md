@@ -71,6 +71,13 @@
 - **変更管理:** 新09 `AMD-E11-G01-P02-001`、影響レビュー`combined_review/195_20261123_g01_p02_privacy_decision_binding_contract_impact.md`。
 - **承認境界:** `PROPOSED / OWNER_09_RE_S10_SEPARATE_RE_S11_PENDING`。旧S10 `bcc1d797e1406e8816d12b725eeace07a181c702` とS11記録193は旧P02契約への歴史的承認。独立S09/B02/B03/B04/B05/T2/T3/07/999義務不変更。
 
+### AMD-E11-G01-P02-001 — RD/LDD/BD/IF/DD/06/07階層整合（2026-11-23追加）
+
+- **Owner追加指示:** 要件定義・基本設計・論理データ定義・API仕様・詳細設計・06コーディング指示・07テスト指示を一貫して修正。
+- **正本候補の改訂:** RD `10_21/10_22/10_91`、LDD `21_23/21_40`、BD `22_09/22_12`、IF `23_41/23_42`、DD `30_62`、G01 P02/P05 `06`、G01 `07`。Author audit `combined_review/196_20261123_g01_p02_rd_ldd_bd_if_dd_06_07_parity_audit.md`。
+- **不変:** P01実装・Checkpoint、P03/P04 WHAT、Status/Manifest public Schema、旧Product v2、G01個票禁止、lock blob、独立科学・FS受入要件。
+- **依然として未許可:** AMD-001およびAMD-002時代のOwner S10/S11を今回の実装変更へ流用しない。今回の全階層の改訂後full SHAを対象に、新09→新暫定G01-S10→別個のS11のOwner明示承認が必要。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。

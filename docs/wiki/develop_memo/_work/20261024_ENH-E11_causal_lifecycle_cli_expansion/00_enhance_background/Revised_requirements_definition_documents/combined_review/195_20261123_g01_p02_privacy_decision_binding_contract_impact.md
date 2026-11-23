@@ -29,3 +29,8 @@ No scientific or Gate PASS, Python3.12 B02, real FS B03, effective Backend B04, 
 ## Decision boundary
 
 Formal 09 AMD-E11-G01-P02-001 Owner decision + new provisional S10 frozen full SHA, then a separate new S11 Coding Authorization. Prior S10 bcc1d797e1406e8816d12b725eeace07a181c702 and S11 record 193 do not cover changed P02 WHAT. Trial01 remains BLOCKED pre-coding; no P02 checkpoint.
+
+
+### Extended RD→LDD→BD→IF→DD→06/07 reconciliation
+
+Author added explicit trace and responsibility rules in requirements (`10_21`, `10_22`, `10_91`), logical-data (`21_23`, `21_40`), basic design (`22_09`, `22_12`), interfaces (`23_41`, `23_42`), detailed design (`30_62`), P02/P05 06 and G01 07. See audit 196. NFR-030/031 stay active/unverified; these cross-layer additions do not imply Owner reauthorization, independent code tests, FS/Reader PASS or P01 replay. Public E11 wire remains unchanged.

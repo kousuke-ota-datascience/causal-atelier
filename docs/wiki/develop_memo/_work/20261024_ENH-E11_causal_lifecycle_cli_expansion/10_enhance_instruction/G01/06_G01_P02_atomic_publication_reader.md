@@ -207,3 +207,8 @@ G01は`P1-M06`のDISCOVERのみで、個票の出力を常に拒否する。Vali
 新Local Graphのimmutable identityは内容hash、parent/source科学証拠とContentRef。Product GraphVersion DBへlookup/write/edit/FIXせず、現行E11 Graph wireの`version_id`と`parent_version_id`はどちらもnullとし、non-nullは未対応importとして拒否する。既存ProductのGraphVersionServiceや旧v2は無変更。
 
 OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・dirfd/O_NOFOLLOW・same FS・symlink/race・rename前後・post-rename indeterminate・Marker/Reader/hash）に限定する。冗長なfault-permutation全順列、statx mount-ID/namespace証明、ACL/xattr digest/コンテナ推測、電源断耐久保証は追加しない。JCS RFC8785 golden bytes、no-clobber、公開後整合性、独立PAG Science Oracleは維持する。Coding Agentが未承認の広いProof強化を推測で復活させない。
+
+
+### Upstream-to-package trace (AMD-E11-G01-P02-001)
+
+NFR-030/031 ↔ LDD 21_23/21_40 ↔ BD 22_09/22_12 ↔ IF 23_41/23_42 ↔ DD 30_62 ↔ G01/P02-P05 06 ↔ G01 07-05/06/11. P02 §6.3 sets the exact internal PrivacyDecision input binding, Concrete validate signature and before-rename independent reauthorization. These are the implementation WHAT for the named P02 Package. The RD/BD/LDD/IF documents define cross-layer invariants and data responsibility, not permission to change this Package's tested behavior without 09/S10/S11. The shared public Port, JSON wire, G01 aggregate-only constraint and real Linux/Reader tests remain unchanged.

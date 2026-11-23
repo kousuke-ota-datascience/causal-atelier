@@ -64,3 +64,8 @@ AMD-E11-G01-P02-001 tracked in 80_contract_amendment_log.md and Author impact re
 ## 11. Guardrails
 
 Fail closed on decision mismatch; no caller-provided boolean as security, no row data in G01, no signed Policy extension, no scientific or FS PASS from a paper contract.
+
+
+### Five-layer source-document reconciliation
+
+The Owner requested that this amendment be reconciled across **requirements (NFR-030/031 and acceptance), logical data (21_23 transient PrivacyDecision; 21_40 integrity), basic design (22_09 publication; 22_12 local security), IF (23_41 Port/Decision; 23_42 bundle), detailed design (30_62 publisher), coding instructions (P02/P05 06) and test instruction (G01 07)**. The exact aligned source additions were committed at `535fb43ca46f1df4f9845798f6775d873517a4a7`; no original RD requirement ID, acceptance grade or Product v2 contract was changed. These are normative cross-layer *semantic* constraints, not identical repetitions or an added persistent Policy entity. An author reconciliation record is `combined_review/196_20261123_g01_p02_rd_ldd_bd_if_dd_06_07_parity_audit.md`. This 09 remains **PROPOSED / OWNER_APPROVAL_PENDING**; the earlier S10 `bcc1d797...` and S11 record193 do not authorize changed P02 WHAT.
