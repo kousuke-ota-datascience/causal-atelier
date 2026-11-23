@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:ariadne:e11:p1-m06:fci-design-evidence:1",
   "title": "P1-M06 FCI Design evidence: strict internal Method profile",
-  "description": "Application-only strict P1-M06 design profile. Declared causal assumptions are not proof that they hold.",
+  "description": "Application-only strict P1-M06 design profile. Declared causal assumptions are not proof that they hold. CATEGORICAL variables require a complete declared category_codes universe; semantic validation checks strict token/ascending order and Dataset membership before FCI.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -45,8 +45,43 @@
               "CONTINUOUS",
               "CATEGORICAL"
             ]
+          },
+          "category_codes": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "integer"
+            },
+            "description": "For CATEGORICAL only: complete declared category-code universe, not observed unique values. Must be strictly ascending, exact JSON integer tokens (no 1.0/1e0, bool or coercion), within verified Backend integer representation; ordering/token exactness enforced by semantic validator."
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "measurement_scale": {
+                  "const": "CATEGORICAL"
+                }
+              },
+              "required": [
+                "measurement_scale"
+              ]
+            },
+            "then": {
+              "required": [
+                "category_codes"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "category_codes"
+                ]
+              }
+            }
+          }
+        ]
       }
     },
     "assumptions": {
