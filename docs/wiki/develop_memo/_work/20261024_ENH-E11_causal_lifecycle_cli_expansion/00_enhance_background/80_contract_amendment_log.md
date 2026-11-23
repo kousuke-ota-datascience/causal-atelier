@@ -93,6 +93,12 @@
 - **New S11 remains separate:** `DEC-G01-P02-S11-REAUTH-01 = PENDING` (docket `combined_review/200_20261123_g01_p02_limited_s11_reauthorization_docket.md`). Old S11 record 193 remains valid historical authorization for the earlier P02 contract **but not revised WHAT**. P02 Trial01 cannot implement until new S11 Owner decision; actual runtime preflight still mandatory.
 - **Unwaived:** G01 independent science/FS/T2/T3/07/999 and Product v2 regression unaffected; other Gates not authorized.
 
+### Owner指定：Gate 06/07は5階層Stock文書との整合後にのみ改訂（2026-11-23）
+
+- **正規相対path基点:** `docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/`。対象は`00_enhance_background/Revised_requirements_definition_documents/{10_requirements_definition,21_logical_data_design,22_product_basic_design,23_api_interface_design,30_detailed_design}`、および`10_enhance_instruction/{GATE_ID}/06_*.md`と`07_*.md`。
+- **照合記録:** `combined_review/202_20261123_g01_06_07_five_layer_contract_concordance_protocol.md`。G01 P01–P05と07をRD/LDD/BD/IF/DDに責務トレース。現行G01/P01とP02は197/195/196で修正済み。未検出の新契約不整合は捏造しない。
+- **Freeze維持:** `6df4b94de72a6ec8619f315e55ba7821e1eb157c`の06/07自体はこの管理追記では改変していない。新たな06/07正規契約改訂は正式09→新S10→別S11を要求。P01逆方向整合化は既承認の一回限り例外。現時点のS11未承認状態を保持。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。

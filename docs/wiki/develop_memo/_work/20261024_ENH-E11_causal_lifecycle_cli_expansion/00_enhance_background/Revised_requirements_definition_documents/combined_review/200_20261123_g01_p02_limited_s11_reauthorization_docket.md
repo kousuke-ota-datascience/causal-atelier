@@ -40,3 +40,7 @@ P02 must not trust a forged `PrivacyDecision.allowed`; pass the typed decision t
 **`DEC-G01-P02-S11-REAUTH-01`:** authorize a **new separate limited G01-S11** for `G01/P01–P05` with **next execution P02/Trial01**, bound to immutable S10 `6df4b94de72a6ec8619f315e55ba7821e1eb157c`, branch `feature/ariadne_mvp_e11`, lock blob above, preserved P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`, and all prior mandatory G01/07/999 tests.
 
 If Owner approves, record a distinct positive S11 authorization (201) **before** issuing a new current P02 Coding Agent handoff. Without it, P02 remains `BLOCKED_CODING_AUTHORIZATION`.
+
+## 5. Five-layer instruction parity audit (Owner supplementary instruction)
+
+Owner explicitly requires cross-layer alignment of `10_enhance_instruction/{GATE_ID}/06_*.md` and `07_*.md` against RD/21 LDD/22 BD/23 IF/30 DD, all under the stated ENH-E11 relative base. The G01 P01/P02-specific reconciliation records are 197 and 195/196; new Gate-wide trace / no-unapproved-postfreeze-change control is `combined_review/202_20261123_g01_06_07_five_layer_contract_concordance_protocol.md`. Current immutable source remains `6df4b94de72a6ec8619f315e55ba7821e1eb157c`; new normative discrepancies must be handled through 09/S10/S11 and not edited after freeze without Owner approval. This audit is not independent S09 PASS.
