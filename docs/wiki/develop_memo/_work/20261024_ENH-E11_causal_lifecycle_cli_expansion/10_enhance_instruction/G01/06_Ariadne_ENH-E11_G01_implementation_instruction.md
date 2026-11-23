@@ -8,7 +8,7 @@
 **Gate ID: G01 (Enhance Workflow Gate)**  
 **Execution Mode: WORK_PACKAGE / Required packages: P01,P02,P03,P04,P05**  
 **対象Gate：G01（Local Question/Design/Graph＋P1-M06 FCI/PAG）**  
-**基準：`prototype/ariadne_mvp` の本書・07と共通契約の同一Commitを、後続のCoding Entryで固定する。**  
+**基準：`feature/ariadne_mvp_e11` の本書・07と共通契約の同一Commitを、後続のCoding Entryで固定する。**  
 **根拠：** [PREP-02 Common Design Baseline](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/117_20261117_prep02_common_contract_baseline_freeze.md)／[Requirement 10_32](../../00_enhance_background/Revised_requirements_definition_documents/10_requirements_definition/10_32_scientific_method_scope.md)／[DD 30_61](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_61_causal_domain_ports.md)・[30_62](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_62_local_execution_publication.md)・[30_63](../../00_enhance_background/Revised_requirements_definition_documents/30_detailed_design/30_63_causal_method_adapters.md)／[IF 23_41](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_41_cli_scientific_ports.md)・[23_42](../../00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/23_42_local_result_manifest_artifact.md)／[G01 07](07_Ariadne_ENH-E11_G01_test_instruction.md)。
 
 ## 0. Gate ID / execution contract authority
