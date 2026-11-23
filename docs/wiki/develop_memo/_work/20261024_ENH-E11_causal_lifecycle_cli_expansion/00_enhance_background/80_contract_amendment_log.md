@@ -206,6 +206,13 @@
 - **別個S11未承認:** `DEC-G01-P03-001-S11-REAUTH-01`。Owner判断資料 `combined_review/225_20261123_g01_p03_001_s11_decision_docket.md`。P03/Trial01 CodingとP02 Reader限定改修は新S11まで実行不可。
 - **保全:** P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、P02 checkpoint `3a76a0aa1698037354b284ba7b5a875300473ce6`、`uv.lock` blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、独立科学・G01 07/S09/G01_999受入条件不変。
 
+### AMD-E11-G01-P03-001 — 新限定G01-S11 Owner承認（2026-11-23）
+
+- **明示Owner決定:** `DEC-G01-P03-001-S11-REAUTH-01=APPROVED`、G01/P01–P05限定、次は**G01/P03/Trial01**。正式09承認222→暫定S10再Freeze224→**別個の新S11承認226**、P02限定互換修正承認221。
+- **厳密WHAT full Git SHA:** `52e5c60176d6b72c91f839ef267f46657bd380b5`。承認文書 `combined_review/226_20261123_g01_p03_001_limited_s11_owner_authorization.md`、再開handoff `combined_review/227_20261123_g01_p03_001_trial01_restart_handoff_after_s11.md`。旧216は旧WHAT用であり現行P03の権威ではない。
+- **範囲:** P03 GraphEvidence／provenanceの実装・Developer verificationと、Owner221の範囲に限る完了済みP02 Reader+focused testの互換修正。P01/P02 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`／`3a76a0aa1698037354b284ba7b5a875300473ce6`と原レポート不変。P02 Publisher・Privacy・FS publication、Product v2は対象外。
+- **未実施:** 実Coding Agent preflight、P03 source/tests/checkpoint、P02 Reader限定改修の回帰、独立MAG/PAG科学・S09/B02–B05/T2/T3・G01_999。承認はPASSではない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
