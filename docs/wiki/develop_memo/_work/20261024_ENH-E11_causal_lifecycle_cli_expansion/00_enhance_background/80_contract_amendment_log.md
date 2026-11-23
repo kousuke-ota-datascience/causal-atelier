@@ -33,6 +33,13 @@
 - **再Freezeの固定full SHA:** `707f6aaac1df5393dbf762448c41db2f1c9dbf35`。`uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`は不変。185/186および本Ledger追記はFreeze後の管理・承認記録であり、凍結した科学・技術WHATを変更しない。
 - **唯一の残るCoding EntryのOwner判断:** 新しい改訂S10と同SHAに対する**別個のG01-S11限定Coding Authorization**。S11未承認の間はG01/P01 Trial01実装再開不可。旧179/180は旧Freezeの履歴のみ。G01_999独立S09/B02/B03/B04/B05/T2/T3/07義務は維持。
 
+### AMD-E11-G01-P01-001 — 改訂後限定S11 Owner再承認（2026-11-23追記）
+
+- **Owner決定:** `DEC-G01-P01-S11-REAUTH-01=APPROVED`。09正式承認185 → 新暫定S10再Freeze186 → **別個の新限定S11再承認187** の順序を満たした。承認記録は`combined_review/187_20261123_g01_p01_revised_limited_s11_owner_coding_authorization.md`。
+- **固定契約:** 新S10の完全Git SHA `707f6aaac1df5393dbf762448c41db2f1c9dbf35`、lock Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`。旧179/180は歴史的承認。現在の実行ハンドオフは`combined_review/188_20261123_g01_p01_trial01_coding_restart_handoff.md`、旧181には最新参照を追記した。
+- **再開状態:** `G01/P01/Trial01=AUTHORIZED_TO_RESTART_SUBJECT_TO_RUNTIME_PREFLIGHT`。対象はG01/P01–P05の実装・開発者テストのみ。Coding Agentの実装、実Linux環境でのpreflight、focused verification、checkpoint、pushは**この承認記録では未観測**。二度のBLOCKED停止記録を保存し、formal FAIL/08がない限りTrial自動増番は行わない。
+- **受入義務の不変更:** 独立S09/B02/B03/B04/B05/T2/T3/07/999及びProduct v2回帰は引き続き必要。G01_999=BLOCKED、G02–G10未許可。過去のPENDING行は当時の履歴であり、最新の状態は本追記を優先する。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
