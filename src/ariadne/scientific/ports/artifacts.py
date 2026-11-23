@@ -1,0 +1,23 @@
+"""Scoped artifact staging made available to scientific code."""
+from typing import Protocol
+
+
+class ArtifactDescriptorView(Protocol):
+    @property
+    def key(self) -> str: ...
+    @property
+    def sha256(self) -> str: ...
+    @property
+    def size_bytes(self) -> int: ...
+    @property
+    def media_type(self) -> str: ...
+    @property
+    def privacy_class(self) -> str: ...
+    @property
+    def visibility(self) -> str: ...
+
+
+class StagingArtifactSink(Protocol):
+    def stage_bytes(
+        self, key: str, data: bytes, media_type: str, classification: str,
+    ) -> ArtifactDescriptorView: ...
