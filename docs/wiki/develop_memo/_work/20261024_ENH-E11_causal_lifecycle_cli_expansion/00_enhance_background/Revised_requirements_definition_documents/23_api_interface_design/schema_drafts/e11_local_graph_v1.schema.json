@@ -83,7 +83,79 @@
       ]
     },
     "provenance": {
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method_id",
+        "backend",
+        "ci_test",
+        "assumptions",
+        "source_refs",
+        "parent_graph_ref"
+      ],
+      "properties": {
+        "method_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "backend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ci_test": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "G01 P1-M06 semantically must equal Study.method.config.indep_test and be fisherz/chisq/gsq"
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Declared assumption labels, not evidence of their scientific truth"
+        },
+        "source_refs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "question",
+            "design",
+            "dataset"
+          ],
+          "properties": {
+            "question": {
+              "$ref": "#/$defs/contentRef"
+            },
+            "design": {
+              "$ref": "#/$defs/contentRef"
+            },
+            "dataset": {
+              "$ref": "#/$defs/contentRef"
+            }
+          }
+        },
+        "parent_graph_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/contentRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Must be null for standalone G01 DISCOVER; future scientific successor only with verified immutable parent bytes"
+        }
+      },
+      "description": "Typed scientific provenance with physical ContentRef verification and Study/Manifest joins performed outside JSON Schema; previous arbitrary-object accepted payloads may be incompatible."
     },
     "content_hash": {
       "type": "string",
@@ -129,6 +201,47 @@
           "oneOf": [
             {
               "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "contentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "relative_key",
+        "sha256",
+        "media_type",
+        "schema_version"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relative_key": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\\\u0000]+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
             },
             {
               "type": "null"

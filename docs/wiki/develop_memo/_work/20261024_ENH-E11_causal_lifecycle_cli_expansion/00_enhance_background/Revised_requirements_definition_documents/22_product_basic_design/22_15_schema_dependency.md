@@ -84,3 +84,8 @@ P01 is the pure typed Study/ContentRef/JCS/Manifest value boundary. The strict e
 ### G01 internal Graph-negative diagnostics schema boundary
 
 The G01 P1-M06 DISCOVER `diagnostics.json` uses the strict **internal** profile `schema_drafts/internal_scientific/e11_g01_discover_negative_diagnostics_draft1.schema.json`. It is NOT the separate `e11_method_diagnostics_draft1.schema.json` for P1-M12–20 REFUTE/SENSITIVITY/DIAGNOSE, and its internal profile identifier is not a public Study/Status/Manifest `schema_version` or new `schema_dispatch` field. No changes to the five public E11 payload versions or Product v2. P02 and Reader perform semantic run/reason joins rather than relying on hash/size alone.
+
+
+### Typed Local GraphProvenance schema and compatibility dependency
+
+`e11-local-graph/1` retains every existing top-level key and the same `schema_version`. Its existing `provenance` object is now strict and contains exactly `method_id`, `backend`, `ci_test`, `assumptions`, `source_refs`, `parent_graph_ref`; references reuse the existing five-field ContentRef shape. Current G01/P1-M06 requires Method P1-M06/Backend causal-learn, CI in fisherz/chisq/gsq from Study method config, three source_refs that equal Study+Manifest inputs and a null parent. Other future graph Method acceptance must be validated by its own authorized Method profile, not implied by this G01 requirement. Tightening an existing public property may reject earlier payloads previously accepted under `provenance: object`; the already completed P02 Reader currently verifies only dict/graph hash and does not independently enforce source/provenance meaning. Any required P02 Reader retrofit needs a separate Owner decision and regression proof.

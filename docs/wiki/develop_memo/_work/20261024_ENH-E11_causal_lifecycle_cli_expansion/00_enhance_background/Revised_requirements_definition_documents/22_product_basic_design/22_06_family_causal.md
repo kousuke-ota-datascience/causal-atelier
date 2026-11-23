@@ -74,3 +74,8 @@ Navigation側の`Setup / Discovery / Identification / Estimation / Effects / Dia
 ### Local G01 DISCOVER input and negative classification boundary
 
 The local G01 implementation supports only DISCOVER with P1-M06/causal-learn, EXPLORATORY, GRAPH_STRUCTURE/OBSERVED_VARIABLES/NOT_APPLICABLE, no requested inference and no input Graph/Identification, in a separate versioned CLI lane. Valid uncertain or empty-edge PAG output is a Graph-positive result; it must not be replaced by a fabricated DAG or dummy Effect. Pure Study/Manifest parsing checks typed structure and reason-code grammar, while actual method execution, eligibility and independently verified scientific-negative proof remain P04/P05 responsibilities. The reserved SCI_NO_ADMISSIBLE_PAG code is **not evidence** that an actual FCI negative producer exists. Backend, schema, input, privacy and FS failures never become successful science-negative bundles.
+
+
+### G01 immutable Graph provenance provenance and owner separation
+
+The Local DISCOVER graph contains a typed scientific provenance value inside existing `provenance`: method/backend/CI, declared but not independently proven assumptions, Study-linked source refs and null initial parent. GraphEvidence is an immutable scientific value and does not create/edit Product GraphVersion, while a real later scientific successor may link to an immutable earlier graph via verified ContentRef (not product IDs). Effective Method/CI and all three declared source references join the trusted Study/Manifest. A graph schema or valid content hash is not proof of P04 FCI correctness or causal identifiability. Existing P02 Publisher/Reader is an integration boundary; preserve its completed checkpoint and require explicit approval before unavoidable Reader edits.
