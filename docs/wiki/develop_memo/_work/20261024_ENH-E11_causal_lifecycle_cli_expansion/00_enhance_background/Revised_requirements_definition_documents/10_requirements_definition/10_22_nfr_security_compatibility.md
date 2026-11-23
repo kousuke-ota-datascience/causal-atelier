@@ -34,3 +34,8 @@
 ### Local per-run privacy authorization invariant (NFR-031)
 
 Local scientific output requires an effective privacy decision tied to the **same validated Study/run ID and JCS-derived request hash, same live verified TrustedRoot FD identity, current principal EUID, permitted output classification and actual staged artifacts**. A permit for a different run, request, root, principal, or artifact classification must be rejected before publication even when the supplied decision says allowed. The staged files are checked again by the publisher's policy evaluator; denied or stale decisions fail closed, and aggregate-only G01 never authorizes row/Parquet output. This extends the existing NFR-031 security meaning, not Product RBAC, an independently signed policy, or a new wire field.
+
+
+### G01 Local privacy decision equality and independently effective authorization (NFR-031)
+
+An ephemeral `PrivacyDecision` is a **value-bearing constraint**, not an issuer-authenticated or unforgeable authorization credential. Acceptance MUST depend on the trusted Publisher's independent re-evaluation against actual staged Study, run/hash, verified root FD/EUID and artifact inventory, plus **structural value equality** to the supplied decision. Two valid decisions of the same type with equal values are equivalent and are accepted if the independently evaluated policy allows; issuance provenance, object identity, nonce, MAC or digital signature is NOT required. An allow boolean alone, a stale/mismatched decision or a policy denial MUST fail closed. Previously described 'forged' negative means **detectable field/invariant/policy mismatch**, not a byte-for-byte equivalent reconstruction. No relaxation of the privacy boundary or root/row restrictions is implied.

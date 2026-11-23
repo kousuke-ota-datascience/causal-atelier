@@ -95,3 +95,8 @@ In the local run path the Application authorizes the *declared output capability
 ### Local Manifest pure versus verified publication boundary (G01)
 
 P01 constructs a pure immutable versioned Manifest from validated Study/Status and staged descriptor values; it computes strict Study JCS request hash and checks run/Method/scientific axes, output Graph Ref versus bundle-relative artifact descriptor, privacy and exact operation-specific inventory. It does not read actual files or claim physical hash authenticity. P02 safely stages and verifies actual descriptor bytes; P05 checks provenance and cross-file Study/Status/Graph contents; independent Reader reopens committed Marker/Manifest/artifacts. Graph semantic content hash differs from actual graph.json file-byte SHA. A staged technical_status=COMPLETED is only a candidate, not externally successful publication before Reader. No Product v2 reader or schema migration is implied.
+
+
+### Publisher final authority versus decision issuance provenance
+
+The local CLI does **not** authenticate which process instantiated an immutable `PrivacyDecision`; this value is an untrusted assertion until checked. The same field values on a fresh immutable instance have the same meaning as on the originally returned instance. A Publisher independently executes its **trusted injected** stateless policy on the live Study, verified root/effective principal and actual staged artifact inventory, compares all fields and requires `allowed=true`. The decision value never overrides policy and neither caller-controlled policy replacement nor missing runtime verification is permitted. G01 row/Parquet publication remains prohibited.

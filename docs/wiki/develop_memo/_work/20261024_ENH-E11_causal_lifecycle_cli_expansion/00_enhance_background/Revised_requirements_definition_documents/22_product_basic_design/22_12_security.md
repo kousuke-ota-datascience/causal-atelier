@@ -111,3 +111,8 @@ Productの`OWNER/EDITOR/VIEWER` RBACはProduct laneの既存契約であり、**
 ### TrustedRoot-bound local privacy authorization at seal
 
 A supplied decision is not itself a security capability. Authorization to stage and publish must match the *same* validated Study/run/JCS request digest, effective user, verified current TrustedRoot FD (not merely equal path text) and authorized aggregate-only output class. Recompute the local stateless privacy evaluator on actual staged Study and artifact inventory at seal; do not accept a decision for a different run/root/actor, a denied outcome or a changed row artifact. Fail before Marker and atomic rename, then recheck live root/UID and sealed inventory at commit. G01 remains aggregate-only; future G05 row opt-in policy is not expanded. No external signature, trust anchor or key handling is introduced.
+
+
+### Local privacy decision trust and equivalence model
+
+Within the approved same-UID private TrustedRoot threat model, the Publisher must rely on trusted runtime facts and its own policy evaluator, not cryptographic provenance or identity of a caller-provided decision object. Accept a separately constructed but **structurally identical** allowed decision only if the current independent policy also allows the verified Study/root/UID/inventory. Reject conflicting or stale values and denied policy before Marker. An identical reconstruction cannot and need not be detected; no signed Policy, issuer token or authority extension is introduced.

@@ -59,3 +59,8 @@ Acceptance requires both valid same-run aggregate publication and denied cases f
 ### G01 P01 pure-contract and cross-file acceptance distinction (FR-201/NFR-029)
 
 G01 must separately prove (a) strict versioned Study/ContentRef/Method/Estimand/privacy decoding, (b) deterministic JCS golden bytes and four distinct hashes, (c) pure positive and synthetic justified-negative Manifest envelopes, five-field input lineage joins, safe output Graph Ref relative to TrustedRoot and exact inventory / Status consistency, and (d) physical P02/P05 Reader verification of actual Study/Status/Graph and secure files. A scientific-negative pure fixture may use the reserved G01 reason SCI_NO_ADMISSIBLE_PAG but **must not** establish that a real FCI run proves no admissible PAG. Technical reasons even when repeated in Status and factory evidence are rejected. P01 developer tests cannot be promoted to G01_999 independent science/OS PASS.
+
+
+### G01 decision-equivalence positive/negative test boundary (NFR-030/031)
+
+Test **both** the genuine-policy-produced decision and an independently reconstructed, immutable, schema-valid **value-identical** decision: each must be accepted **only when** the Publisher independently authorizes the current staged Study/root/UID and inventory. Test mismatched allowed/run/hash/root FD/UID/classification/row flag/output shape, denied policy, altered Study/inventory and untrusted policy substitution as rejects before Marker/rename. **Do not require rejection solely because a decision object was reconstructed.** No issuer attestation is in scope. Positive outcome still requires physical FS/Reader proof, not mere DTO equality.

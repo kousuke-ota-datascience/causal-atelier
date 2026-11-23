@@ -51,3 +51,8 @@ Batch View
 ### Local scientific PrivacyDecision — transient logical value (G01)
 
 The local CLI path uses an immutable **ephemeral value**, not a Product Execution or database entity: `PrivacyDecision = (allowed:bool, run_id:RunId, request_hash:SHA256[JCS(ValidatedStudy)], root_identity:VerifiedRootIdentity, principal_uid:int, classification:AGGREGATE, row_export_requested:false, output_shape:DISCOVER_AGGREGATE_ONLY)`. `VerifiedRootIdentity` captures the verified live root FD identity (device/inode/owner/mode and local filesystem facts), **not a bare user path or persistent authorization credential**. The same `run_id/request_hash` refer to the Study and run-scoped sink; the decision governs an **aggregate-only class**, while the exact staged Graph/diagnostics inventory is checked later. This value is derived by policy evaluation, not caller input; it remains internal/transient and is not a new public Study/Status/Manifest field or Product relational entity. Status/Manifest retain existing outcome and hash semantics.
+
+
+### PrivacyDecision value equivalence (local logical model)
+
+`PrivacyDecision` equality is **structural equality across all declared immutable fields**; two separately constructed values with exactly identical fields are logically indistinguishable and intentionally equivalent. No issuer ID, provenance token, unforgeability flag or hidden object-identity constraint exists in this transient logical value. This alone does not authorize publication; the independently trusted Publisher policy re-evaluation on *current* verified Study/root/principal/actual staged inventory must also allow. Distinguish an arbitrary caller `allowed=true` from a valid current policy result.

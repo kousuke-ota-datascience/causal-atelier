@@ -149,3 +149,8 @@ OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・di
 ### P02 privacy authorization parity and evidence classification
 
 NFR-030/031 ↔ LDD 21_23/21_40 ↔ BD 22_09/22_12 ↔ IF 23_41/23_42 ↔ DD 30_62 ↔ G01/P02-P05 06 ↔ G01 07-05/06/11. Required contract tests include a positive same-run staged aggregate and negatives for wrong run/hash/root FD/EUID, stale/forged/denied/missing PrivacyDecision, changed Study or inventory, restricted row output and disagreed publisher policy. These are developer/G01 independent 07 proof obligations: real FD/root/no-clobber/Reader behavior needs actual Linux testing, while pure port mocks do not establish G01-07-05/06 PASS. Requirements and implementation instructions have no separate competing PrivacyDecision contract.
+
+
+### G01 07-05/06/11 decision equality: positive and negative oracle
+
+Required positives: (A) a genuine P05-issued, immutable all-field valid aggregate Decision, and (B) a **separately instantiated object of the same type with every field identical**; in both cases the Publisher's trusted current Policy, staged Study, live root FD, UID and exact aggregate inventory must allow, and normal seal/publish/readback applies. Required negatives: change each field (`allowed`, run ID, JCS request hash, verified root FD identity, UID, classification, row flag, output shape), alter staged Study/inventory, deny independently evaluated policy, or attempt to substitute untrusted caller policy; assert no Marker/rename/COMPLETED and typed rejection. **Do not assert rejection of a fully value-identical Decision solely because it is reconstructed.** `forged` cases elsewhere in 07 mean detectable mismatch or re-evaluation bypass, not object-origin provenance. Actual FD/FS/Reader tests and independent G01_999 remain unwaived.
