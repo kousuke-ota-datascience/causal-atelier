@@ -1,5 +1,7 @@
 # Agent Entry Prompts — 使用ガイド
 
+**2026-11-23 実行時Authority更新（Owner）:** 対象GitHub repositoryは `kousuke-ota-datascience/causal-atelier`（変更なし）、唯一の現行作業/実装/push先branchは `feature/ariadne_mvp_e11`。40のinstantiated `BRANCH_NAME` と `git push` 指示は変更済み。`REMOTE_NAME=causal-atelier` はローカルremote alias（要実環境照合）でありリポジトリ名・branch名とは別。G01 S10/S11は[179](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/179_20261123_g01_provisional_s10_owner_approved.md)・[180](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/180_20261123_g01_limited_s11_owner_coding_authorization.md)で限定承認済み。詳細は[182 branch migration](../../00_enhance_background/Revised_requirements_definition_documents/combined_review/182_20261123_e11_execution_branch_retargeting.md)。本ガイド中の「S10/S11全Gate未承認」記載は策定時点の履歴であり現在のG01状態ではない。G01_999はBLOCKED、実Coding Agent起動は未観測。
+
 **ENH-E11 DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別独立監査・Freeze・Coding Authorization。** 全402のsource SHA索引は変更影響の全体発見用であり、全Gateの科学・契約独立PASSではない。最初に共通E11契約とG01の実依存閉包について独立S09審査、Owner G01-S10 Freeze、別個のOwner G01-S11 Coding Authorizationを得る。G02以降は当該Gate固有のS09→S10→S11と必要な先行Gate999の**実PASS**を当該GateのS11前に確認する。S09文書監査準備は先行Gateのcoding中でも可能。S11がない場合Agentを起動せず、`BLOCKED_CODING_AUTHORIZATION`を記録する。対象外GateはSHA索引には保持するが`NOT_REVIEWED`、実際のMethod別07/999・T2/T3・FS/Reader・旧Product回帰を省略しない。Owner決定記録は`combined_review/173_20261122_dec_precode01_owner_gate_scoped_s09_s10_s11.md`。**現時点S10/S11は全Gate未承認。**
 
 **Document class:** Authoring Guide  
