@@ -115,7 +115,7 @@ Enhancement-fixed values:
 PROJECT_NAME=Ariadne
 ENHANCE_ID=ENH-E11
 ENHANCE_SHORT_ID=E11
-BRANCH_NAME=prototype/ariadne_mvp
+BRANCH_NAME=feature/ariadne_mvp_e11
 REMOTE_NAME=causal-atelier
 WORK_ROOT=docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion
 WORK_DIR_NAME=20261024_ENH-E11_causal_lifecycle_cli_expansion
