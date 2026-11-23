@@ -85,6 +85,14 @@
 - **監査:** `combined_review/197_20261123_g01_p01_post_implementation_reverse_trace_alignment.md`。P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を保持。developerテスト76件の報告は独立G01_999 PASSでない。
 - **G01/P02の再承認境界:** `AMD-E11-G01-P02-001`の09正式承認、新暫定S10 Freezeと別S11は依然必要。後追いP01整合化を含む**最新full commit SHA**をOwner判断対象に用いること。
 
+### AMD-E11-G01-P02-001 — Owner正式09承認・改訂S10再Freeze (2026-11-23)
+
+- **Owner decision:** `DEC-G01-P02-REBASELINE-01=APPROVED`; Owner explicitly authorized `AMD-E11-G01-P02-001` formal 09 and revised provisional G01-S10 at the **exact full Git SHA** `6df4b94de72a6ec8619f315e55ba7821e1eb157c`.
+- **Sequential records:** `combined_review/198_20261123_g01_p02_formal_09_owner_approved.md` (formal 09 approval, commit `07e2343816e7f95c9e966e5483752d63fbfea37d`); `combined_review/199_20261123_g01_p02_revised_provisional_s10_owner_refreeze.md` (distinct reFreeze, commit `4a7ff7b39e49c5501157bfcc1124fdaae1e9d94a`). Earlier `PROPOSED` / `OWNER_PENDING` lines are historical and the new Owner records set current authority.
+- **Preserved predecessor:** G01/P01 Trial01 `PACKAGE_READY` checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167` remains intact. No actual source/tests/pyproject/uv.lock changed after the P01 checkpoint in the reFreeze baseline. Frozen `uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`.
+- **New S11 remains separate:** `DEC-G01-P02-S11-REAUTH-01 = PENDING` (docket `combined_review/200_20261123_g01_p02_limited_s11_reauthorization_docket.md`). Old S11 record 193 remains valid historical authorization for the earlier P02 contract **but not revised WHAT**. P02 Trial01 cannot implement until new S11 Owner decision; actual runtime preflight still mandatory.
+- **Unwaived:** G01 independent science/FS/T2/T3/07/999 and Product v2 regression unaffected; other Gates not authorized.
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
