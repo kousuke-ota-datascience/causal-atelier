@@ -4,7 +4,7 @@
 
 This standalone instruction is for an **independently launched, fresh-session Review Agent**, not the authoring agent. The Owner approved DEC-S05-02=A on 2026-11-22. Any available Codex CLI mechanism may execute this prompt in a separate context once an authorized Linux execution session exists; a Notion Custom Agent is NOT required. No agent was launched by the present author. Do not reuse or rely on the author's suggested scientific conclusion, earlier self-assessment, or exploratory numeric results as acceptance evidence. Review alone is not human specialist signoff. Escalate questions of statistical method legitimacy to a genuinely qualified human Reviewer where agent-only evidence is inadequate.
 
-Work read-only on Git branch `prototype/ariadne_mvp` at an **explicit frozen commit SHA** supplied with the run. Do not change `src/`, `tests/`, `pyproject.toml`, `uv.lock`, canonical product documents or Git branch refs. No Coding Authorization has been issued. Git branch changes require a separate Owner-authorized document proposal; store findings in an external immutable report until reconciled.
+Work read-only on Git branch `feature/ariadne_mvp_e11` at an **explicit frozen commit SHA** supplied with the run. Do not change `src/`, `tests/`, `pyproject.toml`, `uv.lock`, canonical product documents or Git branch refs. Coding Authorization for G01/P01–P05 was separately approved in record 180; this independent Reviewer prompt itself does not authorize any coding. The Owner-authorized branch retargeting is recorded in 182. Git branch changes require a separate Owner-authorized document proposal; store findings in an external immutable report until reconciled.
 
 ## Inputs; locate all without relying on preceding chat
 
