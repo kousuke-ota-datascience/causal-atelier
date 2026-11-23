@@ -186,7 +186,7 @@ def load_adapter(self, capability: BackendCapabilityRecord) -> ScientificAdapter
 
 ### 3.3. Constructor / Factory
 
-- **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy)`。rootはOS EUID/owner/owner-only mode/同一local ext4-XFS/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
+- **Constructor:** `__init__(self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy, *, issuer: LocalPublicationAdapter | None = None, session: PublicationSessionToken | None = None)`。rootはOS EUID/owner/owner-only mode/同一local ext4-XFS/dirfdを検証済みのCapability（任意Pathではない）。random staging tokenは`begin`時に生成する。実装時にRootの変更をcommit境界まで検出する。
 - **前提:** `run_id`にseparator/「.」「..」を含まない、request hashはcanonical versionと一致。Trusted Root所有者／同一FS／OS principalの確認に失敗したらstaging生成しない。
 
 ### 3.4. メソッド
