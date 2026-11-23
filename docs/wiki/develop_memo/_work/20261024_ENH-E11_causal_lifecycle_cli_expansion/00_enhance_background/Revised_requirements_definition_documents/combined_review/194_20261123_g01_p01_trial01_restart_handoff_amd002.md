@@ -1,5 +1,8 @@
 # 194 — Current G01/P01 Trial01 restart handoff after AMD-002 S11
 
+> **P02 CONTRACT CHANGE — HISTORICAL HANDOFF:** P02 Trial01 was blocked at `4248ca24204ed8ede27527191b1a53d9ced1ff5a` owing to the PrivacyDecision handoff ambiguity; see AMD-E11-G01-P02-001 and 195. Historical S10 `bcc1d797e1406e8816d12b725eeace07a181c702` / S11 record193 do NOT authorize amended P02 WHAT. Do not restart P02 until formal new 09 Owner approval, new S10 freeze and separate new S11 are recorded. P01 ready checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167` is preserved. The remainder of this document is prior-version evidence, not current P02 coding authority.
+
+
 **Date:** 2026-11-23 JST  
 **Status:** `AUTHORIZED_TO_RESTART_SUBJECT_TO_ACTUAL_RUNTIME_PREFLIGHT`  
 **Approval authority:** **190 (formal 09 AMD-002) → 191 (new revised S10) → 193 (new distinct limited S11)**. Prior 185/186/187 and 181/188 concern earlier contract baselines and are not active entry authority.  

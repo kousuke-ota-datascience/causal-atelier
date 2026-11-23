@@ -63,6 +63,14 @@
 - **凍結基準:** 全長S10 SHA `bcc1d797e1406e8816d12b725eeace07a181c702`、uv.lock Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、branch `feature/ariadne_mvp_e11`、G01/P01〜P05のみ。GitHub上の事後承認管理記録は凍結後の変更として許容し、Coding Agentは実環境で全差分・lock・clean tree/Trial状態を必ず再Preflight。
 - **最新状態:** `AMD-002=OWNER_APPROVED`、`S10=RE_FROZEN`、`S11=AUTHORIZED_LIMITED_G01`、`P01/Trial01=AUTHORIZED_TO_START_AFTER_RUNTIME_PREFLIGHT`。コーディング・focused verification・チェックポイント実績は未観測。G01_999の独立S09/B02/B03/B04/B05/T2/T3/07およびProduct v2回帰は未免除、他Gate未承認。
 
+### AMD-E11-G01-P02-001 — P02 PrivacyDecision authority and resource binding (2026-11-23)
+
+- **停止:** G01/P02 Trial01 `BLOCKED_CONTRACT_AMBIGUITY`, START_SHA `4248ca24204ed8ede27527191b1a53d9ced1ff5a`、P02 checkpointなし。Facade sealのPrivacyDecisionとConcrete validate(manifest)の判断権威、run/TrustedRoot/UID/成果物拘束が未定義だった。
+- **既存依存:** P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`をGitHub status reportで確認。P01 WHAT/sourceを変更せず保持。
+- **補完:** Concrete `validate(manifest,*,privacy)`へFacadeがDecisionを渡し、P02 Publisherがstage済みStudyの厳密hash、実際のRoot FD/EUID、Artifact inventoryと注入Policyを再評価して一致検証。不適切なDecisionやrow出力はrename前拒否。公開Port/Schema/旧Product/lock不変更。
+- **変更管理:** 新09 `AMD-E11-G01-P02-001`、影響レビュー`combined_review/195_20261123_g01_p02_privacy_decision_binding_contract_impact.md`。
+- **承認境界:** `PROPOSED / OWNER_09_RE_S10_SEPARATE_RE_S11_PENDING`。旧S10 `bcc1d797e1406e8816d12b725eeace07a181c702` とS11記録193は旧P02契約への歴史的承認。独立S09/B02/B03/B04/B05/T2/T3/07/999義務不変更。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
