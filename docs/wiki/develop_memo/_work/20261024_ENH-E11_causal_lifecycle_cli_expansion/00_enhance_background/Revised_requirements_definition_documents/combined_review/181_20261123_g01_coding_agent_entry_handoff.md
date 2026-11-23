@@ -18,7 +18,7 @@ GATE_ID=G01
 EXECUTION_MODE=WORK_PACKAGE
 TRIAL_NO=01
 PACKAGE_ID=P01
-BRANCH_NAME=prototype/ariadne_mvp
+BRANCH_NAME=feature/ariadne_mvp_e11
 WORK_ROOT=docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion
 G01_S10_FROZEN_SOURCE_FULL_SHA=a05fd072cbb82a7c6e43f45e7208e078f0784a2b
 FROZEN_UV_LOCK_BLOB_SHA=2b83110e86b26b7969fbddf8f98a727370ae19f7
@@ -62,7 +62,7 @@ git diff --name-status a05fd072cbb82a7c6e43f45e7208e078f0784a2b HEAD
 ```
 
 **Required checks:**
-- Branch is exactly `prototype/ariadne_mvp`, working tree clean, frozen commit available, and frozen `uv.lock` blob is `2b83110e86b26b7969fbddf8f98a727370ae19f7`.
+- Branch is exactly `feature/ariadne_mvp_e11`, working tree clean, frozen commit available, and frozen `uv.lock` blob is `2b83110e86b26b7969fbddf8f98a727370ae19f7`.
 - For the actual checkout, `git hash-object uv.lock` matches the frozen blob (unless a properly escalated and newly authorized dependency contract exists); record the actual SHA256 separately.
 - Inspect the entire diff, not just file counts. Only administrative authorization/readiness files may be newer; any effective 06/Pxx/07/40/Common contract or scientific/Privacy/v2/lock drift requires contract-diff analysis and appropriate Owner authorization **before** implementing.
 - Verify 179 and 180 are available to the Orchestrator and denote distinct S10/S11 human decisions. Do **not** treat historical `NOT_AUTHORIZED` headers in frozen Pxx/40 as current status; these are overridden solely in control-plane state by 179+180. Preserve frozen WHAT.
@@ -88,3 +88,7 @@ If any preflight requirement is unmet, report exact `BLOCKED_REPOSITORY_STATE`, 
 Before `G01_999 PASS`, the independent Reviewer/Test Agent and approved Python3.12 environment must provide real B02 six-public/three-G01-Schema, B03 OS/FS/Reader/privacy, B04 fitted `fisherz/chisq/gsq`, B05 independent MAG/PAG/BK and accepted correction, T2 pilot and preregistered T3, all G01 07 mandatory items against the same fixed candidate SHA, and legacy Product v2 regression. The G01-only evidence rephasing in 177 permits coding **before** these are proven, not acceptance without them.
 
 **Current evidence at handoff:** GitHub S10/S11 records created; coding machine/Codex CLI not invoked from this conversation; G01 Pxx reports and candidate SHA not observed; scientific/technical independent checks pending; downstream Gates still closed.
+
+## 6. Owner-approved execution branch migration (2026-11-23 JST)
+
+This handoff has been retargeted to `feature/ariadne_mvp_e11`. The GitHub repository `kousuke-ota-datascience/causal-atelier` and `REMOTE_NAME=causal-atelier` are unchanged; verify that this local remote alias really exists and resolves to that repository, and do not substitute an unknown remote silently. The branch migration was authorized by the Owner and documented in [182](182_20261123_e11_execution_branch_retargeting.md). Both branch refs originally pointed to `82ea702021ce453a4e3f32bf4c5a8a6f36621daa` before this retargeting; G01 S10's immutable frozen contract commit `a05fd072cbb82a7c6e43f45e7208e078f0784a2b` still identifies the scientific/technical WHAT. Operational 40 prompts and the G01 06 branch label may differ only in specifically documented invocation/routing fields. The Coding Agent must honor **the feature branch as its sole write/push target**, preserve prior branch history, and stop for unexpected non-administrative contract drift.
