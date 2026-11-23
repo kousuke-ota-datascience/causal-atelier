@@ -21,6 +21,12 @@
 - **変更管理記録:** `combined_review/183_20261123_g01_p01_manifest_evidence_contract_defect_amendment.md`。本更新を反映するGit commit full SHAは当該commit作成後に操作記録から取得し、正式なOwner再Freeze記録に固定する（自己参照SHAをこのファイル内に捏造しない）。
 - **再開条件:** 改訂文書のcross-contract監査→契約変更として09/影響評価→Owner新暫定G01-S10 Freeze→**別個**の限定G01-S11再Authorization→実行環境の最新SHA/lock/クリーンtree再Preflight。Trial01の停止記録を保存し、formal FAILではないためTrialを自動増番しない。**現時点で実装再開許可は未成立**。
 
+### AMD-E11-G01-P01-001 — 09 formal amendment and Owner decision docket
+
+- 2026-11-23：上記改訂に対して正式なDerived Contract `10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P01-001_Gate_Contract_Amendment.md`を作成。Authorによる影響確認・再基準候補SHA・AC非緩和・Trial01再実行条件は`combined_review/184_20261123_g01_p01_contract_defect_author_review_and_s10_refreeze_docket.md`に記録する。
+- **申請状態:** `PROPOSED / AUTHOR_IMPACT_REVIEW_RECORDED / OWNER_09_AND_RE_FREEZE_PENDING`。Owner A案採用は改訂方針承認であり、具体改訂契約・S10/S11の再承認とは区別。改訂後S10と別個のS11が成立するまで実装開始禁止。
+- **厳守:** 旧179/180、旧Trial01の二件のBLOCKED報告を改ざんしない。今後のOwner承認・再凍結full SHAは実際に発行された場合のみ追記・別文書化する。独立S09/科学/FSテストは未実施でありG01_999は依然BLOCKED。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
