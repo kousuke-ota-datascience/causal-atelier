@@ -8,3 +8,5 @@
 | P04 | [PACKAGE_READY](packages/E11-G01_01_P04__status.md) | `7dcf2061dae3c8832b2b3ec9be6900ad6ee7edb6` |
 
 G01 の独立受入は保留。
+
+Trial と Package の累積監査記録は [Gate-local Implementation Report Detail](../ENH-E11_G01_implementation_report_detail.md) を参照。
