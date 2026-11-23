@@ -49,6 +49,13 @@
 - **現時点:** AMENDMENT_PROPOSED / NEW_OWNER_09_RE_S10_RE_S11_PENDING。従前185/186/187は旧凍結契約の承認履歴として保存するが、今回の改訂WHATへのCoding許可として流用禁止。旧Trial01の3件のBLOCKED停止記録は保持し、正式FAIL/08がなければTrial増番しない。
 
 
+### AMD-E11-G01-P01-002 — Owner正式09承認・改訂G01-S10再Freeze（2026-11-23追記）
+
+- **Owner承認:** `DEC-G01-P01-REBASELINE-02=APPROVED`。新しい09 `AMD-E11-G01-P01-002` は `combined_review/190_20261123_g01_p01_negative_reason_09_owner_approved.md` で正式承認し、新しい暫定S10は `combined_review/191_20261123_g01_p01_negative_reason_revised_provisional_s10_refreeze.md` で**Owner再Freeze済み**。上記の申請時 `PENDING` は履歴として保存し、この追記が現在の09/S10承認状態のauthorityとなる。
+- **固定完全Git SHA:** `bcc1d797e1406e8816d12b725eeace07a181c702`。Frozen `uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`、公開Schema不変。190/191、本追記、後続の申請DocketはFreeze後の運用管理記録であり新しい規範WHATではない。
+- **残る唯一のHuman Coding Entry判断:** `DEC-G01-P01-S11-REAUTH-02` — 改訂後S10に対する**別個のG01-S11限定Coding Authorization**。旧Owner承認187は前版契約の履歴として残すが新WHATには適用不可。新S11判断資料：`combined_review/192_20261123_g01_p01_negative_reason_limited_s11_reauthorization_docket.md`。
+- **現在状態:** `AMD-002=APPROVED` / `G01-S10=RE_FROZEN` / `G01-S11=NOT_AUTHORIZED_FOR_AMD-002` / `G01-P01-Trial01=BLOCKED_CODING_AUTHORIZATION` until new Owner S11 and actual runtime preflight. G01_999未達、G02以降未許可。三件の停止記録は維持。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
