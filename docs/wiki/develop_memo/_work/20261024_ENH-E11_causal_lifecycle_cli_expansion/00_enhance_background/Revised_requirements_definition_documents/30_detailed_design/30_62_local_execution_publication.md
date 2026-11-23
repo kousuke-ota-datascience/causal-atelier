@@ -403,6 +403,8 @@ RecordはI/Oなし。Runtime probe、distribution inspection、optional import�
 
 `DD-E11-EFF03` version/API mismatch、`DD-E11-CAP01〜06` profile isolation/inference availability、no silent fallback。
 
+**G01/P04限定のProduct互換Bridge移行境界（DEC-G01-P04-PRODUCT-POLICY-SHARING-01=B）：** 最終的な単一`MethodCapabilityRegistry`とpure eligibility policyの目標は変更しない。G01/P04ではP1-M06のMethod ID/Estimand/Inference/Backend適格性を新Local Registry/pure policyの一つのOwnerから判定し、G01内で同義規則の別mutable表を作らない。旧Product v2の`ScientificValidationService`および旧`ESTIMATOR_CAPABILITIES`は既存Productの互換用実装としてそのまま維持し、既存Productから新Registryへの呼出・共通policyへの委譲は`DEFERRED_PRODUCT_POLICY_BRIDGE`。両者を現時点で接続済み・全Method横断の単一Authority完成済みと主張しない。旧表を新MethodのFallback Authorityに転用せず、旧Estimatorの全ルールを新Registryへ複製しない。将来の移行は別Ownerの変更承認、旧Productの入出力/例外/エラー分類・Discovery/Identification早期return・Estimation全Method回帰を必要とする。G01_999ではこのarchitecture未完了を明示的な受入依存として保持し、後続のBridge完成または独立の正式Owner受入条件変更なしに当該共通化項目のPASSを宣言しない。
+
 **能力の単一Authority：** `ariadne.scientific.capabilities.BackendCapabilityRecord`が実効Distribution/API/probeを表現し、`ariadne.capabilities.causal.method_registry.MethodCapabilityRegistry`がMethod×Estimand×Inferenceの唯一のRegistryになる。Productの既存`ESTIMATOR_CAPABILITIES`を独立した二重Rules表にしない。
 
 ## 8. Class間の契約・既存実装との再利用境界
