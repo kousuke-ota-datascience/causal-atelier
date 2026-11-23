@@ -79,3 +79,8 @@ Typed Local Port/DTOの境界は[共通契約](../combined_review/112_20261117_p
 ### G01 P01 contract ownership and E11 codec isolation
 
 P01 is the pure typed Study/ContentRef/JCS/Manifest value boundary. The strict e11-local-study/1 and e11-local-manifest/1 wire decoders reject unknown keys, wrong version, legacy v2 interpretation, incompatible Operation/Method/Estimand/privacy, bad cross-ref and invalid scientific-negative reason combinations. P02 owns FD-rooted input/Artifact bytes, atomic staging/publish and independent Reader; P03 Graph scientific-structure serialization; P04 actual FCI execution and science proof; P05 caller orchestration and effective runtime facts. `from_payload` cannot recompute a request hash from absent external Study or recheck Status code bytes; the full evidence factory/P05/Reader must perform cross-file joins. Existing public JSON versions and Product ABI are unchanged.
+
+
+### G01 internal Graph-negative diagnostics schema boundary
+
+The G01 P1-M06 DISCOVER `diagnostics.json` uses the strict **internal** profile `schema_drafts/internal_scientific/e11_g01_discover_negative_diagnostics_draft1.schema.json`. It is NOT the separate `e11_method_diagnostics_draft1.schema.json` for P1-M12–20 REFUTE/SENSITIVITY/DIAGNOSE, and its internal profile identifier is not a public Study/Status/Manifest `schema_version` or new `schema_dispatch` field. No changes to the five public E11 payload versions or Product v2. P02 and Reader perform semantic run/reason joins rather than relying on hash/size alone.

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ariadne:e11:internal:g01_discover_negative_diagnostics:draft1",
+  "title": "ENH-E11 G01 P1-M06 DISCOVER negative diagnostic internal profile",
+  "description": "Internal artifact only. Not a new public E11 wire version; strict parse must separately reject duplicate JSON keys. Formal shape does not establish P04 scientific truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "operation",
+    "method_id",
+    "reason_codes"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,128}$"
+    },
+    "operation": {
+      "const": "DISCOVER"
+    },
+    "method_id": {
+      "const": "P1-M06"
+    },
+    "reason_codes": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "const": "SCI_NO_ADMISSIBLE_PAG"
+        }
+      ],
+      "items": false,
+      "minItems": 1,
+      "maxItems": 1
+    }
+  }
+}

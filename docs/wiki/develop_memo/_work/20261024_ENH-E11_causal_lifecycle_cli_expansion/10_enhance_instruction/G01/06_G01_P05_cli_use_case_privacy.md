@@ -220,3 +220,8 @@ NFR-030/031 ↔ LDD 21_23/21_40 ↔ BD 22_09/22_12 ↔ IF 23_41/23_42 ↔ DD 30_
 ### G01 PrivacyDecision pass-through equality (clarification)
 
 P05 obtains its initial decision from the configured trusted local policy, and passes its **immutable value**, unchanged, to P02 seal. `same prior PrivacyDecision` means all fields equal to the initial result, not that Publisher must prove the same allocated object or trusted issuer provenance. P02's trusted independent policy evaluation on actual staged bytes/root/UID/inventory is the final authority; a separate equal-value instance is not rejected by provenance alone. A discrepancy, current deny or row-output violation is rejected. No Policy Anchor or signature is added.
+
+
+### P05 G01 Graph-negative typed diagnostic production boundary
+
+On a **genuinely justified** P04 `SCI_NO_ADMISSIBLE_PAG` negative, P05 stages a strict internal G01/P1-M06 DISCOVER diagnostic JSON with exactly `run_id` (same Status/Manifest), `operation="DISCOVER"`, `method_id="P1-M06"`, `reason_codes=["SCI_NO_ADMISSIBLE_PAG"]`; its Status has the same singleton reason, technical status COMPLETED, and Manifest output Graph refs null. P05 must not synthesize a science-negative from a Backend/FCI exception, and P02/Reader must independently validate physical bytes and semantic joins. No additional required fields, public schema_version, changed P01 06, or P03/P04 science-contract relaxation.

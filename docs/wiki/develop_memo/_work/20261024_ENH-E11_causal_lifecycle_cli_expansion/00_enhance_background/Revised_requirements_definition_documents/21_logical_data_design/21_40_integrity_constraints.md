@@ -138,3 +138,8 @@ The local immutable `ValidatedRunEvidence` value contains validated Study and it
 ### PrivacyDecision equality does not attest origin
 
 The local bundle invariant is `(supplied decision structurally equals Publisher independently derived current policy decision) AND (current authoritative policy result allowed) AND (verified staged data/root/UID/inventory consistent)`. A separately reconstructed but value-identical valid decision is accepted; no object identity or issuer provenance check exists. The word `forged` in security negatives refers only to detectable mismatches or attempts to bypass the trusted re-evaluation, not fully identical values. No marker/rename on a failed conjunct.
+
+
+### G01 Graph-negative diagnostics consistency integrity
+
+For G01/P1-M06 DISCOVER Graph-negative, a diagnostic Artifact is structurally valid only if its strict decoded internal payload has exactly `run_id` (Status/Manifest equality), `operation=DISCOVER`, `method_id=P1-M06`, and `reason_codes=[SCI_NO_ADMISSIBLE_PAG]` (exact equality with Status.reason_codes and immutable Manifest evidence reason tuple). The physical six-field descriptor hash/size describes actual bytes but alone is insufficient to establish these semantic joins. Reject unknown/missing fields, duplicate JSON keys, inconsistent run/reason, Graph/diagnostics inventory mixing and failed technical runs. Do not infer existence of an admissible scientific negative from the DTO.

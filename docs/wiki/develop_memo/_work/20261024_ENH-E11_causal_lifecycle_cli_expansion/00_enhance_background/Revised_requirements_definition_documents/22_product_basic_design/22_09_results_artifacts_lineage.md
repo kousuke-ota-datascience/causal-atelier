@@ -100,3 +100,8 @@ P01 constructs a pure immutable versioned Manifest from validated Study/Status a
 ### Publisher final authority versus decision issuance provenance
 
 The local CLI does **not** authenticate which process instantiated an immutable `PrivacyDecision`; this value is an untrusted assertion until checked. The same field values on a fresh immutable instance have the same meaning as on the originally returned instance. A Publisher independently executes its **trusted injected** stateless policy on the live Study, verified root/effective principal and actual staged artifact inventory, compares all fields and requires `allowed=true`. The decision value never overrides policy and neither caller-controlled policy replacement nor missing runtime verification is permitted. G01 row/Parquet publication remains prohibited.
+
+
+### Local DISCOVER negative diagnostic responsibility
+
+For a valid G01 DISCOVER scientific-negative, the P04 science producer must actually justify the non-admissible PAG outcome; the P05 integration stage produces the **internal** typed diagnostic and Status with the same reserved reason; the P02 Publisher validates its real staged bytes and cross-file consistency before seal and the independent Reader checks after publication. A stored digest and inventory entry alone do not prove a meaningful diagnostic. This requirement does not modify Product v2, add a public schema, or permit scientific failures to be treated as completed negative results.
