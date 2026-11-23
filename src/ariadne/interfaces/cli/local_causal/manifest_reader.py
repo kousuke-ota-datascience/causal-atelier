@@ -5,6 +5,7 @@ import hashlib
 import os
 
 from ariadne.capabilities.causal.ports.local_io import RunId, VerifiedLocalRun
+from ariadne.causal.discovery.graph_evidence import GraphEvidence
 from ariadne.interfaces.cli.local_causal.config_decoder import StrictLocalConfigDecoder
 from ariadne.interfaces.cli.local_causal.content_io import LocalContentReferenceAdapter
 from ariadne.interfaces.cli.local_causal.manifest import (
@@ -91,6 +92,7 @@ def _validate_graph(raw: bytes) -> None:
 
 def _verify_artifacts(
     directory: int, identity: VerifiedRootIdentity, manifest: LocalRunManifest, *, metadata: set[str],
+    verify_graph_provenance: bool = False,
 ):
     payload = _json(manifest.to_canonical_bytes())
     inventory = tuple(ArtifactDescriptor(**item) for item in payload["artifacts"])
@@ -120,6 +122,9 @@ def _verify_artifacts(
     validate_status(files["status.json"], run_id, negative=negative)
     if negative:
         validate_diagnostics(files[DIAGNOSTICS], run_id)
+    elif verify_graph_provenance:
+        evidence = GraphEvidence.from_canonical_json(files["graph.json"])
+        evidence.provenance.validate_lineage(study, lineage=payload["lineage"], execution=payload["execution"])
     else:
         _validate_graph(files["graph.json"])
     return payload, inventory, study
@@ -165,8 +170,9 @@ class LocalManifestReader:
                        "MANIFEST_HASH_MISMATCH")
                 manifest = LocalRunManifest.from_payload(_json(raw_manifest))
                 _check(manifest.to_canonical_bytes() == raw_manifest, "Manifest is not canonical")
-                payload, inventory, _study = _verify_artifacts(directory, identity, manifest,
-                                                                metadata={MANIFEST, MARKER})
+                payload, inventory, _study = _verify_artifacts(
+                    directory, identity, manifest, metadata={MANIFEST, MARKER}, verify_graph_provenance=True,
+                )
                 _check((payload["run_id"], payload["request_hash"]) == (run_id, marker["request_hash"]),
                        "Marker and Manifest disagree")
                 for name in ("question", "design", "dataset"):

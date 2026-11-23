@@ -77,7 +77,8 @@ def _study(path):
     }
 
 
-def _prepare(root, path, *, negative=False, policy=None, payload=None, invalid_status=None):
+def _prepare(root, path, *, negative=False, policy=None, payload=None, invalid_status=None,
+             change_provenance=None):
     payload = _study(path) if payload is None else payload
     raw_study = jcs.canonical_bytes(payload)
     study = StrictLocalConfigDecoder().decode(raw_study, declared_format="json")
@@ -101,8 +102,16 @@ def _prepare(root, path, *, negative=False, policy=None, payload=None, invalid_s
         artifacts.append(sink.stage_bytes("diagnostics.json", raw, MIME, "AGGREGATE"))
         graph_ref = None
     else:
+        provenance = {
+            "method_id": "P1-M06", "backend": "causal-learn",
+            "ci_test": payload["method"]["config"]["indep_test"], "assumptions": [],
+            "source_refs": {name: payload["inputs"][name] for name in ("question", "design", "dataset")},
+            "parent_graph_ref": None,
+        }
+        if change_provenance is not None:
+            provenance = change_provenance(provenance)
         graph = {"schema_version": "e11-local-graph/1", "kind": "PAG", "version_id": None,
-                 "parent_version_id": None, "nodes": ["a", "b"], "edges": [], "temporal": None, "provenance": {}}
+                 "parent_version_id": None, "nodes": ["a", "b"], "edges": [], "temporal": None, "provenance": provenance}
         raw = jcs.canonical_bytes({**graph, "content_hash": jcs.digest(graph)})
         output = sink.stage_bytes("graph.json", raw, MIME, "AGGREGATE")
         artifacts.append(output)
@@ -488,3 +497,36 @@ def test_reader_rejects_legacy_manifest_even_with_matching_marker(private_root):
     with pytest.raises(ContractViolation) as caught:
         LocalManifestReader().verify(root=root, run_id=RUN)
     assert caught.value.reason.code == "VERSION_UNSUPPORTED"
+
+
+@pytest.mark.parametrize(("mutate", "message"), [
+    (lambda p: {}, "Graph fields"),
+    (lambda p: {**p, "ci_test": "gsq"}, "CI does not agree"),
+    (lambda p: {**p, "source_refs": {**p["source_refs"],
+                                   "dataset": {**p["source_refs"]["dataset"], "sha256": "b" * 64}}},
+     "dataset ContentRef does not agree"),
+    (lambda p: {**p, "parent_graph_ref": {**p["source_refs"]["dataset"], "relative_key": f"runs/{RUN}/graph.json"}},
+     "parent for standalone G01"),
+])
+def test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match(private_root, mutate, message):
+    root, path = private_root
+    facade, sink, manifest, decision = _prepare(root, path, change_provenance=mutate)
+    bundle = facade.seal(sink=sink, manifest=manifest, privacy=decision)
+    with pytest.raises(ContractViolation) as caught:
+        facade.publish(bundle=bundle, root=root)
+    assert caught.value.reason.code == "PUBLICATION_INDETERMINATE"
+    assert (path / "runs" / RUN / "_COMMITTED.json").exists()
+    with pytest.raises(ContractViolation) as read_error:
+        LocalManifestReader().read_run(root, RUN)
+    # Reader adds phase context and chains the pure Graph error.
+    assert message in str(read_error.value.__cause__)
+
+
+def test_reader_rechecks_source_content_bytes_with_matching_provenance(private_root):
+    root, path = private_root
+    facade, sink, manifest, decision = _prepare(root, path)
+    facade.publish(bundle=facade.seal(sink=sink, manifest=manifest, privacy=decision), root=root)
+    (path / "dataset.dat").write_bytes(b"modified after publication")
+    with pytest.raises(ContractViolation) as error:
+        LocalManifestReader().read_run(root, RUN)
+    assert error.value.reason.code == "HASH_INVALID"
