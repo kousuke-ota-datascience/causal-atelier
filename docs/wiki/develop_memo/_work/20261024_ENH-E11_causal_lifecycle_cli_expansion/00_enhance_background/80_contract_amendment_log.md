@@ -27,6 +27,12 @@
 - **申請状態:** `PROPOSED / AUTHOR_IMPACT_REVIEW_RECORDED / OWNER_09_AND_RE_FREEZE_PENDING`。Owner A案採用は改訂方針承認であり、具体改訂契約・S10/S11の再承認とは区別。改訂後S10と別個のS11が成立するまで実装開始禁止。
 - **厳守:** 旧179/180、旧Trial01の二件のBLOCKED報告を改ざんしない。今後のOwner承認・再凍結full SHAは実際に発行された場合のみ追記・別文書化する。独立S09/科学/FSテストは未実施でありG01_999は依然BLOCKED。
 
+### AMD-E11-G01-P01-001 — Owner正式承認・改訂暫定G01-S10再Freeze（2026-11-23追記）
+
+- **事後の明示承認は上記申請状態を置換する:** Ownerが`DEC-G01-P01-REBASELINE-01`を承認し、正式09契約変更は`combined_review/185_20261123_g01_p01_amendment_09_owner_approved.md`で**APPROVED**、新たな暫定G01-S10は`combined_review/186_20261123_g01_p01_revised_provisional_s10_owner_refreeze.md`で**APPROVED / RE_FROZEN**と記録した。上記の`PENDING`は申請当時の履歴であり現在の09/S10状態ではない。
+- **再Freezeの固定full SHA:** `707f6aaac1df5393dbf762448c41db2f1c9dbf35`。`uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`は不変。185/186および本Ledger追記はFreeze後の管理・承認記録であり、凍結した科学・技術WHATを変更しない。
+- **唯一の残るCoding EntryのOwner判断:** 新しい改訂S10と同SHAに対する**別個のG01-S11限定Coding Authorization**。S11未承認の間はG01/P01 Trial01実装再開不可。旧179/180は旧Freezeの履歴のみ。G01_999独立S09/B02/B03/B04/B05/T2/T3/07義務は維持。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
