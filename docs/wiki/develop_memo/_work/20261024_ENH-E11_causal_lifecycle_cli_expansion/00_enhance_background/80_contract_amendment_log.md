@@ -114,6 +114,13 @@
 - **権威:** 提案09 `10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P02-002_Gate_Contract_Amendment.md`; Author監査 `combined_review/204_20261123_g01_p02_privacy_decision_value_equivalence_impact.md`。元S10凍結SHA `6df4b94de72a6ec8619f315e55ba7821e1eb157c`および既承認198/199/201は歴史記録として維持。
 - **Status:** `AUTHOR_CONTRACT_AMENDED / FORMAL_09_OWNER_PENDING / NEW_S10_PENDING / SEPARATE_S11_PENDING`。現行P02の実装を再開しない。P01 Checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を保持。正式Gate FAILなしにつきTrial01継続。
 
+### AMD-E11-G01-P02-002 — 正式09 Owner承認（2026-11-23）
+
+- **Owner明示承認:** 「AMD-E11-G01-P02-002を承認する」。承認の正確な範囲は**正式09のみ**。記録`combined_review/205_20261123_g01_p02_002_formal_09_owner_approved.md`。
+- **承認対象契約SHA:** `0e36d5d8ce5a4fb9880c4ecff07f4e2256cde492`。従前のG01-S10 `6df4b94de72a6ec8619f315e55ba7821e1eb157c` は今回の契約変更を含まず、別の新S10再Freeze・新S11が必要。
+- **決定待ち:** 新S10判断資料`combined_review/206_20261123_g01_p02_002_revised_provisional_s10_decision_docket.md`。P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を保全。P02 Trial01は実装許可の再発行まで停止。
+- **不変:** NFR-031、G01 07物理/科学的受入、公開JSON/Port、Product v2、個票禁止、`uv.lock`およびP01コード/テスト。判断発行済みをS10/S11 PASSとして扱わない。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
