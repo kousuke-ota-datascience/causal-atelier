@@ -106,6 +106,14 @@
 - **再開:** `GATE_ID=G01 PACKAGE_ID=P02 TRIAL_NO=01`。再開ハンドオフ `combined_review/203_20261123_g01_p02_trial01_restart_handoff_after_s11.md`。P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167` を保全。実行Agentの環境preflightは未実施、実FS・G01独立受入はPASS未宣言。
 - **条件:** 凍結WHATからの差分は正式承認/管理文書のみ、正本05階層とG01 06/07の意味整合を維持。新たな06/07改訂は別途09/S10/S11、P02本体のコード変更だけが許可範囲。旧193は新P02契約への権限ではない。
 
+### AMD-E11-G01-P02-002 — PrivacyDecision同値再構築の受理判定を確定（2026-11-23）
+
+- **原因:** G01/P02 Trial01再実行`START_SHA=06726b522faf939c8ea34193d1861bd786092776`が`BLOCKED_CONTRACT_AMBIGUITY`。正規発行されたDecisionと全フィールド同値のDecisionを別生成した場合、元の「偽造拒否」が発行証明まで要求するか不明確。P02コード/Checkpointなし、P01開発者テスト76件PASSはAgent報告。
+- **修正:** 出所認証ではなくPublisherに注入された信頼済みstateless Policyの実Study/root/UID/inventory上での独立再計算と**構造的全フィールド値一致**を最終権威とする。同値再構築は独立再評価が許可なら**受理**、「forged」の負例は値不一致・拒否Policy・検証迂回のみ。署名/Issuer/nonceは新設しない。
+- **変更範囲:** RD `10_22/10_91`; LDD `21_23/21_40`; BD `22_09/22_12`; IF `23_41/23_42`; DD `30_62`; G01 P02/P05 `06`; G01 `07`。実装コード、P01/P03/P04、public JSON、Product v2、独立G01_999は不変。
+- **権威:** 提案09 `10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P02-002_Gate_Contract_Amendment.md`; Author監査 `combined_review/204_20261123_g01_p02_privacy_decision_value_equivalence_impact.md`。元S10凍結SHA `6df4b94de72a6ec8619f315e55ba7821e1eb157c`および既承認198/199/201は歴史記録として維持。
+- **Status:** `AUTHOR_CONTRACT_AMENDED / FORMAL_09_OWNER_PENDING / NEW_S10_PENDING / SEPARATE_S11_PENDING`。現行P02の実装を再開しない。P01 Checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を保持。正式Gate FAILなしにつきTrial01継続。
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
