@@ -135,6 +135,15 @@
 - **Agent handoff:** `combined_review/210_20261123_g01_p02_002_trial01_restart_handoff_after_s11.md`。依存P01 checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`、`uv.lock` Git blob `2b83110e86b26b7969fbddf8f98a727370ae19f7`を維持。P02の再実装開始は現地Preflight成功後。
 - **維持する未完了:** Linux実FS/P02 tests、P03/P04/P05、独立科学/S09/B02–B05/T2/T3/G01 07/999、Product v2回帰。承認記録は独立テストPASSでない。
 
+### AMD-E11-G01-P02-003 — G01 Graph-negative diagnosticsの内部型・Status照合（2026-11-23）
+
+- Coding Agent STOP: BLOCKED_CONTRACT_AMBIGUITY, START_SHA 86d73c501f83eed2ce79b1fa949d6aacffc3f4a1, no P02 code/checkpoint.
+- Cause: P02 and 07 demand a typed diagnostics.json but its G01/P1-M06 DISCOVER schema and run/reason join were unspecified. P1-M12–20 internal diagnostic schema is not applicable.
+- Minimal correction: internal exact four-field run_id/operation/method_id/reason_codes profile; required SCI_NO_ADMISSIBLE_PAG exact join to Status and Manifest; Publisher/Reader strict bytes plus semantic verification; no fake scientific negative.
+- Changed: RD 10_17/10_91, LDD 21_40, BD 22_09/22_15, IF 23_42/internal schema, DD 30_62, G01 P02/P05 06, G01 07. No src/tests/P01/Product v2/lock/independent AC changes.
+- Formal 09 candidate: 10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P02-003_Gate_Contract_Amendment.md ; audit 211_20261123_g01_p02_negative_diagnostics_contract_impact.md.
+- Status: AUTHOR_PREPARED / OWNER_FORMAL_09_PENDING / NEW_S10_PENDING / SEPARATE_S11_PENDING. Preserve P01 9bff61f0eae25236f95f31f2cd3e7c81291f0167 and Trial01.
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
