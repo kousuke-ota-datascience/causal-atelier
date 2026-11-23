@@ -1,5 +1,7 @@
 # 188 — G01/P01 Trial01 Coding Agent restart handoff (revised S10/S11)
 
+> **AUTHORITATIVE UPDATE — AMD-002 S11 REAUTHORIZATION (2026-11-23):** Prior warning that AMD-002 was awaiting approval is historical. Current approved 09/S10/S11 chain: [190](190_20261123_g01_p01_negative_reason_09_owner_approved.md) → [191](191_20261123_g01_p01_negative_reason_revised_provisional_s10_refreeze.md) → [193](193_20261123_g01_p01_negative_reason_limited_s11_owner_authorization.md). **Use [194 current restart handoff](194_20261123_g01_p01_trial01_restart_handoff_amd002.md) instead of this document's superseded older SHA/owner records.** New immutable S10 full SHA is `bcc1d797e1406e8816d12b725eeace07a181c702`. This is a later operator status annotation, not a change to frozen coding WHAT.
+
 > **SUPERSEDED AFTER THIRD PRE-CODING BLOCK (2026-11-23):** The 185/186/187 authorization chain and S10 SHA 707f6aa... below are HISTORICAL for the earlier G01/P01 WHAT. A further CONTRACT_DEFECT was recorded: AMD-E11-G01-P01-002 (Graph-negative reason code). Revised G01/P01, G01/P04, G01/P05, 07, stock design, and a new proposed 09 were written after that freeze. **Do not restart coding under the authorization or variables below.** A new distinct Owner approval of 09+re-S10 and subsequently a separate re-S11 are required, then the latest authorization handoff must be used. This warning is a control-plane annotation, not a change to the frozen implementation WHAT.
 
 
