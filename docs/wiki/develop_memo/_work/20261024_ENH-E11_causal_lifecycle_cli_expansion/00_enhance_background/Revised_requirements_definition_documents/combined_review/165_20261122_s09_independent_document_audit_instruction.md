@@ -12,7 +12,7 @@
 The operator must set:
 ```text
 REPO=kousuke-ota-datascience/causal-atelier
-BRANCH=prototype/ariadne_mvp
+BRANCH=feature/ariadne_mvp_e11
 REVIEW_TARGET_FULL_SHA=<exact 40-character git commit pinned after all G01/common document changes>
 REVIEW_GATE=G01
 REVIEW_MODE=GATE_SCOPED_COMMON_PLUS_UPSTREAM
