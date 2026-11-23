@@ -85,3 +85,19 @@ Expected exit2/3/4 mapping must reuse the approved error families for config/inp
 - **Not performed:** normative 06/07/DD revisions, formal 09 approval, S10/S11, implementation, FCI fit, Python3.12 live test, external scientific reviewer or G01_999.
 - **Owner action:** decide `DEC-G01-P04-CI-ELIG-01` (A or B, or amended policy) and approve a defensible quantitative support/tolerance rule, conditioning coverage and practical resource boundary. No premature Coding Agent restart.
 
+
+## 7. Subsequent Owner decision and Author execution (2026-11-23 JST)
+
+**Owner instruction:** 「A案：FCI呼出前に保守的な全候補集合を検査、こちらを採用する」.
+
+**DEC-G01-P04-CI-ELIG-01 = A_ADOPTED.** Select exhaustive screening of every pair and conditioning subset **before any FCI invocation**, including the conservative G01 CI-specific screening predicates detailed in Option A. Reject the per-reached-test interception approach B. This does **not** grant formal G01 09 approval or an automatic S10/S11, and does not establish that the selected heuristic floor is statistically sufficient for all DGPs.
+
+**Author-prepared normative reconciliation:**
+- 30_detailed_design/30_63_causal_method_adapters.md §4.4
+- 10_enhance_instruction/G01/06_G01_P04_fci_backend_oracle.md §6.4
+- 10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md G01-07-08
+- New 09_ENH-E11_G01_AMD-E11-G01-P04-001_Gate_Contract_Amendment.md: formal 09 candidate only.
+
+**Remaining undecided separate facts:** fixed computational cap, any positive-admission numerical-stability tolerance and real Backend/independent statistical calibration evidence. No automatic numeric cap, SCI PASS or optional engine semantics was inferred. The conservative fail-closed rule applies whenever exhaustive or reliable checking cannot be completed.
+
+**Release:** Pending separate formal AMD-001 approval, revised G01 S10 on final immutable SHA, and separate S11 authorization. No P04 code/tests were changed.
