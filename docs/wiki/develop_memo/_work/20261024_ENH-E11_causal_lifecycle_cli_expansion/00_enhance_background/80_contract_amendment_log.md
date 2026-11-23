@@ -165,6 +165,13 @@
 - P01 PACKAGE_READY checkpoint `9bff61f0eae25236f95f31f2cd3e7c81291f0167`を維持し再実装禁止。実Linux FS/Reader、P02検証、独立科学・G01_999、Product v2互換は条件緩和なし。Codingは現地Agent preflight成功後のみ開始。
 - 実P02コード/テスト/Package checkpointを本承認記録は作成していない。
 
+### AMD-E11-G01-P03-001 — GraphProvenance public semantic decision pending (2026-11-23)
+
+- Coding Agent `BLOCKED_CONTRACT_AMBIGUITY` at 714da741d09b1722e0755bc97cbacc4fb6ad327d. Public e11-local-graph/1 provenance only typed object; P03 06 and DD 30_61 require verifiable parent/source Method/Backend/CI/assumption lineage, no exact field/ContentRef hash definition.
+- `DEC-G01-P03-PROVENANCE-01` Owner decision required because defining a nested public Graph property is a new publicly observable semantic constraint. Recommended A typed nested provenance + trustworthy actual ContentRef joins; B explicitly relaxes GRAPH04. Decision docket: `combined_review/218_20261123_g01_p03_graph_provenance_owner_design_docket.md`.
+- Formal 09 **proposal only** `10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-P03-001_Gate_Contract_Amendment.md`. Normative RD/LDD/BD/IF/DD/schema/06/07 remain untouched until Owner chooses. Subsequent formal 09→new S10→separate S11.
+- P01 checkpoint 9bff61f0eae25236f95f31f2cd3e7c81291f0167, P02 checkpoint 3a76a0aa1698037354b284ba7b5a875300473ce6, S10 c37cd93d981a6d3777e20bd46b26bc3ae9b2c1f8, G01 Trial01 and all scientific/independent acceptance preserved.
+
 ## 3. 今後の記録必須項目
 
 Amendment ID、状態、発生要因・証跡、影響Gate/Trial、変更種別（`REQUIREMENT_CHANGE / DESIGN_CHANGE / CONTRACT_DEFECT / OTHER`）、適用するGate 09、オーナー承認、変更前後の正規意味、影響06/07/Pxx/Rxx、再基準SHA、旧テスト証跡の保存状況。
