@@ -69,6 +69,7 @@ privacy: {classification: AGGREGATE, row_export_requested: false}
 | `LocalPrivacyPolicyPort.authorize(*, study, root, principal, output_shape)` | `PrivacyDecision` | Study内の明示要求・実行UID所有のprivate Root・Method別column/row/byte上限 |
 | `LocalPublicationPort.begin/seal/publish` | `StagingArtifactSink / ValidatedStagedBundle / CommittedLocalRun` | atomic no-replace・readback |
 | `LocalManifestReaderPort.verify(*, root, run_id)` | `VerifiedLocalRun` | Marker→Manifest→Artifact・Privacy・lineage |
+| `LocalManifestFactoryPort.build(*, evidence)` | `ManifestValue` | Application Port; CLI concrete Adapter invokes unchanged P01 Manifest factory; no filesystem I/O or new public wire |
 
 `DiscoveryPort`・`IdentificationPort`・`EstimatorPort`・`DiagnosticPort`は`ariadne.scientific.ports.causal`、`MethodCapabilityPort`は`ariadne.scientific.ports.capability`に配置する。旧Product `ScientificCorePort`の既存v2署名は不変とし、新しい型付きPortと既存ScientificCoreAdapterは共通のScientific Kernelを使う互換Bridgeで接続する。単純alias、複製推定器、Backendのoptional importをProtocol import時に実行することは禁止する。このCLI interfaceの同期実行はContractとし、Product Web Worker/DB lifecycleは本IFの所有範囲外。
 
