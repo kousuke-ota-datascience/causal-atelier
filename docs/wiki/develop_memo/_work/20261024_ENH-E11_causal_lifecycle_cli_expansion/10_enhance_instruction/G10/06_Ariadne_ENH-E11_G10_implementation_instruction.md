@@ -1,5 +1,9 @@
 # Ariadne ENH-E11 / G10 — 06 実装指示書
 
+**DEC-01=B (Owner 2026-11-24) — DEFERRED_PRODUCT_POLICY_BRIDGE:** G10/P05 owns the previously deferred Product v2 compatibility bridge implementation and G10_999 owns independent acceptance. This is a bounded internal refactoring, not a new Method ID or public behavior change. Before G10 coding, specify exact affected existing ScientificValidationService/ESTIMATOR_CAPABILITIES and shared pure policy/metadata Class.Method contracts, characterize legacy behavior and obtain normal G10 S09/S10/S11 authorization for the bounded source change. Preserve public Product v2 operations, aliases, estimands, adjustment/type/diagnostic/lineage/error behavior, Discovery/Identification early return, existing CLI/Web/API/Worker/DB contracts and tests. Delegate legacy eligibility to the single shared pure policy/metadata authority without independent mutable duplicate rules or fallback. Require before/after characterization and all affected legacy Operation/Estimator positive/negative regression; demonstrate actual delegation and one authority, not just equal tables. Re-evaluate all impacted Local Method evidence under existing dependency-closure rules (including P1-M06). G10_999 cannot PASS until the bridge and its independent acceptance are complete. G01 through G09 remain protected; no current G10 coding authorization. If legacy semantics cannot be preserved, BLOCK and seek Owner decision.
+
+**DEC-02/03=B (Owner 2026-11-24):** P1-M06 supported executable positive is BK=null only. Non-null BK must remain typed pre-FCI exit4 refusal with no leakage/fallback/publication; genuine SCI_NO_ADMISSIBLE_PAG production remains deferred. Both enablements are separate future enhancements, not G10 mandatory positives. Preserve 41 Method count, independent null-BK MAG/PAG/latent oracle and quantitative evidence, BK hazard/refusal and synthetic envelope/real FS/Reader/technical-error rejection. Do not claim deferred variants are implemented or scientifically accepted.
+
 **DEC-PREPCODE-01=B（Owner 2026-11-22採用）：Gate別S09→S10→S11。** G10の独立S09監査は、先行Gate（G01+G02+G03+G04+G05+G06+G07+G08+G09）と共通E11 Wire/Port/Privacy/JCS/Publisher/Reader/Protected v2の変更影響閉包、およびG10自身の06/P00/Pxx/07/Method Profile/Backend/Scienceを対象とする。対象外Gateは全体SHA inventoryに保持し`NOT_REVIEWED`、未決の後続MethodはG10のCoding前無条件停止条件にしない。G10固有の独立S09 verdict→Owner G10-S10 Freeze→Owner G10-S11 Coding Authorizationを別々に取得する。**S11実行前にはG01_999・G02_999・G03_999・G04_999・G05_999・G06_999・G07_999・G08_999・G09_999の実PASSが必須**だが、S09文書監査の準備は先行Gateの実装中にも可能。実Adapter/FS/数値T2/T3/RegressionはG10の独立07/999で検証し、文書修正だけでPASSを付けない。現時点は`S09_NOT_RUN/S10_NOT_FROZEN/S11_NOT_AUTHORIZED`。
 
 **Document class:** Gate Coding Contract — Reviewer DRAFT  
@@ -62,7 +66,7 @@ PREP-02のCommon Design BaselineはFreeze済み。**Gate Dependency/WORK_PACKAGE
 | P02 | operation matrix | — / LocalCausalUseCase,IdentificationPort,EstimatorPort,DiagnosticPort,DiscoveryPort | cross-cutting | P01 |
 | P03 | replay manifest | — / LocalRunManifest,LocalArtifactPublisher,LocalManifestReader,GraphEvidence,EffectOutcome | cross-cutting | P01,P02 |
 | P04 | science benchmarks | — / MethodCapabilityRegistry,EffectOutcome,InferenceEvidence,GraphEvidence | cross-cutting | P02,P03 |
-| P05 | compatibility evidence | — / LocalCausalUseCase,LocalManifestReader,LocalPrivacyPolicy | cross-cutting | P03,P04 |
+| P05 | compatibility evidence and Product Policy Bridge | — / LocalCausalUseCase,LocalManifestReader,LocalPrivacyPolicy; bounded ScientificValidationService/shared pure policy integration (final Class.Method scope before G10 freeze) | cross-cutting | P03,P04 |
 
 全PxxのScopeとClass/Method ownershipは別文書`06_G10_Pxx_*.md`に自己完結記述。上流Packageからの利用はPort/Value/Bridgeであり、別Packageが所有するMethodを複製しない。Package setはOwnerが変更し得るため**DRAFT**。
 
