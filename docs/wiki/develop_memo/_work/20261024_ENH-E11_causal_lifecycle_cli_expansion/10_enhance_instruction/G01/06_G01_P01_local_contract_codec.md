@@ -275,3 +275,8 @@ G01は`P1-M06`のDISCOVERのみで、個票の出力を常に拒否する。Vali
 新Local Graphのimmutable identityは内容hash、parent/source科学証拠とContentRef。Product GraphVersion DBへlookup/write/edit/FIXせず、現行E11 Graph wireの`version_id`と`parent_version_id`はどちらもnullとし、non-nullは未対応importとして拒否する。既存ProductのGraphVersionServiceや旧v2は無変更。
 
 OS/FS受入は有界な不変条件別の正負例（owner EUID・0700/0600・dirfd/O_NOFOLLOW・same FS・symlink/race・rename前後・post-rename indeterminate・Marker/Reader/hash）に限定する。冗長なfault-permutation全順列、statx mount-ID/namespace証明、ACL/xattr digest/コンテナ推測、電源断耐久保証は追加しない。JCS RFC8785 golden bytes、no-clobber、公開後整合性、独立PAG Science Oracleは維持する。Coding Agentが未承認の広いProof強化を推測で復活させない。
+
+
+### S09-JCS-01 bounded repair (AMD-E11-G01-P01-003; Owner design decision adopted, formal 09/S10/S11 pending)
+
+The deterministic RFC8785 number codec must be independent of ambient Decimal precision, rounding, exponent limits, traps and flags; it must not mutate caller context. Repair only _number and necessary imports in src/ariadne/shared/serialization/jcs.py. Preserve all public APIs, VERSION, number-domain rejection, Unicode/key sorting and hash domains. Add only tests/enhancement/enh_e11/g01/contract/test_jcs_context_independence.py; existing tests/fixtures and consumers unchanged. Test exact independent RFC8785 bytes/hash, reported precision-6 counterexample, bounded context variation, number boundaries and unchanged golden vectors. Do not infer ECMAScript shortest-roundtrip equivalence from Python repr alone. Actual valid legacy bundle readback and cross-context publication/Reader integrity, all G01 and affected Product/Scientific regression required. No implementation authorization from this section alone; completed P01 may be reopened only by explicit bounded Owner S11.
