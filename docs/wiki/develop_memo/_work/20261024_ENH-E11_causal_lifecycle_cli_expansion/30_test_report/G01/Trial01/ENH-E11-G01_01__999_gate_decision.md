@@ -1,63 +1,54 @@
-# ENH-E11 G01 Trial 01 Test Item 999 — Gate Decision
+# ENH-E11 G01 Trial 01 Test Item 999 — 改訂受入契約による再判定
 
 | 項目 | 記録 |
 | --- | --- |
 | Gate Decision | **BLOCKED** |
 | Blocker code | `BLOCKED_PREREQUISITE` |
-| Promotion | `PROMOTION_NOT_ALLOWED` |
-| Fixed Trial Candidate / actual tested HEAD | `72bcd6acaab6caf48827bf2bb6cd5e249afd658b` |
-| TEST_START_SHA | `249bc48433e1472442fdbedfb9b848896e58d648` |
-| 証跡コミットの特定方法 | この報告を追加した Git commit |
-| 検証日 | 2026-11-24（JST） |
+| 昇格 | `PROMOTION_NOT_ALLOWED` |
+| 検証日 | 2026-11-25（JST） |
+| 開始 HEAD / Owner 記録271 | `47ccfd142a435baaa8e6518322b3ef3bf0e04a6c` |
+| 固定候補 / 実行 HEAD | `72bcd6acaab6caf48827bf2bb6cd5e249afd658b` |
+| 改訂受入凍結 SHA | `211f8b75245b849c2a4b2c057d656ef191df4d28` |
+| 改訂 Gate 07 blob | `aec107e27c8a17e550b96c25b6b1a2ab6eabc38a` |
+| 前回独立検証コミット | `f7d881597a7543b21df4751f466572b38c1cda34` |
 
-Owner 記録270の限定例外を適用し、正式な独立 Test Item 001 から開始した。固定候補の identity、凍結07、承認鎖、P01〜P05 のチェックポイントを照合し、指定候補と同一の detached HEAD で製品・テストを実行した。 [Owner 記録270](../../../00_enhance_background/Revised_requirements_definition_documents/combined_review/270_20261124_g01_trial01_independent_freeze_regression_scope_owner_decision.md) · [凍結 Gate 07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md) · [候補監査](ENH-E11-G01_01__001_candidate_identity.md)
-
-G01 単独 pytest 209件、選定 Scientific Core・Product を含む必須PASS集合268件が通過した。実 ext4 での no-clobber、Reader、CLI および実 Python 3.12 の G01 Schema と3種の FCI fit を観測した。正式な独立審査・科学受入・Bridge 依存と未完の独立機械契約ケースにより Gate は BLOCKED。必須PASS集合に候補固有の FAIL は観測されなかった。 [独立実測出力](independent_raw_evidence.md)
+Owner 記録271に従い、旧実装 S10/S11 は候補の出自に、改訂凍結 Gate 07 は今回の受入判定に使用した。固定候補の source/test/fixture/Schema/lock と Python 3.12 実行環境を照合し、適用可能な既存証拠を再利用した。前回判定は `git show f7d881597a7543b21df4751f466572b38c1cda34:docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/30_test_report/G01/Trial01/ENH-E11-G01_01__999_gate_decision.md` で参照できる。 [001](ENH-E11-G01_01__001_candidate_identity.md) · [改訂 Gate 07](../../../10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md) · [追補実測証拠](independent_acceptance_001_supplement.md)
 
 ## Test Item 判定
 
-| Item | 検証 | AC | 結果 |
-| --- | --- | --- | --- |
-| [001](ENH-E11-G01_01__001_candidate_identity.md) | Candidate identity audit | AC-06 | PASS |
-| [002](ENH-E11-G01_01__002_strict_study_dispatch.md) | Strict Study / dispatch | AC-01, AC-05 | PASS |
-| [003](ENH-E11-G01_01__003_contentref_root.md) | ContentRef / TrustedRoot | AC-01, AC-03 | PASS |
-| [004](ENH-E11-G01_01__004_graph_pag_fidelity.md) | PAG / Graph evidence fidelity | AC-02 | PASS |
-| [005](ENH-E11-G01_01__005_canonical_jcs.md) | Canonical JCS / SHA-256 | AC-02 | PASS |
-| [006](ENH-E11-G01_01__006_atomic_publish.md) | Atomic publish / session | AC-03, AC-06 | BLOCKED |
-| [007](ENH-E11-G01_01__007_bundle_readback.md) | Bundle readback / validation | AC-03, AC-05, AC-06 | BLOCKED |
-| [008](ENH-E11-G01_01__008_discover_only_envelope.md) | DISCOVER-only envelope | AC-05, AC-06 | BLOCKED |
-| [009](ENH-E11-G01_01__009_fci_api_eligibility.md) | FCI API / CI eligibility | AC-01, AC-04 | BLOCKED |
-| [010](ENH-E11-G01_01__010_graph_a_reference.md) | GRAPH-A independent reference | AC-04 | BLOCKED |
-| [011](ENH-E11-G01_01__011_bk_latent_negatives.md) | BK / latent negatives | AC-04 | BLOCKED |
-| [012](ENH-E11-G01_01__012_cli_error_privacy.md) | CLI error and privacy | AC-03, AC-05, AC-06 | BLOCKED |
-| [013](ENH-E11-G01_01__013_product_scope_regression.md) | Product / scope regression | AC-05, AC-06 | BLOCKED |
+| Item | 判定 | 根拠 |
+| --- | --- | --- |
+| [001](ENH-E11-G01_01__001_candidate_identity.md) | PASS | 改訂受入 Authority、固定候補、実装 S10/S11 を再照合 |
+| [002](ENH-E11-G01_01__002_strict_study_dispatch.md) | PASS | Strict Study / dispatch の適用可能な証拠を再利用 |
+| [003](ENH-E11-G01_01__003_contentref_root.md) | PASS | ContentRef / TrustedRoot の適用可能な証拠を再利用 |
+| [004](ENH-E11-G01_01__004_graph_pag_fidelity.md) | PASS | PAG 形式保持の適用可能な証拠を再利用 |
+| [005](ENH-E11-G01_01__005_canonical_jcs.md) | PASS | JCS / SHA-256 の適用可能な証拠を再利用 |
+| [006](ENH-E11-G01_01__006_atomic_publish.md) | PASS | abort state / session binding / 実 FS の publish fault |
+| [007](ENH-E11-G01_01__007_bundle_readback.md) | PASS | Manifest Factory / Reader の個別負例 |
+| [008](ENH-E11-G01_01__008_discover_only_envelope.md) | PASS | 実 Graph-positive と実 FS の synthetic envelope、技術失敗の拒否 |
+| [009](ENH-E11-G01_01__009_fci_api_eligibility.md) | PASS | Fisher Z 数値・fit 0 の残件と既存 B02/B04 |
+| [010](ENH-E11-G01_01__010_graph_a_reference.md) | BLOCKED | 独立導出の参照と探索 Pilot を得た。正式 B05/T3 は未充足 |
+| [011](ENH-E11-G01_01__011_bk_latent_negatives.md) | PASS | 不可識別性・BK hazard・実 CLI pre-FCI 拒否 |
+| [012](ENH-E11-G01_01__012_cli_error_privacy.md) | PASS | Privacy / AMD-001–003 の故障経路 |
+| [013](ENH-E11-G01_01__013_product_scope_regression.md) | PASS | Local 単一 Policy と既存 Product 回帰 |
 
-## Gate 07 受入判定
+## Acceptance Criteria と最終ブロッカー
 
 | AC | 判定 | 根拠 |
 | --- | --- | --- |
-| AC-01 | PASS | Strict Study、ContentRef、実 Draft 2020-12 と typed parser の検証。科学的 CI 数値適格性の未完条件は AC-04 に記録。 |
-| AC-02 | PASS | PAG の lossless 形式往復、Local graph identity、独立 JCS バイトと SHA。 |
-| AC-03 | BLOCKED | 実 ext4 の競合・障害・Reader 正負例は通過。AMD-001–003 の残りの独立状態・故障・Privacy/Reader 行列が未完。 |
-| AC-04 | BLOCKED | 実 Python 3.12 の3種 FCI fit と non-null BK fail-closed を観測。独立数値境界の残項目、正式 B05 と T2/T3 が未充足。 |
-| AC-05 | BLOCKED | DISCOVER 正例、Status、旧Product回帰は観測済み。独立科学 negative の証拠と `DEFERRED_PRODUCT_POLICY_BRIDGE` を含む最終受入が未充足。 |
-| AC-06 | BLOCKED | 001 の候補・凍結契約の identity は PASS。独立 S09 と全受入証跡が未充足。 |
+| AC-01 | PASS | Study・ContentRef・strict schema / parser と FCI 適格性。 |
+| AC-02 | PASS | PAG 形式・Local Graph identity・JCS と digest。 |
+| AC-03 | PASS | 実 ext4 no-clobber、独立 Reader、Privacy、abort と障害の個別対照。 |
+| AC-04 | BLOCKED | 実 Python 3.12 の B02/B04、数値境界、非 null BK 拒否を確認。正式な独立 B05 の科学参照受入と T3 が未充足。 |
+| AC-05 | PASS | 実 Graph-positive、synthetic envelope と旧 Product 回帰。 |
+| AC-06 | BLOCKED | 固定候補・受入 Authority の照合は PASS。改訂契約を対象とする独立 S09 完了記録を確認できなかった。 |
 
-## Protected regression / Transition Debt
+**Reviewer 判断待ち。** 独立に導出した観測／潜在 collider の MAG/PAG 参照、BK hazard と探索的 T2 を添付した。正式 B05 には参照・DGP の適用性と科学的受入範囲の独立レビューが必要。T3 は必須セル・K/R・独立 seed・計算予算・判定規定の事前登録確定および実測が未実施。改訂 Gate 07 に対する独立 S09 も未完。 [010](ENH-E11-G01_01__010_graph_a_reference.md) · [011](ENH-E11-G01_01__011_bk_latent_negatives.md)
 
-- 実測の必須PASS集合は 268 passed / 2 deselected / 11 warnings / exit 0。因果 Runtime operation stage/input matrix、旧CLI / Result v2、Scientific Core を含む。対象2 node ID の個別判定を除いた集合についての結果。 [013](ENH-E11-G01_01__013_product_scope_regression.md)
-- LightGBM 依存ガードは pre-E11 基準・固定候補とも exit 1 と同じ assertion。Owner 270 の前提を独立に照合して `PRE_EXISTING_FAILURE`。実測 FAIL と `TD-G01-LEGACY-DEPENDENCY-GUARD-01 = OPEN` を保持した。 [013](ENH-E11-G01_01__013_product_scope_regression.md)
-- Navigation はテスト・frontend 入力・変更影響閉包の不変性を確認して `OUT_OF_SCOPE_FOR_G01`。前回 Node 未検出の実測エラーは履歴として保持した。 [013](ENH-E11-G01_01__013_product_scope_regression.md)
+## Scope / protected regression / Transition Debt
 
-## 未充足の必須受入
+- `DEFERRED_PRODUCT_POLICY_BRIDGE = UNFULFILLED / DEFERRED_TO_G10_P05`。実装は G10/P05、独立受入は G10_999。今回の G01 は Local 単一 Policy と旧 Product 回帰で評価した。
+- BK 利用可能化と実 `SCI_NO_ADMISSIBLE_PAG` 生成は別エンハンスへ延期。試験済みの非 null BK 拒否と synthetic envelope を改訂受入範囲として評価した。
+- 既存の必須PASS回帰集合 268件と AMD-004 controls を再利用。LightGBM ガードは `PRE_EXISTING_FAILURE`、`TD-G01-LEGACY-DEPENDENCY-GUARD-01 = OPEN`。Navigation は `OUT_OF_SCOPE_FOR_G01` と前回の Node 未検出履歴を保持した。 [013](ENH-E11-G01_01__013_product_scope_regression.md)
 
-| 必須受入 | 状態 | 不足する証跡 |
-| --- | --- | --- |
-| G01 独立 S09 | BLOCKED | Author とは独立した G01/common review の完了記録を確認できなかった。 |
-| B02/B04 G01実効 Python 3.12 | PASS（実測対象） | G01 Schema の正負例、API検証と fisherz/chisq/gsq 実fit の結果。全 CI 受入は009の個別条件を参照。 |
-| B05 独立 MAG/PAG/BK | BLOCKED | 正式な latent MAG/PAG 同値類・独立 oracle 一式と BK motif の証拠。現行の non-null BK は CLI fail-closed。 |
-| T2 Pilot → T3 | BLOCKED | 正式 Pilot、T3 事前登録（K/R/seed/compute）、定量実測が未確認。 |
-| Real FS/Reader、独立 AMD-001–004 | 一部 BLOCKED | 物理 ext4 と AMD-004 の観測は通過。006〜008、012 に個別の未完ケースを記録。 |
-| DEFERRED_PRODUCT_POLICY_BRIDGE | UNFULFILLED | 別途承認された受入変更または実 Bridge の完成と独立 Product 回帰。 |
-
-この判定で確定する状態は `PROMOTION_NOT_ALLOWED`。製品・テスト・依存・契約の変更と状態昇格は0件。
+`PROMOTION_NOT_ALLOWED` を維持する。

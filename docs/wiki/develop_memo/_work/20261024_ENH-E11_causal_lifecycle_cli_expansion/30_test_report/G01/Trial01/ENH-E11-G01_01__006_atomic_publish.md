@@ -31,3 +31,9 @@ BLOCKED の範囲は AMD-003 の全 state （PREPARING/PUBLISHING/COMMITTED/INDE
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — PASS。** 既存の物理 ext4 競合・SIGKILL・syscall fault 証跡を再利用。今回、実 stage の VALIDATING で正規の abort が FD を閉じ、private residue を隔離した。PREPARING/PUBLISHING は実遷移内のフック、COMMITTED/INDETERMINATE/ABORTED は遷移結果で facade abort を拒否した。独立保持の A/B token 交換および null token で両 session の STAGING 状態・FD・バイトと既存 final を保持した。publish 前 EXDEV と rename 後 fsync EIO では CLI は型付き exit 5、Application abort は0。後者では final Marker が物理的に存在したが応答は `PUBLICATION_INDETERMINATE`、成功応答は0。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

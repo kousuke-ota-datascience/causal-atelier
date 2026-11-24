@@ -29,3 +29,9 @@ AMD-001–003 の独立 fault control で check-only/失敗 begin 前 abort 0、
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — PASS。** stage、Graph key/SHA/MIME、Status、Privacy の個別 fault は全て成功 begin 後に元の tuple で Application abort 1回、typed exit 3/4/5、Marker と final run 0。Application publish 以降は abort 0。Status/Privacy で Publisher が先に cleanup 済みの際は追加の非秘密 cleanup 診断が出たが、元の exit 分類を保持した。stale root inode の置換を実 ext4 で行い、同一パスでも seal を拒否し Marker 0を確認した。既存の check-only 零書込、Decision 各 field、Privacy 再評価、CLI exit 2〜5、runtime/Factory/cleanup fault 証跡を再利用。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

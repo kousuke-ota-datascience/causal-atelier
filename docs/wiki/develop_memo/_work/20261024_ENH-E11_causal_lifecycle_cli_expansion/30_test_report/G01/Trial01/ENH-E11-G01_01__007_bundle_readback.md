@@ -31,3 +31,11 @@ READ/MAN の BLOCKED は、実 Reader で未実測の独立 cross-wire 変種（
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — PASS。** 実 ext4 で seal→rename→Reader の正常読戻しを確認してから各変種を1箇所ずつ変更。duplicate inventory、Status/Manifest 不一致、unsafe ContentRef の各表記、symlink に置き換えた Status、余剰 private row、digest を更新した技術 code の diagnostics を Reader が型付き拒否した。既存の stale hash、Marker、provenance、実 Graph-positive 証拠を再利用。
+
+実 stage の six-field descriptor を基に `ManifestBuildEvidence` を構築し、入力 Status を後から変更しても Factory の正規出力は元の Manifest bytes と一致した。malformed descriptor、fabricated SHA、Graph の bare key / MIME、runtime 欠損 / 不正、Status ID 不一致、技術 code の科学理由化を拒否し、stage の Marker と final run は0。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

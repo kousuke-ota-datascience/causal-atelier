@@ -29,3 +29,13 @@
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — BLOCKED。** FCI 出力に依存せず、観測 collider `X→M←Z` と潜在 collider（`L→X,L→M,Z→M`、Lは潜在）を導出した。後者の latent projection は `X↔M←Z`。観測3点の skeleton の唯一の非隣接対 X,Z は周辺 m-separated、M 条件付きで m-connected。中心 M の2 arrowhead が不変。葉端点の TAIL/ARROW 2×2 はすべて ancestral で最大、同じ m-separation をもつため葉は CIRCLE。独立標準正規の線形係数と母集団共分散で非退化・その他の条件付き共分散も確認した。具体的な式・コード・fixture digest は追補資料に収録。
+
+探索的 T2 Pilot は n=512、Fisher Z、BK=null、2 DGP 各100反復（seed 73000–73099）。固定候補の worker の fit を同一プロセスで実行し、正確な skeleton/PAG は観測 collider 93/100、潜在 collider 94/100。各200 true-positive edges、false positive は7と6、false negative と backend error は0。fit の計算量は約0.26秒/100反復・DGP（worker 起動時間を除く）。正式 acceptance や科学 PASS の判定には用いていない。
+
+**T3 事前登録案の残項目。** 独立 Reviewer が参照と DGP 候補の適用性、必須 Hard/conditional/N/A cells、型と層別、独立 seed 範囲、R・計算予算・停止規定を確定する必要がある。凍結07の Bonferroni `alpha_j=.05/K` と replicate-level の事前指定判定を確定し、Pilot seed を除いた別の確定入力で実測する。07の候補しきい値と今回の探索結果を正式判定値へ昇格していない。正式な B05 受領、T3 事前登録確定・定量実測は未完。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

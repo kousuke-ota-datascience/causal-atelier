@@ -47,3 +47,11 @@ AMD-004 のテスト差分は許可された分類関数だけ。旧5件+Local 1
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — 改訂範囲で PASS。** Registry の公開 descriptor/factory maps は immutable、選定可能な entry は P1-M06 のみ。実 CLI 正例で Application preflight と registry-selected Adapter が同一実装 `ScientificEligibilityPolicy.check` を呼び、両方が fisherz を許可して実 Graph-positive が成立。非 null BK の負例は同一 Policy が typed 拒否し、fit 0。ソース照合により eligibility 数値・カテゴリ判定の実装を共有することを確認した。
+
+旧 Product の実測268件と AMD-004 の正負例を再利用。候補・テスト・fixture・lock・関連受入条件は同一。LightGBM の既存 FAIL と `TD-G01-LEGACY-DEPENDENCY-GUARD-01 = OPEN`、navigation 対象外判定を維持。`DEFERRED_PRODUCT_POLICY_BRIDGE = UNFULFILLED / DEFERRED_TO_G10_P05`。G10_999 が独立受入を行う。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

@@ -29,3 +29,11 @@
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — 改訂範囲の hazard／refusal は PASS。** latent common cause と直接効果の2変数 Gaussian の共分散を同じ `[[2,1],[1,2]]` と独立に確認。BK hazard は完全3点 skeleton の selection-free ancestral MAG を列挙。Y→Z の禁止下でも Z→Y の DAG と Z↔Y の MAG が可能で、観測 CI から Z 側の TAIL は強制されない。実 causal-learn 0.1.4.8 の BK orientation 関数に isolated `Z o→Y` を与えると、禁止条件で Z を TAIL に確定し、stdout を3行出力した。これはオリエンテーション段階の hazard 実測。
+
+G01 CLI では空 BK と矛盾 BK を fixture の Study/Design に設定し、双方で exit 4、`BACKEND_SEMANTICS_UNVERIFIED`、JSON 1行、node 名漏洩なし、FCI fit 0、stage 0。BK-positive 利用可能化は延期。包括的な独立 B05 受入は010で引き続き BLOCKED。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

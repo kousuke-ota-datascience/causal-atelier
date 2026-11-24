@@ -58,3 +58,13 @@ Linux WSL2 kernel 6.18.58.1、実効 UID 1000、候補と物理試験の root �
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — PASS。** `git pull --ff-only causal-atelier feature/ariadne_mvp_e11` 後の開始 HEAD / FETCH_HEAD は `47ccfd142a435baaa8e6518322b3ef3bf0e04a6c`、主ブランチと detached 候補の作業ツリーはクリーン。候補 `72bcd6acaab6caf48827bf2bb6cd5e249afd658b` と実行 HEAD が一致。旧実装 S10 `307404e01c43bb83a286986f8f6d124e53032509` → S11 `7c15920ab46c46b3a084432736c2c32fbb087e92` → 固定候補の祖先関係を再確認した。
+
+改訂受入 Authority は `211f8b75245b849c2a4b2c057d656ef191df4d28`。その exact commit と同期 HEAD の Gate 07 blob は `aec107e27c8a17e550b96c25b6b1a2ab6eabc38a`。受入 SHA から同期 HEAD までは承認記録271のみ。前回証跡からは承認された契約・計画13文書と記録271。固定候補から src、tests、G01 fixtures、公開 Schema、`pyproject.toml`、`uv.lock` の製品・テスト差分は0件。前回 PASS 002–005 と B02/B04、旧 Product の適用範囲内の実測を再利用した。 [Owner 271](../../../00_enhance_background/Revised_requirements_definition_documents/combined_review/271_20261124_g01_acceptance_001_owner_freeze.md) · [正式09](../../../10_enhance_instruction/G01/09_ENH-E11_G01_AMD-E11-G01-ACCEPTANCE-001_Gate_Contract_Amendment.md)
+
+実測 Python 3.12.16、pytest 9.0.3、causal-learn 0.1.4.8、ext4、EUID 1000。ロック SHA-256 と環境 fingerprint は前回と一致。旧実装 07 の状態表示は履歴として保持した。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

@@ -31,3 +31,9 @@ B02/B04 の上記実行は PASS。G01-07-08 の独立数値負例全体は BLOCK
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — PASS。** 既存の実 fit、各 CI の正負例と exhaustive screening、条件数・左右残差の閾値比較を再利用。逆演算の LinAlgError、nonfinite inverse、`abs(partial_r)=1`、1超、計算が非有限となる場合の単独 fault を実行し、各 `ELIGIBILITY_UNRESOLVED`、FCI 呼出0、artifact writes 0。partial の個別テストは残差 gate を通過させる fault controls であり、物理的な相関行列と解釈しない。独立に構成した正規3列・n=5（最大 |S|+4）では6組を検査して適格。近接特異の2×2相関は有限逆行列を持つが、独立計算の condition×eps は約 4.44e-4 で上限1e-6を超える。前回の候補パスの同種入力の拒否も保持。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)

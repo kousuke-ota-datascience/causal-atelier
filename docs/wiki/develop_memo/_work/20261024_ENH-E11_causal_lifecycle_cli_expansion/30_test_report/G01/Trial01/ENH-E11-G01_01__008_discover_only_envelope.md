@@ -29,3 +29,9 @@
 [実測出力](independent_raw_evidence.md) · [再実行用資料](independent_probe_inputs.md)
 
 検証対象に対する production code、repo tests、migration、依存定義、凍結契約の変更は0件。
+
+## 2026-11-25 追補 — AMD-E11-G01-ACCEPTANCE-001
+
+**追補判定 — 改訂範囲で PASS。** BK=null の実 FCI を CLI から実行して JSON `COMPLETED / NOT_EVALUATED` を確認。既存の actual Graph-positive bytes、inventory、provenance と実 Reader 証拠を再利用した。synthetic negative は real ext4 で atomic publish し、exact diagnostics、Graph/Result null、Effect なし、Status reasons と Reader の request hash 一致を確認した。技術 code を diagnostics に入れ、Descriptor と Marker の hash を更新しても拒否された。stage、Graph key/SHA/MIME、Status、Privacy、rename/fsync を制御した CLI fault はすべて技術的 FAILED / NOT_EVALUATED。実科学 `SCI_NO_ADMISSIBLE_PAG` の生成は別エンハンスへ延期。
+
+[追補の exact commands・実測出力・再現コード](independent_acceptance_001_supplement.md)
