@@ -1,0 +1,1230 @@
+# G01 Trial 01 独立検証の実測出力
+
+固定候補は `72bcd6acaab6caf48827bf2bb6cd5e249afd658b`。pytest と補助プローブは detached 固定候補で実行した。依存ガードの基準実行は detached pre-E11 基準で実行した。コマンドの作業場所と環境は [001](ENH-E11-G01_01__001_candidate_identity.md) に記録。補助プローブのコードは [再実行用資料](independent_probe_inputs.md) に収録。
+
+<a name="candidate-identity"></a>
+
+## Candidate identity
+
+```sh
+set -e
+git status --porcelain
+git rev-parse HEAD FETCH_HEAD refs/remotes/causal-atelier/feature/ariadne_mvp_e11
+git diff --name-status d0fc571c48d2dc3bf02e70ea4786d10db5394aa3 HEAD
+git diff --name-status 72bcd6acaab6caf48827bf2bb6cd5e249afd658b HEAD
+git diff --name-status 307404e01c43bb83a286986f8f6d124e53032509 7c15920ab46c46b3a084432736c2c32fbb087e92
+git diff --name-only 7c15920ab46c46b3a084432736c2c32fbb087e92 72bcd6acaab6caf48827bf2bb6cd5e249afd658b
+git diff --exit-code 307404e01c43bb83a286986f8f6d124e53032509 HEAD -- docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction
+for sha in 307404e01c43bb83a286986f8f6d124e53032509 72bcd6acaab6caf48827bf2bb6cd5e249afd658b HEAD; do
+git rev-parse "$sha:docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/10_enhance_instruction/G01/07_Ariadne_ENH-E11_G01_test_instruction.md" "$sha:uv.lock"
+done
+rg -n '^(\- )?(Status|Checkpoint|Implementation checkpoint|Package|Trial)|PACKAGE_COMPLETE' docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/*__status.md | tail -25
+git -C /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate rev-parse HEAD HEAD:src HEAD:tests HEAD:tests/enhancement/enh_e11/g01 HEAD:tests/conftest.py HEAD:tests/product HEAD:tests/scientific
+git -C /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate status --porcelain
+```
+
+Exit 0.
+
+```text
+249bc48433e1472442fdbedfb9b848896e58d648
+249bc48433e1472442fdbedfb9b848896e58d648
+249bc48433e1472442fdbedfb9b848896e58d648
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/270_20261124_g01_trial01_independent_freeze_regression_scope_owner_decision.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/268_20261124_g01_trial01_assembly_freeze_authority_owner_decision.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/269_20261124_g01_trial01_assembly_regression_baseline_scope_owner_decision.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/270_20261124_g01_trial01_independent_freeze_regression_scope_owner_decision.md
+M	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/ENH-E11_G01_implementation_report_detail.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/E11-G01_01__implementation_completion.md
+M	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/E11-G01_01_in_progress.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__checkpoint.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__status.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/266_20261124_g01_p05_004_s10_owner_refreeze.md
+A	docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/combined_review/267_20261124_g01_p05_004_limited_s11_owner_reauthorization.md
+pyproject.toml
+src/ariadne/capabilities/causal/local_execution.py
+src/ariadne/capabilities/causal/ports/local_io.py
+src/ariadne/capabilities/causal/ports/local_privacy.py
+src/ariadne/capabilities/causal/ports/manifest_factory.py
+src/ariadne/interfaces/cli/local_causal/command.py
+src/ariadne/interfaces/cli/local_causal/manifest_factory.py
+src/ariadne/interfaces/cli/local_causal/privacy.py
+src/ariadne/interfaces/cli/local_causal/publication.py
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py
+tests/product/test_enh_e4_g07_p03_cli_boundary.py
+6af42b17a403756b237c1b4c4a546bff4ef11381
+2b83110e86b26b7969fbddf8f98a727370ae19f7
+6af42b17a403756b237c1b4c4a546bff4ef11381
+2b83110e86b26b7969fbddf8f98a727370ae19f7
+6af42b17a403756b237c1b4c4a546bff4ef11381
+2b83110e86b26b7969fbddf8f98a727370ae19f7
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__status.md:9:- Trial: 01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__status.md:10:- Package: P05
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__status.md:11:- Execution status: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P05__status.md:17:State: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P01__status.md:9:- Trial: 01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P01__status.md:10:- Package: P01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P01__status.md:11:- Execution status: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P01__status.md:17:State: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P02__status.md:9:- Trial: 01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P02__status.md:10:- Package: P02
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P02__status.md:11:- Execution status: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P02__status.md:17:State: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P04__status.md:9:- Trial: 01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P04__status.md:10:- Package: P04
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P04__status.md:11:- Execution status: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P04__status.md:17:State: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P03__status.md:9:- Trial: 01
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P03__status.md:10:- Package: P03
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P03__status.md:11:- Execution status: PACKAGE_COMPLETE
+docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/20_implementation_reports/G01/Trial01/packages/E11-G01_01_P03__status.md:17:State: PACKAGE_COMPLETE
+72bcd6acaab6caf48827bf2bb6cd5e249afd658b
+de1421ebc1899ce1d46c24ead6ddefe32b7a1c12
+ceeba201e33bf82a885939636234a0f0d58e832e
+4c1911603eb58e52363fa141ea252c567273c1f2
+43fd0a0f4cf7e5950d08268496c9f953e457bd67
+650663a52557043f628d307ada99a16789b735fb
+9d8064a5bd4ef4adabd728bceabb315e953d6a83
+```
+
+<a name="runtime-identity"></a>
+
+## Runtime identity
+
+```text
+3.12.16 (main, Nov 11 2026, 00:15:59) [Clang 23.1.3 ]
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python
+[('pytest', '9.0.3'), ('causal-learn', '0.1.4.8'), ('numpy', '2.2.6'), ('pandas', '3.0.2'), ('scipy', '1.13.1'), ('pyarrow', '24.0.0'), ('PyYAML', '6.0.3')]
+117 1fd46e30fdb9c3af93ba04eb8302f4b4a6c59f8e0c411a51d26b4dca908ba62a
+1d92a472fc3c750c90458a40ae5a09ba3feefbd3d99eee61b0cdbff00d31cffb
+1000
+```
+
+## Collection
+
+```sh
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -m pytest --collect-only -q tests/enhancement/enh_e11/g01 tests/scientific tests/product/test_cli_contract.py tests/product/test_enh_e4_g07_p03_cli_boundary.py tests/product/test_enh_e4_g04_result_artifact_contract.py tests/product/test_domain_and_snapshot.py tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py tests/product/test_enh_e3_causal_workflow_regression.py tests/product/test_estimator_compatibility_e1a.py
+```
+
+Exit 0.
+
+```text
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks0]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks1]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks2]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks3]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks4]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks5]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks6]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks7]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks8]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks0]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks1]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks2]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks3]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks4]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks5]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks6]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks7]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks8]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement0]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement1]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement2]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement3]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement4]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement5]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement6]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement7]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement8]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-unobserved]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-right]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[lag-0]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-circle]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-UNKNOWN]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target_mark-None]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target-value6]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[False]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[True]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[method_id-P1-M05]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[backend-other]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-None]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-other]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value4]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value5]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[science_acceptance-PASS]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[source_refs-value7]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[parent_graph_ref-value8]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_strict_json_digest_and_immutable_values
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[relative_key]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[sha256]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-01]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-02]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-03]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-04]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-05]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-06]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-07]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":NaN}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":Infinity}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":-Infinity}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":1,"a":2}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":"\ud800"}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":9007199254740993}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_non_json_and_does_not_normalize
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[/abs]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a/../b]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[.]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a//b]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[z:/a]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\\b]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\x00]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\u202eb]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_json_and_yaml_study_preserve_projection
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: 1\na: 2]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: !!python/object:object {}]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: &a [*a]]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-schema_version-causal-analysis-spec/2-VERSION_UNSUPPORTED]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-unexpected-True-SCHEMA_INVALID]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[method-id-P1-M05-SCHEMA_INVALID]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[estimand-family-ATE-SCHEMA_INVALID]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[inference-requested-True-SCHEMA_INVALID]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[privacy-row_export_requested-True-PRIVACY_POLICY_CONFLICT]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes0]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes1]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes2]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes3]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes4]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[run_id-wrong]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[technical_status-EXECUTION_FAILED]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[manifest_relative_path-None]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[science_acceptance-PASS]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[reason_codes-value4]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[relative_key-graph.json]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[sha256-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[media_type-text/plain]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_evidence_does_not_retain_mutable_aliases
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config0]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config1]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config2]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config3]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config4]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-False]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-True]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[input_ref]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[method]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[request_hash]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_hash_domains
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[fisherz]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[chisq]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[gsq]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bk-BACKEND_SEMANTICS_UNVERIFIED]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[empty_stratum-UNSUPPORTED_COMBINATION]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[four_per_cell-UNSUPPORTED_COMBINATION]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bad_code-UNSUPPORTED_COMBINATION]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[float_code-UNSUPPORTED_COMBINATION]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[support_only_marginal-UNSUPPORTED_COMBINATION]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[resources-ELIGIBILITY_UNRESOLVED]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_sample_and_conditioning_boundaries
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[condition]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[left]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[right]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_catalog_keeps_backend_factory_lazy_and_no_fallback
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_two_node_latent_observational_ambiguity
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_fisherz_latent_projection_preserves_uncertainty
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_qualified_collider_matches_independent_dag
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows0]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows1]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows2]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows3]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejects_exhaustion_after_partial_scan
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid0]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid1]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid2]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid3]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid4]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_backend_node_order_mismatch_is_typed_and_stages_nothing
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_capability_unavailable_has_no_adapter_load
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_check_and_publish_retry_on_real_ext4
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_denies_row_request_before_composition
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[issuer]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[different_run]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[same_run_new_token]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[root]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[hash]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[policy]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[fake]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[invalid_token]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[legacy]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_begin_rejects_invalid_token_before_staging
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[False]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[True]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[legacy-2]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[hash-3]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[bk-4]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[existing-5]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_application_has_no_cli_implementation_import
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[False]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[True]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[missing]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[deny]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[uid]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[run]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[hash]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[other_fd]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[policy]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{}]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"other","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["EXECUTION_FAILED"]}]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"],"extra":0}]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_status_reason_must_join_negative
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[mode]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[symlink]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[hardlink]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[bytes]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[missing]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_root_rejects_symlink_permissions_and_outside
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_sealed_mutation_and_marker_tamper
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[True]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[False]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[False]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[True]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_post_rename_fsync_error_is_indeterminate
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[fsync-28]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-38]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-22]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-95]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-18]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_checks_diagnostics_semantics_even_with_matching_hashes
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_ref_detects_real_inode_replacement
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_row_and_extra_inventory_are_denied
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_tmpfs_root_is_rejected
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_cross_run_dirfd_replacement_is_refused_before_rename
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_legacy_manifest_even_with_matching_marker
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-Graph fields]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-CI does not agree]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-dataset ContentRef does not agree]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-parent for standalone G01]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rechecks_source_content_bytes_with_matching_provenance
+tests/scientific/test_identification_e1a.py::test_eligibility_type_failure_is_a_saved_scientific_result[treatment-values0-UNSUPPORTED-CONTINUOUS]
+tests/scientific/test_identification_e1a.py::test_eligibility_type_failure_is_a_saved_scientific_result[outcome-values1-BINARY-UNSUPPORTED]
+tests/scientific/test_identification_e1a.py::test_missing_required_column_records_explicit_prerequisite_skips
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[one-treatment-arm]
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[small-sample]
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[propensity-not-estimable]
+tests/scientific/test_identification_e1a.py::test_cpdags_do_not_hide_deterministic_input_errors
+tests/scientific/test_identification_e1a.py::test_consistent_cpdags_remain_reviewable
+tests/scientific/test_identification_e1a.py::test_randomized_design_allows_valid_pretreatment_adjustment
+tests/scientific/test_identification_e1a.py::test_randomized_design_rejects_post_treatment_adjustment
+tests/scientific/test_identification_e1a.py::test_collider_descendant_adjustment_is_path_relative
+tests/scientific/test_identification_e1a.py::test_irrelevant_high_indegree_covariate_is_not_called_a_collider
+tests/scientific/test_product_adapters.py::test_pc_and_ges_run_without_database_and_preserve_graph_semantics[pc]
+tests/scientific/test_product_adapters.py::test_pc_and_ges_run_without_database_and_preserve_graph_semantics[ges]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[difference_in_means-0.7]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[ols-0.25]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[ipw-0.4]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[aipw-0.3]
+tests/scientific/test_product_adapters.py::test_small_sample_is_scientific_result_not_exception
+tests/scientific/test_product_adapters.py::test_missing_treatment_to_outcome_path_is_not_identified
+tests/scientific/test_product_adapters.py::test_extreme_propensity_is_insufficient_overlap
+tests/scientific/test_product_adapters.py::test_non_estimable_aipw_uncertainty_is_unreliable
+tests/product/test_cli_contract.py::test_discovery_cli_writes_portable_manifest_without_web_identity
+tests/product/test_cli_contract.py::test_estimation_cli_scientific_negative_result_exits_zero
+tests/product/test_cli_contract.py::test_estimation_cli_uses_api_compatible_type_error_code
+tests/product/test_cli_contract.py::test_cli_rejects_unknown_config_field
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_all_analysis_cli_scripts_match_explicit_classifications
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_low_level_cli_has_no_legacy_or_product_persistence_reachability
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_portable_cli_manifest_cannot_claim_product_persistent_identity
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac001_result_levels_and_ownership_validation_are_explicit
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac001_ac005_family_cardinality_contract_is_explicit
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac003_store_failure_leaves_no_metadata_and_cleans_written_siblings
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac003_db_failure_cleans_physical_object_and_cleanup_failure_is_reconcilable
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac004_typed_reuse_requires_semantic_id_and_typed_role
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac005_artifact_only_is_explicitly_allowed_or_rejected
+tests/product/test_domain_and_snapshot.py::test_scientific_status_is_exact_current_result_type_design_contract
+tests/product/test_domain_and_snapshot.py::test_snapshot_hash_is_order_stable_and_includes_context
+tests/product/test_domain_and_snapshot.py::test_graph_round_trip_preserves_endpoints
+tests/product/test_domain_and_snapshot.py::test_execution_state_machine_rejects_invalid_transition
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_causal_runtime_operation_stage_and_input_matrix_are_preserved
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_navigation_route_change_has_no_execution_revision_metadata
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_causal_effect_comparison_requires_the_exact_semantic_key
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_compatible_causal_effect_comparison_remains_available
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_frontend_separates_identification_inputs_from_estimation_tuning
+tests/product/test_enh_e3_causal_workflow_regression.py::test_causal_planner_builds_generic_plans_and_registry_resolves_every_operation
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[DISCOVERY]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[IDENTIFICATION]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[ESTIMATION]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[REFUTATION]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[SENSITIVITY]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_artifact_binding_attempt_retry_failure_and_cancellation_keep_generic_meaning
+tests/product/test_enh_e3_causal_workflow_regression.py::test_generic_workflow_has_no_causal_semantics_or_legacy_dependency
+tests/product/test_estimator_compatibility_e1a.py::test_compatible_estimators_can_reuse_one_identification_result
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs0-difference_in_means-parameters0-ESTIMATOR_ESTIMAND_INCOMPATIBLE]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs1-ols-parameters1-ESTIMATOR_TREATMENT_TYPE_INCOMPATIBLE]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs2-ols-parameters2-ESTIMATOR_OUTCOME_TYPE_INCOMPATIBLE]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs3-difference_in_means-parameters3-ESTIMATOR_IDENTIFICATION_STRATEGY_INCOMPATIBLE]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs4-unknown-parameters4-ESTIMATOR_UNSUPPORTED]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs5-ols-parameters5-ESTIMATOR_PARAMETER_UNSUPPORTED]
+tests/product/test_estimator_compatibility_e1a.py::test_estimator_adjustment_and_overlap_prerequisites_are_enforced
+
+270 tests collected in 1.44s
+```
+
+<a name="独立-g01-pytest"></a>
+
+## 独立 G01 pytest
+
+```sh
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -m pytest -vv -ra --tb=short tests/enhancement/enh_e11/g01
+```
+
+Exit 0.
+
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.0.3, pluggy-1.6.0 -- /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate
+configfile: pyproject.toml
+plugins: anyio-4.14.1
+collecting ... collected 209 items
+
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks0] PASSED [  0%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks1] PASSED [  0%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks2] PASSED [  1%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks3] PASSED [  1%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks4] PASSED [  2%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks5] PASSED [  2%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks6] PASSED [  3%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks7] PASSED [  3%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks8] PASSED [  4%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks0] PASSED [  4%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks1] PASSED [  5%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks2] PASSED [  5%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks3] PASSED [  6%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks4] PASSED [  6%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks5] PASSED [  7%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks6] PASSED [  7%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks7] PASSED [  8%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks8] PASSED [  8%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement0] PASSED [  9%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement1] PASSED [  9%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement2] PASSED [ 10%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement3] PASSED [ 10%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement4] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement5] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement6] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement7] PASSED [ 12%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement8] PASSED [ 12%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-unobserved] PASSED [ 13%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-right] PASSED [ 13%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[lag-0] PASSED [ 14%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-circle] PASSED [ 14%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-UNKNOWN] PASSED [ 15%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target_mark-None] PASSED [ 15%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target-value6] PASSED [ 16%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[False] PASSED [ 16%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[True] PASSED [ 17%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[method_id-P1-M05] PASSED [ 17%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[backend-other] PASSED [ 18%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-None] PASSED [ 18%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-other] PASSED [ 19%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value4] PASSED [ 19%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value5] PASSED [ 20%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[science_acceptance-PASS] PASSED [ 20%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[source_refs-value7] PASSED [ 21%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[parent_graph_ref-value8] PASSED [ 21%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_strict_json_digest_and_immutable_values PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[relative_key] PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[sha256] PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-01] PASSED [ 23%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-02] PASSED [ 23%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-03] PASSED [ 24%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-04] PASSED [ 24%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-05] PASSED [ 25%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-06] PASSED [ 25%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-07] PASSED [ 26%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":NaN}] PASSED [ 26%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":Infinity}] PASSED [ 27%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":-Infinity}] PASSED [ 27%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":1,"a":2}] PASSED [ 28%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":"\ud800"}] PASSED [ 28%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":9007199254740993}] PASSED [ 29%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_non_json_and_does_not_normalize PASSED [ 29%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[/abs] PASSED [ 30%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a/../b] PASSED [ 30%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[.] PASSED [ 31%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a//b] PASSED [ 31%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[z:/a] PASSED [ 32%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\\b] PASSED [ 32%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\x00] PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\u202eb] PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_json_and_yaml_study_preserve_projection PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: 1\na: 2] PASSED [ 34%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: !!python/object:object {}] PASSED [ 34%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: &a [*a]] PASSED [ 35%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-schema_version-causal-analysis-spec/2-VERSION_UNSUPPORTED] PASSED [ 35%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-unexpected-True-SCHEMA_INVALID] PASSED [ 36%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[method-id-P1-M05-SCHEMA_INVALID] PASSED [ 36%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[estimand-family-ATE-SCHEMA_INVALID] PASSED [ 37%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[inference-requested-True-SCHEMA_INVALID] PASSED [ 37%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[privacy-row_export_requested-True-PRIVACY_POLICY_CONFLICT] PASSED [ 38%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[False] PASSED [ 38%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[True] PASSED [ 39%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes0] PASSED [ 39%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes1] PASSED [ 40%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes2] PASSED [ 40%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes3] PASSED [ 41%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes4] PASSED [ 41%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[run_id-wrong] PASSED [ 42%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[technical_status-EXECUTION_FAILED] PASSED [ 42%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[manifest_relative_path-None] PASSED [ 43%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[science_acceptance-PASS] PASSED [ 43%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[reason_codes-value4] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[relative_key-graph.json] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[sha256-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[media_type-text/plain] PASSED [ 45%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_evidence_does_not_retain_mutable_aliases PASSED [ 45%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config0] PASSED [ 46%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config1] PASSED [ 46%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config2] PASSED [ 47%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config3] PASSED [ 47%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config4] PASSED [ 48%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-False] PASSED [ 48%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-True] PASSED [ 49%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-False] PASSED [ 49%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-True] PASSED [ 50%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-False] PASSED [ 50%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-True] PASSED [ 51%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-False] PASSED [ 51%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-True] PASSED [ 52%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-False] PASSED [ 52%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-True] PASSED [ 53%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-False] PASSED [ 53%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-True] PASSED [ 54%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[input_ref] PASSED [ 54%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[method] PASSED [ 55%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[request_hash] PASSED [ 55%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_hash_domains PASSED [ 55%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[fisherz] PASSED [ 56%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[chisq] PASSED [ 56%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[gsq] PASSED [ 57%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bk-BACKEND_SEMANTICS_UNVERIFIED] PASSED [ 57%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[empty_stratum-UNSUPPORTED_COMBINATION] PASSED [ 58%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[four_per_cell-UNSUPPORTED_COMBINATION] PASSED [ 58%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bad_code-UNSUPPORTED_COMBINATION] PASSED [ 59%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[float_code-UNSUPPORTED_COMBINATION] PASSED [ 59%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[support_only_marginal-UNSUPPORTED_COMBINATION] PASSED [ 60%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[resources-ELIGIBILITY_UNRESOLVED] PASSED [ 60%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_sample_and_conditioning_boundaries PASSED [ 61%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[condition] PASSED [ 61%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[left] PASSED [ 62%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[right] PASSED [ 62%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_catalog_keeps_backend_factory_lazy_and_no_fallback PASSED [ 63%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_two_node_latent_observational_ambiguity PASSED [ 63%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_fisherz_latent_projection_preserves_uncertainty PASSED [ 64%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_qualified_collider_matches_independent_dag PASSED [ 64%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows0] PASSED [ 65%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows1] PASSED [ 65%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows2] PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows3] PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejects_exhaustion_after_partial_scan PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid0] PASSED [ 67%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid1] PASSED [ 67%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid2] PASSED [ 68%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid3] PASSED [ 68%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid4] PASSED [ 69%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_backend_node_order_mismatch_is_typed_and_stages_nothing PASSED [ 69%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_capability_unavailable_has_no_adapter_load PASSED [ 70%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_check_and_publish_retry_on_real_ext4 PASSED [ 70%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_denies_row_request_before_composition PASSED [ 71%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[issuer] PASSED [ 71%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[different_run] PASSED [ 72%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[same_run_new_token] PASSED [ 72%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[root] PASSED [ 73%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[hash] PASSED [ 73%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[policy] PASSED [ 74%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[fake] PASSED [ 74%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[invalid_token] PASSED [ 75%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[legacy] PASSED [ 75%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_begin_rejects_invalid_token_before_staging PASSED [ 76%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[False] PASSED [ 76%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[True] PASSED [ 77%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[legacy-2] PASSED [ 77%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[hash-3] PASSED [ 77%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[bk-4] PASSED [ 78%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[existing-5] PASSED [ 78%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_application_has_no_cli_implementation_import PASSED [ 79%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[False] PASSED [ 79%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[True] PASSED [ 80%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[missing] PASSED [ 80%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[deny] PASSED [ 81%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[uid] PASSED [ 81%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[run] PASSED [ 82%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[hash] PASSED [ 82%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[other_fd] PASSED [ 83%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[policy] PASSED [ 83%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{}] PASSED [ 84%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"other","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}] PASSED [ 84%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["EXECUTION_FAILED"]}] PASSED [ 85%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}] PASSED [ 85%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"],"extra":0}] PASSED [ 86%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_status_reason_must_join_negative PASSED [ 86%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[mode] PASSED [ 87%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[symlink] PASSED [ 87%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[hardlink] PASSED [ 88%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[bytes] PASSED [ 88%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[missing] PASSED [ 88%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_root_rejects_symlink_permissions_and_outside PASSED [ 89%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_sealed_mutation_and_marker_tamper PASSED [ 89%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[True] PASSED [ 90%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[False] PASSED [ 90%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[False] PASSED [ 91%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[True] PASSED [ 91%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_post_rename_fsync_error_is_indeterminate PASSED [ 92%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[fsync-28] PASSED [ 92%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-38] PASSED [ 93%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-22] PASSED [ 93%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-95] PASSED [ 94%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-18] PASSED [ 94%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_checks_diagnostics_semantics_even_with_matching_hashes PASSED [ 95%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_ref_detects_real_inode_replacement PASSED [ 95%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_row_and_extra_inventory_are_denied PASSED [ 96%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_tmpfs_root_is_rejected PASSED [ 96%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_cross_run_dirfd_replacement_is_refused_before_rename PASSED [ 97%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_legacy_manifest_even_with_matching_marker PASSED [ 97%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-Graph fields] PASSED [ 98%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-CI does not agree] PASSED [ 98%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-dataset ContentRef does not agree] PASSED [ 99%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-parent for standalone G01] PASSED [ 99%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rechecks_source_content_bytes_with_matching_provenance PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py: 11 warnings
+  /home/bigbrother/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=2) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 209 passed, 11 warnings in 25.07s =======================
+```
+
+<a name="g01--scientific-core--product-必須pass集合"></a>
+
+## G01 / Scientific Core / Product 必須PASS集合
+
+```sh
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -m pytest -vv -ra --tb=short tests/enhancement/enh_e11/g01 tests/scientific tests/product/test_cli_contract.py tests/product/test_enh_e4_g07_p03_cli_boundary.py tests/product/test_enh_e4_g04_result_artifact_contract.py tests/product/test_domain_and_snapshot.py tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py tests/product/test_enh_e3_causal_workflow_regression.py tests/product/test_estimator_compatibility_e1a.py --deselect=tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared --deselect=tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_navigation_route_change_has_no_execution_revision_metadata
+```
+
+Exit 0.
+
+```text
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.0.3, pluggy-1.6.0 -- /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate
+configfile: pyproject.toml
+plugins: anyio-4.14.1
+collecting ... collected 270 items / 2 deselected / 268 selected
+
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks0] PASSED [  0%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks1] PASSED [  0%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks2] PASSED [  1%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks3] PASSED [  1%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks4] PASSED [  1%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks5] PASSED [  2%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks6] PASSED [  2%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks7] PASSED [  2%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[False-marks8] PASSED [  3%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks0] PASSED [  3%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks1] PASSED [  4%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks2] PASSED [  4%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks3] PASSED [  4%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks4] PASSED [  5%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks5] PASSED [  5%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks6] PASSED [  5%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks7] PASSED [  6%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_every_pag_endpoint_pair_and_orientation_round_trips[True-marks8] PASSED [  6%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement0] PASSED [  7%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement1] PASSED [  7%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement2] PASSED [  7%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement3] PASSED [  8%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement4] PASSED [  8%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement5] PASSED [  8%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement6] PASSED [  9%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement7] PASSED [  9%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_graph_fields[replacement8] PASSED [ 10%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-unobserved] PASSED [ 10%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source-right] PASSED [ 10%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[lag-0] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-circle] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[source_mark-UNKNOWN] PASSED [ 11%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target_mark-None] PASSED [ 12%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_edges[target-value6] PASSED [ 12%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[False] PASSED [ 13%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_duplicate_endpoint_pairs[True] PASSED [ 13%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[method_id-P1-M05] PASSED [ 13%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[backend-other] PASSED [ 14%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-None] PASSED [ 14%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[ci_test-other] PASSED [ 14%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value4] PASSED [ 15%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[assumptions-value5] PASSED [ 15%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[science_acceptance-PASS] PASSED [ 16%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[source_refs-value7] PASSED [ 16%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_invalid_g01_provenance[parent_graph_ref-value8] PASSED [ 16%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_strict_json_digest_and_immutable_values PASSED [ 17%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[relative_key] PASSED [ 17%]
+tests/enhancement/enh_e11/g01/contract/test_graph_evidence.py::test_rejects_malformed_content_ref[sha256] PASSED [ 17%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-01] PASSED [ 18%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-02] PASSED [ 18%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-03] PASSED [ 19%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-04] PASSED [ 19%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-05] PASSED [ 19%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-06] PASSED [ 20%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_golden_bytes[JCS-07] PASSED [ 20%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":NaN}] PASSED [ 20%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":Infinity}] PASSED [ 21%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":-Infinity}] PASSED [ 21%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":1,"a":2}] PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":"\ud800"}] PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_invalid_json[{"a":9007199254740993}] PASSED [ 22%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_jcs_rejects_non_json_and_does_not_normalize PASSED [ 23%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[/abs] PASSED [ 23%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a/../b] PASSED [ 23%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[.] PASSED [ 24%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a//b] PASSED [ 24%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[z:/a] PASSED [ 25%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\\b] PASSED [ 25%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\x00] PASSED [ 25%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_ref_lexical_rejection[a\u202eb] PASSED [ 26%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_json_and_yaml_study_preserve_projection PASSED [ 26%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: 1\na: 2] PASSED [ 26%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: !!python/object:object {}] PASSED [ 27%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_yaml_hard_errors[a: &a [*a]] PASSED [ 27%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-schema_version-causal-analysis-spec/2-VERSION_UNSUPPORTED] PASSED [ 27%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[top-unexpected-True-SCHEMA_INVALID] PASSED [ 28%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[method-id-P1-M05-SCHEMA_INVALID] PASSED [ 28%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[estimand-family-ATE-SCHEMA_INVALID] PASSED [ 29%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[inference-requested-True-SCHEMA_INVALID] PASSED [ 29%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_invalid_study[privacy-row_export_requested-True-PRIVACY_POLICY_CONFLICT] PASSED [ 29%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[False] PASSED [ 30%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_round_trip[True] PASSED [ 30%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes0] PASSED [ 30%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes1] PASSED [ 31%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes2] PASSED [ 31%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes3] PASSED [ 32%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_negative_reason_must_be_closed_singleton[codes4] PASSED [ 32%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[run_id-wrong] PASSED [ 32%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[technical_status-EXECUTION_FAILED] PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[manifest_relative_path-None] PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[science_acceptance-PASS] PASSED [ 33%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_positive_status[reason_codes-value4] PASSED [ 34%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[relative_key-graph.json] PASSED [ 34%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[sha256-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb] PASSED [ 35%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_graph_ref_must_join_staged_descriptor[media_type-text/plain] PASSED [ 35%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_evidence_does_not_retain_mutable_aliases PASSED [ 35%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config0] PASSED [ 36%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config1] PASSED [ 36%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config2] PASSED [ 36%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config3] PASSED [ 37%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_method_config_rejection[bad_config4] PASSED [ 37%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-False] PASSED [ 38%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[missing-True] PASSED [ 38%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-False] PASSED [ 38%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[extra-True] PASSED [ 39%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-False] PASSED [ 39%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[duplicate-True] PASSED [ 39%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-False] PASSED [ 40%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[wrong_output-True] PASSED [ 40%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-False] PASSED [ 41%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[row-True] PASSED [ 41%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-False] PASSED [ 41%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_inventory_rejection[self-True] PASSED [ 42%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[input_ref] PASSED [ 42%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[method] PASSED [ 42%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_manifest_rejects_invalid_study_projection[request_hash] PASSED [ 43%]
+tests/enhancement/enh_e11/g01/contract/test_local_codec.py::test_hash_domains PASSED [ 43%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[fisherz] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[chisq] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_backend_empty_graph_against_independent_empty_dag[gsq] PASSED [ 44%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bk-BACKEND_SEMANTICS_UNVERIFIED] PASSED [ 45%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[empty_stratum-UNSUPPORTED_COMBINATION] PASSED [ 45%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[four_per_cell-UNSUPPORTED_COMBINATION] PASSED [ 45%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[bad_code-UNSUPPORTED_COMBINATION] PASSED [ 46%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[float_code-UNSUPPORTED_COMBINATION] PASSED [ 46%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[support_only_marginal-UNSUPPORTED_COMBINATION] PASSED [ 47%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejection_never_calls_backend[resources-ELIGIBILITY_UNRESOLVED] PASSED [ 47%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_sample_and_conditioning_boundaries PASSED [ 47%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[condition] PASSED [ 48%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[left] PASSED [ 48%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_numeric_threshold_comparison_and_two_sided_residual[right] PASSED [ 48%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_catalog_keeps_backend_factory_lazy_and_no_fallback PASSED [ 49%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_two_node_latent_observational_ambiguity PASSED [ 49%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_fisherz_latent_projection_preserves_uncertainty PASSED [ 50%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_real_qualified_collider_matches_independent_dag PASSED [ 50%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows0] PASSED [ 50%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows1] PASSED [ 51%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows2] PASSED [ 51%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_fisherz_inadmissibility_calls_no_backend[rows3] PASSED [ 51%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_preflight_rejects_exhaustion_after_partial_scan PASSED [ 52%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid0] PASSED [ 52%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid1] PASSED [ 52%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid2] PASSED [ 53%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid3] PASSED [ 53%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_categorical_design_token_domain_rules[invalid4] PASSED [ 54%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_backend_node_order_mismatch_is_typed_and_stages_nothing PASSED [ 54%]
+tests/enhancement/enh_e11/g01/integration/test_fci_discovery.py::test_capability_unavailable_has_no_adapter_load PASSED [ 54%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_check_and_publish_retry_on_real_ext4 PASSED [ 55%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_denies_row_request_before_composition PASSED [ 55%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[issuer] PASSED [ 55%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[different_run] PASSED [ 56%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[same_run_new_token] PASSED [ 56%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[root] PASSED [ 57%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[hash] PASSED [ 57%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[policy] PASSED [ 57%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[fake] PASSED [ 58%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[invalid_token] PASSED [ 58%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_abort_refuses_mismatched_sessions_without_mutation[legacy] PASSED [ 58%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_begin_rejects_invalid_token_before_staging PASSED [ 59%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[False] PASSED [ 59%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_use_case_aborts_only_before_publish[True] PASSED [ 60%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[legacy-2] PASSED [ 60%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[hash-3] PASSED [ 60%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[bk-4] PASSED [ 61%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_cli_failure_categories_without_publication[existing-5] PASSED [ 61%]
+tests/enhancement/enh_e11/g01/integration/test_local_cli.py::test_application_has_no_cli_implementation_import PASSED [ 61%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[False] PASSED [ 62%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_publish_reader_and_equal_value_decision[True] PASSED [ 62%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[missing] PASSED [ 63%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[deny] PASSED [ 63%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[uid] PASSED [ 63%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[run] PASSED [ 64%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[hash] PASSED [ 64%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[other_fd] PASSED [ 64%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_privacy_rejects_before_marker[policy] PASSED [ 65%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{}] PASSED [ 65%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"other","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}] PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["EXECUTION_FAILED"]}] PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"]}] PASSED [ 66%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_diagnostics_detected_before_seal_even_with_correct_hash[{"run_id":"test-run","operation":"DISCOVER","method_id":"P1-M06","reason_codes":["SCI_NO_ADMISSIBLE_PAG"],"extra":0}] PASSED [ 67%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_status_reason_must_join_negative PASSED [ 67%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[mode] PASSED [ 67%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[symlink] PASSED [ 68%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[hardlink] PASSED [ 68%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[bytes] PASSED [ 69%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_content_reference_rejects_unsafe_file[missing] PASSED [ 69%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_root_rejects_symlink_permissions_and_outside PASSED [ 69%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_sealed_mutation_and_marker_tamper PASSED [ 70%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[True] PASSED [ 70%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_two_process_noreplace[False] PASSED [ 70%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[False] PASSED [ 71%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_real_sigkill_at_rename_boundary[True] PASSED [ 71%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_post_rename_fsync_error_is_indeterminate PASSED [ 72%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[fsync-28] PASSED [ 72%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-38] PASSED [ 72%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-22] PASSED [ 73%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-95] PASSED [ 73%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_kernel_faults_on_real_ext4_do_not_publish[renameat2-18] PASSED [ 73%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_checks_diagnostics_semantics_even_with_matching_hashes PASSED [ 74%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_ref_detects_real_inode_replacement PASSED [ 74%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_row_and_extra_inventory_are_denied PASSED [ 75%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_tmpfs_root_is_rejected PASSED [ 75%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_cross_run_dirfd_replacement_is_refused_before_rename PASSED [ 75%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_legacy_manifest_even_with_matching_marker PASSED [ 76%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-Graph fields] PASSED [ 76%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-CI does not agree] PASSED [ 76%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-dataset ContentRef does not agree] PASSED [ 77%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rejects_graph_provenance_even_when_all_descriptor_hashes_match[<lambda>-parent for standalone G01] PASSED [ 77%]
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py::test_reader_rechecks_source_content_bytes_with_matching_provenance PASSED [ 77%]
+tests/scientific/test_identification_e1a.py::test_eligibility_type_failure_is_a_saved_scientific_result[treatment-values0-UNSUPPORTED-CONTINUOUS] PASSED [ 78%]
+tests/scientific/test_identification_e1a.py::test_eligibility_type_failure_is_a_saved_scientific_result[outcome-values1-BINARY-UNSUPPORTED] PASSED [ 78%]
+tests/scientific/test_identification_e1a.py::test_missing_required_column_records_explicit_prerequisite_skips PASSED [ 79%]
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[one-treatment-arm] PASSED [ 79%]
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[small-sample] PASSED [ 79%]
+tests/scientific/test_identification_e1a.py::test_eligibility_edge_cases_are_results_not_exceptions[propensity-not-estimable] PASSED [ 80%]
+tests/scientific/test_identification_e1a.py::test_cpdags_do_not_hide_deterministic_input_errors PASSED [ 80%]
+tests/scientific/test_identification_e1a.py::test_consistent_cpdags_remain_reviewable PASSED [ 80%]
+tests/scientific/test_identification_e1a.py::test_randomized_design_allows_valid_pretreatment_adjustment PASSED [ 81%]
+tests/scientific/test_identification_e1a.py::test_randomized_design_rejects_post_treatment_adjustment PASSED [ 81%]
+tests/scientific/test_identification_e1a.py::test_collider_descendant_adjustment_is_path_relative PASSED [ 82%]
+tests/scientific/test_identification_e1a.py::test_irrelevant_high_indegree_covariate_is_not_called_a_collider PASSED [ 82%]
+tests/scientific/test_product_adapters.py::test_pc_and_ges_run_without_database_and_preserve_graph_semantics[pc] PASSED [ 82%]
+tests/scientific/test_product_adapters.py::test_pc_and_ges_run_without_database_and_preserve_graph_semantics[ges] PASSED [ 83%]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[difference_in_means-0.7] PASSED [ 83%]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[ols-0.25] PASSED [ 83%]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[ipw-0.4] PASSED [ 84%]
+tests/scientific/test_product_adapters.py::test_estimators_use_explicit_adjustment_and_recover_ate[aipw-0.3] PASSED [ 84%]
+tests/scientific/test_product_adapters.py::test_small_sample_is_scientific_result_not_exception PASSED [ 85%]
+tests/scientific/test_product_adapters.py::test_missing_treatment_to_outcome_path_is_not_identified PASSED [ 85%]
+tests/scientific/test_product_adapters.py::test_extreme_propensity_is_insufficient_overlap PASSED [ 85%]
+tests/scientific/test_product_adapters.py::test_non_estimable_aipw_uncertainty_is_unreliable PASSED [ 86%]
+tests/product/test_cli_contract.py::test_discovery_cli_writes_portable_manifest_without_web_identity PASSED [ 86%]
+tests/product/test_cli_contract.py::test_estimation_cli_scientific_negative_result_exits_zero PASSED [ 86%]
+tests/product/test_cli_contract.py::test_estimation_cli_uses_api_compatible_type_error_code PASSED [ 87%]
+tests/product/test_cli_contract.py::test_cli_rejects_unknown_config_field PASSED [ 87%]
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_all_analysis_cli_scripts_match_explicit_classifications PASSED [ 88%]
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_low_level_cli_has_no_legacy_or_product_persistence_reachability PASSED [ 88%]
+tests/product/test_enh_e4_g07_p03_cli_boundary.py::test_portable_cli_manifest_cannot_claim_product_persistent_identity PASSED [ 88%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac001_result_levels_and_ownership_validation_are_explicit PASSED [ 89%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac001_ac005_family_cardinality_contract_is_explicit PASSED [ 89%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac003_store_failure_leaves_no_metadata_and_cleans_written_siblings PASSED [ 89%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac003_db_failure_cleans_physical_object_and_cleanup_failure_is_reconcilable PASSED [ 90%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac004_typed_reuse_requires_semantic_id_and_typed_role PASSED [ 90%]
+tests/product/test_enh_e4_g04_result_artifact_contract.py::test_g04_ac005_artifact_only_is_explicitly_allowed_or_rejected PASSED [ 91%]
+tests/product/test_domain_and_snapshot.py::test_scientific_status_is_exact_current_result_type_design_contract PASSED [ 91%]
+tests/product/test_domain_and_snapshot.py::test_snapshot_hash_is_order_stable_and_includes_context PASSED [ 91%]
+tests/product/test_domain_and_snapshot.py::test_graph_round_trip_preserves_endpoints PASSED [ 92%]
+tests/product/test_domain_and_snapshot.py::test_execution_state_machine_rejects_invalid_transition PASSED [ 92%]
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_causal_runtime_operation_stage_and_input_matrix_are_preserved PASSED [ 92%]
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_causal_effect_comparison_requires_the_exact_semantic_key PASSED [ 93%]
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_compatible_causal_effect_comparison_remains_available PASSED [ 93%]
+tests/product/test_enh_e5_g03_p02_identification_estimation_separation.py::test_frontend_separates_identification_inputs_from_estimation_tuning PASSED [ 94%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_causal_planner_builds_generic_plans_and_registry_resolves_every_operation PASSED [ 94%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[DISCOVERY] PASSED [ 94%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[IDENTIFICATION] PASSED [ 95%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[ESTIMATION] PASSED [ 95%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[REFUTATION] PASSED [ 95%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_every_existing_causal_operation_runs_through_generic_executor[SENSITIVITY] PASSED [ 96%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_artifact_binding_attempt_retry_failure_and_cancellation_keep_generic_meaning PASSED [ 96%]
+tests/product/test_enh_e3_causal_workflow_regression.py::test_generic_workflow_has_no_causal_semantics_or_legacy_dependency PASSED [ 97%]
+tests/product/test_estimator_compatibility_e1a.py::test_compatible_estimators_can_reuse_one_identification_result PASSED [ 97%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs0-difference_in_means-parameters0-ESTIMATOR_ESTIMAND_INCOMPATIBLE] PASSED [ 97%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs1-ols-parameters1-ESTIMATOR_TREATMENT_TYPE_INCOMPATIBLE] PASSED [ 98%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs2-ols-parameters2-ESTIMATOR_OUTCOME_TYPE_INCOMPATIBLE] PASSED [ 98%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs3-difference_in_means-parameters3-ESTIMATOR_IDENTIFICATION_STRATEGY_INCOMPATIBLE] PASSED [ 98%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs4-unknown-parameters4-ESTIMATOR_UNSUPPORTED] PASSED [ 99%]
+tests/product/test_estimator_compatibility_e1a.py::test_incompatible_estimator_contract_is_rejected_at_submission[uow_kwargs5-ols-parameters5-ESTIMATOR_PARAMETER_UNSUPPORTED] PASSED [ 99%]
+tests/product/test_estimator_compatibility_e1a.py::test_estimator_adjustment_and_overlap_prerequisites_are_enforced PASSED [100%]
+
+=============================== warnings summary ===============================
+tests/enhancement/enh_e11/g01/integration/test_local_publication.py: 11 warnings
+  /home/bigbrother/.local/share/uv/python/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=2) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============== 268 passed, 2 deselected, 11 warnings in 25.55s ================
+```
+
+<a name="依存ガード基準"></a>
+
+## 依存ガード基準
+
+```sh
+cd /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-baseline
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -m pytest -q --tb=short tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared
+```
+
+Exit 1.
+
+```text
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_no_prohibited_causal_runtime_dependency_is_declared ___________
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py:87: in test_no_prohibited_causal_runtime_dependency_is_declared
+    assert dependency not in project_config
+E   assert 'lightgbm' not in '[project]\n...3.0.2",\n]\n'
+E
+E     'lightgbm' is contained here:
+E        = [
+E           "lightgbm>=4.7.0,<4.8",
+E     ?      ++++++++
+E           "shap>=0.52.0,<0.53",
+E           "lime==0.2.0.1",...
+E
+E     ...Full output truncated (71 lines hidden), use '-vv' to show
+=========================== short test summary info ============================
+FAILED tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared
+1 failed in 0.10s
+```
+
+<a name="依存ガード固定候補"></a>
+
+## 依存ガード固定候補
+
+```sh
+cd /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -m pytest -q --tb=short tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared
+```
+
+Exit 1.
+
+```text
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_no_prohibited_causal_runtime_dependency_is_declared ___________
+tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py:87: in test_no_prohibited_causal_runtime_dependency_is_declared
+    assert dependency not in project_config
+E   assert 'lightgbm' not in '[project]\n...3.0.2",\n]\n'
+E
+E     'lightgbm' is contained here:
+E        = [
+E           "lightgbm>=4.7.0,<4.8",
+E     ?      ++++++++
+E           "shap>=0.52.0,<0.53",
+E           "lime==0.2.0.1",...
+E
+E     ...Full output truncated (72 lines hidden), use '-vv' to show
+=========================== short test summary info ============================
+FAILED tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py::test_no_prohibited_causal_runtime_dependency_is_declared
+1 failed in 0.10s
+```
+
+<a name="tomllockclosurefrontend-input"></a>
+
+## TOML、lock、closure、frontend input
+
+```sh
+/mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_regression_audit.py /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-baseline /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate
+```
+
+Exit 0.
+
+```text
+TOML declarations identical 14 ['predictive-advanced'] ['dev', 'docs']
+Only structured TOML delta: ariadne-causal-local = ariadne.interfaces.cli.local_causal.command:main
+Lock SHA256 1d92a472fc3c750c90458a40ae5a09ba3feefbd3d99eee61b0cdbff00d31cffb
+ENH-E11-G01-Trial01-independent-baseline original source assertions dowhy PASS
+ENH-E11-G01-Trial01-independent-baseline original source assertions econml PASS
+ENH-E11-G01-Trial01-independent-baseline original source assertions lightgbm PASS
+ENH-E11-G01-Trial01-independent-candidate original source assertions dowhy PASS
+ENH-E11-G01-Trial01-independent-candidate original source assertions econml PASS
+ENH-E11-G01-Trial01-independent-candidate original source assertions lightgbm PASS
+Changed source modules 30 reachable Python source modules 87 external import roots ['causallearn', 'numpy', 'pandas', 'pyarrow', 'scipy', 'yaml']
+dynamic ariadne/capabilities/predictive/explanation_capabilities.py 47 importlib_util.find_spec
+dynamic ariadne/capabilities/predictive/lime_backend.py 15 importlib.import_module
+dynamic ariadne/capabilities/predictive/modeling.py 99 importlib_util.find_spec
+dynamic ariadne/capabilities/predictive/modeling.py 430 importlib.import_module
+dynamic ariadne/capabilities/predictive/shap_backend.py 14 importlib.import_module
+dynamic ariadne/capabilities/predictive/shap_backend.py 15 importlib.import_module
+dynamic ariadne/interfaces/cli/local_causal/command.py 66 subprocess.run
+dynamic ariadne/interfaces/cli/local_causal/command.py 139 use_case.run
+dynamic ariadne/interfaces/cli/local_causal/publication.py 31 ctypes.CDLL
+dynamic ariadne/product/domain/execution_plan.py 16 re.compile
+dynamic ariadne/product/workflow/executor.py 101 runner.run
+dynamic ariadne/scientific/causal_methods/discovery.py 27 subprocess.run
+dynamic ariadne/shared/local_fs.py 16 ctypes.CDLL
+Effective external distribution closure in lock [('causal-learn', '0.1.4.8'), ('contourpy', '1.3.3'), ('cycler', '0.12.1'), ('fonttools', '4.62.1'), ('graphviz', '0.21'), ('joblib', '1.5.3'), ('kiwisolver', '1.5.0'), ('matplotlib', '3.10.9'), ('momentchi2', '0.1.8'), ('networkx', '3.6.1'), ('numpy', '2.2.6'), ('packaging', '26.2'), ('pandas', '3.0.2'), ('patsy', '1.0.2'), ('pillow', '12.2.0'), ('pyarrow', '24.0.0'), ('pydot', '4.0.1'), ('pyparsing', '3.3.2'), ('python-dateutil', '2.9.0.post0'), ('pyyaml', '6.0.3'), ('scikit-learn', '1.6.1'), ('scipy', '1.13.1'), ('six', '1.17.0'), ('statsmodels', '0.14.6'), ('threadpoolctl', '3.6.0'), ('tqdm', '4.67.3')]
+Legacy planner closure identical 48 modules ['numpy', 'pandas']
+Unchanged navigation input tests/product/test_enh_e5_g03_p03_causal_runtime_regression.py 390196f5c77d8dde7481b7169f9334962c6113be
+Unchanged navigation input frontend/navigation_state.js 66bfddd9c4a1db137a1da1bcb369025093ab5758
+Unchanged navigation input frontend/app.js a75091db134d236bb6e4067ab9daaa0b4916da82
+Unchanged navigation input frontend ab96281278c79c8626e66e72cb9116d24b9f3c1a
+```
+
+<a name="provider--legacy-product"></a>
+
+## Provider / legacy Product
+
+```sh
+git diff --exit-code ff38f224 HEAD -- src/ariadne/capabilities/predictive src/ariadne/product src/ariadne/capabilities/causal/workflow.py frontend .github migrations product_migrations
+PYTHONPATH=src /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python -c 'import sys; from ariadne.interfaces.cli.local_causal.command import _compose; _compose(); x=[n for n in sys.modules if n.split(".")[0] in {"lightgbm","dowhy","econml"}]; print("Local composition + actual FCI worker probe; prohibited imports:", x); assert not x'
+```
+
+Exit 0.
+
+```text
+Local composition + actual FCI worker probe; prohibited imports: []
+```
+
+<a name="独立実-cli--reader--amd-004-controls"></a>
+
+## 独立実 CLI / Reader / AMD-004 Controls
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate/src E11_CANDIDATE_SHA=72bcd6acaab6caf48827bf2bb6cd5e249afd658b /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_cli_audit.py /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work
+```
+
+Exit 0.
+
+```text
+case full
+CLI 0 {"manifest_relative_path": null, "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "PREFLIGHT_OK"} stderr
+CLI 0 {"manifest_relative_path": "runs/test-local/manifest.json", "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "COMPLETED"} stderr
+CLI 0 {"manifest_relative_path": "runs/test-local/manifest.json", "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "COMPLETED"} stderr
+case corrupt_status
+CLI 0 {"manifest_relative_path": null, "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "PREFLIGHT_OK"} stderr
+CLI 0 {"manifest_relative_path": "runs/test-local/manifest.json", "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "COMPLETED"} stderr
+CLI 5 {"manifest_relative_path": null, "phase": "publication", "reason_code": "SCHEMA_INVALID", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr SCHEMA_INVALID phase=publication
+case invalid_question
+CLI 2 {"manifest_relative_path": null, "phase": "configuration", "reason_code": "UNSUPPORTED_COMBINATION", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr UNSUPPORTED_COMBINATION phase=configuration
+case invalid_design_order
+CLI 2 {"manifest_relative_path": null, "phase": "configuration", "reason_code": "UNSUPPORTED_COMBINATION", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr UNSUPPORTED_COMBINATION phase=configuration
+case old_row_flag
+CLI 2 {"manifest_relative_path": null, "phase": "configuration", "reason_code": "SCHEMA_INVALID", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr SCHEMA_INVALID phase=configuration
+case row_opt_in
+CLI 3 {"manifest_relative_path": null, "phase": "privacy", "reason_code": "PRIVACY_DENIED", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr PRIVACY_DENIED phase=privacy
+case noncontiguous_chisq
+Independent balanced-table minimum for observed levels per nonempty stratum 5
+CLI 0 {"manifest_relative_path": "runs/test-local/manifest.json", "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "COMPLETED"} stderr
+case noncontiguous_gsq
+Independent balanced-table minimum for observed levels per nonempty stratum 5
+CLI 0 {"manifest_relative_path": "runs/test-local/manifest.json", "run_id": "test-local", "science_acceptance": "NOT_EVALUATED", "technical_status": "COMPLETED"} stderr
+case e_lt_5
+Independent balanced-table minimum for observed levels per nonempty stratum 4
+CLI 2 {"manifest_relative_path": null, "phase": "configuration", "reason_code": "UNSUPPORTED_COMBINATION", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr UNSUPPORTED_COMBINATION phase=configuration
+case absent_domain
+Independent balanced-table minimum for observed levels per nonempty stratum 5
+CLI 2 {"manifest_relative_path": null, "phase": "configuration", "reason_code": "UNSUPPORTED_COMBINATION", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr UNSUPPORTED_COMBINATION phase=configuration
+case empty_bk
+CLI 4 {"manifest_relative_path": null, "phase": "engine", "reason_code": "BACKEND_SEMANTICS_UNVERIFIED", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr BACKEND_SEMANTICS_UNVERIFIED phase=engine
+case conflicting_bk
+CLI 4 {"manifest_relative_path": null, "phase": "engine", "reason_code": "BACKEND_SEMANTICS_UNVERIFIED", "science_acceptance": "NOT_EVALUATED", "technical_status": "FAILED"} stderr BACKEND_SEMANTICS_UNVERIFIED phase=engine
+AMD-004 exact six-entry positive PASS
+AMD-004 rejected remove ariadne-discover
+AMD-004 rejected remove ariadne-causal-local
+AMD-004 rejected redirect_in ariadne-discover
+AMD-004 rejected redirect_in ariadne-causal-local
+AMD-004 rejected redirect_out ariadne-discover
+AMD-004 rejected redirect_out ariadne-causal-local
+AMD-004 rejected extra in-namespace
+```
+
+<a name="b02-draft-2020-12--strict-parser--jcs--b04-api"></a>
+
+## B02 Draft 2020-12 / strict parser / JCS / B04 API
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate/src:/tmp/e11-g01-schema-tools /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_schema_audit.py docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts
+```
+
+Exit 0.
+
+```text
+Schema e11_p1_m06_fci_design_profile_v1.schema.json f4c7232c8307a27664cc38e2f726ad7df9d6c8b6471ddb9f13d9cab8a652025c
+Schema e11_p1_m06_fci_question_profile_v1.schema.json d23a54dc432b3294659e51e661a2396c6cec41706020de6c78bbde2b5268b962
+Schema e11_p1_m06_fci_method_config_v1.schema.json 6bf423b93b224b58a4f7033f2823209ade8c3b2b436f1812c6f2c9a6e7469402
+Schema internal_scientific/e11_g01_discover_negative_diagnostics_draft1.schema.json ef186354b59f494d86bc7a0028bd36da1721f3ffa786dce620c70c7358adc370
+Question, Config and synthetic diagnostics positive/negative controls PASS
+Design binary schema True parser True
+Design noncontiguous schema True parser True
+Design missing schema False parser False
+Design duplicate schema False parser False
+Design descending schema True parser False
+Design fractional schema False parser False
+Design decimal schema True parser False
+Design exponent schema True parser False
+Design boolean schema False parser False
+Design string schema False parser False
+Design overflow schema True parser False
+Design ordinary_continuous schema True parser True
+Design continuous_with_codes schema False parser False
+JCS vector SHA256 ba1e4349d3bf2ff6a055eab1f802762164e3ef05ff4873c6cabfdf883dd9eaec
+JCS-01 43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777
+JCS-02 fb4b9242c68ddb389a89f1c29290dacc45fe8856e495f8dfeb924208564fd66c
+JCS-03 2f16b8477146a1b2ba7d6bb7cf7c9979c191cc2838a107dbf5f0d920b4cb3ba1
+JCS-04 6a547588c4055916e090ed61467326046dd52810679d03bfb84d862a7123522e
+JCS-05 705f738a525b8cfabf278db1bdb8fa3a0097e3687820d26803274d05cf0d5a0e
+JCS-06 6830f6845782b6844062beda598a7f64a53b32263ad5213e26726c5519415ce3
+JCS-07 52b750f422a4624687ca1a14d19c97b40bc7678a129cce462934c47b3227966a
+JCS-N01 rejected
+JCS-N01 rejected
+JCS-N01 rejected
+JCS-N02 JSON rejected
+JCS-N02 YAML rejected
+JCS-N03 rejected
+JCS-N04 rejected
+JCS-N05 rejected
+JCS-N06 NFC/NFD remain distinct
+JCS-N07 rejected
+FCI backend FciRuntimeObservation(distribution_version='0.1.4.8', api_signature_hash='fb317b20b82d6490b5765b808de14b8847157b10698cd34683e47eba0b63f5d1', reason=None) signature (dataset: 'ndarray', independence_test_method: 'str' = 'fisherz', alpha: 'float' = 0.05, depth: 'int' = -1, max_path_length: 'int' = -1, verbose: 'bool' = False, background_knowledge: 'BackgroundKnowledge | None' = None, show_progress: 'bool' = True, node_names=None, **kwargs) -> 'Tuple[Graph, List[Edge]]'
+```
+
+<a name="b02-実公開-bundle-の-schema-照合"></a>
+
+## B02 実公開 bundle の Schema 照合
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate/src:/tmp/e11-g01-schema-tools /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_wire_audit.py docs/wiki/develop_memo/_work/20261024_ENH-E11_causal_lifecycle_cli_expansion/00_enhance_background/Revised_requirements_definition_documents/23_api_interface_design/schema_drafts /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work
+```
+
+Exit 0.
+
+```text
+{"run_id": "test-local", "technical_status": "COMPLETED", "science_acceptance": "NOT_EVALUATED", "manifest_relative_path": "runs/test-local/manifest.json"}
+Actual wire study valid True schema SHA256 372413a7b1d952e662a15e884d6f274d27f1af5c8c252f6fe4a3f2d6de48a2e9
+Actual wire status valid True schema SHA256 9d170ecca2bf25bcfb3868d8616e18aa4d33bb788cc2e1e53e2aaa48bfaefe00
+Actual wire manifest valid True schema SHA256 81cf594fe9cafe05443e1fa6a3e2e23036c21de6b73b0d876f7961194858de80
+Actual wire graph valid True schema SHA256 28589e498fc87cd78ad70d751ca76830d1956a470a9a948ef86d113f4c084231
+Actual wire commit_marker valid True schema SHA256 3667fdaba758c160e9ede090a9f46367f0da9591dfd00a76f1bcbb96373c7d55
+```
+
+<a name="実-cli--amd-001003-fault-controls--decision-各-field"></a>
+
+## 実 CLI / AMD-001–003 fault controls / Decision 各 field
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate/src /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_amendment_audit.py /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work
+```
+
+Exit 0.
+
+```text
+AMD-001 required manifest_factory TypeError
+AMD-002/003 check-only exit 0 {} {"run_id": "test-local", "technical_status": "PREFLIGHT_OK", "science_acceptance": "NOT_EVALUATED", "manifest_relative_path": null}
+AMD-002/003 begin exit 5 {'begin': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "PUBLICATION_FAILED", "phase": "publication", "manifest_relative_path": null} PUBLICATION_FAILED phase=publication
+AMD-002/003 discovery exit 4 {'begin': 1, 'abort': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "BACKEND_EXECUTION_FAILED", "phase": "engine", "manifest_relative_path": null} BACKEND_EXECUTION_FAILED phase=engine
+AMD-002/003 runtime exit 5 {'begin': 1, 'abort': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "RUNTIME_EVIDENCE_UNAVAILABLE", "phase": "publication", "manifest_relative_path": null} RUNTIME_EVIDENCE_UNAVAILABLE phase=publication
+AMD-002/003 factory exit 5 {'begin': 1, 'abort': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "SCHEMA_INVALID", "phase": "publication", "manifest_relative_path": null} SCHEMA_INVALID phase=publication
+AMD-002/003 seal exit 5 {'begin': 1, 'seal': 1, 'abort': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "PUBLICATION_FAILED", "phase": "publication", "manifest_relative_path": null} PUBLICATION_FAILED phase=publication
+AMD-002/003 cleanup exit 5 {'begin': 1, 'abort': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "SCHEMA_INVALID", "phase": "publication", "manifest_relative_path": null} PUBLICATION_ABORT_FAILED phase=publication
+SCHEMA_INVALID phase=publication
+AMD-002/003 publish exit 5 {'begin': 1, 'seal': 1, 'publish': 1} {"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "PUBLICATION_INDETERMINATE", "phase": "publication", "manifest_relative_path": null} PUBLICATION_INDETERMINATE phase=publication
+privacy field classification PRIVACY_POLICY_CONFLICT
+privacy field row_export_requested PRIVACY_POLICY_CONFLICT
+privacy field output_shape PRIVACY_POLICY_CONFLICT
+```
+
+<a name="fisher-z-数値nan--no-fit-controls"></a>
+
+## Fisher Z 数値・NaN / no-fit controls
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/mnt/wsl/workspace/repositories/causal-atelier/_tmp_work/ENH-E11-G01-Trial01-independent-candidate/src /mnt/wsl/workspace/repositories/causal-atelier/.venv/bin/python /tmp/e11_g01_trial01_independent_ci_audit.py /mnt/wsl/workspace/repositories/causal-atelier/_tmp_work
+```
+
+Exit 0.
+
+```text
+UNSUPPORTED_COMBINATION phase=configuration
+float64 all-S 0 1 () condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+float64 all-S 0 1 (2,) condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+float64 all-S 0 2 () condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+float64 all-S 0 2 (1,) condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+float64 all-S 1 2 () condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+float64 all-S 1 2 (0,) condition*eps 2.220446049250313e-16 residual row sums [np.float64(0.0), np.float64(0.0)] partial r -0.0
+effective policy exhaustive count 6
+no fit n=|S|+3 UNSUPPORTED_COMBINATION configuration
+no fit rank deficient ELIGIBILITY_UNRESOLVED engine
+no fit near singular ELIGIBILITY_UNRESOLVED engine
+{"technical_status": "FAILED", "science_acceptance": "NOT_EVALUATED", "reason_code": "UNSUPPORTED_COMBINATION", "phase": "configuration", "manifest_relative_path": null}
+Parquet NaN: fit count 0, staging absent
+```
+
+<a name="ext4-にある異所有者非private-mode-の-root"></a>
+
+## ext4 にある異所有者・非private mode の Root
+
+```sh
+stat -c '%u %a %n' /mnt/wsl/workspace
+findmnt -n -o FSTYPE -T /mnt/wsl/workspace
+# 独立プローブで TrustedLocalRoot.open(/mnt/wsl/workspace, allowed_directory=/mnt/wsl/workspace) を呼ぶ
+```
+
+Exit 0.
+
+```text
+wrong-owner ext4 root 65534 0o755 current EUID 1000
+INPUT_SECURITY input Root ownership or private directory mode is invalid
+```
