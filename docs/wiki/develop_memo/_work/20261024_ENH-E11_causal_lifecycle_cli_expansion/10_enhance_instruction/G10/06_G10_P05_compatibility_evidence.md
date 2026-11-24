@@ -1,5 +1,9 @@
 # ENH-E11 G10 P05 — compatibility_evidence
 
+**DEC-01=B (Owner 2026-11-24) — DEFERRED_PRODUCT_POLICY_BRIDGE:** G10/P05 owns the previously deferred Product v2 compatibility bridge implementation and G10_999 owns independent acceptance. This is a bounded internal refactoring, not a new Method ID or public behavior change. Before G10 coding, specify exact affected existing ScientificValidationService/ESTIMATOR_CAPABILITIES and shared pure policy/metadata Class.Method contracts, characterize legacy behavior and obtain normal G10 S09/S10/S11 authorization for the bounded source change. Preserve public Product v2 operations, aliases, estimands, adjustment/type/diagnostic/lineage/error behavior, Discovery/Identification early return, existing CLI/Web/API/Worker/DB contracts and tests. Delegate legacy eligibility to the single shared pure policy/metadata authority without independent mutable duplicate rules or fallback. Require before/after characterization and all affected legacy Operation/Estimator positive/negative regression; demonstrate actual delegation and one authority, not just equal tables. Re-evaluate all impacted Local Method evidence under existing dependency-closure rules (including P1-M06). G10_999 cannot PASS until the bridge and its independent acceptance are complete. G01 through G09 remain protected; no current G10 coding authorization. If legacy semantics cannot be preserved, BLOCK and seek Owner decision.
+
+**DEC-02/03=B (Owner 2026-11-24):** P1-M06 supported executable positive is BK=null only. Non-null BK must remain typed pre-FCI exit4 refusal with no leakage/fallback/publication; genuine SCI_NO_ADMISSIBLE_PAG production remains deferred. Both enablements are separate future enhancements, not G10 mandatory positives. Preserve 41 Method count, independent null-BK MAG/PAG/latent oracle and quantitative evidence, BK hazard/refusal and synthetic envelope/real FS/Reader/technical-error rejection. Do not claim deferred variants are implemented or scientifically accepted.
+
 **Document class:** Primary Execution Contract (self-contained Review DRAFT)  
 **Gate:** G10 / **Package:** P05 / **Trial:** NOT_STARTED  
 **Depends on Pxx:** P03,P04  
@@ -9,7 +13,7 @@
 
 ## 1. Assigned Purpose / Authority
 
-**目的:** 旧causal-analysis-spec/2/CLI/Web/API/Worker/DB非破壊、privacy・Method依存version照合（外部顧客Legalは別判定）。
+**目的:** 旧causal-analysis-spec/2/CLI/Web/API/Worker/DB非破壊、privacy・Method依存version照合（外部顧客Legalは別判定）、DEFERRED_PRODUCT_POLICY_BRIDGEの実装と互換性証拠。
 
 **Scope:** 本PackageのClass/Methodと、それらが必要とする契約/適格性/Result Evidenceに限定。**Gate全体の保護意味:** 41 Method/10 UCの有効独立科学証拠を全件照合し、影響分のみ再実行してManifest/依存/旧v2互換を統合する。
 
