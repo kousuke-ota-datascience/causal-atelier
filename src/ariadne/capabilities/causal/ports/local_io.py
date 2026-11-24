@@ -57,8 +57,21 @@ class CommittedLocalRun:
     technical_status: Literal["COMPLETED"] = "COMPLETED"
 
 
+class PublicationSessionToken:
+    """Opaque in-process identity for a single publication attempt."""
+
+    __slots__ = ()
+
+
 class LocalPublicationPort(Protocol):
-    def begin(self, *, run_id: str, request_hash: str, root: TrustedLocalRoot) -> StagingArtifactSink: ...
+    def begin(
+        self, *, run_id: str, request_hash: str, root: TrustedLocalRoot,
+        session: PublicationSessionToken | None = None,
+    ) -> StagingArtifactSink: ...
+    def abort(
+        self, *, sink: StagingArtifactSink, session: PublicationSessionToken, run_id: str,
+        request_hash: str, root: TrustedLocalRoot, reason: str,
+    ) -> None: ...
     def seal(
         self, *, sink: StagingArtifactSink, manifest: ManifestValue, privacy: PrivacyDecision,
     ) -> ValidatedStagedBundle: ...

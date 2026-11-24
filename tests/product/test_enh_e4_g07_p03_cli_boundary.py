@@ -83,7 +83,7 @@ def _forbidden_path(roots: tuple[str, ...]) -> list[str] | None:
     return None
 
 
-def test_all_analysis_cli_scripts_are_explicitly_low_level_utilities() -> None:
+def test_all_analysis_cli_scripts_match_explicit_classifications() -> None:
     pyproject = tomllib.loads((REPOSITORY / "pyproject.toml").read_text(encoding="utf-8"))
     scripts = pyproject["project"]["scripts"]
     analysis_scripts = {
@@ -91,8 +91,19 @@ def test_all_analysis_cli_scripts_are_explicitly_low_level_utilities() -> None:
         for name, target in scripts.items()
         if target.startswith("ariadne.interfaces.cli.")
     }
-    assert set(analysis_scripts) == LOW_LEVEL_UTILITY
-    assert all(target.endswith(":main") for target in analysis_scripts.values())
+    low_level = {
+        "ariadne-discover": "ariadne.interfaces.cli.discovery:main",
+        "ariadne-estimate": "ariadne.interfaces.cli.estimation:main",
+        "ariadne-identify": "ariadne.interfaces.cli.identification:main",
+        "ariadne-refute": "ariadne.interfaces.cli.refutation:main",
+        "ariadne-sensitivity": "ariadne.interfaces.cli.sensitivity:main",
+    }
+    local_lifecycle = {
+        "ariadne-causal-local": "ariadne.interfaces.cli.local_causal.command:main",
+    }
+    assert set(low_level) == LOW_LEVEL_UTILITY
+    assert set(low_level).isdisjoint(local_lifecycle)
+    assert analysis_scripts == low_level | local_lifecycle
 
 
 def test_low_level_cli_has_no_legacy_or_product_persistence_reachability() -> None:

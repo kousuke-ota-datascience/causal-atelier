@@ -29,6 +29,7 @@ predictive-advanced = [
 ]
 
 [project.scripts]
+ariadne-causal-local = "ariadne.interfaces.cli.local_causal.command:main"
 # New product CLI
 ariadne-discover = "ariadne.interfaces.cli.discovery:main"
 ariadne-estimate = "ariadne.interfaces.cli.estimation:main"

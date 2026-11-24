@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 from ariadne.capabilities.causal.ports.local_io import (
-    CommittedLocalRun, LocalPrivacyPolicy, ManifestValue, PrivacyDecision, ValidatedStagedBundle,
+    CommittedLocalRun, LocalPrivacyPolicy, ManifestValue, PrivacyDecision, PublicationSessionToken, ValidatedStagedBundle,
 )
 from ariadne.interfaces.cli.local_causal.config_decoder import StrictLocalConfigDecoder
 from ariadne.interfaces.cli.local_causal.manifest import ArtifactDescriptor, LocalRunManifest
@@ -103,6 +103,7 @@ class ValidatedBundle:
 class LocalArtifactPublisher:
     def __init__(
         self, root: TrustedLocalRoot, run_id: str, request_hash: str, permission_policy: LocalPrivacyPolicy,
+        *, issuer: LocalPublicationAdapter | None = None, session: PublicationSessionToken | None = None,
     ):
         _check(safe_run_id(run_id) and valid_sha256(request_hash), "Invalid run identity")
         self._identity = root.verify()
@@ -114,6 +115,8 @@ class LocalArtifactPublisher:
         self._handles = ExitStack()
         self._staging_handle: StagingHandle | None = None
         self._artifacts: tuple[ArtifactDescriptor, ...] = ()
+        self._issuer = issuer
+        self._session = session
         self._sink = _Sink(self)
         self._validated: ValidatedBundle | None = None
 
@@ -317,8 +320,32 @@ class LocalPublicationAdapter:
     def __init__(self, permission_policy: LocalPrivacyPolicy):
         self._permission_policy = permission_policy
 
-    def begin(self, *, run_id: str, request_hash: str, root: TrustedLocalRoot) -> StagingArtifactSink:
-        return LocalArtifactPublisher(root, run_id, request_hash, self._permission_policy).begin()
+    def begin(
+        self, *, run_id: str, request_hash: str, root: TrustedLocalRoot,
+        session: PublicationSessionToken | None = None,
+    ) -> StagingArtifactSink:
+        _check(session is None or type(session) is PublicationSessionToken,
+               "Invalid publication session", "PUBLICATION_FAILED")
+        return LocalArtifactPublisher(
+            root, run_id, request_hash, self._permission_policy, issuer=self, session=session,
+        ).begin()
+
+    def abort(
+        self, *, sink: StagingArtifactSink, session: PublicationSessionToken, run_id: str,
+        request_hash: str, root: TrustedLocalRoot, reason: str,
+    ) -> None:
+        _check(type(sink) is _Sink and type(session) is PublicationSessionToken,
+               "Invalid staging sink or session", "PUBLICATION_FAILED")
+        publisher = sink._publisher
+        _check(
+            type(publisher) is LocalArtifactPublisher and sink is publisher._sink
+            and publisher._issuer is self and publisher._session is session
+            and publisher.run_id == run_id and publisher.request_hash == request_hash
+            and publisher.root is root and publisher.permission_policy is self._permission_policy
+            and publisher.state in (PublishState.STAGING, PublishState.VALIDATING),
+            "Staging session cannot be aborted", "PUBLICATION_FAILED",
+        )
+        publisher.abort(reason)
 
     def seal(
         self, *, sink: StagingArtifactSink, manifest: ManifestValue, privacy: PrivacyDecision,
