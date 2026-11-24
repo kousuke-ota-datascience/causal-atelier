@@ -5,7 +5,6 @@ import hashlib
 import json
 import math
 from collections.abc import Mapping
-from decimal import Decimal
 
 VERSION = "e11-json-jcs-rfc8785/1"
 
@@ -16,11 +15,25 @@ def _number(value: int | float) -> str:
         raise ValueError("Number cannot be represented exactly in the JSON number domain")
     if number == 0:
         return "0"
-    digits = Decimal(repr(number)).normalize()
-    if 1e-6 <= abs(number) < 1e21:
-        return format(digits, "f")
-    mantissa, exponent = format(digits, "e").split("e")
-    return f"{mantissa}e{int(exponent):+d}"
+    # repr supplies the nearest shortest round-trip digits for binary64.
+    # Place the decimal point using JCS notation rules and integer offsets.
+    sign = "-" if number < 0 else ""
+    mantissa, _, exponent = repr(abs(number)).partition("e")
+    whole, _, fraction = mantissa.partition(".")
+    raw_digits = whole + fraction
+    significant = raw_digits.lstrip("0")
+    point = len(whole) + int(exponent or "0") - (len(raw_digits) - len(significant))
+    digits = significant.rstrip("0")
+
+    if -5 <= point <= 21:
+        if point <= 0:
+            return sign + "0." + "0" * -point + digits
+        if point >= len(digits):
+            return sign + digits.ljust(point, "0")
+        return sign + digits[:point] + "." + digits[point:]
+
+    tail = "." + digits[1:] if len(digits) > 1 else ""
+    return f"{sign}{digits[0]}{tail}e{point - 1:+d}"
 
 
 def _encode(value: object) -> str:
