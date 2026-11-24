@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-24 JST
 **Gate/Trial:** G01/01 (G10 follow-up allocation)
-**State:** OWNER_SCOPE_DECISIONS_ADOPTED / FORMAL_09_REVIEW_PENDING / REVISED_ACCEPTANCE_FREEZE_PENDING / G01_999_BLOCKED
+**State:** OWNER_FORMAL_09_APPROVED / REVISED_ACCEPTANCE_FREEZE_PENDING / G01_999_BLOCKED
 **Owner decisions:** DEC-01=B; DEC-02=B; DEC-03=B (2026-11-24)
 **Existing fixed candidate:** 72bcd6acaab6caf48827bf2bb6cd5e249afd658b
 **Existing S10:** 307404e01c43bb83a286986f8f6d124e53032509
@@ -26,4 +26,10 @@ IF23_41, DD30_61/62/63: explicit capability and temporal boundary; G01 parent06,
 
 ## 4. Approval and continuation
 
-Owner scope decisions are adopted, but this revised normative text is submitted for formal review under existing change governance. Do not retrospectively relabel previous frozen contract or evidence. Establish effective revised acceptance authority before further independent acceptance; retain original candidate SHA and distinguish revised acceptance document revision from tested product identity. No new coding authorization or source modification required for these scope reductions; if actual remaining tests reveal a defect, use existing FAIL remediation rules. Do not automatically declare G01 PASS or release downstream gates. No new execution or independent review performed by Author.
+Owner scope decisions and this formal 09 are approved. The revised acceptance contract requires formal freeze under existing change governance, separately from the historical implementation freeze. Do not retrospectively relabel previous frozen contract or evidence. Establish effective revised acceptance authority before further independent acceptance; retain original candidate SHA and distinguish revised acceptance document revision from tested product identity. No new coding authorization or source modification required for these scope reductions; if actual remaining tests reveal a defect, use existing FAIL remediation rules. Do not automatically declare G01 PASS or release downstream gates. No new execution or independent review performed by Author.
+
+## 5. Formal Owner 09 approval (2026-11-24 JST)
+
+> AMD-E11-G01-ACCEPTANCE-001の正式09案を承認する。DEC-01〜03のB案に基づく改訂受入契約を確定するための必要な処理を実施せよ。既存Fixed Trial Candidateと独立検証証拠を維持し、Coding Agentの再認可・Candidate再生成は行わないこと。その他の独立科学的受入条件は維持すること。
+
+This approval covers the exact amendment and the twelve revised contract/planning documents at review commit 7ed0b4133f78a56cb2d1678e858a07ef0e7dcd8d. No normative edits beyond this approval record are made in the approval commit. Existing implementation S10/S11 and fixed candidate remain historical and unchanged. The revised acceptance freeze is a distinct acceptance-contract authority, not an implementation authorization. No S11 reauthorization, Candidate Assembly replay, candidate regeneration, or retroactive PASS. Prior 999 and raw evidence remain intact. Subsequent independent S09 must cover the revised scope; independent verification must review the applicability of existing evidence and complete remaining obligations before 999 reassessment. G10 remains not authorized.
