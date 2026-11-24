@@ -1,0 +1,24 @@
+# DEC-G01-P01-003-S11-REAUTH-01 — Limited Owner Coding Authorization
+
+2026-11-25 JST / G01/P01/Trial01 / AMD-E11-G01-P01-003
+**State:** S10_FROZEN / LIMITED_S11_AUTHORIZED / REPAIR_NOT_RUN / T3_NOT_AUTHORIZED / G01_999_BLOCKED
+
+**Owner decision (verbatim):** DEC-G01-P01-003-S11-REAUTH-01を承認する。AMD-E11-G01-P01-003に基づくS10凍結SHA 4a355403c2a66a76a6e2965e16fdf7637258e33e を対象に、G01/P01/Trial01の限定Coding Authorizationを発行せよ。S09-JCS-01の修正と追加テストのみを認可し、修正後Candidateの生成を認める。既存Candidate・チェックポイント・独立検証証拠、その他の科学的受入条件を維持すること。T3正式実行は認可しない。
+
+## Authority and allowed changes
+
+Frozen contract 4a355403c2a66a76a6e2965e16fdf7637258e33e, formal 09 AMD-E11-G01-P01-003, P01 06, G01 07, S10 Owner record 272. Immediately preceding HEAD was 29ec9170d7e620f32a65c95a3b15b692f6bc267c, differing from S10 only by record 272. Use actual synchronized clean branch HEAD for start identity; approval/evidence-only descendants do not require new freeze. Only permitted code paths:
+- src/ariadne/shared/serialization/jcs.py: _number body and necessary imports only.
+- tests/enhancement/enh_e11/g01/contract/test_jcs_context_independence.py: new file only.
+
+Normal required status/checkpoint/completion evidence may be updated or added, retaining historical identities and evidence at prior commits. No other production/test/fixture/schema/lock change, no downstream coding, no new dependency. Follow frozen 09 exact verification, including legacy valid bundle cross-context readback, all G01 tests and required protected regressions; records 269/270 applicable only after impact confirmation. Actual Linux verification and independently expected RFC8785 bytes/hash required; if beyond scope, BLOCKED. Do not weaken tests or acceptance.
+
+## Explicit bounded operational exception — existing Trial01 only
+
+Use 40_operator_workflows/agent_entry_prompts/10_normal_execution_02_work_package_coding_agent_prompt.md with GATE_ID=G01, PACKAGE_ID=P01, TRIAL_NO=01. The amendment and this authorization expressly permit reopening completed P01 after a fixed candidate despite existing PACKAGE_READY/READY_FOR_TEST/999 BLOCKED state. Work on clean synchronized branch including original full candidate, not on historical P01 checkpoint alone. Normative repair WHAT is frozen P01 06 and formal 09; 07 is acceptance, not speculative coding specification. Preserve existing P02–P05 implementation, do not recode them. Do not invoke formal FAIL-only 08/40 rework route or invent Gate FAIL. Historical DRAFT/pending labels in 06/07/40/09 are superseded only by verified actual approvals, not by a blanket waiver. Stop on real missing authority, unexpected change, dirty checkout or unresolved scope.
+
+Record a new P01 repair checkpoint and status with original P01 checkpoint 9bff61f0eae25236f95f31f2cd3e7c81291f0167 retained as historical. Original P02 checkpoint 3a76a0aa1698037354b284ba7b5a875300473ce6, P03 858c9f73366036a2d1445e558135cd521f611462, P04 7dcf2061dae3c8832b2b3ec9be6900ad6ee7edb6, P05 original candidate 72bcd6acaab6caf48827bf2bb6cd5e249afd658b and independent evidence 2e56c2a04f4d11d10fdcb7b3ad5c148ab6747d91 remain historical.
+
+After PACKAGE_READY invoke existing 20_candidate_assembly_01_work_package_candidate_assembly_agent_prompt.md with G01/Trial01. For this repair only, the canonical ancestry is original P01→P02→P03→P04→P05/original candidate→authorized P01 repair checkpoint→replacement candidate, with intervening authorized documentation/evidence commits. The repaired P01 checkpoint need not be ancestor of historical P02–P05 checkpoints. Verify original chain and repaired candidate contains ALL original checkpoints and repair, verify exact allowed semantic diff against original candidate, no divergence/reversion/unauthorized changes, and run required gate-wide self-verification; this explicitly supersedes the ordinary forward-Package-chain assumption only for this authorized repair. Do not invent new P02–P05 checkpoints or rerun their coding. Preserve previous completion report in history and identify original and replacement candidate distinctly. Actual new source change requires replacement candidate; evidence-only commits do not. Assembly READY_FOR_TEST is not Gate PASS.
+
+Independent verification uses actual replacement candidate and revised frozen 07/09, verifies original provenance and limited repair chain under 272/273, and re-evaluates affected or uncertain evidence including S09-JCS-01; unchanged evidence only with independently demonstrated applicability. Prior 271 deferrals remain unchanged; 269/270 scope decisions remain conditional on impact. Independent S09/B05/T3 mandatory; T3 planning K=33 only, formal execution prohibited pending detailed preregistration approval. Preserve prior 999 and no promotion until independent reassessment. No independent verdict, tests or code repair performed by author of this authorization.
