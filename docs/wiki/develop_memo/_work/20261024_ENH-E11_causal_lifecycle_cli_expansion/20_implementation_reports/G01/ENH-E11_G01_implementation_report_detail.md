@@ -33,17 +33,17 @@ G01 の実装状況と未解決事項の累積監査台帳。
 | 01 | P02 | COMPLETE | `3a76a0aa1698037354b284ba7b5a875300473ce6` | [状態](Trial01/packages/E11-G01_01_P02__status.md) | [証跡](Trial01/packages/E11-G01_01_P02__checkpoint.md) | 未集計 |
 | 01 | P03 | COMPLETE | `858c9f73366036a2d1445e558135cd521f611462` | [状態](Trial01/packages/E11-G01_01_P03__status.md) | [証跡](Trial01/packages/E11-G01_01_P03__checkpoint.md) | 未集計 |
 | 01 | P04 | COMPLETE | `7dcf2061dae3c8832b2b3ec9be6900ad6ee7edb6` | [状態](Trial01/packages/E11-G01_01_P04__status.md) | [証跡](Trial01/packages/E11-G01_01_P04__checkpoint.md) | 未集計 |
-| 01 | P05 | BLOCKED | NONE | 公式 Package 報告なし | NONE | 未集計 |
+| 01 | P05 | COMPLETE | `72bcd6acaab6caf48827bf2bb6cd5e249afd658b` | [状態](Trial01/packages/E11-G01_01_P05__status.md) | [証跡](Trial01/packages/E11-G01_01_P05__checkpoint.md) | 未集計 |
 
 ## 4. Current implementation state — unverified until Gate PASS
 
-P01〜P04 の実装完了と検証を記録済み。直近の P05 は実装前に停止し、チェックポイントはない。同じポリシーを共有する別 run の正規 sink を、許可された abort 追加範囲の中で識別できないことが停止理由だった。
+P01〜P05 の実装完了と検証を記録済み。AMD-004 で Local CLI の登録を明示的に分類し、対象 Product テストの競合を解消した。P05 継続実行で対象回帰 226 件が通過した。
 
 ## 5. Candidate assembly state
 
 - State: NOT_STARTED
 - Fixed Candidate SHA: NONE
-- Outstanding candidate-affecting issue: P05 の停止が未解消。
+- Outstanding candidate-affecting issue: Package 報告上の実装 blocker なし。Candidate Assembly は未実施。
 
 ## 6. Protected passed-Gate interactions
 
@@ -57,7 +57,7 @@ Product CLI・Graph・Artifact の回帰実測は各 Package のチェックポ�
 
 ## 8. Open Coding observations
 
-P05 の abort 対象の帰属確認が未確定。独立科学検証、T2/T3、G01_999 は保留。
+独立科学検証、T2/T3、G01_999 は保留。
 
 ## 9. Finalization rule
 
