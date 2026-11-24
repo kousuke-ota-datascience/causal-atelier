@@ -1,7 +1,7 @@
 # AMD-E11-G01-P01-003 — S09-JCS-01 context-independent canonical numbers
 
 2026-11-25 JST
-Status: OWNER_DESIGN_DECISION_ADOPTED / FORMAL_09_REVIEW_PENDING / S10_S11_PENDING
+Status: OWNER_FORMAL_09_APPROVED / S10_FREEZE_PENDING / S11_AUTHORIZATION_PENDING
 G01 / P01 bounded post-candidate repair; existing Trial01 historical candidate and evidence preserved.
 
 ## Owner decision
@@ -26,10 +26,16 @@ Only new test file allowed: tests/enhancement/enh_e11/g01/contract/test_jcs_cont
 
 ## Transition and approvals
 
-Current canonical 999 is BLOCKED, not formal FAIL. Do not invent a formal FAIL or invoke 40 FAIL rework prompt without its prerequisites. Proposed bounded repair via explicit Owner-approved 09 -> S10 -> limited S11, using existing work-package coding procedure only with explicit permission to reopen P01 after completed checkpoint and to form a replacement candidate in Trial01. Preserve prior checkpoint and fixed candidate identity as history; no destructive reset or rerun of unrelated packages. The required explicit exception must cover old PACKAGE_COMPLETE/Trial01 candidate state, not allow arbitrary recoding. A new candidate is necessary because production source changes. Assembly/independent verification must use the repaired candidate, not original checkpoint as if unchanged. Separate formal 09, freeze and coding approvals pending; no source/test edits performed here. Existing revised acceptance authority 271 applies except this specific approved amendment when effective.
+Current canonical 999 is BLOCKED, not formal FAIL. Do not invent a formal FAIL or invoke 40 FAIL rework prompt without its prerequisites. Proposed bounded repair via explicit Owner-approved 09 -> S10 -> limited S11, using existing work-package coding procedure only with explicit permission to reopen P01 after completed checkpoint and to form a replacement candidate in Trial01. Preserve prior checkpoint and fixed candidate identity as history; no destructive reset or rerun of unrelated packages. The required explicit exception must cover old PACKAGE_COMPLETE/Trial01 candidate state, not allow arbitrary recoding. A new candidate is necessary because production source changes. Assembly/independent verification must use the repaired candidate, not original checkpoint as if unchanged. Formal 09 approved below; separate S10 freeze and limited S11 authorization remain pending. No source/test edits performed here. Existing revised acceptance authority 271 applies except this specific approved amendment when effective.
 
 ## Science decisions
 
 DEC-02=A: adopt non-temporal latent extension, binary DGP and mediator control as B05 scope alongside observed/latent collider, Fisher Z/chi-square/G-square where eligible. Reviewer must validate exact SCM/discrete distribution, CI/faithfulness, MAG/PAG oracle and applicability. No oracle approval by Owner scope decision alone.
 DEC-03: K=33 planning basis (nine cells, six compelled-endpoint comparisons in addition to 27 other comparisons); n=2048, R=6000, 40 core-h/42 wall-h/1 GiB/parallel1 remain reviewer proposals pending exact preregistration review. Do not assume thresholds or metric definitions from summary. Obtain 023 full preregistration and evidence, confirm denominators, replicate-level inference, MCSE/power, seed separation, resource measurements, failure handling and fixed stopping before separate T3 execution authorization.
 All other scientific acceptance conditions, DEC-01–03=B from AMD-E11-G01-ACCEPTANCE-001 (Bridge/BK/negative deferrals), schemas and protected regression remain unchanged.
+
+## Formal Owner 09 approval — 2026-11-25 JST
+
+> AMD-E11-G01-P01-003の正式09案を承認する。S09-JCS-01の限定修正のため、既存Trial01のP01を限定的に再開し、修正後Candidateを生成する方針を承認する。既存Candidate・チェックポイント・独立検証証拠は履歴として維持する。必要なS10/S11手続を進めよ。T3正式実行は認可しない。
+
+Approval covers the exact reviewed 09, P01 06 and G01 07 at 183a0f8e7cda396e6aaa6629187b74eacdad9a14. No normative scope expansion by this approval record. Owner explicitly adopted the bounded reopening/replacement-candidate policy for Trial01, not a separate S10 freeze or S11 execution grant. The subsequent S11 must explicitly permit reopening P01 despite its historical completion and existing candidate, and narrowly authorize the two specified paths only. Original implementation and revised acceptance freezes remain historical; record 271 and AMD-E11-G01-ACCEPTANCE-001 continue except the explicitly amended obligations after freeze. G01_999 remains BLOCKED; no T3 authorization or independent PASS.
