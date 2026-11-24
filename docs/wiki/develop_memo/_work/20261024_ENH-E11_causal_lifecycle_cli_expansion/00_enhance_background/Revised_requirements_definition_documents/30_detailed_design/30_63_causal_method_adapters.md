@@ -1,5 +1,7 @@
 # 30_63_causal_method_adapters
 
+**Owner scope rephasing (2026-11-24; DEC-01/02/03=B):** G01 P1-M06 executable scope is BK=null only; every non-null BK remains pre-FCI BACKEND_SEMANTICS_UNVERIFIED/exit4, with no leakage, fallback or publication. BK enablement is deferred to a separate future enhancement, not G10 or G01 acceptance; independent null-BK MAG/PAG/latent oracle, B05, T2/T3 and BK refusal remain mandatory. SCI_NO_ADMISSIBLE_PAG remains reserved; its genuine scientific producer/proof is deferred to a separate future enhancement. Existing synthetic envelope, actual FS/Reader validation and technical-error misclassification prevention remain mandatory; no genuine negative production or PASS is asserted. DEFERRED_PRODUCT_POLICY_BRIDGE remains UNFULFILLED, assigned to G10/P05 implementation and G10_999 independent acceptance, not a G01_999 prerequisite. Local single policy and protected legacy behavior remain mandatory. This limited scope decision supersedes contrary earlier timing/positive-production requirements only; no other scientific AC, public schema, source, test, lock or checkpoint changes.
+
 ---
 
 ## 1. Scientific Adapter Class詳細
